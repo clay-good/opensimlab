@@ -2942,6 +2942,29 @@ keeps narration readable without counting reading time as a clinical delay. The 
 does not pause the initial snapshot or an action awaiting acceptance; both require worker progress.
 Observation remains live at the chosen speed, and takeover invalidates pending Continue callbacks.
 
+### Wave E endocrine-metabolic slice 10: hypernatremic dehydration in known AVP deficiency
+
+This preview separates circulation, ongoing water loss, and water replacement in a fictional
+67-year-old with known isolated AVP deficiency, two omitted prescribed desmopressin doses, and
+restricted drinking-water access. Initial sodium is 162 mmol/L with hypovolemia and modest urine
+output; unknown duration is not acute sodium loading. Qualified volume restoration is immediately
+available. Its authored 15-minute response improves live blood pressure and unmasks private dilute
+urine losses. Water replacement and desmopressin then become independently available without
+administrative or fresh-laboratory gates. Reassessment, not time or treatment acknowledgment,
+updates sodium, urine findings, and the observed peak. Combined care leaves sodium at 162, 163,
+or 164 mmol/L depending on when it began, never normal or discharge-ready. Delayed volume,
+rapid-normalization attempts, and blanket withholding remain visible in recovery debriefs.
+
+The exact-version nine-decision example pauses for reading, records normal learner actions, and
+waits for the authored 15- and 120-minute checkpoints. No-volume takeover at 60 minutes and
+unfinished-rehearsal takeover at 300 minutes are teaching stops, not clinical deadlines. There is
+no dose, fluid-deficit solver, automatic redosing, or brain-injury prediction. The shared centered
+160-character report dialog accepts optional observed-state context with unique action-specific
+outcomes; hidden findings and free-form engine prose are excluded. Source links use SfE inpatient
+guidance and the 2022 JCEM review; the August 2026 joint-guideline abstract still describes future
+guidance. Clinical, full inclusive-runtime, version-bound quality, and production reporting gates
+remain pending. See `docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md`.
+
 #### Renal and electrolyte medicine: 12
 
 Hyperkalemia with ECG change; severe hypokalemia; symptomatic hyponatremia; hypernatremic

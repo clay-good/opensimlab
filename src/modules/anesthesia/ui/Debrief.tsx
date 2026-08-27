@@ -30,6 +30,7 @@ import { supportsMyxedema } from '../../endocrine-metabolic/myxedema';
 import { supportsHypercalcemia, HYPERCALCEMIA_FLUID_RESPONSE_TICKS, HYPERCALCEMIA_BRIDGE_RESPONSE_TICKS } from '../../endocrine-metabolic/hypercalcemia';
 import { supportsHypocalcemia, HYPOCALCEMIA_CALCIUM_RESPONSE_TICKS, HYPOCALCEMIA_RESPONSE_TICKS } from '../../endocrine-metabolic/hypocalcemia';
 import { supportsHyponatremiaCorrection } from '../../endocrine-metabolic/hyponatremia-correction';
+import { supportsAvpDeficiency } from '../../endocrine-metabolic/avp-deficiency';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -201,6 +202,8 @@ export function Debrief(props: DebriefProps) {
                 ? { activityContext: 'coordinating monitored hydration, calcium-lowering treatment, and continuing care for severe malignancy-associated hypercalcemia' }
               : supportsHypocalcemia(props.scenario)
                 ? { activityContext: 'coordinating monitored calcium rescue, postoperative risk assessment, and continuing calcium and magnesium care' }
+              : supportsAvpDeficiency(props.scenario)
+                ? { activityContext: 'restoring circulation while coordinating water replacement, prescribed desmopressin, reassessment, and reliable access to ongoing care' }
               : supportsHyponatremiaCorrection(props.scenario)
                 ? { activityContext: 'preserving the original sodium-correction window while coordinating water-loss management and continuing surveillance after emergency rescue' }
               : {}),
@@ -583,6 +586,38 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.startsWith('avp-')) {
+      if (!supportsAvpDeficiency(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The AVP-deficiency lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^avp-deficiency-${id}-\\d+$`).test(entry.eventId));
+      const support = event('support'); const context = event('context-review'); const volume = event('volume-restoration');
+      const first = event('volume-reassessment'); const response = event('response-reassessment');
+      const water = event('water-replacement'); const desmopressin = event('desmopressin-restoration');
+      const delay = event('volume-delay'); const normalization = event('normalization-refused');
+      const withheld = event('withholding-choice'); const handoff = event('handoff');
+      const circulationMet = !!volume && !!(first || response) && !delay;
+      const waterMet = !!water && !!desmopressin && !!response && !normalization && !withheld;
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'avp-context': { met: !!support && !!context,
+          finding: support && context ? 'Known AVP deficiency, omitted prescribed medication, and water access were reviewed with qualified support. Low initial urine output did not exclude the supplied diagnosis.'
+            : 'Qualified support or the medication and water-access review is missing. This is an established diagnosis, not a new diabetes or polyuria test.', tick: context?.tick },
+        'avp-circulation': { met: circulationMet,
+          finding: circulationMet ? 'Circulation support began before the authored deterioration, and a fresh assessment established the later response. Better pressure did not prove corrected sodium.'
+            : 'Delayed volume restoration or a missing fresh circulation assessment remains visible. Authored counterfactual: untreated depleted circulation deteriorates; administrative review and new laboratory requests must not delay qualified support.', tick: volume?.tick },
+        'avp-water-control': { met: waterMet,
+          finding: waterMet ? 'Qualified water replacement and desmopressin addressed separate parts of the problem. After circulation restoration neither request needed a new laboratory result or administrative acknowledgment.'
+            : 'Missing combined care, an unconfirmed response, attempted normalization, or blanket withholding remains learning evidence. Less urine alone does not correct a water deficit; a water request alone does not control ongoing renal loss.', tick: desmopressin?.tick },
+        'avp-reassessment': { met: !!first && !!response,
+          finding: first && response ? 'Requested historical findings distinguish the circulation phase from the later partial water-balance response. The highest observed sodium remains visible; this is not normalization or proven safety.'
+            : 'Separate circulation-phase and later combined-care observations are incomplete. An accepted request, elapsed timer, or changed urine output is not a new sodium result.', tick: response?.tick },
+        'avp-handoff': { met: !!handoff,
+          finding: handoff ? 'Continuing sodium, fluid balance, medication reliability, swallowing and water access, and specialist ownership were handed off. Hypernatremia remains active; handoff is not discharge.'
+            : 'Continuing-care ownership has not been handed off. Corrected medication and water access need a reliable ongoing plan, not just a better number.', tick: handoff?.tick },
+      };
+      const result = results[objective.id];
+      return result ? { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding
+        : { ...base, outcome: 'not-exercised', finding: 'No evidence mapping exists for this objective.' } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.startsWith('sodium-correction-')) {
       if (!supportsHyponatremiaCorrection(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The post-rescue sodium lesson was not active.' } satisfies ObjectiveFinding;

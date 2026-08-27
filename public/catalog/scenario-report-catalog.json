@@ -1890,6 +1890,23 @@
       "limitationManifestHash": "sha256:80d0c23a467df839bfabe433357262271f0e3cbebfa4e70421491afe19333e2f"
     },
     {
+      "scenarioId": "hypernatremic-dehydration-avp-deficiency",
+      "contentVersion": "0.1.0",
+      "moduleId": "endocrine-metabolic",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:d8da3bb3de1f974b964fe3655adb9e7085c9c910b970c4b4d43e12d3b7d48a24",
+      "defaultsHash": "sha256:c5fd03310390a61a66a35425d37687d13e1efd51c1712ddf9e4f64e3ed201a24",
+      "maturityHash": "sha256:f893af0d981ddb8b26c4f51561504b2ef69c37d5a1bfcecb821a97ffbf8591ff",
+      "sourceManifestHash": "sha256:ed632283b076f9f72011170dd057f0fa5891c499d93144d36a5ce28ee11a8112",
+      "limitationManifestHash": "sha256:811e3b23cdf6b73eb910b98eddbf24e7e65ac3f9958c7b5662084b8aa9f74956"
+    },
+    {
       "scenarioId": "hypocalcemic-tetany-rescue-and-recurrence",
       "contentVersion": "0.1.0",
       "moduleId": "endocrine-metabolic",

@@ -289,6 +289,9 @@
 .hypocalcemia__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .sodium-correction__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
 .sodium-correction__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.avp-deficiency__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
+.avp-deficiency__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.avp-deficiency__section .button[aria-disabled='true'],
 .sodium-correction__section .button[aria-disabled='true'],
 .hypocalcemia__section .button[aria-disabled='true'],
 .thyroid-storm__section .button[aria-disabled='true'], .myxedema__section .button[aria-disabled='true'], .hypercalcemia__section .button[aria-disabled='true'] {

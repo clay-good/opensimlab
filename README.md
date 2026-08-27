@@ -399,6 +399,14 @@ A learner-paced example, private report dialog, and continuing-risk debrief shar
 authored patient. No dose, sodium formula, ODS prediction, or discharge clearance is provided;
 independent clinical review and full inclusive and production-report validation remain pending.
 
+The tenth Endocrine lab covers hypernatremic dehydration in known vasopressin deficiency after
+missed prescribed desmopressin and loss of water access. Circulation restoration reveals large
+water losses; qualified water replacement and medication restoration address different problems.
+Fresh historical observations distinguish better pressure, less urine, and a partial sodium
+response. The nine-decision example preserves reading pauses and continuing-care ownership.
+No dose, fluid-deficit calculator, automatic redosing, or discharge clearance is supplied.
+Clinical review, the complete inclusive-runtime matrix, and production reporting remain pending.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

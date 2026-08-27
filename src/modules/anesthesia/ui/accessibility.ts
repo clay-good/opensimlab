@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -101,6 +101,7 @@ export function stateSummary(
     readonly hypercalcemia?: HypercalcemiaSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
+    readonly avpDeficiency?: AvpDeficiencySnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -154,7 +155,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -178,6 +179,26 @@ export function stateSummary(
           + ' intravenous.');
       }
     }
+  }
+  if (options.avpDeficiency) {
+    const patient = options.avpDeficiency;
+    for (const field of ['systolicMmHg', 'diastolicMmHg'] as const) {
+      const value = state[field];
+      if (!options.invalid.has(field) && Number.isFinite(value)) {
+        lines.push(`${FIELDS[field].label}: ${value.toFixed(FIELDS[field].precision)} ${FIELDS[field].unit}.`);
+      }
+    }
+    lines.push('Supplied initial sodium: 162 millimoles per liter. This patient has known AVP deficiency, formerly central diabetes insipidus, not diabetes mellitus.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push(`Qualified volume restoration: ${patient.volumeAtTick === null ? 'not yet requested' : patient.circulationRestored ? 'authored circulation checkpoint reached' : 'requested'}. Water replacement: ${patient.waterAtTick === null ? 'not yet requested' : 'requested'}. Prescribed desmopressin restoration: ${patient.desmopressinAtTick === null ? 'not yet requested' : 'requested'}.`);
+    lines.push('Oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.observation
+      ? `Last requested assessment at simulated ${formatElapsed(patient.observation.atTick)}: sodium ${patient.observation.sodiumMmolL} millimoles per liter, urine output ${patient.observation.urineOutputMlPerHour} milliliters per hour, urine osmolality ${patient.observation.urineOsmolalityMosmPerKg} milliosmoles per kilogram. These are historical observations, not live measurements.`
+      : 'No sodium, urine-output, and urine-osmolality reassessment has been requested.');
+    lines.push(`Highest observed sodium: ${patient.peakObservedSodiumMmolL} millimoles per liter. Improved circulation or less urine does not establish sodium normalization or recovery.`);
+    lines.push(options.alarms.length === 0 ? 'No active alarms.'
+      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    return lines.join(' ');
   }
   if (options.hyponatremiaCorrection) {
     const patient = options.hyponatremiaCorrection;

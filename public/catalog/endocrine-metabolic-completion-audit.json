@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "moduleId": "endocrine-metabolic",
   "capabilityVersion": "0.1.0-alpha.48",
-  "scenarioCount": 9,
+  "scenarioCount": 10,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -1121,6 +1121,132 @@
           "status": "satisfied",
           "evidence": [
             "hyponatremia-correction-fixtures.ts binds expert, commonError, recovery, and noAction to content 0.1.0 and seed 4907. Recovery observes a rise of 9 from the original baseline before qualified combined response."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Engineering model, replay, and nonvisual checks do not establish full exact-version screen-reader, keyboard, reduced-motion, color-vision, phone, zoom, offline, and performance evidence."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "The shared private report path still requires complete inclusive coverage and production Turnstile/D1 evidence for this exact version. Local context and modal tests are not production verification."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "hypernatremic-dehydration-avp-deficiency",
+      "title": "Hypernatremic dehydration: circulation, then water balance",
+      "moduleId": "endocrine-metabolic",
+      "environment": "ward",
+      "estimatedMinutes": 135,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario hypernatremic-dehydration-avp-deficiency carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "5 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "Fixed authored circulation, sodium, and urine findings bind exact-version expert, common-error, recovery, and no-action fixtures to seed 4919. No calculated fluid deficit, prescribing kinetics, or probabilistic injury outcome is modeled."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "Volume restoration can reveal large dilute urine losses in known AVP deficiency. Water replacement and restoration of prescribed desmopressin address different problems; neither a better blood pressure nor lower urine output proves sodium normalization. Unrequested laboratory and urine findings remain private."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "Ten dose-free choices cover urgent support, context review, volume restoration, monitoring, requested reassessment, water replacement, desmopressin restoration, handoff, and retained normalization or blanket-withholding mistakes. Volume restoration has no administrative gate; qualified water and desmopressin requests become independently available after circulation is restored."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "Continuing-care handoff or instructor takeover ends the rehearsal. Authored response and stop clocks are teaching boundaries, not safe waiting intervals, predicted drug effects, or proof of durable recovery."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "satisfied",
+          "evidence": [
+            "Observed-state tutoring supports Guided, Coached, and Unassisted. Worked example 0.1.0 pauses before each decision and requires explicit historical observations; reporting is not permission to resume accelerated practice."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "Event-bound objectives distinguish circulation, qualified water-balance care, surveillance, historical observations, and continuing-care handoff. Earlier mistakes remain available after later correction."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "2 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "avp-deficiency-fixtures.ts binds expert, commonError, recovery, and noAction to content 0.1.0 and seed 4919. Whole-state replay must remain identical without inferring that improving findings establish recovery."
           ]
         },
         {

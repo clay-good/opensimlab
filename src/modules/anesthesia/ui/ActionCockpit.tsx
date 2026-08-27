@@ -31,6 +31,8 @@ import { supportsHypocalcemia, type HypocalcemiaAction, type HypocalcemiaSnapsho
 import { HypocalcemiaTray } from '../../endocrine-metabolic/HypocalcemiaTray';
 import { supportsHyponatremiaCorrection, type HyponatremiaCorrectionAction, type HyponatremiaCorrectionSnapshot } from '../../endocrine-metabolic/hyponatremia-correction';
 import { HyponatremiaCorrectionTray } from '../../endocrine-metabolic/HyponatremiaCorrectionTray';
+import { supportsAvpDeficiency, type AvpDeficiencyAction, type AvpDeficiencySnapshot } from '../../endocrine-metabolic/avp-deficiency';
+import { AvpDeficiencyTray } from '../../endocrine-metabolic/AvpDeficiencyTray';
 import { HypercalcemiaTray } from '../../endocrine-metabolic/HypercalcemiaTray';
 import type { AdrenalCrisisSnapshot } from '@platform/kernel/protocol';
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
@@ -1415,6 +1417,7 @@ export interface ActionCockpitProps {
     readonly hypercalcemia?: HypercalcemiaSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
+    readonly avpDeficiency?: AvpDeficiencySnapshot;
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2606,6 +2609,10 @@ export interface ActionCockpitProps {
   readonly hyponatremiaCorrectionGuidance?: GuidanceLevel;
   readonly hyponatremiaCorrectionDemonstrating?: boolean;
   readonly onHyponatremiaCorrectionTutorSource?: () => void;
+  readonly onAvpDeficiencyResponse?: (action: AvpDeficiencyAction) => void;
+  readonly avpDeficiencyGuidance?: GuidanceLevel;
+  readonly avpDeficiencyDemonstrating?: boolean;
+  readonly onAvpDeficiencyTutorSource?: () => void;
   readonly thyroidGuidance?: GuidanceLevel;
   readonly thyroidDemonstrating?: boolean;
   readonly onThyroidTutorSource?: () => void;
@@ -2762,6 +2769,7 @@ export function crisisResponseAvailability(
   const hasHypercalcemiaResponse = supportsHypercalcemia(scenario);
   const hasHypocalcemiaResponse = supportsHypocalcemia(scenario);
   const hasHyponatremiaCorrectionResponse = supportsHyponatremiaCorrection(scenario);
+  const hasAvpDeficiencyResponse = supportsAvpDeficiency(scenario);
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -3334,7 +3342,7 @@ export function crisisResponseAvailability(
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
-    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse,
+    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3584,6 +3592,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'hypercalcemia')
       || (event.type === 'narrative' && event.target === 'hypocalcemia')
       || (event.type === 'narrative' && event.target === 'hyponatremia-correction')
+      || (event.type === 'narrative' && event.target === 'avp-deficiency')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3716,7 +3725,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
-    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse,
+    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3881,8 +3890,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasHypercalcemiaResponse
     || hasHypocalcemiaResponse
     || hasHyponatremiaCorrectionResponse
+    || hasAvpDeficiencyResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasHyponatremiaCorrectionResponse
+  const responseTray = hasAvpDeficiencyResponse
+    ? { id: 'crisis', label: 'Circulation + water balance' } as const
+    : hasHyponatremiaCorrectionResponse
     ? { id: 'crisis', label: 'Correction + surveillance' } as const
     : hasHypocalcemiaResponse
     ? { id: 'crisis', label: 'Rescue + continuing care' } as const
@@ -4355,6 +4367,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasHypercalcemiaResponse
     || hasHypocalcemiaResponse
     || hasHyponatremiaCorrectionResponse
+    || hasAvpDeficiencyResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -5339,6 +5352,12 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 demonstrating={props.adrenalDemonstrating}
                 onOpenSource={props.onAdrenalTutorSource}
                 onAction={props.onAdrenalCrisisResponse ?? (() => {})} />
+            )}
+            {hasAvpDeficiencyResponse && (
+              <AvpDeficiencyTray assessment={props.resuscitation.avpDeficiency} guidance={props.avpDeficiencyGuidance}
+                demonstrating={props.avpDeficiencyDemonstrating}
+                scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onAvpDeficiencyTutorSource}
+                onAction={props.onAvpDeficiencyResponse ?? (() => {})} />
             )}
             {hasHyponatremiaCorrectionResponse && (
               <HyponatremiaCorrectionTray assessment={props.resuscitation.hyponatremiaCorrection} guidance={props.hyponatremiaCorrectionGuidance}

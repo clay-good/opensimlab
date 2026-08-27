@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 166 reports postpartum severe-preeclampsia state. */
-export const WORKER_PROTOCOL_VERSION = 169;
+/** Version 170 adds the authored AVP-deficiency dehydration snapshot. */
+export const WORKER_PROTOCOL_VERSION = 170;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -154,6 +154,27 @@ export interface ReadyMessage {
  * request rather than the result teaches the learner to trust a number that is
  * not true (cockpit/action-cockpit → the tray reflects the patient).
  */
+export interface AvpDeficiencySnapshot {
+  readonly supportActive: boolean;
+  readonly contextReviewedAtTick: number | null; readonly monitoringAtTick: number | null;
+  readonly volumeAtTick: number | null; readonly waterAtTick: number | null; readonly desmopressinAtTick: number | null;
+  readonly volumeDueInSeconds: number | null; readonly responseDueInSeconds: number | null;
+  readonly circulationRestored: boolean;
+  readonly volumeObserved: boolean; readonly diluteLossesObserved: boolean; readonly responseObserved: boolean;
+  readonly peakObservedSodiumMmolL: number; readonly volumeDelayed: boolean;
+  readonly normalizationAttempted: boolean; readonly withholdingChosen: boolean;
+  readonly observation: {
+    readonly atTick: number; readonly sodiumMmolL: number; readonly urineOutputMlPerHour: number;
+    readonly urineOsmolalityMosmPerKg: number;
+    readonly systolicMmHg: number; readonly diastolicMmHg: number; readonly meanArterialMmHg: number;
+    readonly heartRateBpm: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string; readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true; readonly doseModelAvailable: false; readonly durableRecoveryProven: false;
+}
+
 export interface HyponatremiaCorrectionSnapshot {
   readonly supportActive: boolean;
   readonly riskReviewedAtTick: number | null; readonly monitoringAtTick: number | null;
@@ -3300,6 +3321,7 @@ export interface EquipmentSnapshot {
     readonly thyroidStorm?: ThyroidStormSnapshot;
     readonly myxedema?: MyxedemaSnapshot;
     readonly hypercalcemia?: HypercalcemiaSnapshot;
+    readonly avpDeficiency?: AvpDeficiencySnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

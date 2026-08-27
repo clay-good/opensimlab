@@ -27,6 +27,30 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'avp-deficiency-authored-checkpoints',
+    headline: 'Circulation, urine, and sodium changes are authored contrasts, not treatment kinetics.',
+    simplification: 'The 15-minute circulation, 30-minute urine, and 120-minute combined-care checkpoints are fixed. Unrequested laboratory findings remain private; later requested values remain historical. Teaching stops bound untreated and unfinished branches.',
+    whereItMisleads: 'A learner waits for a timer, assumes a fixed fluid or desmopressin response, or equates less urine with corrected sodium.',
+    correctUnderstanding: 'Reassess whenever needed. Circulation, water balance, medication effect, and sodium require individualized monitoring. No volume, dose, infusion-rate, kidney-function, or brain-injury model is provided.',
+    briefIn: ['hypernatremic-dehydration-avp-deficiency'],
+  },
+  {
+    id: 'avp-deficiency-known-diagnosis',
+    headline: 'Established isolated AVP deficiency is supplied, not diagnosed by the learner.',
+    simplification: 'Medication omission and limited water access occur in an adult with a known diagnosis. Depleted circulation initially masks large urine losses. Other pituitary deficits and renal AVP resistance are outside this case.',
+    whereItMisleads: 'A learner rules out known AVP deficiency from low initial urine output or applies this pathway to every cause of hypernatremia or diabetes.',
+    correctUnderstanding: 'Assess the person, medication history, hydration, renal function, and other possible causes. Known prescribed treatment does not require a new diagnostic laboratory gate after circulation restoration.',
+    briefIn: ['hypernatremic-dehydration-avp-deficiency'],
+  },
+  {
+    id: 'avp-deficiency-qualified-water-plan',
+    headline: 'Water replacement and desmopressin are qualified care requests, not prescriptions.',
+    simplification: 'Both profiles share one selected fluid-first pathway. Independent water and medication requests follow restored circulation; neither administrative review nor a new laboratory click gates them. The later response remains hypernatremic.',
+    whereItMisleads: 'A learner treats an authored delay as mandatory, blindly repeats desmopressin, rapidly targets normal sodium, or declares safe discharge after a partial response.',
+    correctUnderstanding: 'Qualified teams individualize correction, monitor combined water and antidiuretic effects, and review swallowing, medication reliability, and water access. Unknown duration is not acute sodium loading. Handoff transfers unresolved care.',
+    briefIn: ['hypernatremic-dehydration-avp-deficiency'],
+  },
+  {
     id: 'hyponatremia-correction-authored-checkpoints',
     headline: 'Sodium and urine changes are authored contrasts, not predicted water balance or drug effects.',
     simplification: 'Water diuresis at 30 minutes, excessive rise at 60 minutes without control, a 60-minute response checkpoint, and 120- or 240-minute teaching stops are fictional. Results appear only when requested; they remain historical afterward.',

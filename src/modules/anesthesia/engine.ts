@@ -46,6 +46,7 @@ import { Myxedema, supportsMyxedema } from '../endocrine-metabolic/myxedema';
 import { Hypercalcemia, supportsHypercalcemia } from '../endocrine-metabolic/hypercalcemia';
 import { Hypocalcemia, supportsHypocalcemia } from '../endocrine-metabolic/hypocalcemia';
 import { HyponatremiaCorrection, supportsHyponatremiaCorrection } from '../endocrine-metabolic/hyponatremia-correction';
+import { AvpDeficiency, supportsAvpDeficiency } from '../endocrine-metabolic/avp-deficiency';
 
 /** The engine's own version, recorded in every transcript. */
 export const ENGINE_VERSION = '0.1.0-alpha.48';
@@ -1718,6 +1719,7 @@ export class AnesthesiaEngine {
   private readonly hypercalcemia: Hypercalcemia | null;
   private readonly hypocalcemia: Hypocalcemia | null;
   private readonly hyponatremiaCorrection: HyponatremiaCorrection | null;
+  private readonly avpDeficiency: AvpDeficiency | null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1830,6 +1832,7 @@ export class AnesthesiaEngine {
     this.hypercalcemia = supportsHypercalcemia(options.scenario) ? new Hypercalcemia() : null;
     this.hypocalcemia = supportsHypocalcemia(options.scenario) ? new Hypocalcemia() : null;
     this.hyponatremiaCorrection = supportsHyponatremiaCorrection(options.scenario) ? new HyponatremiaCorrection() : null;
+    this.avpDeficiency = supportsAvpDeficiency(options.scenario) ? new AvpDeficiency() : null;
     this.practiceRegion = options.practiceRegion;
     this.seed = options.seed;
     if (options.scenario.timeline.some((event) => event.type === 'narrative'
@@ -1963,6 +1966,11 @@ export class AnesthesiaEngine {
       || typeof action.payload !== 'object' || Array.isArray(action.payload)) {
       this.log('warning', 'assessment', `malformed-action-refused-${this.currentTick}`,
         'That action was malformed and was safely ignored. Nothing changed.');
+      return;
+    }
+    if (this.avpDeficiency && action.type !== 'avp-deficiency-response' && action.type !== 'silence-alarm') {
+      this.log('warning', 'assessment', `avp-deficiency-generic-action-refused-${this.currentTick}`,
+        'Only this lesson’s qualified circulation, water, medication, reassessment, and handoff choices are available. No generic drug, dose, fluid, procedure, or adjacent-scenario action was performed.');
       return;
     }
     if (this.hyponatremiaCorrection && action.type !== 'hyponatremia-correction-response' && action.type !== 'silence-alarm') {
@@ -2877,6 +2885,16 @@ export class AnesthesiaEngine {
         'This HHS lesson exposes no generic history, examination, testing, calculation, interpretation, diagnosis, fluid, insulin, dextrose, electrolyte, drug, dose, rate, route, access, infusion, nutrition, precipitant treatment, thrombosis or pressure-injury prevention, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
+      case 'avp-deficiency-response': {
+        if (!this.avpDeficiency || Object.keys(action.payload).some((key) => key !== 'action')) {
+          this.log('warning', 'assessment', `avp-deficiency-action-refused-${this.currentTick}`, 'Only the declared dose-free AVP-deficiency choices are available in this lesson.');
+          break;
+        }
+        for (const event of this.avpDeficiency.apply(action.payload.action, this.currentTick)) {
+          this.log('warning', 'assessment', `avp-deficiency-${event.id}-${this.currentTick}`, event.message);
+        }
+        break;
+      }
       case 'hyponatremia-correction-response': {
         if (!this.hyponatremiaCorrection || Object.keys(action.payload).some((key) => key !== 'action')) {
           this.log('warning', 'assessment', `sodium-correction-action-refused-${this.currentTick}`, 'Only the declared dose-free sodium-correction choices are available in this lesson.');
@@ -14366,6 +14384,9 @@ export class AnesthesiaEngine {
 
   /** Advance exactly one tick. */
   step(): EngineTick {
+    for (const event of this.avpDeficiency?.advance(this.currentTick) ?? []) {
+      this.log('warning', 'assessment', `avp-deficiency-${event.id}-${this.currentTick}`, event.message);
+    }
     for (const event of this.hyponatremiaCorrection?.advance(this.currentTick) ?? []) {
       this.log('warning', 'assessment', `sodium-correction-${event.id}-${this.currentTick}`, event.message);
     }
@@ -15193,6 +15214,13 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: this.endocrineDkaResolutionReassessmentAtTick !== null ? 16 : 18,
         spo2Percent: 98, systolicMmHg: 118, diastolicMmHg: 70, meanArterialMmHg: 86,
         coreTemperatureC: 36.9 };
+    }
+    if (this.avpDeficiency) {
+      const patient = this.avpDeficiency.vitals();
+      crisisState = { ...crisisState, heartRateBpm: patient.heartRateBpm,
+        respiratoryRateBpm: patient.respiratoryRateBpm, spo2Percent: patient.spo2Percent,
+        systolicMmHg: patient.systolicMmHg, diastolicMmHg: patient.diastolicMmHg,
+        meanArterialMmHg: patient.meanArterialMmHg, coreTemperatureC: patient.coreTemperatureC };
     }
     if (this.hyponatremiaCorrection) {
       const patient = this.hyponatremiaCorrection.vitals();
@@ -19935,6 +19963,7 @@ export class AnesthesiaEngine {
         ...(this.myxedema ? { myxedema: this.myxedema.snapshot(this.currentTick) } : {}),
         ...(this.hypercalcemia ? { hypercalcemia: this.hypercalcemia.snapshot(this.currentTick) } : {}),
         ...(this.hypocalcemia ? { hypocalcemia: this.hypocalcemia.snapshot(this.currentTick) } : {}),
+        ...(this.avpDeficiency ? { avpDeficiency: this.avpDeficiency.snapshot(this.currentTick) } : {}),
         ...(this.hyponatremiaCorrection ? { hyponatremiaCorrection: this.hyponatremiaCorrection.snapshot(this.currentTick) } : {}),
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,
@@ -20130,7 +20159,7 @@ export class AnesthesiaEngine {
   invalidParameters(): Set<string> {
     const invalid = new Set<string>();
     // These lessons do not supply a capnogram or a modeled oxygen setting.
-    if (this.myxedema || this.hypercalcemia || this.hypocalcemia || this.hyponatremiaCorrection) {
+    if (this.myxedema || this.hypercalcemia || this.hypocalcemia || this.hyponatremiaCorrection || this.avpDeficiency) {
       invalid.add('etco2MmHg');
       invalid.add('fio2');
     }

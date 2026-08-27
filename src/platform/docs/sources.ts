@@ -64,6 +64,22 @@ const CHECKED = '2026-08-20';
 
 export const SOURCES: readonly Source[] = [
   {
+    id: 'sfe-inpatient-avp-deficiency-2018', authors: 'Baldeweg SE, Ball S, Brooke A, et al',
+    title: 'Society for Endocrinology Clinical Guidance: Inpatient management of cranial diabetes insipidus',
+    publication: 'Endocrine Connections', year: 2018, locator: '7:G8–G11; doi:10.1530/EC-18-0154; decompensated CDI §§1–6',
+    usedFor: 'Known AVP deficiency with fluid depletion: circulation and fluid priority, masked polyuria, monitored desmopressin, and continuing specialist care. Authored patient values and response clocks are not guideline predictions.',
+    verifiedAgainst: 'Full issuing-body guideline https://www.endocrinology.org/media/scplexuf/guidelines-for-the-inpatient-management-of-cranial-diabetes-insipidus.pdf, G10–G11; current AVP-D page still links it. August 10, 2026 EJE abstract doi:10.1093/ejendo/lvag096.042 describes the joint ESE/ES guideline as forthcoming, not a published replacement.',
+    verifiedOn: '2026-08-27',
+  },
+  {
+    id: 'tomkins-central-diabetes-insipidus-2022', authors: 'Tomkins M, Lawless S, Martin-Grace J, Sherlock M, Thompson CJ',
+    title: 'Diagnosis and Management of Central Diabetes Insipidus in Adults',
+    publication: 'Journal of Clinical Endocrinology & Metabolism', year: 2022, locator: '107(10):2701–2715; doi:10.1210/clinem/dgac381; chronic CDI and inpatient/perioperative care',
+    usedFor: 'Medication omission, water-access hazards, and coordinated inpatient care. Review article, not a new guideline; adult correction-rate uncertainty is not converted into a numerical prescription or predicted injury.',
+    verifiedAgainst: 'Publisher full text https://academic.oup.com/jcem/article/107/10/2701/6623615; inpatient and perioperative sections checked. No reproduced tables or independent simulation review.',
+    verifiedOn: '2026-08-27',
+  },
+  {
     id: 'sfe-emergency-hyponatremia-2022', authors: 'Society for Endocrinology',
     title: 'Emergency management of severe and moderately severely symptomatic hyponatraemia in adult patients',
     publication: 'Society for Endocrinology', year: 2022, locator: 'Revised 2022; treatment and overcorrection sections, PDF pp. 3–5',

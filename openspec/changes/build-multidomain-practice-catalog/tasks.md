@@ -1040,6 +1040,36 @@ credited toward the catalog until every item in the completion contract passes.
     kinetics nor ODS prevention. Deploy the updated reports catalog before new client content;
     all 208 registered report identities must remain intact. Local engineering checks do not waive
     these publication gates.
+  - [x] Endocrine/metabolic slice 10/12 registers hypernatremic dehydration in known AVP deficiency
+    with independent volume, water, desmopressin, monitoring, reassessment, and continuing-care
+    choices. Circulation restoration has no administrative or laboratory gate. Subsequent water
+    and desmopressin requests are independently available after circulation improves. Requested
+    sodium and urine results remain historical; hidden findings and unobserved peaks are never
+    invented. Late combined care improves sodium from 165 to 164 mmol/L, not to normal.
+    Earlier delay, rapid-normalization attempts, and blanket withholding remain learning evidence.
+  - [x] Add the nine-decision, learner-confirmed worked example, source-linked quiet tutor, five
+    debrief objectives, bounded teaching stops, real-engine reference fixtures, and private shared
+    reporting. Twenty-eight model tests, 12 full-frame integration tests, three real-session tests,
+    ten tutor/UI tests, nine nonvisual tests, 23 report-attribution/identity tests, and 18 shared
+    report-surface tests pass. Guidance modes preserve every engine frame and waveform; reading
+    pauses, duplicate/stale callbacks, takeover, reset, and disposal cannot send extra decisions.
+    No native assistive-technology or production Turnstile/D1 pass is inferred from these checks.
+    Local browser checks confirm the desktop centered dialog, optional context off, 160-character
+    limit, focus return, preserved paused example, and takeover at 1× without reset. A 320-pixel
+    briefing smoke check is not a full phone or zoom matrix. Temporary layout fixtures were removed.
+    Full indexable CI passes 4,213 tests in 495 files, 30 specs, the change specification, 226 static
+    routes, 44 catalog artifacts, and 223 crawlable routes. Compressed budgets are 148.2 KiB landing,
+    1,513.7 KiB cockpit, and 3,373.2 KiB offline; fonts are 86.2 KiB. Six stale integration/count
+    expectations failed first and passed after their scenario, protocol, and SEO updates. Existing
+    hypocalcemia and hyponatremia evidence was revalidated before explicitly repinning six and ten
+    changed shared dependencies, respectively; their records and prior audit entries are unchanged.
+    The actual preview release still refuses 217 publication blockers. No production report was sent.
+  - [ ] Complete AVP-deficiency independent clinical review, four exact-version quality records,
+    full inclusive-runtime verification, and production reporting evidence. Sources were checked
+    August 27, 2026; the 2026 joint-guideline abstract describes forthcoming guidance. All response
+    clocks and sodium/urine branches remain authored, with no dose, rate, deficit calculation,
+    automatic redose, neurologic-injury prediction, or discharge claim. Deploy the reports catalog
+    before new client content; the 208 existing identities remain unchanged and one is added.
   - [x] Repair service-worker release consistency. Build-stamped SHA-256 integrity checks reject
     mixed or incomplete installations; active snapshots are immutable. Explicit acceptance waits
     for the intended controller before reloading only that tab. Durable per-client release pins

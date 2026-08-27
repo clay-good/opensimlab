@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "endocrine-metabolic",
-  "recordCount": 9,
+  "recordCount": 10,
   "records": [
     {
       "recordId": "scenario:dka-resolution-transition@0.1.0",
@@ -100,6 +100,17 @@
       "evidence": [
         "/catalog/endocrine-metabolic-completion-audit.json#hyponatremia-aquaresis-and-overcorrection@0.1.0",
         "/catalog/endocrine-metabolic-quality-audit.json#hyponatremia-aquaresis-and-overcorrection@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:hypernatremic-dehydration-avp-deficiency@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "hypernatremic-dehydration-avp-deficiency",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/endocrine-metabolic-completion-audit.json#hypernatremic-dehydration-avp-deficiency@0.1.0",
+        "/catalog/endocrine-metabolic-quality-audit.json#hypernatremic-dehydration-avp-deficiency@0.1.0"
       ]
     }
   ]
