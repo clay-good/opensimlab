@@ -869,6 +869,24 @@ credited toward the catalog until every item in the completion contract passes.
     reporting, takeover, reset, and stale callbacks preserve learner control; restarting manual
     practice after an example restores 1× speed. Local route/form tests cover briefing, live,
     example, debrief, replay, and source reporting without claiming production submission.
+  - [x] Endocrine/metabolic slice 6/12 registers myxedema coma with qualified ventilation,
+    empiric hydrocortisone before IV levothyroxine, parallel supportive care, fresh respiratory
+    and later whole-person reassessment, and ongoing-treatment handoff. Same-tick ordered steroid
+    and thyroid actions need no artificial wait or laboratory gate. Oxygen-only support does not
+    clear carbon-dioxide retention; blood-gas values remain explicit historical observations.
+    Refused thyroxine-first and rapid-rewarming choices, diagnostic delay, and omitted care remain
+    visible after correction. Quiet tutoring and an eight-decision learner-paced example use
+    accepted state and label every response clock as authored rather than clinical kinetics.
+    Model, UI, real-engine replay, and worked-example checks pass. The registry now has 198 scenarios, six endocrine/metabolic
+    previews, and 219 indexable routes; these counts do not establish full scenario completion.
+  - [x] Myxedema local verification passes full CI with 3,530 tests across 458 files, real-engine
+    replay, report-surface privacy and pause checks, and desktop/320 px browser inspection.
+    Keyboard summaries, automatic announcements, and the Why panel preserve unavailable readings
+    and authored-state boundaries. A promptly corrected oxygen-only bridge remains visible without
+    being graded as delayed ventilation. Temporary browser fixtures and owned tabs are removed.
+  - [ ] Complete myxedema inclusive-runtime verification, independent clinical review, and
+    production Turnstile/D1 evidence. Local automated and browser checks do not substitute for
+    these separate gates.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
   - [x] Toxicology slice 1/15 establishes the indexable `/toxicology` module with one authored
     methemoglobinemia lab after documented topical benzocaine exposure. The learner reconciles

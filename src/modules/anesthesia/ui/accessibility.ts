@@ -11,7 +11,8 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm } from '@platform/kernel/protocol';
+import type { EngineAlarm, MyxedemaSnapshot } from '@platform/kernel/protocol';
+import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
 /**
@@ -52,10 +53,12 @@ export function announcementsFor(
   previous: Readonly<Record<string, number>> | null,
   current: Readonly<Record<string, number>>,
   alarms: readonly EngineAlarm[],
+  unavailable?: ReadonlySet<string>,
 ): Announcement[] {
   if (!previous) return [];
   const out: Announcement[] = [];
   for (const [field, thresholds] of Object.entries(ANNOUNCE_THRESHOLDS)) {
+    if (unavailable?.has(field)) continue;
     const before = previous[field];
     const after = current[field];
     if (before === undefined || after === undefined || thresholds === undefined) continue;
@@ -94,6 +97,7 @@ export function stateSummary(
       freshGasFlowLPerMin?: number;
     };
     readonly invalid: ReadonlySet<string>;
+    readonly myxedema?: MyxedemaSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -147,6 +151,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
+    if (options.myxedema && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -170,6 +175,20 @@ export function stateSummary(
           + ' intravenous.');
       }
     }
+  }
+  if (options.myxedema) {
+    const patient = options.myxedema;
+    lines.push(`Authored qualified ventilation support: ${patient.ventilationAtTick === null ? 'not yet started' : 'started'}.`);
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push('Oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.observation
+      ? `Last requested bedside PaCO₂ at simulated ${formatElapsed(patient.observation.atTick)}: ${patient.observation.paco2MmHg} millimeters of mercury. This is a historical observation, not a live measurement.`
+      : 'No bedside PaCO₂ reassessment has been requested.');
+    lines.push('Supported improvement is not independent breathing or recovery.');
+    lines.push(options.alarms.length === 0
+      ? 'No active alarms.'
+      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    return lines.join(' ');
   }
   lines.push(options.infusions.length === 0
     ? 'No infusions running.'
@@ -291,6 +310,7 @@ export function waveformDescriptions(options: {
   readonly airwayPatencyFraction: number;
   readonly perfusionIndex: number;
   readonly artifacts: ReadonlySet<string>;
+  readonly capnographyUnavailable?: boolean;
   readonly capnographySampleObstructed?: boolean;
   readonly tracheostomyPatencyFraction?: number;
   readonly arterialDamped?: boolean;
@@ -300,7 +320,9 @@ export function waveformDescriptions(options: {
 }): { signal: string; label: string; description: string }[] {
   const rhythm = getRhythm(options.rhythm);
   const alpha = alphaForObstruction(options.bronchospasmSeverity);
-  const capnoShape = options.capnographySampleObstructed
+  const capnoShape = options.capnographyUnavailable
+    ? 'Not supplied in this lesson. Request a bedside blood-gas reassessment for arterial carbon dioxide.'
+    : options.capnographySampleObstructed
     || options.artifacts.has('sampling-line-obstruction')
     ? 'No sampled waveform: the carbon-dioxide sampling line is obstructed. This is a monitoring problem; cross-check ventilation independently.'
     : options.tracheostomyPatencyFraction !== undefined

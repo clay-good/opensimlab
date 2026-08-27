@@ -27,6 +27,30 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'myxedema-authored-support-states',
+    headline: 'Oxygenation, ventilation, and systemic response are authored contrasts, not treatment kinetics.',
+    simplification: 'Oxygen alone changes saturation but not carbon-dioxide retention. Qualified ventilation changes the respiratory state after five authored minutes; complete care permits a later partial-support state.',
+    whereItMisleads: 'A learner treats a five-, 15-, 30-, 60-, or 180-minute checkpoint as a safe delay, a predicted response, or a clinical deadline.',
+    correctUnderstanding: 'Assess the patient continuously and respond to deterioration immediately. Every time and numeric state is fictional; improvement under support is not thyroid recovery.',
+    briefIn: ['myxedema-coma-ventilation-and-steroid-sequence'],
+  },
+  {
+    id: 'myxedema-qualified-team-not-procedures',
+    headline: 'Qualified-care choices do not teach doses, airway procedures, warming devices, or electrolyte correction.',
+    simplification: 'One supportive-care choice bundles monitored passive thermal protection, individualized circulatory/metabolic support, and precipitant investigation and treatment.',
+    whereItMisleads: 'A learner equates a button with performed intubation, an appropriate fluid load, corrected sodium or glucose, or a complete diagnosis.',
+    correctUnderstanding: 'Qualified clinicians individualize organ support, empiric infection treatment, serial laboratory review, and ongoing endocrine care. Other causes of altered consciousness and shock must remain under investigation.',
+    briefIn: ['myxedema-coma-ventilation-and-steroid-sequence'],
+  },
+  {
+    id: 'myxedema-sequence-and-recovery-limits',
+    headline: 'Steroids precede the selected T4 pathway; no artificial wait, universal T3 rule, or recovery clearance is modeled.',
+    simplification: 'Empiric steroid coverage is checked before qualified levothyroxine. Endpoints are ongoing-care handoff or instructor takeover, with persistent illness.',
+    whereItMisleads: 'A learner delays thyroid therapy for a nonexistent interval, treats T3 as always necessary or forbidden, or uses a better saturation or early TSH result as proof of recovery.',
+    correctUnderstanding: 'The 2026 consensus and ATA guidance emphasize individualized therapy, cardiac risk, clinical reassessment, and continued monitoring. Normal oxygen saturation does not prove adequate ventilation; early improvement does not permit extubation or discharge.',
+    briefIn: ['myxedema-coma-ventilation-and-steroid-sequence'],
+  },
+  {
     id: 'thyroid-authored-checkpoints',
     headline: 'Patient states and early-support checkpoints are authored, not thyroid or drug kinetics.',
     simplification: 'Fixed presentation, incomplete-care deterioration, early partial-support response, and instructor-takeover states respond to bounded decisions and elapsed time.',

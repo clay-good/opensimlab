@@ -64,6 +64,23 @@ const CHECKED = '2026-08-20';
 
 export const SOURCES: readonly Source[] = [
   {
+    id: 'eta-bta-sfe-myxedema-coma-2026', authors: 'Taylor P, et al',
+    title: 'Management of endocrine emergencies: joint consensus statement for management of myxoedema coma',
+    publication: 'European Thyroid Journal', year: 2026,
+    locator: '15(4):ETJ260044; doi:10.1530/ETJ-26-0044; treatment, thyroid hormone replacement, glucocorticoids, warming, precipitating factors, hypoventilation, and ongoing management',
+    usedFor: 'Prompt qualified treatment on clinical suspicion, empiric steroids, cautious thyroid replacement, passive warming, ventilation and precipitant support, and continued monitoring. Expert consensus does not validate authored patient values, response checkpoints, or clinical recovery.',
+    verifiedAgainst: 'Full article XML retrieved from NCBI PMC13452032 through E-utilities; https://doi.org/10.1530/ETJ-26-0044. No independent clinical review of the simulation is claimed.',
+    verifiedOn: '2026-08-27',
+  },
+  {
+    id: 'ata-hypothyroidism-2014', authors: 'Jonklaas J, Bianco AC, Bauer AJ, et al',
+    title: 'Guidelines for the Treatment of Hypothyroidism: Prepared by the American Thyroid Association Task Force on Thyroid Hormone Replacement',
+    publication: 'Thyroid', year: 2014, locator: '24:1670–1751; doi:10.1089/thy.2014.0028; recommendations 21a–21d',
+    usedFor: 'Empiric stress glucocorticoid coverage before levothyroxine in myxedema coma, initial intravenous thyroid replacement, individualized cardiac-risk caution, and clinical recovery endpoints. No minimum steroid waiting interval or one-hour recovery claim is inferred.',
+    verifiedAgainst: 'Primary guideline recommendation text at https://doi.org/10.1089/thy.2014.0028 and NCBI PMC4267409.',
+    verifiedOn: '2026-08-27',
+  },
+  {
     id: 'eta-bta-sfe-thyroid-emergencies-2026',
     authors: 'European Thyroid Association, British Thyroid Association, Society for Endocrinology, and Welsh Endocrine and Diabetes Society',
     title: 'Management of thyroid emergencies: joint consensus statement on management of thyroid storm',

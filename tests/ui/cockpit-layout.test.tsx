@@ -24,18 +24,20 @@ const root = process.cwd();
 const cockpitCss = readFileSync(join(root, 'src/modules/anesthesia/ui/cockpit.css'), 'utf8');
 const componentsCss = readFileSync(join(root, 'src/platform/ui/components.css'), 'utf8');
 
-describe('Report-safe briefing and thyroid reading layout', () => {
+describe('Report-safe briefing and endocrine reading layout', () => {
   it('reserves bottom scroll room so the fixed report launcher cannot cover Start', () => {
     const prebrief = readFileSync(join(root, 'src/modules/anesthesia/ui/Prebrief.tsx'), 'utf8');
     expect(prebrief).toContain('className="reading prebrief"');
     expect(cockpitCss).toContain('.prebrief { padding-block-end: calc(64px + var(--space-6)); }');
   });
-  it('wraps the full thyroid section headings instead of truncating the instruction', () => {
-    const tray = readFileSync(join(root, 'src/modules/endocrine-metabolic/ThyroidStormTray.tsx'), 'utf8');
-    expect(tray.match(/className="syringe thyroid-storm__section"/g)).toHaveLength(3);
-    expect(cockpitCss).toContain('.thyroid-storm__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }');
-    expect(cockpitCss).toContain('.thyroid-storm__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }');
-    expect(cockpitCss).toContain(".thyroid-storm__section .button[aria-disabled='true']");
+  it.each([
+    ['thyroid-storm', 'ThyroidStormTray.tsx'], ['myxedema', 'MyxedemaTray.tsx'],
+  ])('wraps the full %s section headings instead of truncating the instruction', (id, file) => {
+    const tray = readFileSync(join(root, 'src/modules/endocrine-metabolic', file!), 'utf8');
+    expect(tray.match(new RegExp(`className="syringe ${id}__section"`, 'g'))).toHaveLength(3);
+    expect(cockpitCss).toContain('.thyroid-storm__section .syringe__name, .myxedema__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }');
+    expect(cockpitCss).toContain('.thyroid-storm__section .crisis-drug__actions, .myxedema__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }');
+    expect(cockpitCss).toContain(`.${id}__section .button[aria-disabled='true']`);
   });
 });
 

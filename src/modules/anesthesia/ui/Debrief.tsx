@@ -26,6 +26,7 @@ import { MaturityMarker } from '@platform/governance/MaturityMarker';
 import { supportsSevereHypoglycemia } from '../../endocrine-metabolic/severe-hypoglycemia';
 import { supportsAdrenalCrisis } from '../../endocrine-metabolic/adrenal-crisis';
 import { supportsThyroidStorm } from '../../endocrine-metabolic/thyroid-storm';
+import { supportsMyxedema } from '../../endocrine-metabolic/myxedema';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -191,6 +192,8 @@ export function Debrief(props: DebriefProps) {
                 ? { activityContext: 'coordinating emergency treatment and reassessment for a patient with suspected adrenal crisis' }
               : supportsThyroidStorm(props.scenario)
                 ? { activityContext: 'coordinating thyroid-emergency treatment, circulation assessment, and ongoing critical care' }
+              : supportsMyxedema(props.scenario)
+                ? { activityContext: 'coordinating ventilatory support, steroid-first endocrine treatment, and ongoing critical care' }
               : {}),
           })}</p>
           <label className="field__label" htmlFor="reactions-account">Your account</label>
@@ -571,6 +574,43 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.startsWith('myxedema-')) {
+      if (!supportsMyxedema(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The myxedema lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^myxedema-${id}-\\d+$`).test(entry.eventId));
+      const ventilation = event('ventilation'); const oxygen = event('oxygen-only');
+      const steroid = event('hydrocortisone'); const thyroxine = event('levothyroxine');
+      const support = event('support'); const supportive = event('supportive-care');
+      const reassessment = event('post-treatment-reassessment');
+      const respiratory = event('respiratory-reassessment') || reassessment;
+      const respiratoryDelay = event('respiratory-delay'); const endocrineDelay = event('endocrine-delay');
+      const wait = event('diagnostic-delay-choice'); const early = event('early-thyroxine-refused');
+      const warming = event('rapid-rewarming-refused'); const handoff = event('handoff');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'myxedema-ventilation': { met: !!ventilation && !!respiratory && !respiratoryDelay,
+          finding: (oxygen ? 'Oxygen-only support was chosen first. It can be a bridge, but does not establish adequate ventilation. ' : '')
+            + (respiratoryDelay ? 'Ventilatory support was delayed. Later correction is credited without erasing that interval; oxygen saturation alone did not establish adequate ventilation.'
+            : ventilation && respiratory ? 'Qualified ventilatory support and fresh reassessment addressed the supplied hypoventilation. Oxygen saturation and carbon dioxide were considered separately.'
+              : 'Ventilatory support or its fresh reassessment is missing. Authored counterfactual: oxygen-only can improve saturation while hypoventilation persists.'), tick: respiratory?.tick },
+        'myxedema-steroid-sequence': { met: !!steroid && !!thyroxine && !early,
+          finding: early ? 'Thyroxine was attempted before empiric steroid coverage. The refused attempt remains visible after correction.'
+            : steroid && thyroxine ? 'Empiric hydrocortisone preceded qualified levothyroxine. No artificial waiting interval separated these actions.'
+              : 'The steroid-first endocrine pathway remains incomplete.', tick: thyroxine?.tick },
+        'myxedema-parallel-care': { met: !!support && !!supportive && !!steroid && !!thyroxine && !wait && !endocrineDelay && !warming,
+          finding: wait || endocrineDelay || warming ? 'Diagnostic delay, incomplete endocrine treatment, or a rapid-warming attempt was recorded. Later qualified care does not erase the earlier decision.'
+            : support && supportive && steroid && thyroxine ? 'Qualified endocrine, circulatory, passive-warming, and precipitant care proceeded with team support. Authored counterfactual: missing urgent treatment prevents the partial-support pathway.'
+              : 'Parallel qualified support remains incomplete. Authored counterfactual: combined care permits partial stabilization, not proven thyroid recovery.', tick: supportive?.tick },
+        'myxedema-reassessment': { met: !!reassessment,
+          finding: reassessment ? 'Fresh reassessment documented partial stabilization with persistent drowsiness, hypothermia, bradycardia, and hypercapnia. The authored one-hour checkpoint does not establish hormone kinetics or recovery.'
+            : 'The later support-dependent state was not freshly reassessed. An older observation or monitor change is not a new whole-person assessment.', tick: reassessment?.tick },
+        'myxedema-handoff': { met: !!handoff,
+          finding: handoff ? 'The receiving team owns continuing ventilation, endocrine treatment, circulation and temperature monitoring, serial assessment, and precipitant care. No extubation, recovery, or discharge clearance was claimed.'
+            : 'The continuing-care handoff remains incomplete.', tick: handoff?.tick },
+      };
+      const result = results[objective.id];
+      return result ? { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding
+        : { ...base, outcome: 'not-exercised', finding: 'No evidence mapping exists for this objective.' } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.startsWith('thyroid-')) {
       if (!supportsThyroidStorm(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The thyroid-storm lesson was not active.' } satisfies ObjectiveFinding;

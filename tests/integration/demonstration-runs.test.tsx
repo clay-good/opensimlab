@@ -33,6 +33,9 @@ import { ADRENAL_CRISIS_TREATMENT_BEFORE_TESTS } from '../../src/modules/endocri
 import { useThyroidDemonstration } from '../../src/modules/endocrine-metabolic/demo/useThyroidDemonstration';
 import { THYROID_STORM_HEMODYNAMIC_RISK } from '../../src/modules/endocrine-metabolic/scenarios/thyroid-storm-hemodynamic-risk';
 import { THYROID_IODINE_WAIT_TICKS, THYROID_RESPONSE_TICKS } from '../../src/modules/endocrine-metabolic/thyroid-storm';
+import { useMyxedemaDemonstration } from '../../src/modules/endocrine-metabolic/demo/useMyxedemaDemonstration';
+import { MYXEDEMA_COMA_VENTILATION_AND_STEROID_SEQUENCE } from '../../src/modules/endocrine-metabolic/scenarios/myxedema-coma-ventilation-and-steroid-sequence';
+import { MYXEDEMA_VENTILATION_TICKS, MYXEDEMA_RESPONSE_TICKS } from '../../src/modules/endocrine-metabolic/myxedema';
 import type { PatientState } from '@anesthesia/physiology';
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import { useDemonstration } from '@anesthesia/demo/useDemonstration';
@@ -503,6 +506,98 @@ describe('the demonstration, run for its full length', () => {
     } finally { act(() => exampleRoot.unmount()); exampleContainer.remove(); }
   // Two complete three-hour, whole-tick runs include session recording and replay.
   }, 120_000);
+
+  it('runs the myxedema example through distinct respiratory and partial-support waits and replays its real transcript', () => {
+    // This test must also run alone without the induction fixture owning the store.
+    act(() => root.unmount());
+    const exampleContainer = document.createElement('div'); document.body.appendChild(exampleContainer);
+    const exampleRoot = createRoot(exampleContainer); const scenario = MYXEDEMA_COMA_VENTILATION_AND_STEROID_SEQUENCE;
+    const worker = new InProcessWorker(); let finishes = 0; let decisions = 0;
+    const advance = { current: undefined as (() => void) | undefined };
+    const pausedWaits = new Set<string>();
+    function MyxedemaHarness() {
+      const session = useSession();
+      const demonstration = useMyxedemaDemonstration({ active: true, running: session.transport === 'running',
+        patient: session.equipment?.resuscitation.myxedema, act: session.act,
+        pause: session.pause, play: session.play, onFinished: () => { finishes += 1; },
+      });
+      advance.current = demonstration.onAdvance;
+      return null;
+    }
+    try {
+      act(() => {
+        useSession.getState().begin({ scenarioId: scenario.metadata.id, scenarioVersion: scenario.metadata.version,
+          contentVersion: scenario.metadata.version, modelSetRevision: MODEL_SET_REVISION, engineVersion: ENGINE_VERSION,
+          practiceRegion: 'US', seed: 4904, scenario,
+        }, () => worker as unknown as Worker, { engine: ENGINE_VERSION, content: scenario.metadata.version,
+          modelSet: MODEL_SET_REVISION, scenario: scenario.metadata.version }, 'endocrine-metabolic');
+        exampleRoot.render(createElement(MyxedemaHarness));
+        useSession.getState().setSpeed(60); useSession.getState().play();
+      });
+      for (let batch = 0; batch < 1000 && !useSession.getState().equipment?.resuscitation.myxedema?.ended; batch += 1) {
+        if (advance.current) { advancePausedDecision(advance.current, worker); decisions += 1; }
+        const patient = useSession.getState().equipment?.resuscitation.myxedema;
+        const wait = patient && patient.supportActive && patient.ventilationDueInSeconds !== null
+          && patient.ventilationDueInSeconds > 0 ? 'respiratory-support'
+          : patient && patient.respiratorySupportObserved && patient.responseDueInSeconds !== null
+            && patient.responseDueInSeconds > 0 ? 'partial-support' : null;
+        if (wait && !pausedWaits.has(wait)) {
+          pausedWaits.add(wait);
+          expect(advance.current).toBeUndefined();
+          expect(useSession.getState().transport).toBe('running');
+          if (wait === 'partial-support') expect(patient).toMatchObject({ responseObserved: false,
+            observation: { respiratoryRateBpm: 12, spo2Percent: 94, paco2MmHg: 54, coreTemperatureC: 34 } });
+          act(() => useSession.getState().pause());
+          const tick = useSession.getState().tick; const count = worker.applied.length;
+          act(() => { for (let frame = 0; frame < 60; frame += 1) useSession.getState().frame(frame % 2 ? 1000 / 60 : 1000); });
+          expect(useSession.getState().tick).toBe(tick);
+          expect(useSession.getState().equipment?.resuscitation.myxedema).toEqual(patient);
+          expect(worker.applied).toHaveLength(count);
+          expect(advance.current).toBeUndefined();
+          act(() => useSession.getState().play());
+        }
+        act(() => { for (let frame = 0; frame < 6; frame += 1) useSession.getState().frame(1000 / 60); });
+      }
+      expect(finishes).toBe(1); expect(decisions).toBe(8);
+      expect(pausedWaits).toEqual(new Set(['respiratory-support', 'partial-support']));
+      expect(useSession.getState().transport).toBe('paused');
+      expect(worker.applied).toEqual([
+        'ventilate', 'hydrocortisone', 'levothyroxine', 'supportive-care', 'call-support', 'reassess', 'reassess', 'handoff',
+      ].map((action) => ({ type: 'myxedema-response', payload: { action } })));
+      expect(useSession.getState().equipment?.resuscitation.myxedema).toMatchObject({
+        ended: 'handoff', respiratorySupportObserved: true, responseObserved: true, ventilationDelayed: false,
+        endocrineTreatmentDelayed: false, oxygenOnlyAtTick: null, earlyThyroxineAttempted: false,
+        waitForLabsChosen: false, rapidRewarmingAttempted: false, durableRecoveryProven: false,
+        observation: { heartRateBpm: 46, coreTemperatureC: 34.2, paco2MmHg: 54, alertness: 'still drowsy and support-dependent' },
+      });
+      const transcript = sessionInternals().recorder!.build('pending');
+      const actions = transcript.actions.filter((action) => action.type === 'myxedema-response');
+      const ventilation = actions.find((action) => action.payload.action === 'ventilate')!;
+      const steroid = actions.find((action) => action.payload.action === 'hydrocortisone')!;
+      const thyroxine = actions.find((action) => action.payload.action === 'levothyroxine')!;
+      const packageAt = Math.max(...actions.filter((action) => ['ventilate', 'hydrocortisone', 'levothyroxine', 'supportive-care', 'call-support']
+        .includes(action.payload.action as string)).map((action) => action.tick));
+      const reassessments = actions.filter((action) => action.payload.action === 'reassess');
+      expect(steroid.tick).toBeLessThanOrEqual(thyroxine.tick);
+      expect(reassessments).toHaveLength(2);
+      expect(reassessments[0]!.tick - ventilation.tick).toBeGreaterThanOrEqual(MYXEDEMA_VENTILATION_TICKS);
+      expect(reassessments[0]!.tick).toBeLessThan(packageAt + MYXEDEMA_RESPONSE_TICKS);
+      expect(reassessments[1]!.tick - packageAt).toBeGreaterThanOrEqual(MYXEDEMA_RESPONSE_TICKS);
+      const replay = new AnesthesiaEngine({ scenario, seed: 4904, practiceRegion: 'US' });
+      let last;
+      for (let tick = 0; tick < useSession.getState().tick; tick += 1) {
+        for (const action of transcript.actions) if (action.tick === tick) replay.apply(action);
+        last = replay.step();
+      }
+      expect(last?.state).toEqual(useSession.getState().state);
+      expect(replay.equipment().resuscitation.myxedema).toEqual(useSession.getState().equipment?.resuscitation.myxedema);
+      const endedTick = useSession.getState().tick;
+      act(() => { exampleRoot.render(createElement(MyxedemaHarness)); useSession.getState().frame(1000); });
+      expect(finishes).toBe(1); expect(worker.applied).toHaveLength(8);
+      expect(advance.current).toBeUndefined(); expect(useSession.getState().tick).toBe(endedTick);
+    } finally { act(() => exampleRoot.unmount()); exampleContainer.remove(); }
+  // The authored hour is run once through the real session and once as replay.
+  }, 60_000);
 
   it('invalidates a pending adrenal decision when the learner takes over the session', () => {
     const exampleContainer = document.createElement('div'); document.body.appendChild(exampleContainer);

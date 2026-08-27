@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "moduleId": "endocrine-metabolic",
   "capabilityVersion": "0.1.0-alpha.48",
-  "scenarioCount": 5,
+  "scenarioCount": 6,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -631,6 +631,132 @@
           "status": "missing",
           "evidence": [
             "The shared report control, exact-version Worker catalog, and bounded opt-in thyroid context are integrated. tests/ui/thyroid-report-surfaces.test.tsx verifies real route/form projection on briefing, live, example, debrief, replay, and source entry with local transport/network stubs. Complete inclusive four-surface reporting and production Turnstile/D1 verification remain pending."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "myxedema-coma-ventilation-and-steroid-sequence",
+      "title": "Myxedema coma: support breathing, protect the sequence",
+      "moduleId": "endocrine-metabolic",
+      "environment": "ward",
+      "estimatedMinutes": 12,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario myxedema-coma-ventilation-and-steroid-sequence carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "5 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "Fixed authored myxedema transitions and reference seed 4904; myxedema-runs.test.ts verifies real-engine replay hashes including observations and event evidence."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "Independent ventilatory and endocrine support states expose oxygen-saturation masking, delayed urgent care, partial support, and bounded takeover. All response values and clocks are authored."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "Ten dose-free qualified-team decisions include ventilation, steroid-before-thyroxine without an invented interval, parallel support, fresh reassessment, handoff, and retained delay, early-thyroxine, and rapid-warming attempts."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "Continuing-care handoff or instructor takeover ends the branch. Thirty-minute missing urgent care and 180-minute unfinished-lesson stops are teaching bounds, not safe treatment delays or predicted clinical outcomes."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "satisfied",
+          "evidence": [
+            "Exact-version observed-state tutoring supports Guided, Coached, and Unassisted. Worked example 0.1.0 pauses before eight real decisions, observes the separate ventilatory and full-package checkpoints, and ends with support-dependent handoff. Tray and real-session demonstration tests verify accepted actions and transcript replay."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "Debrief.tsx maps five objectives to accepted and refused actions, preserves mistakes after correction, and labels incomplete-care deterioration as an authored counterfactual."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "2 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "myxedema-fixtures.ts binds expert, commonError, recovery, and noAction paths to content 0.1.0; model and real-engine tests verify distinct outcomes and deterministic replay."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Tray, replay, keyboard-summary, unavailable-reading, and authored-explanation regressions plus desktop and 320 px browser checks are recorded. Complete screen-reader, 400% zoom, color-vision, offline, and performance evidence remains pending for this exact version."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "The shared report control, exact-version Worker catalog, and bounded opt-in myxedema context are integrated. myxedema-report-surfaces.test.tsx verifies real route/form projection on briefing, live, example, debrief, replay, and source entry with local transport/network stubs. Complete inclusive four-surface reporting and production Turnstile/D1 verification remain pending."
           ]
         }
       ]

@@ -67,13 +67,15 @@ export interface WhyPanelProps {
   readonly field: StateField | null;
   readonly value: number | null;
   readonly attribution: readonly Attribution[];
+  /** State-transition lessons must not inherit unrelated physiology attribution. */
+  readonly authoredExplanation?: string;
   readonly onClose: () => void;
   readonly onOpenExplainer: (id: string) => void;
   readonly onOpenDrugCard: (drugId: string) => void;
 }
 
 export function WhyPanel({
-  open, field, value, attribution, onClose, onOpenExplainer, onOpenDrugCard,
+  open, field, value, attribution, authoredExplanation, onClose, onOpenExplainer, onOpenDrugCard,
 }: WhyPanelProps) {
   if (!field) return null;
   const spec = FIELDS[field];
@@ -86,7 +88,7 @@ export function WhyPanel({
         <span className="vital-tile__unit">{spec.unit}</span>
       </p>
 
-      {!entry || entry.terms.length === 0 ? (
+      {authoredExplanation ? <p className="field__hint">{authoredExplanation}</p> : !entry || entry.terms.length === 0 ? (
         <p className="field__hint">
           Nothing is currently pushing on {spec.label.toLowerCase()}. It is sitting where the
           patient&apos;s own baseline puts it.

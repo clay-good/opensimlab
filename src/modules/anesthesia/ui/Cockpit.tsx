@@ -32,6 +32,8 @@ import { useAdrenalDemonstration } from '../../endocrine-metabolic/demo/useAdren
 import { supportsAdrenalDemonstration } from '../../endocrine-metabolic/demo/adrenal-demonstration';
 import { useThyroidDemonstration } from '../../endocrine-metabolic/demo/useThyroidDemonstration';
 import { supportsThyroidDemonstration } from '../../endocrine-metabolic/demo/thyroid-demonstration';
+import { useMyxedemaDemonstration } from '../../endocrine-metabolic/demo/useMyxedemaDemonstration';
+import { supportsMyxedemaDemonstration } from '../../endocrine-metabolic/demo/myxedema-demonstration';
 import { WhyPanel } from './WhyPanel';
 import {
   announcementsFor, arterialLineSummary, breathingCircuitSummary, mechanicalPulseFromState, stateSummary,
@@ -158,8 +160,9 @@ export function Cockpit({
   const hypoglycemiaDemoSupported = supportsHypoglycemiaDemonstration(scenario);
   const adrenalDemoSupported = supportsAdrenalDemonstration(scenario);
   const thyroidDemoSupported = supportsThyroidDemonstration(scenario);
+  const myxedemaDemoSupported = supportsMyxedemaDemonstration(scenario);
   const inductionDemonstration = useDemonstration({
-    active: demonstrating && !hypoglycemiaDemoSupported && !adrenalDemoSupported && !thyroidDemoSupported,
+    active: demonstrating && !hypoglycemiaDemoSupported && !adrenalDemoSupported && !thyroidDemoSupported && !myxedemaDemoSupported,
     tick: session.tick,
     act: session.act,
     onFinished: () => onTakeControls?.(),
@@ -182,7 +185,14 @@ export function Cockpit({
     pause: session.pause, play: session.play,
     act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = thyroidDemoSupported ? thyroidDemonstration : adrenalDemoSupported ? adrenalDemonstration
+  const myxedemaDemonstration = useMyxedemaDemonstration({
+    active: demonstrating && myxedemaDemoSupported,
+    running: session.transport === 'running', patient: session.equipment?.resuscitation.myxedema,
+    pause: session.pause, play: session.play,
+    act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const demonstration = myxedemaDemoSupported ? myxedemaDemonstration
+    : thyroidDemoSupported ? thyroidDemonstration : adrenalDemoSupported ? adrenalDemonstration
     : hypoglycemiaDemoSupported ? hypoglycemiaDemonstration : inductionDemonstration;
   const [colorblindSafe] = useLocalPreference('colorblind-safe', false);
   const [whyField, setWhyField] = useState<StateField | null>(null);
@@ -359,13 +369,14 @@ export function Cockpit({
   // Announce only on a clinically meaningful change, never on every tick.
   useEffect(() => {
     if (!session.state) return;
-    const announcements = announcementsFor(previousState.current, session.state, session.alarms);
+    const announcements = announcementsFor(previousState.current, session.state, session.alarms,
+      equipment?.resuscitation.myxedema ? invalidParameters : undefined);
     previousState.current = session.state;
     if (announcements.length === 0) return;
     const critical = announcements.filter((entry) => entry.severity === 'critical');
     if (critical.length > 0) setCriticalAnnouncement(critical.map((entry) => entry.text).join('. '));
     else setAnnouncement(announcements.map((entry) => entry.text).join('. '));
-  }, [session.state, session.alarms]);
+  }, [session.state, session.alarms, equipment?.resuscitation.myxedema, invalidParameters]);
 
   // The pulse tone sounds once per beat, at the pitch saturation implies.
   useEffect(() => {
@@ -385,7 +396,8 @@ export function Cockpit({
   // every guidance level.
   useEffect(() => {
     if (tutorIntroductionOpen || demonstrating || scenario.metadata.id === 'adrenal-crisis-treatment-before-tests'
-      || scenario.metadata.id === 'thyroid-storm-hemodynamic-risk') return;
+      || scenario.metadata.id === 'thyroid-storm-hemodynamic-risk'
+      || scenario.metadata.id === 'myxedema-coma-ventilation-and-steroid-sequence') return;
     const input = {
       scenarioId: scenario.metadata.id,
       scenarioVersion: scenario.metadata.version,
@@ -424,6 +436,7 @@ export function Cockpit({
       infusions,
       ventilator,
       invalid: invalidParameters,
+      myxedema: equipment?.resuscitation.myxedema,
       showTrainOfFour: scenario.equipment.monitoring.includes('train-of-four'),
       jawThrustCpapSecondsRemaining: airway.jawThrustCpapSecondsRemaining,
       capnographyLine,
@@ -446,7 +459,7 @@ export function Cockpit({
     scenario.equipment.monitoring, scenario.patient.weightKg, airway.jawThrustCpapSecondsRemaining,
     resuscitation, region, lastExposure, hasAnaphylaxisResponse, hasHypermetabolicResponse,
     hasCardiacArrestResponse, hasHighSpinalResponse, hasVenousAirEmbolismResponse,
-    hasBronchospasmResponse, capnographyLine, hasArterialLine,
+    hasBronchospasmResponse, capnographyLine, hasArterialLine, equipment?.resuscitation.myxedema,
     arterialLine.cuff.meanArterialMmHg, hasCircuitScenario, breathingCircuit,
   ]);
 
@@ -457,6 +470,7 @@ export function Cockpit({
       airwayPatencyFraction: airway.patencyFraction,
       perfusionIndex: session.state?.perfusionIndex ?? 0.8,
       artifacts: waveformArtifacts,
+      capnographyUnavailable: !!equipment?.resuscitation.myxedema,
       capnographySampleObstructed: capnographyLine.obstructed,
       tracheostomyPatencyFraction: equipment?.tracheostomy?.patencyFraction,
       arterialDamped: arterialLine.dynamicResponse === 'overdamped',
@@ -466,7 +480,7 @@ export function Cockpit({
     }).map((entry) => `${entry.label}: ${entry.description}`).join(' '));
   }, [session.state, speak, rhythm, waveformArtifacts, airway, capnographyLine.obstructed,
     arterialLine.dynamicResponse, breathingCircuit.inspiredCo2MmHg, ventilator.delivering,
-    equipment?.tracheostomy?.patencyFraction]);
+    equipment?.tracheostomy?.patencyFraction, equipment?.resuscitation.myxedema]);
 
   useEffect(() => {
     if (arterialLine.mislevelingCm > 0 || arterialLine.dynamicResponse === 'overdamped') {
@@ -646,6 +660,9 @@ export function Cockpit({
                 spo2Percent: 'Pulse-derived saturation unavailable',
                 etco2MmHg: 'Exhaled carbon dioxide not supplied',
               }
+            : myxedemaDemoSupported
+              ? { etco2MmHg: 'Exhaled carbon dioxide not supplied; request a bedside PaCO₂ assessment',
+                  fio2: 'Oxygen setting is not modeled' }
             : scenario.metadata.id === 'pediatric-foreign-body-airway-obstruction'
               ? { meanArterialMmHg: 'Pressure not supplied' } : undefined}
           artifactParameters={artifactParameters}
@@ -710,6 +727,9 @@ export function Cockpit({
       <div className="cockpit__actions">
         <ActionCockpit
           thyroidGuidance={session.guidance}
+          myxedemaGuidance={session.guidance}
+          myxedemaDemonstrating={demonstrating && myxedemaDemoSupported}
+          onMyxedemaTutorSource={session.pause}
           thyroidDemonstrating={demonstrating && thyroidDemoSupported}
           onThyroidTutorSource={session.pause}
           adrenalGuidance={session.guidance}
@@ -1282,6 +1302,9 @@ export function Cockpit({
           onThyroidStormResponse={(action) => session.act({
             type: 'thyroid-storm-response', payload: { action },
           })}
+          onMyxedemaResponse={(action) => session.act({
+            type: 'myxedema-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}
@@ -1330,12 +1353,12 @@ export function Cockpit({
       </div>
 
       {/* Guidance. Non-blocking, dismissible, and never shown during an alarm. */}
-      {!demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && tutorIntroductionOpen && session.alarms.length === 0 ? (
+      {!demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && tutorIntroductionOpen && session.alarms.length === 0 ? (
         <TutorIntroduction onDismissPermanently={() => {
           setTutorIntroductionDismissed(true);
           setTutorIntroductionOpen(false);
         }} />
-      ) : !demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && !tutorIntroductionOpen && prompt ? (
+      ) : !demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !tutorIntroductionOpen && prompt ? (
         <TutorPromptCard
           prompt={prompt}
           collapsed={tutorCollapsed}
@@ -1362,7 +1385,11 @@ export function Cockpit({
       <WhyPanel
         open={whyField !== null}
         field={whyField}
-        value={whyField && session.state ? session.state[whyField] ?? null : null}
+        value={whyField && session.state && !(equipment?.resuscitation.myxedema && invalidParameters.has(whyField))
+          ? session.state[whyField] ?? null : null}
+        authoredExplanation={equipment?.resuscitation.myxedema
+          ? 'These are authored teaching states, not predicted physiology or treatment kinetics. Exhaled carbon dioxide and oxygen settings are not supplied; arterial carbon dioxide appears only in a requested bedside assessment.'
+          : undefined}
         attribution={session.attribution}
         onClose={() => setWhyField(null)}
         onOpenExplainer={setExplainerId}
@@ -1446,7 +1473,7 @@ export function Cockpit({
             and cue is also shown.
           </p>
         </div>
-        {scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && <Button onClick={() => {
+        {scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && <Button onClick={() => {
           setShortcutsOpen(false);
           setTutorIntroductionOpen(true);
         }}>

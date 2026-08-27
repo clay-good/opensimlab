@@ -2766,8 +2766,43 @@ Expert, common-error, recovery, and no-action fixtures bind content 0.1.0 to see
 debrief objectives preserve early mistakes after correction and name an authored counterfactual.
 Quiet exact-version tutoring reads observed state without changing the patient. Shared reporting
 retains up to 32 equipment scalars, prioritizing whitelisted thyroid actions and observations
-without feedback or unobserved findings. The worked example and clinical, inclusive-runtime,
-and complete reporting evidence remain separate unfinished requirements.
+without feedback or unobserved findings. Content 0.1.0 now includes a nine-decision learner-paced
+worked example: the clock pauses for reading, Continue sends one ordinary action, and early and
+later reassessments remain explicit decisions. Iodine and partial-support waits follow accepted
+state; takeover, reset, and disposed callbacks cannot continue the old example. Shared-session
+replay and local reporting surfaces are verified. Clinical, full inclusive-runtime, and production
+reporting evidence remain separate unfinished requirements.
+
+### Wave E endocrine-metabolic slice 6: myxedema breathing support and steroid sequence
+
+The sixth registered preview separates oxygen saturation from ventilation and empiric steroid
+coverage from thyroid replacement. Ten dose-free choices represent qualified team care. Oxygen
+alone can improve the authored saturation without correcting carbon-dioxide retention; the tray
+shows blood-gas values only in a requested, timestamped observation. Hydrocortisone must precede IV
+levothyroxine, but both may be accepted in order at the same tick. No artificial wait, score, or
+laboratory result unlocks urgent treatment. Supportive care and qualified help proceed alongside
+breathing and endocrine treatment. Rapid rewarming is refused, and earlier shortcuts stay visible
+after correction.
+
+The 2026 joint myxedema consensus and ATA 2014 recommendations anchor care and sequence. The
+five-minute ventilation response or missing-ventilation deterioration, 15-minute endocrine-delay
+contrast, one-hour complete-care partial response, 30-minute incomplete-care takeover, and
+three-hour unfinished-session stop are authored, not clinical kinetics or safe waiting intervals.
+Fresh respiratory and later whole-person assessments distinguish supported improvement from
+independent breathing, thyroid recovery, or discharge readiness. No medication dose, T3 selection,
+airway technique, or warming procedure is simulated.
+
+Exact-version quiet tutoring and an eight-decision learner-paced example use accepted state.
+Expert, error, recovery, and no-action fixtures preserve the distinction between requests and
+observed response. Full CI passes 3,530 tests across 458 files, including real-engine replay,
+local report surfaces, and actual cockpit keyboard/announcement and explanation-panel checks.
+Desktop and 320 px browser checks verify the bounded report modal, wrapped actions, and a paused
+example after cancellation. Unsupported capnography and oxygen settings remain unavailable in
+visual and spoken channels; authored values do not inherit generic physiology attribution.
+Complete inclusive-runtime, independent clinical review, and production Turnstile/D1 evidence
+remain pending for this slice.
+The registry contains 198 scenarios, including six endocrine/metabolic previews, and 219
+indexable routes. These are registration and route counts, not complete-contract approval counts.
 
 ### Wave E endocrine-metabolic slice 1: DKA resolution and transition
 

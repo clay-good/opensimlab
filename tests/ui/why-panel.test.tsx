@@ -12,8 +12,23 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { TERM_EXPLAINER_IDS } from '@anesthesia/ui/WhyPanel';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { TERM_EXPLAINER_IDS, WhyPanel } from '@anesthesia/ui/WhyPanel';
 import { EXPLAINERS } from '@anesthesia/content/explainers';
+
+it.each(['etco2MmHg', 'fio2', 'meanArterialMmHg'] as const)('keeps authored %s explanations separate from generic physiology attribution', (field) => {
+  const explanation = 'These are authored teaching states, not predicted physiology or treatment kinetics.';
+  const markup = renderToStaticMarkup(<WhyPanel open field={field}
+    value={field === 'meanArterialMmHg' ? 71 : null} authoredExplanation={explanation}
+    attribution={[{ variable: field, terms: [{ termId: 'propofol-vasodilation', label: 'Unrelated drug effect', contribution: -10, share: 1, teachingModel: true }] }]}
+    onClose={() => {}} onOpenExplainer={() => {}} onOpenDrugCard={() => {}} />);
+  const container = document.createElement('div'); container.innerHTML = markup;
+  expect(container.querySelector('.numeric')?.textContent?.trim()).toMatch(field === 'meanArterialMmHg' ? /^71/ : /^--/);
+  expect(container.textContent).toContain(explanation);
+  expect(container.textContent).not.toContain('Unrelated drug effect');
+  expect(container.textContent).not.toContain('Ranked contributors');
+  expect(container.textContent).not.toContain('baseline puts it');
+});
 
 /**
  * Every attribution term id the physiology can emit, read from the source.

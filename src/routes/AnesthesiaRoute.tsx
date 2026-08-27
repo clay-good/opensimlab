@@ -23,6 +23,7 @@ import { DEMONSTRATION_SCENARIO_ID, demonstrationRequested } from '@anesthesia/d
 import { supportsHypoglycemiaDemonstration } from '../modules/endocrine-metabolic/demo/hypoglycemia-demonstration';
 import { supportsAdrenalDemonstration } from '../modules/endocrine-metabolic/demo/adrenal-demonstration';
 import { supportsThyroidDemonstration } from '../modules/endocrine-metabolic/demo/thyroid-demonstration';
+import { supportsMyxedemaDemonstration } from '../modules/endocrine-metabolic/demo/myxedema-demonstration';
 import { Cockpit } from '@anesthesia/ui/Cockpit';
 import { Debrief } from '@anesthesia/ui/Debrief';
 import { assertTranscriptIsAnonymous, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
@@ -239,6 +240,28 @@ function boundedScalars(value: unknown, limit: number): Record<string, ReportCon
 }
 
 export function collectReportEquipmentContext(equipment: SessionState['equipment']): Record<string, ReportContextScalar> {
+  const myxedema = equipment?.resuscitation.myxedema;
+  if (myxedema && equipment) {
+    const priority = boundedScalars({ resuscitation: { myxedema: {
+      supportActive: myxedema.supportActive, ventilationAtTick: myxedema.ventilationAtTick,
+      oxygenOnlyAtTick: myxedema.oxygenOnlyAtTick, hydrocortisoneAtTick: myxedema.hydrocortisoneAtTick,
+      levothyroxineAtTick: myxedema.levothyroxineAtTick, supportiveCareAtTick: myxedema.supportiveCareAtTick,
+      ventilationDueInSeconds: myxedema.ventilationDueInSeconds, responseDueInSeconds: myxedema.responseDueInSeconds,
+      respiratorySupportObserved: myxedema.respiratorySupportObserved, responseObserved: myxedema.responseObserved,
+      ventilationDelayed: myxedema.ventilationDelayed, endocrineTreatmentDelayed: myxedema.endocrineTreatmentDelayed,
+      waitForLabsChosen: myxedema.waitForLabsChosen, earlyThyroxineAttempted: myxedema.earlyThyroxineAttempted,
+      rapidRewarmingAttempted: myxedema.rapidRewarmingAttempted, ended: myxedema.ended,
+      observation: myxedema.observation ? {
+        atTick: myxedema.observation.atTick, systolicMmHg: myxedema.observation.systolicMmHg,
+        diastolicMmHg: myxedema.observation.diastolicMmHg, meanArterialMmHg: myxedema.observation.meanArterialMmHg,
+        heartRateBpm: myxedema.observation.heartRateBpm, respiratoryRateBpm: myxedema.observation.respiratoryRateBpm,
+        spo2Percent: myxedema.observation.spo2Percent, coreTemperatureC: myxedema.observation.coreTemperatureC,
+        paco2MmHg: myxedema.observation.paco2MmHg,
+      } : null,
+    } } }, 32);
+    const remaining = { ...equipment, resuscitation: { ...equipment.resuscitation, myxedema: undefined } };
+    return { ...priority, ...boundedScalars(remaining, 32 - Object.keys(priority).length) };
+  }
   const thyroid = equipment?.resuscitation.thyroidStorm;
   if (thyroid && equipment) {
     const priority = boundedScalars({ resuscitation: { thyroidStorm: {
@@ -294,6 +317,9 @@ function collectReportRecentContext(session: SessionState, seed: number): Scenar
     snapshot: {
       patient: Object.fromEntries(Object.entries(session.state ?? {})
         .filter((entry): entry is [string, number] => Number.isFinite(entry[1]))
+        // Myxedema supplies CO2 only through bedside observations, and no oxygen setting.
+        .filter(([field]) => !session.equipment?.resuscitation.myxedema
+          || (field !== 'paco2MmHg' && field !== 'etco2MmHg' && field !== 'fio2'))
         .sort(([left], [right]) => left.localeCompare(right))
         .slice(0, REPORT_CONTEXT_SNAPSHOT_LIMIT)),
       equipment: collectReportEquipmentContext(session.equipment),
@@ -465,7 +491,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
     if (session.phase !== 'briefing' && session.phase !== 'idle') return;
     if (!session.ready) return;
     const endocrineDemo = config.id === 'endocrine-metabolic'
-      && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario));
+      && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario));
     if (!endocrineDemo && (config.id !== 'anesthesia' || scenario.metadata.id !== DEMONSTRATION_SCENARIO_ID)) return;
     autoDemo.current = false;
     setDemonstrating(true);
@@ -568,7 +594,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
           }}
           {...(config.id === 'anesthesia' && scenario.metadata.id === DEMONSTRATION_SCENARIO_ID
             ? { onWatch: () => { setDemonstrating(true); session.setSpeed(5); session.play(); } }
-            : config.id === 'endocrine-metabolic' && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario))
+            : config.id === 'endocrine-metabolic' && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario))
             ? { onWatch: () => { setDemonstrating(true); session.setSpeed(60); session.play(); } }
             : {})}
           {...(assignment.label ? { assignmentLabel: assignment.label } : {})}

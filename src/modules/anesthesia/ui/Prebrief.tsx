@@ -22,6 +22,7 @@ import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
 import { supportsSevereHypoglycemia } from '../../endocrine-metabolic/severe-hypoglycemia';
 import { supportsAdrenalCrisis } from '../../endocrine-metabolic/adrenal-crisis';
 import { supportsThyroidDemonstration } from '../../endocrine-metabolic/demo/thyroid-demonstration';
+import { supportsMyxedemaDemonstration } from '../../endocrine-metabolic/demo/myxedema-demonstration';
 
 export const FICTION_CONTRACT =
   'This is a simulation. The patient is not real, nothing you do here reaches anyone, and an '
@@ -190,6 +191,15 @@ export function Prebrief({
               coordinated ownership, reassessment, and handoff, not examination, dosing, procedures, or delivery.
             </p>
           </>
+        ) : scenario.metadata.id === 'myxedema-coma-ventilation-and-steroid-sequence' ? (
+          <>
+            <p>Support breathing while qualified endocrine and precipitant care begin. Oxygen saturation
+              can improve without clearing carbon dioxide. Empiric steroids precede levothyroxine;
+              laboratory confirmation and a diagnostic score do not delay urgent treatment.</p>
+            <p>The five-minute respiratory and one-hour complete-care changes are authored support
+              checkpoints, not predicted recovery. Request fresh reassessments, then hand off ongoing
+              risk. Pause freely; 60× advances one simulated minute each second.</p>
+          </>
         ) : scenario.metadata.id === 'thyroid-storm-hemodynamic-risk' ? (
           <>
             <p>Start qualified treatment while investigating, assess circulation before choosing
@@ -337,12 +347,12 @@ export function Prebrief({
       <div className="prebrief__start">
         <Button variant="primary" onClick={onStart}>Start the scenario</Button>
         {onWatch && (
-          <Button onClick={onWatch}>{hypoglycemia || supportsAdrenalCrisis(scenario) || supportsThyroidDemonstration(scenario) ? 'Watch a worked example' : 'Watch a 90-second demonstration'}</Button>
+          <Button onClick={onWatch}>{hypoglycemia || supportsAdrenalCrisis(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) ? 'Watch a worked example' : 'Watch a 90-second demonstration'}</Button>
         )}
       </div>
       {onWatch && (
         <p className="field__hint">
-          {hypoglycemia || supportsAdrenalCrisis(scenario) || supportsThyroidDemonstration(scenario) ? 'The worked example pauses before each decision so you can read. Choose “Continue example” when ready; observation periods run at 60× speed. Reading time does not advance the patient. ' : 'The demonstration runs this scenario at five times speed and explains what to look at. '}
+          {hypoglycemia || supportsAdrenalCrisis(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) ? 'The worked example pauses before each decision so you can read. Choose “Continue example” when ready; observation periods run at 60× speed. Reading time does not advance the patient. ' : 'The demonstration runs this scenario at five times speed and explains what to look at. '}
           You can take the controls at any point and carry on from where it got to.
         </p>
       )}
