@@ -585,6 +585,16 @@ credited toward the catalog until every item in the completion contract passes.
     stimulation, thermal care, device handling, CPAP, oxygen or setting selection, suction,
     ventilation, airway care, compression, access, fluid, glucose, surfactant, drug, feeding,
     resuscitation, transport, counseling, procedure, diagnosis, disposition, or outcome controls.
+  - [x] Neonatology slice 7/11 adds one authored symptomatic confirmed low-glucose pattern in a term
+    infant of a mother with diabetes; newborn, glucose, feeding, neurologic, escalation and parent-
+    dyad ownership; risk, clock, signs, bedside and laboratory glucose, thermal and whole-dyad
+    reconciliation; urgent-pattern recognition without a universal definition or injury threshold;
+    qualified local-protocol treatment, confirmation, serial-reassessment and recurrent-cause
+    boundary review; a fixed 30-minute glucose and symptom report; and active-risk handoff without
+    learner history, examination, scoring, monitoring, glucose or test acquisition or interpretation,
+    diagnosis, feeding, glucose gel, IV dextrose, fluid, drug, dose, access, thermal care, device
+    handling, oxygen, ventilation, airway care, resuscitation, transport, counseling, procedure,
+    disposition, or outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

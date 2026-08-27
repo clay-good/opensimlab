@@ -581,6 +581,10 @@ const NEONATOLOGY_PRETERM_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES = new Set([
   ...NEONATOLOGY_MECONIUM_TRANSITION_BLOCKED_ACTION_TYPES,
   'meconium-stained-transition-response',
 ]);
+const NEONATOLOGY_HYPOGLYCEMIA_BLOCKED_ACTION_TYPES = new Set([
+  ...NEONATOLOGY_PRETERM_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES,
+  'preterm-respiratory-distress-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1634,6 +1638,12 @@ export class AnesthesiaEngine {
   private neonatologyPretermRespiratoryReadinessAtTick: number | null = null;
   private neonatologyPretermRespiratoryReassessmentAtTick: number | null = null;
   private neonatologyPretermRespiratoryHandoffAtTick: number | null = null;
+  private neonatologyHypoglycemiaSupportAtTick: number | null = null;
+  private neonatologyHypoglycemiaContextAtTick: number | null = null;
+  private neonatologyHypoglycemiaRecognitionAtTick: number | null = null;
+  private neonatologyHypoglycemiaReadinessAtTick: number | null = null;
+  private neonatologyHypoglycemiaReassessmentAtTick: number | null = null;
+  private neonatologyHypoglycemiaHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2693,6 +2703,14 @@ export class AnesthesiaEngine {
     if (neonatologyPretermRespiratoryDistress && NEONATOLOGY_PRETERM_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `neonatology-preterm-respiratory-distress-generic-action-refused-${this.currentTick}`,
         'This Neonatology lesson exposes no generic examination, scoring, monitoring interpretation, positioning, drying, stimulation, wrap or warmer handling, CPAP or oxygen operation, setting selection, suction, ventilation, airway, compression, access, fluid, glucose, surfactant, drug, feeding, resuscitation, transport, procedure, diagnosis, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const neonatologyHypoglycemia = this.scenario.metadata.id === 'neonatal-hypoglycemia'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'neonatal-hypoglycemia').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'neonatal-hypoglycemia-boundary').length === 1;
+    if (neonatologyHypoglycemia && NEONATOLOGY_HYPOGLYCEMIA_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `neonatology-hypoglycemia-generic-action-refused-${this.currentTick}`,
+        'This Neonatology lesson exposes no generic history, examination, scoring, monitoring or glucose interpretation, feeding, dextrose, fluid, drug, access, thermal care, device handling, oxygen, ventilation, airway, resuscitation, transport, procedure, diagnosis, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -11622,6 +11640,29 @@ export class AnesthesiaEngine {
         if (this.neonatologyPretermRespiratoryHandoffAtTick !== null) break;
         this.neonatologyPretermRespiratoryHandoffAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-preterm-respiratory-distress-active-risk-handoff-recorded-${this.currentTick}`, 'Birth clock and qualified care, breathing effort and apnea, oxygen requirement and exposure, CPAP tolerance, ventilation, air-leak and airway risk, temperature, glucose and nutrition, infection and congenital causes, parent state, preferences and support, escalation, transfer, documentation, review, disposition, and outcome uncertainty were handed off.', { respiratoryDiseaseExcluded: false, durableStabilityProven: false, neurologicSafetyProven: false, safetyDispositionDetermined: false, newbornOutcomePredicted: false, parentOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'neonatal-hypoglycemia-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'neonatal-hypoglycemia'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'neonatal-hypoglycemia').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'neonatal-hypoglycemia-boundary').length === 1;
+        const actions = this.scenario.metadata.objectives.map((objective) => objective.id);
+        const valid = typeof response === 'string' && actions.includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `neonatology-hypoglycemia-response-refused-${this.currentTick}`, supported ? 'That neonatal-hypoglycemia response is not available. Nothing changed.' : 'These neonatal-hypoglycemia choices are available only in the exact declared Neonatology lesson.'); break; }
+        if (response === actions[0]) { if (this.neonatologyHypoglycemiaSupportAtTick !== null) break; this.neonatologyHypoglycemiaSupportAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-hypoglycemia-support-activated-${this.currentTick}`, 'A trained newborn team, glucose and feeding pathway, neurologic and escalation support, shared clock, parent communication, dignity, family, and follow-up ownership were confirmed. No learner examination, glucose measurement, feeding, dextrose, access, drug, or other care occurred.'); break; }
+        if (this.neonatologyHypoglycemiaSupportAtTick === null) { this.log('warning', 'assessment', `neonatology-hypoglycemia-support-order-refused-${this.currentTick}`, 'Confirm prepared newborn, glucose, feeding, neurologic, escalation, clock, communication, and dyad support before further review.'); break; }
+        if (response === actions[1]) { if (this.neonatologyHypoglycemiaContextAtTick !== null) break; this.neonatologyHypoglycemiaContextAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-hypoglycemia-context-reconciled-${this.currentTick}`, 'The supplied maternal-diabetes risk, age and feed clock, jitteriness, feeding difficulty, bedside and laboratory glucose reports, temperature, breathing, heart rate, parent state, preferences, support, and whole dyad were connected without learner history, examination, measurement, test interpretation, or diagnosis.'); break; }
+        if (this.neonatologyHypoglycemiaContextAtTick === null) { this.log('warning', 'assessment', `neonatology-hypoglycemia-context-order-refused-${this.currentTick}`, 'Connect the supplied risk, clock, signs, verified glucose, thermal, feeding, parent, and whole-dyad context before recognizing the urgent pattern.'); break; }
+        if (response === actions[2]) { if (this.neonatologyHypoglycemiaRecognitionAtTick !== null) break; this.neonatologyHypoglycemiaRecognitionAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-hypoglycemia-pattern-recognized-${this.currentTick}`, 'Abnormal clinical signs plus confirmed plasma glucose 32 mg/dL (1.8 mmol/L) were recognized as requiring immediate qualified escalation across the cited operational frameworks. No universal injury threshold or cause was claimed; the signs remained nonspecific and infection, hypoxic injury, drug exposure, endocrine, metabolic, and other causes stayed open.'); break; }
+        if (this.neonatologyHypoglycemiaRecognitionAtTick === null) { this.log('warning', 'assessment', `neonatology-hypoglycemia-recognition-order-refused-${this.currentTick}`, 'Recognize the coupled symptomatic low-glucose risk without universal-threshold, diagnosis, or outcome closure before boundary review.'); break; }
+        if (response === actions[3]) { if (this.neonatologyHypoglycemiaReadinessAtTick !== null) break; this.neonatologyHypoglycemiaReadinessAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-hypoglycemia-readiness-reviewed-${this.currentTick}`, 'Qualified immediate support, laboratory confirmation when needed, locally protocolized feeding or dextrose treatment, serial glucose and clinical reassessment, thermoregulation, feeding protection, parent explanation, dignity, and persistent or recurrent cause evaluation were reviewed. No learner treatment, access, drug, feed, measurement, or procedure occurred.'); break; }
+        if (this.neonatologyHypoglycemiaReadinessAtTick === null) { this.log('warning', 'assessment', `neonatology-hypoglycemia-readiness-order-refused-${this.currentTick}`, 'Review qualified local-protocol treatment, confirmation, serial reassessment, and cause boundaries before the fixed report.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.neonatologyHypoglycemiaReadinessAtTick) { this.log('warning', 'assessment', `neonatology-hypoglycemia-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed qualified-team report.'); break; } if (this.neonatologyHypoglycemiaReassessmentAtTick !== null) break; this.neonatologyHypoglycemiaReassessmentAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-hypoglycemia-thirty-minute-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report 30 minutes after locally protocolized treatment: plasma glucose is 54 mg/dL (3.0 mmol/L), jitteriness is not currently observed, temperature is 36.7°C, breathing remains regular, heart rate is 140/min, and supported feeding assessment continues. This snapshot does not prove a universal treatment effect, durable glucose stability, neurologic safety, feeding success, cause, discharge readiness, or outcome.', { glucoseMeasuredOrInterpretedByLearner: false, feedingDextroseFluidOrDrugDeliveredByLearner: false, treatmentEffectProven: false, durableGlucoseStabilityProven: false, outcomePredicted: false }); break; }
+        if (this.neonatologyHypoglycemiaReassessmentAtTick === null) { this.log('warning', 'assessment', `neonatology-hypoglycemia-handoff-order-refused-${this.currentTick}`, 'Review the fixed 30-minute qualified-team report before active-risk handoff.'); break; }
+        if (this.currentTick <= this.neonatologyHypoglycemiaReassessmentAtTick) { this.log('warning', 'assessment', `neonatology-hypoglycemia-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.neonatologyHypoglycemiaHandoffAtTick !== null) break;
+        this.neonatologyHypoglycemiaHandoffAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-hypoglycemia-active-risk-handoff-recorded-${this.currentTick}`, 'Birth, feed, glucose, and treatment clocks; recurrent or persistent hypoglycemia; neurologic signs and safety; feeding; temperature; infection; endocrine, metabolic and other causes; parent state, preferences and support; serial monitoring; escalation; documentation; review; disposition; and outcome uncertainty were handed off.', { causeDetermined: false, durableGlucoseStabilityProven: false, neurologicSafetyProven: false, feedingSuccessProven: false, safetyDispositionDetermined: false, newbornOutcomePredicted: false, parentOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -14703,6 +14744,14 @@ export class AnesthesiaEngine {
         spo2Percent: this.neonatologyPretermRespiratoryReassessmentAtTick !== null ? 90 : 62,
         systolicMmHg: 46, diastolicMmHg: 28, meanArterialMmHg: 34,
         coreTemperatureC: this.neonatologyPretermRespiratoryReassessmentAtTick !== null ? 36.6 : 36.5 };
+    }
+    if (this.scenario.metadata.id === 'neonatal-hypoglycemia'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'neonatal-hypoglycemia').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'neonatal-hypoglycemia-boundary').length === 1) {
+      crisisState = { ...crisisState, heartRateBpm: this.neonatologyHypoglycemiaReassessmentAtTick !== null ? 140 : 146,
+        respiratoryRateBpm: 46, spo2Percent: 97, systolicMmHg: 62, diastolicMmHg: 38,
+        meanArterialMmHg: 46, coreTemperatureC: this.neonatologyHypoglycemiaReassessmentAtTick !== null ? 36.7 : 36.6 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -19200,6 +19249,35 @@ export class AnesthesiaEngine {
               neurologicSafetyProven: false as const, safetyDispositionDetermined: false as const,
               newbornOutcomePredicted: false as const, parentOutcomePredicted: false as const,
               outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'neonatal-hypoglycemia'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'neonatal-hypoglycemia').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'neonatal-hypoglycemia-boundary').length === 1 ? {
+            neonatologyHypoglycemiaAssessment: {
+              supportAtTick: this.neonatologyHypoglycemiaSupportAtTick,
+              contextAtTick: this.neonatologyHypoglycemiaContextAtTick,
+              recognitionAtTick: this.neonatologyHypoglycemiaRecognitionAtTick,
+              readinessAtTick: this.neonatologyHypoglycemiaReadinessAtTick,
+              reassessmentAtTick: this.neonatologyHypoglycemiaReassessmentAtTick,
+              handoffAtTick: this.neonatologyHypoglycemiaHandoffAtTick,
+              authoredSymptomaticConfirmedLowGlucosePattern: true as const,
+              authoredQualifiedThirtyMinuteReport: this.neonatologyHypoglycemiaReassessmentAtTick !== null,
+              historyTakenByLearner: false as const, newbornExaminedOrScoredByLearner: false as const,
+              monitoringGlucoseOrTestsObtainedOrInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const, feedingPerformedByLearner: false as const,
+              glucoseGelIvDextroseFluidOrDrugDeliveredByLearner: false as const,
+              accessObtainedByLearner: false as const, thermalCarePerformedByLearner: false as const,
+              deviceHandledByLearner: false as const, oxygenOrVentilationDeliveredByLearner: false as const,
+              airwayPlacedOrManagedByLearner: false as const, resuscitationPerformedByLearner: false as const,
+              transportOrProcedurePerformedByLearner: false as const,
+              universalInjuryThresholdClaimed: false as const, causeDetermined: false as const,
+              infectionExcluded: false as const, endocrineOrMetabolicDiseaseExcluded: false as const,
+              treatmentEffectProven: false as const, durableGlucoseStabilityProven: false as const,
+              neurologicSafetyProven: false as const, feedingSuccessProven: false as const,
+              safetyDispositionDetermined: false as const, newbornOutcomePredicted: false as const,
+              parentOutcomePredicted: false as const, outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

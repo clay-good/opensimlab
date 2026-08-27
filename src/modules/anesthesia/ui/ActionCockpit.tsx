@@ -1355,6 +1355,11 @@ export interface ActionCockpitProps {
       readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly neonatologyHypoglycemiaAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2471,6 +2476,14 @@ export interface ActionCockpitProps {
       | 'review-preterm-respiratory-distress-fixed-ten-minute-qualified-report'
       | 'handoff-preterm-respiratory-distress-breathing-oxygen-thermal-glucose-infection-family-and-outcome-risk',
   ) => void;
+  readonly onNeonatologyHypoglycemiaResponse?: (
+    action: 'activate-neonatal-hypoglycemia-newborn-glucose-feeding-neurologic-and-family-support'
+      | 'reconcile-neonatal-hypoglycemia-risk-clock-signs-glucose-temperature-feeding-and-whole-dyad'
+      | 'recognize-symptomatic-low-neonatal-glucose-requiring-qualified-immediate-escalation-without-universal-threshold-closure'
+      | 'review-qualified-neonatal-hypoglycemia-local-protocol-treatment-confirmation-and-cause-boundaries'
+      | 'review-neonatal-hypoglycemia-fixed-thirty-minute-qualified-report'
+      | 'handoff-neonatal-hypoglycemia-recurrence-neurologic-feeding-thermal-cause-family-and-outcome-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2579,6 +2592,11 @@ export function crisisResponseAvailability(
     && scenario.timeline.every((event) => event.type === 'narrative')
     && scenario.timeline.filter((event) => event.target === 'preterm-respiratory-distress').length === 1
     && scenario.timeline.filter((event) => event.target === 'preterm-respiratory-distress-boundary').length === 1;
+  const hasNeonatologyHypoglycemiaResponse =
+    scenario.metadata.id === 'neonatal-hypoglycemia'
+    && scenario.timeline.every((event) => event.type === 'narrative')
+    && scenario.timeline.filter((event) => event.target === 'neonatal-hypoglycemia').length === 1
+    && scenario.timeline.filter((event) => event.target === 'neonatal-hypoglycemia-boundary').length === 1;
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -3142,6 +3160,7 @@ export function crisisResponseAvailability(
     hasNeonatologyBradycardiaResponse,
     hasNeonatologyMeconiumTransitionResponse,
     hasNeonatologyPretermRespiratoryDistressResponse,
+    hasNeonatologyHypoglycemiaResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3377,6 +3396,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'neonatal-bradycardia-transition')
       || (event.type === 'narrative' && event.target === 'meconium-stained-transition')
       || (event.type === 'narrative' && event.target === 'preterm-respiratory-distress')
+      || (event.type === 'narrative' && event.target === 'neonatal-hypoglycemia')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3500,6 +3520,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeonatologyBradycardiaResponse,
     hasNeonatologyMeconiumTransitionResponse,
     hasNeonatologyPretermRespiratoryDistressResponse,
+    hasNeonatologyHypoglycemiaResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3650,8 +3671,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeonatologyBradycardiaResponse
     || hasNeonatologyMeconiumTransitionResponse
     || hasNeonatologyPretermRespiratoryDistressResponse
+    || hasNeonatologyHypoglycemiaResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasNeonatologyPretermRespiratoryDistressResponse
+  const responseTray = hasNeonatologyHypoglycemiaResponse
+    ? { id: 'crisis', label: 'Glucose + trajectory' } as const
+    : hasNeonatologyPretermRespiratoryDistressResponse
     ? { id: 'crisis', label: 'Breathing + warmth' } as const
     : hasNeonatologyMeconiumTransitionResponse
     ? { id: 'crisis', label: 'Transition + observation' } as const
@@ -4082,6 +4106,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeonatologyBradycardiaResponse
     || hasNeonatologyMeconiumTransitionResponse
     || hasNeonatologyPretermRespiratoryDistressResponse
+    || hasNeonatologyHypoglycemiaResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -5031,6 +5056,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNeonatologyPretermRespiratoryDistressResponse && (
               <NeonatologyPretermRespiratoryDistressTray assessment={props.resuscitation.neonatologyPretermRespiratoryDistressAssessment}
                 onAction={props.onNeonatologyPretermRespiratoryDistressResponse ?? (() => {})} />
+            )}
+            {hasNeonatologyHypoglycemiaResponse && (
+              <NeonatologyHypoglycemiaTray assessment={props.resuscitation.neonatologyHypoglycemiaAssessment}
+                onAction={props.onNeonatologyHypoglycemiaResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -12500,6 +12529,38 @@ function NeonatologyPretermRespiratoryDistressTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-preterm-respiratory-distress-fixed-ten-minute-qualified-report')}>Review the fixed 10-minute report</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-preterm-respiratory-distress-breathing-oxygen-thermal-glucose-infection-family-and-outcome-risk')}>Hand off active newborn risk</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function NeonatologyHypoglycemiaTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['neonatologyHypoglycemiaAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onNeonatologyHypoglycemiaResponse']>;
+}) {
+  const support = assessment?.supportAtTick != null;
+  const context = assessment?.contextAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const readiness = assessment?.readinessAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="neonatology-hypoglycemia-now-title">
+      <div id="neonatology-hypoglycemia-now-title" className="syringe__name">Read the sign and the number together.</div>
+      <p className="syringe__remaining">Connect risk, clock, signs, verified glucose, warmth, feeding, parent, and whole dyad. Thresholds vary; every measurement and treatment stays with the qualified team.</p>
+      <div className="crisis-drug__actions">
+        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-neonatal-hypoglycemia-newborn-glucose-feeding-neurologic-and-family-support')}>Confirm prepared support</Button>}
+        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neonatal-hypoglycemia-risk-clock-signs-glucose-temperature-feeding-and-whole-dyad')}>Connect newborn + whole dyad</Button>}
+        {context && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-symptomatic-low-neonatal-glucose-requiring-qualified-immediate-escalation-without-universal-threshold-closure')}>Recognize the urgent pattern</Button>}
+        {recognition && !readiness && <Button className="crisis-drug__action" onClick={() => onAction('review-qualified-neonatal-hypoglycemia-local-protocol-treatment-confirmation-and-cause-boundaries')}>Review qualified boundaries</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="neonatology-hypoglycemia-later-title">
+      <div id="neonatology-hypoglycemia-later-title" className="syringe__name">One better value is a checkpoint, not closure.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Recurrence, neurologic, feeding, thermal, cause, family, disposition, and outcome risks handed off.' : reassessment ? 'The supplied glucose is higher. Durable stability, neurologic safety, cause, and outcomes remain open.' : readiness ? 'Qualified local-protocol care and serial reassessment continue. Review the fixed report after time passes.' : support ? 'Prepared support is present. Connect the whole newborn and dyad before naming the pattern.' : 'Begin with calm shared ownership. You can pause or leave this practice at any time.'}</p>
+      <div className="crisis-drug__actions">
+        {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-neonatal-hypoglycemia-fixed-thirty-minute-qualified-report')}>Review the fixed 30-minute report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neonatal-hypoglycemia-recurrence-neurologic-feeding-thermal-cause-family-and-outcome-risk')}>Hand off active newborn risk</Button>}
       </div>
     </section>
   </>;

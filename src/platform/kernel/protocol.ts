@@ -3050,6 +3050,27 @@ export interface EquipmentSnapshot {
       readonly safetyDispositionDetermined: false; readonly newbornOutcomePredicted: false;
       readonly parentOutcomePredicted: false; readonly outcomePredicted: false;
     };
+    readonly neonatologyHypoglycemiaAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly authoredSymptomaticConfirmedLowGlucosePattern: true;
+      readonly authoredQualifiedThirtyMinuteReport: boolean;
+      readonly historyTakenByLearner: false; readonly newbornExaminedOrScoredByLearner: false;
+      readonly monitoringGlucoseOrTestsObtainedOrInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly feedingPerformedByLearner: false;
+      readonly glucoseGelIvDextroseFluidOrDrugDeliveredByLearner: false;
+      readonly accessObtainedByLearner: false; readonly thermalCarePerformedByLearner: false;
+      readonly deviceHandledByLearner: false; readonly oxygenOrVentilationDeliveredByLearner: false;
+      readonly airwayPlacedOrManagedByLearner: false; readonly resuscitationPerformedByLearner: false;
+      readonly transportOrProcedurePerformedByLearner: false;
+      readonly universalInjuryThresholdClaimed: false; readonly causeDetermined: false;
+      readonly infectionExcluded: false; readonly endocrineOrMetabolicDiseaseExcluded: false;
+      readonly treatmentEffectProven: false; readonly durableGlucoseStabilityProven: false;
+      readonly neurologicSafetyProven: false; readonly feedingSuccessProven: false;
+      readonly safetyDispositionDetermined: false; readonly newbornOutcomePredicted: false;
+      readonly parentOutcomePredicted: false; readonly outcomePredicted: false;
+    };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {
       readonly cuesReviewedAtTick: number | null;

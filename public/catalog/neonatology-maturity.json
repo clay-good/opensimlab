@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "neonatology",
-  "recordCount": 6,
+  "recordCount": 7,
   "records": [
     {
       "recordId": "scenario:term-newborn-transition@0.1.0",
@@ -67,6 +67,17 @@
       "evidence": [
         "/catalog/neonatology-completion-audit.json#preterm-respiratory-distress@0.1.1",
         "/catalog/neonatology-quality-audit.json#preterm-respiratory-distress@0.1.1"
+      ]
+    },
+    {
+      "recordId": "scenario:neonatal-hypoglycemia@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "neonatal-hypoglycemia",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/neonatology-completion-audit.json#neonatal-hypoglycemia@0.1.0",
+        "/catalog/neonatology-quality-audit.json#neonatal-hypoglycemia@0.1.0"
       ]
     }
   ]

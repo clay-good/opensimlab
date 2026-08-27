@@ -1856,6 +1856,23 @@
       "limitationManifestHash": "sha256:f506135edd3a4c1d88b6a42c469d7d595b5bf1f8898df29a2514d457597ed692"
     },
     {
+      "scenarioId": "neonatal-hypoglycemia",
+      "contentVersion": "0.1.0",
+      "moduleId": "neonatology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:3b5b1af510ef38672408f1a72f55fc1a6a2dc49369d5a563465d5ac2423a9e06",
+      "defaultsHash": "sha256:6e457df1b98aa46cb60ebf444ef1f973a28f0d1d32d92dcf6e0ef5dc4027a9b9",
+      "maturityHash": "sha256:ff34075349fba7806837b492e7f31c80d0aebf64e084153bfeb7dbd4b90b6798",
+      "sourceManifestHash": "sha256:eda2a6dc42e31720af39cbb07205a5fb280b19fc3b7ac5267ee8b7484487acc3",
+      "limitationManifestHash": "sha256:7d7eb11562437bd10dc8630f32a3b8a0d150f6f8ddaef599b3c2686bb70424e9"
+    },
+    {
       "scenarioId": "preterm-respiratory-distress",
       "contentVersion": "0.1.1",
       "moduleId": "neonatology",

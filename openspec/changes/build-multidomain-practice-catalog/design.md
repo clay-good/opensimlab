@@ -2376,6 +2376,24 @@ setting selection, suction, ventilation, airway care, compression, access, fluid
 surfactant, drug, feeding, resuscitation, transport, counseling, procedure, diagnosis, disposition,
 or outcome control.
 
+### Wave D neonatology slice 7: neonatal hypoglycemia
+
+A 3.8 kg term newborn of a mother with insulin-treated diabetes develops persistent jitteriness and
+difficulty sustaining a feed at 2 hours. Qualified reports supply bedside glucose 30 mg/dL and
+laboratory plasma glucose 32 mg/dL (1.8 mmol/L), with preserved spontaneous breathing, normal room-
+air oxygenation and temperature, and no authored seizure, apnea, fever, hypothermia, trauma, or
+known medication exposure. The learner activates newborn, glucose, feeding, neurologic, escalation
+and family support; connects risk, clock, signs, verified glucose, temperature and whole-dyad
+context; recognizes urgent coupled clinical and biochemical risk without claiming a universal
+definition or injury threshold; and reviews qualified local-protocol treatment, confirmation,
+serial reassessment and persistent or recurrent cause boundaries. A fixed 30-minute report supplies
+plasma glucose 54 mg/dL (3.0 mmol/L), no currently observed jitteriness, temperature 36.7°C and
+continued feeding assessment while durable stability, neurologic safety, cause and outcomes remain
+open. Six controls expose no learner history, examination, scoring, monitoring, glucose or test
+acquisition or interpretation, diagnosis, feeding, glucose gel, IV dextrose, fluid, drug, dose,
+access, thermal care, device handling, oxygen, ventilation, airway care, resuscitation, transport,
+counseling, procedure, disposition, or outcome control.
+
 ### Wave E neurology slice 1: minor nondisabling acute ischemic stroke
 
 The first Neurology lab is a function-based minor-stroke decision boundary, not another disabling

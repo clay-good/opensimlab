@@ -5325,6 +5325,31 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['activate-neonatal-hypoglycemia-newborn-glucose-feeding-neurologic-and-family-support',
+      'reconcile-neonatal-hypoglycemia-risk-clock-signs-glucose-temperature-feeding-and-whole-dyad',
+      'recognize-symptomatic-low-neonatal-glucose-requiring-qualified-immediate-escalation-without-universal-threshold-closure',
+      'review-qualified-neonatal-hypoglycemia-local-protocol-treatment-confirmation-and-cause-boundaries',
+      'review-neonatal-hypoglycemia-fixed-thirty-minute-qualified-report',
+      'handoff-neonatal-hypoglycemia-recurrence-neurologic-feeding-thermal-cause-family-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'neonatal-hypoglycemia'
+        && scenario.timeline.every((event) => event.type === 'narrative')
+        && scenario.timeline.filter((event) => event.target === 'neonatal-hypoglycemia').length === 1
+        && scenario.timeline.filter((event) => event.target === 'neonatal-hypoglycemia-boundary').length === 1;
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neonatology hypoglycemia lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['support-activated', 'Newborn, glucose, feeding, neurologic, escalation, clock, communication, dignity, family, and follow-up ownership was confirmed first.'],
+        ['context-reconciled', 'Risk, birth and feed clock, signs, bedside and laboratory glucose, temperature, breathing, heart rate, parent, and whole-dyad context were connected.'],
+        ['pattern-recognized', 'The symptomatic confirmed low-glucose pattern was recognized without a universal injury threshold, diagnosis, cause, or outcome claim.'],
+        ['readiness-reviewed', 'Qualified local-protocol support, confirmation, feeding or dextrose treatment, serial reassessment, thermoregulation, and recurrent-cause boundaries were reviewed without learner care.'],
+        ['thirty-minute-report-reviewed', 'The fixed qualified glucose and symptom report was reviewed without universal treatment-effect, durable-stability, cause, disposition, or outcome claims.'],
+        ['active-risk-handoff-recorded', 'Recurrence, neurologic, feeding, thermal, infection, endocrine, metabolic, parent, monitoring, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^neonatology-hypoglycemia-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^neonatology-hypoglycemia-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['activate-obstetrics-cord-prolapse-response-diagnosis-clock-theatre-anesthesia-newborn-and-support-roles',
       'reconcile-obstetrics-cord-prolapse-membrane-rupture-fetal-heart-exam-birth-imminence-and-whole-person',
       'review-obstetrics-cord-prolapse-pressure-relief-minimal-handling-position-and-no-delay-boundaries',

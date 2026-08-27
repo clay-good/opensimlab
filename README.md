@@ -305,6 +305,15 @@ then reads a fixed 10-minute report and hands off what remains open. No learner 
 monitoring interpretation, CPAP or oxygen operation, thermal or airway care, surfactant, procedure,
 disposition, or newborn/parent outcome control is exposed.
 
+The seventh Neonatology lab pairs abnormal clinical signs with a confirmed low glucose rather than
+teaching one universal threshold. It connects maternal-diabetes risk, age and feed clock,
+jitteriness, feeding difficulty, verified plasma glucose, warmth, parent, and whole dyad; reviews
+qualified immediate escalation, local-protocol feeding or dextrose support, confirmation, serial
+reassessment, and recurrent-cause boundaries; then reads a fixed 30-minute report without treating
+one improved value as closure. No learner examination, glucose measurement or interpretation,
+feeding, dextrose, access, drug, procedure, disposition, or newborn/parent outcome control is
+exposed.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

@@ -5063,6 +5063,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified direct findings, current local neonatal-resuscitation and preterm-stabilization protocols and equipment, immediate trained teams, continuous response assessment, respectful parent communication, and hands-on simulation.',
     briefIn: ['preterm-respiratory-distress'],
   },
+  {
+    id: 'neonatal-hypoglycemia-risk-signs-glucose-parent-and-qualified-course-reports-are-authored',
+    headline: 'The risk, signs, glucose values, parent, qualified care, and 30-minute reports are authored.',
+    simplification: 'Fixed reports stand in for history, newborn examination, bedside and laboratory glucose acquisition, assay limitations, neurologic and feeding assessment, thermal care, parent assessment, locally protocolized treatment, and serial review. Hidden adult-oriented engine-schema minimums are scaffolding, not neonatal physiology validation.',
+    whereItMisleads: 'Treating jitteriness, feeding difficulty, glucose values, or the later improved value as learner findings, a universal definition, predicted brain injury, proven treatment effect, excluded cause, durable stability, prognosis, or outcome.',
+    correctUnderstanding: 'Neonatal glucose decisions combine verified values, clinical signs, age, risk, assay, repeat trajectory, and the current local pathway. Borderline thresholds and treatment details vary.',
+    briefIn: ['neonatal-hypoglycemia'],
+  },
+  {
+    id: 'neonatal-hypoglycemia-controls-activate-reconcile-review-reassess-and-handoff-only',
+    headline: 'The controls confirm support, connect supplied facts, review local-protocol boundaries, read a fixed report, and hand off only.',
+    simplification: 'Six actions stand in for concurrent qualified newborn, glucose, feeding, neurologic, laboratory, endocrine, metabolic, nursing, leadership, timekeeping, documentation, communication, dignity, parent, family, escalation, and follow-up work.',
+    whereItMisleads: 'Equating button order with history, examination, glucose measurement or interpretation, diagnosis, feeding, dextrose treatment, access, communication quality, or competence.',
+    correctUnderstanding: 'Real neonatal hypoglycemia care is concurrent, physical, relational, time-aware, assay-aware, locally protocolized, and serially reassessed. Cognitive practice cannot replace direct care.',
+    briefIn: ['neonatal-hypoglycemia'],
+  },
+  {
+    id: 'no-live-neonatal-hypoglycemia-exam-glucose-test-feed-dextrose-drug-procedure-disposition-or-outcome',
+    headline: 'The lab does not examine, measure or interpret glucose, feed, give dextrose or another drug, determine disposition, or report outcome.',
+    simplification: 'No live history, breathing, heart-rate, neurologic, temperature, feeding, parent or other assessment; scoring; glucose or test acquisition or interpretation; diagnosis; feeding; glucose gel; IV dextrose; fluid; drug or dose; access; thermal care; device handling; oxygen; ventilation; airway care; resuscitation; transport; counseling; procedure; disposition; prognosis; or outcome is modeled.',
+    whereItMisleads: 'Using the rehearsal as a universal threshold, assay, feeding, glucose-gel, IV-dextrose, access, monitoring, transfer, or disposition instruction; delaying trained response for a click; or reading completion as competence.',
+    correctUnderstanding: 'Use verified direct findings, validated glucose methods, the current local neonatal-hypoglycemia pathway, immediate trained teams for abnormal signs, serial reassessment, respectful parent communication, and hands-on training.',
+    briefIn: ['neonatal-hypoglycemia'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

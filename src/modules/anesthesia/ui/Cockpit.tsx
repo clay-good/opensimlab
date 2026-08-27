@@ -1204,6 +1204,9 @@ export function Cockpit({
           onNeonatologyPretermRespiratoryDistressResponse={(action) => session.act({
             type: 'preterm-respiratory-distress-response', payload: { action },
           })}
+          onNeonatologyHypoglycemiaResponse={(action) => session.act({
+            type: 'neonatal-hypoglycemia-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}
