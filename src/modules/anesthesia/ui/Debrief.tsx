@@ -33,6 +33,7 @@ import { supportsHyponatremiaCorrection } from '../../endocrine-metabolic/hypona
 import { supportsAvpDeficiency } from '../../endocrine-metabolic/avp-deficiency';
 import { supportsRefeeding } from '../../endocrine-metabolic/refeeding';
 import { supportsPerioperativeDiabetes } from '../../endocrine-metabolic/perioperative-diabetes';
+import { supportsRenalHyperkalemia } from '../../renal-electrolyte/hyperkalemia';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -204,6 +205,8 @@ export function Debrief(props: DebriefProps) {
                 ? { activityContext: 'coordinating monitored hydration, calcium-lowering treatment, and continuing care for severe malignancy-associated hypercalcemia' }
               : supportsHypocalcemia(props.scenario)
                 ? { activityContext: 'coordinating monitored calcium rescue, postoperative risk assessment, and continuing calcium and magnesium care' }
+              : supportsRenalHyperkalemia(props.scenario)
+                ? { activityContext: 'coordinating cardiac protection, temporary potassium shifting, individualized elimination, and ongoing reassessment for hyperkalemia' }
               : supportsPerioperativeDiabetes(props.scenario)
                 ? { activityContext: 'restoring reliable insulin delivery during delayed surgery, distinguishing glucose-only checks from full reassessment, and handing off continued perioperative care' }
               : supportsRefeeding(props.scenario)
@@ -595,6 +598,46 @@ export function objectiveFindings(
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
 
+    if (objective.id.startsWith('renal-hyperkalemia-')) {
+      if (!supportsRenalHyperkalemia(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The renal hyperkalemia lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^renal-hyperkalemia-${id}-\\d+$`).test(entry.eventId));
+      const calcium = event('calcium-care'); const shift = event('shifting-care');
+      const support = event('support'); const context = event('context-review');
+      const plan = event('removal-plan'); const removal = event('removal-care'); const monitoring = event('monitoring');
+      const later = log.find((entry) => /^renal-hyperkalemia-(shift|removal|rebound)-reassessment-\d+$/.test(entry.eventId));
+      const rebound = event('rebound-reassessment'); const handoff = event('handoff');
+      const ecgOnly = event('ecg-check'); const glucoseOnly = event('glucose-check');
+      const ecgShortcut = event('ecg-resolution-refused'); const glucoseStop = event('glucose-monitoring-stop-refused');
+      const afterCalcium = calcium && log.find((entry, index) => index > log.indexOf(calcium) && entry.tick >= calcium.tick
+        && /^renal-hyperkalemia-(ecg-check|(?:initial|shift|removal|rebound)-reassessment)-\d+$/.test(entry.eventId));
+      const afterShift = shift && log.find((entry, index) => index > log.indexOf(shift) && entry.tick >= shift.tick
+        && /^renal-hyperkalemia-(shift|removal|rebound)-reassessment-\d+$/.test(entry.eventId));
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'renal-hyperkalemia-protection': { met: !!afterCalcium, tick: calcium?.tick,
+          finding: (calcium ? `Qualified cardiac protection began ${(calcium.tick / TICKS_PER_SECOND).toLocaleString('en-US', { maximumFractionDigits: 1 })} simulated seconds into practice. ` : 'Qualified cardiac protection was not recorded. ')
+            + (afterCalcium ? 'A requested ECG or full assessment followed care. ' : 'A requested post-care ECG assessment is missing. ')
+            + (ecgShortcut ? 'The attempted ECG-means-resolved shortcut was refused and remains visible. ' : '')
+            + 'Calcium does not lower potassium and its ECG benefit is temporary. The clock describes this run, not a grading deadline; a better waveform cannot establish potassium safety.' },
+        'renal-hyperkalemia-shift': { met: !!afterShift && !!monitoring, tick: shift?.tick,
+          finding: (afterShift && monitoring ? 'Qualified insulin-glucose care was followed by a requested later full assessment and continued surveillance. ' : 'Qualified shifting, fresh later findings, or continued surveillance remains incomplete. ')
+            + (rebound ? 'Earlier observed rebound remains part of this run despite later care. ' : '')
+            + (glucoseStop ? 'Attempted glucose-monitoring closure was refused. ' : '')
+            + 'Authored counterfactual: shifting without elimination can leave later hyperkalemia unresolved. Hypoglycemia is a possible delayed complication, not an inevitable modeled outcome.' },
+        'renal-hyperkalemia-removal': { met: !!support && !!context && !!plan && !!removal, tick: removal?.tick,
+          finding: support && context && plan && removal
+            ? 'Renal support, kidney and contributor review, an individualized elimination plan, and qualified delivered removal care were recorded separately. Planning did not lower potassium; no automatic dialysis or universal drug policy was prescribed.'
+            : 'Renal ownership, contributor review, planning, or delivered elimination care remains incomplete. A consultation or plan alone does not remove potassium; urgent care need not wait for administrative review.' },
+        'renal-hyperkalemia-reassessment': { met: !!later, tick: later?.tick,
+          finding: (later ? 'A fresh later potassium, glucose, ECG, and bedside assessment made the authored response or unresolved rebound available for review. ' : 'A fresh later full assessment is missing. ')
+            + (ecgOnly || glucoseOnly ? 'ECG-only and glucose-only checks were useful partial observations and did not refresh older potassium findings. ' : '')
+            + 'Neither elapsed clocks nor accepted treatment prove correction. Current care must follow current findings, not an old reassuring observation.' },
+        'renal-hyperkalemia-handoff': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The receiving team owns current findings, elimination progress, repeat cardiac-protection review, and ongoing potassium and glucose surveillance. Hyperkalemia or removal response may remain unresolved. ' : 'Continuing-care ownership or current full reassessment remains incomplete. ')
+            + 'Handoff ends the rehearsal, not monitoring. No durable safety, kidney recovery, discharge, or competence certification is implied.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (objective.id.startsWith('perioperative-diabetes-')) {
       if (!supportsPerioperativeDiabetes(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The insulin-continuity lesson was not active.' } satisfies ObjectiveFinding;
       const event = (id: string) => log.find((entry) => new RegExp(`^perioperative-diabetes-${id}-\\d+$`).test(entry.eventId));

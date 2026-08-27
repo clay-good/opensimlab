@@ -70,7 +70,7 @@ describe('Refeeding decisions through the real engine and causal debrief', () =>
     const snapshot = first.patient;
     first.engine.apply(choice(999999, 'reassess')); first.engine.step();
     expect(first.engine.equipment().resuscitation.refeeding).toEqual(snapshot);
-  });
+  }, 120_000); // Three complete long-course replays also run under concurrent CI load.
 
   it('accepts nutrition, vitamin, and replacement in either order without an administrative or laboratory gate', () => {
     for (const order of [['replace-electrolytes', 'review-nutrition', 'thiamine'],

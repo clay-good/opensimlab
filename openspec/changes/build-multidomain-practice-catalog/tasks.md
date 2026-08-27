@@ -1156,6 +1156,35 @@ credited toward the catalog until every item in the completion contract passes.
     the example performs one decision and pauses again. This does not establish phone, native
     assistive-technology, or live-service validation. No production report was sent. Deploy the
     updated reports catalog before new client content; do not relabel pending gates as passes.
+  - [x] Renal/electrolyte slice 1/12 registers `hyperkalemia-cardioprotection-and-rebound@0.1.0`
+    as a distinct preview, preserving the older Emergency Medicine scenario. The catalog now has
+    205 scenarios across 12 modules. Qualified calcium, shifting, and delivered elimination have
+    independent authored consequences; consultation and planning do not lower potassium. Calcium
+    benefit is temporary, partial observations do not refresh potassium, and later recovery does
+    not erase observed rebound. UKKA 2023, KDIGO 2020, and RCUK 2025 sources were checked August 27.
+  - [x] Add renal navigation, static metadata, the private tutor, ten-decision paused example,
+    five-objective debrief, qualitative waveform, nonvisual summaries, and shared report controls.
+    Thirteen choices include retained ECG-resolution and glucose-monitoring refusals. Sparse clock
+    jumps preserve checkpoint order and stop boundaries. Debrief assessment-after-treatment credit
+    respects event order even when two actions occur at the same tick. Optional report context has
+    seven live vital signs and at most 30 equipment scalars, excluding hidden labs, clocks, and prose.
+    All 212 prior client and Worker identities remain unchanged; 213 are now accepted.
+  - [x] Verify renal model, replay, and UI integration: 26 model, 12 full-engine, five real-session,
+    12 tutor/UI, nine accessibility, six rendered-debrief, 23 action-attribution, and ten shared-form
+    checks pass. The indexable build serves 230 static routes, 227 crawlable routes, and 47 catalog
+    artifacts. Full indexable CI passes 4,579 tests across 521 files, 30 strict specs, typecheck,
+    lint, public readiness, build, and static-host checks. Landing/cockpit/offline budgets are
+    148.4/1,551.4/3,458.3 KiB; fonts are 86.2 KiB.
+    Neighboring replay, UI, accessibility, reporting, and quality checks passed before repinning
+    seven hypocalcemia, eleven hyponatremia, and thirteen AVP shared dependencies. Their authored
+    quality records did not change. The actual preview release refuses 220 publication blockers.
+  - [ ] Complete renal hyperkalemia independent clinical review, four exact-version quality records,
+    full inclusive-runtime verification, and production Turnstile/D1 evidence. Desktop browser QA
+    at 1,280 × 720 confirmed a centered 560 × 619 report dialog, 160-character limit, unchecked
+    context, cancel focus return, and an unchanged paused clock. Continuing the example performs
+    one decision and pauses again. This does not establish phone or assistive-technology validation.
+    Local report submission remains disabled; no production report was sent. Deploy the updated
+    Worker report catalog before new client content and keep pending validation explicit.
   - [x] Repair service-worker release consistency. Build-stamped SHA-256 integrity checks reject
     mixed or incomplete installations; active snapshots are immutable. Explicit acceptance waits
     for the intended controller before reloading only that tab. Durable per-client release pins

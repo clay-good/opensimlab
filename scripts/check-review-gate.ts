@@ -17,6 +17,7 @@ import { TOXICOLOGY_SCENARIOS } from '../src/modules/toxicology/scenarios';
 import { OBSTETRICS_SCENARIOS } from '../src/modules/obstetrics/scenarios';
 import { NEONATOLOGY_SCENARIOS } from '../src/modules/neonatology/scenarios';
 import { ENDOCRINE_METABOLIC_SCENARIOS } from '../src/modules/endocrine-metabolic/scenarios';
+import { RENAL_ELECTROLYTE_SCENARIOS } from '../src/modules/renal-electrolyte/scenarios';
 import { buildScenarioQualityCatalogs } from '@platform/catalog/scenario-quality';
 import { QUALITY_DEPENDENCY_RECEIPTS, QUALITY_RECORDS } from './quality-records';
 import { assertQualityDependencies } from './quality-dependencies';
@@ -89,6 +90,9 @@ export function main(): void {
   const endocrineMetabolicCompletion = buildModuleCompletionCatalog(
     ENDOCRINE_METABOLIC_SCENARIOS, ENGINE_VERSION, 'endocrine-metabolic', 'ward', 'state_transition',
   );
+  const renalElectrolyteCompletion = buildModuleCompletionCatalog(
+    RENAL_ELECTROLYTE_SCENARIOS, ENGINE_VERSION, 'renal-electrolyte', 'ward', 'state_transition',
+  );
   const qualityCatalogs = buildScenarioQualityCatalogs([
     completion,
     emergencyCompletion,
@@ -101,6 +105,7 @@ export function main(): void {
     obstetricsCompletion,
     neonatologyCompletion,
     endocrineMetabolicCompletion,
+    renalElectrolyteCompletion,
   ], QUALITY_RECORDS);
   assertQualityDependencies(QUALITY_RECORDS, QUALITY_DEPENDENCY_RECEIPTS, root);
   const quality = qualityCatalogs.get('anesthesia')!;
@@ -114,6 +119,7 @@ export function main(): void {
   const obstetricsQuality = qualityCatalogs.get('obstetrics')!;
   const neonatologyQuality = qualityCatalogs.get('neonatology')!;
   const endocrineMetabolicQuality = qualityCatalogs.get('endocrine-metabolic')!;
+  const renalElectrolyteQuality = qualityCatalogs.get('renal-electrolyte')!;
   const maturity = buildMaturityCatalog(completion, quality, additionalMaturitySubjects());
   const emergencyMaturity = buildMaturityCatalog(emergencyCompletion, emergencyQuality);
   const criticalCareMaturity = buildMaturityCatalog(criticalCareCompletion, criticalCareQuality);
@@ -127,6 +133,7 @@ export function main(): void {
   const obstetricsMaturity = buildMaturityCatalog(obstetricsCompletion, obstetricsQuality);
   const neonatologyMaturity = buildMaturityCatalog(neonatologyCompletion, neonatologyQuality);
   const endocrineMetabolicMaturity = buildMaturityCatalog(endocrineMetabolicCompletion, endocrineMetabolicQuality);
+  const renalElectrolyteMaturity = buildMaturityCatalog(renalElectrolyteCompletion, renalElectrolyteQuality);
   const moduleCatalogs = [
     { completion, quality, maturity },
     { completion: emergencyCompletion, quality: emergencyQuality, maturity: emergencyMaturity },
@@ -140,6 +147,7 @@ export function main(): void {
     { completion: obstetricsCompletion, quality: obstetricsQuality, maturity: obstetricsMaturity },
     { completion: neonatologyCompletion, quality: neonatologyQuality, maturity: neonatologyMaturity },
     { completion: endocrineMetabolicCompletion, quality: endocrineMetabolicQuality, maturity: endocrineMetabolicMaturity },
+    { completion: renalElectrolyteCompletion, quality: renalElectrolyteQuality, maturity: renalElectrolyteMaturity },
   ];
   const validation = buildValidationReport();
   const evidenceOptions = {

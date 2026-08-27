@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 172 adds the authored perioperative insulin-continuity snapshot. */
-export const WORKER_PROTOCOL_VERSION = 172;
+/** Version 173 adds the authored renal hyperkalemia snapshot. */
+export const WORKER_PROTOCOL_VERSION = 173;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -154,6 +154,30 @@ export interface ReadyMessage {
  * request rather than the result teaches the learner to trust a number that is
  * not true (cockpit/action-cockpit → the tray reflects the patient).
  */
+export interface RenalHyperkalemiaSnapshot {
+  readonly supportActive: boolean;
+  readonly contextReviewedAtTick: number | null; readonly removalPlanAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly calciumAtTick: number | null; readonly lastCalciumAtTick: number | null;
+  readonly calciumRequests: number; readonly shiftAtTick: number | null; readonly removalAtTick: number | null;
+  readonly calciumDueInSeconds: number | null; readonly shiftDueInSeconds: number | null;
+  readonly removalDueInSeconds: number | null; readonly reboundDueInSeconds: number | null;
+  readonly shiftResponseObserved: boolean; readonly removalResponseObserved: boolean; readonly reboundObserved: boolean;
+  readonly ecgResolvedAttempted: boolean; readonly glucoseMonitoringStopAttempted: boolean;
+  readonly ecgObservation: { readonly atTick: number; readonly rhythm: 'hyperkalemic-conduction' | 'sinus' } | null;
+  readonly glucoseObservation: { readonly atTick: number; readonly glucoseMgDl: number } | null;
+  readonly observation: {
+    readonly atTick: number; readonly potassiumMmolL: number; readonly glucoseMgDl: number;
+    readonly rhythm: 'hyperkalemic-conduction' | 'sinus';
+    readonly systolicMmHg: number; readonly diastolicMmHg: number; readonly meanArterialMmHg: number;
+    readonly heartRateBpm: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string; readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true; readonly doseModelAvailable: false; readonly durableRecoveryProven: false;
+}
+
 export interface PerioperativeDiabetesSnapshot {
   readonly supportActive: boolean;
   readonly contextReviewedAtTick: number | null; readonly fastingPlanAtTick: number | null;
@@ -3363,6 +3387,7 @@ export interface EquipmentSnapshot {
     readonly avpDeficiency?: AvpDeficiencySnapshot;
     readonly refeeding?: RefeedingSnapshot;
     readonly perioperativeDiabetes?: PerioperativeDiabetesSnapshot;
+    readonly renalHyperkalemia?: RenalHyperkalemiaSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

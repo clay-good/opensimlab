@@ -125,8 +125,11 @@ describe('Requirement: No Telemetry, No Analytics, No Third-Party Requests', () 
           'src/modules/endocrine-metabolic/hyponatremia-correction-quality.ts',
           'src/modules/endocrine-metabolic/scenarios/hyponatremia-aquaresis-and-overcorrection.ts'].includes(file.path)
           && url === 'https://www.endocrinology.org/media/xhrhxhxm/emergency-management-of-severe-and-moderately-severely-symptomatic-hyponatraemia-in-adult-patients-2022.pdf';
+        const renalGuidanceLink = file.path === 'src/modules/renal-electrolyte/renal-hyperkalemia-tutor.ts'
+          && ['https://www.ukkidney.org/health-professionals/guidelines/treatment-acute-hyperkalaemia-adults-0',
+            'https://kdigo.org/wp-content/uploads/2018/04/KDIGO-Acute-Hyperkalemia-conf-report-FINAL.pdf'].includes(url);
         expect(
-          documentationHosts.test(url) || namespaceUris.test(url) || lazyTurnstile || sodiumGuidanceLink,
+          documentationHosts.test(url) || namespaceUris.test(url) || lazyTurnstile || sodiumGuidanceLink || renalGuidanceLink,
           `${file.path} references ${url}`,
         ).toBe(true);
       }

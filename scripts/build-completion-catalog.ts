@@ -19,6 +19,7 @@ import { TOXICOLOGY_SCENARIOS } from '../src/modules/toxicology/scenarios';
 import { OBSTETRICS_SCENARIOS } from '../src/modules/obstetrics/scenarios';
 import { NEONATOLOGY_SCENARIOS } from '../src/modules/neonatology/scenarios';
 import { ENDOCRINE_METABOLIC_SCENARIOS } from '../src/modules/endocrine-metabolic/scenarios';
+import { RENAL_ELECTROLYTE_SCENARIOS } from '../src/modules/renal-electrolyte/scenarios';
 import { SCENARIO_COMPLETION_SCHEMA } from '@platform/catalog/scenario-completion';
 import { buildScenarioQualityCatalogs, QUALITY_SCHEMAS } from '@platform/catalog/scenario-quality';
 import { QUALITY_DEPENDENCY_RECEIPTS, QUALITY_RECORDS } from './quality-records';
@@ -76,6 +77,9 @@ const neonatologyCompletion = buildModuleCompletionCatalog(
 const endocrineMetabolicCompletion = buildModuleCompletionCatalog(
   ENDOCRINE_METABOLIC_SCENARIOS, ENGINE_VERSION, 'endocrine-metabolic', 'ward', 'state_transition',
 );
+const renalElectrolyteCompletion = buildModuleCompletionCatalog(
+  RENAL_ELECTROLYTE_SCENARIOS, ENGINE_VERSION, 'renal-electrolyte', 'ward', 'state_transition',
+);
 
 const qualityCatalogs = buildScenarioQualityCatalogs([
   completion,
@@ -89,6 +93,7 @@ const qualityCatalogs = buildScenarioQualityCatalogs([
   obstetricsCompletion,
   neonatologyCompletion,
   endocrineMetabolicCompletion,
+  renalElectrolyteCompletion,
 ], QUALITY_RECORDS);
 assertQualityDependencies(QUALITY_RECORDS, QUALITY_DEPENDENCY_RECEIPTS, root);
 const quality = qualityCatalogs.get('anesthesia')!;
@@ -102,6 +107,7 @@ const toxicologyQuality = qualityCatalogs.get('toxicology')!;
 const obstetricsQuality = qualityCatalogs.get('obstetrics')!;
 const neonatologyQuality = qualityCatalogs.get('neonatology')!;
 const endocrineMetabolicQuality = qualityCatalogs.get('endocrine-metabolic')!;
+const renalElectrolyteQuality = qualityCatalogs.get('renal-electrolyte')!;
 
 function stableJson(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(stableJson).join(',')}]`;
@@ -128,6 +134,7 @@ const authoredScenarios = [
   ['obstetrics', OBSTETRICS_SCENARIOS],
   ['neonatology', NEONATOLOGY_SCENARIOS],
   ['endocrine-metabolic', ENDOCRINE_METABOLIC_SCENARIOS],
+  ['renal-electrolyte', RENAL_ELECTROLYTE_SCENARIOS],
 ] as const;
 const authoredByKey = new Map<string, Scenario>(authoredScenarios.flatMap(([moduleId, scenarios]) => scenarios.map(
   (scenario) => [`${moduleId}:${scenario.metadata.id}@${scenario.metadata.version}`, scenario] as const,
@@ -135,7 +142,7 @@ const authoredByKey = new Map<string, Scenario>(authoredScenarios.flatMap(([modu
 const currentReportRecords = [
   completion, emergencyCompletion, criticalCareCompletion, cardiologyCompletion,
   respiratoryMedicineCompletion, pediatricsCompletion, neurologyCompletion, toxicologyCompletion,
-  obstetricsCompletion, neonatologyCompletion, endocrineMetabolicCompletion,
+  obstetricsCompletion, neonatologyCompletion, endocrineMetabolicCompletion, renalElectrolyteCompletion,
 ].flatMap((catalog) => catalog.scenarios).map((scenario) => {
   const key = `${scenario.moduleId}:${scenario.scenarioId}@${scenario.contentVersion}`;
   const authored = authoredByKey.get(key);
@@ -292,6 +299,10 @@ writeFileSync(join(target, 'endocrine-metabolic-completion-audit.json'),
   `${JSON.stringify(endocrineMetabolicCompletion, null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'endocrine-metabolic-quality-audit.json'),
   `${JSON.stringify(endocrineMetabolicQuality, null, 2)}\n`, 'utf8');
+writeFileSync(join(target, 'renal-electrolyte-completion-audit.json'),
+  `${JSON.stringify(renalElectrolyteCompletion, null, 2)}\n`, 'utf8');
+writeFileSync(join(target, 'renal-electrolyte-quality-audit.json'),
+  `${JSON.stringify(renalElectrolyteQuality, null, 2)}\n`, 'utf8');
 writeFileSync(
   join(target, 'maturity-record.schema.json'),
   `${JSON.stringify(MATURITY_RECORD_SCHEMA, null, 2)}\n`,
@@ -325,9 +336,11 @@ writeFileSync(join(target, 'neonatology-maturity.json'),
   `${JSON.stringify(buildMaturityCatalog(neonatologyCompletion, neonatologyQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'endocrine-metabolic-maturity.json'),
   `${JSON.stringify(buildMaturityCatalog(endocrineMetabolicCompletion, endocrineMetabolicQuality), null, 2)}\n`, 'utf8');
+writeFileSync(join(target, 'renal-electrolyte-maturity.json'),
+  `${JSON.stringify(buildMaturityCatalog(renalElectrolyteCompletion, renalElectrolyteQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'asset-licenses.json'), `${JSON.stringify(ASSET_LICENSE_MANIFEST, null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'evidence-sources.json'), `${JSON.stringify(buildEvidenceSourceManifest(SOURCES), null, 2)}\n`, 'utf8');
 
 process.stdout.write(
-  `catalog: audited ${SCENARIOS.length} anesthesia, ${EMERGENCY_MEDICINE_SCENARIOS.length} emergency medicine, ${CRITICAL_CARE_SCENARIOS.length} critical care, ${CARDIOLOGY_SCENARIOS.length} cardiology, ${RESPIRATORY_MEDICINE_SCENARIOS.length} respiratory medicine, ${PEDIATRICS_SCENARIOS.length} pediatrics, ${NEUROLOGY_SCENARIOS.length} neurology, ${TOXICOLOGY_SCENARIOS.length} toxicology, ${OBSTETRICS_SCENARIOS.length} obstetrics, ${NEONATOLOGY_SCENARIOS.length} neonatology, and ${ENDOCRINE_METABOLIC_SCENARIOS.length} endocrine/metabolic scenarios\n`,
+  `catalog: audited ${SCENARIOS.length} anesthesia, ${EMERGENCY_MEDICINE_SCENARIOS.length} emergency medicine, ${CRITICAL_CARE_SCENARIOS.length} critical care, ${CARDIOLOGY_SCENARIOS.length} cardiology, ${RESPIRATORY_MEDICINE_SCENARIOS.length} respiratory medicine, ${PEDIATRICS_SCENARIOS.length} pediatrics, ${NEUROLOGY_SCENARIOS.length} neurology, ${TOXICOLOGY_SCENARIOS.length} toxicology, ${OBSTETRICS_SCENARIOS.length} obstetrics, ${NEONATOLOGY_SCENARIOS.length} neonatology, ${ENDOCRINE_METABOLIC_SCENARIOS.length} endocrine/metabolic, and ${RENAL_ELECTROLYTE_SCENARIOS.length} renal/electrolyte scenarios\n`,
 );

@@ -175,6 +175,19 @@ export const MODULES: readonly ModuleDeclaration[] = [
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
+    id: 'renal-electrolyte',
+    route: 'renal-electrolyte',
+    displayName: 'Renal and Electrolyte Medicine',
+    description: 'Practice calm kidney and electrolyte reassessment, immediate protection, treatment boundaries, and recurrence-aware handoff.',
+    audience: 'Medical students, residents, nurses, pharmacists, and acute-care trainees supporting kidney and electrolyte emergencies.',
+    prerequisites: 'Basic kidney, electrolyte, acid-base, and cardiovascular physiology.',
+    status: 'available',
+    plannedScope:
+      'Twelve bounded renal and electrolyte rehearsals spanning potassium, sodium, calcium, '
+      + 'magnesium, acute kidney injury, acid-base disorders, and dialysis-related deterioration.',
+    timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
+  },
+  {
     id: 'oncology',
     route: 'oncology',
     displayName: 'Oncology',

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 307,
+  "sourceCount": 308,
   "sources": [
     {
       "id": "association-jbds-perioperative-diabetes-2026",
@@ -2141,10 +2141,10 @@
       "title": "Clinical Practice Guideline: Management of Hyperkalaemia in Adults",
       "publication": "UK Kidney Association",
       "year": 2023,
-      "locator": "Hospital treatment and monitoring recommendations, including Guidelines 17.1 and 17.2",
-      "usedFor": "The serial-monitoring boundary after emergency hyperkalemia care: repeat potassium and structured glucose surveillance, distinguish temporary intracellular shifting from potassium removal, and preserve rebound risk and ongoing cause management.",
+      "locator": "Hospital treatment and monitoring recommendations, Sections 16, 17, and 19",
+      "usedFor": "Separate cardiac protection, shifting, and individualized elimination; preserve serial potassium and glucose surveillance, rebound risk, and renal or critical-care ownership. The renal preview uses dose-free qualified care, not a universal treatment or monitoring schedule.",
       "verifiedAgainst": "https://www.ukkidney.org/health-professionals/guidelines/treatment-acute-hyperkalaemia-adults-0",
-      "verifiedOn": "2026-08-25"
+      "verifiedOn": "2026-08-27"
     },
     {
       "id": "lindner-acute-hyperkalemia-2020",
@@ -2153,9 +2153,20 @@
       "publication": "European Journal of Emergency Medicine",
       "year": 2020,
       "locator": "27:329-337; doi:10.1097/MEJ.0000000000000691",
-      "usedFor": "The acute-care distinction among cardiac membrane stabilization, intracellular potassium shifting, and potassium removal, with ECG limitations and the need for serial reassessment.",
-      "verifiedAgainst": "https://doi.org/10.1097/MEJ.0000000000000691",
-      "verifiedOn": "2026-08-25"
+      "usedFor": "Conference-consensus distinctions among temporary calcium benefit, intracellular shifting, and removal; ECG limitations and rebound surveillance. Fictional renal-preview clocks and numerical responses are not patient-specific predictions or required waits.",
+      "verifiedAgainst": "https://kdigo.org/wp-content/uploads/2018/04/KDIGO-Acute-Hyperkalemia-conf-report-FINAL.pdf",
+      "verifiedOn": "2026-08-27"
+    },
+    {
+      "id": "rcuk-special-circumstances-hyperkalemia-2025",
+      "authors": "Resuscitation Council UK",
+      "title": "2025 Resuscitation Guidelines: Special circumstances",
+      "publication": "Resuscitation Council UK",
+      "year": 2025,
+      "locator": "2025 guidelines, Hyperkalaemia section",
+      "usedFor": "Qualified cardiac protection for severe hyperkalemia with ECG changes, insulin-glucose shifting, potassium removal, and individualized dialysis consideration for refractory disease. The renal preview concerns preserved circulation, not the separate cardiac-arrest evidence base; preparation and dose are not simulated.",
+      "verifiedAgainst": "https://www.resus.org.uk/professional-library/2025-resuscitation-guidelines/special-circumstances-guidelines",
+      "verifiedOn": "2026-08-27"
     },
     {
       "id": "esc-myocarditis-pericarditis-guideline-2025",

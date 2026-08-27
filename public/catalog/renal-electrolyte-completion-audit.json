@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 1,
+  "moduleId": "renal-electrolyte",
+  "capabilityVersion": "0.1.0-alpha.48",
+  "scenarioCount": 1,
+  "completeScenarioCount": 0,
+  "scenarios": [
+    {
+      "scenarioId": "hyperkalemia-cardioprotection-and-rebound",
+      "title": "Hyperkalemia: protection is not removal",
+      "moduleId": "renal-electrolyte",
+      "environment": "ward",
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario hyperkalemia-cardioprotection-and-rebound carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "5 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "Seed 4941 binds fixed expert, incomplete-care, rebound/recovery, and no-action contrasts. No stochastic potassium or dose kinetics is claimed."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "Temporary ECG protection, shifting, delivered-removal response, and rebound differ. Partial observations retain independent timestamps; clocks do not disclose unrequested potassium or glucose."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "Thirteen dose-free choices separate calcium, shifting, planning, delivered elimination, observations, and ownership. ECG-based closure and glucose-monitoring closure are refused and retained."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "Current-state continuing-care handoff or instructor takeover bounds practice without predicting arrhythmia, kidney recovery, discharge, or safety. Earlier mistakes do not bar later handoff."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "satisfied",
+          "evidence": [
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary actions. Unassisted mode remains silent without private state mutation."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "Five event-bound findings distinguish transient cardiac protection, redistribution, delivered care, partial observations, and continued ownership. Rebound history persists after later response."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "3 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "hyperkalemia-fixtures.ts binds exact-content pathways; real-engine replay checks compare complete frames, not merely final potassium."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version."
+          ]
+        }
+      ]
+    }
+  ]
+}

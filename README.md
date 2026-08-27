@@ -422,6 +422,13 @@ No universal dose, device instruction, DKA diagnosis, or surgical clearance is s
 All 12 planned endocrine scenarios are registered previews, not clinically completed labs;
 clinical, quality-matrix, full inclusive-runtime, and production reporting evidence remain pending.
 
+The first Renal and Electrolyte Medicine lab separates temporary cardiac protection, potassium
+shifting, and qualified delivered elimination. Compare ECG improvement with unchanged potassium,
+request fresh findings, and manage an authored rebound without confusing a removal plan with care.
+The paused example and private report dialog follow the shared pattern. No dose, automatic dialysis,
+calibrated potassium kinetics, or discharge clearance is supplied. This is the first of 12 planned
+renal previews; clinical, quality-matrix, inclusive-runtime, and production reporting evidence remain pending.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

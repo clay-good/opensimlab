@@ -8,8 +8,8 @@
  * report and the limitations register do not support.
  */
 
-export const READY_SCENARIO_COUNT = 204;
-export const READY_MODULE_COUNT = 11;
+export const READY_SCENARIO_COUNT = 205;
+export const READY_MODULE_COUNT = 12;
 
 export const ONE_LINE_DESCRIPTION =
   `Practice ${READY_SCENARIO_COUNT} clinical scenarios across ${READY_MODULE_COUNT} specialties—free online—`
@@ -28,7 +28,7 @@ export interface SupportingFact {
 export const THREE_FACTS: readonly SupportingFact[] = [
   {
     text: 'Free, with no account and nothing to install.',
-    short: 'Free. No account',
+    short: 'No account',
     linkLabel: 'Read what is stored on your device',
     href: '/privacy',
   },
@@ -272,12 +272,12 @@ export const QUESTIONS: readonly QuestionAnswer[] = [
 
 /** The footer trust block. Each link names its destination. */
 export const FOOTER_LINKS: readonly { readonly label: string; readonly href: string }[] = [
-  { label: 'Validation report', href: '/validation' },
-  { label: 'Clinical governance', href: '/governance' },
-  { label: 'Limitations register', href: '/limitations' },
+  { label: 'Validation', href: '/validation' },
+  { label: 'Governance', href: '/governance' },
+  { label: 'Limitations', href: '/limitations' },
   { label: 'Privacy', href: '/privacy' },
   { label: 'License', href: 'https://github.com/clay-good/opensimlab/blob/main/LICENSE' },
-  { label: 'Source repository', href: 'https://github.com/clay-good/opensimlab' },
+  { label: 'Source', href: 'https://github.com/clay-good/opensimlab' },
 ];
 
 export const SUGGESTED_CITATION =

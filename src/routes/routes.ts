@@ -19,6 +19,7 @@ import { TOXICOLOGY_SCENARIOS } from '../modules/toxicology/scenarios';
 import { OBSTETRICS_SCENARIOS } from '../modules/obstetrics/scenarios';
 import { NEONATOLOGY_SCENARIOS } from '../modules/neonatology/scenarios';
 import { ENDOCRINE_METABOLIC_SCENARIOS } from '../modules/endocrine-metabolic/scenarios';
+import { RENAL_ELECTROLYTE_SCENARIOS } from '../modules/renal-electrolyte/scenarios';
 import type { Scenario } from '@anesthesia/scenarios/types';
 import { ROOT_ROUTE, formatTitle } from './site-metadata';
 import type { RouteMetadata } from './site-metadata';
@@ -252,6 +253,23 @@ export const ROUTES: readonly RouteMetadata[] = [
   },
   ...ENDOCRINE_METABOLIC_SCENARIOS.map((scenario) => ({
     path: `/endocrine-metabolic/scenario/${scenario.metadata.id}`,
+    title: formatTitle(scenario.metadata.title.length > 44
+      ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
+    description: scenarioDescription(scenario),
+    indexable: true,
+    structuredData: ['LearningResource'] as const,
+    heading: scenario.metadata.title,
+  })),
+  {
+    path: '/renal-electrolyte',
+    title: formatTitle('Renal and Electrolyte Medicine simulator'),
+    description: 'Practice calm kidney and electrolyte reassessment, immediate protection, treatment boundaries, and recurrence-aware handoff in focused simulations.',
+    indexable: true,
+    structuredData: ['SoftwareApplication'],
+    heading: 'Renal and Electrolyte Medicine simulator',
+  },
+  ...RENAL_ELECTROLYTE_SCENARIOS.map((scenario) => ({
+    path: `/renal-electrolyte/scenario/${scenario.metadata.id}`,
     title: formatTitle(scenario.metadata.title.length > 44
       ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
     description: scenarioDescription(scenario),

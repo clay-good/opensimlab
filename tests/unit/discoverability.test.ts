@@ -27,6 +27,7 @@ import { TOXICOLOGY_SCENARIOS } from '../../src/modules/toxicology/scenarios';
 import { OBSTETRICS_SCENARIOS } from '../../src/modules/obstetrics/scenarios';
 import { NEONATOLOGY_SCENARIOS } from '../../src/modules/neonatology/scenarios';
 import { ENDOCRINE_METABOLIC_SCENARIOS } from '../../src/modules/endocrine-metabolic/scenarios';
+import { RENAL_ELECTROLYTE_SCENARIOS } from '../../src/modules/renal-electrolyte/scenarios';
 import { Landing } from '@landing/Landing';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -158,6 +159,7 @@ describe('Requirement: Structured Data That Is Accurate', () => {
       { basePath: '/obstetrics', scenarios: OBSTETRICS_SCENARIOS },
       { basePath: '/neonatology', scenarios: NEONATOLOGY_SCENARIOS },
       { basePath: '/endocrine-metabolic', scenarios: ENDOCRINE_METABOLIC_SCENARIOS },
+      { basePath: '/renal-electrolyte', scenarios: RENAL_ELECTROLYTE_SCENARIOS },
     ] as const;
     for (const { basePath, scenarios } of modules) {
       for (const scenario of scenarios) {
@@ -185,7 +187,7 @@ describe('Requirement: One Screen, One Action', () => {
       + CARDIOLOGY_SCENARIOS.length + RESPIRATORY_MEDICINE_SCENARIOS.length
       + PEDIATRICS_SCENARIOS.length + NEUROLOGY_SCENARIOS.length
       + TOXICOLOGY_SCENARIOS.length + OBSTETRICS_SCENARIOS.length + NEONATOLOGY_SCENARIOS.length
-      + ENDOCRINE_METABOLIC_SCENARIOS.length,
+      + ENDOCRINE_METABOLIC_SCENARIOS.length + RENAL_ELECTROLYTE_SCENARIOS.length,
     );
     for (const word of FORBIDDEN_MARKETING_WORDS) {
       expect(ONE_LINE_DESCRIPTION.toLowerCase(), `contains "${word}"`).not.toContain(word.toLowerCase());
@@ -229,7 +231,7 @@ describe('Requirement: The Hero Is The Product Running', () => {
 describe('Requirement: Modules Directory Is Honest About What Exists', () => {
   it('Scenario: Available and planned are visually distinct, with no date', () => {
     expect(availableModules().map((module) => module.id))
-      .toEqual(['anesthesia', 'emergency-medicine', 'cardiology', 'respiratory-medicine', 'pediatrics', 'neurology', 'toxicology', 'obstetrics', 'neonatology', 'endocrine-metabolic', 'critical-care']);
+      .toEqual(['anesthesia', 'emergency-medicine', 'cardiology', 'respiratory-medicine', 'pediatrics', 'neurology', 'toxicology', 'obstetrics', 'neonatology', 'endocrine-metabolic', 'renal-electrolyte', 'critical-care']);
     expect(plannedModules().length).toBeGreaterThanOrEqual(1);
     for (const module of plannedModules()) {
       expect(module.plannedScope, `${module.id} needs a description of its scope`).toBeTruthy();
@@ -447,7 +449,7 @@ describe('Requirement: Footer Carries The Trust Signals', () => {
 describe('Requirement: Crawlability Basics', () => {
   it('Scenario: The sitemap is generated and complete', () => {
     const indexable = indexableRoutes();
-    expect(indexable).toHaveLength(225);
+    expect(indexable).toHaveLength(227);
     expect(indexable.every((route) => route.indexable)).toBe(true);
     expect(indexable.map((route) => route.path)).toContain('/');
     expect(indexable.map((route) => route.path)).toContain('/anesthesia');

@@ -1,0 +1,9 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+import { RENAL_HYPERKALEMIA_CARDIOPROTECTION_AND_REBOUND } from './hyperkalemia-cardioprotection-and-rebound';
+
+export const RENAL_ELECTROLYTE_SCENARIOS: readonly Scenario[] = [RENAL_HYPERKALEMIA_CARDIOPROTECTION_AND_REBOUND];
+export const DEFAULT_RENAL_ELECTROLYTE_SCENARIO_ID = RENAL_HYPERKALEMIA_CARDIOPROTECTION_AND_REBOUND.metadata.id;
+
+export function getRenalElectrolyteScenario(id: string): Scenario | undefined {
+  return RENAL_ELECTROLYTE_SCENARIOS.find((scenario) => scenario.metadata.id === id);
+}

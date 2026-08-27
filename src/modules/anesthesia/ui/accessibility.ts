@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -104,6 +104,7 @@ export function stateSummary(
     readonly avpDeficiency?: AvpDeficiencySnapshot;
     readonly refeeding?: RefeedingSnapshot;
     readonly perioperativeDiabetes?: PerioperativeDiabetesSnapshot;
+    readonly renalHyperkalemia?: RenalHyperkalemiaSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -157,7 +158,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -181,6 +182,34 @@ export function stateSummary(
           + ' intravenous.');
       }
     }
+  }
+  if (options.renalHyperkalemia) {
+    const patient = options.renalHyperkalemia;
+    const rhythm = (value: string) => value === 'hyperkalemic-conduction' ? 'supplied conduction abnormality' : 'authored ECG improvement';
+    for (const field of ['systolicMmHg', 'diastolicMmHg'] as const) {
+      const value = state[field];
+      if (!options.invalid.has(field) && Number.isFinite(value)) {
+        lines.push(`${FIELDS[field].label}: ${value.toFixed(FIELDS[field].precision)} ${FIELDS[field].unit}.`);
+      }
+    }
+    lines.push('Supplied potassium was 6.9 millimoles per liter and blood glucose 108 milligrams per deciliter, with a qualitative ECG conduction change. These remain historical starting findings.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push(`Calcium requests: ${patient.calciumRequests}. Shifting treatment: ${patient.shiftAtTick === null ? 'not yet requested' : 'requested'}. Removal plan: ${patient.removalPlanAtTick === null ? 'not yet requested' : 'requested'}. Qualified removal delivery: ${patient.removalAtTick === null ? 'not yet confirmed' : 'confirmed'}.`);
+    lines.push('Calcium does not lower potassium. Oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.ecgObservation
+      ? `Last requested ECG at simulated ${formatElapsed(patient.ecgObservation.atTick)}: ${rhythm(patient.ecgObservation.rhythm)}. An ECG-only check does not refresh potassium.`
+      : 'No new ECG assessment has been requested.');
+    lines.push(patient.glucoseObservation
+      ? `Last requested blood glucose at simulated ${formatElapsed(patient.glucoseObservation.atTick)}: ${patient.glucoseObservation.glucoseMgDl} milligrams per deciliter. A glucose-only check does not refresh potassium.`
+      : 'No new blood-glucose measurement has been requested.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: potassium ${patient.observation.potassiumMmolL.toFixed(1)} millimoles per liter, blood glucose ${patient.observation.glucoseMgDl} milligrams per deciliter, and ${rhythm(patient.observation.rhythm)}. These are historical observations, not live measurements.`
+      : 'No new full potassium, glucose, ECG, and bedside assessment has been requested.');
+    if (patient.reboundObserved) lines.push('A full assessment recorded rebound; later care does not erase that observation.');
+    lines.push('ECG appearance does not establish a potassium concentration. The waveform is not calibrated to QRS duration. Repeated potassium, glucose, and ECG surveillance remain necessary; improvement does not prove durable safety.');
+    lines.push(options.alarms.length === 0 ? 'No active alarms.'
+      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    return lines.join(' ');
   }
   if (options.perioperativeDiabetes) {
     const patient = options.perioperativeDiabetes;

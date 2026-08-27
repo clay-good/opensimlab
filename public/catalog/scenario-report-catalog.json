@@ -3097,6 +3097,23 @@
       "limitationManifestHash": "sha256:203d1b752628e3ffdd19ceb6de98e240f3083a4cb2f471d460245f782a13a3c9"
     },
     {
+      "scenarioId": "hyperkalemia-cardioprotection-and-rebound",
+      "contentVersion": "0.1.0",
+      "moduleId": "renal-electrolyte",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:ae1991ca415284ad91c5b539126a71a26ab57dbe4655c5d9228d62d69dac7203",
+      "defaultsHash": "sha256:40c979535c236c6ef7e71bc4ac3102b7c30cd9bdc15477e3ada83e8434487bc2",
+      "maturityHash": "sha256:6efe20690e134e500aebda25d514f861e341897d9ec97288971533eb55a04faa",
+      "sourceManifestHash": "sha256:ddf79410280f6a5b73acbc1e50c72e30ecf8d3e5bd2d2a3ef3d083e59cdfd032",
+      "limitationManifestHash": "sha256:47c5afc640259fff8e75ce81224b5256dc7757597d03828509d8f88485251588"
+    },
+    {
       "scenarioId": "acute-pulmonary-edema-respiratory-support-reassessment",
       "contentVersion": "0.1.0",
       "moduleId": "respiratory-medicine",

@@ -54,6 +54,10 @@ import {
   ENDOCRINE_METABOLIC_SCENARIOS, DEFAULT_ENDOCRINE_METABOLIC_SCENARIO_ID,
   getEndocrineMetabolicScenario,
 } from '../modules/endocrine-metabolic/scenarios';
+import {
+  RENAL_ELECTROLYTE_SCENARIOS, DEFAULT_RENAL_ELECTROLYTE_SCENARIO_ID,
+  getRenalElectrolyteScenario,
+} from '../modules/renal-electrolyte/scenarios';
 import type { Scenario } from '@anesthesia/scenarios/types';
 
 export function PrerenderedBody({ path }: { path: string }) {
@@ -143,6 +147,15 @@ export function PrerenderedBody({ path }: { path: string }) {
   if (path === '/neurology') return (
     <ModuleMarkup moduleId="neurology" basePath="/neurology"
       heading="Neurology simulator" scenarios={NEUROLOGY_SCENARIOS} />
+  );
+  if (path === '/renal-electrolyte') return (
+    <ModuleMarkup moduleId="renal-electrolyte" basePath="/renal-electrolyte"
+      heading="Renal and Electrolyte Medicine simulator" scenarios={RENAL_ELECTROLYTE_SCENARIOS} />
+  );
+  if (path.startsWith('/renal-electrolyte/scenario/')) return (
+    <ScenarioMarkup path={path} basePath="/renal-electrolyte"
+      defaultScenarioId={DEFAULT_RENAL_ELECTROLYTE_SCENARIO_ID}
+      getScenario={getRenalElectrolyteScenario} />
   );
   if (path.startsWith('/neurology/scenario/')) return (
     <ScenarioMarkup path={path} basePath="/neurology"

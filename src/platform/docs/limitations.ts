@@ -27,6 +27,30 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'renal-hyperkalemia-authored-contrasts',
+    headline: 'Cardiac protection, shifting, removal, and rebound use fictional contrasts, not treatment kinetics.',
+    simplification: 'Calcium has a finite 45-minute ECG benefit; shifting, delivered removal care, and rebound use 30-, 60-, and 150-minute checkpoints. No dose response, arrhythmia, arrest, or kidney-recovery model is supplied.',
+    whereItMisleads: 'An authored clock becomes a safe waiting interval, a normal ECG establishes potassium safety, or a fixed response predicts a patient outcome.',
+    correctUnderstanding: 'Treat promptly and reassess according to qualified clinical judgment. Calcium does not lower potassium, shifting does not remove total-body potassium, and ECG morphology is qualitative rather than a calibrated potassium or QRS measurement.',
+    briefIn: ['hyperkalemia-cardioprotection-and-rebound'],
+  },
+  {
+    id: 'renal-hyperkalemia-individualized-care',
+    headline: 'A removal plan is not delivered elimination, and delivered care is not automatic dialysis.',
+    simplification: 'Qualified calcium, insulin-glucose care, and delivered individualized elimination are dose-free requests. Support, context, monitoring, and planning do not themselves lower potassium.',
+    whereItMisleads: 'A consultation instantly clears potassium, a binder alone becomes emergency rescue, or all patients receive identical dialysis, diuresis, or medication cessation.',
+    correctUnderstanding: 'Individualize treatment and elimination with renal or critical-care expertise, including kidney trajectory, volume, urine output, contributors, and refractory disease. Preserve glucose prevention and surveillance; hypoglycemia is a risk, not an inevitable simulated event.',
+    briefIn: ['hyperkalemia-cardioprotection-and-rebound'],
+  },
+  {
+    id: 'renal-hyperkalemia-observed-findings',
+    headline: 'ECG-only and glucose-only checks do not refresh historical potassium findings.',
+    simplification: 'Requested observations retain separate timestamps. Accepted care and elapsed response clocks do not disclose new laboratory results. Observed rebound remains part of the learning history after later care.',
+    whereItMisleads: 'An improved waveform or old potassium result justifies ending monitoring, or handoff is mistaken for durable correction or discharge.',
+    correctUnderstanding: 'Repeat ECG, potassium, glucose, and bedside assessment as indicated; hand off unresolved risks, elimination progress, and continuing surveillance. A bounded teaching stop does not certify clinical safety or competence.',
+    briefIn: ['hyperkalemia-cardioprotection-and-rebound'],
+  },
+  {
     id: 'perioperative-diabetes-authored-contrasts',
     headline: 'Glucose, ketones, and vital signs follow authored contrasts, not insulin kinetics.',
     simplification: 'The adult pump-interruption lesson has fixed untreated and response checkpoints at 30 and 60 minutes. Acidosis, dose response, insulin overlap, and surgery are not modeled.',

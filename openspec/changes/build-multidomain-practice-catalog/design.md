@@ -3021,6 +3021,21 @@ dehydration; hypocalcemia; hypermagnesemia; acute kidney injury from hypovolemia
 with overload; metabolic acidosis differential; metabolic alkalosis from losses; dialysis-patient
 pulmonary edema; missed-dialysis deterioration.
 
+The first registered renal preview, `hyperkalemia-cardioprotection-and-rebound@0.1.0`, uses a
+distinct identity from the older Emergency Medicine hyperkalemia lesson. Independent qualified
+calcium, insulin-glucose shifting, and delivered individualized elimination have different authored
+effects. Support and removal planning do not change potassium. Temporary ECG protection expires;
+shifting without completed elimination can lead to rebound. ECG-only and glucose-only observations
+do not refresh older potassium, and later care does not erase observed rebound. Current-state
+handoff transfers unresolved risk without requiring normal potassium or a flawless history.
+
+The private tutor, paused worked example, five-objective debrief, qualitative waveform, nonvisual
+summary, and shared centered 160-character report follow the existing platform. Optional context
+excludes hidden labs, clocks, and prose. Authored timings and numerical responses are documented
+in `docs/evidence-briefs/hyperkalemia-cardioprotection-and-rebound.md`; they are not kinetic predictions
+or clinical waiting instructions. Clinical review, four quality records, full inclusive-runtime
+verification, and production reporting evidence remain pending.
+
 #### Infectious disease: 10
 
 Sepsis without shock; septic shock; meningitis; neutropenic fever; severe community-acquired

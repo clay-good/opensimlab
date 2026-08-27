@@ -37,6 +37,8 @@ import { supportsRefeeding, type RefeedingAction, type RefeedingSnapshot } from 
 import { RefeedingTray } from '../../endocrine-metabolic/RefeedingTray';
 import { supportsPerioperativeDiabetes, type PerioperativeDiabetesAction, type PerioperativeDiabetesSnapshot } from '../../endocrine-metabolic/perioperative-diabetes';
 import { PerioperativeDiabetesTray } from '../../endocrine-metabolic/PerioperativeDiabetesTray';
+import { supportsRenalHyperkalemia, type RenalHyperkalemiaAction, type RenalHyperkalemiaSnapshot } from '../../renal-electrolyte/hyperkalemia';
+import { RenalHyperkalemiaTray } from '../../renal-electrolyte/RenalHyperkalemiaTray';
 import { HypercalcemiaTray } from '../../endocrine-metabolic/HypercalcemiaTray';
 import type { AdrenalCrisisSnapshot } from '@platform/kernel/protocol';
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
@@ -82,6 +84,7 @@ export interface BreathingCircuitStatus {
 }
 
 export interface ActionCockpitProps {
+  readonly renalHyperkalemia?: RenalHyperkalemiaSnapshot;
   readonly hypoglycemiaDemonstrating?: boolean;
   readonly scenario: Scenario;
   readonly region: RegionProfile;
@@ -2616,6 +2619,10 @@ export interface ActionCockpitProps {
   readonly hyponatremiaCorrectionDemonstrating?: boolean;
   readonly onHyponatremiaCorrectionTutorSource?: () => void;
   readonly onPerioperativeDiabetesResponse?: (action: PerioperativeDiabetesAction) => void;
+  readonly onRenalHyperkalemiaResponse?: (action: RenalHyperkalemiaAction) => void;
+  readonly renalHyperkalemiaGuidance?: GuidanceLevel;
+  readonly renalHyperkalemiaDemonstrating?: boolean;
+  readonly onRenalHyperkalemiaTutorSource?: () => void;
   readonly perioperativeDiabetesGuidance?: GuidanceLevel;
   readonly perioperativeDiabetesDemonstrating?: boolean;
   readonly onPerioperativeDiabetesTutorSource?: () => void;
@@ -2786,6 +2793,7 @@ export function crisisResponseAvailability(
   const hasAvpDeficiencyResponse = supportsAvpDeficiency(scenario);
   const hasRefeedingResponse = supportsRefeeding(scenario);
   const hasPerioperativeDiabetesResponse = supportsPerioperativeDiabetes(scenario);
+  const hasRenalHyperkalemiaResponse = supportsRenalHyperkalemia(scenario);
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -3358,7 +3366,7 @@ export function crisisResponseAvailability(
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
-    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse,
+    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3611,6 +3619,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'avp-deficiency')
       || (event.type === 'narrative' && event.target === 'refeeding')
       || (event.type === 'narrative' && event.target === 'perioperative-diabetes')
+      || (event.type === 'narrative' && event.target === 'renal-hyperkalemia')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3743,7 +3752,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
-    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse,
+    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3911,8 +3920,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasAvpDeficiencyResponse
     || hasRefeedingResponse
     || hasPerioperativeDiabetesResponse
+    || hasRenalHyperkalemiaResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasPerioperativeDiabetesResponse
+  const responseTray = hasRenalHyperkalemiaResponse
+    ? { id: 'crisis', label: 'Protect + shift + remove' } as const
+    : hasPerioperativeDiabetesResponse
     ? { id: 'crisis', label: 'Insulin + perioperative care' } as const
     : hasRefeedingResponse
     ? { id: 'crisis', label: 'Electrolytes + nutrition' } as const
@@ -4394,6 +4406,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasAvpDeficiencyResponse
     || hasRefeedingResponse
     || hasPerioperativeDiabetesResponse
+    || hasRenalHyperkalemiaResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -5384,6 +5397,12 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 demonstrating={props.perioperativeDiabetesDemonstrating}
                 scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onPerioperativeDiabetesTutorSource}
                 onAction={props.onPerioperativeDiabetesResponse ?? (() => {})} />
+            )}
+            {hasRenalHyperkalemiaResponse && (
+              <RenalHyperkalemiaTray assessment={props.renalHyperkalemia} guidance={props.renalHyperkalemiaGuidance}
+                demonstrating={props.renalHyperkalemiaDemonstrating}
+                scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onRenalHyperkalemiaTutorSource}
+                onAction={props.onRenalHyperkalemiaResponse ?? (() => {})} />
             )}
             {hasRefeedingResponse && (
               <RefeedingTray assessment={props.resuscitation.refeeding} guidance={props.refeedingGuidance}
