@@ -387,6 +387,10 @@ for accepted actions and a fresh post-response reassessment. Pause stops its dec
 returns control without resetting the patient. Clinical review and complete inclusive-runtime
 and four-surface reporting evidence remain pending.
 
+Both endocrine worked examples pause before each decision. Read the explanation, then choose
+“Continue example”; only observation periods advance at 60×. Reading time does not delay the
+simulated patient's care. Takeover preserves the current patient and returns to 1× speed.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

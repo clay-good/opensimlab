@@ -108,7 +108,7 @@ describe('Observed-state hypoglycemia tutor', () => {
     expect(audit.requirements.filter((entry) => entry.status === 'missing').map((entry) => entry.id)).toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
     expect(hypoglycemiaCompletionEvidence(SCENARIO, 'unknown-engine', 'endocrine-metabolic')).toEqual([]);
     expect(hypoglycemiaCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toEqual([]);
-    expect(hypoglycemiaCompletionEvidence({ ...SCENARIO, metadata: { ...SCENARIO.metadata, version: '0.1.3' } }, ENGINE_VERSION, 'endocrine-metabolic')).toEqual([]);
+    expect(hypoglycemiaCompletionEvidence({ ...SCENARIO, metadata: { ...SCENARIO.metadata, version: '0.1.2' } }, ENGINE_VERSION, 'endocrine-metabolic')).toEqual([]);
     expect(hypoglycemiaCompletionEvidence({ ...SCENARIO, timeline: [] }, ENGINE_VERSION, 'endocrine-metabolic')).toEqual([]);
   });
 });

@@ -59,7 +59,7 @@ describe('Adrenal worked example', () => {
   });
   it('offers only the exact supported version and waits for the first snapshot', () => {
     expect(supportsAdrenalDemonstration(SCENARIO)).toBe(true);
-    for (const version of ['0.1.0', '0.1.2']) expect(supportsAdrenalDemonstration({ ...SCENARIO, metadata: { ...SCENARIO.metadata, version } })).toBe(false);
+    for (const version of ['0.1.0', '0.1.1', '0.1.3']) expect(supportsAdrenalDemonstration({ ...SCENARIO, metadata: { ...SCENARIO.metadata, version } })).toBe(false);
     expect(supportsAdrenalDemonstration({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) })).toBe(false);
     expect(supportsAdrenalDemonstration({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'routine-induction' } })).toBe(false);
     expect(adrenalDemonstrationStep()).toMatchObject({ id: 'preparing' });

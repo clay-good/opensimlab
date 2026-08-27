@@ -78,35 +78,35 @@
     },
     {
       "scenarioId": "severe-hypoglycemia-recurrence",
-      "contentVersion": "0.1.2",
+      "contentVersion": "0.1.3",
       "completionComplete": false,
       "qualityRecords": [
         {
           "kind": "training-value",
           "status": "missing",
           "evidence": [
-            "No version-bound training-value record exists for severe-hypoglycemia-recurrence 0.1.2."
+            "No version-bound training-value record exists for severe-hypoglycemia-recurrence 0.1.3."
           ]
         },
         {
           "kind": "authored-defaults",
           "status": "missing",
           "evidence": [
-            "No version-bound authored-defaults record exists for severe-hypoglycemia-recurrence 0.1.2."
+            "No version-bound authored-defaults record exists for severe-hypoglycemia-recurrence 0.1.3."
           ]
         },
         {
           "kind": "scenario-hazard",
           "status": "missing",
           "evidence": [
-            "No version-bound scenario-hazard record exists for severe-hypoglycemia-recurrence 0.1.2."
+            "No version-bound scenario-hazard record exists for severe-hypoglycemia-recurrence 0.1.3."
           ]
         },
         {
           "kind": "state-space-verification",
           "status": "missing",
           "evidence": [
-            "No version-bound state-space-verification record exists for severe-hypoglycemia-recurrence 0.1.2."
+            "No version-bound state-space-verification record exists for severe-hypoglycemia-recurrence 0.1.3."
           ]
         }
       ],
@@ -114,35 +114,35 @@
     },
     {
       "scenarioId": "adrenal-crisis-treatment-before-tests",
-      "contentVersion": "0.1.1",
+      "contentVersion": "0.1.2",
       "completionComplete": false,
       "qualityRecords": [
         {
           "kind": "training-value",
           "status": "missing",
           "evidence": [
-            "No version-bound training-value record exists for adrenal-crisis-treatment-before-tests 0.1.1."
+            "No version-bound training-value record exists for adrenal-crisis-treatment-before-tests 0.1.2."
           ]
         },
         {
           "kind": "authored-defaults",
           "status": "missing",
           "evidence": [
-            "No version-bound authored-defaults record exists for adrenal-crisis-treatment-before-tests 0.1.1."
+            "No version-bound authored-defaults record exists for adrenal-crisis-treatment-before-tests 0.1.2."
           ]
         },
         {
           "kind": "scenario-hazard",
           "status": "missing",
           "evidence": [
-            "No version-bound scenario-hazard record exists for adrenal-crisis-treatment-before-tests 0.1.1."
+            "No version-bound scenario-hazard record exists for adrenal-crisis-treatment-before-tests 0.1.2."
           ]
         },
         {
           "kind": "state-space-verification",
           "status": "missing",
           "evidence": [
-            "No version-bound state-space-verification record exists for adrenal-crisis-treatment-before-tests 0.1.1."
+            "No version-bound state-space-verification record exists for adrenal-crisis-treatment-before-tests 0.1.2."
           ]
         }
       ],

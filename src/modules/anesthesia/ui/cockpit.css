@@ -647,6 +647,19 @@
   color: var(--text-tertiary);
 }
 
+.demo-bar__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.demo-bar__controls .button[aria-disabled='true'] {
+  color: var(--text-tertiary);
+  cursor: not-allowed;
+  background: var(--surface-2);
+  transform: none;
+}
+
 .demo-bar__text {
   margin: 0;
   /* Two lines whatever this beat says, so a longer narration does not reflow the

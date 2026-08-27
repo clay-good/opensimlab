@@ -40,7 +40,7 @@ export const ADRENAL_TUTOR_RULES: readonly TutorRule[] = rules.map((rule) => ({
   urgent: rule.urgent, cooldownSeconds: 90, afterSeconds: 0,
   prompt: { id: rule.id, suggestion: rule.suggestion, because: rule.because,
     sourceHref: ADRENAL_SOURCE_HREF },
-  applies: (input) => input.scenarioId === 'adrenal-crisis-treatment-before-tests' && input.scenarioVersion === '0.1.1'
+  applies: (input) => input.scenarioId === 'adrenal-crisis-treatment-before-tests' && input.scenarioVersion === '0.1.2'
     && !!input.adrenalCrisis && !input.adrenalCrisis.ended && rule.observed(input.adrenalCrisis),
 }));
 

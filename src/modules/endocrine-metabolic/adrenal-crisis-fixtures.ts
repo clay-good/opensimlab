@@ -1,7 +1,7 @@
 import type { AdrenalCrisisAction } from './adrenal-crisis';
 
 export const ADRENAL_FIXTURES = {
-  scenarioId: 'adrenal-crisis-treatment-before-tests', contentVersion: '0.1.1', seed: 4902,
+  scenarioId: 'adrenal-crisis-treatment-before-tests', contentVersion: '0.1.2', seed: 4902,
   expert: [[0, 'hydrocortisone'], [1, 'saline'], [2, 'call-support'], [3, 'review-record'],
     [6001, 'reassess'], [6002, 'prevention'], [6003, 'handoff']],
   commonError: [[0, 'wait-for-cortisol'], [1, 'oral-only'], [2, 'call-support'], [3, 'saline'],

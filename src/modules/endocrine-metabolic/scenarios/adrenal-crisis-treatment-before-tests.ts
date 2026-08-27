@@ -3,7 +3,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const ADRENAL_CRISIS_TREATMENT_BEFORE_TESTS: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'adrenal-crisis-treatment-before-tests', version: '0.1.1', maturity: 'preview',
+    id: 'adrenal-crisis-treatment-before-tests', version: '0.1.2', maturity: 'preview',
     title: 'Adrenal crisis: treatment cannot wait for tests', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 15, difficulty: 'intermediate',
     objectives: [
@@ -14,7 +14,7 @@ export const ADRENAL_CRISIS_TREATMENT_BEFORE_TESTS: Scenario = {
     ],
     clinicalReview: {
       reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED', competingInterests: 'None declared',
-      reviewedOn: '1970-01-01', reviewBy: '1970-01-01', contentVersion: '0.1.1',
+      reviewedOn: '1970-01-01', reviewBy: '1970-01-01', contentVersion: '0.1.2',
       sources: [
         'Endocrine Society. Diagnosis and Treatment of Primary Adrenal Insufficiency. 2016. Recommendations 1.1–1.3 and 4.1–4.6.',
         'Society for Endocrinology. Adrenal Crisis Information. Emergency treatment and prevention guidance. Consulted 2026-08-26.',

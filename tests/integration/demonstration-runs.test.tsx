@@ -148,6 +148,29 @@ function Harness({ onBeat }: { onBeat: (narration: string | null, focus: string 
   return null;
 }
 
+function advancePausedDecision(advance: () => void, worker: InProcessWorker) {
+  const paused = useSession.getState(); const count = worker.applied.length;
+  expect(paused.transport).toBe('paused');
+  act(() => {
+    for (let frame = 0; frame < 60; frame += 1) useSession.getState().frame(frame % 2 ? 1000 / 60 : 1000);
+  });
+  expect(useSession.getState().tick).toBe(paused.tick);
+  expect(useSession.getState().state).toEqual(paused.state);
+  expect(useSession.getState().equipment).toEqual(paused.equipment);
+  expect(worker.applied).toHaveLength(count);
+  act(() => {
+    advance();
+    expect(worker.applied).toHaveLength(count + 1);
+    advance();
+    expect(worker.applied).toHaveLength(count + 1);
+  });
+  // The action has reached the engine, but the next worker snapshot has not.
+  // Rerendering with that stale snapshot must not pause the same decision again.
+  expect(useSession.getState().transport).toBe('running');
+  expect(useSession.getState().tick).toBe(paused.tick);
+  expect(useSession.getState().equipment).toEqual(paused.equipment);
+}
+
 describe('the demonstration, run for its full length', () => {
   const workers: InProcessWorker[] = [];
   const narrations: string[] = [];
@@ -269,13 +292,15 @@ describe('the demonstration, run for its full length', () => {
   it('runs the hypoglycemia example through the real session clock, recorder, and worker protocol', () => {
     act(() => root.unmount());
     const exampleRoot = createRoot(container); const scenario = SEVERE_HYPOGLYCEMIA_RECURRENCE;
-    const worker = new InProcessWorker(); let finishes = 0;
+    const worker = new InProcessWorker(); let finishes = 0; let decisions = 0;
+    const advance = { current: undefined as (() => void) | undefined };
     function HypoglycemiaHarness() {
       const session = useSession();
-      useHypoglycemiaDemonstration({ active: true, running: session.transport === 'running',
+      const demonstration = useHypoglycemiaDemonstration({ active: true, running: session.transport === 'running',
         patient: session.equipment?.resuscitation.severeHypoglycemia, act: session.act,
-        onFinished: () => { finishes += 1; session.pause(); },
+        pause: session.pause, play: session.play, onFinished: () => { finishes += 1; },
       });
+      advance.current = demonstration.onAdvance;
       return null;
     }
     try {
@@ -289,6 +314,7 @@ describe('the demonstration, run for its full length', () => {
         useSession.getState().setSpeed(60); useSession.getState().play();
       });
       for (let batch = 0; batch < 600 && !useSession.getState().equipment?.resuscitation.severeHypoglycemia?.ended; batch += 1) {
+        if (advance.current) { advancePausedDecision(advance.current, worker); decisions += 1; }
         if (batch === 25) {
           act(() => useSession.getState().pause());
           const pausedTick = useSession.getState().tick; const count = worker.applied.length;
@@ -306,10 +332,17 @@ describe('the demonstration, run for its full length', () => {
           act(() => useSession.getState().play());
           expect(useSession.getState().catchUpNotice).toBe(false);
         }
-        act(() => { for (let frame = 0; frame < 6; frame += 1) useSession.getState().frame(1000 / 60); });
+        act(() => {
+          for (let frame = 0; frame < 6; frame += 1) useSession.getState().frame(1000 / 60);
+          // The final observation can arrive in the same render as a manual
+          // pause; completion must still be recognized exactly once.
+          if (worker.applied.length === 10) useSession.getState().pause();
+        });
       }
       expect(finishes, JSON.stringify({ tick: useSession.getState().tick, phase: useSession.getState().phase,
         patient: useSession.getState().equipment?.resuscitation.severeHypoglycemia, applied: worker.applied })).toBe(1);
+      expect(decisions).toBe(10);
+      expect(useSession.getState().transport).toBe('paused');
       expect(worker.applied).toHaveLength(10);
       expect(useSession.getState().equipment?.resuscitation.severeHypoglycemia?.ended).toBe('handoff');
       const transcript = sessionInternals().recorder!.build('pending');
@@ -321,19 +354,23 @@ describe('the demonstration, run for its full length', () => {
       }
       expect(last?.state).toEqual(useSession.getState().state);
       expect(replay.equipment().resuscitation.severeHypoglycemia).toEqual(useSession.getState().equipment?.resuscitation.severeHypoglycemia);
+      act(() => { exampleRoot.render(createElement(HypoglycemiaHarness)); useSession.getState().frame(100); });
+      expect(finishes).toBe(1); expect(worker.applied).toHaveLength(10);
     } finally { act(() => exampleRoot.unmount()); container.remove(); }
   }, 30_000);
 
   it('runs the adrenal example through combined rescue, the timed reassessment, and a replayable handoff', () => {
     const exampleContainer = document.createElement('div'); document.body.appendChild(exampleContainer);
     const exampleRoot = createRoot(exampleContainer); const scenario = ADRENAL_CRISIS_TREATMENT_BEFORE_TESTS;
-    const worker = new InProcessWorker(); let finishes = 0;
+    const worker = new InProcessWorker(); let finishes = 0; let decisions = 0;
+    const advance = { current: undefined as (() => void) | undefined };
     function AdrenalHarness() {
       const session = useSession();
-      useAdrenalDemonstration({ active: true, running: session.transport === 'running',
+      const demonstration = useAdrenalDemonstration({ active: true, running: session.transport === 'running',
         patient: session.equipment?.resuscitation.adrenalCrisis, act: session.act,
-        onFinished: () => { finishes += 1; session.pause(); },
+        pause: session.pause, play: session.play, onFinished: () => { finishes += 1; },
       });
+      advance.current = demonstration.onAdvance;
       return null;
     }
     try {
@@ -347,6 +384,7 @@ describe('the demonstration, run for its full length', () => {
         useSession.getState().setSpeed(60); useSession.getState().play();
       });
       for (let batch = 0; batch < 150 && !useSession.getState().equipment?.resuscitation.adrenalCrisis?.ended; batch += 1) {
+        if (advance.current) { advancePausedDecision(advance.current, worker); decisions += 1; }
         if (batch === 25) {
           act(() => useSession.getState().pause());
           const pausedTick = useSession.getState().tick; const count = worker.applied.length;
@@ -360,6 +398,7 @@ describe('the demonstration, run for its full length', () => {
       }
       expect(finishes, JSON.stringify({ tick: useSession.getState().tick,
         patient: useSession.getState().equipment?.resuscitation.adrenalCrisis, applied: worker.applied })).toBe(1);
+      expect(decisions).toBe(7);
       expect(useSession.getState().transport).toBe('paused');
       expect(worker.applied).toEqual([
         'hydrocortisone', 'saline', 'call-support', 'review-record', 'reassess', 'prevention', 'handoff',
@@ -385,16 +424,18 @@ describe('the demonstration, run for its full length', () => {
     } finally { act(() => exampleRoot.unmount()); exampleContainer.remove(); }
   }, 30_000);
 
-  it('stops future adrenal example actions when the learner takes over the running session', () => {
+  it('invalidates a pending adrenal decision when the learner takes over the session', () => {
     const exampleContainer = document.createElement('div'); document.body.appendChild(exampleContainer);
     const exampleRoot = createRoot(exampleContainer); const scenario = ADRENAL_CRISIS_TREATMENT_BEFORE_TESTS;
     const worker = new InProcessWorker(); let finishes = 0;
+    const advance = { current: undefined as (() => void) | undefined };
     function AdrenalHarness({ active }: { active: boolean }) {
       const session = useSession();
-      useAdrenalDemonstration({ active, running: session.transport === 'running',
+      const demonstration = useAdrenalDemonstration({ active, running: session.transport === 'running',
         patient: session.equipment?.resuscitation.adrenalCrisis, act: session.act,
-        onFinished: () => { finishes += 1; session.pause(); },
+        pause: session.pause, play: session.play, onFinished: () => { finishes += 1; },
       });
+      advance.current = demonstration.onAdvance;
       return null;
     }
     try {
@@ -408,13 +449,22 @@ describe('the demonstration, run for its full length', () => {
         useSession.getState().setSpeed(60); useSession.getState().play();
       });
       for (let batch = 0; batch < 20 && worker.applied.length < 2; batch += 1) {
+        if (advance.current) advancePausedDecision(advance.current, worker);
         act(() => { for (let frame = 0; frame < 6; frame += 1) useSession.getState().frame(1000 / 60); });
       }
       expect(worker.applied.map((action) => action.payload.action)).toEqual(['hydrocortisone', 'saline']);
+      expect(useSession.getState().transport).toBe('paused');
+      const pendingAdvance = advance.current;
+      expect(pendingAdvance).toBeTypeOf('function');
       const takeoverTick = useSession.getState().tick; const takeoverPatient = useSession.getState().equipment?.resuscitation.adrenalCrisis;
       act(() => exampleRoot.render(createElement(AdrenalHarness, { active: false })));
+      expect(advance.current).toBeUndefined();
+      act(() => pendingAdvance?.());
+      expect(worker.applied).toHaveLength(2);
+      expect(useSession.getState().transport).toBe('paused');
       expect(useSession.getState().tick).toBe(takeoverTick);
       expect(useSession.getState().equipment?.resuscitation.adrenalCrisis).toEqual(takeoverPatient);
+      act(() => useSession.getState().play());
       for (let batch = 0; batch < 110; batch += 1) {
         act(() => { for (let frame = 0; frame < 6; frame += 1) useSession.getState().frame(1000 / 60); });
       }

@@ -71,12 +71,17 @@ describe('scenario report contract', () => {
     }[] };
     expect(catalog.schemaVersion).toBe(2);
     expect(catalog.evidenceAlgorithm).toBe('scenario-evidence-v1');
-    expect(catalog.scenarios).toHaveLength(199);
+    expect(catalog.scenarios).toHaveLength(201);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(199);
-    for (const contentVersion of ['0.1.0', '0.1.1']) {
+      .toBe(201);
+    for (const contentVersion of ['0.1.0', '0.1.1', '0.1.2']) {
       expect(catalog.scenarios).toContainEqual(expect.objectContaining({
         moduleId: 'endocrine-metabolic', scenarioId: 'adrenal-crisis-treatment-before-tests', contentVersion,
+      }));
+    }
+    for (const contentVersion of ['0.1.2', '0.1.3']) {
+      expect(catalog.scenarios).toContainEqual(expect.objectContaining({
+        moduleId: 'endocrine-metabolic', scenarioId: 'severe-hypoglycemia-recurrence', contentVersion,
       }));
     }
     for (const entry of catalog.scenarios) {

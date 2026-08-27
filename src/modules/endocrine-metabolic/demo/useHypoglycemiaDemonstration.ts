@@ -1,33 +1,17 @@
-import { useEffect, useRef } from 'react';
 import type { LearnerAction, SevereHypoglycemiaSnapshot } from '@platform/kernel/protocol';
 import type { DemonstrationController } from '@anesthesia/demo/useDemonstration';
+import { useObservedDemonstration } from '@anesthesia/demo/useObservedDemonstration';
 import { hypoglycemiaDemonstrationStep } from './hypoglycemia-demonstration';
 
-export function useHypoglycemiaDemonstration({ active, running, patient, act, onFinished }: {
+export function useHypoglycemiaDemonstration({ active, running, patient, act, pause, play, onFinished }: {
   readonly active: boolean;
   readonly running: boolean;
   readonly patient?: SevereHypoglycemiaSnapshot;
   readonly act: (action: Omit<LearnerAction, 'tick'>) => void;
+  readonly pause: () => void;
+  readonly play: () => void;
   readonly onFinished: () => void;
 }): DemonstrationController {
-  const step = hypoglycemiaDemonstrationStep(patient);
-  const sentStep = useRef<string | null>(null);
-  const finished = useRef(false);
-  useEffect(() => {
-    if (!active) { sentStep.current = null; finished.current = false; return; }
-    if (!running) return;
-    if (step.finished) {
-      if (!finished.current) { finished.current = true; onFinished(); }
-      return;
-    }
-    if (step.action && sentStep.current !== step.id) {
-      sentStep.current = step.id;
-      act({ type: 'severe-hypoglycemia-response', payload: { action: step.action } });
-    }
-  }, [active, running, step.id, step.action, step.finished, act, onFinished]);
-  return {
-    beat: active ? { atSecond: 0, narration: step.narration, focus: step.focus } : null,
-    progress: active ? step.progress : 0,
-    finished: active && !!step.finished,
-  };
+  return useObservedDemonstration({ active, running, step: hypoglycemiaDemonstrationStep(patient),
+    actionType: 'severe-hypoglycemia-response', act, pause, play, onFinished });
 }

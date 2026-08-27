@@ -1822,6 +1822,23 @@
       "limitationManifestHash": "sha256:6b1ae40ff1e83e7c22c3bcac6c7c6d658acba129cb8a11bb85d95db9dd9edd88"
     },
     {
+      "scenarioId": "adrenal-crisis-treatment-before-tests",
+      "contentVersion": "0.1.2",
+      "moduleId": "endocrine-metabolic",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:b33835faaf558a9497cdd88830f621fcf8a0ca5a4a10d117949148c11f7d5428",
+      "defaultsHash": "sha256:5280e3335fcf1b3af48cd595f9450878c1516ecbe68325ccbd83513f24a7996f",
+      "maturityHash": "sha256:cca393e0e92a0e877799238864ba0fa32ac9abac18da771cb94ec1825705d69a",
+      "sourceManifestHash": "sha256:808ac80351c02de9335573f6ead8a6d9969022b81ac9819ea4a9485a1f37c684",
+      "limitationManifestHash": "sha256:6b1ae40ff1e83e7c22c3bcac6c7c6d658acba129cb8a11bb85d95db9dd9edd88"
+    },
+    {
       "scenarioId": "dka-resolution-transition",
       "contentVersion": "0.1.0",
       "moduleId": "endocrine-metabolic",
@@ -1903,6 +1920,23 @@
       "releaseRef": "sha256:4696f671e8680dc0e8550c8204e57733fd9f1d51b0bd42dfe9f588b4807bbfa5",
       "defaultsHash": "sha256:5407d5519d7df9d93c4c0c6cf6b65dc0b0ec2bf07f06d2e385cf2a20f09c858a",
       "maturityHash": "sha256:5bbb861457fcefad35c58502ad4b618534d48650e5f0032e535c7fa91b7b14d3",
+      "sourceManifestHash": "sha256:0897ebc60f9d7b2ad067d68734ed6f838176664163e11272c47b9079f47e79f5",
+      "limitationManifestHash": "sha256:a70c4e46b188581d62668b022f9da517523f0fcf74fa43d8692d97b18a3bf0fc"
+    },
+    {
+      "scenarioId": "severe-hypoglycemia-recurrence",
+      "contentVersion": "0.1.3",
+      "moduleId": "endocrine-metabolic",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:fd51facd2c1a8af3888b4de73fe7908f67b6726d10fdc0497131bf01a40b4b8b",
+      "defaultsHash": "sha256:5407d5519d7df9d93c4c0c6cf6b65dc0b0ec2bf07f06d2e385cf2a20f09c858a",
+      "maturityHash": "sha256:2e5fcac2d3c174945dc1661411c018f369eaec5446c73fa0642f3af939df8ad8",
       "sourceManifestHash": "sha256:0897ebc60f9d7b2ad067d68734ed6f838176664163e11272c47b9079f47e79f5",
       "limitationManifestHash": "sha256:a70c4e46b188581d62668b022f9da517523f0fcf74fa43d8692d97b18a3bf0fc"
     },

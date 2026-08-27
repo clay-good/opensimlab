@@ -54,6 +54,13 @@ The simulator SHALL offer to demonstrate itself: a scripted run of a scenario, n
 - **WHEN** a beat identifies a region of the interface
 - **THEN** the region is indicated visually and the same information is available to a screen reader, announced politely so it does not interrupt what is already being read
 
+#### Scenario: Endocrine worked examples give the reader control of each decision
+
+- **WHEN** an adrenal-crisis or severe-hypoglycemia worked example reaches an unsent decision
+- **THEN** its narration remains available with the patient clock paused until the learner chooses “Continue example”
+- **AND** Continue sends that decision only once and resumes observation, while a repeated click or stale snapshot cannot resend the action or prevent its acceptance from appearing
+- **AND** the Continue control remains present but disabled during observation, ordinary pause remains respected, and taking control prevents even a retained Continue action from resuming the example
+
 ### Requirement: Stated Learning Objectives
 
 Every scenario SHALL declare its learning objectives in learner-facing language before the session and SHALL evaluate against those same objectives in the debrief.

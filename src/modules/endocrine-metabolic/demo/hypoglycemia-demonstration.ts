@@ -3,10 +3,10 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import type { SevereHypoglycemiaSnapshot } from '@platform/kernel/protocol';
 import { HYPOGLYCEMIA_RECURRENCE_TICKS, supportsSevereHypoglycemia, type HypoglycemiaAction } from '../severe-hypoglycemia';
 
-export const HYPOGLYCEMIA_DEMONSTRATION_VERSION = '0.1.0';
+export const HYPOGLYCEMIA_DEMONSTRATION_VERSION = '0.1.1';
 
 export function supportsHypoglycemiaDemonstration(scenario: Scenario): boolean {
-  return scenario.metadata.version === '0.1.2' && supportsSevereHypoglycemia(scenario);
+  return scenario.metadata.version === '0.1.3' && supportsSevereHypoglycemia(scenario);
 }
 
 export interface HypoglycemiaDemonstrationStep {

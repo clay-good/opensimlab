@@ -17,6 +17,8 @@ export interface DemonstrationBarProps {
   readonly beat: DemonstrationBeat | null;
   readonly progress: number;
   readonly onTakeControls: () => void;
+  readonly onAdvance?: (() => void) | undefined;
+  readonly awaitingAdvance?: boolean | undefined;
 }
 
 /**
@@ -35,7 +37,7 @@ const FOCUS_LABEL: Record<DemonstrationBeat['focus'], string> = {
   none: '',
 };
 
-export function DemonstrationBar({ beat, progress, onTakeControls }: DemonstrationBarProps) {
+export function DemonstrationBar({ beat, progress, onTakeControls, onAdvance, awaitingAdvance }: DemonstrationBarProps) {
   if (!beat) return null;
   const where = FOCUS_LABEL[beat.focus];
   return (
@@ -51,7 +53,7 @@ export function DemonstrationBar({ beat, progress, onTakeControls }: Demonstrati
         <span style={{ width: `${progress * 100}%` }} />
       </div>
       <div className="demo-bar__body">
-        <p className="demo-bar__label">Demonstration</p>
+        <p className="demo-bar__label">{awaitingAdvance ? 'Paused to read' : 'Demonstration'}</p>
         {/* Polite, not assertive: a narration line that interrupted whatever a
             screen-reader user was reading would make the demonstration worse
             for them than no demonstration at all. */}
@@ -59,7 +61,13 @@ export function DemonstrationBar({ beat, progress, onTakeControls }: Demonstrati
           {beat.narration}
           {where ? <span className="visually-hidden"> Look at {where}.</span> : null}
         </p>
-        <Button variant="primary" onClick={onTakeControls}>Take the controls</Button>
+        <div className="demo-bar__controls" onKeyDown={(event) => {
+          // Space activates these buttons; it must not also toggle the cockpit clock.
+          if (event.key === ' ') event.stopPropagation();
+        }}>
+          {awaitingAdvance !== undefined && <Button aria-disabled={!awaitingAdvance} onClick={awaitingAdvance ? onAdvance : undefined}>Continue example</Button>}
+          <Button variant="primary" onClick={onTakeControls}>Take the controls</Button>
+        </div>
       </div>
     </aside>
   );

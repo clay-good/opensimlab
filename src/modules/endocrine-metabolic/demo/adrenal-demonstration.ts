@@ -3,10 +3,10 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import type { AdrenalCrisisSnapshot } from '@platform/kernel/protocol';
 import { supportsAdrenalCrisis, type AdrenalCrisisAction } from '../adrenal-crisis';
 
-export const ADRENAL_DEMONSTRATION_VERSION = '0.1.0';
+export const ADRENAL_DEMONSTRATION_VERSION = '0.1.1';
 
 export function supportsAdrenalDemonstration(scenario: Scenario): boolean {
-  return scenario.metadata.version === '0.1.1' && supportsAdrenalCrisis(scenario);
+  return scenario.metadata.version === '0.1.2' && supportsAdrenalCrisis(scenario);
 }
 
 export interface AdrenalDemonstrationStep {

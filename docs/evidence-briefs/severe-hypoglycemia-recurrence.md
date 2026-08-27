@@ -73,3 +73,25 @@ accepted 160 characters, and remained unavailable on localhost without sending a
 
 The final 0.1.2 CI run passed 440 test files and 3,273 tests, including the clock-freeze,
 report-overlay, real-session replay, and worked-example regressions.
+
+Content 0.1.3 uses worked-example controller 0.1.1. Each decision pauses for reading and awaits
+“Continue example”; the next observation runs at the selected speed. No clinical time passes
+while the reader considers a checkpoint. Distinct step IDs preserve all repeated glucose checks
+and rescue actions without double dispatch. The initial snapshot and accepted-action update are
+allowed to arrive before pausing again. Manual pause and takeover remain authoritative, including
+a retained Continue callback after takeover. Clinical assumptions and patient transitions are unchanged.
+
+The shared Continue control stays focusable and visibly unavailable during observation; guarded
+`aria-disabled` handling prevents duplicate actions without dropping keyboard focus. Space on
+either demo control no longer toggles the underlying cockpit clock. Real-session and DOM tests
+cover all ten decisions, repeated checks, waiting, and cancellation; these do not replace the
+pending moderated accessibility review.
+
+The 0.1.3 desktop browser check held the support explanation at simulated 00:00:02 after
+the initial glucose check. Takeover preserved that time and the observed 36 mg/dL result,
+restored 1× speed and manual decisions, and left the clock paused.
+
+The final shared-checkpoint CI run passed all 30 specs and 3,320 tests across 444 files,
+including full-session replay, paused-reading, duplicate-click, focus, and Space-key regressions.
+The indexable build verified 217 routes. The 211 preview-channel blockers remain disclosed;
+passing development checks does not constitute clinical review or deployment approval.

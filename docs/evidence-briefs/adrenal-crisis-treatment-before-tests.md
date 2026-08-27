@@ -1,6 +1,6 @@
 # Adrenal crisis: treatment before tests
 
-Content 0.1.1 rehearses urgent combined rescue, reassessment, and continuity in a fictional
+Content 0.1.2 rehearses urgent combined rescue, reassessment, and continuity in a fictional
 46-year-old with known primary adrenal insufficiency and persistent vomiting. It is a preview,
 not clinically reviewed, and does not establish dosing or procedural competence.
 
@@ -52,7 +52,7 @@ the bounded opt-in context; sending stayed disabled on localhost and no report w
 The debrief names emergency care rather than anesthesia, and the menu omits the unused floating
 tutor introduction for this inline-guidance lesson.
 
-The optional worked example (controller 0.1.0) performs seven ordinary decisions: steroid,
+The optional worked example (controller 0.1.1) performs seven ordinary decisions: steroid,
 saline, support, record review, fresh reassessment, prevention, and handoff. Accepted state chooses
 the next step; a countdown reaching zero alone does not prove the response. Pause stops decisions
 and the patient clock. Takeover restores manual controls and selected guidance without resetting
@@ -69,3 +69,22 @@ remain visible; a passing development build is not a reviewed release.
 
 Clinical review, complete inclusive-runtime evidence, and
 four-surface reporting verification remain pending. Catalog registration is not full completion.
+
+Content 0.1.2 adds reading checkpoints shared with the hypoglycemia example. Each decision pauses
+the clock until Continue; accepting the action resumes observation. The initial snapshot and
+submitted action are allowed to advance before another checkpoint, avoiding a worker deadlock.
+Repeated clicks cannot repeat care, and takeover invalidates a pending Continue callback. Reading
+time does not become a treatment delay. Patient states, clinical sources, and numeric assumptions
+are unchanged; the exact-version report record is separate from earlier content.
+
+The desktop browser run held each explanation at an unchanged clock until Continue, retained
+focus across decisions and the observation period, then paused at reassessment, prevention, and
+handoff. Native disabling initially dropped focus to the document body; the control now uses
+guarded `aria-disabled` semantics. Space on the demo controls no longer reaches the cockpit's
+play/pause shortcut. The live report modal remained centered with the 160-character limit.
+These are desktop engineering checks, not complete keyboard, 320 px, or screen-reader approval.
+
+The final shared-checkpoint CI run passed all 30 specs and 3,320 tests across 444 files,
+including full-session replay, paused-reading, duplicate-click, focus, and Space-key regressions.
+The indexable build verified 217 routes. The 211 preview-channel blockers remain disclosed;
+passing development checks does not constitute clinical review or deployment approval.

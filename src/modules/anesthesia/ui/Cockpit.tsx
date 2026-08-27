@@ -164,11 +164,13 @@ export function Cockpit({
   const hypoglycemiaDemonstration = useHypoglycemiaDemonstration({
     active: demonstrating && hypoglycemiaDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.severeHypoglycemia,
+    pause: session.pause, play: session.play,
     act: session.act, onFinished: () => onTakeControls?.(),
   });
   const adrenalDemonstration = useAdrenalDemonstration({
     active: demonstrating && adrenalDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.adrenalCrisis,
+    pause: session.pause, play: session.play,
     act: session.act, onFinished: () => onTakeControls?.(),
   });
   const demonstration = adrenalDemoSupported ? adrenalDemonstration
@@ -581,6 +583,8 @@ export function Cockpit({
       <DemonstrationBar
         beat={demonstration.beat}
         progress={demonstration.progress}
+        onAdvance={demonstration.onAdvance}
+        awaitingAdvance={demonstration.awaitingAdvance}
         onTakeControls={() => onTakeControls?.()}
       />
 

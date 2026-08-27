@@ -2825,6 +2825,11 @@ guidance and 1× speed without resetting the patient. Clinical review and comple
 four-surface reporting verification remain pending.
 See `docs/evidence-briefs/adrenal-crisis-treatment-before-tests.md` for the fictional parameters.
 
+Both endocrine examples now pause before each decision and wait for “Continue example.” This
+keeps narration readable without counting reading time as a clinical delay. The shared controller
+does not pause the initial snapshot or an action awaiting acceptance; both require worker progress.
+Observation remains live at the chosen speed, and takeover invalidates pending Continue callbacks.
+
 #### Renal and electrolyte medicine: 12
 
 Hyperkalemia with ECG change; severe hypokalemia; symptomatic hyponatremia; hypernatremic

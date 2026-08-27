@@ -842,6 +842,11 @@ credited toward the catalog until every item in the completion contract passes.
     seven-decision worked example driven by accepted state, with pause, single-dispatch actions,
     and non-resetting takeover. Clinical review, full inclusive-runtime evidence, and four-surface
     report verification remain pending.
+  - [x] Severe-hypoglycemia content 0.1.3 and adrenal-crisis content 0.1.2 add learner-paced
+    worked-example decisions. The patient pauses for reading, Continue sends one action and
+    resumes observation, and takeover cancels pending automation without resetting the patient.
+    A stable disabled Continue control preserves the reading layout during observation. Clinical
+    and inclusive validation gates remain pending.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
   - [x] Toxicology slice 1/15 establishes the indexable `/toxicology` module with one authored
     methemoglobinemia lab after documented topical benzocaine exposure. The learner reconciles

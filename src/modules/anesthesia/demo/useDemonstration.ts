@@ -21,6 +21,9 @@ export interface DemonstrationController {
   readonly progress: number;
   /** True once the last beat has been reached. */
   readonly finished: boolean;
+  /** Present only while an observed-state example waits at a reading checkpoint. */
+  readonly onAdvance?: (() => void) | undefined;
+  readonly awaitingAdvance?: boolean | undefined;
 }
 
 export interface DemonstrationOptions {
