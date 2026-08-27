@@ -252,6 +252,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       hasNeonatologyTermTransitionResponse: false,
       hasNeonatologyApneaResponse: false,
       hasNeonatologyIneffectiveVentilationResponse: false,
+      hasNeonatologyBradycardiaResponse: false,
       hasPulmonaryEmbolismResponse: false,
       hasStemiResponse: false,
       hasUnstableNarrowTachycardiaResponse: false,

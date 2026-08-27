@@ -2328,6 +2328,21 @@ stimulation, oxygen or pressure selection, ventilation, corrective step, airway 
 compression, access, fluid, glucose, drug, feeding, resuscitation, transport, counseling, procedure,
 disposition or outcome control.
 
+### Wave D neonatology slice 4: neonatal bradycardia after adequate ventilation
+
+A term newborn remains apneic with heart rate 48/min after supplied qualified correction, alternative
+airway placement, and 30 seconds of ventilation that visibly inflates the lungs. The learner activates
+advanced newborn and parent-dyad ownership; connects adequate ventilation, airway, heart-rate,
+oxygenation, thermal and bleeding-risk context; recognizes the compression threshold only after
+ventilation verification; and reviews qualified coordinated support, reassessment, access readiness,
+and the later epinephrine boundary. A fixed 3-minute report supplies heart rate 74/min and preductal
+SpO2 71% after 60 seconds of qualified coordinated compressions and ventilation, with compressions
+stopped while assisted ventilation and direct assessment continue. The heart-rate response is an
+authored teaching estimate, not a universal treatment effect. Six controls expose no learner
+examination, scoring, monitoring interpretation, device handling, oxygen or ventilation delivery,
+airway placement or verification, compression, access, fluid, blood, glucose, epinephrine or other
+drug, feeding, resuscitation, transport, counseling, procedure, disposition or outcome control.
+
 ### Wave E neurology slice 1: minor nondisabling acute ischemic stroke
 
 The first Neurology lab is a function-based minor-stroke decision boundary, not another disabling

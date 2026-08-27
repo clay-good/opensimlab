@@ -555,6 +555,16 @@ credited toward the catalog until every item in the completion contract passes.
     handling, position, suction, stimulation, oxygen or pressure selection, ventilation, corrective
     step, airway placement, compression, access, fluid, glucose, drug, feeding, resuscitation,
     transport, counseling, procedure, disposition, or outcome controls.
+  - [x] Neonatology slice 4/11 adds one authored persistent heart rate 48/min pattern after 30 seconds
+    of qualified ventilation that visibly inflates the lungs through an alternative airway;
+    advanced-team and parent-dyad ownership; adequate-ventilation, airway, heart-rate, oxygenation,
+    thermal, bleeding-risk and whole-dyad reconciliation; compression-threshold recognition only
+    after ventilation verification; qualified coordination, reassessment, access-readiness and later
+    epinephrine-boundary review; a fixed 3-minute early-response report; and active-risk handoff
+    without learner examination, scoring, monitoring interpretation, device handling, oxygen or
+    ventilation delivery, airway placement or verification, compression, access, fluid, blood,
+    glucose, drug, feeding, resuscitation, transport, counseling, procedure, disposition, or outcome
+    controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

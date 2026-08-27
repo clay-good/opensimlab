@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "neonatology",
-  "recordCount": 3,
+  "recordCount": 4,
   "records": [
     {
       "recordId": "scenario:term-newborn-transition@0.1.0",
@@ -34,6 +34,17 @@
       "evidence": [
         "/catalog/neonatology-completion-audit.json#ineffective-ventilation-correction@0.1.0",
         "/catalog/neonatology-quality-audit.json#ineffective-ventilation-correction@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:neonatal-bradycardia@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "neonatal-bradycardia",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/neonatology-completion-audit.json#neonatal-bradycardia@0.1.0",
+        "/catalog/neonatology-quality-audit.json#neonatal-bradycardia@0.1.0"
       ]
     }
   ]

@@ -569,6 +569,10 @@ const NEONATOLOGY_INEFFECTIVE_VENTILATION_BLOCKED_ACTION_TYPES = new Set([
   ...NEONATOLOGY_APNEA_BLOCKED_ACTION_TYPES,
   'neonatal-apnea-response',
 ]);
+const NEONATOLOGY_BRADYCARDIA_BLOCKED_ACTION_TYPES = new Set([
+  ...NEONATOLOGY_INEFFECTIVE_VENTILATION_BLOCKED_ACTION_TYPES,
+  'ineffective-ventilation-correction-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1604,6 +1608,12 @@ export class AnesthesiaEngine {
   private neonatologyIneffectiveVentilationReadinessAtTick: number | null = null;
   private neonatologyIneffectiveVentilationReassessmentAtTick: number | null = null;
   private neonatologyIneffectiveVentilationHandoffAtTick: number | null = null;
+  private neonatologyBradycardiaSupportAtTick: number | null = null;
+  private neonatologyBradycardiaContextAtTick: number | null = null;
+  private neonatologyBradycardiaRecognitionAtTick: number | null = null;
+  private neonatologyBradycardiaReadinessAtTick: number | null = null;
+  private neonatologyBradycardiaReassessmentAtTick: number | null = null;
+  private neonatologyBradycardiaHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2639,6 +2649,14 @@ export class AnesthesiaEngine {
     if (neonatologyIneffectiveVentilation && NEONATOLOGY_INEFFECTIVE_VENTILATION_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `neonatology-ineffective-ventilation-generic-action-refused-${this.currentTick}`,
         'This Neonatology lesson exposes no generic examination, scoring, monitoring interpretation, position, suction, stimulation, mask or device handling, oxygen, ventilation setting or delivery, corrective step, airway, compression, access, fluid, glucose, drug, feeding, resuscitation, transport, procedure, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const neonatologyBradycardia = this.scenario.metadata.id === 'neonatal-bradycardia'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'neonatal-bradycardia-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'neonatal-bradycardia-transition-boundary').length === 1;
+    if (neonatologyBradycardia && NEONATOLOGY_BRADYCARDIA_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `neonatology-bradycardia-generic-action-refused-${this.currentTick}`,
+        'This Neonatology lesson exposes no generic examination, scoring, monitoring interpretation, device handling, oxygen or ventilation delivery, airway placement or verification, compression, access, fluid, blood, glucose, epinephrine or other drug, feeding, resuscitation, transport, procedure, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -11499,6 +11517,29 @@ export class AnesthesiaEngine {
         if (this.neonatologyIneffectiveVentilationHandoffAtTick !== null) break;
         this.neonatologyIneffectiveVentilationHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `neonatology-ineffective-ventilation-active-risk-handoff-recorded-${this.currentTick}`, 'Birth and resuscitation clocks, ventilation effectiveness, recurrent leak or obstruction, spontaneous breathing, oxygenation, airway and lung disease, heart rate, thermal, glucose, neurologic, etiologic, parent and family support, surveillance, escalation, transport, documentation, review, disposition, and outcome uncertainty were handed off.', { durableBreathingProven: false, stableTransitionProven: false, airwayOrLungDiseaseExcluded: false, neurologicSafetyProven: false, safetyDispositionDetermined: false, newbornOutcomePredicted: false, parentOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'neonatal-bradycardia-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'neonatal-bradycardia'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'neonatal-bradycardia-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'neonatal-bradycardia-transition-boundary').length === 1;
+        const actions = this.scenario.metadata.objectives.map((objective) => objective.id);
+        const valid = typeof response === 'string' && actions.includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `neonatology-bradycardia-response-refused-${this.currentTick}`, supported ? 'That neonatal-bradycardia response is not available. Nothing changed.' : 'These neonatal-bradycardia choices are available only in the exact declared Neonatology lesson.'); break; }
+        if (response === actions[0]) { if (this.neonatologyBradycardiaSupportAtTick !== null) break; this.neonatologyBradycardiaSupportAtTick = this.currentTick; this.log('critical', 'assessment', `neonatology-bradycardia-support-activated-${this.currentTick}`, 'A trained advanced newborn-resuscitation team, leader, ventilation and airway owner, compression owner, heart-rate assessor, monitoring, timekeeping, recording, access and medication readiness, equipment, parent communication, dignity, family, and staff-support ownership were activated. No learner examination, ventilation, airway, compression, access, drug, or resuscitation action occurred.'); break; }
+        if (this.neonatologyBradycardiaSupportAtTick === null) { this.log('warning', 'assessment', `neonatology-bradycardia-support-order-refused-${this.currentTick}`, 'Activate qualified advanced newborn, clock, communication, and dyad support before further review.'); break; }
+        if (response === actions[1]) { if (this.neonatologyBradycardiaContextAtTick !== null) break; this.neonatologyBradycardiaContextAtTick = this.currentTick; this.log('critical', 'assessment', `neonatology-bradycardia-context-reconciled-${this.currentTick}`, 'The supplied birth and resuscitation clocks, completed initial steps, ventilation correction, alternative airway, visible chest movement, persistent heart rate 48/min, reliable oxygenation signal, temperature, bleeding concern, parent state, preferences, support, and whole dyad were connected without learner examination, monitoring interpretation, diagnosis, or procedure.'); break; }
+        if (this.neonatologyBradycardiaContextAtTick === null) { this.log('warning', 'assessment', `neonatology-bradycardia-context-order-refused-${this.currentTick}`, 'Connect the supplied adequate-ventilation, heart-rate, airway, oxygenation, thermal, bleeding-risk, parent, and whole-dyad context before threshold recognition.'); break; }
+        if (response === actions[2]) { if (this.neonatologyBradycardiaRecognitionAtTick !== null) break; this.neonatologyBradycardiaRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `neonatology-bradycardia-threshold-recognized-${this.currentTick}`, 'Persistent heart rate below 60/min after 30 seconds of qualified ventilation that visibly inflated the lungs was recognized as meeting the newborn compression threshold. Ventilation adequacy was verified before entering the compression branch, while respiratory, airway, hypovolemic, infectious, metabolic, congenital, and other causes stayed open.'); break; }
+        if (this.neonatologyBradycardiaRecognitionAtTick === null) { this.log('warning', 'assessment', `neonatology-bradycardia-recognition-order-refused-${this.currentTick}`, 'Recognize the supplied compression threshold only after adequate ventilation is established.'); break; }
+        if (response === actions[3]) { if (this.neonatologyBradycardiaReadinessAtTick !== null) break; this.neonatologyBradycardiaReadinessAtTick = this.currentTick; this.log('critical', 'assessment', `neonatology-bradycardia-readiness-reviewed-${this.currentTick}`, 'Qualified coordinated compressions and ventilation, tracheal-airway and oxygen strategy, heart-rate reassessment, warmth, monitoring, access and medication readiness, explanation, dignity, and support were reviewed. Epinephrine remained the later branch only if heart rate failed to reach 60/min after optimized ventilation and compressions. No learner care was delivered.'); break; }
+        if (this.neonatologyBradycardiaReadinessAtTick === null) { this.log('warning', 'assessment', `neonatology-bradycardia-readiness-order-refused-${this.currentTick}`, 'Review qualified coordinated support, reassessment, access readiness, and the later epinephrine boundary before the fixed report.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.neonatologyBradycardiaReadinessAtTick) { this.log('warning', 'assessment', `neonatology-bradycardia-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed qualified-team report.'); break; } if (this.neonatologyBradycardiaReassessmentAtTick !== null) break; this.neonatologyBradycardiaReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `neonatology-bradycardia-three-minute-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report at 3 minutes: after 60 seconds of coordinated compressions and ventilation, heart rate has risen to 74/min and preductal SpO2 is 71% with the same reliable signal. Compressions are stopped while assisted ventilation and direct assessment continue. This authored estimate does not prove durable circulation, breathing, stable transition, cause, neurologic safety, disposition, or outcome.', { compressionPerformedByLearner: false, oxygenOrVentilationDeliveredByLearner: false, airwayPlacedOrVerifiedByLearner: false, accessFluidBloodGlucoseOrDrugDeliveredByLearner: false, durableCirculationProven: false, outcomePredicted: false }); break; }
+        if (this.neonatologyBradycardiaReassessmentAtTick === null) { this.log('warning', 'assessment', `neonatology-bradycardia-handoff-order-refused-${this.currentTick}`, 'Review the fixed 3-minute qualified-team report before active-risk handoff.'); break; }
+        if (this.currentTick <= this.neonatologyBradycardiaReassessmentAtTick) { this.log('warning', 'assessment', `neonatology-bradycardia-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.neonatologyBradycardiaHandoffAtTick !== null) break;
+        this.neonatologyBradycardiaHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `neonatology-bradycardia-active-risk-handoff-recorded-${this.currentTick}`, 'Birth and resuscitation clocks, recurrent bradycardia, ventilation, airway, oxygenation, perfusion, bleeding and hypovolemia risk, thermal, glucose, neurologic, etiologic, parent and family support, surveillance, escalation, access and medication readiness, transport, documentation, review, disposition, and outcome uncertainty were handed off.', { durableCirculationProven: false, durableBreathingProven: false, stableTransitionProven: false, causeDetermined: false, neurologicSafetyProven: false, safetyDispositionDetermined: false, newbornOutcomePredicted: false, parentOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -14551,6 +14592,16 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: this.neonatologyIneffectiveVentilationReassessmentAtTick !== null ? 24 : 0,
         spo2Percent: this.neonatologyIneffectiveVentilationReassessmentAtTick !== null ? 76 : 68,
         systolicMmHg: 58, diastolicMmHg: 34, meanArterialMmHg: 42, coreTemperatureC: 36.5 };
+    }
+    if (this.scenario.metadata.id === 'neonatal-bradycardia'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'neonatal-bradycardia-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'neonatal-bradycardia-transition-boundary').length === 1) {
+      crisisState = { ...crisisState, heartRateBpm: this.neonatologyBradycardiaReassessmentAtTick !== null ? 74 : 48,
+        respiratoryRateBpm: 0, spo2Percent: this.neonatologyBradycardiaReassessmentAtTick !== null ? 71 : 62,
+        systolicMmHg: this.neonatologyBradycardiaReassessmentAtTick !== null ? 50 : 44,
+        diastolicMmHg: this.neonatologyBradycardiaReassessmentAtTick !== null ? 30 : 26,
+        meanArterialMmHg: this.neonatologyBradycardiaReassessmentAtTick !== null ? 37 : 34, coreTemperatureC: 36.4 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -18960,6 +19011,35 @@ export class AnesthesiaEngine {
               neurologicSafetyProven: false as const, causeDetermined: false as const,
               safetyDispositionDetermined: false as const, newbornOutcomePredicted: false as const,
               parentOutcomePredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'neonatal-bradycardia'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'neonatal-bradycardia-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'neonatal-bradycardia-transition-boundary').length === 1 ? {
+            neonatologyBradycardiaAssessment: {
+              supportAtTick: this.neonatologyBradycardiaSupportAtTick,
+              contextAtTick: this.neonatologyBradycardiaContextAtTick,
+              recognitionAtTick: this.neonatologyBradycardiaRecognitionAtTick,
+              readinessAtTick: this.neonatologyBradycardiaReadinessAtTick,
+              reassessmentAtTick: this.neonatologyBradycardiaReassessmentAtTick,
+              handoffAtTick: this.neonatologyBradycardiaHandoffAtTick,
+              authoredSevereBradycardiaAfterAdequateVentilation: true as const,
+              authoredQualifiedCompressionResponse: this.neonatologyBradycardiaReassessmentAtTick !== null,
+              newbornExaminedOrScoredByLearner: false as const,
+              monitoringOrTestsInterpretedByLearner: false as const, diagnosisMadeByLearner: false as const,
+              maskOrDeviceHandledByLearner: false as const,
+              pressureRatePeepOrOxygenSelectedByLearner: false as const,
+              oxygenOrVentilationDeliveredByLearner: false as const,
+              airwayPlacedOrVerifiedByLearner: false as const, compressionPerformedByLearner: false as const,
+              accessFluidBloodGlucoseOrDrugDeliveredByLearner: false as const,
+              feedingPerformedByLearner: false as const, resuscitationPerformedByLearner: false as const,
+              transportOrProcedurePerformedByLearner: false as const, durableCirculationProven: false as const,
+              durableBreathingProven: false as const, stableTransitionProven: false as const,
+              neurologicSafetyProven: false as const, causeDetermined: false as const,
+              treatmentEffectProven: false as const, safetyDispositionDetermined: false as const,
+              newbornOutcomePredicted: false as const, parentOutcomePredicted: false as const,
+              outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

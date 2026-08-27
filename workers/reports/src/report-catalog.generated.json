@@ -1822,6 +1822,23 @@
       "limitationManifestHash": "sha256:c35bfc01923a4aa64a55ea5059945c20185f11edd51faa7ff417a9cde16cc54b"
     },
     {
+      "scenarioId": "neonatal-bradycardia",
+      "contentVersion": "0.1.0",
+      "moduleId": "neonatology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:c58a27eb6ef762f97ea6e38bda543705f1c7ca7e046fa8f63814c24443ace5dc",
+      "defaultsHash": "sha256:13c026127936d8ef137fede6658f9157254ea7f2ac978dd7679efd9569bbe8bc",
+      "maturityHash": "sha256:9216334d1cc5bb82d53b677ab9d86d1395c410e825e4d97ef2f5ffe926831503",
+      "sourceManifestHash": "sha256:39beb051d5326f88fdfc132d9799c4741dc5a19c90b40a06dfd2854e60165a25",
+      "limitationManifestHash": "sha256:f506135edd3a4c1d88b6a42c469d7d595b5bf1f8898df29a2514d457597ed692"
+    },
+    {
       "scenarioId": "term-newborn-transition",
       "contentVersion": "0.1.0",
       "moduleId": "neonatology",

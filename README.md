@@ -283,6 +283,13 @@ heart rate 118/min, preductal SpO2 76%, and emerging irregular respirations whil
 continues. No learner examination, device handling, ventilation, corrective step, airway,
 compression, drug, procedure, disposition, or newborn/parent outcome control is exposed.
 
+The fourth Neonatology lab begins only after qualified ventilation visibly inflates the lungs while
+heart rate remains 48/min. It makes ventilation verification precede compression-threshold
+recognition, reviews qualified coordinated support and the later epinephrine boundary, then supplies
+a fixed heart-rate rise above 60/min without claiming a universal treatment effect. No learner
+examination, monitoring interpretation, ventilation, airway, compression, access, drug, procedure,
+disposition, or newborn/parent outcome control is exposed.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

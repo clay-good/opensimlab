@@ -5250,6 +5250,31 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['activate-neonatal-bradycardia-qualified-compression-ventilation-clock-and-dyad-response',
+      'reconcile-neonatal-bradycardia-adequate-ventilation-heart-rate-airway-oxygenation-and-whole-dyad',
+      'recognize-neonatal-bradycardia-compression-threshold-after-adequate-ventilation',
+      'review-qualified-neonatal-compression-ventilation-coordination-and-epinephrine-boundary',
+      'review-neonatal-bradycardia-fixed-three-minute-qualified-response-report',
+      'handoff-neonatal-bradycardia-respiratory-circulatory-neurologic-parent-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'neonatal-bradycardia'
+        && scenario.timeline.every((event) => event.type === 'narrative')
+        && scenario.timeline.filter((event) => event.target === 'neonatal-bradycardia-transition').length === 1
+        && scenario.timeline.filter((event) => event.target === 'neonatal-bradycardia-transition-boundary').length === 1;
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neonatology bradycardia lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['support-activated', 'Qualified advanced newborn, ventilation, airway, compression, heart-rate, monitoring, clock, access-readiness, communication, parent, and support ownership was activated first.'],
+        ['context-reconciled', 'Adequate ventilation, alternative airway, chest movement, heart-rate trajectory, oxygenation, temperature, bleeding concern, parent, and whole-dyad context were connected.'],
+        ['threshold-recognized', 'The compression threshold was recognized only after the supplied evidence of adequate ventilation, without cause or outcome closure.'],
+        ['readiness-reviewed', 'Qualified coordinated support, airway and oxygen strategy, reassessment, access readiness, and the later epinephrine boundary were reviewed without learner care.'],
+        ['three-minute-report-reviewed', 'The fixed qualified early-response report was reviewed without universal treatment-effect, durable-recovery, disposition, or outcome claims.'],
+        ['active-risk-handoff-recorded', 'Respiratory, circulatory, airway, oxygenation, bleeding, thermal, glucose, neurologic, etiologic, parent, escalation, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^neonatology-bradycardia-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^neonatology-bradycardia-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['activate-obstetrics-cord-prolapse-response-diagnosis-clock-theatre-anesthesia-newborn-and-support-roles',
       'reconcile-obstetrics-cord-prolapse-membrane-rupture-fetal-heart-exam-birth-imminence-and-whole-person',
       'review-obstetrics-cord-prolapse-pressure-relief-minimal-handling-position-and-no-delay-boundaries',

@@ -4991,6 +4991,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified direct findings, current local neonatal-resuscitation protocols and equipment, immediate trained teams, continuous response assessment, respectful parent communication, and hands-on simulation.',
     briefIn: ['ineffective-ventilation-correction'],
   },
+  {
+    id: 'neonatal-bradycardia-birth-ventilation-airway-parent-and-qualified-course-reports-are-authored',
+    headline: 'The birth, adequate-ventilation, airway, heart-rate, parent, qualified response, and 3-minute reports are authored.',
+    simplification: 'Fixed reports stand in for record review, newborn examination, heart-rate and oxygenation assessment, ventilation correction and delivery, airway placement and verification, chest movement, compressions, thermal care, equipment and access readiness, parent communication, and serial reassessment. Hidden adult-oriented engine-schema minimums are scaffolding, not neonatal physiology validation.',
+    whereItMisleads: 'Treating ventilation adequacy, airway placement, chest movement, heart rate 48/min, oxygenation, or the early heart-rate rise as learner findings, technical performance, universal treatment effect, durable recovery, prognosis, or outcome.',
+    correctUnderstanding: 'Persistent heart rate below 60/min triggers compressions only after qualified ventilation has demonstrably inflated the lungs; ongoing response and cause assessment remain essential.',
+    briefIn: ['neonatal-bradycardia'],
+  },
+  {
+    id: 'neonatal-bradycardia-controls-activate-reconcile-review-reassess-and-handoff-only',
+    headline: 'The controls activate qualified help, connect supplied facts, review threshold and coordination boundaries, read a fixed report, and hand off only.',
+    simplification: 'Six actions stand in for concurrent qualified newborn, airway, ventilation, compression, heart-rate, monitoring, thermal, equipment, access, pharmacy, transport, leadership, timekeeping, documentation, communication, dignity, parent, family, staff-support, escalation, and handoff work.',
+    whereItMisleads: 'Equating button order with examination, scoring, ventilation or airway verification, compression skill, oxygen strategy, access or medication readiness, communication quality, or competence.',
+    correctUnderstanding: 'Real advanced newborn resuscitation is concurrent, physical, time-critical, team-based, locally protocolized, and verified through direct assessment. Cognitive practice cannot replace hands-on simulation.',
+    briefIn: ['neonatal-bradycardia'],
+  },
+  {
+    id: 'no-live-neonatal-bradycardia-exam-monitor-ventilation-airway-compression-access-drug-procedure-disposition-or-outcome',
+    headline: 'The lab does not examine, monitor, ventilate, place an airway, compress, obtain access, give a drug, determine disposition, or report outcome.',
+    simplification: 'No live breathing, heart-rate, chest-movement, tone, color, temperature, perfusion, glucose, neurologic, parent or other assessment; scoring; device handling; pressure, rate, PEEP or oxygen selection; ventilation; airway placement or verification; compression; access; fluid; blood; glucose; epinephrine or other drug or dose; feeding; resuscitation; transport; counseling; procedure; disposition; prognosis; or outcome is modeled.',
+    whereItMisleads: 'Using the rehearsal as ventilation, airway, compression, oxygen, access, epinephrine, fluid, blood, transfer, or disposition instruction; delaying trained response for a click; or reading completion as competence.',
+    correctUnderstanding: 'Use verified direct findings, current local neonatal-resuscitation protocols and equipment, immediate trained teams, continuous response assessment, respectful parent communication, and hands-on simulation.',
+    briefIn: ['neonatal-bradycardia'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {
