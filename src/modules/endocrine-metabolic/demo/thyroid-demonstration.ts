@@ -6,7 +6,7 @@ import { supportsThyroidStorm, type ThyroidStormAction } from '../thyroid-storm'
 export const THYROID_DEMONSTRATION_VERSION = '0.1.0';
 
 export function supportsThyroidDemonstration(scenario: Scenario): boolean {
-  return scenario.metadata.version === '0.1.0' && supportsThyroidStorm(scenario);
+  return scenario.metadata.version === '0.1.1' && supportsThyroidStorm(scenario);
 }
 
 export interface ThyroidDemonstrationStep {

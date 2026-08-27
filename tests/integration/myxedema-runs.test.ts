@@ -64,7 +64,7 @@ describe('Myxedema: real engine support, sequence, and replay', () => {
       .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
     expect(audit.requirements.find(({ id }) => id === 'guidance-and-demonstration')?.status).toBe('satisfied');
     expect(myxedemaCompletionEvidence(SCENARIO, ENGINE_VERSION, 'endocrine-metabolic').length).toBeGreaterThan(0);
-    expect(myxedemaCompletionEvidence({ ...SCENARIO, metadata: { ...SCENARIO.metadata, version: '0.1.1' } }, ENGINE_VERSION, 'endocrine-metabolic')).toEqual([]);
+    expect(myxedemaCompletionEvidence({ ...SCENARIO, metadata: { ...SCENARIO.metadata, version: '0.1.2' } }, ENGINE_VERSION, 'endocrine-metabolic')).toEqual([]);
     expect(myxedemaCompletionEvidence({ ...SCENARIO, patient: { ...SCENARIO.patient, weightKg: SCENARIO.patient.weightKg + 1 } }, ENGINE_VERSION, 'endocrine-metabolic')).toEqual([]);
     expect(myxedemaCompletionEvidence(SCENARIO, `${ENGINE_VERSION}-changed`, 'endocrine-metabolic')).toEqual([]);
     expect(myxedemaCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toEqual([]);
@@ -72,6 +72,7 @@ describe('Myxedema: real engine support, sequence, and replay', () => {
 
   it('binds schema, objectives, fixture version, and explicitly authored timing', () => {
     expect(validateScenario(SCENARIO)).toEqual([]);
+    expect(SCENARIO.metadata.version).toBe('0.1.1');
     expect(SCENARIO.metadata.objectives.map(({ id }) => id)).toEqual(OBJECTIVES);
     expect(FIXTURES.scenarioId).toBe(SCENARIO.metadata.id); expect(FIXTURES.contentVersion).toBe(SCENARIO.metadata.version);
     expect(supportsMyxedema(SCENARIO)).toBe(true);
@@ -87,6 +88,18 @@ describe('Myxedema: real engine support, sequence, and replay', () => {
     expect(engine.invalidParameters()).toContain('etco2MmHg');
     expect(engine.invalidParameters()).toContain('fio2');
     expect(engine.step().equipment.invalidParameters).toContain('etco2MmHg');
+  });
+
+  it('advertises complete-care observation without adding the concurrent ventilation interval', () => {
+    expect(SCENARIO.metadata.estimatedMinutes).toBe(60);
+    expect(SCENARIO.metadata.estimatedMinutes).toBe(MYXEDEMA_RESPONSE_TICKS / TICKS_PER_SECOND / 60);
+    const packageAt = Math.max(...FIXTURES.expert.filter(([, action]) => action !== 'reassess' && action !== 'handoff').map(([tick]) => tick));
+    const assessments = FIXTURES.expert.filter(([, action]) => action === 'reassess');
+    const handoff = FIXTURES.expert.find(([, action]) => action === 'handoff')![0];
+    expect(assessments[0]![0]).toBe(MYXEDEMA_VENTILATION_TICKS);
+    expect(assessments[1]![0] - packageAt).toBe(MYXEDEMA_RESPONSE_TICKS);
+    expect(Math.round(handoff / TICKS_PER_SECOND / 60)).toBe(SCENARIO.metadata.estimatedMinutes);
+    expect(handoff).toBeLessThan(MYXEDEMA_SESSION_TICKS);
   });
 
   it.each(['expert', 'commonError', 'recovery', 'noAction'] as const)('replays %s with identical whole-state hashes and retained objective evidence', (path) => {

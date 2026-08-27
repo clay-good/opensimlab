@@ -73,7 +73,7 @@ describe('Thyroid storm: real engine decisions, time, and replay', () => {
       .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
     expect(audit.requirements.find(({ id }) => id === 'guidance-and-demonstration')?.status).toBe('satisfied');
     expect(thyroidCompletionEvidence(SCENARIO, ENGINE_VERSION, 'endocrine-metabolic').length).toBeGreaterThan(0);
-    expect(thyroidCompletionEvidence({ ...SCENARIO, metadata: { ...SCENARIO.metadata, version: '0.1.1' } }, ENGINE_VERSION, 'endocrine-metabolic')).toEqual([]);
+    expect(thyroidCompletionEvidence({ ...SCENARIO, metadata: { ...SCENARIO.metadata, version: '0.1.2' } }, ENGINE_VERSION, 'endocrine-metabolic')).toEqual([]);
     expect(thyroidCompletionEvidence({ ...SCENARIO, patient: { ...SCENARIO.patient, weightKg: SCENARIO.patient.weightKg + 1 } }, ENGINE_VERSION, 'endocrine-metabolic')).toEqual([]);
     expect(thyroidCompletionEvidence(SCENARIO, `${ENGINE_VERSION}-changed`, 'endocrine-metabolic')).toEqual([]);
     expect(thyroidCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toEqual([]);
@@ -81,6 +81,7 @@ describe('Thyroid storm: real engine decisions, time, and replay', () => {
 
   it('binds the schema, five objectives, exact fixture version, and authored time boundaries', () => {
     expect(validateScenario(SCENARIO)).toEqual([]);
+    expect(SCENARIO.metadata.version).toBe('0.1.1');
     expect(SCENARIO.metadata.objectives.map(({ id }) => id)).toEqual(OBJECTIVES);
     expect(FIXTURES.scenarioId).toBe(SCENARIO.metadata.id);
     expect(FIXTURES.contentVersion).toBe(SCENARIO.metadata.version);
@@ -94,6 +95,19 @@ describe('Thyroid storm: real engine decisions, time, and replay', () => {
       circulationRisk: 'unassessed', observation: null, ended: null,
       authoredStateTransitions: true, doseModelAvailable: false, durableRecoveryProven: false,
     });
+  });
+
+  it('advertises the full sequential iodine and partial-support observation path', () => {
+    const observationTicks = THYROID_IODINE_WAIT_TICKS + THYROID_RESPONSE_TICKS;
+    expect(SCENARIO.metadata.estimatedMinutes).toBe(180);
+    expect(SCENARIO.metadata.estimatedMinutes).toBe(observationTicks / TICKS_PER_SECOND / 60);
+    const iodine = FIXTURES.expert.find(([, action]) => action === 'iodine')![0];
+    const reassess = FIXTURES.expert.find(([, action]) => action === 'reassess')![0];
+    const handoff = FIXTURES.expert.find(([, action]) => action === 'handoff')![0];
+    expect(iodine).toBe(THYROID_IODINE_WAIT_TICKS);
+    expect(reassess - iodine).toBe(THYROID_RESPONSE_TICKS);
+    expect(Math.round(handoff / TICKS_PER_SECOND / 60)).toBe(SCENARIO.metadata.estimatedMinutes);
+    expect(handoff).toBeLessThan(THYROID_SESSION_TICKS);
   });
 
   it.each(['expert', 'commonError', 'recovery', 'noAction'] as const)('replays %s with identical whole-state hashes and honest objective outcomes', (path) => {

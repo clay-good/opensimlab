@@ -14,7 +14,7 @@ import { myxedemaInlinePrompt, MYXEDEMA_SOURCE_HREF, MYXEDEMA_ATA_SOURCE_HREF } 
 import { myxedemaDemonstrationStep, supportsMyxedemaDemonstration, MYXEDEMA_DEMONSTRATION_VERSION } from '../../src/modules/endocrine-metabolic/demo/myxedema-demonstration';
 import { useMyxedemaDemonstration } from '../../src/modules/endocrine-metabolic/demo/useMyxedemaDemonstration';
 
-const VERSION = '0.1.0';
+const VERSION = '0.1.1';
 const labels: Record<MyxedemaAction, string> = {
   'call-support': 'Call qualified support', ventilate: 'Start qualified ventilation support',
   'oxygen-only': 'Use oxygen without ventilation', hydrocortisone: 'Start qualified hydrocortisone coverage',
@@ -58,9 +58,9 @@ describe('Myxedema emergency experience', () => {
   it('prepares without invented observations and gates the worked example to the exact supported version', () => {
     const html = renderToStaticMarkup(<MyxedemaTray scenarioVersion={VERSION} onAction={() => {}} />);
     expect(html).toContain('Preparing the fictional patient'); expect(html).not.toContain('<button');
-    expect(MYXEDEMA_DEMONSTRATION_VERSION).toBe('0.1.0'); expect(SCENARIO.metadata.version).toBe('0.1.0');
+    expect(MYXEDEMA_DEMONSTRATION_VERSION).toBe('0.1.0'); expect(SCENARIO.metadata.version).toBe('0.1.1');
     expect(supportsMyxedemaDemonstration(SCENARIO)).toBe(true);
-    expect(supportsMyxedemaDemonstration({ ...SCENARIO, metadata: { ...SCENARIO.metadata, version: '0.1.1' } })).toBe(false);
+    expect(supportsMyxedemaDemonstration({ ...SCENARIO, metadata: { ...SCENARIO.metadata, version: '0.1.2' } })).toBe(false);
     expect(supportsMyxedemaDemonstration({ ...SCENARIO, timeline: [] })).toBe(false);
     expect(myxedemaDemonstrationStep()).toMatchObject({ id: 'preparing', progress: 0 });
     expect(myxedemaDemonstrationStep().action).toBeUndefined();
@@ -75,7 +75,7 @@ describe('Myxedema emergency experience', () => {
     const prompt = (level: 'guided' | 'coached' | 'unassisted', version = VERSION, tick = 0) =>
       myxedemaInlinePrompt(level, { scenarioVersion: version, myxedema: model.snapshot(tick) });
     expect(prompt('guided')?.id).toBe('myxedema-breathing'); expect(prompt('coached')?.id).toBe('myxedema-breathing');
-    expect(prompt('unassisted')).toBeNull(); expect(prompt('guided', '0.1.1')).toBeNull();
+    expect(prompt('unassisted')).toBeNull(); expect(prompt('guided', '0.1.2')).toBeNull();
     expect(myxedemaInlinePrompt('guided', { scenarioVersion: VERSION })).toBeNull();
     model.apply('ventilate', 0); expect(prompt('coached')?.id).toBe('myxedema-steroid-first');
     model.apply('hydrocortisone', 0); expect(prompt('guided')?.id).toBe('myxedema-thyroxine');

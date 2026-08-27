@@ -25,6 +25,13 @@ describe('Endocrine and Metabolic Medicine module foundation', () => {
     expect(structuredDataFor(['LearningResource'], '/endocrine-metabolic/scenario/hypercalcemic-crisis-volume-and-bridge')[0])
       .toMatchObject({ timeRequired: 'PT240M' });
   });
+  it.each([
+    ['thyroid-storm-hemodynamic-risk', 'PT180M'],
+    ['myxedema-coma-ventilation-and-steroid-sequence', 'PT60M'],
+  ])('publishes the full modeled observation duration for %s in search metadata', (id, timeRequired) => {
+    expect(structuredDataFor(['LearningResource'], `/endocrine-metabolic/scenario/${id}`)[0])
+      .toMatchObject({ timeRequired });
+  });
   it('publishes exact review, completion, maturity, and secure-report records', () => {
     const completion = json('public/catalog/endocrine-metabolic-completion-audit.json');
     const maturity = json('public/catalog/endocrine-metabolic-maturity.json');

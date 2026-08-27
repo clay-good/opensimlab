@@ -1,7 +1,7 @@
 import type { ThyroidStormAction } from './thyroid-storm';
 
 export const THYROID_FIXTURES = {
-  scenarioId: 'thyroid-storm-hemodynamic-risk', contentVersion: '0.1.0', seed: 4903,
+  scenarioId: 'thyroid-storm-hemodynamic-risk', contentVersion: '0.1.1', seed: 4903,
   noAction: [],
   expert: [[0, 'synthesis-blockade'], [1, 'supportive-care'], [2, 'call-support'], [3, 'assess-circulation'],
     [4, 'rate-control-review'], [36000, 'iodine'], [108000, 'reassess'], [108001, 'handoff']],

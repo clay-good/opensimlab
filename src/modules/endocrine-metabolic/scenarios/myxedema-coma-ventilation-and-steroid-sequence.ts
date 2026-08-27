@@ -3,9 +3,9 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const MYXEDEMA_COMA_VENTILATION_AND_STEROID_SEQUENCE: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'myxedema-coma-ventilation-and-steroid-sequence', version: '0.1.0', maturity: 'preview',
+    id: 'myxedema-coma-ventilation-and-steroid-sequence', version: '0.1.1', maturity: 'preview',
     title: 'Myxedema coma: support breathing, protect the sequence', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
-    estimatedMinutes: 12, difficulty: 'intermediate',
+    estimatedMinutes: 60, difficulty: 'intermediate',
     objectives: [
       { id: 'myxedema-ventilation', statement: 'Support ventilation and assess its response, not just oxygen saturation.', measure: 'Qualified ventilation and a fresh supported respiratory observation are recorded without a missing-ventilation delay.' },
       { id: 'myxedema-steroid-sequence', statement: 'Establish empiric steroid coverage before thyroid hormone replacement.', measure: 'Hydrocortisone precedes levothyroxine without an early-thyroxine attempt; no artificial waiting interval is imposed.' },
@@ -15,7 +15,7 @@ export const MYXEDEMA_COMA_VENTILATION_AND_STEROID_SEQUENCE: Scenario = {
     ],
     clinicalReview: {
       reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED', competingInterests: 'None declared',
-      reviewedOn: '1970-01-01', reviewBy: '1970-01-01', contentVersion: '0.1.0',
+      reviewedOn: '1970-01-01', reviewBy: '1970-01-01', contentVersion: '0.1.1',
       sources: [
         'Jonklaas J et al. Guidelines for the Treatment of Hypothyroidism. American Thyroid Association. 2014. Recommendations 21a–21d. doi:10.1089/thy.2014.0028.',
         'Taylor P et al. Management of endocrine emergencies: joint consensus statement for management of myxoedema coma. 2026. Treatment, Thyroid hormone replacement, Glucocorticoid treatment, Warming, Hypoventilation, and Ongoing management sections. doi:10.1530/ETJ-26-0044.',

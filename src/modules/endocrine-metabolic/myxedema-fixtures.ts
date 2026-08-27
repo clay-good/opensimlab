@@ -1,7 +1,7 @@
 import type { MyxedemaAction } from './myxedema';
 
 export const MYXEDEMA_FIXTURES = {
-  scenarioId: 'myxedema-coma-ventilation-and-steroid-sequence', contentVersion: '0.1.0', seed: 4904,
+  scenarioId: 'myxedema-coma-ventilation-and-steroid-sequence', contentVersion: '0.1.1', seed: 4904,
   noAction: [],
   expert: [[0, 'ventilate'], [1, 'hydrocortisone'], [2, 'levothyroxine'], [3, 'supportive-care'],
     [4, 'call-support'], [3000, 'reassess'], [36004, 'reassess'], [36005, 'handoff']],

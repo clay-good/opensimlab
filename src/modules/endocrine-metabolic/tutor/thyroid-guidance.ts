@@ -10,7 +10,7 @@ export function thyroidInlinePrompt(level: GuidanceLevel, input: {
   readonly thyroidStorm?: ThyroidStormSnapshot;
 }) {
   const patient = input.thyroidStorm;
-  if (level === 'unassisted' || input.scenarioVersion !== '0.1.0' || !patient || patient.ended) return null;
+  if (level === 'unassisted' || input.scenarioVersion !== '0.1.1' || !patient || patient.ended) return null;
   const prompt = (id: string, urgent: boolean, suggestion: string, because: string) =>
     level === 'coached' && !urgent ? null : { id, suggestion, because, sourceHref: THYROID_SOURCE_HREF };
   if (patient.synthesisAtTick === null || patient.supportiveCareAtTick === null || !patient.supportActive) {

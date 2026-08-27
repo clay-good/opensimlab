@@ -11,7 +11,7 @@ export function myxedemaInlinePrompt(level: GuidanceLevel, input: {
   readonly myxedema?: MyxedemaSnapshot;
 }) {
   const patient = input.myxedema;
-  if (level === 'unassisted' || input.scenarioVersion !== '0.1.0' || !patient || patient.ended) return null;
+  if (level === 'unassisted' || input.scenarioVersion !== '0.1.1' || !patient || patient.ended) return null;
   const prompt = (id: string, urgent: boolean, suggestion: string, because: string) =>
     level === 'coached' && !urgent ? null : { id, suggestion, because, sourceHref: MYXEDEMA_SOURCE_HREF };
   if (patient.ventilationAtTick === null) return prompt('myxedema-breathing', true,

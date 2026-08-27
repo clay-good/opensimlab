@@ -3,9 +3,9 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const THYROID_STORM_HEMODYNAMIC_RISK: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'thyroid-storm-hemodynamic-risk', version: '0.1.0', maturity: 'preview',
+    id: 'thyroid-storm-hemodynamic-risk', version: '0.1.1', maturity: 'preview',
     title: 'Thyroid storm: treat the person, not just the pulse', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
-    estimatedMinutes: 15, difficulty: 'intermediate',
+    estimatedMinutes: 180, difficulty: 'intermediate',
     objectives: [
       { id: 'thyroid-urgent-treatment', statement: 'Begin qualified multimodal treatment without waiting for laboratory confirmation.', measure: 'Antithyroid and supportive pathways start without a diagnostic-delay choice or incomplete-coverage deterioration.' },
       { id: 'thyroid-circulation', statement: 'Assess circulation before selecting individualized rate control.', measure: 'Fresh circulation findings inform qualified rate-control review without a blanket beta-blocker choice.' },
@@ -15,7 +15,7 @@ export const THYROID_STORM_HEMODYNAMIC_RISK: Scenario = {
     ],
     clinicalReview: {
       reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED', competingInterests: 'None declared',
-      reviewedOn: '1970-01-01', reviewBy: '1970-01-01', contentVersion: '0.1.0',
+      reviewedOn: '1970-01-01', reviewBy: '1970-01-01', contentVersion: '0.1.1',
       sources: [
         'European Thyroid Association, British Thyroid Association, Society for Endocrinology, and Welsh Endocrine and Diabetes Society. Management of thyroid emergencies: joint consensus statement on management of thyroid storm. 2026. doi:10.1530/ETJ-26-0043.',
         'Ross DS et al. 2016 American Thyroid Association Guidelines for Diagnosis and Management of Hyperthyroidism and Other Causes of Thyrotoxicosis. Recommendations 34–35 and Table 7. doi:10.1089/thy.2016.0229.',

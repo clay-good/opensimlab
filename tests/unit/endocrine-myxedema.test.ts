@@ -27,7 +27,7 @@ describe('Myxedema: ventilation, steroid-first sequence, and observed support', 
       { ...scenario, timeline: [...scenario.timeline, { ...scenario.timeline[0]!, type: 'surgical-stimulus' as const }] }]) {
       expect(supportsMyxedema(other)).toBe(false);
     }
-    expect(FIXTURES.contentVersion).toBe('0.1.0'); expect(FIXTURES.seed).toBe(4904);
+    expect(FIXTURES.contentVersion).toBe('0.1.1'); expect(FIXTURES.seed).toBe(4904);
   });
 
   it.each(['call-support', 'ventilate', 'hydrocortisone', 'supportive-care'] as const)('accepts %s independently without invented gates', (action) => {

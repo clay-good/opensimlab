@@ -1,10 +1,22 @@
 # Myxedema coma: breathing support and treatment sequence
 
-Content 0.1.0 rehearses a fictional 72-year-old woman with interrupted levothyroxine,
+Content 0.1.1 rehearses a fictional 72-year-old woman with interrupted levothyroxine,
 progressive drowsiness, hypothermia, bradycardia, hypotension, and hypoventilation. The lesson
 separates oxygenation from ventilation, starts qualified treatment without waiting for tests,
 preserves steroid-before-thyroxine sequencing, and returns to fresh reassessment and handoff.
 It is a state-transition preview, not independently clinically reviewed.
+
+## Duration correction, 2026-08-27
+
+Version 0.1.1 corrects the catalog, briefing, and search metadata from 12 to about 60 simulated
+minutes. The five-minute ventilatory-support checkpoint runs within the one-hour complete-care
+interval, not after it; the expert fixture hands off at tick 36,005 (10 ticks per second). This
+is modeled elapsed time, not reading time, a clinical recovery estimate, or the three-hour
+unfinished-lesson limit. At 60×, observation time takes about one real minute, plus learner-paced
+decisions. Patient defaults, treatment rules, sources, limitations, and worked-example narration
+are unchanged. Exact-version fixtures, tutor, example eligibility, and completion evidence now
+bind to 0.1.1; the unchanged worked-example algorithm remains version 0.1.0. Historical 0.1.0 report
+evidence is retained unchanged. Earlier checks below remain records of their original versions.
 
 ## Sources checked August 27, 2026
 

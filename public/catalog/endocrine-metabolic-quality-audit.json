@@ -150,35 +150,35 @@
     },
     {
       "scenarioId": "thyroid-storm-hemodynamic-risk",
-      "contentVersion": "0.1.0",
+      "contentVersion": "0.1.1",
       "completionComplete": false,
       "qualityRecords": [
         {
           "kind": "training-value",
           "status": "missing",
           "evidence": [
-            "No version-bound training-value record exists for thyroid-storm-hemodynamic-risk 0.1.0."
+            "No version-bound training-value record exists for thyroid-storm-hemodynamic-risk 0.1.1."
           ]
         },
         {
           "kind": "authored-defaults",
           "status": "missing",
           "evidence": [
-            "No version-bound authored-defaults record exists for thyroid-storm-hemodynamic-risk 0.1.0."
+            "No version-bound authored-defaults record exists for thyroid-storm-hemodynamic-risk 0.1.1."
           ]
         },
         {
           "kind": "scenario-hazard",
           "status": "missing",
           "evidence": [
-            "No version-bound scenario-hazard record exists for thyroid-storm-hemodynamic-risk 0.1.0."
+            "No version-bound scenario-hazard record exists for thyroid-storm-hemodynamic-risk 0.1.1."
           ]
         },
         {
           "kind": "state-space-verification",
           "status": "missing",
           "evidence": [
-            "No version-bound state-space-verification record exists for thyroid-storm-hemodynamic-risk 0.1.0."
+            "No version-bound state-space-verification record exists for thyroid-storm-hemodynamic-risk 0.1.1."
           ]
         }
       ],
@@ -186,35 +186,35 @@
     },
     {
       "scenarioId": "myxedema-coma-ventilation-and-steroid-sequence",
-      "contentVersion": "0.1.0",
+      "contentVersion": "0.1.1",
       "completionComplete": false,
       "qualityRecords": [
         {
           "kind": "training-value",
           "status": "missing",
           "evidence": [
-            "No version-bound training-value record exists for myxedema-coma-ventilation-and-steroid-sequence 0.1.0."
+            "No version-bound training-value record exists for myxedema-coma-ventilation-and-steroid-sequence 0.1.1."
           ]
         },
         {
           "kind": "authored-defaults",
           "status": "missing",
           "evidence": [
-            "No version-bound authored-defaults record exists for myxedema-coma-ventilation-and-steroid-sequence 0.1.0."
+            "No version-bound authored-defaults record exists for myxedema-coma-ventilation-and-steroid-sequence 0.1.1."
           ]
         },
         {
           "kind": "scenario-hazard",
           "status": "missing",
           "evidence": [
-            "No version-bound scenario-hazard record exists for myxedema-coma-ventilation-and-steroid-sequence 0.1.0."
+            "No version-bound scenario-hazard record exists for myxedema-coma-ventilation-and-steroid-sequence 0.1.1."
           ]
         },
         {
           "kind": "state-space-verification",
           "status": "missing",
           "evidence": [
-            "No version-bound state-space-verification record exists for myxedema-coma-ventilation-and-steroid-sequence 0.1.0."
+            "No version-bound state-space-verification record exists for myxedema-coma-ventilation-and-steroid-sequence 0.1.1."
           ]
         }
       ],

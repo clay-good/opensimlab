@@ -1,9 +1,21 @@
 # Thyroid storm: treatment and circulation
 
-Content 0.1.0 is a dose-free, state-transition preview for a fictional 38-year-old with known
+Content 0.1.1 is a dose-free, state-transition preview for a fictional 38-year-old with known
 Graves disease, interrupted antithyroid treatment, fever, confusion, vomiting, and circulatory
 instability. It rehearses parallel treatment, circulation-informed rate control, iodine sequencing,
 reassessment, and continuing-care handoff. It is not independently clinically reviewed.
+
+## Duration correction, 2026-08-27
+
+Version 0.1.1 corrects the catalog, briefing, and search metadata from 15 to about 180 simulated
+minutes: the selected one-hour iodine interval precedes the authored two-hour complete-care
+checkpoint. The expert fixture hands off at tick 108,001 (10 ticks per second). This is modeled
+elapsed time, not reading time, a clinical recovery estimate, or the four-hour unfinished-lesson
+limit. At 60×, observation time takes about three real minutes, plus learner-paced decisions.
+Patient defaults, treatment rules, sources, limitations, and worked-example narration are unchanged.
+Exact-version fixtures, tutor, example eligibility, and completion evidence now bind to 0.1.1;
+the unchanged worked-example algorithm remains version 0.1.0. Historical 0.1.0 report evidence is
+retained unchanged. The checks below describe their recorded earlier versions, not new signoffs.
 
 ## Sources and disagreement
 

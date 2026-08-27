@@ -8,7 +8,7 @@ import { ThyroidStorm, THYROID_IODINE_WAIT_TICKS, THYROID_RESPONSE_TICKS, THYROI
   THYROID_TAKEOVER_TICKS, type ThyroidStormAction } from '../../src/modules/endocrine-metabolic/thyroid-storm';
 import { thyroidInlinePrompt, THYROID_SOURCE_HREF } from '../../src/modules/endocrine-metabolic/tutor/thyroid-guidance';
 
-const VERSION = '0.1.0';
+const VERSION = '0.1.1';
 const labels: Record<ThyroidStormAction, string> = {
   'call-support': 'Call qualified support',
   'synthesis-blockade': 'Start qualified synthesis blockade',
@@ -63,7 +63,7 @@ describe('Thyroid storm experience', () => {
       { scenarioVersion: version, thyroidStorm: model.snapshot(0) });
     expect(prompt('guided')?.id).toBe('thyroid-urgent-care');
     expect(prompt('coached')?.id).toBe('thyroid-urgent-care');
-    expect(prompt('unassisted')).toBeNull(); expect(prompt('guided', '0.1.1')).toBeNull();
+    expect(prompt('unassisted')).toBeNull(); expect(prompt('guided', '0.1.2')).toBeNull();
     expect(thyroidInlinePrompt('guided', { scenarioVersion: VERSION })).toBeNull();
     for (const action of ['call-support', 'synthesis-blockade', 'supportive-care'] as const) model.apply(action, 0);
     expect(prompt('guided')?.id).toBe('thyroid-circulation');

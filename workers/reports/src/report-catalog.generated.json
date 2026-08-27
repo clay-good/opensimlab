@@ -1907,6 +1907,23 @@
       "limitationManifestHash": "sha256:11918f0365bdd85369a425c3ec76ed885963697d37b4e670ac8e753325e8707d"
     },
     {
+      "scenarioId": "myxedema-coma-ventilation-and-steroid-sequence",
+      "contentVersion": "0.1.1",
+      "moduleId": "endocrine-metabolic",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:4788e412aa411883507145cda28fb332ba1b6b52ee5e16cf0d7500d8eb1077d8",
+      "defaultsHash": "sha256:30d3a73fe153c7e5b08648cb90f1a4446bb39f6318f3dbc9eeacbfc5b35a0db0",
+      "maturityHash": "sha256:2f71e136f1781f7cf99723c32d807978c8ab76f183d8c317a96832874a61c94d",
+      "sourceManifestHash": "sha256:efa348e5d861e0793bc33167bf55d7829b5c87b040313fa9c6c363be63af6b13",
+      "limitationManifestHash": "sha256:11918f0365bdd85369a425c3ec76ed885963697d37b4e670ac8e753325e8707d"
+    },
+    {
       "scenarioId": "severe-hypoglycemia-recurrence",
       "contentVersion": "0.1.0",
       "moduleId": "endocrine-metabolic",
@@ -1988,6 +2005,23 @@
       "releaseRef": "sha256:a4df094d6491f56e382d48fb455cde0d385c5f84ad641d5b80af37bb56a9258a",
       "defaultsHash": "sha256:098d300c091390b0885fed004915138ae9c9d60feac84cf7fd01592718040a8f",
       "maturityHash": "sha256:819cdb3017284e3a0c02be780fef7b2108e5a2cf8df1bfd897dcc9b509700f8a",
+      "sourceManifestHash": "sha256:80c91127d1659ef35fa0975e90db3553a4a86c6494856073228a15cfa89fe2de",
+      "limitationManifestHash": "sha256:e80acd3fc429c1a683378d6b57471ad0b344e9437e99c71ccd5d575595087945"
+    },
+    {
+      "scenarioId": "thyroid-storm-hemodynamic-risk",
+      "contentVersion": "0.1.1",
+      "moduleId": "endocrine-metabolic",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:52dd4e4ce6d3d55e9f9a0de4603002db3b0c9b6d3c6547a8110950676c097865",
+      "defaultsHash": "sha256:098d300c091390b0885fed004915138ae9c9d60feac84cf7fd01592718040a8f",
+      "maturityHash": "sha256:441706ed62228dffb14ed079c321213f31ecabc15d4bd5e41e6415b9c791b666",
       "sourceManifestHash": "sha256:80c91127d1659ef35fa0975e90db3553a4a86c6494856073228a15cfa89fe2de",
       "limitationManifestHash": "sha256:e80acd3fc429c1a683378d6b57471ad0b344e9437e99c71ccd5d575595087945"
     },

@@ -66,6 +66,11 @@ limitation-manifest hashes. Weekly review can therefore detect drift without tre
 behavior, maturity, sources, limitations, fidelity, region, or capability without advancing its
 content version blocks catalog generation.
 
+Deploy a regenerated reporting Worker catalog before the site introduces its new content
+versions. A previously deployed Worker cannot accept an unknown version; retaining historical
+entries keeps older cached sessions reportable while the site rolls forward. Verify both old
+and new identities against the deployed endpoint before claiming production coverage.
+
 ## Abuse and cost boundaries
 
 The API Worker is separately deployed and accepts only exact GET config and POST report routes.

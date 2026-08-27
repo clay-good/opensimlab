@@ -19,6 +19,31 @@ const context: ScenarioReportContext = {
 
 const valid = () => buildScenarioReportRequest(context, 'clinical-content', 'Expected a different value.', 'token');
 
+// Published evidence is intentionally pinned here, not recomputed from current
+// scenario source: older cached clients must retain their original report identity.
+const HISTORICAL_ENDOCRINE_REPORTS = [
+  {
+    scenarioId: 'myxedema-coma-ventilation-and-steroid-sequence', contentVersion: '0.1.0',
+    moduleId: 'endocrine-metabolic', maturity: 'preview', practiceRegions: ['US', 'GB'],
+    fidelityClass: 'state_transition', capabilityVersion: '0.1.0-alpha.48',
+    releaseRef: 'sha256:3279d1acdfa8e749339ef670b50733a859fd38dc52771b9def4fca8e0f31de5a',
+    defaultsHash: 'sha256:30d3a73fe153c7e5b08648cb90f1a4446bb39f6318f3dbc9eeacbfc5b35a0db0',
+    maturityHash: 'sha256:24db1e37a44fc5e6ab3d834812976b17e2a6c4b9b162eda7135da2d81092e1ac',
+    sourceManifestHash: 'sha256:efa348e5d861e0793bc33167bf55d7829b5c87b040313fa9c6c363be63af6b13',
+    limitationManifestHash: 'sha256:11918f0365bdd85369a425c3ec76ed885963697d37b4e670ac8e753325e8707d',
+  },
+  {
+    scenarioId: 'thyroid-storm-hemodynamic-risk', contentVersion: '0.1.0',
+    moduleId: 'endocrine-metabolic', maturity: 'preview', practiceRegions: ['US', 'GB'],
+    fidelityClass: 'state_transition', capabilityVersion: '0.1.0-alpha.48',
+    releaseRef: 'sha256:a4df094d6491f56e382d48fb455cde0d385c5f84ad641d5b80af37bb56a9258a',
+    defaultsHash: 'sha256:098d300c091390b0885fed004915138ae9c9d60feac84cf7fd01592718040a8f',
+    maturityHash: 'sha256:819cdb3017284e3a0c02be780fef7b2108e5a2cf8df1bfd897dcc9b509700f8a',
+    sourceManifestHash: 'sha256:80c91127d1659ef35fa0975e90db3553a4a86c6494856073228a15cfa89fe2de',
+    limitationManifestHash: 'sha256:e80acd3fc429c1a683378d6b57471ad0b344e9437e99c71ccd5d575595087945',
+  },
+];
+
 function recentContextWithJsonLength(target: number) {
   const recent = {
     seed: 7,
@@ -61,6 +86,42 @@ function recentContextWithJsonLength(target: number) {
 }
 
 describe('scenario report contract', () => {
+  it.each(HISTORICAL_ENDOCRINE_REPORTS)('preserves published $scenarioId evidence alongside the duration-corrected version', (historical) => {
+    const catalog = JSON.parse(readFileSync(
+      join(process.cwd(), 'workers/reports/src/report-catalog.generated.json'), 'utf8',
+    )) as { scenarios: typeof HISTORICAL_ENDOCRINE_REPORTS };
+    const publicCatalog = JSON.parse(readFileSync(
+      join(process.cwd(), 'public/catalog/scenario-report-catalog.json'), 'utf8',
+    ));
+    expect(publicCatalog).toEqual(catalog);
+    const versions = catalog.scenarios.filter((record) => record.moduleId === historical.moduleId
+      && record.scenarioId === historical.scenarioId);
+    expect(versions.map((record) => record.contentVersion)).toEqual(['0.1.0', '0.1.1']);
+    expect(versions.find((record) => record.contentVersion === '0.1.0')).toEqual(historical);
+    const current = versions.find((record) => record.contentVersion === '0.1.1')!;
+    expect(current).toEqual({ ...historical, contentVersion: '0.1.1',
+      releaseRef: expect.stringMatching(/^sha256:[a-f0-9]{64}$/),
+      maturityHash: expect.stringMatching(/^sha256:[a-f0-9]{64}$/) });
+    expect(current.releaseRef).not.toBe(historical.releaseRef);
+    expect(current.maturityHash).not.toBe(historical.maturityHash);
+    // The full-record comparison above also locks unchanged defaults, sources,
+    // limitations, capability, maturity, fidelity, and practice regions.
+    for (const record of [historical, current]) {
+      const { practiceRegions, ...serverEvidence } = record;
+      for (const practiceRegion of practiceRegions) {
+        const request = { ...valid(), module_id: record.moduleId, scenario_id: record.scenarioId,
+          content_version: record.contentVersion, practice_region: practiceRegion,
+          canonical_url: `https://opensimlab.com/${record.moduleId}/scenario/${record.scenarioId}` };
+        expect(validateReportPayload(request)).toMatchObject({ ok: true,
+          value: { ...serverEvidence, practiceRegion } });
+        expect(validateReportPayload({ ...request, content_version: '0.1.2' })).toEqual({ ok: false, status: 400 });
+        expect(validateReportPayload({ ...request, module_id: 'anesthesia' })).toEqual({ ok: false, status: 400 });
+        expect(validateReportPayload({ ...request, canonical_url: `${request.canonical_url}?version=0.1.1` }))
+          .toEqual({ ok: false, status: 403 });
+      }
+    }
+  });
+
   it('publishes an exact-version server catalog for every current playable scenario', () => {
     const catalog = JSON.parse(readFileSync(
       join(process.cwd(), 'workers/reports/src/report-catalog.generated.json'), 'utf8',
@@ -71,9 +132,9 @@ describe('scenario report contract', () => {
     }[] };
     expect(catalog.schemaVersion).toBe(2);
     expect(catalog.evidenceAlgorithm).toBe('scenario-evidence-v1');
-    expect(catalog.scenarios).toHaveLength(204);
+    expect(catalog.scenarios).toHaveLength(206);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(204);
+      .toBe(206);
     for (const contentVersion of ['0.1.0', '0.1.1', '0.1.2']) {
       expect(catalog.scenarios).toContainEqual(expect.objectContaining({
         moduleId: 'endocrine-metabolic', scenarioId: 'adrenal-crisis-treatment-before-tests', contentVersion,

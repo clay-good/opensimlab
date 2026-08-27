@@ -6,7 +6,7 @@ import { supportsMyxedema, type MyxedemaAction } from '../myxedema';
 export const MYXEDEMA_DEMONSTRATION_VERSION = '0.1.0';
 
 export function supportsMyxedemaDemonstration(scenario: Scenario): boolean {
-  return scenario.metadata.version === '0.1.0' && supportsMyxedema(scenario);
+  return scenario.metadata.version === '0.1.1' && supportsMyxedema(scenario);
 }
 
 export interface MyxedemaDemonstrationStep {

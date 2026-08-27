@@ -916,9 +916,20 @@ credited toward the catalog until every item in the completion contract passes.
   - [ ] Complete hypercalcemia inclusive-runtime verification, independent clinical review,
     and production Turnstile/D1 evidence. Local model, replay, report, and browser checks do not
     substitute for those separate gates.
-  - [ ] Correct the earlier thyroid-storm and myxedema duration metadata through new content
-    versions: their current 15- and 12-minute labels understate their full modeled observation
-    paths. Preserve previously published report-evidence records when updating those versions.
+  - [x] Correct thyroid-storm and myxedema duration metadata through new content versions
+    0.1.1: thyroid is about 180 simulated minutes (60 before iodine, then 120 to the authored
+    complete-care checkpoint), and myxedema is about 60 (ventilatory observation runs within
+    that interval). The former 15- and 12-minute labels understated both paths. Six failing-first
+    checks now pass, binding durations to model/fixture ticks, new versions, and search metadata.
+    Prerendered labels, structured data, and maturity links agree. Treatment rules, defaults,
+    sources, limitations, and worked-example narration are unchanged; exact-version eligibility
+    and evidence bind to the new content. All 204 prior report records remain identical, with
+    two new records added; old and new versions pass Worker validation in both practice regions.
+    Clinical, inclusive-runtime, and production reporting gates remain pending. Final CI passes
+    3,683 tests across 467 files and all 30 specs. The indexable build verifies 220 routes;
+    final static-host checks verify 223 routes and 44 catalog artifacts. Compressed budgets are
+    147.9 KiB landing, 1,474.7 KiB cockpit, and 3,281.6 KiB offline. The registry remains at
+    199 scenarios, including seven endocrine previews, not 199 completed scenarios.
   - [x] Repair service-worker release consistency. Build-stamped SHA-256 integrity checks reject
     mixed or incomplete installations; active snapshots are immutable. Explicit acceptance waits
     for the intended controller before reloading only that tab. Durable per-client release pins

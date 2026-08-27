@@ -121,7 +121,7 @@ describe('Thyroid storm observed-state worked example', () => {
 
   it('isolates the exact content version and waits without action for the first snapshot', () => {
     expect(THYROID_DEMONSTRATION_VERSION).toBe('0.1.0'); expect(supportsThyroidDemonstration(SCENARIO)).toBe(true);
-    for (const version of ['0.0.9', '0.1.1']) expect(supportsThyroidDemonstration({
+    for (const version of ['0.1.0', '0.1.2']) expect(supportsThyroidDemonstration({
       ...SCENARIO, metadata: { ...SCENARIO.metadata, version },
     })).toBe(false);
     expect(supportsThyroidDemonstration({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'routine-induction' } })).toBe(false);

@@ -30,7 +30,7 @@ describe('Thyroid storm: urgent care, sequence, circulation, and observed respon
       { ...scenario, timeline: [...scenario.timeline, { ...scenario.timeline[0]!, type: 'surgical-stimulus' as const }] }]) {
       expect(supportsThyroidStorm(other)).toBe(false);
     }
-    expect(FIXTURES.contentVersion).toBe('0.1.0'); expect(FIXTURES.seed).toBe(4903);
+    expect(FIXTURES.contentVersion).toBe('0.1.1'); expect(FIXTURES.seed).toBe(4903);
   });
 
   it.each(['synthesis-blockade', 'supportive-care'] as const)('starts %s without labs, support, or a circulation gate', (first) => {
