@@ -530,6 +530,13 @@ credited toward the catalog until every item in the completion contract passes.
     monitoring interpretation, infusion operation, position, oxygen, fluid, drug, dose, stimulation,
     amnioinfusion, anesthesia, surgery, delivery, newborn care, procedure, restart or birth decision,
     disposition or outcome controls.
+  - [x] Neonatology slice 1/11 adds the available module foundation and one authored stable term-
+    newborn transition with a shared birth clock, breathing or crying, good tone, adequate heart rate,
+    protected skin-to-skin thermal care, deferred-cord and observation review, a fixed 1-hour
+    qualified report, and active-risk handoff without learner examination, scoring, monitoring or
+    test interpretation, cord care, positioning, drying, warming, suction, stimulation, separation,
+    oxygen, ventilation, airway care, compressions, access, fluid, glucose, drug, dose, feeding,
+    resuscitation, transport, counseling, procedure, disposition, or outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

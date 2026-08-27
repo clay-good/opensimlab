@@ -17,6 +17,7 @@ import { PEDIATRICS_SCENARIOS } from '../modules/pediatrics/scenarios';
 import { NEUROLOGY_SCENARIOS } from '../modules/neurology/scenarios';
 import { TOXICOLOGY_SCENARIOS } from '../modules/toxicology/scenarios';
 import { OBSTETRICS_SCENARIOS } from '../modules/obstetrics/scenarios';
+import { NEONATOLOGY_SCENARIOS } from '../modules/neonatology/scenarios';
 import type { Scenario } from '@anesthesia/scenarios/types';
 import { ROOT_ROUTE, formatTitle } from './site-metadata';
 import type { RouteMetadata } from './site-metadata';
@@ -31,7 +32,7 @@ export type { RouteMetadata } from './site-metadata';
  */
 function scenarioDescription(scenario: Scenario): string {
   const { patient, metadata } = scenario;
-  const who = `${patient.ageYears}-year-old ${patientPersonNoun(patient)}`;
+  const who = patient.ageYears === 0 ? 'newborn' : `${patient.ageYears}-year-old ${patientPersonNoun(patient)}`;
   let description = `A ${who} for ${patient.procedure.toLowerCase()}.`;
   // Objectives are added until the description is substantial enough to be worth
   // showing in a result, and stopped before it is truncated. A terse first
@@ -216,6 +217,23 @@ export const ROUTES: readonly RouteMetadata[] = [
   },
   ...OBSTETRICS_SCENARIOS.map((scenario) => ({
     path: `/obstetrics/scenario/${scenario.metadata.id}`,
+    title: formatTitle(scenario.metadata.title.length > 44
+      ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
+    description: scenarioDescription(scenario),
+    indexable: true,
+    structuredData: ['LearningResource'] as const,
+    heading: scenario.metadata.title,
+  })),
+  {
+    path: '/neonatology',
+    title: formatTitle('Neonatology simulator'),
+    description: 'Practice calm newborn transition, ventilation, thermal care, glucose, infection, escalation, reassessment, and parent-newborn handoff.',
+    indexable: true,
+    structuredData: ['SoftwareApplication'],
+    heading: 'Neonatology simulator',
+  },
+  ...NEONATOLOGY_SCENARIOS.map((scenario) => ({
+    path: `/neonatology/scenario/${scenario.metadata.id}`,
     title: formatTitle(scenario.metadata.title.length > 44
       ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
     description: scenarioDescription(scenario),

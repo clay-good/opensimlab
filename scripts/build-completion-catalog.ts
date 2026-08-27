@@ -17,6 +17,7 @@ import { PEDIATRICS_SCENARIOS } from '../src/modules/pediatrics/scenarios';
 import { NEUROLOGY_SCENARIOS } from '../src/modules/neurology/scenarios';
 import { TOXICOLOGY_SCENARIOS } from '../src/modules/toxicology/scenarios';
 import { OBSTETRICS_SCENARIOS } from '../src/modules/obstetrics/scenarios';
+import { NEONATOLOGY_SCENARIOS } from '../src/modules/neonatology/scenarios';
 import { SCENARIO_COMPLETION_SCHEMA } from '@platform/catalog/scenario-completion';
 import { buildScenarioQualityCatalog, QUALITY_SCHEMAS } from '@platform/catalog/scenario-quality';
 import { buildMaturityCatalog, MATURITY_RECORD_SCHEMA } from '@platform/catalog/maturity';
@@ -77,6 +78,10 @@ const obstetricsCompletion = buildModuleCompletionCatalog(
   OBSTETRICS_SCENARIOS, ENGINE_VERSION, 'obstetrics', 'delivery-room', 'state_transition',
 );
 const obstetricsQuality = buildScenarioQualityCatalog(obstetricsCompletion);
+const neonatologyCompletion = buildModuleCompletionCatalog(
+  NEONATOLOGY_SCENARIOS, ENGINE_VERSION, 'neonatology', 'delivery-room', 'state_transition',
+);
+const neonatologyQuality = buildScenarioQualityCatalog(neonatologyCompletion);
 
 function stableJson(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(stableJson).join(',')}]`;
@@ -101,6 +106,7 @@ const authoredScenarios = [
   ['neurology', NEUROLOGY_SCENARIOS],
   ['toxicology', TOXICOLOGY_SCENARIOS],
   ['obstetrics', OBSTETRICS_SCENARIOS],
+  ['neonatology', NEONATOLOGY_SCENARIOS],
 ] as const;
 const authoredByKey = new Map<string, Scenario>(authoredScenarios.flatMap(([moduleId, scenarios]) => scenarios.map(
   (scenario) => [`${moduleId}:${scenario.metadata.id}@${scenario.metadata.version}`, scenario] as const,
@@ -108,7 +114,7 @@ const authoredByKey = new Map<string, Scenario>(authoredScenarios.flatMap(([modu
 const currentReportRecords = [
   completion, emergencyCompletion, criticalCareCompletion, cardiologyCompletion,
   respiratoryMedicineCompletion, pediatricsCompletion, neurologyCompletion, toxicologyCompletion,
-  obstetricsCompletion,
+  obstetricsCompletion, neonatologyCompletion,
 ].flatMap((catalog) => catalog.scenarios).map((scenario) => {
   const key = `${scenario.moduleId}:${scenario.scenarioId}@${scenario.contentVersion}`;
   const authored = authoredByKey.get(key);
@@ -255,6 +261,10 @@ writeFileSync(join(target, 'obstetrics-completion-audit.json'),
   `${JSON.stringify(obstetricsCompletion, null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'obstetrics-quality-audit.json'),
   `${JSON.stringify(obstetricsQuality, null, 2)}\n`, 'utf8');
+writeFileSync(join(target, 'neonatology-completion-audit.json'),
+  `${JSON.stringify(neonatologyCompletion, null, 2)}\n`, 'utf8');
+writeFileSync(join(target, 'neonatology-quality-audit.json'),
+  `${JSON.stringify(neonatologyQuality, null, 2)}\n`, 'utf8');
 writeFileSync(
   join(target, 'maturity-record.schema.json'),
   `${JSON.stringify(MATURITY_RECORD_SCHEMA, null, 2)}\n`,
@@ -284,9 +294,11 @@ writeFileSync(join(target, 'toxicology-maturity.json'),
   `${JSON.stringify(buildMaturityCatalog(toxicologyCompletion, toxicologyQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'obstetrics-maturity.json'),
   `${JSON.stringify(buildMaturityCatalog(obstetricsCompletion, obstetricsQuality), null, 2)}\n`, 'utf8');
+writeFileSync(join(target, 'neonatology-maturity.json'),
+  `${JSON.stringify(buildMaturityCatalog(neonatologyCompletion, neonatologyQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'asset-licenses.json'), `${JSON.stringify(ASSET_LICENSE_MANIFEST, null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'evidence-sources.json'), `${JSON.stringify(buildEvidenceSourceManifest(SOURCES), null, 2)}\n`, 'utf8');
 
 process.stdout.write(
-  `catalog: audited ${SCENARIOS.length} anesthesia, ${EMERGENCY_MEDICINE_SCENARIOS.length} emergency medicine, ${CRITICAL_CARE_SCENARIOS.length} critical care, ${CARDIOLOGY_SCENARIOS.length} cardiology, ${RESPIRATORY_MEDICINE_SCENARIOS.length} respiratory medicine, ${PEDIATRICS_SCENARIOS.length} pediatrics, ${NEUROLOGY_SCENARIOS.length} neurology, ${TOXICOLOGY_SCENARIOS.length} toxicology, and ${OBSTETRICS_SCENARIOS.length} obstetrics scenarios\n`,
+  `catalog: audited ${SCENARIOS.length} anesthesia, ${EMERGENCY_MEDICINE_SCENARIOS.length} emergency medicine, ${CRITICAL_CARE_SCENARIOS.length} critical care, ${CARDIOLOGY_SCENARIOS.length} cardiology, ${RESPIRATORY_MEDICINE_SCENARIOS.length} respiratory medicine, ${PEDIATRICS_SCENARIOS.length} pediatrics, ${NEUROLOGY_SCENARIOS.length} neurology, ${TOXICOLOGY_SCENARIOS.length} toxicology, ${OBSTETRICS_SCENARIOS.length} obstetrics, and ${NEONATOLOGY_SCENARIOS.length} neonatology scenarios\n`,
 );

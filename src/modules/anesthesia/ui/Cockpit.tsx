@@ -58,7 +58,7 @@ export interface CockpitProps {
   readonly onEnd: () => void;
   readonly onReportSource?: () => void;
   readonly onSourceVisibilityChange?: (open: boolean) => void;
-  readonly moduleId?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics';
+  readonly moduleId?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics' | 'neonatology';
 }
 
 export function depthConfidenceFor(
@@ -643,7 +643,7 @@ export function Cockpit({
         <AnalysisRegion
           scenario={scenario}
           moduleId={moduleId}
-          initialTab={moduleId === 'respiratory-medicine' || moduleId === 'pediatrics' || moduleId === 'neurology'
+          initialTab={moduleId === 'respiratory-medicine' || moduleId === 'pediatrics' || moduleId === 'neurology' || moduleId === 'neonatology'
             ? 'patient' : 'concentrations'}
           history={session.history}
           concentrations={session.concentrations}
@@ -1185,6 +1185,9 @@ export function Cockpit({
           })}
           onObstetricsOxytocinTachysystoleResponse={(action) => session.act({
             type: 'oxytocin-associated-uterine-tachysystole-response', payload: { action },
+          })}
+          onNeonatologyTermTransitionResponse={(action) => session.act({
+            type: 'term-newborn-transition-response', payload: { action },
           })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },

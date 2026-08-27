@@ -47,6 +47,9 @@ import {
 import {
   OBSTETRICS_SCENARIOS, DEFAULT_OBSTETRICS_SCENARIO_ID, getObstetricsScenario,
 } from '../modules/obstetrics/scenarios';
+import {
+  NEONATOLOGY_SCENARIOS, DEFAULT_NEONATOLOGY_SCENARIO_ID, getNeonatologyScenario,
+} from '../modules/neonatology/scenarios';
 import type { Scenario } from '@anesthesia/scenarios/types';
 
 export function PrerenderedBody({ path }: { path: string }) {
@@ -114,6 +117,15 @@ export function PrerenderedBody({ path }: { path: string }) {
     <ScenarioMarkup path={path} basePath="/pediatrics"
       defaultScenarioId={DEFAULT_PEDIATRICS_SCENARIO_ID}
       getScenario={getPediatricsScenario} />
+  );
+  if (path === '/neonatology') return (
+    <ModuleMarkup moduleId="neonatology" basePath="/neonatology"
+      heading="Neonatology simulator" scenarios={NEONATOLOGY_SCENARIOS} />
+  );
+  if (path.startsWith('/neonatology/scenario/')) return (
+    <ScenarioMarkup path={path} basePath="/neonatology"
+      defaultScenarioId={DEFAULT_NEONATOLOGY_SCENARIO_ID}
+      getScenario={getNeonatologyScenario} />
   );
   if (path === '/neurology') return (
     <ModuleMarkup moduleId="neurology" basePath="/neurology"

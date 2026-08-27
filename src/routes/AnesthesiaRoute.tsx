@@ -67,6 +67,9 @@ import {
 import {
   OBSTETRICS_SCENARIOS, DEFAULT_OBSTETRICS_SCENARIO_ID, getObstetricsScenario,
 } from '../modules/obstetrics/scenarios';
+import {
+  NEONATOLOGY_SCENARIOS, DEFAULT_NEONATOLOGY_SCENARIO_ID, getNeonatologyScenario,
+} from '../modules/neonatology/scenarios';
 import { APP_VERSION } from '@platform/governance/status';
 import { ScenarioProblemReport } from '@platform/reporting/ScenarioProblemReport';
 import {
@@ -76,8 +79,8 @@ import {
 import { SITE_ORIGIN } from './site-metadata';
 
 interface ClinicalModuleConfig {
-  readonly id: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics';
-  readonly basePath: '/anesthesia' | '/emergency-medicine' | '/critical-care' | '/cardiology' | '/respiratory-medicine' | '/pediatrics' | '/neurology' | '/toxicology' | '/obstetrics';
+  readonly id: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics' | 'neonatology';
+  readonly basePath: '/anesthesia' | '/emergency-medicine' | '/critical-care' | '/cardiology' | '/respiratory-medicine' | '/pediatrics' | '/neurology' | '/toxicology' | '/obstetrics' | '/neonatology';
   readonly heading: string;
   readonly catalogIntroduction: string;
   readonly catalogStatus: string;
@@ -157,6 +160,14 @@ const OBSTETRICS_CONFIG: ClinicalModuleConfig = {
   catalogStatus: `${OBSTETRICS_SCENARIOS.length} of 15 bounded Obstetrics labs is playable.`,
   scenarios: OBSTETRICS_SCENARIOS, defaultScenarioId: DEFAULT_OBSTETRICS_SCENARIO_ID,
   getScenario: getObstetricsScenario,
+};
+
+const NEONATOLOGY_CONFIG: ClinicalModuleConfig = {
+  id: 'neonatology', basePath: '/neonatology', heading: 'Neonatology simulator',
+  catalogIntroduction: 'Quiet newborn rehearsals for protecting transition, noticing change early, and keeping the parent-newborn dyad at the center of every handoff.',
+  catalogStatus: `${NEONATOLOGY_SCENARIOS.length} of 11 bounded Neonatology labs is playable.`,
+  scenarios: NEONATOLOGY_SCENARIOS, defaultScenarioId: DEFAULT_NEONATOLOGY_SCENARIO_ID,
+  getScenario: getNeonatologyScenario,
 };
 
 /**
@@ -559,6 +570,10 @@ export function ToxicologyRoute({ path }: { path: string }) {
 
 export function ObstetricsRoute({ path }: { path: string }) {
   return <ClinicalModuleRoute path={path} config={OBSTETRICS_CONFIG} />;
+}
+
+export function NeonatologyRoute({ path }: { path: string }) {
+  return <ClinicalModuleRoute path={path} config={NEONATOLOGY_CONFIG} />;
 }
 
 /**

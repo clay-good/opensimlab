@@ -1788,6 +1788,23 @@
       "limitationManifestHash": "sha256:d8d5c11c34520fdaa59a4969e3c22f30681f10f186a6d5c2337e6a9449273ca2"
     },
     {
+      "scenarioId": "term-newborn-transition",
+      "contentVersion": "0.1.0",
+      "moduleId": "neonatology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:cac41dd3f334b59c8556470c692dd2e0f1c038b99708f1fc2ab384eaa6808753",
+      "defaultsHash": "sha256:2163deddffe559e9a8d1a2f804c75a2faa156d88cd691755dca361843238f4c6",
+      "maturityHash": "sha256:0100bf82b1e62c754ab55d8da1b9a44bedbe6ea50e2c05011dbb72ac497fd899",
+      "sourceManifestHash": "sha256:9545e00c6d8df7926c9b4e29c545995c8a1fb236e1ad33f19e813b031a3324d5",
+      "limitationManifestHash": "sha256:1538d6224696040d10e1a065b1f981a5119a3e37d2e5c4dfd5661bad13d8bd8a"
+    },
+    {
       "scenarioId": "acute-bacterial-meningitis-first-hour",
       "contentVersion": "0.1.0",
       "moduleId": "neurology",

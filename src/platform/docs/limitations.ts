@@ -4919,6 +4919,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified direct findings, current local protocols, immediate qualified obstetric review, cause-specific conservative measures, continuous communication and surveillance, and hands-on simulation.',
     briefIn: ['oxytocin-associated-uterine-tachysystole'],
   },
+  {
+    id: 'term-newborn-transition-antenatal-birth-newborn-parent-and-qualified-course-reports-are-authored',
+    headline: 'The antenatal, birth, newborn, parent, qualified care, and 1-hour transition reports are authored.',
+    simplification: 'Fixed reports stand in for record review, newborn examination and observation, shared-clock documentation, cord care, drying, skin-to-skin positioning, thermal protection, feeding support, parent assessment, communication, and serial review. Hidden adult-oriented engine-schema minimums are scaffolding, not neonatal hemodynamic validation.',
+    whereItMisleads: 'Treating gestation, breathing, tone, heart rate, temperature, absent supplied risks, or the stable 1-hour report as learner findings, universal reassurance thresholds, care effects, discharge readiness, prognosis, or outcome.',
+    correctUnderstanding: 'Normal transition still requires prepared attendance, direct ongoing breathing and temperature observation, protected positioning, parent-dyad support, and immediate escalation when the pattern changes.',
+    briefIn: ['term-newborn-transition'],
+  },
+  {
+    id: 'term-newborn-transition-controls-activate-reconcile-review-reassess-and-handoff-only',
+    headline: 'The controls confirm support, connect supplied facts, review transition and protective care, read a fixed report, and hand off only.',
+    simplification: 'Six actions stand in for concurrent qualified newborn, obstetric, midwifery, nursing, feeding, leadership, timekeeping, documentation, communication, dignity, parent, family, staff-support, escalation, and handoff work.',
+    whereItMisleads: 'Equating button order with newborn examination, scoring, observation, cord care, positioning, thermal care, feeding support, communication quality, or competence.',
+    correctUnderstanding: 'Real newborn care is concurrent, physical, relational, time-aware, locally protocolized, and responsive to change. Cognitive sequence practice cannot replace direct care or hands-on simulation.',
+    briefIn: ['term-newborn-transition'],
+  },
+  {
+    id: 'no-live-term-newborn-exam-monitor-score-cord-care-resuscitation-feeding-procedure-disposition-or-outcome',
+    headline: 'The lab does not examine, score, monitor, perform cord or thermal care, feed, resuscitate, determine disposition, or report outcome.',
+    simplification: 'No live breathing, heart-rate, tone, color, temperature, glucose, feeding, parent or other assessment; Apgar scoring; cord clamping; positioning; drying; warming; suction; stimulation; separation; oxygen; ventilation; airway care; compressions; access; fluid; glucose; drug or dose; feeding; resuscitation; transport; counseling; procedure; disposition; prognosis; or outcome is modeled.',
+    whereItMisleads: 'Using the rehearsal as newborn assessment, cord, skin-to-skin, warming, oxygen, feeding, resuscitation, discharge, or outcome instruction; delaying trained care for a click; or reading completion as competence.',
+    correctUnderstanding: 'Use verified direct findings, current local newborn-transition and resuscitation protocols, trained teams, protected parent-newborn positioning, respectful communication, and hands-on simulation.',
+    briefIn: ['term-newborn-transition'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

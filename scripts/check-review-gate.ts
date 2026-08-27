@@ -15,6 +15,7 @@ import { PEDIATRICS_SCENARIOS } from '../src/modules/pediatrics/scenarios';
 import { NEUROLOGY_SCENARIOS } from '../src/modules/neurology/scenarios';
 import { TOXICOLOGY_SCENARIOS } from '../src/modules/toxicology/scenarios';
 import { OBSTETRICS_SCENARIOS } from '../src/modules/obstetrics/scenarios';
+import { NEONATOLOGY_SCENARIOS } from '../src/modules/neonatology/scenarios';
 import { buildScenarioQualityCatalog } from '@platform/catalog/scenario-quality';
 import {
   buildMaturityCatalog, maturityFor, type MaturitySubjectKind,
@@ -99,6 +100,11 @@ function main(): void {
   );
   const obstetricsQuality = buildScenarioQualityCatalog(obstetricsCompletion);
   const obstetricsMaturity = buildMaturityCatalog(obstetricsCompletion, obstetricsQuality);
+  const neonatologyCompletion = buildModuleCompletionCatalog(
+    NEONATOLOGY_SCENARIOS, ENGINE_VERSION, 'neonatology', 'delivery-room', 'state_transition',
+  );
+  const neonatologyQuality = buildScenarioQualityCatalog(neonatologyCompletion);
+  const neonatologyMaturity = buildMaturityCatalog(neonatologyCompletion, neonatologyQuality);
   const moduleCatalogs = [
     { completion, quality, maturity },
     { completion: emergencyCompletion, quality: emergencyQuality, maturity: emergencyMaturity },
@@ -110,6 +116,7 @@ function main(): void {
     { completion: neurologyCompletion, quality: neurologyQuality, maturity: neurologyMaturity },
     { completion: toxicologyCompletion, quality: toxicologyQuality, maturity: toxicologyMaturity },
     { completion: obstetricsCompletion, quality: obstetricsQuality, maturity: obstetricsMaturity },
+    { completion: neonatologyCompletion, quality: neonatologyQuality, maturity: neonatologyMaturity },
   ];
   const validation = buildValidationReport();
   const evidenceOptions = {

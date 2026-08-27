@@ -20,6 +20,7 @@ import { getPediatricsScenario } from '../../modules/pediatrics/scenarios';
 import { getNeurologyScenario } from '../../modules/neurology/scenarios';
 import { getToxicologyScenario } from '../../modules/toxicology/scenarios';
 import { getObstetricsScenario } from '../../modules/obstetrics/scenarios';
+import { getNeonatologyScenario } from '../../modules/neonatology/scenarios';
 import { ONE_LINE_DESCRIPTION } from '@landing/content';
 import { SITE_NAME, SITE_ORIGIN, canonicalUrl } from '@routes/routes';
 
@@ -81,7 +82,7 @@ export function softwareApplicationJsonLd(path = '/anesthesia'): JsonLd {
  * the site does not make.
  */
 type ScenarioModuleRoute = 'anesthesia' | 'emergency-medicine' | 'critical-care'
-  | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics';
+  | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics' | 'neonatology';
 
 export function learningResourceJsonLd(
   scenarioId: string = DEFAULT_SCENARIO_ID,
@@ -95,6 +96,8 @@ export function learningResourceJsonLd(
         ? getCardiologyScenario(scenarioId)
         : moduleRoute === 'respiratory-medicine'
           ? getRespiratoryMedicineScenario(scenarioId)
+          : moduleRoute === 'neonatology'
+            ? getNeonatologyScenario(scenarioId)
           : moduleRoute === 'pediatrics'
             ? getPediatricsScenario(scenarioId)
             : moduleRoute === 'neurology'
@@ -124,7 +127,7 @@ export function learningResourceJsonLd(
 export function structuredDataFor(types: readonly string[], path?: string): JsonLd[] {
   const out: JsonLd[] = [];
   const scenarioMatch = path?.match(
-    /^\/(anesthesia|emergency-medicine|critical-care|cardiology|respiratory-medicine|pediatrics|neurology|toxicology|obstetrics)\/scenario\/([^/]+)$/,
+    /^\/(anesthesia|emergency-medicine|critical-care|cardiology|respiratory-medicine|pediatrics|neurology|toxicology|obstetrics|neonatology)\/scenario\/([^/]+)$/,
   );
   const moduleRoute = scenarioMatch?.[1] as ScenarioModuleRoute | undefined;
   const scenarioId = scenarioMatch?.[2];

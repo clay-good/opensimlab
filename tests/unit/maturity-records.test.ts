@@ -14,6 +14,7 @@ import { PEDIATRICS_SCENARIOS } from '../../src/modules/pediatrics/scenarios';
 import { NEUROLOGY_SCENARIOS } from '../../src/modules/neurology/scenarios';
 import { TOXICOLOGY_SCENARIOS } from '../../src/modules/toxicology/scenarios';
 import { OBSTETRICS_SCENARIOS } from '../../src/modules/obstetrics/scenarios';
+import { NEONATOLOGY_SCENARIOS } from '../../src/modules/neonatology/scenarios';
 import { buildScenarioQualityCatalog } from '@platform/catalog/scenario-quality';
 import {
   buildMaturityCatalog, MATURITY_RECORD_SCHEMA, MATURITY_STATUSES,
@@ -74,6 +75,12 @@ const obstetricsCompletion = buildModuleCompletionCatalog(
 const obstetricsCatalog = buildMaturityCatalog(
   obstetricsCompletion, buildScenarioQualityCatalog(obstetricsCompletion),
 );
+const neonatologyCompletion = buildModuleCompletionCatalog(
+  NEONATOLOGY_SCENARIOS, ENGINE_VERSION, 'neonatology', 'delivery-room', 'state_transition',
+);
+const neonatologyCatalog = buildMaturityCatalog(
+  neonatologyCompletion, buildScenarioQualityCatalog(neonatologyCompletion),
+);
 
 describe('exact-version maturity records', () => {
   it('supports the complete public vocabulary and records every clinical item honestly', () => {
@@ -85,7 +92,7 @@ describe('exact-version maturity records', () => {
     expect(catalog.recordCount + emergencyCatalog.recordCount + criticalCareCatalog.recordCount
       + cardiologyCatalog.recordCount + respiratoryMedicineCatalog.recordCount
       + pediatricsCatalog.recordCount + neurologyCatalog.recordCount + toxicologyCatalog.recordCount
-      + obstetricsCatalog.recordCount)
+      + obstetricsCatalog.recordCount + neonatologyCatalog.recordCount)
       .toBe(reviewableItems().length);
     expect(catalog.recordCount).toBe(54);
     expect(catalog.records.filter((record) => record.subjectKind === 'scenario')

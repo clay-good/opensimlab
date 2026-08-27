@@ -30,7 +30,7 @@ export const FICTION_CONTRACT =
 export interface PrebriefProps {
   readonly scenario: Scenario;
   readonly region: RegionProfile;
-  readonly environment?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics';
+  readonly environment?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics' | 'neonatology';
   readonly onStart: () => void;
   /**
    * Offered only where the demonstration was authored. A "watch this" control on
@@ -57,8 +57,8 @@ export function Prebrief({
         <p className="field__label">Assignment: {assignmentLabel}</p>
       )}
       <h1>{scenario.metadata.title}</h1>
-      <p>{patient.ageYears}-year-old {patientPersonNoun(patient)}, {patient.weightKg} kg
-        {environment === 'cardiology' || environment === 'respiratory-medicine' || environment === 'pediatrics' || environment === 'neurology' || environment === 'toxicology' || environment === 'obstetrics'
+      <p>{patient.ageYears === 0 ? 'Newborn' : `${patient.ageYears}-year-old ${patientPersonNoun(patient)}`}, {patient.weightKg} kg
+        {environment === 'cardiology' || environment === 'respiratory-medicine' || environment === 'pediatrics' || environment === 'neurology' || environment === 'toxicology' || environment === 'obstetrics' || environment === 'neonatology'
           ? `, for ${patient.procedure}.`
           : `, ASA ${patient.asaClass}, for ${patient.procedure}.`}</p>
 
@@ -81,7 +81,7 @@ export function Prebrief({
 
       <section>
         <h2>The patient</h2>
-        {environment === 'respiratory-medicine' || environment === 'pediatrics' || environment === 'neurology' || environment === 'toxicology' || environment === 'obstetrics' ? (
+        {environment === 'respiratory-medicine' || environment === 'pediatrics' || environment === 'neurology' || environment === 'toxicology' || environment === 'obstetrics' || environment === 'neonatology' ? (
           <ul>
             <li>{patient.diagnosis}.</li>
             {scenario.metadata.id === 'maternal-cardiac-arrest-coordinated-response' ? (
@@ -184,6 +184,17 @@ export function Prebrief({
             <p>
               Qualified findings and response reports are authored. This lab practices early recognition,
               coordinated ownership, reassessment, and handoff, not examination, dosing, procedures, or delivery.
+            </p>
+          </>
+        ) : environment === 'neonatology' ? (
+          <>
+            <p>
+              The supplied birth record, newborn findings, parent-dyad context, and monitor stay visible
+              while the focused transition review opens below. Pause freely and follow the shared clock at your own pace.
+            </p>
+            <p>
+              Qualified findings and care reports are authored. This lab practices transition recognition,
+              protective-care review, reassessment, and handoff, not examination, scoring, feeding, resuscitation, or disposition.
             </p>
           </>
         ) : (

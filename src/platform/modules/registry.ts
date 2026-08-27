@@ -149,6 +149,19 @@ export const MODULES: readonly ModuleDeclaration[] = [
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
+    id: 'neonatology',
+    route: 'neonatology',
+    displayName: 'Neonatology',
+    description: 'Practice calm newborn transition, escalation, reassessment, and handoff while keeping the parent-newborn dyad together.',
+    audience: 'Medical students, residents, midwives, nurses, respiratory therapists, and acute-care trainees supporting newborns.',
+    prerequisites: 'Basic newborn assessment and respiratory, cardiovascular, and thermal physiology.',
+    status: 'available',
+    plannedScope:
+      'Eleven bounded neonatal rehearsals spanning normal transition, ventilation, bradycardia, '
+      + 'respiratory distress, glucose, infection, thermal care, escalation, and handoff.',
+    timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
+  },
+  {
     id: 'oncology',
     route: 'oncology',
     displayName: 'Oncology',

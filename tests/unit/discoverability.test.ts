@@ -25,6 +25,7 @@ import { PEDIATRICS_SCENARIOS } from '../../src/modules/pediatrics/scenarios';
 import { NEUROLOGY_SCENARIOS } from '../../src/modules/neurology/scenarios';
 import { TOXICOLOGY_SCENARIOS } from '../../src/modules/toxicology/scenarios';
 import { OBSTETRICS_SCENARIOS } from '../../src/modules/obstetrics/scenarios';
+import { NEONATOLOGY_SCENARIOS } from '../../src/modules/neonatology/scenarios';
 import { Landing } from '@landing/Landing';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -153,6 +154,8 @@ describe('Requirement: Structured Data That Is Accurate', () => {
       { basePath: '/pediatrics', scenarios: PEDIATRICS_SCENARIOS },
       { basePath: '/neurology', scenarios: NEUROLOGY_SCENARIOS },
       { basePath: '/toxicology', scenarios: TOXICOLOGY_SCENARIOS },
+      { basePath: '/obstetrics', scenarios: OBSTETRICS_SCENARIOS },
+      { basePath: '/neonatology', scenarios: NEONATOLOGY_SCENARIOS },
     ] as const;
     for (const { basePath, scenarios } of modules) {
       for (const scenario of scenarios) {
@@ -179,7 +182,7 @@ describe('Requirement: One Screen, One Action', () => {
       SCENARIOS.length + EMERGENCY_MEDICINE_SCENARIOS.length + CRITICAL_CARE_SCENARIOS.length
       + CARDIOLOGY_SCENARIOS.length + RESPIRATORY_MEDICINE_SCENARIOS.length
       + PEDIATRICS_SCENARIOS.length + NEUROLOGY_SCENARIOS.length
-      + TOXICOLOGY_SCENARIOS.length + OBSTETRICS_SCENARIOS.length,
+      + TOXICOLOGY_SCENARIOS.length + OBSTETRICS_SCENARIOS.length + NEONATOLOGY_SCENARIOS.length,
     );
     for (const word of FORBIDDEN_MARKETING_WORDS) {
       expect(ONE_LINE_DESCRIPTION.toLowerCase(), `contains "${word}"`).not.toContain(word.toLowerCase());
@@ -223,7 +226,7 @@ describe('Requirement: The Hero Is The Product Running', () => {
 describe('Requirement: Modules Directory Is Honest About What Exists', () => {
   it('Scenario: Available and planned are visually distinct, with no date', () => {
     expect(availableModules().map((module) => module.id))
-      .toEqual(['anesthesia', 'emergency-medicine', 'cardiology', 'respiratory-medicine', 'pediatrics', 'neurology', 'toxicology', 'obstetrics', 'critical-care']);
+      .toEqual(['anesthesia', 'emergency-medicine', 'cardiology', 'respiratory-medicine', 'pediatrics', 'neurology', 'toxicology', 'obstetrics', 'neonatology', 'critical-care']);
     expect(plannedModules().length).toBeGreaterThanOrEqual(1);
     for (const module of plannedModules()) {
       expect(module.plannedScope, `${module.id} needs a description of its scope`).toBeTruthy();

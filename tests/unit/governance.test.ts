@@ -105,7 +105,7 @@ describe('Requirement: Governance Is Auditable From Outside', () => {
     const covered = uncoveredDomains(items, [{
       name: 'A Clinician', credential: 'MBBS FRCA', institution: 'A Hospital',
       scope: ['adult-general-anaesthesia', 'emergency-medicine', 'critical-care',
-        'cardiology', 'respiratory-medicine', 'pediatrics', 'neurology', 'toxicology', 'obstetrics', 'pharmacology',
+        'cardiology', 'respiratory-medicine', 'pediatrics', 'neurology', 'toxicology', 'obstetrics', 'neonatology', 'pharmacology',
         'practice-variation'],
       joined: '2026-01-01', competingInterests: 'None declared',
     }]);

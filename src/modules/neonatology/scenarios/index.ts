@@ -1,0 +1,9 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+import { TERM_NEWBORN_TRANSITION } from './term-newborn-transition';
+
+export const NEONATOLOGY_SCENARIOS: readonly Scenario[] = [TERM_NEWBORN_TRANSITION];
+export const DEFAULT_NEONATOLOGY_SCENARIO_ID = TERM_NEWBORN_TRANSITION.metadata.id;
+
+export function getNeonatologyScenario(id: string): Scenario | undefined {
+  return NEONATOLOGY_SCENARIOS.find((scenario) => scenario.metadata.id === id);
+}

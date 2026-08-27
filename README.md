@@ -259,6 +259,14 @@ not proof of fetal safety or permission to restart. No learner examination, moni
 interpretation, infusion operation, position, oxygen, fluid, drug, dose, procedure, birth,
 disposition, or maternal/newborn outcome control is exposed.
 
+The first Neonatology lab opens the new module with the quiet work of protecting normal term
+transition. A stable term newborn remains supervised skin-to-skin while the learner connects the
+shared birth clock, breathing, tone, heart rate, temperature, position, parent, and whole dyad;
+reviews prepared attendance, deferred cord clamping, thermal protection, observation, feeding
+support, and escalation boundaries; then reads a fixed 1-hour report and hands off what remains
+open. No learner examination, scoring, monitoring interpretation, cord care, positioning, warming,
+feeding, resuscitation, procedure, disposition, or newborn/parent outcome control is exposed.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

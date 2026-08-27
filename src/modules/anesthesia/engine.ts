@@ -557,6 +557,10 @@ const OBSTETRICS_OXYTOCIN_TACHYSYSTOLE_BLOCKED_ACTION_TYPES = new Set([
   ...OBSTETRICS_MATERNAL_NEONATAL_HANDOFF_BLOCKED_ACTION_TYPES,
   'maternal-to-neonatal-resuscitation-handoff-response',
 ]);
+const NEONATOLOGY_TERM_TRANSITION_BLOCKED_ACTION_TYPES = new Set([
+  ...OBSTETRICS_OXYTOCIN_TACHYSYSTOLE_BLOCKED_ACTION_TYPES,
+  'oxytocin-associated-uterine-tachysystole-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1574,6 +1578,12 @@ export class AnesthesiaEngine {
   private obstetricsOxytocinTachysystoleReadinessAtTick: number | null = null;
   private obstetricsOxytocinTachysystoleReassessmentAtTick: number | null = null;
   private obstetricsOxytocinTachysystoleHandoffAtTick: number | null = null;
+  private neonatologyTermTransitionSupportAtTick: number | null = null;
+  private neonatologyTermTransitionContextAtTick: number | null = null;
+  private neonatologyTermTransitionRecognitionAtTick: number | null = null;
+  private neonatologyTermTransitionCareAtTick: number | null = null;
+  private neonatologyTermTransitionReassessmentAtTick: number | null = null;
+  private neonatologyTermTransitionHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2585,6 +2595,14 @@ export class AnesthesiaEngine {
     if (obstetricsOxytocinTachysystole && OBSTETRICS_OXYTOCIN_TACHYSYSTOLE_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `obstetrics-oxytocin-tachysystole-generic-action-refused-${this.currentTick}`,
         'This Obstetrics lesson exposes no generic examination, palpation, fetal-monitor interpretation, diagnosis, infusion operation, position, oxygen, fluid, tocolytic or other drug, dose, fetal stimulation, amnioinfusion, anesthesia, surgery, delivery, newborn care, procedure, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const neonatologyTermTransition = this.scenario.metadata.id === 'term-newborn-transition'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'term-newborn-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'term-newborn-transition-boundary').length === 1;
+    if (neonatologyTermTransition && NEONATOLOGY_TERM_TRANSITION_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `neonatology-term-transition-generic-action-refused-${this.currentTick}`,
+        'This Neonatology lesson exposes no generic examination, scoring, monitoring interpretation, cord care, positioning, drying, warming, suction, stimulation, separation, oxygen, ventilation, airway, compressions, access, fluid, glucose, drug, feeding, resuscitation, transport, procedure, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -11376,6 +11394,29 @@ export class AnesthesiaEngine {
         if (this.obstetricsOxytocinTachysystoleHandoffAtTick !== null) break;
         this.obstetricsOxytocinTachysystoleHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-oxytocin-tachysystole-active-risk-handoff-recorded-${this.currentTick}`, 'Tachysystole recurrence, fetal hypoxia and surveillance, oxytocin and line reconciliation, alternative maternal, uterine, placental, cord, medication and fetal causes, tocolysis and urgent-birth readiness, maternal status, labour, newborn preparation, explanation, family and staff support, documentation, review, disposition, prognosis, and maternal or newborn outcome uncertainty were handed off.', { fetalRecoveryProven: false, restartEligibilityDetermined: false, birthPlanDetermined: false, newbornSafetyProven: false, safetyDispositionDetermined: false, maternalOutcomePredicted: false, newbornOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'term-newborn-transition-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'term-newborn-transition'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'term-newborn-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'term-newborn-transition-boundary').length === 1;
+        const actions = this.scenario.metadata.objectives.map((objective) => objective.id);
+        const valid = typeof response === 'string' && actions.includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `neonatology-term-transition-response-refused-${this.currentTick}`, supported ? 'That newborn-transition response is not available. Nothing changed.' : 'These newborn-transition choices are available only in the exact declared Neonatology lesson.'); break; }
+        if (response === actions[0]) { if (this.neonatologyTermTransitionSupportAtTick !== null) break; this.neonatologyTermTransitionSupportAtTick = this.currentTick; this.log('info', 'assessment', `neonatology-term-transition-support-activated-${this.currentTick}`, 'A trained and equipped newborn-capable clinician, birth team, shared clock, communication, dignity, parent, family, and staff-support ownership were confirmed. No learner examination, cord care, warming, feeding, treatment, or procedure occurred.'); break; }
+        if (this.neonatologyTermTransitionSupportAtTick === null) { this.log('warning', 'assessment', `neonatology-term-transition-support-order-refused-${this.currentTick}`, 'Confirm prepared newborn and parent-dyad support before further review.'); break; }
+        if (response === actions[1]) { if (this.neonatologyTermTransitionContextAtTick !== null) break; this.neonatologyTermTransitionContextAtTick = this.currentTick; this.log('info', 'assessment', `neonatology-term-transition-context-reconciled-${this.currentTick}`, 'The supplied gestation, antenatal and intrapartum risks, birth method and clock, breathing or crying, tone, heart rate, temperature, position, airway visibility, parent state, preferences, support, and whole dyad were connected without learner examination, scoring, monitoring interpretation, or diagnosis.'); break; }
+        if (this.neonatologyTermTransitionContextAtTick === null) { this.log('warning', 'assessment', `neonatology-term-transition-context-order-refused-${this.currentTick}`, 'Connect the supplied birth, newborn, thermal, parent, and whole-dyad context before recognizing the transition pattern.'); break; }
+        if (response === actions[2]) { if (this.neonatologyTermTransitionRecognitionAtTick !== null) break; this.neonatologyTermTransitionRecognitionAtTick = this.currentTick; this.log('info', 'assessment', `neonatology-term-transition-pattern-recognized-${this.currentTick}`, 'The supplied breathing or crying, good tone, and adequate heart rate supported normal term transition and no current need for resuscitation. Apnea, respiratory difficulty, abnormal heart rate, thermal instability, evolving illness, and other risk remained open; color or an early saturation value alone did not close the assessment.'); break; }
+        if (this.neonatologyTermTransitionRecognitionAtTick === null) { this.log('warning', 'assessment', `neonatology-term-transition-recognition-order-refused-${this.currentTick}`, 'Recognize the supplied transition pattern without resuscitation or well-newborn closure before reviewing protective care.'); break; }
+        if (response === actions[3]) { if (this.neonatologyTermTransitionCareAtTick !== null) break; this.neonatologyTermTransitionCareAtTick = this.currentTick; this.log('info', 'assessment', `neonatology-term-transition-care-reviewed-${this.currentTick}`, 'Qualified deferred cord clamping for at least 60 seconds in this stable term pattern, prompt drying, supervised skin-to-skin positioning with the airway visible, warm coverings, ongoing breathing and temperature evaluation, feeding support, explanation, dignity, and escalation readiness were reviewed. Routine suction, separation, oxygen, stimulation, ventilation, drug, dose, feeding, or learner care delivery were excluded.'); break; }
+        if (this.neonatologyTermTransitionCareAtTick === null) { this.log('warning', 'assessment', `neonatology-term-transition-care-order-refused-${this.currentTick}`, 'Review qualified cord, skin-to-skin, thermal, observation, feeding-support, and escalation care before the fixed report.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.neonatologyTermTransitionCareAtTick) { this.log('warning', 'assessment', `neonatology-term-transition-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed qualified-team report.'); break; } if (this.neonatologyTermTransitionReassessmentAtTick !== null) break; this.neonatologyTermTransitionReassessmentAtTick = this.currentTick; this.log('info', 'assessment', `neonatology-term-transition-one-hour-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report at 1 hour: uninterrupted supervised skin-to-skin care continues; breathing is regular without apnea or increased work, heart rate is 136/min, axillary temperature is 36.7°C, the airway remains visible, and feeding cues are present with qualified feeding support beginning. This snapshot does not prove durable respiratory or thermal safety, glucose stability, feeding success, discharge readiness, or outcome.', { careDeliveredByLearner: false, durableSafetyProven: false, feedingSuccessProven: false, dischargeReadinessDetermined: false, outcomePredicted: false }); break; }
+        if (this.neonatologyTermTransitionReassessmentAtTick === null) { this.log('warning', 'assessment', `neonatology-term-transition-handoff-order-refused-${this.currentTick}`, 'Review the fixed 1-hour qualified-team report before active-risk handoff.'); break; }
+        if (this.currentTick <= this.neonatologyTermTransitionReassessmentAtTick) { this.log('warning', 'assessment', `neonatology-term-transition-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.neonatologyTermTransitionHandoffAtTick !== null) break;
+        this.neonatologyTermTransitionHandoffAtTick = this.currentTick; this.log('info', 'assessment', `neonatology-term-transition-active-risk-handoff-recorded-${this.currentTick}`, 'Birth clock and qualified care, breathing and apnea, heart rate, temperature, positioning and airway visibility, glucose and feeding, infection and jaundice surveillance, parent state, preferences and support, escalation triggers, documentation, review, disposition, and newborn or parent outcome uncertainty were handed off.', { durableSafetyProven: false, glucoseStabilityProven: false, feedingSuccessProven: false, dischargeReadinessDetermined: false, newbornOutcomePredicted: false, parentOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -14402,6 +14443,14 @@ export class AnesthesiaEngine {
       crisisState = { ...crisisState, heartRateBpm: 92, respiratoryRateBpm: 18,
         spo2Percent: 98, systolicMmHg: 122, diastolicMmHg: 68,
         meanArterialMmHg: 86, coreTemperatureC: 36.9 };
+    }
+    if (this.scenario.metadata.id === 'term-newborn-transition'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'term-newborn-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'term-newborn-transition-boundary').length === 1) {
+      crisisState = { ...crisisState, heartRateBpm: this.neonatologyTermTransitionReassessmentAtTick !== null ? 136 : 142,
+        respiratoryRateBpm: 42, spo2Percent: 95, systolicMmHg: 62, diastolicMmHg: 38,
+        meanArterialMmHg: 46, coreTemperatureC: this.neonatologyTermTransitionReassessmentAtTick !== null ? 36.7 : 36.8 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -18729,6 +18778,32 @@ export class AnesthesiaEngine {
               newbornSafetyProven: false as const, safetyDispositionDetermined: false as const,
               maternalOutcomePredicted: false as const, newbornOutcomePredicted: false as const,
               outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'term-newborn-transition'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'term-newborn-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'term-newborn-transition-boundary').length === 1 ? {
+            neonatologyTermTransitionAssessment: {
+              supportAtTick: this.neonatologyTermTransitionSupportAtTick,
+              contextAtTick: this.neonatologyTermTransitionContextAtTick,
+              recognitionAtTick: this.neonatologyTermTransitionRecognitionAtTick,
+              careAtTick: this.neonatologyTermTransitionCareAtTick,
+              reassessmentAtTick: this.neonatologyTermTransitionReassessmentAtTick,
+              handoffAtTick: this.neonatologyTermTransitionHandoffAtTick,
+              authoredStableTermTransition: true as const,
+              authoredQualifiedOneHourReport: this.neonatologyTermTransitionReassessmentAtTick !== null,
+              newbornExaminedOrScoredByLearner: false as const,
+              monitoringOrTestsInterpretedByLearner: false as const, diagnosisMadeByLearner: false as const,
+              cordCarePerformedByLearner: false as const, skinToSkinOrPositionPerformedByLearner: false as const,
+              dryingOrWarmingPerformedByLearner: false as const, suctionOrStimulationPerformedByLearner: false as const,
+              oxygenVentilationOrAirwayCareDeliveredByLearner: false as const,
+              compressionsAccessFluidGlucoseOrDrugDeliveredByLearner: false as const,
+              feedingPerformedByLearner: false as const, resuscitationPerformedByLearner: false as const,
+              transportOrProcedurePerformedByLearner: false as const, durableSafetyProven: false as const,
+              glucoseStabilityProven: false as const, feedingSuccessProven: false as const,
+              dischargeReadinessDetermined: false as const, newbornOutcomePredicted: false as const,
+              parentOutcomePredicted: false as const, outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

@@ -2276,6 +2276,26 @@ meconium-stained transition; preterm respiratory distress; neonatal hypoglycemia
 thermoregulation failure; delivery-room-to-NICU handoff; tension pneumothorax during respiratory
 support with asymmetric ventilation and rapid cardiopulmonary deterioration.
 
+### Wave D neonatology slice 1: term newborn transition
+
+The Neonatology module opens with a quiet normal-transition lab rather than a resuscitation shortcut.
+A supplied 39-week-4-day, 3.4 kg newborn is breathing and crying with good flexed tone, heart rate
+142/min, temperature 36.8°C, and no supplied risk requiring immediate resuscitation. She is dried,
+warmly covered, and supervised skin-to-skin with an awake parent while the airway remains visible and
+the intact-cord clock reads 20 seconds.
+
+The learner confirms prepared newborn-capable and parent-dyad support; connects gestation, birth,
+breathing, tone, heart rate, temperature, position and whole-dyad context; recognizes normal term
+transition without resuscitation or well-newborn closure; and reviews qualified deferred cord
+clamping for at least 60 seconds in this stable pattern, thermal protection, skin-to-skin observation,
+feeding support, and escalation readiness. A fixed 1-hour report supplies regular breathing without
+apnea or increased work, heart rate 136/min, axillary temperature 36.7°C, visible airway, and feeding
+cues with qualified support beginning. Durable respiratory, thermal, glucose, feeding, discharge and
+outcome safety remain open. Six controls expose no learner examination, scoring, monitoring or test
+interpretation, cord care, positioning, drying, warming, suction, stimulation, separation, oxygen,
+ventilation, airway care, compressions, access, fluid, glucose, drug, dose, feeding, resuscitation,
+transport, counseling, procedure, disposition or outcome control.
+
 ### Wave E neurology slice 1: minor nondisabling acute ischemic stroke
 
 The first Neurology lab is a function-based minor-stroke decision boundary, not another disabling

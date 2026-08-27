@@ -32,8 +32,9 @@ export function StatusBar({
   moduleId = 'anesthesia',
 }: StatusBarProps) {
   const patient = scenario.patient;
-  const summary = `${patient.ageYears} y ${patient.sex === 'male' ? 'M' : 'F'} · `
-    + `${patient.weightKg} kg${moduleId === 'cardiology' || moduleId === 'respiratory-medicine' || moduleId === 'pediatrics'
+  const age = patient.ageYears === 0 ? 'Newborn' : `${patient.ageYears} y`;
+  const summary = `${age} ${patient.sex === 'male' ? 'M' : 'F'} · `
+    + `${patient.weightKg} kg${moduleId === 'cardiology' || moduleId === 'respiratory-medicine' || moduleId === 'pediatrics' || moduleId === 'neonatology'
       ? '' : ` · ASA ${patient.asaClass}`}`;
 
   return (
