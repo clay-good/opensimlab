@@ -154,6 +154,25 @@ export interface ReadyMessage {
  * request rather than the result teaches the learner to trust a number that is
  * not true (cockpit/action-cockpit → the tray reflects the patient).
  */
+export interface HypocalcemiaSnapshot {
+  readonly supportActive: boolean;
+  readonly riskAssessedAtTick: number | null; readonly causeReviewedAtTick: number | null;
+  readonly calciumAtTick: number | null; readonly magnesiumAtTick: number | null; readonly continuingCareAtTick: number | null;
+  readonly calciumDueInSeconds: number | null; readonly responseDueInSeconds: number | null;
+  readonly calciumResponseObserved: boolean; readonly responseObserved: boolean;
+  readonly urgentTreatmentDelayed: boolean; readonly recurrenceOccurred: boolean;
+  readonly oralOnlyChosen: boolean; readonly waitForLabsChosen: boolean;
+  readonly waitForMagnesiumChosen: boolean; readonly stopAfterReliefAttempted: boolean;
+  readonly observation: {
+    readonly atTick: number; readonly systolicMmHg: number; readonly diastolicMmHg: number; readonly meanArterialMmHg: number;
+    readonly heartRateBpm: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly coreTemperatureC: number; readonly adjustedCalciumMgDl: number; readonly symptoms: string;
+  } | null;
+  readonly symptoms: string; readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true; readonly doseModelAvailable: false; readonly durableRecoveryProven: false;
+}
+
 export interface HypercalcemiaSnapshot {
   readonly supportActive: boolean;
   readonly cardiorenalAssessedAtTick: number | null; readonly fluidsAtTick: number | null;
@@ -3262,6 +3281,7 @@ export interface EquipmentSnapshot {
     readonly thyroidStorm?: ThyroidStormSnapshot;
     readonly myxedema?: MyxedemaSnapshot;
     readonly hypercalcemia?: HypercalcemiaSnapshot;
+    readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {
       readonly supportAtTick: number | null; readonly contextAtTick: number | null;
       readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;

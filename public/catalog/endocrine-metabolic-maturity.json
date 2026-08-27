@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "endocrine-metabolic",
-  "recordCount": 7,
+  "recordCount": 8,
   "records": [
     {
       "recordId": "scenario:dka-resolution-transition@0.1.0",
@@ -78,6 +78,17 @@
       "evidence": [
         "/catalog/endocrine-metabolic-completion-audit.json#hypercalcemic-crisis-volume-and-bridge@0.1.0",
         "/catalog/endocrine-metabolic-quality-audit.json#hypercalcemic-crisis-volume-and-bridge@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:hypocalcemic-tetany-rescue-and-recurrence@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "hypocalcemic-tetany-rescue-and-recurrence",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/endocrine-metabolic-completion-audit.json#hypocalcemic-tetany-rescue-and-recurrence@0.1.0",
+        "/catalog/endocrine-metabolic-quality-audit.json#hypocalcemic-tetany-rescue-and-recurrence@0.1.0"
       ]
     }
   ]

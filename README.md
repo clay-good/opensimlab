@@ -893,7 +893,9 @@ complete by trusting a card or a boolean.
 The same catalog directory publishes training-value, authored-defaults, scenario-hazard, and
 state-space-verification schemas plus `/catalog/anesthesia-quality-audit.json`. A scenario is
 playable only when its completion contract and all four version-bound quality records pass. The
-current audit honestly reports 0 playable scenarios while those records are still being authored.
+current audit honestly reports 0 playable scenarios. Record ingestion is not yet implemented:
+the catalog builder emits missing records for every scenario. Authoring evidence alone will not
+satisfy this gate until validated exact-version records are wired into the builder.
 
 `/catalog/asset-licenses.json` classifies every shipped media asset by source, author, license,
 modification, and redistribution terms; `/catalog/evidence-sources.json` publishes the complete

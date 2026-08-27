@@ -28,6 +28,7 @@ import { supportsAdrenalCrisis } from '../../endocrine-metabolic/adrenal-crisis'
 import { supportsThyroidStorm } from '../../endocrine-metabolic/thyroid-storm';
 import { supportsMyxedema } from '../../endocrine-metabolic/myxedema';
 import { supportsHypercalcemia, HYPERCALCEMIA_FLUID_RESPONSE_TICKS, HYPERCALCEMIA_BRIDGE_RESPONSE_TICKS } from '../../endocrine-metabolic/hypercalcemia';
+import { supportsHypocalcemia, HYPOCALCEMIA_CALCIUM_RESPONSE_TICKS, HYPOCALCEMIA_RESPONSE_TICKS } from '../../endocrine-metabolic/hypocalcemia';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -197,6 +198,8 @@ export function Debrief(props: DebriefProps) {
                 ? { activityContext: 'coordinating ventilatory support, steroid-first endocrine treatment, and ongoing critical care' }
               : supportsHypercalcemia(props.scenario)
                 ? { activityContext: 'coordinating monitored hydration, calcium-lowering treatment, and continuing care for severe malignancy-associated hypercalcemia' }
+              : supportsHypocalcemia(props.scenario)
+                ? { activityContext: 'coordinating monitored calcium rescue, postoperative risk assessment, and continuing calcium and magnesium care' }
               : {}),
           })}</p>
           <label className="field__label" htmlFor="reactions-account">Your account</label>
@@ -577,6 +580,47 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.startsWith('hypocalcemia-')) {
+      if (!supportsHypocalcemia(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The hypocalcemia lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^hypocalcemia-${id}-\\d+$`).test(entry.eventId));
+      const rescue = event('calcium-rescue'); const support = event('support'); const risk = event('risk-assessment');
+      const cause = event('cause-review'); const magnesium = event('magnesium'); const continuing = event('continuing-care');
+      const delay = event('urgent-treatment-delay');
+      const deferred = event('oral-only-choice') || event('wait-for-labs-choice') || event('wait-for-magnesium-choice');
+      const causeRefused = event('magnesium-review-refused') || event('continuing-care-review-refused');
+      const recurrence = event('recurrence'); const stopped = event('stop-after-relief-refused');
+      const observations = log.filter((entry) => /^hypocalcemia-(early|calcium|recurrence|response)-reassessment-\d+$/.test(entry.eventId));
+      const packageEvents = [rescue, support, risk, cause, magnesium, continuing];
+      const packageTick = packageEvents.every((entry) => entry !== undefined)
+        ? Math.max(...packageEvents.map((entry) => entry!.tick)) : null;
+      const calciumObserved = rescue && observations.find((entry) => entry.tick >= rescue.tick + HYPOCALCEMIA_CALCIUM_RESPONSE_TICKS
+        && (packageTick === null || entry.tick < packageTick + HYPOCALCEMIA_RESPONSE_TICKS));
+      const responseObserved = packageTick !== null && observations.find((entry) => entry.tick >= packageTick + HYPOCALCEMIA_RESPONSE_TICKS);
+      const handoff = event('handoff');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'hypocalcemia-rescue': { met: !!rescue && !!support && !delay && !deferred,
+          finding: delay || deferred ? 'An oral-only or wait-for-results shortcut, or delayed rescue, remains recorded after correction. Severe symptomatic hypocalcemia needs qualified monitored calcium rescue while investigation and magnesium care proceed in parallel.'
+            : rescue && support ? 'Qualified monitored calcium rescue and team support began without waiting for a cause panel or magnesium correction. No dose, preparation, rate, access, or treatment kinetics was simulated.'
+              : 'Monitored calcium rescue or qualified support is missing. Authored counterfactual: absent rescue leads to greater spasm and distress, not a predicted seizure or airway obstruction.', tick: rescue?.tick },
+        'hypocalcemia-risk': { met: !!risk && !!support,
+          finding: risk && support ? 'The supplied airway, wound, seizure, and ECG risks were reviewed with qualified support. A patent airway now does not remove postoperative vigilance; new neck swelling or stridor needs urgent qualified assessment. QT recovery is not modeled.'
+            : 'Risk review or qualified support is missing. The illustrative monitor does not calculate the supplied QTc or establish airway safety.', tick: risk?.tick },
+        'hypocalcemia-cause': { met: !!cause && !!magnesium && !!continuing && !causeRefused && !recurrence && !stopped,
+          finding: causeRefused || recurrence || stopped ? 'A cause-review omission, recurrence, or attempt to stop after relief remains visible after later correction. Rescue alone does not establish durable calcium control; magnesium and continuing cause-directed care remain necessary.'
+            : cause && magnesium && continuing ? 'Supplied postoperative and low-magnesium findings informed qualified magnesium and continuing calcium care. Neither instant magnesium correction, vitamin D efficacy, nor permanent hypoparathyroidism was inferred.'
+              : 'Cause review, magnesium care, or continuing calcium care remains incomplete. Authored counterfactual: initial relief can be followed by recurrent spasm when continuing care is missing.', tick: continuing?.tick },
+        'hypocalcemia-reassessment': { met: !!calciumObserved && !!responseObserved,
+          finding: calciumObserved && responseObserved ? 'Fresh observations distinguish the initial-rescue or recurrence phase from later partial support with calcium still low. Historical results and timers are not new calcium, magnesium, or ECG measurements.'
+            : 'Fresh observation of the early and later support states is incomplete. Do not infer calcium normalization from reduced spasm or a better pulse.', tick: responseObserved ? responseObserved.tick : undefined },
+        'hypocalcemia-handoff': { met: !!handoff,
+          finding: handoff ? 'The receiving team owns serial calcium and magnesium review, cause-directed treatment, ECG and postoperative surveillance, and recurrence or overtreatment escalation. This ends rehearsal, not disease or discharge planning.'
+            : 'Continuing-care ownership has not been handed off; symptom relief is not permission to stop treatment or discharge.', tick: handoff?.tick },
+      };
+      const result = results[objective.id];
+      return result ? { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding
+        : { ...base, outcome: 'not-exercised', finding: 'No evidence mapping exists for this objective.' } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.startsWith('hypercalcemia-')) {
       if (!supportsHypercalcemia(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The hypercalcemia lesson was not active.' } satisfies ObjectiveFinding;

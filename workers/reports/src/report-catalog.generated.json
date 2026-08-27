@@ -1890,6 +1890,23 @@
       "limitationManifestHash": "sha256:80d0c23a467df839bfabe433357262271f0e3cbebfa4e70421491afe19333e2f"
     },
     {
+      "scenarioId": "hypocalcemic-tetany-rescue-and-recurrence",
+      "contentVersion": "0.1.0",
+      "moduleId": "endocrine-metabolic",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:9a8b41bb91b7fe8b14a59c813a87a574c11391f3b048f08340dd54c093a9bf9a",
+      "defaultsHash": "sha256:1802d3f6166eda8da42b54520369fc99ae89f2e817d4985f5daa34ed60fb9513",
+      "maturityHash": "sha256:65012f19f1938362e5dd2235a8c519b80422ccf5238cf2c5b3ecd4d11448bd29",
+      "sourceManifestHash": "sha256:48e2f69335328e34e9436f8533b316f9fed6e78ebeccc6e20428cf7ee13e49d5",
+      "limitationManifestHash": "sha256:b011b56a72dae60e2e516c2c9f1d79fc7f5c9418f52857266c393400c7133a37"
+    },
+    {
       "scenarioId": "myxedema-coma-ventilation-and-steroid-sequence",
       "contentVersion": "0.1.0",
       "moduleId": "endocrine-metabolic",

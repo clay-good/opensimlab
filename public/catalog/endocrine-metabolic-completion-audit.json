@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "moduleId": "endocrine-metabolic",
   "capabilityVersion": "0.1.0-alpha.48",
-  "scenarioCount": 7,
+  "scenarioCount": 8,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -883,6 +883,132 @@
           "status": "missing",
           "evidence": [
             "The shared report pattern requires exact-version coverage and bounded opt-in context on briefing, live, debrief, replay, and source entry. Complete inclusive four-surface reporting and production Turnstile/D1 verification remain pending."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "hypocalcemic-tetany-rescue-and-recurrence",
+      "title": "Hypocalcemic tetany: rescue now, prevent recurrence",
+      "moduleId": "endocrine-metabolic",
+      "environment": "ward",
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario hypocalcemic-tetany-rescue-and-recurrence carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "5 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "Fixed authored hypocalcemia transitions and reference seed 4906 bind the model and real-engine regression fixtures to this exact content version."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "Initial calcium relief, recurrence without magnesium or continuing care, and a later incomplete-stabilization checkpoint advance independently of explicit observations. Calcium, magnesium, and QT normalization are not inferred."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "Twelve dose-free choices cover immediate monitored rescue, qualified risk and cause review, magnesium, continuing care, support, reassessment, and handoff, with retained oral-only, diagnostic-delay, magnesium-delay, and stop-after-relief mistakes."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "Ongoing-care handoff or instructor takeover ends the branch. Thirty-minute no-rescue and 180-minute unfinished stops are authored lesson bounds, not treatment deadlines or predicted catastrophe."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "satisfied",
+          "evidence": [
+            "Exact-version observed-state tutoring supports Guided, Coached, and Unassisted. Worked example 0.1.0 pauses before nine decisions and distinguishes early relief from a later incomplete-stabilization observation."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "Five objective bindings cover rescue, airway/cardiac risk, underlying cause, fresh observations, and continuing-care handoff. Observation credit requires early and later phases; complete care with a fresh later assessment permits handoff even if the early observation was missed. Earlier mistakes survive correction; recurrence contrasts are explicitly authored."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "4 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "hypocalcemia-fixtures.ts binds expert, commonError, recovery, and noAction to content 0.1.0 and seed 4906. The recovery path observes recurrence before correcting magnesium and continuing care."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Local model, replay, guidance, and tray checks do not establish complete inclusive runtime evidence. Exact-version screen-reader, keyboard, reduced-motion, color-vision, 320 px, 400% zoom, offline, and performance verification remains pending."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "Shared reporting requires exact-version coverage and bounded opt-in context on briefing, live, debrief, replay, and source entry. Complete inclusive reporting coverage and production Turnstile/D1 verification remain pending."
           ]
         }
       ]

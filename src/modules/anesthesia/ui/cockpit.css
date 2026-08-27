@@ -285,6 +285,9 @@
 .syringe__meta { font: var(--type-micro); color: var(--text-tertiary); }
 .thyroid-storm__section .syringe__name, .myxedema__section .syringe__name, .hypercalcemia__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
 .thyroid-storm__section .crisis-drug__actions, .myxedema__section .crisis-drug__actions, .hypercalcemia__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.hypocalcemia__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
+.hypocalcemia__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.hypocalcemia__section .button[aria-disabled='true'],
 .thyroid-storm__section .button[aria-disabled='true'], .myxedema__section .button[aria-disabled='true'], .hypercalcemia__section .button[aria-disabled='true'] {
   color: var(--text-tertiary);
   cursor: not-allowed;

@@ -27,6 +27,30 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'hypocalcemia-authored-response-and-recurrence',
+    headline: 'Relief, recurrence, and calcium changes are authored contrasts, not treatment kinetics.',
+    simplification: 'Five-minute delay, 30-minute no-rescue takeover, 15-minute initial relief, 45-minute recurrence without magnesium or continuing care, 60-minute complete-care partial stabilization, and 180-minute unfinished stop are fictional lesson clocks. Calcium remains low; magnesium and the supplied QTc do not normalize.',
+    whereItMisleads: 'A learner waits for a timer, predicts recurrence at a fixed minute, or assumes symptom relief proves corrected calcium, magnesium, or cardiac risk.',
+    correctUnderstanding: 'Treat promptly and reassess as clinically required. The rate and durability of response vary. These fixed calcium, pulse, and breathing changes demonstrate contrasting branches; they neither prescribe reassessment intervals nor predict an individual outcome.',
+    briefIn: ['hypocalcemic-tetany-rescue-and-recurrence'],
+  },
+  {
+    id: 'hypocalcemia-qualified-care-and-cause-limits',
+    headline: 'Emergency calcium does not wait for the cause panel; dose and delivery skills are not assessed.',
+    simplification: 'Calcium rescue includes qualified ECG monitoring and has no acknowledgment or laboratory prerequisite. Supplied cause review unlocks selected magnesium and continuing-care pathways; their buttons do not demonstrate replacement, activated-vitamin-D effect, or corrected laboratory values.',
+    whereItMisleads: 'A learner delays calcium until magnesium is normal, treats oral calcium alone as sufficient for severe tetany, or interchanges calcium preparations by volume.',
+    correctUnderstanding: 'Qualified teams provide monitored rescue while evaluating and treating the cause. Low magnesium needs correction alongside care. Calcium preparation, elemental content, dose, rate, access, renal considerations, activated vitamin D, and laboratory monitoring require individualized clinical decisions.',
+    briefIn: ['hypocalcemic-tetany-rescue-and-recurrence'],
+  },
+  {
+    id: 'hypocalcemia-postoperative-airway-and-handoff',
+    headline: 'The fixed QTc is not a live measurement, and early postoperative improvement is not recovery.',
+    simplification: 'The fictional person initially has a patent airway, no supplied neck hematoma, and a fixed ECG report with QTc 520 ms. No evolving QT waveform, seizure, airway obstruction, permanent hypoparathyroidism, or discharge outcome is modeled.',
+    whereItMisleads: 'Every postoperative airway symptom is attributed to calcium, an ordinary trace is treated as QT normalization, or one low PTH and brief symptom relief establish permanent disease or discharge readiness.',
+    correctUnderstanding: 'Post-thyroidectomy airway deterioration needs urgent qualified evaluation, including hematoma risk. Continue symptom, ECG, calcium, magnesium, phosphate, renal and vitamin D review. Early parathyroid dysfunction may recover; handoff transfers active risk and does not prove chronic hypoparathyroidism or independent stability.',
+    briefIn: ['hypocalcemic-tetany-rescue-and-recurrence'],
+  },
+  {
     id: 'hypercalcemia-authored-bridge-states',
     headline: 'Volume and calcium changes are authored contrasts, not fluid or drug kinetics.',
     simplification: 'Separate 15-minute hydration and 4-hour calcitonin checkpoints change fixed observations. Missing urgent care flags at 15 minutes, stops at 30 minutes, and any unfinished branch stops at six hours. No antiresorptive effect is modeled.',

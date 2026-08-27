@@ -25,6 +25,8 @@ import { supportsAdrenalDemonstration } from '../modules/endocrine-metabolic/dem
 import { supportsThyroidDemonstration } from '../modules/endocrine-metabolic/demo/thyroid-demonstration';
 import { supportsMyxedemaDemonstration } from '../modules/endocrine-metabolic/demo/myxedema-demonstration';
 import { supportsHypercalcemiaDemonstration } from '../modules/endocrine-metabolic/demo/hypercalcemia-demonstration';
+import { supportsHypocalcemiaDemonstration } from '../modules/endocrine-metabolic/demo/hypocalcemia-demonstration';
+import { HYPOCALCEMIA_ACTIONS } from '../modules/endocrine-metabolic/hypocalcemia';
 import { Cockpit } from '@anesthesia/ui/Cockpit';
 import { Debrief } from '@anesthesia/ui/Debrief';
 import { assertTranscriptIsAnonymous, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
@@ -241,6 +243,29 @@ function boundedScalars(value: unknown, limit: number): Record<string, ReportCon
 }
 
 export function collectReportEquipmentContext(equipment: SessionState['equipment']): Record<string, ReportContextScalar> {
+  const hypocalcemia = equipment?.resuscitation.hypocalcemia;
+  if (hypocalcemia && equipment) {
+    const priority = boundedScalars({ resuscitation: { hypocalcemia: {
+      supportActive: hypocalcemia.supportActive, riskAssessedAtTick: hypocalcemia.riskAssessedAtTick,
+      causeReviewedAtTick: hypocalcemia.causeReviewedAtTick, calciumAtTick: hypocalcemia.calciumAtTick,
+      magnesiumAtTick: hypocalcemia.magnesiumAtTick, continuingCareAtTick: hypocalcemia.continuingCareAtTick,
+      calciumDueInSeconds: hypocalcemia.calciumDueInSeconds, responseDueInSeconds: hypocalcemia.responseDueInSeconds,
+      calciumResponseObserved: hypocalcemia.calciumResponseObserved, responseObserved: hypocalcemia.responseObserved,
+      urgentTreatmentDelayed: hypocalcemia.urgentTreatmentDelayed, recurrenceOccurred: hypocalcemia.recurrenceOccurred,
+      oralOnlyChosen: hypocalcemia.oralOnlyChosen, waitForLabsChosen: hypocalcemia.waitForLabsChosen,
+      waitForMagnesiumChosen: hypocalcemia.waitForMagnesiumChosen,
+      stopAfterReliefAttempted: hypocalcemia.stopAfterReliefAttempted, ended: hypocalcemia.ended,
+      observation: hypocalcemia.observation ? {
+        atTick: hypocalcemia.observation.atTick, systolicMmHg: hypocalcemia.observation.systolicMmHg,
+        diastolicMmHg: hypocalcemia.observation.diastolicMmHg, meanArterialMmHg: hypocalcemia.observation.meanArterialMmHg,
+        heartRateBpm: hypocalcemia.observation.heartRateBpm, respiratoryRateBpm: hypocalcemia.observation.respiratoryRateBpm,
+        spo2Percent: hypocalcemia.observation.spo2Percent, coreTemperatureC: hypocalcemia.observation.coreTemperatureC,
+        adjustedCalciumMgDl: hypocalcemia.observation.adjustedCalciumMgDl,
+      } : null,
+    } } }, REPORT_CONTEXT_SNAPSHOT_LIMIT);
+    const remaining = { ...equipment, resuscitation: { ...equipment.resuscitation, hypocalcemia: undefined } };
+    return { ...priority, ...boundedScalars(remaining, REPORT_CONTEXT_SNAPSHOT_LIMIT - Object.keys(priority).length) };
+  }
   const hypercalcemia = equipment?.resuscitation.hypercalcemia;
   if (hypercalcemia && equipment) {
     const priority = boundedScalars({ resuscitation: { hypercalcemia: {
@@ -331,18 +356,29 @@ function collectReportRecentContext(session: SessionState, seed: number): Scenar
   const actions = sessionInternals().recorder?.build('pending').actions ?? [];
   return {
     seed: Math.trunc(seed),
-    actions: actions.slice(-REPORT_CONTEXT_ACTION_LIMIT).map((action) => ({
-      tick: Math.max(0, Math.trunc(action.tick)),
-      type: action.type.slice(0, 80),
-      outcome: session.log.some((entry) => entry.tick === action.tick && entry.eventId.includes('refused'))
-        ? 'refused' as const : 'accepted' as const,
-      payload: boundedScalars(action.payload, 12),
-    })),
+    actions: actions.slice(-REPORT_CONTEXT_ACTION_LIMIT).map((action) => {
+      const hypocalcemiaAction = action.type === 'hypocalcemia-response';
+      const hypocalcemiaChoice = hypocalcemiaAction && action.payload !== null
+        && typeof action.payload === 'object' && !Array.isArray(action.payload)
+        && Object.keys(action.payload).length === 1
+        ? HYPOCALCEMIA_ACTIONS.find((choice) => choice === action.payload.action) : undefined;
+      return {
+        tick: Math.max(0, Math.trunc(action.tick)),
+        type: action.type.slice(0, 80),
+        outcome: (hypocalcemiaAction && hypocalcemiaChoice === undefined)
+          || session.log.some((entry) => entry.tick === action.tick && entry.eventId.includes('refused'))
+          ? 'refused' as const : 'accepted' as const,
+        // Invalid lesson payloads remain refused attempts, without reproducing
+        // an injected note or making their named action look accepted.
+        payload: hypocalcemiaAction ? hypocalcemiaChoice !== undefined ? { action: hypocalcemiaChoice } : {}
+          : boundedScalars(action.payload, 12),
+      };
+    }),
     snapshot: {
       patient: Object.fromEntries(Object.entries(session.state ?? {})
         .filter((entry): entry is [string, number] => Number.isFinite(entry[1]))
         // These authored cases supply neither a continuous CO2 measurement nor oxygen settings.
-        .filter(([field]) => !(session.equipment?.resuscitation.myxedema || session.equipment?.resuscitation.hypercalcemia)
+        .filter(([field]) => !(session.equipment?.resuscitation.myxedema || session.equipment?.resuscitation.hypercalcemia || session.equipment?.resuscitation.hypocalcemia)
           || (field !== 'paco2MmHg' && field !== 'etco2MmHg' && field !== 'fio2'))
         .sort(([left], [right]) => left.localeCompare(right))
         .slice(0, REPORT_CONTEXT_SNAPSHOT_LIMIT)),
@@ -515,7 +551,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
     if (session.phase !== 'briefing' && session.phase !== 'idle') return;
     if (!session.ready) return;
     const endocrineDemo = config.id === 'endocrine-metabolic'
-      && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario));
+      && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario));
     if (!endocrineDemo && (config.id !== 'anesthesia' || scenario.metadata.id !== DEMONSTRATION_SCENARIO_ID)) return;
     autoDemo.current = false;
     setDemonstrating(true);
@@ -618,7 +654,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
           }}
           {...(config.id === 'anesthesia' && scenario.metadata.id === DEMONSTRATION_SCENARIO_ID
             ? { onWatch: () => { setDemonstrating(true); session.setSpeed(5); session.play(); } }
-            : config.id === 'endocrine-metabolic' && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario))
+            : config.id === 'endocrine-metabolic' && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario))
             ? { onWatch: () => { setDemonstrating(true); session.setSpeed(60); session.play(); } }
             : {})}
           {...(assignment.label ? { assignmentLabel: assignment.label } : {})}

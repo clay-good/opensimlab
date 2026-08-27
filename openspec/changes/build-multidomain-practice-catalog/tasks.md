@@ -14,6 +14,9 @@ credited toward the catalog until every item in the completion contract passes.
   scenarios against it without changing their behavior.
 - [x] Publish machine-readable training-value, authored-defaults, scenario-hazard, and state-space
   verification schemas; require all four before a scenario counts as playable.
+- [ ] Wire validated exact-scenario/version quality records into the catalog builder, which
+  currently emits every quality record as missing. Reject duplicate, stale, and malformed records;
+  preserve missing state-space and inclusive-runtime evidence rather than infer it from fixtures.
 - [x] Add architecture tests rejecting standalone calculators, scores, classifications,
   conversions, lookups, checklist answers, documentation generators, real-patient entry, and public
   compute endpoints while permitting calculations internal to fictional patient response.
@@ -930,6 +933,29 @@ credited toward the catalog until every item in the completion contract passes.
     final static-host checks verify 223 routes and 44 catalog artifacts. Compressed budgets are
     147.9 KiB landing, 1,474.7 KiB cockpit, and 3,281.6 KiB offline. The registry remains at
     199 scenarios, including seven endocrine previews, not 199 completed scenarios.
+  - [x] Endocrine/metabolic slice 8/12 registers postoperative hypocalcemic tetany with immediate
+    qualified monitored calcium rescue, independent risk and cause review, magnesium correction,
+    continuing calcium/cause care, explicit historical reassessment, and continuing-risk handoff.
+    Authored relief and recurrence distinguish rescue from sustained care; corrected omissions
+    remain visible. Fixed QTc and hidden cause findings never become live monitor measurements.
+    A nine-decision learner-paced example preserves reading pauses and separate observation phases.
+    Missing an earlier observation loses observation credit, not permission for an otherwise
+    appropriate continuing-care handoff. The registry now has 200 scenarios, eight endocrine
+    previews, and 221 indexable routes; registration does not establish scenario completion.
+  - [x] Hypocalcemia local verification passes full CI: all 30 specs and 3,760 tests across
+    472 files, including exact whole-state replay, recurrence-first and late-only assessment,
+    all nine worked-example decisions, and report-surface privacy. Desktop browser checks confirm
+    a centered 160-character form and paused takeover focused on Play; a 320 × 568 layout check
+    covers compact cockpit/action entry and a scrolling centered form with reachable cancellation.
+    No production report was sent. The temporary fixture, browser tabs, and preview server were
+    removed. Static-host verification covers 224 routes and 44 catalog artifacts; compressed
+    budgets are 147.9 KiB landing, 1,487.3 KiB cockpit, and 3,308.8 KiB offline. The final indexable
+    build verifies 221 routes; development publication blockers remain explicit, not overridden.
+    All 206 historical report records remain identical, with one new record added.
+  - [ ] Complete hypocalcemia independent clinical review, full inclusive-runtime verification,
+    version-bound quality records, and production Turnstile/D1 evidence. Local tests and browser
+    checks do not satisfy these separate gates. Deploy the reports Worker's updated catalog before
+    publishing the new client content version; retain all 206 previously published report records.
   - [x] Repair service-worker release consistency. Build-stamped SHA-256 integrity checks reject
     mixed or incomplete installations; active snapshots are immutable. Explicit acceptance waits
     for the intended controller before reloading only that tab. Durable per-client release pins

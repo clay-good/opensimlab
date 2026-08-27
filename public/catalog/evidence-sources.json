@@ -1,7 +1,51 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 295,
+  "sourceCount": 299,
   "sources": [
+    {
+      "id": "sfe-acute-hypocalcemia-2016",
+      "authors": "Turner J, Gittoes N, Selby P, and the Society for Endocrinology Clinical Committee",
+      "title": "Society for Endocrinology Endocrine Emergency Guidance: Emergency management of acute hypocalcaemia in adult patients",
+      "publication": "Endocrine Connections",
+      "year": 2016,
+      "locator": "5(5):G7-G8; doi:10.1530/EC-16-0056; presentation, investigations, severe hypocalcemia and underlying-cause management",
+      "usedFor": "Symptomatic hypocalcemia, tetany, QT and airway/seizure risk; urgent monitored IV calcium, magnesium and etiologic review, continuing calcium and activated vitamin D for postoperative hypoparathyroidism. The symptom threshold varies with the rate of decline; fictional response and recurrence timers are not guideline intervals.",
+      "verifiedAgainst": "Primary article text at https://pmc.ncbi.nlm.nih.gov/articles/PMC5314808/ and the issuing-body listing at https://www.endocrinology.org/clinical-practice/clinical-guidance/society-for-endocrinology-guidance/, which retains the 2016 guidance with its 2019 addendum. No independent clinical review of the simulation is claimed.",
+      "verifiedOn": "2026-08-27"
+    },
+    {
+      "id": "sfe-acute-hypocalcemia-addendum-2019",
+      "authors": "Turner J, Gittoes N, Selby P, and the Society for Endocrinology Clinical Committee",
+      "title": "Society for Endocrinology Emergency Endocrine Guidance: Emergency management of acute hypocalcaemia in adult patients: addendum",
+      "publication": "Endocrine Connections",
+      "year": 2019,
+      "locator": "8(6):X1; doi:10.1530/EC-16-0056a",
+      "usedFor": "Calcium gluconate and chloride preparations differ in elemental calcium and cannot be interchanged by volume. Preparation, concentration, access, rate, and equivalence calculations remain outside this dose-free rehearsal.",
+      "verifiedAgainst": "Complete primary addendum at https://pmc.ncbi.nlm.nih.gov/articles/PMC8117371/; author, year, journal, locator and severe-hypocalcemia/additional-equivalence text checked.",
+      "verifiedOn": "2026-08-27"
+    },
+    {
+      "id": "ese-hypoparathyroidism-2025",
+      "authors": "Bollerslev J, Buch O, Cardoso LM, et al",
+      "title": "Revised European Society of Endocrinology Clinical Practice Guideline: Treatment of Chronic Hypoparathyroidism in Adults",
+      "publication": "European Journal of Endocrinology",
+      "year": 2025,
+      "locator": "193(5):G83-G112; doi:10.1093/ejendo/lvaf222; R.1.1, R.2.5, R.3.3, R.3.8 and section 5.3",
+      "usedFor": "Magnesium depletion impairs PTH secretion/action; qualified activated-vitamin-D treatment and serial monitoring; early postoperative dysfunction is not established chronic hypoparathyroidism. Emergency discussion supports monitored IV calcium, while chronic treatment thresholds and follow-up intervals are not substituted for acute assessment.",
+      "verifiedAgainst": "Publisher recommendation and reasoning text at https://academic.oup.com/ejendo/article/193/5/G83/8321487, published November 13, 2025. Clinical recommendations rely substantially on limited evidence and expert opinion; no authored timing or simulation signoff is inferred.",
+      "verifiedOn": "2026-08-27"
+    },
+    {
+      "id": "das-baets-entuk-thyroid-hematoma-2021",
+      "authors": "Iliff HA, El-Boghdadly K, Ahmad I, et al",
+      "title": "Management of haematoma after thyroid surgery: systematic review and multidisciplinary consensus guidelines from the Difficult Airway Society, the British Association of Endocrine and Thyroid Surgeons and the British Association of Otorhinolaryngology, Head and Neck Surgery",
+      "publication": "Anaesthesia",
+      "year": 2022,
+      "locator": "77(1):82-95; doi:10.1111/anae.15585; published online September 21, 2021",
+      "usedFor": "Post-thyroidectomy breathing difficulty or stridor must prompt qualified reassessment for neck hematoma and other airway causes, not automatic attribution to low calcium. No wound-opening or airway procedure is simulated.",
+      "verifiedAgainst": "Primary consensus article https://pmc.ncbi.nlm.nih.gov/articles/PMC9291554/ and issuing-body guidance https://das.uk.com/guidelines/haematoma/. Recognition and escalation scope checked.",
+      "verifiedOn": "2026-08-27"
+    },
     {
       "id": "sfe-emergency-hypercalcemia-2016",
       "authors": "Walsh J, Gittoes N, Selby P, and the Society for Endocrinology Clinical Committee",

@@ -27,6 +27,8 @@ import { ThyroidStormTray } from '../../endocrine-metabolic/ThyroidStormTray';
 import { supportsMyxedema, type MyxedemaAction, type MyxedemaSnapshot } from '../../endocrine-metabolic/myxedema';
 import { MyxedemaTray } from '../../endocrine-metabolic/MyxedemaTray';
 import { supportsHypercalcemia, type HypercalcemiaAction, type HypercalcemiaSnapshot } from '../../endocrine-metabolic/hypercalcemia';
+import { supportsHypocalcemia, type HypocalcemiaAction, type HypocalcemiaSnapshot } from '../../endocrine-metabolic/hypocalcemia';
+import { HypocalcemiaTray } from '../../endocrine-metabolic/HypocalcemiaTray';
 import { HypercalcemiaTray } from '../../endocrine-metabolic/HypercalcemiaTray';
 import type { AdrenalCrisisSnapshot } from '@platform/kernel/protocol';
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
@@ -1409,6 +1411,7 @@ export interface ActionCockpitProps {
     readonly thyroidStorm?: ThyroidStormSnapshot;
     readonly myxedema?: MyxedemaSnapshot;
     readonly hypercalcemia?: HypercalcemiaSnapshot;
+    readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2592,6 +2595,10 @@ export interface ActionCockpitProps {
   readonly hypercalcemiaGuidance?: GuidanceLevel;
   readonly hypercalcemiaDemonstrating?: boolean;
   readonly onHypercalcemiaTutorSource?: () => void;
+  readonly onHypocalcemiaResponse?: (action: HypocalcemiaAction) => void;
+  readonly hypocalcemiaGuidance?: GuidanceLevel;
+  readonly hypocalcemiaDemonstrating?: boolean;
+  readonly onHypocalcemiaTutorSource?: () => void;
   readonly thyroidGuidance?: GuidanceLevel;
   readonly thyroidDemonstrating?: boolean;
   readonly onThyroidTutorSource?: () => void;
@@ -2746,6 +2753,7 @@ export function crisisResponseAvailability(
   const hasThyroidStormResponse = supportsThyroidStorm(scenario);
   const hasMyxedemaResponse = supportsMyxedema(scenario);
   const hasHypercalcemiaResponse = supportsHypercalcemia(scenario);
+  const hasHypocalcemiaResponse = supportsHypocalcemia(scenario);
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -3318,7 +3326,7 @@ export function crisisResponseAvailability(
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
-    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse,
+    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3566,6 +3574,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'thyroid-storm')
       || (event.type === 'narrative' && event.target === 'myxedema')
       || (event.type === 'narrative' && event.target === 'hypercalcemia')
+      || (event.type === 'narrative' && event.target === 'hypocalcemia')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3698,7 +3707,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
-    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse,
+    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3861,8 +3870,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasThyroidStormResponse
     || hasMyxedemaResponse
     || hasHypercalcemiaResponse
+    || hasHypocalcemiaResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasHypercalcemiaResponse
+  const responseTray = hasHypocalcemiaResponse
+    ? { id: 'crisis', label: 'Rescue + continuing care' } as const
+    : hasHypercalcemiaResponse
     ? { id: 'crisis', label: 'Volume + calcium' } as const
     : hasMyxedemaResponse
     ? { id: 'crisis', label: 'Breathing + treatment' } as const
@@ -4329,6 +4341,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasThyroidStormResponse
     || hasMyxedemaResponse
     || hasHypercalcemiaResponse
+    || hasHypocalcemiaResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -5313,6 +5326,12 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 demonstrating={props.adrenalDemonstrating}
                 onOpenSource={props.onAdrenalTutorSource}
                 onAction={props.onAdrenalCrisisResponse ?? (() => {})} />
+            )}
+            {hasHypocalcemiaResponse && (
+              <HypocalcemiaTray assessment={props.resuscitation.hypocalcemia} guidance={props.hypocalcemiaGuidance}
+                demonstrating={props.hypocalcemiaDemonstrating}
+                scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onHypocalcemiaTutorSource}
+                onAction={props.onHypocalcemiaResponse ?? (() => {})} />
             )}
             {hasHypercalcemiaResponse && (
               <HypercalcemiaTray assessment={props.resuscitation.hypercalcemia} guidance={props.hypercalcemiaGuidance}

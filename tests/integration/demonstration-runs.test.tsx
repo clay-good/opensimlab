@@ -39,6 +39,9 @@ import { MYXEDEMA_VENTILATION_TICKS, MYXEDEMA_RESPONSE_TICKS } from '../../src/m
 import { useHypercalcemiaDemonstration } from '../../src/modules/endocrine-metabolic/demo/useHypercalcemiaDemonstration';
 import { HYPERCALCEMIC_CRISIS_VOLUME_AND_BRIDGE } from '../../src/modules/endocrine-metabolic/scenarios/hypercalcemic-crisis-volume-and-bridge';
 import { HYPERCALCEMIA_FLUID_RESPONSE_TICKS, HYPERCALCEMIA_BRIDGE_RESPONSE_TICKS } from '../../src/modules/endocrine-metabolic/hypercalcemia';
+import { useHypocalcemiaDemonstration } from '../../src/modules/endocrine-metabolic/demo/useHypocalcemiaDemonstration';
+import { HYPOCALCEMIC_TETANY_RESCUE_AND_RECURRENCE } from '../../src/modules/endocrine-metabolic/scenarios/hypocalcemic-tetany-rescue-and-recurrence';
+import { HYPOCALCEMIA_CALCIUM_RESPONSE_TICKS, HYPOCALCEMIA_RESPONSE_TICKS } from '../../src/modules/endocrine-metabolic/hypocalcemia';
 import type { PatientState } from '@anesthesia/physiology';
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import { useDemonstration } from '@anesthesia/demo/useDemonstration';
@@ -690,6 +693,99 @@ describe('the demonstration, run for its full length', () => {
       expect(advance.current).toBeUndefined(); expect(useSession.getState().tick).toBe(endedTick);
     } finally { act(() => exampleRoot.unmount()); exampleContainer.remove(); }
   // The authored four hours is run once through the real session and once as replay.
+  }, 120_000);
+
+  it('runs the hypocalcemia example through distinct rescue and continuing-care waits and replays its real transcript', () => {
+    // This test must also run alone without the induction fixture owning the store.
+    act(() => root.unmount());
+    const exampleContainer = document.createElement('div'); document.body.appendChild(exampleContainer);
+    const exampleRoot = createRoot(exampleContainer); const scenario = HYPOCALCEMIC_TETANY_RESCUE_AND_RECURRENCE;
+    const worker = new InProcessWorker(); let finishes = 0; let decisions = 0;
+    const advance = { current: undefined as (() => void) | undefined };
+    const pausedWaits = new Set<string>();
+    function HypocalcemiaHarness() {
+      const session = useSession();
+      const demonstration = useHypocalcemiaDemonstration({ active: true, running: session.transport === 'running',
+        patient: session.equipment?.resuscitation.hypocalcemia, act: session.act,
+        pause: session.pause, play: session.play, onFinished: () => { finishes += 1; },
+      });
+      advance.current = demonstration.onAdvance;
+      return null;
+    }
+    try {
+      act(() => {
+        useSession.getState().begin({ scenarioId: scenario.metadata.id, scenarioVersion: scenario.metadata.version,
+          contentVersion: scenario.metadata.version, modelSetRevision: MODEL_SET_REVISION, engineVersion: ENGINE_VERSION,
+          practiceRegion: 'US', seed: 4906, scenario,
+        }, () => worker as unknown as Worker, { engine: ENGINE_VERSION, content: scenario.metadata.version,
+          modelSet: MODEL_SET_REVISION, scenario: scenario.metadata.version }, 'endocrine-metabolic');
+        exampleRoot.render(createElement(HypocalcemiaHarness));
+        useSession.getState().setSpeed(60); useSession.getState().play();
+      });
+      for (let batch = 0; batch < 3000 && !useSession.getState().equipment?.resuscitation.hypocalcemia?.ended; batch += 1) {
+        if (advance.current) { advancePausedDecision(advance.current, worker); decisions += 1; }
+        const patient = useSession.getState().equipment?.resuscitation.hypocalcemia;
+        const wait = patient && patient.supportActive && patient.calciumDueInSeconds !== null
+          && patient.calciumDueInSeconds > 0 ? 'early-relief'
+          : patient && patient.calciumResponseObserved && patient.responseDueInSeconds !== null
+            && patient.responseDueInSeconds > 0 ? 'continuing-care' : null;
+        if (wait && !pausedWaits.has(wait)) {
+          pausedWaits.add(wait);
+          expect(advance.current).toBeUndefined();
+          expect(useSession.getState().transport).toBe('running');
+          if (wait === 'continuing-care') expect(patient).toMatchObject({ responseObserved: false,
+            observation: { heartRateBpm: 90, adjustedCalciumMgDl: 7, coreTemperatureC: 36.8 } });
+          act(() => useSession.getState().pause());
+          const tick = useSession.getState().tick; const count = worker.applied.length;
+          act(() => { for (let frame = 0; frame < 60; frame += 1) useSession.getState().frame(frame % 2 ? 1000 / 60 : 1000); });
+          expect(useSession.getState().tick).toBe(tick);
+          expect(useSession.getState().equipment?.resuscitation.hypocalcemia).toEqual(patient);
+          expect(worker.applied).toHaveLength(count);
+          expect(advance.current).toBeUndefined();
+          act(() => useSession.getState().play());
+        }
+        act(() => { for (let frame = 0; frame < 6; frame += 1) useSession.getState().frame(1000 / 60); });
+      }
+      expect(finishes).toBe(1); expect(decisions).toBe(9);
+      expect(pausedWaits).toEqual(new Set(['early-relief', 'continuing-care']));
+      expect(useSession.getState().transport).toBe('paused');
+      expect(worker.applied).toEqual([
+        'calcium-rescue', 'assess-risk', 'review-cause', 'magnesium', 'continuing-care', 'call-support', 'reassess', 'reassess', 'handoff',
+      ].map((action) => ({ type: 'hypocalcemia-response', payload: { action } })));
+      expect(useSession.getState().equipment?.resuscitation.hypocalcemia).toMatchObject({
+        ended: 'handoff', calciumResponseObserved: true, responseObserved: true, urgentTreatmentDelayed: false,
+        oralOnlyChosen: false, waitForLabsChosen: false, waitForMagnesiumChosen: false, recurrenceOccurred: false, stopAfterReliefAttempted: false,
+        durableRecoveryProven: false, observation: { heartRateBpm: 86, coreTemperatureC: 36.8, adjustedCalciumMgDl: 7.2 },
+      });
+      const transcript = sessionInternals().recorder!.build('pending');
+      const actions = transcript.actions.filter((action) => action.type === 'hypocalcemia-response');
+      const rescue = actions.find((action) => action.payload.action === 'calcium-rescue')!;
+      const cause = actions.find((action) => action.payload.action === 'review-cause')!;
+      const magnesium = actions.find((action) => action.payload.action === 'magnesium')!;
+      const continuing = actions.find((action) => action.payload.action === 'continuing-care')!;
+      const support = actions.find((action) => action.payload.action === 'call-support')!;
+      const reassessments = actions.filter((action) => action.payload.action === 'reassess');
+      expect(rescue.tick).toBeLessThan(cause.tick);
+      expect(cause.tick).toBeLessThanOrEqual(magnesium.tick);
+      expect(cause.tick).toBeLessThanOrEqual(continuing.tick);
+      expect(reassessments).toHaveLength(2);
+      expect(reassessments[0]!.tick - rescue.tick).toBeGreaterThanOrEqual(HYPOCALCEMIA_CALCIUM_RESPONSE_TICKS);
+      expect(reassessments[0]!.tick).toBeLessThan(support.tick + HYPOCALCEMIA_RESPONSE_TICKS);
+      expect(reassessments[1]!.tick - support.tick).toBeGreaterThanOrEqual(HYPOCALCEMIA_RESPONSE_TICKS);
+      const replay = new AnesthesiaEngine({ scenario, seed: 4906, practiceRegion: 'US' });
+      let last;
+      for (let tick = 0; tick < useSession.getState().tick; tick += 1) {
+        for (const action of transcript.actions) if (action.tick === tick) replay.apply(action);
+        last = replay.step();
+      }
+      expect(last?.state).toEqual(useSession.getState().state);
+      expect(replay.equipment().resuscitation.hypocalcemia).toEqual(useSession.getState().equipment?.resuscitation.hypocalcemia);
+      const endedTick = useSession.getState().tick;
+      act(() => { exampleRoot.render(createElement(HypocalcemiaHarness)); useSession.getState().frame(1000); });
+      expect(finishes).toBe(1); expect(worker.applied).toHaveLength(9);
+      expect(advance.current).toBeUndefined(); expect(useSession.getState().tick).toBe(endedTick);
+    } finally { act(() => exampleRoot.unmount()); exampleContainer.remove(); }
+  // The authored complete-care hour is run once through the real session and once as replay.
   }, 120_000);
 
   it('invalidates a pending adrenal decision when the learner takes over the session', () => {

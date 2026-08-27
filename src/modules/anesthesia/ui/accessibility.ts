@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypercalcemiaSnapshot, MyxedemaSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -99,6 +99,7 @@ export function stateSummary(
     readonly invalid: ReadonlySet<string>;
     readonly myxedema?: MyxedemaSnapshot;
     readonly hypercalcemia?: HypercalcemiaSnapshot;
+    readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -152,7 +153,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -176,6 +177,20 @@ export function stateSummary(
           + ' intravenous.');
       }
     }
+  }
+  if (options.hypocalcemia) {
+    const patient = options.hypocalcemia;
+    lines.push(`Authored qualified calcium rescue: ${patient.calciumAtTick === null ? 'not yet started' : 'started with ECG monitoring'}.`);
+    lines.push(`Current symptoms: ${patient.symptoms}.`);
+    lines.push('Oxygen settings and exhaled carbon dioxide are not supplied in this lesson. The supplied QTc is not calculated by the waveform.');
+    lines.push(patient.observation
+      ? `Last requested adjusted calcium at simulated ${formatElapsed(patient.observation.atTick)}: ${patient.observation.adjustedCalciumMgDl} milligrams per deciliter. This is a historical observation, not a live measurement.`
+      : 'No calcium and bedside reassessment has been requested.');
+    lines.push('Symptom relief does not establish sustained calcium control or recovery.');
+    lines.push(options.alarms.length === 0
+      ? 'No active alarms.'
+      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    return lines.join(' ');
   }
   if (options.hypercalcemia) {
     const patient = options.hypercalcemia;

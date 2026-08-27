@@ -44,6 +44,7 @@ import { AdrenalCrisis, supportsAdrenalCrisis } from '../endocrine-metabolic/adr
 import { ThyroidStorm, supportsThyroidStorm } from '../endocrine-metabolic/thyroid-storm';
 import { Myxedema, supportsMyxedema } from '../endocrine-metabolic/myxedema';
 import { Hypercalcemia, supportsHypercalcemia } from '../endocrine-metabolic/hypercalcemia';
+import { Hypocalcemia, supportsHypocalcemia } from '../endocrine-metabolic/hypocalcemia';
 
 /** The engine's own version, recorded in every transcript. */
 export const ENGINE_VERSION = '0.1.0-alpha.48';
@@ -1714,6 +1715,7 @@ export class AnesthesiaEngine {
   private readonly thyroidStorm: ThyroidStorm | null;
   private readonly myxedema: Myxedema | null;
   private readonly hypercalcemia: Hypercalcemia | null;
+  private readonly hypocalcemia: Hypocalcemia | null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1824,6 +1826,7 @@ export class AnesthesiaEngine {
     this.thyroidStorm = supportsThyroidStorm(options.scenario) ? new ThyroidStorm() : null;
     this.myxedema = supportsMyxedema(options.scenario) ? new Myxedema() : null;
     this.hypercalcemia = supportsHypercalcemia(options.scenario) ? new Hypercalcemia() : null;
+    this.hypocalcemia = supportsHypocalcemia(options.scenario) ? new Hypocalcemia() : null;
     this.practiceRegion = options.practiceRegion;
     this.seed = options.seed;
     if (options.scenario.timeline.some((event) => event.type === 'narrative'
@@ -1957,6 +1960,11 @@ export class AnesthesiaEngine {
       || typeof action.payload !== 'object' || Array.isArray(action.payload)) {
       this.log('warning', 'assessment', `malformed-action-refused-${this.currentTick}`,
         'That action was malformed and was safely ignored. Nothing changed.');
+      return;
+    }
+    if (this.hypocalcemia && action.type !== 'hypocalcemia-response' && action.type !== 'silence-alarm') {
+      this.log('warning', 'assessment', `hypocalcemia-generic-action-refused-${this.currentTick}`,
+        'Only this lesson’s qualified rescue, assessment, continuing care, and handoff choices are available. No generic drug, dose, fluid, procedure, or adjacent-scenario action was performed.');
       return;
     }
     if (this.hypercalcemia && action.type !== 'hypercalcemia-response' && action.type !== 'silence-alarm') {
@@ -2861,6 +2869,16 @@ export class AnesthesiaEngine {
         'This HHS lesson exposes no generic history, examination, testing, calculation, interpretation, diagnosis, fluid, insulin, dextrose, electrolyte, drug, dose, rate, route, access, infusion, nutrition, precipitant treatment, thrombosis or pressure-injury prevention, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
+      case 'hypocalcemia-response': {
+        if (!this.hypocalcemia || Object.keys(action.payload).some((key) => key !== 'action')) {
+          this.log('warning', 'assessment', `hypocalcemia-action-refused-${this.currentTick}`, 'Only the declared dose-free hypocalcemia choices are available in this lesson.');
+          break;
+        }
+        for (const event of this.hypocalcemia.apply(action.payload.action, this.currentTick)) {
+          this.log('warning', 'assessment', `hypocalcemia-${event.id}-${this.currentTick}`, event.message);
+        }
+        break;
+      }
       case 'hypercalcemia-response': {
         if (!this.hypercalcemia || Object.keys(action.payload).some((key) => key !== 'action')) {
           this.log('warning', 'assessment', `hypercalcemia-action-refused-${this.currentTick}`, 'Only the declared dose-free hypercalcemia choices are available in this lesson.');
@@ -14330,6 +14348,9 @@ export class AnesthesiaEngine {
 
   /** Advance exactly one tick. */
   step(): EngineTick {
+    for (const event of this.hypocalcemia?.advance(this.currentTick) ?? []) {
+      this.log('warning', 'assessment', `hypocalcemia-${event.id}-${this.currentTick}`, event.message);
+    }
     for (const event of this.hypercalcemia?.advance(this.currentTick) ?? []) {
       this.log('warning', 'assessment', `hypercalcemia-${event.id}-${this.currentTick}`, event.message);
     }
@@ -15151,6 +15172,13 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: this.endocrineDkaResolutionReassessmentAtTick !== null ? 16 : 18,
         spo2Percent: 98, systolicMmHg: 118, diastolicMmHg: 70, meanArterialMmHg: 86,
         coreTemperatureC: 36.9 };
+    }
+    if (this.hypocalcemia) {
+      const patient = this.hypocalcemia.vitals();
+      crisisState = { ...crisisState, heartRateBpm: patient.heartRateBpm,
+        respiratoryRateBpm: patient.respiratoryRateBpm, spo2Percent: patient.spo2Percent,
+        systolicMmHg: patient.systolicMmHg, diastolicMmHg: patient.diastolicMmHg,
+        meanArterialMmHg: patient.meanArterialMmHg, coreTemperatureC: patient.coreTemperatureC };
     }
     if (this.hypercalcemia) {
       const patient = this.hypercalcemia.vitals();
@@ -19878,6 +19906,7 @@ export class AnesthesiaEngine {
         ...(this.thyroidStorm ? { thyroidStorm: this.thyroidStorm.snapshot(this.currentTick) } : {}),
         ...(this.myxedema ? { myxedema: this.myxedema.snapshot(this.currentTick) } : {}),
         ...(this.hypercalcemia ? { hypercalcemia: this.hypercalcemia.snapshot(this.currentTick) } : {}),
+        ...(this.hypocalcemia ? { hypocalcemia: this.hypocalcemia.snapshot(this.currentTick) } : {}),
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,
           classification: this.aspirationRiskClassification,
@@ -20072,7 +20101,7 @@ export class AnesthesiaEngine {
   invalidParameters(): Set<string> {
     const invalid = new Set<string>();
     // These lessons do not supply a capnogram or a modeled oxygen setting.
-    if (this.myxedema || this.hypercalcemia) {
+    if (this.myxedema || this.hypercalcemia || this.hypocalcemia) {
       invalid.add('etco2MmHg');
       invalid.add('fio2');
     }

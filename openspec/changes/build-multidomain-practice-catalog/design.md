@@ -2830,6 +2830,25 @@ handoff. The lesson ends without claiming renal recovery, cancer control, or dis
 Independent clinical review, complete inclusive-runtime evidence, and production Turnstile/D1
 verification remain separate pending gates.
 
+### Wave E endocrine-metabolic slice 8: hypocalcemic tetany and recurrence
+
+The eighth preview separates monitored calcium rescue from durable cause-directed care after
+thyroidectomy. Urgent rescue includes ECG monitoring without a cause-panel, risk-review or support
+prerequisite. Supplied low magnesium, low PTH, high phosphate and preserved renal function become
+visible only after cause review and inform magnesium and continuing calcium/activated-vitamin-D
+care. Oral-only rescue, diagnostic or magnesium delay, and stopping after relief remain evidence.
+
+The 2016 SfE guidance with its 2019 addendum, revised ESE 2025 guideline, and DAS/BAETS/ENT-UK
+postoperative-airway consensus anchor scope. Every response value and five-, 15-, 30-, 45-, 60-
+and 180-minute lesson clock is authored. Calcium relief may precede recurrence in the missing-care
+branch; later partial stabilization still leaves calcium low. Neither magnesium nor the supplied
+QTc normalizes, and the displayed ECG does not calculate QTc. No seizure or airway catastrophe is
+scripted. Fresh early and later observations earn full observation credit; complete care and a
+fresh later assessment permit active-risk handoff even when the early check was missed, not
+discharge or permanent hypoparathyroidism. The estimated duration is 60 simulated minutes.
+Exact-version fixtures, quiet guidance, a nine-decision worked example, debrief and shared reporting
+bind to content 0.1.0. Clinical, complete inclusive-runtime and production reporting gates stay pending.
+
 ### Wave E endocrine-metabolic slice 1: DKA resolution and transition
 
 The new module opens with a late-treatment boundary rather than duplicating Emergency Medicine's
