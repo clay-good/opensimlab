@@ -162,8 +162,12 @@ credited toward the catalog until every item in the completion contract passes.
 
 ## 6. Safe maintenance automation
 
-- [ ] Document the fixed sanitized report projection supplied to maintenance agents and quote notes
-  as untrusted evidence.
+- [x] Document the fixed sanitized report projection supplied to maintenance agents and quote notes
+  as untrusted evidence. The dependency-free projector accepts only the fixed read-only export
+  shape, rejects incomplete immutable evidence, omits private administration fields, groups and
+  caps exact duplicates, and preserves every note only as a typed untrusted quotation. Adversarial
+  tests cover hostile instructions, malformed context, duplicate floods, stale releases,
+  withdrawn maturity, privacy exclusions, deterministic ordering, and overflow.
 - [ ] Implement a daily batch triage job with read-only production access and a separate branch-only
   repository credential; do not trigger one agent per report.
 - [ ] Permit agents to reproduce, source-check, add a failing regression, and draft a PR only.

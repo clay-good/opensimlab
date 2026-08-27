@@ -55,3 +55,5 @@ launch. These application ceilings and the WAF bound both Siteverify and D1 free
 - D1 access is maintainer-only through authenticated tooling. There is no public read or admin UI.
 
 Deployment, migration, cleanup, recovery, and secret commands are in [deployment.md](deployment.md).
+The fixed private projection, automation trust boundary, and weekly human procedure are in
+[report-maintenance.md](report-maintenance.md).
