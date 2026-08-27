@@ -35,7 +35,12 @@
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
-.problem-report__turnstile { min-block-size: 65px; }
+.problem-report__turnstile {
+  min-inline-size: 0;
+  min-block-size: 140px;
+  display: flex;
+  justify-content: center;
+}
 
 /* The simulator's Analysis and Actions controls occupy the bottom-right corner
    below 768 px (and on short landscape screens). Keep reporting in the same

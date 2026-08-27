@@ -93,7 +93,8 @@ export function renderTurnstile(
     sitekey,
     action: REPORT_ACTION,
     appearance: 'interaction-only',
-    size: 'flexible',
+    // Flexible has a 300 px minimum; compact also fits a 320 px dialog after padding.
+    size: 'compact',
     theme: 'auto',
     'response-field': false,
     'feedback-enabled': false,

@@ -63,6 +63,32 @@ specs and final short-screen assertion were also verified separately.
 The indexable build verified 217 routes. Its 211 preview-channel blockers remain disclosed;
 these engineering checks do not grant clinical review, deployment approval, or full conformance.
 
+## Nested reporting and compact security check, 2026-08-27
+
+A temporary development fixture used the real shared source drawer and report modal with
+Cloudflare's public interactive test key. It did not supply a submission token to the report
+form, solve a challenge, or send a report. The fixture was removed before CI and is not shipped.
+
+- At 320 × 568, the modal is centered at (160, 284). Its client and scroll widths both measure
+  271 px; the document client and scroll widths both measure 320 px. The real compact test
+  widget, expanded payload preview, and footer are reachable by vertical scrolling.
+- Resizing the same iframe to 568 × 320 without reloading keeps the modal centered at
+  (284, 160), with client and scroll widths of 519 px. The widget and footer remain visible
+  after scrolling. Returning to portrait preserves the open report and avoids horizontal overflow.
+- Escape closes only the report and restores focus to the source's report control. A second
+  Escape closes the source drawer and restores its original trigger.
+
+Focused DOM tests cover top-dialog Tab/Escape ownership, pending-send dismissal protection,
+empty dialogs, removed invokers, simultaneous mounts, StrictMode reopening, and nonmodal
+background interaction. Widget tests verify compact options and no rerender/reset on resize.
+These checks do not establish native Tab traversal through the third-party challenge, a full
+screen-reader session, production-domain Turnstile validation, or a successful D1 submission.
+No scenario content version, clinical review, or exact-version reporting gate is promoted.
+
+Full CI passed 3,371 tests across 447 files, including 22 added regressions. All 30 specs,
+lint, TypeScript, static-host checks, asset budgets, and font checks passed. The indexable
+build verified 217 routes; its 211 preview-channel blockers remain open.
+
 ## Still owed, and only a person can do it
 
 - **Screen reader narration.** Nobody has listened to VoiceOver, NVDA or TalkBack read a

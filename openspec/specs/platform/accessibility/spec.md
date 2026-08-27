@@ -46,6 +46,13 @@ Every function SHALL be operable by keyboard alone, with a visible focus indicat
 - **THEN** the sending lock ends, focus moves to Done, and Done or Escape closes the confirmation and restores focus to the invoking report control
 - **AND** reopening starts with an empty form and a new security check
 
+#### Scenario: A nested report preserves its source context
+
+- **WHEN** a report modal opens above a source drawer
+- **THEN** only the top dialog handles Escape and Tab, and closing the report restores focus to its invoking control without closing the drawer
+- **AND** a pending submission consumes Escape without dismissing either layer
+- **AND** a nonmodal drawer permits background interaction when no modal covers it
+
 ### Requirement: Screen Reader Access To Live Physiology
 
 Continuously changing vital signs SHALL be available to assistive technology without flooding it, through a polite live region that announces on clinically meaningful change and an on-demand full-state summary.
@@ -83,6 +90,12 @@ The interface SHALL meet a 4.5:1 contrast ratio for normal text and 3:1 for larg
 
 - **WHEN** the learner increases the interface text scale to 200%
 - **THEN** all labels, numerics, and log entries remain fully readable without truncation or overlap
+
+#### Scenario: The report security check fits a narrow screen
+
+- **WHEN** a report is opened at 320 CSS pixels wide or its viewport rotates
+- **THEN** the centered dialog and security check require no horizontal scrolling, and all controls remain reachable by vertical scrolling
+- **AND** resizing does not recreate the security widget or discard its token
 
 ### Requirement: Motion And Audio Accommodations
 

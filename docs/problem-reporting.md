@@ -35,10 +35,24 @@ note, context choice, and prior security token. Cockpit shortcuts do not run whi
 control or dialog owns keyboard focus. Regression tests cover success, failure, pending sends,
 focus restoration, and fresh reopening without contacting the live service.
 
-Remaining runtime checks include a real interactive Turnstile challenge at 320 px, nested
-source-drawer/report-dialog Escape ordering, and native keyboard-only traversal of the full
-submission flow. The local unavailable-service dialog does not prove those checks. Shared
-coverage must not be used to promote every scenario's exact-version reporting evidence.
+When a report opens above a source drawer, only the top dialog handles Escape and Tab.
+Closing the report preserves the drawer and returns focus to its report control; a pending
+send cannot dismiss either layer with Escape. Nonmodal drawers still permit background
+interaction when no modal covers them.
+
+The security check uses the compact widget at every width. Cloudflare documents a 300 px
+minimum for flexible widgets and a 150 × 140 px compact size; the latter fits the padded
+320 px report dialog. The host reserves at least 140 px and centers the widget without
+scaling or clipping it. Keeping one size avoids resetting a challenge or its token when
+the screen rotates. Appearance remains interaction-only, and token validation is unchanged.
+See [Cloudflare widget sizes](https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/widget-configurations/#widget-sizes)
+(consulted August 27, 2026).
+
+Native keyboard-only traversal of the complete submission flow and production-domain
+Turnstile/D1 verification remain launch checks. Public dummy keys can exercise layout without
+production secrets or report submissions; they do not prove production validation. See
+[Cloudflare testing guidance](https://developers.cloudflare.com/turnstile/troubleshooting/testing/).
+Shared coverage must not promote every scenario's exact-version reporting evidence.
 
 The Worker, not the browser, binds every accepted row to the generated catalog's capability
 version and content-addressed release, defaults, maturity, source-manifest, and

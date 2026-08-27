@@ -374,33 +374,76 @@ export function Abbreviation({ short, expansion, explanation }: {
  * close, and the dialog is a focus trap while it is open
  * (platform/accessibility → Focus is never lost).
  */
-function useDialogFocus(open: boolean, container: React.RefObject<HTMLElement | null>) {
-  const invoker = useRef<HTMLElement | null>(null);
+interface DialogLayer {
+  readonly node: HTMLElement;
+  readonly modal: boolean;
+  readonly invokers: readonly (Element | null)[];
+}
+const dialogLayers: DialogLayer[] = [];
+
+function dialogControls(node: HTMLElement) {
+  return [...node.querySelectorAll<HTMLElement>('a[href], button, input, select, textarea, summary, iframe, [tabindex]')]
+    .filter((item) => item.tabIndex >= 0 && !item.matches(':disabled')
+      && !item.closest('[hidden], [inert], [aria-hidden="true"]')
+      && getComputedStyle(item).display !== 'none' && getComputedStyle(item).visibility !== 'hidden');
+}
+
+function focusDialog(layer: DialogLayer) {
+  (dialogControls(layer.node)[0] ?? layer.node).focus();
+}
+
+function useDialogFocus(open: boolean, container: React.RefObject<HTMLElement | null>, modal: boolean,
+  onClose: (() => void) | undefined, dismissible = true) {
+  const options = useRef({ onClose, dismissible });
+  options.current = { onClose, dismissible };
   useEffect(() => {
-    if (!open) return undefined;
-    invoker.current = document.activeElement as HTMLElement | null;
+    if (!open || !container.current) return undefined;
     const node = container.current;
-    const focusable = node?.querySelectorAll<HTMLElement>(
-      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-    );
-    focusable?.[0]?.focus();
+    const previous = dialogLayers.at(-1);
+    const layer: DialogLayer = { node, modal, invokers: [document.activeElement, ...(previous?.invokers ?? [])] };
+    // Modal surfaces cover drawers. A child dialog remains above its parent
+    // even when React mounts the child's effect before the parent's effect.
+    const above = dialogLayers.findIndex((entry) => (!modal && entry.modal) || node.contains(entry.node));
+    dialogLayers.splice(above < 0 ? dialogLayers.length : above, 0, layer);
+    const ownsFocus = () => dialogLayers.at(-1) === layer && node.isConnected;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Tab' || !node) return;
-      const items = [...node.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-      )];
-      if (items.length === 0) return;
+      if (event.defaultPrevented || !ownsFocus()) return;
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        if (options.current.dismissible) options.current.onClose?.();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      if (!modal && !node.contains(document.activeElement)) return;
+      const items = dialogControls(node);
       const first = items[0]!;
       const last = items[items.length - 1]!;
-      if (event.shiftKey && document.activeElement === first) { last.focus(); event.preventDefault(); }
+      if (!items.length || !node.contains(document.activeElement) || document.activeElement === node) {
+        event.preventDefault(); (event.shiftKey ? last ?? node : first ?? node).focus();
+      } else if (event.shiftKey && document.activeElement === first) { last.focus(); event.preventDefault(); }
       else if (!event.shiftKey && document.activeElement === last) { first.focus(); event.preventDefault(); }
     };
+    const onFocus = (event: FocusEvent) => {
+      if (modal && !event.defaultPrevented && ownsFocus() && !node.contains(event.target as Node)) focusDialog(layer);
+    };
     document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('focusin', onFocus);
+    if (ownsFocus()) focusDialog(layer);
     return () => {
       document.removeEventListener('keydown', onKeyDown);
-      invoker.current?.focus();
+      document.removeEventListener('focusin', onFocus);
+      const wasTop = dialogLayers.at(-1) === layer;
+      dialogLayers.splice(dialogLayers.indexOf(layer), 1);
+      if (!wasTop) return;
+      const next = dialogLayers.filter((entry) => entry.node.isConnected).at(-1);
+      for (const invoker of layer.invokers) {
+        if (!(invoker instanceof HTMLElement) || !invoker.isConnected || (next?.modal && !next.node.contains(invoker))) continue;
+        invoker.focus();
+        if (document.activeElement === invoker) return;
+      }
+      if (next) focusDialog(next);
     };
-  }, [open, container]);
+  }, [open, container, modal]);
 }
 
 export interface ModalProps {
@@ -416,18 +459,12 @@ export interface ModalProps {
 export function Modal({ open, title, onClose, dismissible = true, children, footer }: ModalProps) {
   const ref = useRef<HTMLDivElement>(null);
   const titleId = useId();
-  useDialogFocus(open, ref);
-  useEffect(() => {
-    if (!open || !dismissible || !onClose) return undefined;
-    const onKeyDown = (event: KeyboardEvent) => { if (event.key === 'Escape') onClose(); };
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
-  }, [open, dismissible, onClose]);
+  useDialogFocus(open, ref, true, onClose, dismissible);
 
   if (!open) return null;
   return (
     <div className="modal-backdrop">
-      <div className="modal" role="dialog" aria-modal="true" aria-labelledby={titleId} ref={ref}>
+      <div className="modal" role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} ref={ref}>
         <h2 className="panel__title" id={titleId} style={{ marginBlockEnd: 'var(--space-4)' }}>{title}</h2>
         {children}
         {footer && <div style={{ display: 'flex', gap: 'var(--space-3)', justifyContent: 'flex-end', marginBlockStart: 'var(--space-5)' }}>{footer}</div>}
@@ -441,16 +478,10 @@ export function Drawer({ open, title, onClose, children }: {
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const titleId = useId();
-  useDialogFocus(open, ref);
-  useEffect(() => {
-    if (!open) return undefined;
-    const onKeyDown = (event: KeyboardEvent) => { if (event.key === 'Escape') onClose(); };
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
-  }, [open, onClose]);
+  useDialogFocus(open, ref, false, onClose);
   if (!open) return null;
   return (
-    <div className="drawer" role="dialog" aria-modal="false" aria-labelledby={titleId} ref={ref}>
+    <div className="drawer" role="dialog" aria-modal="false" aria-labelledby={titleId} tabIndex={-1} ref={ref}>
       <div className="panel__header" style={{ paddingInline: 0 }}>
         <h2 className="panel__title" id={titleId}>{title}</h2>
         <IconButton label="Close" onClick={onClose}>✕</IconButton>

@@ -852,6 +852,10 @@ credited toward the catalog until every item in the completion contract passes.
     on short screens, isolate cockpit shortcuts from controls/dialogs/reading, and unlock/focus
     the successful report confirmation. Browser geometry and DOM regressions are recorded in
     `docs/accessibility-audit.md`; moderated and live-service review gates remain pending.
+  - [x] Preserve the source drawer beneath a report modal, assign Escape and focus handling
+    to the top dialog, and keep the compact security check reachable through narrow-screen
+    rotation without recreating it. Shared regressions and a public test-widget browser check
+    do not replace exact-version reporting evidence or production Turnstile/D1 verification.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
   - [x] Toxicology slice 1/15 establishes the indexable `/toxicology` module with one authored
     methemoglobinemia lab after documented topical benzocaine exposure. The learner reconciles
