@@ -2226,6 +2226,28 @@ oxygen, ventilation, position, suction, front-of-neck access, fluid, blood, anes
 dose, airway, wake-or-proceed, anesthesia or birth decision, surgery, delivery, newborn care,
 procedure, transfer, disposition or outcome control.
 
+### Wave D obstetrics slice 14: maternal-to-neonatal resuscitation handoff
+
+The fourteenth lab opens immediately after urgent term caesarean birth for persistent fetal
+bradycardia. Separate qualified maternal and newborn teams are active. The newborn was apneic with
+a supplied heart rate of 70/min after initial steps; qualified assisted ventilation began within the
+first minute, with visible chest movement and a heart-rate rise to 118/min. The awake mother is
+physiologically stable and asks whether her newborn is breathing. Placental findings, cord gases,
+newborn respiratory and neurologic course, glucose, temperature, disposition and outcomes remain
+open.
+
+The learner names the 2 patient owners, sender, receiver, shared clock and family-communication
+owner; connects maternal and antenatal context, intrapartum concern, birth, newborn identity,
+initial condition, timed qualified interventions, response and unresolved risks; reviews ventilation
+priority without reading early improvement as stable transition; and reviews an interruption-limited
+structured transfer with readback, questions, explicit responsibility and contingency triggers. A
+fixed 5-minute report supplies spontaneous respirations with ongoing qualified respiratory support,
+pending temperature, glucose and cord-gas checks, planned monitored postresuscitation care and an
+unchanged maternal state. Six controls expose no learner examination, monitoring or test
+interpretation, scoring, diagnosis, resuscitation, oxygen, ventilation, airway, compressions,
+access, fluid, blood, glucose, drug, dose, maternal anesthesia, surgery, delivery, newborn care,
+transport, cooling, family counseling, procedure, disposition or outcome control.
+
 #### Neonatology: 11
 
 Term newborn transition; neonatal apnea; ineffective ventilation correction; neonatal bradycardia;

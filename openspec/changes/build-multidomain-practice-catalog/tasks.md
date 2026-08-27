@@ -509,6 +509,16 @@ credited toward the catalog until every item in the completion contract passes.
     proceeding-to-essential-surgery report; and active-risk handoff without learner examination,
     monitoring interpretation, diagnosis, airway care, oxygen, ventilation, device, drug, dose,
     anesthesia, surgery, delivery, newborn care, procedure, disposition or outcome.
+  - [x] Obstetrics slice 14/15 adds one authored urgent-term-birth maternal-to-neonatal resuscitation
+    handoff after qualified assisted ventilation for apnea and a supplied heart rate below 100/min;
+    explicit separate maternal and newborn ownership, sender, receiver, shared clock and family-
+    communication ownership; antenatal, intrapartum, birth, newborn, timed-intervention, response and
+    open-risk reconciliation; ventilation-priority review without stable-transition closure; an
+    interruption-limited structured transfer with readback and explicit responsibility; a fixed
+    5-minute qualified postresuscitation report; and active-risk handoff without learner examination,
+    monitoring or test interpretation, scoring, diagnosis, resuscitation, oxygen, ventilation,
+    airway, compressions, access, fluid, blood, glucose, drug, dose, anesthesia, surgery, delivery,
+    newborn care, transport, cooling, counseling, procedure, disposition or outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

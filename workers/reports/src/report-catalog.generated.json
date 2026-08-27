@@ -2162,6 +2162,23 @@
       "limitationManifestHash": "sha256:7fad1edc1db81477b05ca77fff2b3fb3782de3f2448baedafa215ec97b886891"
     },
     {
+      "scenarioId": "maternal-to-neonatal-resuscitation-handoff",
+      "contentVersion": "0.1.0",
+      "moduleId": "obstetrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:a6881f33c85866ab2e22131c8e05fa0e58c8a6765ef0d55d92884ab35d535d3e",
+      "defaultsHash": "sha256:35f6f3d03af201a11ad55298b6f8ecb7b9cd1d0995fdcf1777d6236b4f7c15ec",
+      "maturityHash": "sha256:92c6166add4766608db78e96814ccdb365a234cea351bfcaea8d1265f861cabf",
+      "sourceManifestHash": "sha256:ffe575e0abd9d0d98cadf61b38da4441643ab0da1b6523622cb4e5e657c60d66",
+      "limitationManifestHash": "sha256:617c7908f3496ed5a18fc020ac27eca93812dccedc8e2704307882a1c7755434"
+    },
+    {
       "scenarioId": "postpartum-hemorrhage-uterine-atony",
       "contentVersion": "0.1.0",
       "moduleId": "obstetrics",

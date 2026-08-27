@@ -5300,6 +5300,31 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['activate-obstetrics-maternal-neonatal-handoff-two-patient-team-and-support-ownership',
+      'reconcile-obstetrics-maternal-neonatal-handoff-antenatal-intrapartum-birth-resuscitation-and-whole-family-context',
+      'review-obstetrics-maternal-neonatal-handoff-ventilation-priority-response-and-uncertainty-boundaries',
+      'review-obstetrics-maternal-neonatal-handoff-structured-transfer-readback-and-parallel-readiness',
+      'review-obstetrics-maternal-neonatal-handoff-fixed-five-minute-qualified-course-report',
+      'handoff-obstetrics-maternal-neonatal-postresuscitation-monitoring-maternal-family-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'maternal-to-neonatal-resuscitation-handoff'
+        && scenario.timeline.every((event) => event.type === 'narrative')
+        && scenario.timeline.filter((event) => event.target === 'maternal-to-neonatal-resuscitation-handoff-transition').length === 1
+        && scenario.timeline.filter((event) => event.target === 'maternal-to-neonatal-resuscitation-handoff-transition-boundary').length === 1;
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Obstetrics maternal-to-neonatal resuscitation-handoff lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['support-activated', 'Separate qualified maternal and newborn teams, sender, receiver, shared clock, communication, dignity, family, and support ownership were named first.'],
+        ['context-reconciled', 'Maternal identity and history, gestation, intrapartum concern, birth, newborn identity and initial condition, timed qualified interventions and response, open tests, and family context were connected.'],
+        ['safety-reviewed', 'Ventilation priority and the supplied heart-rate response were reviewed without treating early improvement as stable transition or outcome.'],
+        ['transfer-reviewed', 'Structured transfer, receiver readback, questions, explicit responsibility, contingency triggers, documentation, maternal continuity, and family communication were reviewed.'],
+        ['five-minute-report-reviewed', 'The fixed qualified postresuscitation report was reviewed without learner care, durable newborn-stability, maternal-recovery, disposition, or outcome claims.'],
+        ['active-risk-handoff-recorded', 'Newborn respiratory, glucose, temperature, neurologic, placental, maternal, family, documentation, follow-up, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^obstetrics-maternal-neonatal-handoff-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^obstetrics-maternal-neonatal-handoff-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-obstetrics-sepsis-postpartum-clock-infection-organ-dysfunction-and-whole-person',
       'recognize-obstetrics-maternal-sepsis-emergency-without-fever-score-source-or-single-value-closure',
       'activate-obstetrics-sepsis-obstetric-critical-care-anesthesia-nursing-pharmacy-microbiology-source-newborn-and-dignity-ownership',

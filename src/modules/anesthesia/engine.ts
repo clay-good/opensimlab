@@ -549,6 +549,10 @@ const OBSTETRICS_FAILED_INTUBATION_BLOCKED_ACTION_TYPES = new Set([
   ...OBSTETRICS_HIGH_NEURAXIAL_BLOCK_BLOCKED_ACTION_TYPES,
   'high-neuraxial-block-obstetric-coordination-response',
 ]);
+const OBSTETRICS_MATERNAL_NEONATAL_HANDOFF_BLOCKED_ACTION_TYPES = new Set([
+  ...OBSTETRICS_FAILED_INTUBATION_BLOCKED_ACTION_TYPES,
+  'failed-obstetric-intubation-oxygenation-first-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1554,6 +1558,12 @@ export class AnesthesiaEngine {
   private obstetricsFailedIntubationDecisionAtTick: number | null = null;
   private obstetricsFailedIntubationReassessmentAtTick: number | null = null;
   private obstetricsFailedIntubationHandoffAtTick: number | null = null;
+  private obstetricsMaternalNeonatalHandoffSupportAtTick: number | null = null;
+  private obstetricsMaternalNeonatalHandoffContextAtTick: number | null = null;
+  private obstetricsMaternalNeonatalHandoffSafetyAtTick: number | null = null;
+  private obstetricsMaternalNeonatalHandoffTransferAtTick: number | null = null;
+  private obstetricsMaternalNeonatalHandoffReassessmentAtTick: number | null = null;
+  private obstetricsMaternalNeonatalHandoffHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2549,6 +2559,14 @@ export class AnesthesiaEngine {
     if (obstetricsFailedIntubation && OBSTETRICS_FAILED_INTUBATION_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `obstetrics-failed-intubation-generic-action-refused-${this.currentTick}`,
         'This Obstetrics lesson exposes no generic examination, monitoring interpretation, diagnosis, airway attempt or device manipulation, oxygen, ventilation, position, suction, front-of-neck access, fluid, blood, anesthetic or other drug, dose, wake-or-proceed decision, surgery, birth, newborn care, procedure, transfer, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const obstetricsMaternalNeonatalHandoff = this.scenario.metadata.id === 'maternal-to-neonatal-resuscitation-handoff'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'maternal-to-neonatal-resuscitation-handoff-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'maternal-to-neonatal-resuscitation-handoff-transition-boundary').length === 1;
+    if (obstetricsMaternalNeonatalHandoff && OBSTETRICS_MATERNAL_NEONATAL_HANDOFF_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `obstetrics-maternal-neonatal-handoff-generic-action-refused-${this.currentTick}`,
+        'This Obstetrics lesson exposes no generic maternal or newborn examination, monitoring or test interpretation, diagnosis, resuscitation, oxygen, ventilation, airway, compressions, access, fluid, blood, glucose, drug, dose, anesthesia, surgery, birth, newborn care, transport, cooling, procedure, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -11286,6 +11304,33 @@ export class AnesthesiaEngine {
         if (this.obstetricsFailedIntubationHandoffAtTick !== null) break;
         this.obstetricsFailedIntubationHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-failed-intubation-active-risk-handoff-recorded-${this.currentTick}`, 'Airway patency, device seal and displacement, oxygenation and ventilation deterioration, CICO rescue, aspiration, awareness and recall, airway injury, anesthetic course, maternal circulation, fetal hypoxia, surgery, birth, newborn resuscitation, explanation, family and staff support, postnatal anesthesia review, psychological follow-up, incident review, disposition, prognosis, and maternal or newborn outcome uncertainty were handed off.', { airwaySafetyProven: false, aspirationExcluded: false, awarenessExcluded: false, fetalRecoveryProven: false, deliveryCompleted: false, newbornSafetyProven: false, safetyDispositionDetermined: false, maternalOutcomePredicted: false, newbornOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'maternal-to-neonatal-resuscitation-handoff-response': {
+        const response = typeof action.payload?.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'maternal-to-neonatal-resuscitation-handoff'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'maternal-to-neonatal-resuscitation-handoff-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'maternal-to-neonatal-resuscitation-handoff-transition-boundary').length === 1;
+        const actions = ['activate-obstetrics-maternal-neonatal-handoff-two-patient-team-and-support-ownership',
+          'reconcile-obstetrics-maternal-neonatal-handoff-antenatal-intrapartum-birth-resuscitation-and-whole-family-context',
+          'review-obstetrics-maternal-neonatal-handoff-ventilation-priority-response-and-uncertainty-boundaries',
+          'review-obstetrics-maternal-neonatal-handoff-structured-transfer-readback-and-parallel-readiness',
+          'review-obstetrics-maternal-neonatal-handoff-fixed-five-minute-qualified-course-report',
+          'handoff-obstetrics-maternal-neonatal-postresuscitation-monitoring-maternal-family-and-outcome-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `obstetrics-maternal-neonatal-handoff-response-refused-${this.currentTick}`, supported ? 'The maternal-to-neonatal handoff action was not listed. No supplied or injected text was retained.' : 'These handoff choices are available only in the exact declared Obstetrics lesson.'); break; }
+        if (response === actions[0]) { if (this.obstetricsMaternalNeonatalHandoffSupportAtTick !== null) break; this.obstetricsMaternalNeonatalHandoffSupportAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-maternal-neonatal-handoff-support-activated-${this.currentTick}`, 'Separate qualified maternal and newborn owners, one sender, one receiver, one shared clock, and communication, documentation, dignity, family, and staff-support ownership were named. No learner maternal or newborn examination, resuscitation, treatment, procedure, transfer, or disposition action occurred.'); break; }
+        if (this.obstetricsMaternalNeonatalHandoffSupportAtTick === null) { this.log('warning', 'assessment', `obstetrics-maternal-neonatal-handoff-support-order-refused-${this.currentTick}`, 'Name the two patient teams, sender, receiver, clock, and family-communication owner before further review.'); break; }
+        if (response === actions[1]) { if (this.obstetricsMaternalNeonatalHandoffContextAtTick !== null) break; this.obstetricsMaternalNeonatalHandoffContextAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-maternal-neonatal-handoff-context-reconciled-${this.currentTick}`, 'Supplied maternal identity and antenatal history, gestation, intrapartum concern, birth time and route, fluid and placental context, newborn identity and initial condition, timed qualified interventions and response, current support, exposures, unresolved tests, family priorities, and the whole family were connected without learner examination, monitoring interpretation, diagnosis, or care.'); break; }
+        if (this.obstetricsMaternalNeonatalHandoffContextAtTick === null) { this.log('warning', 'assessment', `obstetrics-maternal-neonatal-handoff-context-order-refused-${this.currentTick}`, 'Connect the supplied maternal, fetal, birth, resuscitation-clock, newborn, and whole-family facts before reviewing the response.'); break; }
+        if (response === actions[2]) { if (this.obstetricsMaternalNeonatalHandoffSafetyAtTick !== null) break; this.obstetricsMaternalNeonatalHandoffSafetyAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-maternal-neonatal-handoff-safety-reviewed-${this.currentTick}`, 'Effective ventilation, indicated by the supplied increasing heart rate, was recognized as the immediate qualified-team priority. The response was not treated as proof of stable transition; respiratory, oxygenation, temperature, glucose, neurologic, placental, and other postresuscitation uncertainty remained open without learner care.'); break; }
+        if (this.obstetricsMaternalNeonatalHandoffSafetyAtTick === null) { this.log('warning', 'assessment', `obstetrics-maternal-neonatal-handoff-safety-order-refused-${this.currentTick}`, 'Review ventilation priority, the supplied response, and continuing uncertainty before transfer readiness.'); break; }
+        if (response === actions[3]) { if (this.obstetricsMaternalNeonatalHandoffTransferAtTick !== null) break; this.obstetricsMaternalNeonatalHandoffTransferAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-maternal-neonatal-handoff-transfer-reviewed-${this.currentTick}`, 'An interruption-limited structured transfer with identity, shared clocks, trajectory, timed qualified interventions, response, current support, unresolved risks and tests, receiver readback and questions, explicit responsibility, contingency triggers, documentation, maternal continuity, family communication, dignity, and support was reviewed. No learner resuscitation, treatment, transport, counseling, or disposition decision occurred.'); break; }
+        if (this.obstetricsMaternalNeonatalHandoffTransferAtTick === null) { this.log('warning', 'assessment', `obstetrics-maternal-neonatal-handoff-transfer-order-refused-${this.currentTick}`, 'Review a structured transfer, receiver readback, explicit responsibility, and parallel maternal and newborn readiness before the fixed report.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.obstetricsMaternalNeonatalHandoffTransferAtTick) { this.log('warning', 'assessment', `obstetrics-maternal-neonatal-handoff-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed qualified-team report.'); break; } if (this.obstetricsMaternalNeonatalHandoffReassessmentAtTick !== null) break; this.obstetricsMaternalNeonatalHandoffReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-maternal-neonatal-handoff-five-minute-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report 5 minutes after activation: newborn HR is 136/min with spontaneous respirations while qualified respiratory support and pulse-oximetry-guided oxygen continue. Temperature and glucose checks and cord gases are pending; the qualified newborn team plans monitored postresuscitation care. The mother remains awake and physiologically unchanged while qualified surgery continues. Durable newborn stability, neurologic state, maternal recovery, placental cause, separation, feeding, disposition, and outcomes remain unresolved.', { newbornCarePerformedByLearner: false, newbornStabilityProven: false, maternalRecoveryProven: false, transferPerformedByLearner: false, dispositionDetermined: false, outcomePredicted: false }); break; }
+        if (this.obstetricsMaternalNeonatalHandoffReassessmentAtTick === null) { this.log('warning', 'assessment', `obstetrics-maternal-neonatal-handoff-handoff-order-refused-${this.currentTick}`, 'Review the fixed 5-minute qualified-team report before active-risk handoff.'); break; }
+        if (this.currentTick <= this.obstetricsMaternalNeonatalHandoffReassessmentAtTick) { this.log('warning', 'assessment', `obstetrics-maternal-neonatal-handoff-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.obstetricsMaternalNeonatalHandoffHandoffAtTick !== null) break;
+        this.obstetricsMaternalNeonatalHandoffHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-maternal-neonatal-handoff-active-risk-handoff-recorded-${this.currentTick}`, 'Newborn breathing, oxygenation, ventilation, temperature, glucose, neurologic state, recurrence, cord gases, placental findings, monitored-care needs, maternal recovery, anesthesia and surgery, separation, feeding, attachment, explanation, family and staff support, documentation, debriefing, follow-up, disposition, prognosis, and maternal or newborn outcome uncertainty were handed off.', { newbornStabilityProven: false, newbornNeurologicSafetyProven: false, maternalRecoveryProven: false, placentalCauseDetermined: false, familyCommunicationCompletedByLearner: false, dispositionDetermined: false, maternalOutcomePredicted: false, newbornOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -14296,6 +14341,14 @@ export class AnesthesiaEngine {
         diastolicMmHg: this.obstetricsFailedIntubationReassessmentAtTick !== null ? 66 : 64,
         meanArterialMmHg: this.obstetricsFailedIntubationReassessmentAtTick !== null ? 81 : 78,
         coreTemperatureC: 36.7 };
+    }
+    if (this.scenario.metadata.id === 'maternal-to-neonatal-resuscitation-handoff'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'maternal-to-neonatal-resuscitation-handoff-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'maternal-to-neonatal-resuscitation-handoff-transition-boundary').length === 1) {
+      crisisState = { ...crisisState, heartRateBpm: 98, respiratoryRateBpm: 16,
+        spo2Percent: 98, systolicMmHg: 112, diastolicMmHg: 62,
+        meanArterialMmHg: 79, coreTemperatureC: 36.8 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -18569,6 +18622,32 @@ export class AnesthesiaEngine {
               airwaySafetyProven: false as const, aspirationExcluded: false as const,
               awarenessExcluded: false as const, fetalRecoveryProven: false as const,
               treatmentEffectProven: false as const, newbornSafetyProven: false as const,
+              safetyDispositionDetermined: false as const, maternalOutcomePredicted: false as const,
+              newbornOutcomePredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'maternal-to-neonatal-resuscitation-handoff'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'maternal-to-neonatal-resuscitation-handoff-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'maternal-to-neonatal-resuscitation-handoff-transition-boundary').length === 1 ? {
+            obstetricsMaternalNeonatalHandoffAssessment: {
+              supportAtTick: this.obstetricsMaternalNeonatalHandoffSupportAtTick,
+              contextAtTick: this.obstetricsMaternalNeonatalHandoffContextAtTick,
+              safetyAtTick: this.obstetricsMaternalNeonatalHandoffSafetyAtTick,
+              transferAtTick: this.obstetricsMaternalNeonatalHandoffTransferAtTick,
+              reassessmentAtTick: this.obstetricsMaternalNeonatalHandoffReassessmentAtTick,
+              handoffAtTick: this.obstetricsMaternalNeonatalHandoffHandoffAtTick,
+              authoredMaternalNeonatalHandoff: true as const,
+              authoredQualifiedPostresuscitationCourse: this.obstetricsMaternalNeonatalHandoffReassessmentAtTick !== null,
+              maternalOrNewbornExaminedByLearner: false as const,
+              monitoringOrTestsInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const, newbornResuscitationPerformedByLearner: false as const,
+              oxygenOrVentilationDeliveredByLearner: false as const, airwayManagedByLearner: false as const,
+              compressionsAccessFluidBloodGlucoseOrDrugDeliveredByLearner: false as const,
+              maternalAnesthesiaOrSurgeryPerformedByLearner: false as const,
+              newbornCareOrTransportPerformedByLearner: false as const,
+              familyCounselingPerformedByLearner: false as const, newbornStabilityProven: false as const,
+              maternalRecoveryProven: false as const, placentalCauseDetermined: false as const,
               safetyDispositionDetermined: false as const, maternalOutcomePredicted: false as const,
               newbornOutcomePredicted: false as const, outcomePredicted: false as const,
             },

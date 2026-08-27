@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "obstetrics",
-  "recordCount": 13,
+  "recordCount": 14,
   "records": [
     {
       "recordId": "scenario:postpartum-hemorrhage-uterine-atony@0.1.0",
@@ -144,6 +144,17 @@
       "evidence": [
         "/catalog/obstetrics-completion-audit.json#failed-obstetric-intubation-oxygenation-first@0.1.0",
         "/catalog/obstetrics-quality-audit.json#failed-obstetric-intubation-oxygenation-first@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:maternal-to-neonatal-resuscitation-handoff@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "maternal-to-neonatal-resuscitation-handoff",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/obstetrics-completion-audit.json#maternal-to-neonatal-resuscitation-handoff@0.1.0",
+        "/catalog/obstetrics-quality-audit.json#maternal-to-neonatal-resuscitation-handoff@0.1.0"
       ]
     }
   ]

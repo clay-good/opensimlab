@@ -2895,6 +2895,24 @@ export interface EquipmentSnapshot {
       readonly safetyDispositionDetermined: false; readonly maternalOutcomePredicted: false;
       readonly newbornOutcomePredicted: false; readonly outcomePredicted: false;
     };
+    readonly obstetricsMaternalNeonatalHandoffAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly safetyAtTick: number | null; readonly transferAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly authoredMaternalNeonatalHandoff: true;
+      readonly authoredQualifiedPostresuscitationCourse: boolean;
+      readonly maternalOrNewbornExaminedByLearner: false;
+      readonly monitoringOrTestsInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly newbornResuscitationPerformedByLearner: false;
+      readonly oxygenOrVentilationDeliveredByLearner: false; readonly airwayManagedByLearner: false;
+      readonly compressionsAccessFluidBloodGlucoseOrDrugDeliveredByLearner: false;
+      readonly maternalAnesthesiaOrSurgeryPerformedByLearner: false;
+      readonly newbornCareOrTransportPerformedByLearner: false;
+      readonly familyCounselingPerformedByLearner: false; readonly newbornStabilityProven: false;
+      readonly maternalRecoveryProven: false; readonly placentalCauseDetermined: false;
+      readonly safetyDispositionDetermined: false; readonly maternalOutcomePredicted: false;
+      readonly newbornOutcomePredicted: false; readonly outcomePredicted: false;
+    };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {
       readonly cuesReviewedAtTick: number | null;

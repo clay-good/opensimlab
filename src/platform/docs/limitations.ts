@@ -4871,6 +4871,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use direct findings, current local protocols and equipment, immediate experienced airway and obstetric help, qualified individualized decisions, respectful communication, and hands-on simulation.',
     briefIn: ['failed-obstetric-intubation-oxygenation-first'],
   },
+  {
+    id: 'maternal-neonatal-handoff-maternal-fetal-birth-newborn-and-qualified-course-reports-are-authored',
+    headline: 'The maternal, fetal, birth, newborn-resuscitation, and 5-minute qualified reports are authored.',
+    simplification: 'Fixed reports stand in for antenatal and intrapartum record review, birth documentation, newborn examination and monitoring, timed resuscitation, response assessment, placental and cord-gas review, postresuscitation monitoring, maternal surgery, family communication, and serial review.',
+    whereItMisleads: 'Treating the birth clock, heart-rate reports, ventilation response, displayed maternal values, absent supplied risks, pending tests, or planned monitored care as learner findings, universal thresholds, technical success, stable transition, diagnosis, prognosis, or outcome.',
+    correctUnderstanding: 'Every birth needs a dedicated newborn-capable clinician; effective ventilation is prioritized when required, and infants needing more than initial steps need direct qualified observation, monitoring, structured transfer, and follow-up.',
+    briefIn: ['maternal-to-neonatal-resuscitation-handoff'],
+  },
+  {
+    id: 'maternal-neonatal-handoff-controls-activate-reconcile-review-reassess-and-handoff-only',
+    headline: 'The controls name owners, connect supplied facts, review response and transfer structure, read a fixed report, and hand off only.',
+    simplification: 'Six actions stand in for concurrent qualified maternal, newborn, anesthesia, obstetric, nursing, theatre, laboratory, placental, transport, leadership, timekeeping, documentation, communication, dignity, family, staff-support, debriefing, and handoff work.',
+    whereItMisleads: 'Equating button order with maternal or newborn examination, monitoring interpretation, resuscitation skill, closed-loop communication quality, family counseling, transport readiness, documentation quality, or competence.',
+    correctUnderstanding: 'Real resuscitation and transfer are concurrent, physical, time-critical, team-based, interruption-aware, locally rehearsed, and verified by the receiver. Cognitive practice cannot replace direct care or hands-on simulation with qualified feedback.',
+    briefIn: ['maternal-to-neonatal-resuscitation-handoff'],
+  },
+  {
+    id: 'no-live-maternal-neonatal-exam-monitor-resuscitation-oxygen-drug-procedure-transfer-disposition-or-outcome',
+    headline: 'The lab does not examine, monitor, resuscitate, treat, transport, counsel, determine disposition, or report outcome.',
+    simplification: 'No live maternal or newborn examination, Apgar scoring, monitoring, glucose, temperature, laboratory, cord-gas or placental assessment; drying, stimulation, suction, position, oxygen, ventilation, airway, compressions, access, fluid, blood, glucose, epinephrine or other drug or dose; maternal anesthesia, surgery, delivery, newborn care, transport, cooling, family counseling, procedure, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Using the rehearsal as resuscitation, oxygen, glucose, temperature, cooling, transfer, counseling, or disposition instruction; delaying immediate trained response for a click; or reading completion as competence.',
+    correctUnderstanding: 'Use verified direct findings, current local neonatal-resuscitation and transfer protocols, immediate trained teams, explicit transfer of responsibility, respectful family communication, and hands-on multidisciplinary simulation.',
+    briefIn: ['maternal-to-neonatal-resuscitation-handoff'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

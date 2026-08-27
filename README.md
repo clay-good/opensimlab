@@ -241,6 +241,15 @@ learner seizure first aid, examination, pressure or glucose measurement, test in
 magnesium or other drug, dose, route, oxygen, airway care, anesthesia, birth, disposition, or
 maternal/newborn outcome control is exposed.
 
+The fourteenth Obstetrics lab practices the moment responsibility crosses from the birth team to
+the newborn team after qualified ventilation. It keeps 2 patients and 2 named owners visible,
+connects the antenatal, intrapartum, birth, resuscitation, response, family, and open-risk record,
+then uses receiver readback and an explicit transfer of responsibility before a fixed 5-minute
+postresuscitation report. A rising newborn heart rate is encouraging without proving stable
+transition. No learner examination, monitoring interpretation, resuscitation, oxygen, ventilation,
+drug, dose, procedure, transport, counseling, disposition, or maternal/newborn outcome control is
+exposed.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later
