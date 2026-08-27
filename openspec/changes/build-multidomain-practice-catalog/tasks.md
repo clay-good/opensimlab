@@ -919,11 +919,31 @@ credited toward the catalog until every item in the completion contract passes.
   - [ ] Correct the earlier thyroid-storm and myxedema duration metadata through new content
     versions: their current 15- and 12-minute labels understate their full modeled observation
     paths. Preserve previously published report-evidence records when updating those versions.
-  - [ ] Repair service-worker update consistency before the next scenario slice. A read-only
-    execution of the current worker reproduced background refresh replacing active-version HTML
-    with a newer build whose script was not cached; update acceptance also reloads before the
-    waiting worker takes control. Add multi-build regression tests and explicit activation-order
-    checks. The local rebuild symptom is consistent with these defects, not definitive attribution.
+  - [x] Repair service-worker release consistency. Build-stamped SHA-256 integrity checks reject
+    mixed or incomplete installations; active snapshots are immutable. Explicit acceptance waits
+    for the intended controller before reloading only that tab. Durable per-client release pins
+    and a two-phase activation fallback protect old pages, solver workers, worker restarts, and
+    storage-failure paths. Initializing clients survive cleanup; confirmed closed-client pins are
+    pruned outside activation, and a later activation retires unused releases. Uncontrolled pages
+    are not claimed, so first-install offline readiness requires a subsequent controlled navigation.
+  - [x] Verify release behavior with 36 real-worker VM regressions and 19 update-registration/
+    notice UI tests, plus production-style local browser smoke checks. All 300 precache responses
+    match their integrity digests through the configured Cloudflare static-asset preview. Accepting
+    one update changes only that tab's script version; the older paused session retains its choice.
+    With the server stopped, the old solver accepts another choice, a new navigation loads the
+    current release's untouched document, and a fresh scenario worker starts and advances. The
+    offline report dialog fails closed without interrupting practice. Old lazy-asset version
+    isolation is covered by the VM regressions, not claimed from full-document browser navigation.
+    Final CI passes 3,653 tests across 466 files, all 30 specifications, static-host checks, and
+    font budgets; the indexable build verifies 220 routes. Compressed budgets are 147.6 KiB for
+    landing, 1,474.2 KiB for the interactive cockpit, and 3,285.2 KiB for the full offline bundle.
+    This infrastructure evidence does not replace independent clinical, inclusive-runtime, or
+    production Turnstile/D1 verification.
+  - [ ] Fix the existing update strip covering the cockpit transport controls before the next
+    scenario slice. Browser inspection reproduced the overlap; dismissing “Not now” restores
+    stepping and the old solver remains healthy. Preserve modal focus/reading isolation, phone
+    layout, and visible transport access while offering an optional update. Release-consistency
+    verification does not establish this separate nonblocking-layout requirement.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
   - [x] Toxicology slice 1/15 establishes the indexable `/toxicology` module with one authored
     methemoglobinemia lab after documented topical benzocaine exposure. The learner reconciles

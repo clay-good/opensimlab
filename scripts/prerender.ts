@@ -12,6 +12,7 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 import { renderToString } from 'react-dom/server';
 import { createElement } from 'react';
 import {
@@ -233,7 +234,7 @@ function main(): void {
     // learner who had already opened the simulator before losing the network,
     // which is exactly the learner who did not need it.
     //
-    // The whole bundle is a few hundred kilobytes against an 8 MB budget, so
+    // The whole bundle remains within the enforced 8 MB budget, so
     // there is no reason to be clever about which parts of it to keep.
     const assets = readdirSync(join(dist, 'assets')).map((file) => `/assets/${file}`);
     const fontsDir = join(dist, 'fonts');
@@ -252,16 +253,20 @@ function main(): void {
       ...PUBLIC_CATALOG_ARTIFACTS,
     ];
     const documentPaths = new Set(documents);
-    const version = precacheVersion(precache.map((url) => {
+    const entries = precache.map((url) => {
       const path = url === '/' || url === '/index.html'
         ? join(dist, 'index.html')
         : documentPaths.has(url)
           ? join(dist, url.slice(1), 'index.html')
           : join(dist, url.slice(1));
       return { url, bytes: readFileSync(path) };
-    }));
-    const sw = readFileSync(swPath, 'utf8')
+    });
+    const template = readFileSync(join(root, 'public/sw.js'), 'utf8');
+    const version = precacheVersion([...entries, { url: '/sw.js', bytes: Buffer.from(template) }]);
+    const integrity = Object.fromEntries(entries.map(({ url, bytes }) => [url, `sha256-${createHash('sha256').update(bytes).digest('base64')}`]));
+    const sw = template
       .replace('__CACHE_VERSION__', version)
+      .replace('__PRECACHE_INTEGRITY__', JSON.stringify(integrity))
       .replace("'__PRECACHE_MANIFEST__'", precache.map((asset) => JSON.stringify(asset)).join(', '));
     writeFileSync(swPath, sw, 'utf8');
   }
@@ -278,19 +283,9 @@ function main(): void {
 export function precacheVersion(
   entries: readonly { readonly url: string; readonly bytes: Uint8Array }[],
 ): string {
-  return simpleHash(entries
+  return createHash('sha256').update(entries
     .map(({ url, bytes }) => `${url}:${Buffer.from(bytes).toString('base64')}`)
-    .join('|'));
-}
-
-/** A short stable hash, used as the cache version. */
-function simpleHash(text: string): string {
-  let hash = 0x811c9dc5;
-  for (let i = 0; i < text.length; i += 1) {
-    hash ^= text.charCodeAt(i);
-    hash = Math.imul(hash, 0x01000193);
-  }
-  return (hash >>> 0).toString(36);
+    .join('|')).digest('hex');
 }
 
 const isEntryPoint = process.argv[1] !== undefined

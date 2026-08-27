@@ -5,6 +5,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import { BUDGETS, largestCockpitDocument, manifestAssetPaths } from '../../scripts/check-budgets';
 import { precacheVersion } from '../../scripts/prerender';
@@ -24,7 +25,7 @@ const manifest = JSON.parse(readFileSync(join(root, 'public/manifest.webmanifest
 describe('Requirement: Cache-First Service Worker With Explicit Updates', () => {
   it('serves cache-first from a versioned cache', () => {
     expect(serviceWorker).toContain('caches.open(CACHE_NAME)');
-    expect(serviceWorker).toContain('cache.match(request');
+    expect(serviceWorker).toContain('cache.match(path)');
     // The cache name carries a version, so a new build gets a new cache.
     expect(serviceWorker).toMatch(/const CACHE_NAME = `opensimlab-\$\{CACHE_VERSION\}`/);
   });
@@ -49,10 +50,12 @@ describe('Requirement: Cache-First Service Worker With Explicit Updates', () => 
     );
     // The new cache is fully populated during install, before it can activate.
     expect(installBlock).toContain('cache.addAll');
-    // Old caches are deleted only in activate, after the new one is in place.
+    // Activation retires only unpinned releases; a failed new install can remove
+    // its own newly created cache, never the active snapshot.
     const activateBlock = serviceWorker.slice(serviceWorker.indexOf("addEventListener('activate'"));
     expect(activateBlock).toContain('caches.delete');
-    expect(installBlock).not.toContain('caches.delete');
+    expect(installBlock).toContain('if (!existed) await caches.delete(CACHE_NAME)');
+    expect(installBlock).toContain('integrity: INTEGRITY[url]');
   });
 
   it('Scenario: A broken service worker can be escaped', async () => {
@@ -218,6 +221,23 @@ describe('Requirement: Everything The Offline Claim Names Is Actually Precached'
   // opened the simulator, which is the learner who did not need it.
   const sw = readFileSync(join(process.cwd(), 'dist/sw.js'), 'utf8');
   const precache = JSON.parse(/const PRECACHE = (\[[^\]]*\])/.exec(sw)?.[1] ?? '[]') as string[];
+
+  it('stamps the exact bytes of every offline response with SHA-256 integrity', () => {
+    const integrity = JSON.parse(/const INTEGRITY = (\{[^;]+\});/.exec(sw)?.[1] ?? '{}') as Record<string, string>;
+    expect(Object.keys(integrity)).toEqual(precache);
+    const entries: { url: string; bytes: Buffer }[] = [];
+    for (const url of precache) {
+      const path = url === '/' || url === '/index.html' ? 'index.html'
+        : ROUTES.some((route) => route.path === url) ? `${url.slice(1)}/index.html` : url.slice(1);
+      const bytes = readFileSync(join(root, 'dist', path));
+      entries.push({ url, bytes });
+      const expected = `sha256-${createHash('sha256').update(bytes).digest('base64')}`;
+      expect(integrity[url], url).toBe(expected);
+    }
+    expect(/const CACHE_VERSION = '([^']+)'/.exec(sw)?.[1]).toBe(precacheVersion([
+      ...entries, { url: '/sw.js', bytes: Buffer.from(serviceWorker) },
+    ]));
+  });
 
   it('Scenario: the solver worker is precached', () => {
     expect(precache.some((url) => url.includes('solver.worker'))).toBe(true);

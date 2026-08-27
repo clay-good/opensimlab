@@ -3586,6 +3586,18 @@ simulator. A bad domain pack can be removed from the next service-worker manifes
 locally exported transcripts. Review and endorsement badges disappear automatically when their
 exact version is no longer current.
 
+Offline updates preserve release consistency across open tabs. Each installed response must match
+its build-stamped SHA-256 digest, and the release cache is immutable afterward. Accepting an update
+reloads only the accepting tab, after the intended worker takes control. Browser-generated client
+IDs map locally to release hashes, including solver workers and initializing clients; no practice
+content or client identifiers are transmitted. Update preparation persists the previous-release
+fallback before requesting activation, so storage failure leaves the session on its existing files.
+After activation, confirmed closed-client pins can be pruned; only a later activation retires
+unpinned old releases. First-install activation does not claim an uncontrolled page from an unknown
+build. Offline readiness therefore requires installation followed by a controlled navigation or
+reload, and remains subject to browser storage eviction. These guarantees protect bundled practice,
+not the network-only report API or Turnstile.
+
 ## 12. Authoritative platform behavior
 
 The reporting design assumes that simulation contains sensitive learner context. The note limit is

@@ -209,5 +209,29 @@ claim rather than a decoration on it. `connect-src 'self'` permits only the exac
 `script-src` and `frame-src` name `challenges.cloudflare.com` as the sole foreign Turnstile origin.
 `form-action 'none'` prevents browser form navigation because submission uses the bounded client.
 
-Hashed assets are immutable and cached for a year. HTML is revalidated every
-time, and `sw.js` is never cached, so an update is actually seen.
+Hashed assets have a one-year immutable HTTP cache policy. HTML and `sw.js` use
+HTTP revalidation (`no-cache` means revalidate, not “never store”). The installed
+service worker serves a frozen release rather than refreshing HTML inside its cache.
+
+Each precached response is checked against the build's SHA-256 integrity manifest.
+A missing file, mismatched response, interrupted download, or quota failure rejects
+installation without replacing the current release. Publish complete artifacts atomically
+when possible; integrity rejection protects consistency, not availability of an incomplete deploy.
+
+Update acceptance waits for the intended worker to control the accepting tab before
+reloading it. Other open tabs and their solver workers retain their original release,
+including stable-URL fonts and catalogs. Local browser-client IDs map to release hashes
+in `opensimlab-runtime-v1`; these contain no practice content and are never transmitted.
+After activation, a background check removes pins only when the browser confirms the
+client is gone; initializing documents and workers remain protected. A later activation
+retires unpinned older release caches. Live
+releases and newer waiting installations are preserved, as are unrelated origin caches.
+Keeping multiple old tabs open can retain multiple releases; storage pressure must fail
+the new installation rather than evict an open session's assets. Offline availability
+requires a completed installation and a subsequent navigation or reload under worker
+control, and remains subject to browser storage eviction. First-install activation does
+not take over an already-running page whose files may belong to an earlier deployment.
+
+Use `npm run preview:worker` for offline-installation checks. Vite's generic SPA preview
+can serve the root document for extensionless routes; those responses correctly fail the
+per-route integrity checks and cannot establish offline readiness.

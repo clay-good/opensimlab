@@ -333,7 +333,16 @@ function PrivacyBody() {
         <li>The expiry of any goal-path suggestion you hide for 7 days.</li>
         <li>Your newest 50 bounded practice-attempt summaries, in the same place.</li>
         <li>Session transcripts, if you save them, in the same place.</li>
+        <li>Offline application files in this browser&apos;s cache, plus local browser-client IDs
+          mapped to release hashes so an update in one tab does not break another. These are not
+          learner identifiers, contain no practice content, and are never transmitted. Closed-client
+          records are removed after the browser confirms those clients have closed; a later update
+          removes unused releases. Keeping older tabs open can retain more than one release on
+          this device. Clearing this site&apos;s browser
+          data removes the offline files and these records.</li>
       </ul>
+      <p>To prepare for offline practice, let the offline download finish, then reload once while
+        online. Browser storage eviction or clearing site data requires another download.</p>
       <p id="problem-reports">
         A problem report you deliberately send is kept in a private correction queue for at most
         30 days. Abuse-prevention counters are kept for at most 14 days. The client does not attach

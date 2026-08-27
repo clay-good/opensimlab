@@ -23,6 +23,8 @@ describe('static hosting artifact', () => {
   it('recognizes unresolved service-worker build tokens', () => {
     expect(unresolvedBuildToken("const cache = '__CACHE_VERSION__'"))
       .toBe('__CACHE_VERSION__');
+    expect(unresolvedBuildToken('const integrity = __PRECACHE_INTEGRITY__'))
+      .toBe('__PRECACHE_INTEGRITY__');
     expect(unresolvedBuildToken('const cache = "v-123"')).toBeUndefined();
   });
 });

@@ -14,7 +14,7 @@ const PRIVATE_BASENAMES = new Set([
 const PRIVATE_EXTENSIONS = new Set([
   '.db', '.dump', '.kdbx', '.key', '.p12', '.pem', '.pfx', '.sqlite', '.sqlite3',
 ]);
-const BUILD_TOKENS = ['__CACHE_VERSION__', '__PRECACHE_MANIFEST__'] as const;
+const BUILD_TOKENS = ['__CACHE_VERSION__', '__PRECACHE_MANIFEST__', '__PRECACHE_INTEGRITY__'] as const;
 
 function filesUnder(directory: string): string[] {
   return readdirSync(directory).flatMap((name) => {

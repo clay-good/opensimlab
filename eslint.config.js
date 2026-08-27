@@ -55,7 +55,8 @@ export default tseslint.config(
     languageOptions: {
       globals: {
         self: 'readonly', caches: 'readonly', fetch: 'readonly', clients: 'readonly',
-        URL: 'readonly', Promise: 'readonly',
+        URL: 'readonly', Promise: 'readonly', Request: 'readonly', Response: 'readonly',
+        __PRECACHE_INTEGRITY__: 'readonly',
       },
     },
     rules: { '@typescript-eslint/no-unused-vars': 'off' },

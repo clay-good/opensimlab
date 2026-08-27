@@ -33,7 +33,7 @@ export const THREE_FACTS: readonly SupportingFact[] = [
     href: '/privacy',
   },
   {
-    text: 'Works offline once it has loaded, including every scenario and every citation.',
+    text: 'Works offline after the offline download finishes and you reload, including every bundled scenario and citation.',
     short: 'Works offline',
     linkLabel: 'Read how offline operation works',
     href: '/privacy',
@@ -232,8 +232,8 @@ export const QUESTIONS: readonly QuestionAnswer[] = [
   },
   {
     question: 'Does it work offline?',
-    answer: 'Yes. Once it has loaded once, every scenario, model, citation and debrief works with '
-      + 'the network switched off, and you can install it to your home screen.',
+    answer: 'Yes. After the offline download finishes, reload once while online. Bundled scenarios, models, citations and debriefs then work with '
+      + 'the network switched off. You can install it to your home screen. Clearing site data or browser storage eviction requires another download.',
   },
   {
     question: 'Can I use it on a phone?',

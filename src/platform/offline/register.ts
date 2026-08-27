@@ -20,6 +20,7 @@
  * that were fixed weeks ago.
  */
 export const UPDATE_READY_EVENT = 'opensimlab:update-ready';
+export const UPDATE_FAILED_EVENT = 'opensimlab:update-failed';
 
 const FAILURE_KEY = 'opensimlab.service-worker-failures';
 const MAX_FAILURES = 2;
@@ -115,10 +116,50 @@ export function registerServiceWorker(): RegistrationOutcome {
   return { registered: true, reason: 'Registered; assets will be served cache-first.' };
 }
 
-/** Accept a pending update. Called only when the learner chooses to. */
+let updateAcceptancePending = false;
+let updateReloadRequested = false;
+
+/** Accept a pending update in this tab, then reload only after it takes control. */
 export async function acceptUpdate(): Promise<void> {
-  if (typeof navigator === 'undefined' || !('serviceWorker' in navigator)) return;
-  const registration = await navigator.serviceWorker.getRegistration();
-  registration?.waiting?.postMessage({ type: 'skip-waiting' });
-  location.reload();
+  if (typeof navigator === 'undefined' || !('serviceWorker' in navigator)
+    || updateAcceptancePending || updateReloadRequested) return;
+  updateAcceptancePending = true;
+  const container = navigator.serviceWorker;
+  let cleanup = () => { updateAcceptancePending = false; };
+  try {
+    const registration = await container.getRegistration();
+    const waiting = registration?.waiting;
+    if (!waiting || waiting.state === 'redundant') { cleanup(); return; }
+    let settled = false;
+    cleanup = () => {
+      if (settled) return;
+      settled = true;
+      container.removeEventListener('controllerchange', onControllerChange);
+      container.removeEventListener('message', onMessage);
+      waiting.removeEventListener('statechange', onStateChange);
+      updateAcceptancePending = false;
+    };
+    const onControllerChange = () => {
+      if (settled || container.controller !== waiting) return;
+      cleanup(); updateReloadRequested = true;
+      location.reload();
+    };
+    const onStateChange = () => { if (waiting.state === 'redundant') cleanup(); };
+    const onMessage = (event: MessageEvent) => {
+      if (settled || event.source !== waiting || event.data?.type !== 'update-preparation-failed') return;
+      cleanup();
+      window.dispatchEvent(new CustomEvent(UPDATE_FAILED_EVENT));
+    };
+    // Subscribe first: activation can win the race with the message's return.
+    // Tabs that did not accept install no reload listener.
+    container.addEventListener('controllerchange', onControllerChange);
+    container.addEventListener('message', onMessage);
+    waiting.addEventListener('statechange', onStateChange);
+    waiting.postMessage({ type: 'skip-waiting' });
+    onControllerChange();
+    onStateChange();
+  } catch {
+    // A lookup or worker-message failure leaves this tab running and retryable.
+    cleanup();
+  }
 }

@@ -2,17 +2,17 @@
 
 ## Purpose
 
-Makes Open Sim Lab work where medical students actually study: hospital basements, rural clinics, commuter trains, and campuses with metered or intermittent connectivity. Once loaded, the application must be complete on the device and never require the network again.
+Makes Open Sim Lab work where medical students actually study: hospital basements, rural clinics, commuter trains, and campuses with metered or intermittent connectivity. Once installed and controlling a page, the application must be complete on the device while its offline files remain stored.
 
 ## Requirements
 
 ### Requirement: Full Offline Operation After First Load
 
-After the first successful load, the application SHALL run every bundled scenario, model, citation, and debrief with the network disabled.
+After the first successful offline installation and a subsequent navigation or reload under worker control, the application SHALL run every bundled scenario, model, citation, and debrief with the network disabled. A first page render alone SHALL NOT be described as completed offline installation; clearing or browser eviction of site data requires another download. First-install activation SHALL NOT claim an uncontrolled page whose release identity is unknown.
 
 #### Scenario: Airplane mode changes nothing
 
-- **WHEN** the device is switched to airplane mode after a first successful load and the application is restarted
+- **WHEN** the device is switched to airplane mode after successful offline installation and the application is restarted
 - **THEN** the cockpit, all bundled scenarios, the model detail panels, the citations, and the debrief all function identically, verified by an automated offline end-to-end test
 
 #### Scenario: No runtime network dependency exists
@@ -32,7 +32,22 @@ A service worker SHALL serve all application assets cache-first using a versione
 #### Scenario: Version activation is atomic
 
 - **WHEN** the learner accepts an update
-- **THEN** the new cache is fully populated before activation, old caches are deleted after activation, and a partially downloaded update never serves mixed asset versions
+- **THEN** every precached response matches its build-stamped SHA-256 integrity value before activation, the accepting tab reloads once after the intended worker controls it, and an incomplete or mixed deployment cannot replace the current release
+
+#### Scenario: Another tab retains its release through repeated updates
+
+- **WHEN** one tab remains open while another accepts multiple newer releases, including a service-worker restart
+- **THEN** the older tab and its solver workers retain their original lazy assets and stable-URL resources; release pins survive worker restarts without recording practice content or transmitting client IDs
+
+#### Scenario: Cleanup never evicts a live or waiting release
+
+- **WHEN** a release activates
+- **THEN** all durable client pins, including initializing clients omitted by client enumeration, retain their release; after activation, confirmed closed-client pins may be removed and a later activation may retire unpinned older snapshots; live releases, newer installations, and unrelated origin caches remain intact; insufficient storage rejects a new installation rather than evicting a live release
+
+#### Scenario: Release responses remain immutable
+
+- **WHEN** the network begins serving newer HTML or assets before update acceptance
+- **THEN** the current release's cached bytes remain unchanged, query/trailing-slash/index aliases resolve within that release, and no arbitrary network response is written into its cache
 
 #### Scenario: A broken service worker can be escaped
 
@@ -60,7 +75,7 @@ The initial load required to reach an interactive cockpit SHALL not exceed 1.625
 #### Scenario: Scenario packs load on demand
 
 - **WHEN** the learner opens a scenario outside the initial pack while online
-- **THEN** it downloads once, is cached permanently, and is thereafter available offline
+- **THEN** it downloads once and is thereafter available offline while its installed release remains stored; browser eviction or clearing site data may require another download
 
 ### Requirement: Local Storage Is Small, Inspectable, And Erasable
 
