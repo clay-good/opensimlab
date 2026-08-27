@@ -4943,6 +4943,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified direct findings, current local newborn-transition and resuscitation protocols, trained teams, protected parent-newborn positioning, respectful communication, and hands-on simulation.',
     briefIn: ['term-newborn-transition'],
   },
+  {
+    id: 'neonatal-apnea-birth-initial-step-newborn-parent-and-qualified-course-reports-are-authored',
+    headline: 'The birth, initial steps, apnea, heart-rate, parent, qualified ventilation, and 90-second reports are authored.',
+    simplification: 'Fixed reports stand in for record review, newborn examination, heart-rate and oxygenation assessment, initial steps, mask ventilation, chest-movement assessment, thermal care, response monitoring, parent communication, and serial review. Hidden adult-oriented engine-schema minimums are scaffolding, not neonatal physiology validation.',
+    whereItMisleads: 'Treating the birth clock, apnea, heart rate, tone, temperature, visible chest movement, or early response as learner findings, universal technical success, durable breathing, stable transition, prognosis, or outcome.',
+    correctUnderstanding: 'Apnea or gasping and heart rate below 100/min after initial steps require immediate qualified assisted ventilation, direct assessment of effectiveness, heart-rate response, warmth, monitoring, and escalation when indicated.',
+    briefIn: ['neonatal-apnea'],
+  },
+  {
+    id: 'neonatal-apnea-controls-activate-reconcile-review-reassess-and-handoff-only',
+    headline: 'The controls activate qualified help, connect supplied facts, review threshold and readiness, read a fixed report, and hand off only.',
+    simplification: 'Six actions stand in for concurrent qualified newborn, airway, ventilation, heart-rate, monitoring, thermal, pharmacy, transport, leadership, timekeeping, documentation, communication, dignity, parent, family, staff-support, escalation, and handoff work.',
+    whereItMisleads: 'Equating button order with examination, scoring, ventilation skill, mask seal, airway management, oxygen titration, medication choice, communication quality, or competence.',
+    correctUnderstanding: 'Real newborn resuscitation is concurrent, physical, time-critical, team-based, locally protocolized, and verified through direct chest-movement and heart-rate response. Cognitive practice cannot replace hands-on simulation.',
+    briefIn: ['neonatal-apnea'],
+  },
+  {
+    id: 'no-live-neonatal-apnea-exam-monitor-score-ventilation-oxygen-airway-drug-procedure-disposition-or-outcome',
+    headline: 'The lab does not examine, score, monitor, ventilate, give oxygen or a drug, manage an airway, determine disposition, or report outcome.',
+    simplification: 'No live breathing, heart-rate, tone, color, temperature, glucose, neurologic, parent or other assessment; Apgar scoring; position; drying; warming; suction; stimulation; separation; oxygen; mask ventilation; seal or pressure correction; alternative airway; compressions; access; fluid; glucose; drug or dose; feeding; resuscitation; transport; counseling; procedure; disposition; prognosis; or outcome is modeled.',
+    whereItMisleads: 'Using the rehearsal as ventilation technique, oxygen, airway, compression, medication, transfer, or disposition instruction; delaying trained response for a click; or reading completion as competence.',
+    correctUnderstanding: 'Use verified direct findings, current local neonatal-resuscitation protocols and equipment, immediate trained teams, continuous response assessment, respectful parent communication, and hands-on simulation.',
+    briefIn: ['neonatal-apnea'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

@@ -267,6 +267,14 @@ support, and escalation boundaries; then reads a fixed 1-hour report and hands o
 open. No learner examination, scoring, monitoring interpretation, cord care, positioning, warming,
 feeding, resuscitation, procedure, disposition, or newborn/parent outcome control is exposed.
 
+The second Neonatology lab moves from quiet transition to apnea after qualified initial steps. It
+connects the shared birth clock, breathing, heart rate, tone, warmth, parent, and whole dyad;
+recognizes the ventilation threshold; reviews qualified effective ventilation and escalation
+readiness; then reads a fixed early heart-rate response and hands off what remains unresolved.
+Ineffective-ventilation correction stays reserved for the next lab. No learner examination, scoring,
+monitoring interpretation, oxygen, ventilation, airway care, drug, resuscitation, procedure,
+disposition, or newborn/parent outcome control is exposed.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

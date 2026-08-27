@@ -1788,6 +1788,23 @@
       "limitationManifestHash": "sha256:d8d5c11c34520fdaa59a4969e3c22f30681f10f186a6d5c2337e6a9449273ca2"
     },
     {
+      "scenarioId": "neonatal-apnea",
+      "contentVersion": "0.1.0",
+      "moduleId": "neonatology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:ee6585c476b9dbf2bf6d272bd89d500faf66012550e8be0b71fe9bbdac59b5c4",
+      "defaultsHash": "sha256:33b403229865e40fce802c64cd934a6662b4a4469da846eae0aae79467d76bcf",
+      "maturityHash": "sha256:9216334d1cc5bb82d53b677ab9d86d1395c410e825e4d97ef2f5ffe926831503",
+      "sourceManifestHash": "sha256:39beb051d5326f88fdfc132d9799c4741dc5a19c90b40a06dfd2854e60165a25",
+      "limitationManifestHash": "sha256:c35bfc01923a4aa64a55ea5059945c20185f11edd51faa7ff417a9cde16cc54b"
+    },
+    {
       "scenarioId": "term-newborn-transition",
       "contentVersion": "0.1.0",
       "moduleId": "neonatology",

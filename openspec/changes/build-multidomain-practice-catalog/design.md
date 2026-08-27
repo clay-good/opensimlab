@@ -2296,6 +2296,21 @@ interpretation, cord care, positioning, drying, warming, suction, stimulation, s
 ventilation, airway care, compressions, access, fluid, glucose, drug, dose, feeding, resuscitation,
 transport, counseling, procedure, disposition or outcome control.
 
+### Wave D neonatology slice 2: neonatal apnea
+
+A term newborn remains apneic 40 seconds after birth despite supplied qualified initial steps, with
+heart rate 92/min, reduced tone and temperature 36.6°C. The learner activates a ventilation-capable
+newborn response and shared clock; connects gestation, intrapartum risk, birth, initial steps,
+breathing, heart rate, tone, temperature, parent and whole-dyad context; recognizes the assisted-
+ventilation threshold without cause or outcome closure; and reviews qualified ventilation before
+60 seconds, chest movement, heart-rate response, warmth, monitoring and escalation readiness. A
+fixed 90-second report supplies visible chest movement, heart rate risen to 126/min and emerging
+irregular spontaneous respirations while qualified ventilation and direct assessment continue.
+Ineffective-ventilation correction remains the next lab. Six controls expose no learner examination,
+scoring, monitoring interpretation, positioning, drying, warming, suction, stimulation, separation,
+oxygen, ventilation, airway care, corrective step, compression, access, fluid, glucose, drug, dose,
+feeding, resuscitation, transport, counseling, procedure, disposition or outcome control.
+
 ### Wave E neurology slice 1: minor nondisabling acute ischemic stroke
 
 The first Neurology lab is a function-based minor-stroke decision boundary, not another disabling

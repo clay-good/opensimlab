@@ -537,6 +537,15 @@ credited toward the catalog until every item in the completion contract passes.
     test interpretation, cord care, positioning, drying, warming, suction, stimulation, separation,
     oxygen, ventilation, airway care, compressions, access, fluid, glucose, drug, dose, feeding,
     resuscitation, transport, counseling, procedure, disposition, or outcome controls.
+  - [x] Neonatology slice 2/11 adds one authored term neonatal-apnea pattern after qualified initial
+    steps with heart rate 92/min at 40 seconds; prepared ventilation-capable and parent-dyad
+    ownership; birth-clock, breathing, heart-rate, tone, thermal and whole-dyad reconciliation;
+    assisted-ventilation threshold recognition; qualified ventilation-effectiveness and escalation
+    readiness review; a fixed 90-second early-response report; and active-risk handoff without
+    learner examination, scoring, monitoring or test interpretation, positioning, drying, warming,
+    suction, stimulation, separation, oxygen, ventilation, airway care, corrective steps,
+    compressions, access, fluid, glucose, drug, dose, feeding, resuscitation, transport, counseling,
+    procedure, disposition, or outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

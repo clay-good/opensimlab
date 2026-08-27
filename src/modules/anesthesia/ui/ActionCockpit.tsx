@@ -1330,6 +1330,11 @@ export interface ActionCockpitProps {
       readonly recognitionAtTick: number | null; readonly careAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly neonatologyApneaAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2406,6 +2411,14 @@ export interface ActionCockpitProps {
       | 'review-term-newborn-transition-fixed-one-hour-qualified-report'
       | 'handoff-term-newborn-transition-breathing-temperature-feeding-parent-and-outcome-risk',
   ) => void;
+  readonly onNeonatologyApneaResponse?: (
+    action: 'activate-neonatal-apnea-qualified-newborn-airway-clock-and-dyad-support'
+      | 'reconcile-neonatal-apnea-gestation-birth-clock-breathing-heart-rate-tone-temperature-and-whole-dyad'
+      | 'recognize-neonatal-apnea-ventilation-threshold-without-cause-or-outcome-closure'
+      | 'review-neonatal-apnea-qualified-effective-ventilation-heart-rate-and-escalation-readiness'
+      | 'review-neonatal-apnea-fixed-ninety-second-qualified-response-report'
+      | 'handoff-neonatal-apnea-respiratory-thermal-glucose-neurologic-parent-and-outcome-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2489,6 +2502,11 @@ export function crisisResponseAvailability(
     && scenario.timeline.every((event) => event.type === 'narrative')
     && scenario.timeline.filter((event) => event.target === 'term-newborn-transition').length === 1
     && scenario.timeline.filter((event) => event.target === 'term-newborn-transition-boundary').length === 1;
+  const hasNeonatologyApneaResponse =
+    scenario.metadata.id === 'neonatal-apnea'
+    && scenario.timeline.every((event) => event.type === 'narrative')
+    && scenario.timeline.filter((event) => event.target === 'neonatal-apnea-transition').length === 1
+    && scenario.timeline.filter((event) => event.target === 'neonatal-apnea-transition-boundary').length === 1;
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -3047,6 +3065,7 @@ export function crisisResponseAvailability(
     hasObstetricsMaternalNeonatalHandoffResponse,
     hasObstetricsOxytocinTachysystoleResponse,
     hasNeonatologyTermTransitionResponse,
+    hasNeonatologyApneaResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3277,6 +3296,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'maternal-to-neonatal-resuscitation-handoff-transition')
       || (event.type === 'narrative' && event.target === 'oxytocin-associated-uterine-tachysystole-transition')
       || (event.type === 'narrative' && event.target === 'term-newborn-transition')
+      || (event.type === 'narrative' && event.target === 'neonatal-apnea-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3395,6 +3415,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasObstetricsMaternalNeonatalHandoffResponse,
     hasObstetricsOxytocinTachysystoleResponse,
     hasNeonatologyTermTransitionResponse,
+    hasNeonatologyApneaResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3540,8 +3561,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasObstetricsMaternalNeonatalHandoffResponse
     || hasObstetricsOxytocinTachysystoleResponse
     || hasNeonatologyTermTransitionResponse
+    || hasNeonatologyApneaResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasNeonatologyTermTransitionResponse
+  const responseTray = hasNeonatologyApneaResponse
+    ? { id: 'crisis', label: 'Breathing + heart rate' } as const
+    : hasNeonatologyTermTransitionResponse
     ? { id: 'crisis', label: 'Transition + dyad' } as const
     : hasObstetricsOxytocinTachysystoleResponse
     ? { id: 'crisis', label: 'Contractions + fetus' } as const
@@ -3957,6 +3981,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasObstetricsMaternalNeonatalHandoffResponse
     || hasObstetricsOxytocinTachysystoleResponse
     || hasNeonatologyTermTransitionResponse
+    || hasNeonatologyApneaResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -4886,6 +4911,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNeonatologyTermTransitionResponse && (
               <NeonatologyTermTransitionTray assessment={props.resuscitation.neonatologyTermTransitionAssessment}
                 onAction={props.onNeonatologyTermTransitionResponse ?? (() => {})} />
+            )}
+            {hasNeonatologyApneaResponse && (
+              <NeonatologyApneaTray assessment={props.resuscitation.neonatologyApneaAssessment}
+                onAction={props.onNeonatologyApneaResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -12195,6 +12224,38 @@ function NeonatologyTermTransitionTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {care && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-term-newborn-transition-fixed-one-hour-qualified-report')}>Review the fixed 1-hour report</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-term-newborn-transition-breathing-temperature-feeding-parent-and-outcome-risk')}>Hand off active transition risk</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function NeonatologyApneaTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['neonatologyApneaAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onNeonatologyApneaResponse']>;
+}) {
+  const support = assessment?.supportAtTick != null;
+  const context = assessment?.contextAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const readiness = assessment?.readinessAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="neonatology-apnea-now-title">
+      <div id="neonatology-apnea-now-title" className="syringe__name">Make breathing effective. Watch the heart rate answer.</div>
+      <p className="syringe__remaining">Connect the birth clock, completed initial steps, apnea, heart rate, warmth, parent, and whole dyad. Every physical resuscitation step stays with the qualified team.</p>
+      <div className="crisis-drug__actions">
+        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-neonatal-apnea-qualified-newborn-airway-clock-and-dyad-support')}>Activate qualified response</Button>}
+        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neonatal-apnea-gestation-birth-clock-breathing-heart-rate-tone-temperature-and-whole-dyad')}>Connect newborn + whole dyad</Button>}
+        {context && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-neonatal-apnea-ventilation-threshold-without-cause-or-outcome-closure')}>Recognize the threshold</Button>}
+        {recognition && !readiness && <Button className="crisis-drug__action" onClick={() => onAction('review-neonatal-apnea-qualified-effective-ventilation-heart-rate-and-escalation-readiness')}>Review qualified response</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="neonatology-apnea-later-title">
+      <div id="neonatology-apnea-later-title" className="syringe__name">A rising heart rate is the first answer, not the last word.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Respiratory, thermal, glucose, neurologic, parent, disposition, and outcome risks handed off.' : reassessment ? 'Heart rate rises and respirations emerge. Durable breathing, stable transition, cause, and outcomes remain open.' : readiness ? 'Qualified ventilation and direct assessment continue. Review the fixed report after time passes.' : support ? 'The team is ready. Connect the whole clock and dyad before naming the threshold.' : 'Begin with calm shared ownership. You can pause or leave this practice at any time.'}</p>
+      <div className="crisis-drug__actions">
+        {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-neonatal-apnea-fixed-ninety-second-qualified-response-report')}>Review the fixed 90-second report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neonatal-apnea-respiratory-thermal-glucose-neurologic-parent-and-outcome-risk')}>Hand off active newborn risk</Button>}
       </div>
     </section>
   </>;
