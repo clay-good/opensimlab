@@ -1360,6 +1360,11 @@ export interface ActionCockpitProps {
       readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly neonatologySepsisAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2484,6 +2489,14 @@ export interface ActionCockpitProps {
       | 'review-neonatal-hypoglycemia-fixed-thirty-minute-qualified-report'
       | 'handoff-neonatal-hypoglycemia-recurrence-neurologic-feeding-thermal-cause-family-and-outcome-risk',
   ) => void;
+  readonly onNeonatologySepsisResponse?: (
+    action: 'activate-neonatal-sepsis-newborn-infection-respiratory-circulatory-and-family-support'
+      | 'reconcile-neonatal-sepsis-maternal-risk-clock-clinical-change-physiology-and-whole-dyad'
+      | 'recognize-clinically-ill-newborn-sepsis-risk-without-calculator-laboratory-or-diagnosis-closure'
+      | 'review-qualified-neonatal-sepsis-culture-antimicrobial-support-investigation-and-reassessment-boundaries'
+      | 'review-neonatal-sepsis-fixed-one-hour-qualified-report'
+      | 'handoff-neonatal-sepsis-respiratory-circulatory-neurologic-culture-family-and-outcome-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2597,6 +2610,11 @@ export function crisisResponseAvailability(
     && scenario.timeline.every((event) => event.type === 'narrative')
     && scenario.timeline.filter((event) => event.target === 'neonatal-hypoglycemia').length === 1
     && scenario.timeline.filter((event) => event.target === 'neonatal-hypoglycemia-boundary').length === 1;
+  const hasNeonatologySepsisResponse =
+    scenario.metadata.id === 'neonatal-sepsis'
+    && scenario.timeline.every((event) => event.type === 'narrative')
+    && scenario.timeline.filter((event) => event.target === 'neonatal-sepsis').length === 1
+    && scenario.timeline.filter((event) => event.target === 'neonatal-sepsis-boundary').length === 1;
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -3161,6 +3179,7 @@ export function crisisResponseAvailability(
     hasNeonatologyMeconiumTransitionResponse,
     hasNeonatologyPretermRespiratoryDistressResponse,
     hasNeonatologyHypoglycemiaResponse,
+    hasNeonatologySepsisResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3397,6 +3416,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'meconium-stained-transition')
       || (event.type === 'narrative' && event.target === 'preterm-respiratory-distress')
       || (event.type === 'narrative' && event.target === 'neonatal-hypoglycemia')
+      || (event.type === 'narrative' && event.target === 'neonatal-sepsis')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3521,6 +3541,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeonatologyMeconiumTransitionResponse,
     hasNeonatologyPretermRespiratoryDistressResponse,
     hasNeonatologyHypoglycemiaResponse,
+    hasNeonatologySepsisResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3672,8 +3693,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeonatologyMeconiumTransitionResponse
     || hasNeonatologyPretermRespiratoryDistressResponse
     || hasNeonatologyHypoglycemiaResponse
+    || hasNeonatologySepsisResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasNeonatologyHypoglycemiaResponse
+  const responseTray = hasNeonatologySepsisResponse
+    ? { id: 'crisis', label: 'Infection + trajectory' } as const
+    : hasNeonatologyHypoglycemiaResponse
     ? { id: 'crisis', label: 'Glucose + trajectory' } as const
     : hasNeonatologyPretermRespiratoryDistressResponse
     ? { id: 'crisis', label: 'Breathing + warmth' } as const
@@ -4107,6 +4131,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeonatologyMeconiumTransitionResponse
     || hasNeonatologyPretermRespiratoryDistressResponse
     || hasNeonatologyHypoglycemiaResponse
+    || hasNeonatologySepsisResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -5060,6 +5085,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNeonatologyHypoglycemiaResponse && (
               <NeonatologyHypoglycemiaTray assessment={props.resuscitation.neonatologyHypoglycemiaAssessment}
                 onAction={props.onNeonatologyHypoglycemiaResponse ?? (() => {})} />
+            )}
+            {hasNeonatologySepsisResponse && (
+              <NeonatologySepsisTray assessment={props.resuscitation.neonatologySepsisAssessment}
+                onAction={props.onNeonatologySepsisResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -12561,6 +12590,38 @@ function NeonatologyHypoglycemiaTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-neonatal-hypoglycemia-fixed-thirty-minute-qualified-report')}>Review the fixed 30-minute report</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neonatal-hypoglycemia-recurrence-neurologic-feeding-thermal-cause-family-and-outcome-risk')}>Hand off active newborn risk</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function NeonatologySepsisTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['neonatologySepsisAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onNeonatologySepsisResponse']>;
+}) {
+  const support = assessment?.supportAtTick != null;
+  const context = assessment?.contextAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const readiness = assessment?.readinessAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="neonatology-sepsis-now-title">
+      <div id="neonatology-sepsis-now-title" className="syringe__name">Follow the change, not just the risk.</div>
+      <p className="syringe__remaining">Connect maternal context, clocks, new multisystem illness, parent, and whole dyad. A score or isolated result never overrules the clinically ill newborn.</p>
+      <div className="crisis-drug__actions">
+        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-neonatal-sepsis-newborn-infection-respiratory-circulatory-and-family-support')}>Confirm prepared support</Button>}
+        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neonatal-sepsis-maternal-risk-clock-clinical-change-physiology-and-whole-dyad')}>Connect newborn + whole dyad</Button>}
+        {context && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-clinically-ill-newborn-sepsis-risk-without-calculator-laboratory-or-diagnosis-closure')}>Recognize the urgent pattern</Button>}
+        {recognition && !readiness && <Button className="crisis-drug__action" onClick={() => onAction('review-qualified-neonatal-sepsis-culture-antimicrobial-support-investigation-and-reassessment-boundaries')}>Review qualified boundaries</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="neonatology-sepsis-later-title">
+      <div id="neonatology-sepsis-later-title" className="syringe__name">Partial improvement is not microbiologic closure.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Respiratory, circulatory, neurologic, culture, family, stewardship, disposition, and outcome risks handed off.' : reassessment ? 'The supplied physiology is partly better while culture remains pending. Diagnosis, exclusion, durable stability, duration, and outcomes remain open.' : readiness ? 'Qualified evaluation, care, and serial reassessment continue. Review the fixed report after time passes.' : support ? 'Prepared support is present. Connect the whole newborn and dyad before naming the pattern.' : 'Begin with calm shared ownership. You can pause or leave this practice at any time.'}</p>
+      <div className="crisis-drug__actions">
+        {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-neonatal-sepsis-fixed-one-hour-qualified-report')}>Review the fixed 1-hour report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neonatal-sepsis-respiratory-circulatory-neurologic-culture-family-and-outcome-risk')}>Hand off active newborn risk</Button>}
       </div>
     </section>
   </>;

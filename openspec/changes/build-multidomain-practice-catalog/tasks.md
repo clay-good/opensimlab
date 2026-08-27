@@ -595,6 +595,17 @@ credited toward the catalog until every item in the completion contract passes.
     diagnosis, feeding, glucose gel, IV dextrose, fluid, drug, dose, access, thermal care, device
     handling, oxygen, ventilation, airway care, resuscitation, transport, counseling, procedure,
     disposition, or outcome controls.
+  - [x] Neonatology slice 8/11 adds one authored clinically ill term-newborn infection-risk pattern
+    after maternal fever, prolonged rupture, unknown GBS status and late maternal antibiotics;
+    newborn, infection, respiratory, circulatory, laboratory, pharmacy, transport and parent-dyad
+    ownership; maternal-risk, clock, clinical-change, physiology and whole-dyad reconciliation;
+    urgent sepsis-risk recognition without calculator, isolated-laboratory, diagnosis or exclusion
+    closure; qualified culture, empiric antimicrobial, respiratory, circulatory, glucose, thermal,
+    investigation, reassessment and stewardship-boundary review; a fixed 1-hour partial-response
+    and pending-culture report; and active-risk handoff without learner history, examination,
+    scoring, monitoring or test work, risk calculation, diagnosis, support, access, fluid, glucose,
+    antimicrobial, drug, dose, feeding, device, ventilation, airway care, resuscitation, transport,
+    counseling, procedure, duration, disposition, or outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

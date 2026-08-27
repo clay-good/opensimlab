@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "neonatology",
-  "recordCount": 7,
+  "recordCount": 8,
   "records": [
     {
       "recordId": "scenario:term-newborn-transition@0.1.0",
@@ -78,6 +78,17 @@
       "evidence": [
         "/catalog/neonatology-completion-audit.json#neonatal-hypoglycemia@0.1.0",
         "/catalog/neonatology-quality-audit.json#neonatal-hypoglycemia@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:neonatal-sepsis@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "neonatal-sepsis",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/neonatology-completion-audit.json#neonatal-sepsis@0.1.0",
+        "/catalog/neonatology-quality-audit.json#neonatal-sepsis@0.1.0"
       ]
     }
   ]

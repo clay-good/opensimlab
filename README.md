@@ -314,6 +314,16 @@ one improved value as closure. No learner examination, glucose measurement or in
 feeding, dextrose, access, drug, procedure, disposition, or newborn/parent outcome control is
 exposed.
 
+The eighth Neonatology lab follows a term newborn whose new multisystem illness matters more than a
+risk score. It connects maternal fever, prolonged rupture, the deterioration clock, breathing,
+perfusion, feeding, temperature, parent, and whole-dyad context; recognizes immediate qualified
+sepsis evaluation and treatment without diagnosis closure; reviews culture-before-antibiotics only
+when care is not delayed, locally protocolized antimicrobial and supportive boundaries, and a fixed
+1-hour partial-response report; then hands off unresolved respiratory, circulatory, neurologic,
+culture, stewardship, family, transfer, disposition, and outcome risk. No learner examination,
+test, risk calculation, antimicrobial, supportive treatment, procedure, diagnosis, or outcome is
+implied.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

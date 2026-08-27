@@ -3071,6 +3071,27 @@ export interface EquipmentSnapshot {
       readonly safetyDispositionDetermined: false; readonly newbornOutcomePredicted: false;
       readonly parentOutcomePredicted: false; readonly outcomePredicted: false;
     };
+    readonly neonatologySepsisAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly authoredClinicallyIllNewbornSepsisRisk: true;
+      readonly authoredQualifiedOneHourReport: boolean;
+      readonly historyTakenByLearner: false; readonly newbornExaminedOrScoredByLearner: false;
+      readonly monitoringOrTestsObtainedOrInterpretedByLearner: false;
+      readonly riskCalculatedByLearner: false; readonly diagnosisMadeByLearner: false;
+      readonly thermalCarePerformedByLearner: false;
+      readonly oxygenRespiratoryOrCirculatorySupportDeliveredByLearner: false;
+      readonly accessFluidGlucoseAntimicrobialOrDrugDeliveredByLearner: false;
+      readonly feedingPerformedByLearner: false; readonly deviceHandledByLearner: false;
+      readonly ventilationOrAirwayManagedByLearner: false; readonly resuscitationPerformedByLearner: false;
+      readonly transportOrProcedurePerformedByLearner: false; readonly treatmentEffectProven: false;
+      readonly sepsisDiagnosed: false; readonly bacteremiaMeningitisOrInfectionExcluded: false;
+      readonly otherCauseExcluded: false; readonly durableStabilityProven: false;
+      readonly antimicrobialDurationDetermined: false; readonly safetyDispositionDetermined: false;
+      readonly newbornOutcomePredicted: false; readonly parentOutcomePredicted: false;
+      readonly outcomePredicted: false;
+    };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {
       readonly cuesReviewedAtTick: number | null;

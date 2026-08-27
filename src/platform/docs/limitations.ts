@@ -5087,6 +5087,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified direct findings, validated glucose methods, the current local neonatal-hypoglycemia pathway, immediate trained teams for abnormal signs, serial reassessment, respectful parent communication, and hands-on training.',
     briefIn: ['neonatal-hypoglycemia'],
   },
+  {
+    id: 'neonatal-sepsis-maternal-risk-newborn-parent-and-qualified-course-reports-are-authored',
+    headline: 'The maternal risk, newborn illness, parent, qualified care, and 1-hour report are authored.',
+    simplification: 'Fixed reports stand in for maternal and newborn history, newborn examination, clinical monitoring, culture and laboratory acquisition, respiratory and circulatory assessment, thermal and glucose care, parent assessment, locally protocolized antimicrobials, investigation, and serial review. Hidden adult-oriented engine-schema minimums are scaffolding, not neonatal sepsis physiology validation.',
+    whereItMisleads: 'Treating risk factors, multisystem illness, partial physiologic improvement, or a pending culture as learner findings, a calculator result, proven treatment effect, diagnosis, exclusion, durable stability, antimicrobial-duration decision, prognosis, or outcome.',
+    correctUnderstanding: 'A clinically ill newborn needs immediate qualified assessment and treatment. Maternal risk, the infant trajectory, direct findings, microbiology, targeted investigation, and serial response all matter; no calculator or isolated laboratory value safely closes the case.',
+    briefIn: ['neonatal-sepsis'],
+  },
+  {
+    id: 'neonatal-sepsis-controls-activate-reconcile-review-reassess-and-handoff-only',
+    headline: 'The controls confirm support, connect supplied facts, review qualified boundaries, read a fixed report, and hand off only.',
+    simplification: 'Six actions stand in for concurrent qualified newborn, infection, respiratory, circulatory, airway-ready, laboratory, pharmacy, nursing, leadership, timekeeping, documentation, communication, dignity, parent, family, stewardship, transport, and follow-up work.',
+    whereItMisleads: 'Equating button order with history, examination, risk calculation, culture or test work, diagnosis, antimicrobial or supportive treatment, communication quality, or competence.',
+    correctUnderstanding: 'Real neonatal sepsis care is concurrent, physical, relational, time-critical, locally protocolized, microbiology-aware, and serially reassessed. Cognitive practice cannot replace direct care.',
+    briefIn: ['neonatal-sepsis'],
+  },
+  {
+    id: 'no-live-neonatal-sepsis-history-exam-monitor-culture-antimicrobial-support-procedure-disposition-or-outcome',
+    headline: 'The lab does not examine, test, diagnose, give antimicrobials or support, determine disposition, or report outcome.',
+    simplification: 'No live history; newborn examination or scoring; measurement or monitoring; culture, CRP, blood count, glucose, gas, imaging, lumbar puncture, or other test acquisition or interpretation; risk calculation; diagnosis; thermal care; oxygen; respiratory or circulatory support; access; fluid; glucose; antimicrobial, drug, dose, route, or duration selection; feeding; device handling; ventilation; airway care; resuscitation; transport; counseling; procedure; disposition; prognosis; or outcome is modeled.',
+    whereItMisleads: 'Using the rehearsal as a risk-calculator, culture, antimicrobial, dose, support, meningitis-evaluation, stewardship, transfer, or disposition instruction; delaying trained response for a click; or reading completion as competence.',
+    correctUnderstanding: 'Use verified direct findings, the current local neonatal-infection pathway, prompt trained teams, culture before antibiotics only when it does not delay treatment, continuous supportive care and reassessment, respectful parent communication, and hands-on training.',
+    briefIn: ['neonatal-sepsis'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

@@ -5350,6 +5350,31 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['activate-neonatal-sepsis-newborn-infection-respiratory-circulatory-and-family-support',
+      'reconcile-neonatal-sepsis-maternal-risk-clock-clinical-change-physiology-and-whole-dyad',
+      'recognize-clinically-ill-newborn-sepsis-risk-without-calculator-laboratory-or-diagnosis-closure',
+      'review-qualified-neonatal-sepsis-culture-antimicrobial-support-investigation-and-reassessment-boundaries',
+      'review-neonatal-sepsis-fixed-one-hour-qualified-report',
+      'handoff-neonatal-sepsis-respiratory-circulatory-neurologic-culture-family-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'neonatal-sepsis'
+        && scenario.timeline.every((event) => event.type === 'narrative')
+        && scenario.timeline.filter((event) => event.target === 'neonatal-sepsis').length === 1
+        && scenario.timeline.filter((event) => event.target === 'neonatal-sepsis-boundary').length === 1;
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neonatology sepsis lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['support-activated', 'Newborn, infection, respiratory, circulatory, laboratory, pharmacy, transport, clock, communication, dignity, family, and follow-up ownership was confirmed first.'],
+        ['context-reconciled', 'Maternal risk, birth and deterioration clocks, clinical change, temperature, breathing, oxygenation, perfusion, feeding, parent, and whole-dyad context were connected.'],
+        ['pattern-recognized', 'Clinically ill newborn sepsis risk was recognized without calculator, isolated-laboratory, diagnosis, exclusion, or outcome closure.'],
+        ['readiness-reviewed', 'Qualified culture, empiric antimicrobial, respiratory, circulatory, glucose, thermal, investigation, reassessment, and stewardship boundaries were reviewed without learner care.'],
+        ['one-hour-report-reviewed', 'The fixed qualified physiologic and pending-culture report was reviewed without treatment-effect, diagnosis, exclusion, durable-stability, duration, disposition, or outcome claims.'],
+        ['active-risk-handoff-recorded', 'Respiratory, circulatory, neurologic, culture, antimicrobial, organ, glucose, feeding, family, stewardship, transfer, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^neonatology-sepsis-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^neonatology-sepsis-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['activate-obstetrics-cord-prolapse-response-diagnosis-clock-theatre-anesthesia-newborn-and-support-roles',
       'reconcile-obstetrics-cord-prolapse-membrane-rupture-fetal-heart-exam-birth-imminence-and-whole-person',
       'review-obstetrics-cord-prolapse-pressure-relief-minimal-handling-position-and-no-delay-boundaries',

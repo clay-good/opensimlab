@@ -1873,6 +1873,23 @@
       "limitationManifestHash": "sha256:7d7eb11562437bd10dc8630f32a3b8a0d150f6f8ddaef599b3c2686bb70424e9"
     },
     {
+      "scenarioId": "neonatal-sepsis",
+      "contentVersion": "0.1.0",
+      "moduleId": "neonatology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:d127ccca6fbd2a4c289683ca3abcdf7a4026333c7fd758e5977463272c8c9609",
+      "defaultsHash": "sha256:7d88b07b5f1141f231ce47c941ac03e59d145b276c62a34aeb1631ce88439026",
+      "maturityHash": "sha256:994bff5de7ec344731b7ef8f82c6f5e3bf9585ea649056e41f7b909765a6d714",
+      "sourceManifestHash": "sha256:27c071c73b5fd208bc66292e4f07fe089b8f7943e70dc81144d19a12ea6d4e65",
+      "limitationManifestHash": "sha256:ad4d59cdeffa2a71368c9afcfed3e747b93d3d119bd5875040143cf557ec8d28"
+    },
+    {
       "scenarioId": "preterm-respiratory-distress",
       "contentVersion": "0.1.1",
       "moduleId": "neonatology",

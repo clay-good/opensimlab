@@ -585,6 +585,10 @@ const NEONATOLOGY_HYPOGLYCEMIA_BLOCKED_ACTION_TYPES = new Set([
   ...NEONATOLOGY_PRETERM_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES,
   'preterm-respiratory-distress-response',
 ]);
+const NEONATOLOGY_SEPSIS_BLOCKED_ACTION_TYPES = new Set([
+  ...NEONATOLOGY_HYPOGLYCEMIA_BLOCKED_ACTION_TYPES,
+  'neonatal-hypoglycemia-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1644,6 +1648,12 @@ export class AnesthesiaEngine {
   private neonatologyHypoglycemiaReadinessAtTick: number | null = null;
   private neonatologyHypoglycemiaReassessmentAtTick: number | null = null;
   private neonatologyHypoglycemiaHandoffAtTick: number | null = null;
+  private neonatologySepsisSupportAtTick: number | null = null;
+  private neonatologySepsisContextAtTick: number | null = null;
+  private neonatologySepsisRecognitionAtTick: number | null = null;
+  private neonatologySepsisReadinessAtTick: number | null = null;
+  private neonatologySepsisReassessmentAtTick: number | null = null;
+  private neonatologySepsisHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2711,6 +2721,14 @@ export class AnesthesiaEngine {
     if (neonatologyHypoglycemia && NEONATOLOGY_HYPOGLYCEMIA_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `neonatology-hypoglycemia-generic-action-refused-${this.currentTick}`,
         'This Neonatology lesson exposes no generic history, examination, scoring, monitoring or glucose interpretation, feeding, dextrose, fluid, drug, access, thermal care, device handling, oxygen, ventilation, airway, resuscitation, transport, procedure, diagnosis, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const neonatologySepsis = this.scenario.metadata.id === 'neonatal-sepsis'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'neonatal-sepsis').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'neonatal-sepsis-boundary').length === 1;
+    if (neonatologySepsis && NEONATOLOGY_SEPSIS_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `neonatology-sepsis-generic-action-refused-${this.currentTick}`,
+        'This Neonatology lesson exposes no generic history, examination, scoring, monitoring or test interpretation, risk calculation, thermal care, oxygen, respiratory or circulatory support, access, fluid, glucose, antimicrobial, drug, feeding, device, ventilation, airway, resuscitation, transport, procedure, diagnosis, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -11663,6 +11681,29 @@ export class AnesthesiaEngine {
         if (this.neonatologyHypoglycemiaHandoffAtTick !== null) break;
         this.neonatologyHypoglycemiaHandoffAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-hypoglycemia-active-risk-handoff-recorded-${this.currentTick}`, 'Birth, feed, glucose, and treatment clocks; recurrent or persistent hypoglycemia; neurologic signs and safety; feeding; temperature; infection; endocrine, metabolic and other causes; parent state, preferences and support; serial monitoring; escalation; documentation; review; disposition; and outcome uncertainty were handed off.', { causeDetermined: false, durableGlucoseStabilityProven: false, neurologicSafetyProven: false, feedingSuccessProven: false, safetyDispositionDetermined: false, newbornOutcomePredicted: false, parentOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'neonatal-sepsis-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'neonatal-sepsis'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'neonatal-sepsis').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'neonatal-sepsis-boundary').length === 1;
+        const actions = this.scenario.metadata.objectives.map((objective) => objective.id);
+        const valid = typeof response === 'string' && actions.includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `neonatology-sepsis-response-refused-${this.currentTick}`, supported ? 'That neonatal-sepsis response is not available. Nothing changed.' : 'These neonatal-sepsis choices are available only in the exact declared Neonatology lesson.'); break; }
+        if (response === actions[0]) { if (this.neonatologySepsisSupportAtTick !== null) break; this.neonatologySepsisSupportAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-sepsis-support-activated-${this.currentTick}`, 'A trained newborn team, infection pathway, respiratory, circulatory, airway-ready, laboratory, pharmacy, transport, family, clock, communication, dignity, and follow-up ownership were confirmed. No learner history, examination, test, support, antimicrobial, or other care occurred.'); break; }
+        if (this.neonatologySepsisSupportAtTick === null) { this.log('warning', 'assessment', `neonatology-sepsis-support-order-refused-${this.currentTick}`, 'Confirm prepared newborn, infection, respiratory, circulatory, laboratory, pharmacy, transport, family, clock, and communication support before further review.'); break; }
+        if (response === actions[1]) { if (this.neonatologySepsisContextAtTick !== null) break; this.neonatologySepsisContextAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-sepsis-context-reconciled-${this.currentTick}`, 'The supplied maternal fever, rupture, GBS and antibiotic context, birth and deterioration clocks, prior transition, behavior, feeding, temperature, breathing, oxygenation, perfusion, parent state, preferences, support, and whole dyad were connected without learner history, examination, measurement, test interpretation, risk calculation, or diagnosis.'); break; }
+        if (this.neonatologySepsisContextAtTick === null) { this.log('warning', 'assessment', `neonatology-sepsis-context-order-refused-${this.currentTick}`, 'Connect maternal risk, clocks, clinical change, physiology, parent, and whole-dyad context before recognizing the urgent pattern.'); break; }
+        if (response === actions[2]) { if (this.neonatologySepsisRecognitionAtTick !== null) break; this.neonatologySepsisRecognitionAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-sepsis-pattern-recognized-${this.currentTick}`, 'New multisystem clinical illness after relevant perinatal risk was recognized as requiring immediate qualified sepsis evaluation and treatment. A calculator or isolated laboratory result did not overrule the clinically ill newborn, and no sepsis diagnosis or exclusion was claimed.'); break; }
+        if (this.neonatologySepsisRecognitionAtTick === null) { this.log('warning', 'assessment', `neonatology-sepsis-recognition-order-refused-${this.currentTick}`, 'Recognize clinically ill newborn sepsis risk without calculator, laboratory, diagnosis, or outcome closure before boundary review.'); break; }
+        if (response === actions[3]) { if (this.neonatologySepsisReadinessAtTick !== null) break; this.neonatologySepsisReadinessAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-sepsis-readiness-reviewed-${this.currentTick}`, 'Qualified culture before antibiotics when it does not delay care, locally protocolized empiric antimicrobials, respiratory, circulatory, glucose and thermal support, targeted investigation, serial reassessment, parent explanation, dignity, and stewardship boundaries were reviewed. No learner care, test, drug, dose, or procedure occurred.'); break; }
+        if (this.neonatologySepsisReadinessAtTick === null) { this.log('warning', 'assessment', `neonatology-sepsis-readiness-order-refused-${this.currentTick}`, 'Review qualified culture, antimicrobial, support, investigation, reassessment, and stewardship boundaries before the fixed report.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.neonatologySepsisReadinessAtTick) { this.log('warning', 'assessment', `neonatology-sepsis-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed qualified-team report.'); break; } if (this.neonatologySepsisReassessmentAtTick !== null) break; this.neonatologySepsisReassessmentAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-sepsis-one-hour-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report 1 hour after culture collection, empiric antimicrobials, warming, oxygen and circulatory support: temperature is 36.5°C, heart rate is 154/min, respiratory rate is 58/min with persistent mild retractions, preductal SpO2 is 96% during reported support, capillary refill is 3 seconds, glucose is 68 mg/dL, and blood culture is pending. This partial response does not prove treatment effect, diagnose sepsis, exclude bacteremia, meningitis, infection or another cause, establish durable stability, determine antimicrobial duration, disposition, or outcome.', { monitoringOrTestsObtainedOrInterpretedByLearner: false, oxygenRespiratoryOrCirculatorySupportDeliveredByLearner: false, accessFluidGlucoseAntimicrobialOrDrugDeliveredByLearner: false, treatmentEffectProven: false, sepsisDiagnosed: false, outcomePredicted: false }); break; }
+        if (this.neonatologySepsisReassessmentAtTick === null) { this.log('warning', 'assessment', `neonatology-sepsis-handoff-order-refused-${this.currentTick}`, 'Review the fixed 1-hour qualified-team report before active-risk handoff.'); break; }
+        if (this.currentTick <= this.neonatologySepsisReassessmentAtTick) { this.log('warning', 'assessment', `neonatology-sepsis-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.neonatologySepsisHandoffAtTick !== null) break;
+        this.neonatologySepsisHandoffAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-sepsis-active-risk-handoff-recorded-${this.currentTick}`, 'Birth, deterioration, culture and antimicrobial clocks; breathing and circulatory support; neurologic state; shock, respiratory failure and meningitis risk; culture and investigation status; organ, glucose and feeding risk; parent state, preferences and support; stewardship; escalation; transfer; documentation; review; disposition; and outcome uncertainty were handed off.', { sepsisDiagnosed: false, bacteremiaMeningitisOrInfectionExcluded: false, otherCauseExcluded: false, durableStabilityProven: false, antimicrobialDurationDetermined: false, safetyDispositionDetermined: false, newbornOutcomePredicted: false, parentOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -14752,6 +14793,16 @@ export class AnesthesiaEngine {
       crisisState = { ...crisisState, heartRateBpm: this.neonatologyHypoglycemiaReassessmentAtTick !== null ? 140 : 146,
         respiratoryRateBpm: 46, spo2Percent: 97, systolicMmHg: 62, diastolicMmHg: 38,
         meanArterialMmHg: 46, coreTemperatureC: this.neonatologyHypoglycemiaReassessmentAtTick !== null ? 36.7 : 36.6 };
+    }
+    if (this.scenario.metadata.id === 'neonatal-sepsis'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'neonatal-sepsis').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'neonatal-sepsis-boundary').length === 1) {
+      crisisState = { ...crisisState, heartRateBpm: this.neonatologySepsisReassessmentAtTick !== null ? 154 : 172,
+        respiratoryRateBpm: this.neonatologySepsisReassessmentAtTick !== null ? 58 : 68,
+        spo2Percent: this.neonatologySepsisReassessmentAtTick !== null ? 96 : 93,
+        systolicMmHg: 58, diastolicMmHg: 32, meanArterialMmHg: this.neonatologySepsisReassessmentAtTick !== null ? 42 : 40,
+        coreTemperatureC: this.neonatologySepsisReassessmentAtTick !== null ? 36.5 : 35.9 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -19278,6 +19329,31 @@ export class AnesthesiaEngine {
               neurologicSafetyProven: false as const, feedingSuccessProven: false as const,
               safetyDispositionDetermined: false as const, newbornOutcomePredicted: false as const,
               parentOutcomePredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'neonatal-sepsis'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'neonatal-sepsis').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'neonatal-sepsis-boundary').length === 1 ? {
+            neonatologySepsisAssessment: {
+              supportAtTick: this.neonatologySepsisSupportAtTick, contextAtTick: this.neonatologySepsisContextAtTick,
+              recognitionAtTick: this.neonatologySepsisRecognitionAtTick, readinessAtTick: this.neonatologySepsisReadinessAtTick,
+              reassessmentAtTick: this.neonatologySepsisReassessmentAtTick, handoffAtTick: this.neonatologySepsisHandoffAtTick,
+              authoredClinicallyIllNewbornSepsisRisk: true as const,
+              authoredQualifiedOneHourReport: this.neonatologySepsisReassessmentAtTick !== null,
+              historyTakenByLearner: false as const, newbornExaminedOrScoredByLearner: false as const,
+              monitoringOrTestsObtainedOrInterpretedByLearner: false as const, riskCalculatedByLearner: false as const,
+              diagnosisMadeByLearner: false as const, thermalCarePerformedByLearner: false as const,
+              oxygenRespiratoryOrCirculatorySupportDeliveredByLearner: false as const,
+              accessFluidGlucoseAntimicrobialOrDrugDeliveredByLearner: false as const,
+              feedingPerformedByLearner: false as const, deviceHandledByLearner: false as const,
+              ventilationOrAirwayManagedByLearner: false as const, resuscitationPerformedByLearner: false as const,
+              transportOrProcedurePerformedByLearner: false as const, treatmentEffectProven: false as const,
+              sepsisDiagnosed: false as const, bacteremiaMeningitisOrInfectionExcluded: false as const,
+              otherCauseExcluded: false as const, durableStabilityProven: false as const,
+              antimicrobialDurationDetermined: false as const, safetyDispositionDetermined: false as const,
+              newbornOutcomePredicted: false as const, parentOutcomePredicted: false as const,
+              outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

@@ -2394,6 +2394,23 @@ acquisition or interpretation, diagnosis, feeding, glucose gel, IV dextrose, flu
 access, thermal care, device handling, oxygen, ventilation, airway care, resuscitation, transport,
 counseling, procedure, disposition, or outcome control.
 
+### Wave D neonatology slice 8: neonatal sepsis
+
+A 3.2 kg term newborn develops lethargy, poor feeding, hypothermia, tachycardia, tachypnea,
+increased work, lower room-air oxygenation, and delayed capillary refill at 10 hours after maternal
+fever, 22-hour rupture, unknown GBS status, and late maternal antibiotics. The learner activates
+newborn, infection, respiratory, circulatory, laboratory, pharmacy, transport and family support;
+connects maternal risk, clocks, clinical change, physiology and whole-dyad context; recognizes
+clinically ill newborn sepsis risk without letting a calculator or isolated laboratory value close
+the case; and reviews qualified culture-before-antibiotics when this does not delay care, locally
+protocolized empiric antimicrobials, supportive care, targeted investigation, serial reassessment
+and stewardship boundaries. A fixed 1-hour report supplies partial physiologic improvement during
+qualified support with culture pending. Six controls expose no learner history, examination,
+scoring, monitoring or test work, risk calculation, diagnosis, thermal, respiratory or circulatory
+care, access, fluid, glucose, antimicrobial, drug, feeding, device, ventilation, airway,
+resuscitation, transport, counseling, procedure, antimicrobial-duration, disposition, or outcome
+control.
+
 ### Wave E neurology slice 1: minor nondisabling acute ischemic stroke
 
 The first Neurology lab is a function-based minor-stroke decision boundary, not another disabling
