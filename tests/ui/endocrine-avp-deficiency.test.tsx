@@ -19,7 +19,7 @@ import { avpDeficiencyDemonstrationStep, supportsAvpDeficiencyDemonstration,
   AVP_DEFICIENCY_DEMONSTRATION_VERSION } from '../../src/modules/endocrine-metabolic/demo/avp-deficiency-demonstration';
 import { useAvpDeficiencyDemonstration } from '../../src/modules/endocrine-metabolic/demo/useAvpDeficiencyDemonstration';
 
-const VERSION = '0.1.0';
+const VERSION = '0.1.1';
 const labels: Record<AvpDeficiencyAction, string> = {
   'restore-volume': 'Start qualified volume restoration', 'review-context': 'Review medication and water-access context',
   'call-support': 'Call qualified support', monitor: 'Arrange serial sodium and urine checks',
@@ -84,12 +84,12 @@ describe('AVP deficiency circulation and water-balance experience', () => {
     expect(container.textContent).toContain('distinct from diabetes mellitus');
     expect(tutor(view.model, 0)?.id).toBe('avp-deficiency-volume');
     expect(step(view.model, 0)).toMatchObject({ id: 'volume', action: 'restore-volume' });
-    expect(AVP_DEFICIENCY_DEMONSTRATION_VERSION).toBe('0.1.0');
+    expect(AVP_DEFICIENCY_DEMONSTRATION_VERSION).toBe('0.1.1');
     expect(supportsAvpDeficiencyDemonstration(SCENARIO)).toBe(true);
-    expect(supportsAvpDeficiencyDemonstration({ ...SCENARIO, metadata: { ...SCENARIO.metadata, version: '0.1.1' } })).toBe(false);
+    expect(supportsAvpDeficiencyDemonstration({ ...SCENARIO, metadata: { ...SCENARIO.metadata, version: '0.1.2' } })).toBe(false);
     expect(avpDeficiencyDemonstrationStep()).toMatchObject({ id: 'preparing' });
     expect(avpDeficiencyInlinePrompt('unassisted', { scenarioVersion: VERSION, avpDeficiency: view.snapshot() })).toBeNull();
-    expect(avpDeficiencyInlinePrompt('guided', { scenarioVersion: '0.1.1', avpDeficiency: view.snapshot() })).toBeNull();
+    expect(avpDeficiencyInlinePrompt('guided', { scenarioVersion: '0.1.2', avpDeficiency: view.snapshot() })).toBeNull();
     const volume = view.button('restore-volume'); volume.focus(); view.click('restore-volume');
     expect(view.snapshot()).toMatchObject({ volumeAtTick: 0, contextReviewedAtTick: null, supportActive: false, observation: null });
     expect(view.button('restore-volume')).toBe(volume); expect(document.activeElement).toBe(volume);

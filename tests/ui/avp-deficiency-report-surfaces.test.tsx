@@ -20,6 +20,19 @@ import { collectReportEquipmentContext, EndocrineMetabolicRoute } from '@routes/
 import { HYPERNATREMIC_DEHYDRATION_AVP_DEFICIENCY as SCENARIO } from '../../src/modules/endocrine-metabolic/scenarios/hypernatremic-dehydration-avp-deficiency';
 import { AVP_DEFICIENCY_VOLUME_TICKS } from '../../src/modules/endocrine-metabolic/avp-deficiency';
 import { validateReportPayload } from '../../workers/reports/src/index.mjs';
+import reportCatalog from '../../workers/reports/src/report-catalog.generated.json';
+
+// Published identity, deliberately independent of the current scenario or generator.
+const HISTORICAL_REPORT = {
+  scenarioId: 'hypernatremic-dehydration-avp-deficiency', contentVersion: '0.1.0',
+  moduleId: 'endocrine-metabolic', maturity: 'preview', practiceRegions: ['US', 'GB'],
+  fidelityClass: 'state_transition', capabilityVersion: '0.1.0-alpha.48',
+  releaseRef: 'sha256:d8da3bb3de1f974b964fe3655adb9e7085c9c910b970c4b4d43e12d3b7d48a24',
+  defaultsHash: 'sha256:c5fd03310390a61a66a35425d37687d13e1efd51c1712ddf9e4f64e3ed201a24',
+  maturityHash: 'sha256:f893af0d981ddb8b26c4f51561504b2ef69c37d5a1bfcecb821a97ffbf8591ff',
+  sourceManifestHash: 'sha256:ed632283b076f9f72011170dd057f0fa5891c499d93144d36a5ce28ee11a8112',
+  limitationManifestHash: 'sha256:811e3b23cdf6b73eb910b98eddbf24e7e65ac3f9958c7b5662084b8aa9f74956',
+};
 
 const harness = vi.hoisted(() => ({ session: null as unknown as SessionState, actions: [] as LearnerAction[], build: vi.fn(),
   takeControls: undefined as (() => void) | undefined }));
@@ -134,6 +147,35 @@ describe('exact-version AVP-deficiency reporting through shared route surfaces',
     expect(validateReportPayload({ ...payload, content_version: '999.0.0' }).ok).toBe(false);
     expect(JSON.stringify(payload)).not.toMatch(/private-assignment-label|private-value|private action prose|private log prose|private debrief account/);
   };
+
+  it('submits the corrected version while preserving the immutable historical Worker identity', async () => {
+    await render(); await openReport(); await selectCategory(); await click(button('Send report'));
+    const payload = lastPayload();
+    expect(payload.content_version).toBe('0.1.1');
+    const versions = reportCatalog.scenarios.filter(({ scenarioId, moduleId }) => scenarioId === SCENARIO.metadata.id
+      && moduleId === 'endocrine-metabolic');
+    expect(versions.map(({ contentVersion }) => contentVersion)).toEqual(['0.1.0', '0.1.1']);
+    expect(versions[0]).toEqual(HISTORICAL_REPORT);
+    const { practiceRegions: currentRegions, ...currentIdentity } = versions[1]!;
+    expect(currentRegions).toEqual(['US', 'GB']);
+    expect(validateReportPayload(payload)).toMatchObject({ ok: true, value: currentIdentity });
+    expect(currentIdentity.releaseRef).not.toBe(HISTORICAL_REPORT.releaseRef);
+    const { practiceRegions, ...historicalIdentity } = HISTORICAL_REPORT;
+    for (const practiceRegion of practiceRegions) {
+      const historicalPayload = { ...payload, content_version: '0.1.0', practice_region: practiceRegion };
+      expect(validateReportPayload(historicalPayload)).toMatchObject({ ok: true,
+        value: { ...historicalIdentity, practiceRegion } });
+      // Manifest evidence is server-derived: cached clients cannot replace it
+      // with current hashes or submit a plausible but mismatched manifest.
+      for (const [field, hash] of Object.entries({ release_ref: currentIdentity.releaseRef,
+        defaults_hash: currentIdentity.defaultsHash, maturity_hash: currentIdentity.maturityHash,
+        source_manifest_hash: currentIdentity.sourceManifestHash,
+        limitation_manifest_hash: currentIdentity.limitationManifestHash })) {
+        expect(validateReportPayload({ ...historicalPayload, [field]: hash })).toEqual({ ok: false, status: 400 });
+      }
+    }
+    expect(validateReportPayload({ ...payload, content_version: '0.1.2' })).toEqual({ ok: false, status: 400 });
+  });
 
   it.each(['briefing', 'running', 'ended'] as const)('offers the real shared 160-character form in %s with correct payload identity and no implicit context', async (phase) => {
     harness.session = { ...harness.session, phase, transport: phase === 'running' ? 'running' : 'paused' };

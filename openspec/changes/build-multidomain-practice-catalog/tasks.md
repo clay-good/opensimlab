@@ -1064,12 +1064,33 @@ credited toward the catalog until every item in the completion contract passes.
     hypocalcemia and hyponatremia evidence was revalidated before explicitly repinning six and ten
     changed shared dependencies, respectively; their records and prior audit entries are unchanged.
     The actual preview release still refuses 217 publication blockers. No production report was sent.
-  - [ ] Complete AVP-deficiency independent clinical review, four exact-version quality records,
+  - [x] Correct AVP circulation scoring in content 0.1.1: otherwise equivalent complete-care paths
+    at ticks 17,999 and 18,000 no longer receive different credit solely from the authored
+    deterioration cutoff. The real-engine regression failed first and passes after the correction.
+    Actual volume-start seconds and deterioration remain in debrief; fresh reassessment is still
+    required, and normalization/withholding mistakes are retained. Patient values and clocks did
+    not change. Fixtures, tutor/example eligibility, completion evidence, and report identity are
+    bound to the corrected version; all 209 earlier client and Worker report records are preserved.
+  - [x] Supply AVP training-value, authored-defaults, and hazard records with 47 literal defaults,
+    ten hazard categories, and a 47-file dependency receipt. Sixteen new quality checks compare
+    records with actual model state, transitions, fixtures, tutor, objectives, and shared defaults.
+    Thirty-six new drift cases cover nine AVP dependencies across catalog, development, preview,
+    and reviewed-release consumers; all refuse stale evidence before writes or publication checks.
+    The report regression pins original 0.1.0 evidence, accepts 0.1.1, and refuses client manifest
+    overrides. Neither structural validity nor local checks supply a state-space or clinical pass.
+  - [x] Verify the AVP 0.1.1 correction with full CI: 4,267 tests across 496 files, 30 strict specs,
+    type/lint, public readiness, 226 static routes, and 44 catalog artifacts pass. All 223 crawlable
+    routes pass indexability checks. Landing/cockpit/offline budgets are 148.2/1,513.9/3,382.9 KiB;
+    fonts are 86.2 KiB. The strict catalog change validates. Existing hypocalcemia and hyponatremia
+    evidence was rechecked before repinning only their shared debrief dependency; their authored
+    records remain unchanged. The actual preview release still refuses 217 publication blockers.
+    No production report was sent, and no pending review was converted into a pass.
+  - [ ] Complete AVP-deficiency independent clinical review, its state-space verification record,
     full inclusive-runtime verification, and production reporting evidence. Sources were checked
     August 27, 2026; the 2026 joint-guideline abstract describes forthcoming guidance. All response
     clocks and sodium/urine branches remain authored, with no dose, rate, deficit calculation,
     automatic redose, neurologic-injury prediction, or discharge claim. Deploy the reports catalog
-    before new client content; the 208 existing identities remain unchanged and one is added.
+    before new client content; 210 current and historical report identities remain available.
   - [x] Repair service-worker release consistency. Build-stamped SHA-256 integrity checks reject
     mixed or incomplete installations; active snapshots are immutable. Explicit acceptance waits
     for the intended controller before reloading only that tab. Durable per-client release pins

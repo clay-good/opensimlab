@@ -1,7 +1,7 @@
 import type { AvpDeficiencyAction } from './avp-deficiency';
 
 export const AVP_DEFICIENCY_FIXTURES = {
-  scenarioId: 'hypernatremic-dehydration-avp-deficiency', contentVersion: '0.1.0', seed: 4919,
+  scenarioId: 'hypernatremic-dehydration-avp-deficiency', contentVersion: '0.1.1', seed: 4919,
   noAction: [],
   expert: [[0, 'restore-volume'], [1, 'review-context'], [2, 'call-support'], [3, 'monitor'],
     [9000, 'reassess'], [9001, 'replace-water'], [9002, 'restore-desmopressin'],

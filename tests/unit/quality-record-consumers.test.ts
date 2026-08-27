@@ -94,11 +94,12 @@ describe('Build and release consume the same fail-closed quality registry', () =
     expect(cardiacSetting(gate.completions)).toBe('clinic');
   });
 
-  it('publishes both three-record endocrine evidence sets identically without claiming playable status', async () => {
+  it('publishes all three endocrine evidence sets identically without claiming playable status', async () => {
     const production = await vi.importActual<typeof QualityRecords>('../../scripts/quality-records');
-    expect(production.QUALITY_RECORDS).toHaveLength(6);
+    expect(production.QUALITY_RECORDS).toHaveLength(9);
     expect(production.QUALITY_RECORDS.map(({ kind }) => kind).sort())
-      .toEqual(['authored-defaults', 'authored-defaults', 'scenario-hazard', 'scenario-hazard', 'training-value', 'training-value']);
+      .toEqual(['authored-defaults', 'authored-defaults', 'authored-defaults',
+        'scenario-hazard', 'scenario-hazard', 'scenario-hazard', 'training-value', 'training-value', 'training-value']);
     expect(production.QUALITY_RECORDS.every(({ moduleId }) => moduleId === 'endocrine-metabolic')).toBe(true);
     harness.records = production.QUALITY_RECORDS;
     await consume('build'); await consume('gate');
@@ -108,10 +109,11 @@ describe('Build and release consume the same fail-closed quality registry', () =
       expect(call.inputs).toBe(production.QUALITY_RECORDS);
       expect(call.completions.map(({ moduleId }) => moduleId)).toEqual(MODULES);
       const scenarios = [...call.result!.values()].flatMap(({ scenarios }) => scenarios);
-      const targets = ['hypocalcemic-tetany-rescue-and-recurrence', 'hyponatremia-aquaresis-and-overcorrection'];
+      const targets = ['hypocalcemic-tetany-rescue-and-recurrence', 'hyponatremia-aquaresis-and-overcorrection',
+        'hypernatremic-dehydration-avp-deficiency'];
       for (const scenarioId of targets) {
         const target = scenarios.find((scenario) => scenario.scenarioId === scenarioId)!;
-        expect(target.contentVersion).toBe('0.1.0');
+        expect(target.contentVersion).toBe(scenarioId === 'hypernatremic-dehydration-avp-deficiency' ? '0.1.1' : '0.1.0');
         expect(target.qualityRecords.filter(({ status }) => status === 'present')).toHaveLength(3);
         expect(target.qualityRecords.filter(({ status }) => status === 'missing').map(({ kind }) => kind))
           .toEqual(['state-space-verification']);

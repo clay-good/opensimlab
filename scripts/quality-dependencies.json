@@ -28,7 +28,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "9eda2d1b3bf6302f0b21ef26d2b59f4e1480e49ceb63b060185c86d5346921f0"
+        "sha256": "6bc691c03b6c691d3fb6cc3b432bc019cfec7d7a25f1acd8513cbedb7955611b"
       },
       {
         "path": "src/modules/endocrine-metabolic/HypocalcemiaTray.tsx",
@@ -181,7 +181,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "9eda2d1b3bf6302f0b21ef26d2b59f4e1480e49ceb63b060185c86d5346921f0"
+        "sha256": "6bc691c03b6c691d3fb6cc3b432bc019cfec7d7a25f1acd8513cbedb7955611b"
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
@@ -326,6 +326,203 @@
       {
         "path": "tests/unit/hyponatremia-correction-reporting.test.ts",
         "sha256": "702c0878215c2245d00299dfed8bbc9c7427c406724d9a8e22187c0bdb55c522"
+      }
+    ]
+  },
+  {
+    "moduleId": "endocrine-metabolic",
+    "scenarioId": "hypernatremic-dehydration-avp-deficiency",
+    "contentVersion": "0.1.1",
+    "algorithm": "sha256-files-v1",
+    "recordsSha256": "733c2a9785cf3af3a7e42a1a069313a487468fa709a55997874c3089d7c3484e",
+    "files": [
+      {
+        "path": "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md",
+        "sha256": "b653a0feea7bc1c3e4ef063e61a1a95fb9589098e547e2865c80b469d827ae02"
+      },
+      {
+        "path": "package-lock.json",
+        "sha256": "87ac3b4895c682cc68b41ad327dd66ba822c62254e2b5ee83aa9286a69ced167"
+      },
+      {
+        "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
+        "sha256": "b6dbdaba7a422180eba541de68a7abc19ad68274ffe3bdd37818e50350079f96"
+      },
+      {
+        "path": "src/modules/anesthesia/demo/useDemonstration.ts",
+        "sha256": "b2dfb81309da24a35480a673c1df7fb2166bb20528d14084421d8fbe040bcd18"
+      },
+      {
+        "path": "src/modules/anesthesia/demo/useObservedDemonstration.ts",
+        "sha256": "d3ac456d0cd55cb9b26d2bf18a8ed163060982fcf49ceb80652ff11f640f24e4"
+      },
+      {
+        "path": "src/modules/anesthesia/engine.ts",
+        "sha256": "90d88bb08baad6d95f3f31e00b731370542ea0f39869027178949d71e39f000e"
+      },
+      {
+        "path": "src/modules/anesthesia/region/profiles.ts",
+        "sha256": "6f2476883c6ab3f9dbb7e34f8775bceb97914a6d75e3e6aa4ecdb1d161bc36a8"
+      },
+      {
+        "path": "src/modules/anesthesia/ui/ActionCockpit.tsx",
+        "sha256": "75cdd9e808302f4b6d55f45e938cbc4aac8e3045b6dc4cee422a99e50f6bfda4"
+      },
+      {
+        "path": "src/modules/anesthesia/ui/Cockpit.tsx",
+        "sha256": "3d9276383e7a87a271c5ee7d2b912f976e75f55277464c34ad1f42b2edd1d707"
+      },
+      {
+        "path": "src/modules/anesthesia/ui/Debrief.tsx",
+        "sha256": "6bc691c03b6c691d3fb6cc3b432bc019cfec7d7a25f1acd8513cbedb7955611b"
+      },
+      {
+        "path": "src/modules/anesthesia/ui/DemonstrationBar.tsx",
+        "sha256": "44cc7371c91dbfe20a7846c9f9c4c04b9f1d28f45df1b9d42be2e41eea4e717b"
+      },
+      {
+        "path": "src/modules/anesthesia/ui/Prebrief.tsx",
+        "sha256": "033a518b0c99df8d56bb7d7614edcb7cff3a662d0de724e723a04a57e1eb7454"
+      },
+      {
+        "path": "src/modules/anesthesia/ui/accessibility.ts",
+        "sha256": "b41540682e2359fce58065fc774f6715b2468d52f4ce80ded986b469108599f6"
+      },
+      {
+        "path": "src/modules/anesthesia/ui/cockpit.css",
+        "sha256": "f6c365130529b826babfa0bd41638d5224a11d859b083ada8a3d266ec0dc7be8"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/AvpDeficiencyTray.tsx",
+        "sha256": "6ecddbb5ec77963637305be15506f78f7f32896913bcf555151cfe3d7caa15c1"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/avp-deficiency-completion.ts",
+        "sha256": "cfc8b6b5ced866e351c343371e0d725b9a3a96199f8e866a032eaaf36c97ef41"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/avp-deficiency-fixtures.ts",
+        "sha256": "f3059a913c7e509dc1ace2f78b72df394ecca10c1291f0ddea39a9a1d8aca071"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/avp-deficiency-quality.ts",
+        "sha256": "96a983172a410e1fc5d50e7cf859fb0e46bfff76658e19a8722c385aae63bcd9"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/avp-deficiency-reporting.ts",
+        "sha256": "ad7edbed2523bbb2233de286a5a5bb019d31127ed3e3c5d1edc272e0c5c59343"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/avp-deficiency-tutor.ts",
+        "sha256": "6c2ea2a4dcc7760c3704002906e4ab7b7810d18046a5b3636152ba84b8bd0ae1"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/avp-deficiency.ts",
+        "sha256": "5a5e13b5d75202c37ab43d810d54934918c9ba9c0df5e09d58a52de3e6c09ce9"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/demo/avp-deficiency-demonstration.ts",
+        "sha256": "cff46539e07fe94cdc77cb139295f7a23dd84f033e611eb6fc53ddd647f7492a"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/demo/useAvpDeficiencyDemonstration.ts",
+        "sha256": "2397793bf08f57d5873c316757a200a2e1649f70a8a545b698eb76a9e29163d9"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/scenarios/hypernatremic-dehydration-avp-deficiency.ts",
+        "sha256": "12bee606a7501236482326b862b6b282560123cfcce4be23f8b9406cdd4d008c"
+      },
+      {
+        "path": "src/platform/catalog/maturity.ts",
+        "sha256": "69970d4d7fae816e935846572b4943ec38ae86ac6da0410fb78ccf17b757e913"
+      },
+      {
+        "path": "src/platform/catalog/scenario-quality.ts",
+        "sha256": "e0f40ab3ac2d787ffba19b5e65a8b76b9a019d4cbba2e996ed5e05b5964190f2"
+      },
+      {
+        "path": "src/platform/clock/simulation-clock.ts",
+        "sha256": "1e757dd6474e3a5046382b3031008094fd2b20ba9e1a13b4a19689db50acadeb"
+      },
+      {
+        "path": "src/platform/docs/limitations.ts",
+        "sha256": "127feed70b4edb02e42ca5e533c34d1abe49822fd4f945d16f8a88e099504d1f"
+      },
+      {
+        "path": "src/platform/docs/sources.ts",
+        "sha256": "5e98102f33144cf33dd62cd62743c514cdc641679b4983c94109052a7edcfbce"
+      },
+      {
+        "path": "src/platform/governance/publication.ts",
+        "sha256": "b1ab5cb0cbc8d1894b079f842ad40bfad309c9cb1aa212bc1b803f9473fc5a9e"
+      },
+      {
+        "path": "src/platform/governance/records.ts",
+        "sha256": "3558c073643a4a1b0af47b722f56e0355c21f16657a9479e4c059f825722e76f"
+      },
+      {
+        "path": "src/platform/governance/review-gate.ts",
+        "sha256": "ad779f6e639a0ec3933622b405ce56cbc7e11b5eff0975b835497b0efa80f157"
+      },
+      {
+        "path": "src/platform/governance/review-notes.ts",
+        "sha256": "8c2f789a4fecbaac8b75e3dfd3cec1f7758ef4927db17460bd801154e47a29c0"
+      },
+      {
+        "path": "src/platform/kernel/protocol.ts",
+        "sha256": "cf682dd65b70e3db85aed76e7dc4e5ad0d6e5f5416fd281190fe32d9153897a5"
+      },
+      {
+        "path": "src/platform/reporting/ScenarioProblemReport.tsx",
+        "sha256": "c8f8d80cb01ea44782c827190a0cde1e9d06dab3ffe46010aae9db7267cfcfab"
+      },
+      {
+        "path": "src/platform/reporting/contracts.ts",
+        "sha256": "78cdf0e0f7ff3c7ee79c2419283f32005e7f33b7dac4a677af83284dcba400c0"
+      },
+      {
+        "path": "src/platform/session/session-store.ts",
+        "sha256": "761d2694863617d9ea5ecbf102fdfa24c790cbdfba391b1c743b0d859d1ce4a6"
+      },
+      {
+        "path": "src/platform/tokens/base.css",
+        "sha256": "d316dcc5504d59ab9d68651a47cf2835ab161288d9f663fcf831c5455700e385"
+      },
+      {
+        "path": "src/routes/AnesthesiaRoute.tsx",
+        "sha256": "46ea6fdeb72263f59876922ff61afa4702b32407dd9e7dc3d9dbc4a8c28d20a8"
+      },
+      {
+        "path": "tests/integration/avp-deficiency-demonstration-session.test.tsx",
+        "sha256": "afdfe36471d0e55ef3b2f6128e95bb883310dfff55b087b2835be84861c97aa4"
+      },
+      {
+        "path": "tests/integration/avp-deficiency-runs.test.ts",
+        "sha256": "1cd52a965848581327abc8d442d5778a51cb01ef8a41f2ffb381a5b05c7b3cbf"
+      },
+      {
+        "path": "tests/ui/avp-deficiency-accessibility.test.tsx",
+        "sha256": "e7f9c2fa72995bae77b4a730ac65dfaf2356c748867333fed5e6249d5303212c"
+      },
+      {
+        "path": "tests/ui/avp-deficiency-report-surfaces.test.tsx",
+        "sha256": "e3dd70af08fbef2808477525ec44f22c81b8e17b7887964b53bcb9aeab4974ac"
+      },
+      {
+        "path": "tests/ui/endocrine-avp-deficiency.test.tsx",
+        "sha256": "92a7edd584f4510364d259568ea75c57ddedf375d8846a4e4a689be5be38c461"
+      },
+      {
+        "path": "tests/unit/avp-deficiency-quality.test.ts",
+        "sha256": "4874e690231851a6d86fb7187c76fc128d96f34a0bbbc3185e54aab35fde720d"
+      },
+      {
+        "path": "tests/unit/avp-deficiency-reporting.test.ts",
+        "sha256": "acf64bd1eacd6f72eb57476141c0810641e3aac4daaa51106448256860204d78"
+      },
+      {
+        "path": "tests/unit/endocrine-avp-deficiency.test.ts",
+        "sha256": "4c49e7e75500795ab224d6f349fb5d335b3f9ab77048c1e4e854f686ba9c4ab2"
       }
     ]
   }

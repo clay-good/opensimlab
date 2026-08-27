@@ -2965,6 +2965,14 @@ guidance and the 2022 JCEM review; the August 2026 joint-guideline abstract stil
 guidance. Clinical, full inclusive-runtime, version-bound quality, and production reporting gates
 remain pending. See `docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md`.
 
+Content 0.1.1 separates recorded delay from circulation-objective credit. The authored 30-minute
+deterioration remains, but crossing it by 0.1 second cannot turn otherwise equivalent observed
+care into a failed objective. Debrief reports the actual start time and retains deterioration,
+normalization attempts, and withholding. Three literal quality records cover 47 defaults and ten
+hazards; dependency receipts and executable comparisons protect their exact version. The complete
+state-space record remains missing. Original 0.1.0 report evidence stays immutable and accepted;
+new practice and reports use 0.1.1. Neither the clinical model nor its clocks changed.
+
 #### Renal and electrolyte medicine: 12
 
 Hyperkalemia with ECG change; severe hypokalemia; symptomatic hyponatremia; hypernatremic

@@ -52,9 +52,9 @@ const findings = (events: readonly EngineEvent[]) => objectiveFindings(SCENARIO,
 describe('Known AVP deficiency through the real engine and causal debrief', () => {
   it('binds exact content and capability without promoting pending inclusive or production evidence', () => {
     expect(SCENARIO.metadata.objectives.map(({ id }) => id)).toEqual(OBJECTIVES);
-    expect(SCENARIO.metadata).toMatchObject({ version: '0.1.0', maturity: 'preview', estimatedMinutes: 135 });
+    expect(SCENARIO.metadata).toMatchObject({ version: '0.1.1', maturity: 'preview', estimatedMinutes: 135 });
     expect(SCENARIO.metadata.clinicalReview.reviewer).toBe('UNSIGNED');
-    expect(FIXTURES).toMatchObject({ scenarioId: SCENARIO.metadata.id, contentVersion: '0.1.0', seed: 4919 });
+    expect(FIXTURES).toMatchObject({ scenarioId: SCENARIO.metadata.id, contentVersion: '0.1.1', seed: 4919 });
     const minute = 60 * TICKS_PER_SECOND;
     expect([VOLUME, DELAY, DESMOPRESSIN, UNCONTROLLED, RESPONSE, TAKEOVER, SESSION])
       .toEqual([15, 30, 30, 120, 120, 60, 300].map((minutes) => minutes * minute));
@@ -63,7 +63,7 @@ describe('Known AVP deficiency through the real engine and causal debrief', () =
     expect(audit.requirements.filter(({ status }) => status === 'missing').map(({ id }) => id))
       .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
     expect(avpDeficiencyCompletionEvidence(SCENARIO, ENGINE_VERSION, 'endocrine-metabolic')).toHaveLength(9);
-    for (const scenario of [{ ...SCENARIO, metadata: { ...SCENARIO.metadata, version: '0.1.1' } },
+    for (const scenario of [{ ...SCENARIO, metadata: { ...SCENARIO.metadata, version: '0.1.2' } },
       { ...SCENARIO, patient: { ...SCENARIO.patient, weightKg: 999 } }]) {
       expect(avpDeficiencyCompletionEvidence(scenario, ENGINE_VERSION, 'endocrine-metabolic')).toEqual([]);
     }
@@ -96,7 +96,7 @@ describe('Known AVP deficiency through the real engine and causal debrief', () =
     if (path === 'noAction') expect(guided.patient.observation).toBeNull();
     expect(findings(guided.events).map(({ objectiveId }) => objectiveId)).toEqual(OBJECTIVES);
     expect(findings(guided.events).map(({ outcome }) => outcome)).toEqual(path === 'expert' ? Array(5).fill('met')
-      : path === 'recovery' ? ['met', 'not-met', 'not-met', 'met', 'met'] : Array(5).fill('not-met'));
+      : path === 'recovery' ? ['met', 'met', 'not-met', 'met', 'met'] : Array(5).fill('not-met'));
     const ended = guided.patient;
     guided.engine.apply(choice(999999, 'reassess')); guided.engine.step();
     expect(guided.engine.equipment().resuscitation.avpDeficiency).toEqual(ended);
@@ -191,5 +191,19 @@ describe('Known AVP deficiency through the real engine and causal debrief', () =
     expect(JSON.stringify(frame.events)).not.toContain('private-value');
     engine.apply(choice(999999, 'restore-volume')); engine.apply(choice(-100, 'monitor'));
     expect(engine.equipment().resuscitation.avpDeficiency).toMatchObject({ volumeAtTick: 1, monitoringAtTick: 1 });
+  });
+
+  it('retains delay evidence without making a one-tick teaching boundary decide circulation credit', () => {
+    for (const start of [DELAY - 1, DELAY]) {
+      const first = start + VOLUME; const later = first + RESPONSE;
+      const result = run([[0, 'call-support'], [0, 'review-context'], [0, 'monitor'],
+        [start, 'restore-volume'], [first, 'reassess'], [first, 'replace-water'],
+        [first, 'restore-desmopressin'], [later, 'reassess'], [later, 'handoff']], later);
+      expect(result.patient).toMatchObject({ ended: 'handoff', volumeDelayed: start === DELAY });
+      const circulation = findings(result.events).find(({ objectiveId }) => objectiveId === 'avp-circulation')!;
+      expect(circulation.outcome).toBe('met');
+      expect(circulation.finding).toContain(start === DELAY ? '1,800.0 simulated seconds' : '1,799.9 simulated seconds');
+      expect(circulation.finding.includes('that delay remains')).toBe(start === DELAY);
+    }
   });
 });

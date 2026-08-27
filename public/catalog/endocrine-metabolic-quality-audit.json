@@ -1950,35 +1950,964 @@
     },
     {
       "scenarioId": "hypernatremic-dehydration-avp-deficiency",
-      "contentVersion": "0.1.0",
+      "contentVersion": "0.1.1",
       "completionComplete": false,
       "qualityRecords": [
         {
           "kind": "training-value",
-          "status": "missing",
+          "status": "present",
+          "record": {
+            "causalDebrief": true,
+            "consequence": true,
+            "contentVersion": "0.1.1",
+            "evidence": [
+              "src/modules/endocrine-metabolic/avp-deficiency.ts: circulation, masked urine loss, single-component care, and combined partial response evolve separately; findings require requests.",
+              "tests/unit/endocrine-avp-deficiency.test.ts: exact boundaries, independent care without administrative or laboratory gates, hidden-result noninterference, and retained history.",
+              "tests/integration/avp-deficiency-runs.test.ts: four real-engine courses across all guidance levels, GB pathway, hostile actions, and event-bound debrief.",
+              "tests/integration/avp-deficiency-demonstration-session.test.tsx: nine learner confirmations, real store/clock/recorder, both observation waits, stale-callback rejection, and every-frame replay for prompt and late recovery through in-process transport.",
+              "src/modules/endocrine-metabolic/AvpDeficiencyTray.tsx: learner interpretation, meaningful alternatives, and repeated observation cannot be replaced by a static sodium lookup.",
+              "src/modules/endocrine-metabolic/avp-deficiency-quality.ts: these three literal records are engineering evidence, not a state-space pass or clinical sign-off.",
+              "tests/unit/avp-deficiency-quality.test.ts: checks literal records against actual model progression, scenario, fixtures, guidance, shared defaults, and debrief predicates.",
+              "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md: fictional values and clocks do not establish clinical kinetics, prescription competence, independent review, or production reporting verification."
+            ],
+            "fictionalTimeEvolvingState": true,
+            "incompleteInformation": true,
+            "learnerAction": true,
+            "reassessment": true,
+            "scenarioId": "hypernatremic-dehydration-avp-deficiency",
+            "schemaVersion": 1,
+            "staticOutputSubstitute": false
+          },
           "evidence": [
-            "No version-bound training-value record exists for hypernatremic-dehydration-avp-deficiency 0.1.0."
+            "Validated version-bound training-value record for hypernatremic-dehydration-avp-deficiency 0.1.1; structural validity does not establish independent review."
           ]
         },
         {
           "kind": "authored-defaults",
-          "status": "missing",
+          "status": "present",
+          "record": {
+            "contentVersion": "0.1.1",
+            "defaults": [
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "starting-setting",
+                "educationalEffect": "Sets the encounter without teaching a replacement calculation.",
+                "id": "patient-demographics",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Fictional adult and compatibility values, not population estimates or dosing inputs.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/scenarios/hypernatremic-dehydration-avp-deficiency.ts",
+                  "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md"
+                ],
+                "value": "{\"ageYears\":67,\"sex\":\"male\",\"heightCm\":178,\"weightKg\":72,\"asaClass\":4}"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "starting-setting",
+                "educationalEffect": "Keeps reliable medication and water access central without generalizing to every hypernatremia cause.",
+                "id": "history-and-prior-care",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "The diagnosis and medication omission are supplied, not hidden diagnostic answers. This is not immediate postoperative management or acute sodium loading.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/scenarios/hypernatremic-dehydration-avp-deficiency.ts",
+                  "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md",
+                  "https://doi.org/10.1530/EC-18-0154",
+                  "https://doi.org/10.1210/clinem/dgac381"
+                ],
+                "value": "Established isolated AVP deficiency after remote pituitary surgery; two scheduled prescribed desmopressin doses omitted during restricted drinking access and intercurrent illness. Hypernatremia duration is unknown. No known drug allergies is supplied fiction; swallowing and route review remain necessary."
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "starting-setting",
+                "educationalEffect": "Prompts renal and electrolyte surveillance without implying normal follow-up results.",
+                "id": "supplied-electrolytes",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored initial laboratory context; neither potassium nor creatinine has a treatment-response model.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/scenarios/hypernatremic-dehydration-avp-deficiency.ts",
+                  "src/modules/endocrine-metabolic/AvpDeficiencyTray.tsx",
+                  "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md"
+                ],
+                "value": "{\"potassiumMmolL\":3.8,\"creatinineMgDl\":1.6}"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "starting-setting",
+                "educationalEffect": "Separates generic engine compatibility from authored circulation states.",
+                "id": "schema-baseline",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Schema-compatible constants, not a validated hemodynamic or water-balance calibration.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/scenarios/hypernatremic-dehydration-avp-deficiency.ts",
+                  "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md"
+                ],
+                "value": "{\"heartRateBpm\":112,\"meanArterialMmHg\":66,\"strokeVolumeMl\":55,\"hemoglobinGPerDl\":13.6,\"bloodVolumeMl\":4200,\"coreTemperatureC\":37.1,\"arterialStiffness\":1,\"baroreflexGain\":1,\"fixedStrokeVolume\":true}"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "starting-setting",
+                "educationalEffect": "No airway-procedure skill or validated respiratory-risk estimate is implied.",
+                "id": "schema-airway-respiratory",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Inactive compatibility settings beside a supplied awake patient with a patent airway.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/scenarios/hypernatremic-dehydration-avp-deficiency.ts"
+                ],
+                "value": "{\"difficulty\":0.1,\"difficultMaskVentilation\":false,\"respiratoryProfile\":\"healthy\"}"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "starting-setting",
+                "educationalEffect": "Prevents monitor presence from substituting for surveillance decisions.",
+                "id": "monitoring",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored monitor availability; sodium, urine output, and urine concentration still need explicit assessment.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/scenarios/hypernatremic-dehydration-avp-deficiency.ts"
+                ],
+                "value": "[\"ecg\",\"nibp\",\"pulse-oximetry\",\"temperature\"]"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "preselected-action",
+                "educationalEffect": "Avoids unsupported equipment claims in monitor, Why, reporting, and nonvisual output.",
+                "id": "inactive-ventilator",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Inactive schema defaults, not delivered oxygen or ventilation. FiO2 and exhaled CO2 are unavailable.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/scenarios/hypernatremic-dehydration-avp-deficiency.ts",
+                  "src/modules/anesthesia/engine.ts#invalidParameters",
+                  "tests/ui/avp-deficiency-accessibility.test.tsx"
+                ],
+                "value": "{\"mode\":\"manual\",\"fio2\":0.21,\"tidalVolumeMl\":450,\"respiratoryRateBpm\":20,\"freshGasFlowLPerMin\":10,\"delivering\":false}"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "stocked-action",
+                "educationalEffect": "Rehearses qualified care intent rather than prescribing competence.",
+                "id": "formulary",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "No selectable drug dose, fluid volume, infusion rate, or formulation conversion.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/scenarios/hypernatremic-dehydration-avp-deficiency.ts",
+                  "https://doi.org/10.1530/EC-18-0154",
+                  "https://doi.org/10.1210/clinem/dgac381"
+                ],
+                "value": "[]"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "starting-setting",
+                "educationalEffect": "Makes volume urgency visible without inventing a consciousness score.",
+                "id": "initial-live-vitals",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored circulatory compromise with unchanged respiratory, saturation, temperature, and alertness fields throughout the lesson.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts",
+                  "src/modules/endocrine-metabolic/scenarios/hypernatremic-dehydration-avp-deficiency.ts",
+                  "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md"
+                ],
+                "value": "{\"systolicMmHg\":90,\"diastolicMmHg\":54,\"meanArterialMmHg\":66,\"heartRateBpm\":112,\"respiratoryRateBpm\":20,\"spo2Percent\":98,\"coreTemperatureC\":37.1,\"alertness\":\"awake, thirsty, and tired\"}"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "hidden-trait",
+                "educationalEffect": "Better pressure permits continued qualified care but does not prove corrected sodium.",
+                "id": "restored-live-vitals",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Becomes public after the authored volume checkpoint; no laboratory or urine value is part of live vitals.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts",
+                  "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md"
+                ],
+                "value": "{\"systolicMmHg\":110,\"diastolicMmHg\":68,\"meanArterialMmHg\":82,\"heartRateBpm\":92,\"respiratoryRateBpm\":20,\"spo2Percent\":98,\"coreTemperatureC\":37.1,\"alertness\":\"awake, thirsty, and tired\"}"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "hidden-trait",
+                "educationalEffect": "Retains a meaningful delay contrast without scripting death or neurologic injury.",
+                "id": "delayed-live-vitals",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored no-volume deterioration, superseded by restored circulation after treatment; not predicted shock kinetics.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts",
+                  "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md"
+                ],
+                "value": "{\"systolicMmHg\":80,\"diastolicMmHg\":46,\"meanArterialMmHg\":57,\"heartRateBpm\":124,\"respiratoryRateBpm\":20,\"spo2Percent\":98,\"coreTemperatureC\":37.1,\"alertness\":\"awake, thirsty, and tired\"}"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "starting-setting",
+                "educationalEffect": "Low urine output cannot exclude the known diagnosis during hypovolemia.",
+                "id": "supplied-initial-findings",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Supplied historical findings, not a new requested result; initial urine osmolality remains undisclosed until assessment.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/scenarios/hypernatremic-dehydration-avp-deficiency.ts",
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts",
+                  "src/modules/endocrine-metabolic/AvpDeficiencyTray.tsx"
+                ],
+                "value": "{\"sodiumMmolL\":162,\"urineOutputMlPerHour\":60}"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "preselected-action",
+                "educationalEffect": "Distinguishes established history from decisions and evidence created during practice.",
+                "id": "initial-public-state",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "No care, response credit, new finding, or learner mistake is preselected. Observed peak begins with the supplied sodium.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts",
+                  "src/platform/kernel/protocol.ts"
+                ],
+                "value": "{\"supportActive\":false,\"contextReviewedAtTick\":null,\"monitoringAtTick\":null,\"volumeAtTick\":null,\"waterAtTick\":null,\"desmopressinAtTick\":null,\"volumeDueInSeconds\":null,\"responseDueInSeconds\":null,\"circulationRestored\":false,\"volumeObserved\":false,\"diluteLossesObserved\":false,\"responseObserved\":false,\"peakObservedSodiumMmolL\":162,\"volumeDelayed\":false,\"normalizationAttempted\":false,\"withholdingChosen\":false,\"observation\":null,\"alertness\":\"awake, thirsty, and tired\",\"choiceFeedback\":null,\"ended\":null,\"authoredStateTransitions\":true,\"doseModelAvailable\":false,\"durableRecoveryProven\":false}"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "hidden-trait",
+                "educationalEffect": "Makes private laboratory and response boundaries reviewable.",
+                "id": "initial-hidden-state",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Literal internal state for audit, not a learner-facing debug interface or extra patient information.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts"
+                ],
+                "value": "{\"supportAt\":null,\"contextAt\":null,\"monitoringAt\":null,\"volumeAt\":null,\"waterAt\":null,\"desmopressinAt\":null,\"circulationRestored\":false,\"delayed\":false,\"desmopressinResponded\":false,\"responded\":false,\"responseSodium\":162,\"sodium\":162,\"urineOutput\":60,\"urineOsmolality\":100,\"volumeObserved\":false,\"diluteObserved\":false,\"responseObserved\":false,\"peakObserved\":162,\"normalizationAttempted\":false,\"withholdingChosen\":false,\"observation\":null,\"feedback\":null,\"ended\":null}"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "hidden-trait",
+                "educationalEffect": "Requires fresh observation and distinguishes antidiuresis from water-deficit correction.",
+                "id": "authored-laboratory-contrasts",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Fictional requested-result contrasts, not fluid or drug kinetics. After-volume and desmopressin-only entries show prompt care; delayed care holds its already higher sodium.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts",
+                  "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md",
+                  "tests/unit/endocrine-avp-deficiency.test.ts"
+                ],
+                "value": "{\"initial\":{\"sodiumMmolL\":162,\"urineOutputMlPerHour\":60,\"urineOsmolalityMosmPerKg\":100},\"afterVolume\":{\"sodiumMmolL\":163,\"urineOutputMlPerHour\":450,\"urineOsmolalityMosmPerKg\":95},\"delayed\":{\"sodiumMmolL\":164,\"urineOutputMlPerHour\":60,\"urineOsmolalityMosmPerKg\":100},\"afterDesmopressin\":{\"sodiumMmolL\":163,\"urineOutputMlPerHour\":80,\"urineOsmolalityMosmPerKg\":500},\"uncontrolled\":{\"sodiumMmolL\":165,\"urineOutputMlPerHour\":450,\"urineOsmolalityMosmPerKg\":95},\"promptResponse\":{\"sodiumMmolL\":162,\"urineOutputMlPerHour\":80,\"urineOsmolalityMosmPerKg\":500},\"delayedResponse\":{\"sodiumMmolL\":163,\"urineOutputMlPerHour\":80,\"urineOsmolalityMosmPerKg\":500},\"lateResponse\":{\"sodiumMmolL\":164,\"urineOutputMlPerHour\":80,\"urineOsmolalityMosmPerKg\":500}}"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "hidden-trait",
+                "educationalEffect": "Prevents delayed recovery from erasing earlier hypernatremia or requiring an unreachable course.",
+                "id": "combined-response-policy",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "An authored partial-response rule, not a sodium-rate prescription, water-balance equation, or normalization guarantee.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts",
+                  "tests/unit/endocrine-avp-deficiency.test.ts",
+                  "tests/integration/avp-deficiency-demonstration-session.test.tsx",
+                  "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md"
+                ],
+                "value": "At the second accepted water/desmopressin request, capture responseSodium = Math.max(162, current private sodium - 1). After the combined interval, prompt 163 becomes 162, delayed 164 becomes 163, and late 165 becomes 164. Volume restoration uses Math.max(current sodium, 163); either water or desmopressin alone prevents the authored further rise without lowering achieved sodium."
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "stocked-action",
+                "educationalEffect": "Makes plausible alternatives and their boundaries observable.",
+                "id": "declared-actions",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Ten dose-free choices include refused normalization and a retained withholding choice. Repeated accepted treatment is a no-op, not automatic redosing.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts",
+                  "src/modules/endocrine-metabolic/AvpDeficiencyTray.tsx",
+                  "https://doi.org/10.1530/EC-18-0154",
+                  "https://doi.org/10.1210/clinem/dgac381"
+                ],
+                "value": "[\"call-support\",\"review-context\",\"restore-volume\",\"monitor\",\"reassess\",\"replace-water\",\"restore-desmopressin\",\"handoff\",\"normalize-now\",\"withhold-desmopressin\"]"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "tutor-threshold",
+                "educationalEffect": "Separates urgent care, educational observations, and continuing ownership.",
+                "id": "care-and-handoff-prerequisites",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Selected depleted-circulation pathway, not a universal instruction to withhold maintenance desmopressin or wait 15 minutes.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts",
+                  "src/modules/endocrine-metabolic/avp-deficiency-tutor.ts",
+                  "tests/unit/endocrine-avp-deficiency.test.ts",
+                  "tests/integration/avp-deficiency-runs.test.ts",
+                  "https://doi.org/10.1530/EC-18-0154"
+                ],
+                "value": "Volume restoration is immediately available. Water and known prescribed desmopressin become independently available when public circulationRestored is true, without new laboratory, context, support, monitoring-button, or other-treatment prerequisites. Handoff requires support, context, monitoring, both requests, and a fresh combined-care observation; an earlier teaching assessment is not a clinical handoff gate."
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "time-scale",
+                "educationalEffect": "Makes accepted action times and boundaries reproducible.",
+                "id": "ticks-per-second",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Shared simulated-time resolution, not a clinical sampling interval.",
+                "sourceRefs": [
+                  "src/platform/clock/simulation-clock.ts"
+                ],
+                "value": 10
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "scripted-delay",
+                "educationalEffect": "Creates a visible change before the later water-balance contrast.",
+                "id": "volume-interval-ticks",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored 15-minute circulation contrast after volume acceptance, not required clinical waiting.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts",
+                  "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md"
+                ],
+                "value": 9000
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "scripted-delay",
+                "educationalEffect": "Retains the actual start time and delay narrative without a one-tick pass/fail boundary.",
+                "id": "volume-delay-ticks",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored 30-minute deterioration if volume has not started; this threshold does not determine objective credit.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts",
+                  "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md"
+                ],
+                "value": 18000
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "scripted-delay",
+                "educationalEffect": "Less urine must be requested and interpreted, not equated with sodium correction.",
+                "id": "desmopressin-interval-ticks",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored 30-minute urine contrast after desmopressin; no automatic event reveals its private results.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts",
+                  "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md"
+                ],
+                "value": 18000
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "scripted-delay",
+                "educationalEffect": "Makes incomplete care consequential without announcing an unrequested laboratory change.",
+                "id": "uncontrolled-loss-interval-ticks",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored 120 minutes after volume acceptance, not after its 15-minute checkpoint; sodium rises privately if neither water nor desmopressin was accepted.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts",
+                  "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md"
+                ],
+                "value": 72000
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "scripted-delay",
+                "educationalEffect": "Separates treatment requests from a fresh later partial-response assessment.",
+                "id": "combined-response-interval-ticks",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored 120 minutes after the later water/desmopressin request, independent of administrative steps.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts",
+                  "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md"
+                ],
+                "value": 72000
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "scripted-delay",
+                "educationalEffect": "Bounds untreated practice without predicting death or supplying a new laboratory result.",
+                "id": "missing-volume-stop-ticks",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored 60-minute instructor stop if volume restoration remains absent.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts",
+                  "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md"
+                ],
+                "value": 36000
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "scripted-delay",
+                "educationalEffect": "Keeps the promised recovery path reachable while bounding unfinished practice.",
+                "id": "unfinished-session-ticks",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored 300-minute unfinished stop; late 165-to-164 recovery can finish before it.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts",
+                  "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md",
+                  "tests/unit/endocrine-avp-deficiency.test.ts"
+                ],
+                "value": 180000
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "tutor-threshold",
+                "educationalEffect": "Equal public histories retain equal timers, messages, and feedback across different latent sodium values.",
+                "id": "public-checkpoint-policy",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Information-boundary convention, not a guarantee of physiologic response or a safe interval without checks.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts",
+                  "tests/unit/endocrine-avp-deficiency.test.ts",
+                  "src/modules/endocrine-metabolic/demo/avp-deficiency-demonstration.ts",
+                  "src/modules/endocrine-metabolic/demo/useAvpDeficiencyDemonstration.ts",
+                  "tests/integration/avp-deficiency-demonstration-session.test.tsx"
+                ],
+                "value": "Volume countdown follows accepted volume and public circulation response. Combined countdown follows max(waterAtTick, desmopressinAtTick), never private sodium or response magnitude. Both return zero at a due boundary until advance, then null; reading a future snapshot never advances state. Checkpoint messages request reassessment without revealing sodium, urine output, osmolality, or unobserved peak."
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "tutor-threshold",
+                "educationalEffect": "Preserves earlier exposure without disclosing unrequested state.",
+                "id": "observed-peak-policy",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "A record of supplied or observed findings, not an inferred live laboratory maximum.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts",
+                  "src/modules/endocrine-metabolic/AvpDeficiencyTray.tsx",
+                  "tests/unit/endocrine-avp-deficiency.test.ts",
+                  "tests/ui/avp-deficiency-report-surfaces.test.tsx"
+                ],
+                "value": "Peak is max(supplied 162, explicitly requested sodium values). Private rises, later lower sodium, elapsed clocks, accepted treatment, and handoff never backfill or erase the observed peak. Only reassessment updates historical sodium and urine findings."
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "time-scale",
+                "educationalEffect": "Distinguishes catalog duration from the 300-minute maximum branch.",
+                "id": "estimated-simulated-minutes",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Approximate expert course: 15-minute circulation plus 120-minute combined-care contrast, with decision reading additional in wall time.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/scenarios/hypernatremic-dehydration-avp-deficiency.ts",
+                  "src/modules/endocrine-metabolic/avp-deficiency-fixtures.ts",
+                  "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md"
+                ],
+                "value": 135
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "starting-setting",
+                "educationalEffect": "Keeps supplied context visible during rehearsal and replay.",
+                "id": "timeline-and-replay-ticks",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Initial narrative and limitations plus a repeatable early decision point.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/scenarios/hypernatremic-dehydration-avp-deficiency.ts"
+                ],
+                "value": "{\"avp-deficiency-presentation\":0,\"avp-deficiency-boundary\":0,\"avp-deficiency-first-response\":1}"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "randomization-range",
+                "educationalEffect": "Supports reproducibility without implying validation across a randomized patient population.",
+                "id": "fixture-seed",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Fixed reference seed; the AVP model has no stochastic clinical variation.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency-fixtures.ts",
+                  "tests/integration/avp-deficiency-runs.test.ts"
+                ],
+                "value": 4919
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "randomization-range",
+                "educationalEffect": "Documents launch behavior without adding seed-dependent AVP physiology.",
+                "id": "shared-url-seed-default",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Shared route fallback when no seed is supplied, distinct from the dedicated fixture seed.",
+                "sourceRefs": [
+                  "src/routes/AnesthesiaRoute.tsx"
+                ],
+                "value": 20260819
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "scripted-delay",
+                "educationalEffect": "Shows circulation-first care with separate observation and continuing ownership.",
+                "id": "expert-fixture",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Nine reference choices and two observation periods; one-tick spacing is not a clinical speed target.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency-fixtures.ts",
+                  "tests/integration/avp-deficiency-runs.test.ts",
+                  "tests/integration/avp-deficiency-demonstration-session.test.tsx"
+                ],
+                "value": "[[0,\"restore-volume\"],[1,\"review-context\"],[2,\"call-support\"],[3,\"monitor\"],[9000,\"reassess\"],[9001,\"replace-water\"],[9002,\"restore-desmopressin\"],[81002,\"reassess\"],[81003,\"handoff\"]]"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "scripted-delay",
+                "educationalEffect": "Makes mistaken choices inspectable without manufacturing treatment effects.",
+                "id": "common-error-fixture",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored normalization attempt, withholding, and delayed assessment before instructor takeover.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency-fixtures.ts",
+                  "tests/integration/avp-deficiency-runs.test.ts"
+                ],
+                "value": "[[0,\"normalize-now\"],[1,\"withhold-desmopressin\"],[18000,\"reassess\"]]"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "scripted-delay",
+                "educationalEffect": "Allows recovery without rewriting delayed care or earlier mistakes.",
+                "id": "recovery-fixture",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Twelve choices include medication before water and retain the observed 164 despite later 163.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency-fixtures.ts",
+                  "tests/integration/avp-deficiency-runs.test.ts"
+                ],
+                "value": "[[0,\"normalize-now\"],[1,\"withhold-desmopressin\"],[18000,\"reassess\"],[18001,\"restore-volume\"],[18002,\"review-context\"],[18003,\"call-support\"],[18004,\"monitor\"],[27001,\"reassess\"],[27002,\"restore-desmopressin\"],[27003,\"replace-water\"],[99003,\"reassess\"],[99004,\"handoff\"]]"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "scripted-delay",
+                "educationalEffect": "Leaves the supplied peak at 162 rather than importing a private rise.",
+                "id": "no-action-fixture",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "No learner action or requested finding before the no-volume instructor stop.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency-fixtures.ts",
+                  "tests/integration/avp-deficiency-runs.test.ts"
+                ],
+                "value": "[]"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "time-scale",
+                "educationalEffect": "Preserves simulated intervals without requiring 135 minutes of wall time.",
+                "id": "example-playback-speed",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Optional 60x observation speed with learner-paced, paused decisions.",
+                "sourceRefs": [
+                  "src/routes/AnesthesiaRoute.tsx",
+                  "src/modules/endocrine-metabolic/demo/useAvpDeficiencyDemonstration.ts",
+                  "tests/integration/avp-deficiency-demonstration-session.test.tsx"
+                ],
+                "value": 60
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "time-scale",
+                "educationalEffect": "Avoids surprising the learner with inherited demonstration acceleration.",
+                "id": "manual-restart-speed",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Leaving or restarting an example returns ordinary practice to 1x; ordinary practice otherwise retains a selected speed.",
+                "sourceRefs": [
+                  "src/routes/AnesthesiaRoute.tsx",
+                  "tests/ui/avp-deficiency-report-surfaces.test.tsx"
+                ],
+                "value": 1
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "preselected-action",
+                "educationalEffect": "Provides quiet help without controlling the learner’s decisions.",
+                "id": "initial-guidance",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Shared session assistance default; no treatment or observation is selected.",
+                "sourceRefs": [
+                  "src/platform/session/session-store.ts",
+                  "src/modules/endocrine-metabolic/avp-deficiency-tutor.ts"
+                ],
+                "value": "coached"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "preselected-action",
+                "educationalEffect": "Makes assistance depend on explicit session wiring rather than implicit clinical behavior.",
+                "id": "standalone-guidance",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "The standalone tray is silent if its caller supplies no guidance prop.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/AvpDeficiencyTray.tsx"
+                ],
+                "value": "unassisted"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "tutor-threshold",
+                "educationalEffect": "Prevents stale callbacks after takeover, reset, or disposal from creating extra care.",
+                "id": "demonstration-eligibility",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Exact content and authored demonstration algorithm; the generic controller dispatches one ordinary action per confirmation.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/demo/avp-deficiency-demonstration.ts",
+                  "src/modules/endocrine-metabolic/demo/useAvpDeficiencyDemonstration.ts",
+                  "src/modules/anesthesia/demo/useObservedDemonstration.ts",
+                  "src/modules/anesthesia/demo/useDemonstration.ts"
+                ],
+                "value": "{\"contentVersion\":\"0.1.1\",\"demonstrationVersion\":\"0.1.1\"}"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "tutor-threshold",
+                "educationalEffect": "Keeps the current example step understandable without grading clinical performance.",
+                "id": "example-progress-landmarks",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Display positions, not elapsed-time percentages or competence scores.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/demo/avp-deficiency-demonstration.ts",
+                  "src/modules/anesthesia/ui/DemonstrationBar.tsx"
+                ],
+                "value": "{\"preparing\":0,\"volume\":0.05,\"context\":0.15,\"support\":0.25,\"monitor\":0.35,\"volume-observation\":0.4,\"volume-reassessment\":0.5,\"water\":0.6,\"desmopressin\":0.65,\"response-observation\":0.75,\"response-reassessment\":0.85,\"handoff\":0.95,\"finished\":1}"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "tutor-threshold",
+                "educationalEffect": "Preserves clinical alternatives and identical engine behavior across assistance levels.",
+                "id": "guidance-policy",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored instructional priorities, not a second treatment model or a hidden diagnosis.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency-tutor.ts",
+                  "src/modules/endocrine-metabolic/demo/avp-deficiency-demonstration.ts",
+                  "src/modules/endocrine-metabolic/AvpDeficiencyTray.tsx",
+                  "tests/ui/endocrine-avp-deficiency.test.tsx",
+                  "tests/integration/avp-deficiency-runs.test.ts"
+                ],
+                "value": "Exact content 0.1.1 only. Guided follows accepted public state; Coached omits nonurgent observation waits and handoff; Unassisted is silent. Once circulation is restored, missing water/desmopressin prompts precede administrative review. The example observes first for teaching, not because a new laboratory click is a care gate."
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "tutor-threshold",
+                "educationalEffect": "Keeps recovery and an error-free course distinct without arbitrary timing penalties.",
+                "id": "objective-predicates",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Five event-bound educational predicates, not safety certification. Circulation reports actual start seconds and retained deterioration without making its authored clock a grading threshold. Final-only assessment can support handoff but not earlier observation credit.",
+                "sourceRefs": [
+                  "src/modules/anesthesia/ui/Debrief.tsx",
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts",
+                  "tests/integration/avp-deficiency-runs.test.ts"
+                ],
+                "value": "{\"avp-context\":\"support and context review\",\"avp-circulation\":\"volume restoration and either circulation or later response assessment; delay is retained, not a credit cutoff\",\"avp-water-control\":\"water and desmopressin and fresh later response, without normalization attempt or withholding choice\",\"avp-reassessment\":\"separate circulation-phase and later response assessments\",\"avp-handoff\":\"accepted continuing-care handoff\"}"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "tutor-threshold",
+                "educationalEffect": "Makes the declared learning outcomes auditable.",
+                "id": "reference-objective-outcomes",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Expected findings for the fixed reference transcripts; later partial correction does not erase prior behavior.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/avp-deficiency-fixtures.ts",
+                  "tests/integration/avp-deficiency-runs.test.ts",
+                  "src/modules/anesthesia/ui/Debrief.tsx"
+                ],
+                "value": "{\"expert\":[\"met\",\"met\",\"met\",\"met\",\"met\"],\"commonError\":[\"not-met\",\"not-met\",\"not-met\",\"not-met\",\"not-met\"],\"recovery\":[\"met\",\"met\",\"not-met\",\"met\",\"met\"],\"noAction\":[\"not-met\",\"not-met\",\"not-met\",\"not-met\",\"not-met\"]}"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "time-scale",
+                "educationalEffect": "Keeps reading pauses, single steps, capped catch-up, and recorded replay timing explicit.",
+                "id": "shared-transport-defaults",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Initial shared transport and clock constants. Beginning a session enters briefing; controls govern time, not the AVP care state.",
+                "sourceRefs": [
+                  "src/platform/session/session-store.ts",
+                  "src/platform/clock/simulation-clock.ts",
+                  "src/platform/kernel/protocol.ts",
+                  "tests/integration/avp-deficiency-demonstration-session.test.tsx"
+                ],
+                "value": "{\"phase\":\"idle\",\"transport\":\"idle\",\"speed\":1,\"tick\":0,\"elapsed\":\"00:00:00\",\"ready\":false,\"tickMs\":100,\"singleStepTicks\":10,\"maxCatchupTicks\":50,\"speedMultipliers\":[1,2,5,60]}"
+              },
+              {
+                "applicability": "Authored content 0.1.1; US and GB share this known-AVP-deficiency pathway, not a universal prescription.",
+                "category": "preselected-action",
+                "educationalEffect": "Avoids implicit transmission of session details or fabricated action outcomes.",
+                "id": "report-defaults",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Report starts closed with no note, category, or optional context selected. Character and context bounds are software limits, not clinical information defaults.",
+                "sourceRefs": [
+                  "src/platform/reporting/ScenarioProblemReport.tsx",
+                  "src/platform/reporting/contracts.ts",
+                  "src/modules/endocrine-metabolic/avp-deficiency-reporting.ts",
+                  "src/routes/AnesthesiaRoute.tsx",
+                  "tests/ui/avp-deficiency-report-surfaces.test.tsx"
+                ],
+                "value": "{\"open\":false,\"category\":\"\",\"note\":\"\",\"recentContext\":null,\"noteLimit\":160,\"actionLimit\":20,\"snapshotScalarLimit\":32,\"jsonCharacterLimit\":16384}"
+              }
+            ],
+            "scenarioId": "hypernatremic-dehydration-avp-deficiency",
+            "schemaVersion": 1
+          },
           "evidence": [
-            "No version-bound authored-defaults record exists for hypernatremic-dehydration-avp-deficiency 0.1.0."
+            "Validated version-bound authored-defaults record for hypernatremic-dehydration-avp-deficiency 0.1.1; structural validity does not establish independent review."
           ]
         },
         {
           "kind": "scenario-hazard",
-          "status": "missing",
+          "status": "present",
+          "record": {
+            "contentVersion": "0.1.1",
+            "hazards": [
+              {
+                "category": "premature-closure",
+                "description": "Improved pressure, less urine, accepted care, or a lower sodium could be mistaken for replaced water deficit, normalization, or discharge.",
+                "disposition": "mitigated",
+                "evidence": [
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts: handoff requires fresh combined-care evidence and preserves hypernatremia and observed peak.",
+                  "tests/integration/avp-deficiency-runs.test.ts: desmopressin-only care does not earn confirmed combined-response credit.",
+                  "https://doi.org/10.1530/EC-18-0154",
+                  "https://doi.org/10.1210/clinem/dgac381"
+                ]
+              },
+              {
+                "category": "cue-leakage",
+                "description": "Latent sodium, urine output, osmolality, or peak could escape through timers, feedback, reporting, or accessibility.",
+                "disposition": "tested",
+                "evidence": [
+                  "tests/unit/endocrine-avp-deficiency.test.ts: equivalent public histories have equal full snapshots and checkpoint events across an unrequested sodium rise.",
+                  "tests/ui/avp-deficiency-report-surfaces.test.tsx: historical findings, absent initial osmolality, ambiguous outcomes, and private scalar injection are tested.",
+                  "tests/ui/avp-deficiency-accessibility.test.tsx: historical findings and unsupported equipment remain distinct."
+                ]
+              },
+              {
+                "category": "negative-transfer",
+                "description": "An authored clock or circulation gate could teach delaying prescribed medication universally, fixed fluid rates, or automatic repeat doses.",
+                "disposition": "limited",
+                "evidence": [
+                  "https://doi.org/10.1530/EC-18-0154",
+                  "https://doi.org/10.1210/clinem/dgac381",
+                  "src/modules/endocrine-metabolic/scenarios/hypernatremic-dehydration-avp-deficiency.ts#avp-deficiency-boundary",
+                  "src/modules/endocrine-metabolic/AvpDeficiencyTray.tsx: known diagnosis and selected hypovolemia only; qualified care and earlier reassessment remain necessary.",
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts: water and desmopressin are independent after circulation, without new laboratory or administrative prerequisites."
+                ]
+              },
+              {
+                "category": "unsupported-precision",
+                "description": "Exact blood pressures, urine concentration, sodium steps, or clocks could be mistaken for measured physiology, a correction prescription, or an arbitrary pass/fail deadline.",
+                "disposition": "limited",
+                "evidence": [
+                  "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md#authored-contract",
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts: fixed branch contrasts and one-unit partial response have no dosing or water-balance solver.",
+                  "src/modules/anesthesia/ui/Debrief.tsx: actual volume-start seconds and retained deterioration are reported without making the authored 30-minute clock a credit cutoff.",
+                  "tests/integration/avp-deficiency-runs.test.ts: volume at tick 17999 versus 18000 earns equal circulation credit with fresh assessment while the different delay evidence remains.",
+                  "tests/integration/avp-deficiency-demonstration-session.test.tsx: reproducible replay establishes software determinism, not treatment efficacy."
+                ]
+              },
+              {
+                "category": "omitted-alternatives",
+                "description": "The selected known-AVP-D pathway could be generalized to renal AVP resistance, new diagnosis, acute sodium loading, pregnancy, or every postoperative course.",
+                "disposition": "limited",
+                "evidence": [
+                  "https://doi.org/10.1530/EC-18-0154",
+                  "https://doi.org/10.1210/clinem/dgac381",
+                  "src/modules/endocrine-metabolic/scenarios/hypernatremic-dehydration-avp-deficiency.ts: established isolated AVP deficiency after remote surgery and unknown hypernatremia duration.",
+                  "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md: no dose, route conversion, fluid-deficit calculation, acute correction exception, or diagnostic challenge is taught."
+                ]
+              },
+              {
+                "category": "invalid-actions",
+                "description": "Generic interventions, malformed payloads, forged ticks, duplicate evidence, or stale callbacks could create unintended care or report outcomes.",
+                "disposition": "tested",
+                "evidence": [
+                  "tests/integration/avp-deficiency-runs.test.ts: authoritative ticks and generic/extra-field action refusals.",
+                  "tests/integration/avp-deficiency-demonstration-session.test.tsx: duplicate, takeover, reset, and disposed callbacks do not dispatch additional actions.",
+                  "src/modules/endocrine-metabolic/avp-deficiency-reporting.ts: exact action/event matching omits ambiguous or missing outcomes.",
+                  "tests/unit/avp-deficiency-reporting.test.ts: hostile, duplicate, and incomplete action evidence is bounded and excluded."
+                ]
+              },
+              {
+                "category": "model-boundary-crossing",
+                "description": "A sodium monitor, inactive ventilator, narrative display, or optional report could imply unsupported real-time physiology or prescribing capability.",
+                "disposition": "limited",
+                "evidence": [
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts: new laboratory and urine findings are disclosed only through requested observations; supplied initial context stays historical.",
+                  "src/modules/anesthesia/ui/Cockpit.tsx: unavailable equipment and authored Why context stay separate.",
+                  "src/modules/anesthesia/ui/ActionCockpit.tsx: the dedicated AVP tray replaces generic interventions.",
+                  "src/modules/anesthesia/ui/Prebrief.tsx: dose-free scope and worked-example context precede practice.",
+                  "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md: no real-patient inputs, renal solver, or validated clinical predictions."
+                ]
+              },
+              {
+                "category": "catastrophic-outcome-framing",
+                "description": "Delay or instructor takeover could be mistaken for predicted death, neurologic injury, or punishment for exploration.",
+                "disposition": "mitigated",
+                "evidence": [
+                  "src/modules/endocrine-metabolic/avp-deficiency.ts: teaching stops do not change the supplied alertness into a catastrophe or expose an unrequested laboratory result.",
+                  "tests/integration/avp-deficiency-runs.test.ts: no-action and recovery transcripts retain uncertainty and earlier choices.",
+                  "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md: unfinished practice is bounded without a clinical outcome claim."
+                ]
+              },
+              {
+                "category": "accessibility-misunderstanding",
+                "description": "Changing focus, clock, nonvisual values, or overlays could imply a stronger diagnosis or completed response than the visual lesson.",
+                "disposition": "limited",
+                "evidence": [
+                  "src/modules/anesthesia/ui/accessibility.ts: authored circulation and historical laboratory summaries omit inactive equipment.",
+                  "tests/ui/avp-deficiency-accessibility.test.tsx: keyboard summary, unavailable Why values, and filtered announcements are locally tested.",
+                  "tests/ui/avp-deficiency-report-surfaces.test.tsx: modal interaction keeps an example paused and context opt-in.",
+                  "tests/integration/avp-deficiency-demonstration-session.test.tsx: actual session components use in-process transport, not native browser Worker or assistive-technology certification.",
+                  "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md: full exact-version inclusive-runtime verification remains pending; no state-space pass is supplied."
+                ]
+              },
+              {
+                "category": "regional-variation",
+                "description": "One shared US/GB pathway or a verified reference course could be mistaken for universal regional prescribing or a complete state-space matrix.",
+                "disposition": "limited",
+                "evidence": [
+                  "https://doi.org/10.1530/EC-18-0154",
+                  "https://doi.org/10.1210/clinem/dgac381",
+                  "tests/integration/avp-deficiency-runs.test.ts: a GB expert course and US guidance comparisons use the same explicit selected pathway.",
+                  "docs/evidence-briefs/hypernatremic-dehydration-avp-deficiency.md: dose, route, correction-rate selection, clinical review, comprehensive inclusive coverage, and production Turnstile/D1 evidence remain outside these three records."
+                ]
+              }
+            ],
+            "scenarioId": "hypernatremic-dehydration-avp-deficiency",
+            "schemaVersion": 1
+          },
           "evidence": [
-            "No version-bound scenario-hazard record exists for hypernatremic-dehydration-avp-deficiency 0.1.0."
+            "Validated version-bound scenario-hazard record for hypernatremic-dehydration-avp-deficiency 0.1.1; structural validity does not establish independent review."
           ]
         },
         {
           "kind": "state-space-verification",
           "status": "missing",
           "evidence": [
-            "No version-bound state-space-verification record exists for hypernatremic-dehydration-avp-deficiency 0.1.0."
+            "No version-bound state-space-verification record exists for hypernatremic-dehydration-avp-deficiency 0.1.1."
           ]
         }
       ],

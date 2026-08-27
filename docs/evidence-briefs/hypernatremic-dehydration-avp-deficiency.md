@@ -2,7 +2,7 @@
 
 This unsigned preview concerns known arginine vasopressin deficiency (AVP-D, formerly central
 diabetes insipidus), not a new diagnosis, renal AVP resistance, or a generic sodium calculator.
-Content 0.1.0 is a bounded rehearsal, not a completed clinical product. Engineering evidence
+Content 0.1.1 is a bounded rehearsal, not a completed clinical product. Engineering evidence
 does not establish clinical review.
 
 ## Source boundary
@@ -72,6 +72,15 @@ The shared report dialog accepts at most 160 characters; optional context contai
 observed-state scalars and uniquely matched action outcomes, never latent laboratory findings,
 free-form engine messages, or a fabricated normal capnogram.
 
-Independent clinical review, the full inclusive-runtime matrix, all four version-bound quality
-records, and production Turnstile/D1 evidence remain pending. Local UI and replay checks are not
-substitutes for those gates; no production patient information or report is used for verification.
+Content 0.1.1 corrects an arbitrary scoring cutoff: volume restoration and fresh observed response
+earn circulation credit on either side of the authored 30-minute deterioration. The debrief reports
+the actual start time and retains deterioration and delay, rather than converting 0.1 second into
+a clinical pass/fail decision. Normalization and withholding mistakes remain distinct evidence.
+The patient trajectory and teaching clocks are unchanged; the original report identity is retained.
+
+Three version-bound quality records now declare training value, literal authored defaults, and
+ten hazard categories. Their dependency receipt binds the implemented files and tests; it does not
+refresh during a normal build or stand in for review. Independent clinical review, the complete
+inclusive-runtime and state-space matrix, and production Turnstile/D1 evidence remain pending.
+Local UI and replay checks are not substitutes; no production patient information or report is
+used for verification.

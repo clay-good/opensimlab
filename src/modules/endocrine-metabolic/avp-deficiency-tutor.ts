@@ -10,7 +10,7 @@ export function avpDeficiencyInlinePrompt(level: GuidanceLevel, input: {
   readonly avpDeficiency?: AvpDeficiencySnapshot;
 }) {
   const patient = input.avpDeficiency;
-  if (level === 'unassisted' || input.scenarioVersion !== '0.1.0' || !patient || patient.ended) return null;
+  if (level === 'unassisted' || input.scenarioVersion !== '0.1.1' || !patient || patient.ended) return null;
   const prompt = (id: string, urgent: boolean, suggestion: string, because: string) =>
     level === 'coached' && !urgent ? null : { id, suggestion, because, sourceHref: AVP_DEFICIENCY_SOURCE_HREF };
   if (patient.volumeAtTick === null) return prompt('avp-deficiency-volume', true,

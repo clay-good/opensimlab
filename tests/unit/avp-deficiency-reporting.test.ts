@@ -95,7 +95,7 @@ describe('AVP-deficiency completion evidence binds exact content, not a nearby i
     expect(avpDeficiencyCompletionEvidence(SCENARIO, '0.1.0-alpha.48', 'anesthesia')).toEqual([]);
     for (const changed of [
       { ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'different-scenario' } },
-      { ...SCENARIO, metadata: { ...SCENARIO.metadata, version: '0.1.1' } },
+      { ...SCENARIO, metadata: { ...SCENARIO.metadata, version: '0.1.2' } },
       { ...SCENARIO, metadata: { ...SCENARIO.metadata, estimatedMinutes: SCENARIO.metadata.estimatedMinutes + 1 } },
       { ...SCENARIO, patient: { ...SCENARIO.patient, weightKg: SCENARIO.patient.weightKg + 1 } },
     ]) expect(avpDeficiencyCompletionEvidence(changed, '0.1.0-alpha.48', 'endocrine-metabolic')).toEqual([]);

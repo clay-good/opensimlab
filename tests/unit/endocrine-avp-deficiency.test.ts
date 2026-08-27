@@ -22,15 +22,15 @@ const restored = () => {
 describe('Known AVP deficiency: circulation, prescribed treatment, and observed water balance', () => {
   it('binds the narrative model and literal fixture clocks without inventing clinical approval', () => {
     expect(validateScenario(scenario)).toEqual([]);
-    expect(scenario.metadata).toMatchObject({ version: '0.1.0', estimatedMinutes: 135, maturity: 'preview',
-      clinicalReview: { reviewer: 'UNSIGNED', contentVersion: '0.1.0' } });
+    expect(scenario.metadata).toMatchObject({ version: '0.1.1', estimatedMinutes: 135, maturity: 'preview',
+      clinicalReview: { reviewer: 'UNSIGNED', contentVersion: '0.1.1' } });
     expect(supportsAvpDeficiency(scenario)).toBe(true);
     for (const other of [ROUTINE_INDUCTION, { ...scenario, timeline: scenario.timeline.slice(0, 1) },
       { ...scenario, timeline: [...scenario.timeline, scenario.timeline[0]!] },
       { ...scenario, timeline: [...scenario.timeline, { ...scenario.timeline[0]!, type: 'surgical-stimulus' as const }] }]) {
       expect(supportsAvpDeficiency(other)).toBe(false);
     }
-    expect(FIXTURES).toMatchObject({ scenarioId: 'hypernatremic-dehydration-avp-deficiency', contentVersion: '0.1.0', seed: 4919 });
+    expect(FIXTURES).toMatchObject({ scenarioId: 'hypernatremic-dehydration-avp-deficiency', contentVersion: '0.1.1', seed: 4919 });
     expect(FIXTURES.scenarioId).toBe(scenario.metadata.id);
     expect(FIXTURES.contentVersion).toBe(scenario.metadata.version);
     expect([VOLUME, DELAY, DESMOPRESSIN, UNCONTROLLED, RESPONSE, TAKEOVER, SESSION])

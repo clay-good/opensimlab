@@ -595,15 +595,21 @@ export function objectiveFindings(
       const water = event('water-replacement'); const desmopressin = event('desmopressin-restoration');
       const delay = event('volume-delay'); const normalization = event('normalization-refused');
       const withheld = event('withholding-choice'); const handoff = event('handoff');
-      const circulationMet = !!volume && !!(first || response) && !delay;
+      const circulationMet = !!volume && !!(first || response);
+      const volumeTiming = volume
+        ? `Volume restoration began ${(volume.tick / TICKS_PER_SECOND).toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} simulated seconds after this rehearsal began. `
+        : 'Volume restoration was not recorded. ';
       const waterMet = !!water && !!desmopressin && !!response && !normalization && !withheld;
       const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
         'avp-context': { met: !!support && !!context,
           finding: support && context ? 'Known AVP deficiency, omitted prescribed medication, and water access were reviewed with qualified support. Low initial urine output did not exclude the supplied diagnosis.'
             : 'Qualified support or the medication and water-access review is missing. This is an established diagnosis, not a new diabetes or polyuria test.', tick: context?.tick },
         'avp-circulation': { met: circulationMet,
-          finding: circulationMet ? 'Circulation support began before the authored deterioration, and a fresh assessment established the later response. Better pressure did not prove corrected sodium.'
-            : 'Delayed volume restoration or a missing fresh circulation assessment remains visible. Authored counterfactual: untreated depleted circulation deteriorates; administrative review and new laboratory requests must not delay qualified support.', tick: volume?.tick },
+          finding: volumeTiming + (circulationMet
+            ? 'A fresh assessment established the later circulation response. Better pressure did not prove corrected sodium. '
+            : 'Volume restoration or a fresh circulation assessment is missing. ')
+            + (delay ? 'Authored deterioration occurred while volume restoration was still absent; that delay remains part of this run. ' : '')
+            + 'Authored counterfactual: without volume restoration, this branch develops worsening circulation. That clock is not a clinical deadline or a pass/fail cutoff. Urgent volume care must not wait for administrative review or new laboratory requests.', tick: volume?.tick },
         'avp-water-control': { met: waterMet,
           finding: waterMet ? 'Qualified water replacement and desmopressin addressed separate parts of the problem. After circulation restoration neither request needed a new laboratory result or administrative acknowledgment.'
             : 'Missing combined care, an unconfirmed response, attempted normalization, or blanket withholding remains learning evidence. Less urine alone does not correct a water deficit; a water request alone does not control ongoing renal loss.', tick: desmopressin?.tick },

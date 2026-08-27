@@ -3,9 +3,9 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import type { AvpDeficiencySnapshot } from '@platform/kernel/protocol';
 import { supportsAvpDeficiency, type AvpDeficiencyAction } from '../avp-deficiency';
 
-export const AVP_DEFICIENCY_DEMONSTRATION_VERSION = '0.1.0';
+export const AVP_DEFICIENCY_DEMONSTRATION_VERSION = '0.1.1';
 export function supportsAvpDeficiencyDemonstration(scenario: Scenario): boolean {
-  return scenario.metadata.version === '0.1.0' && supportsAvpDeficiency(scenario);
+  return scenario.metadata.version === '0.1.1' && supportsAvpDeficiency(scenario);
 }
 export interface AvpDeficiencyDemonstrationStep {
   readonly id: string;

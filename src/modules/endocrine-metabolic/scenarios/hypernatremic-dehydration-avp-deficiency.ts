@@ -3,19 +3,19 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const HYPERNATREMIC_DEHYDRATION_AVP_DEFICIENCY: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'hypernatremic-dehydration-avp-deficiency', version: '0.1.0', maturity: 'preview',
+    id: 'hypernatremic-dehydration-avp-deficiency', version: '0.1.1', maturity: 'preview',
     title: 'Hypernatremic dehydration: circulation, then water balance', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 135, difficulty: 'intermediate',
     objectives: [
       { id: 'avp-context', statement: 'Recognize known vasopressin deficiency, omitted medication, and lost access to water.', measure: 'Review the supplied diagnosis, omitted prescribed desmopressin, unknown hypernatremia duration, and water-access problem with qualified support, without treating low initial urine output as excluding AVP deficiency.' },
-      { id: 'avp-circulation', statement: 'Prioritize circulation and reassess the response.', measure: 'Begin qualified volume restoration without an administrative or laboratory gate and explicitly observe the later circulation response; delayed restoration remains in the record.' },
+      { id: 'avp-circulation', statement: 'Prioritize circulation and reassess the response.', measure: 'Begin qualified volume restoration without an administrative or laboratory gate and explicitly observe the later circulation response. Report elapsed delay and authored deterioration separately, not as an unsourced clinical pass/fail cutoff.' },
       { id: 'avp-water-control', statement: 'Address water deficit and ongoing renal water loss as distinct problems.', measure: 'After circulation is restored, qualified water replacement and desmopressin can proceed independently without a new laboratory or administrative gate; normalization and blanket withholding choices remain evidence.' },
       { id: 'avp-reassessment', statement: 'Confirm a later trajectory without mistaking less urine for corrected sodium.', measure: 'Request historical findings after circulation and after combined care; retain the highest observed sodium and distinguish a partial response from normalization or safety.' },
       { id: 'avp-handoff', statement: 'Transfer continuing correction, medication, and water-access responsibilities.', measure: 'Qualified support, context review, surveillance, both response requests, and fresh later evidence support a continuing-care handoff, not discharge.' },
     ],
     clinicalReview: {
       reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED', competingInterests: 'None declared',
-      reviewedOn: '1970-01-01', reviewBy: '1970-01-01', contentVersion: '0.1.0',
+      reviewedOn: '1970-01-01', reviewBy: '1970-01-01', contentVersion: '0.1.1',
       sources: [
         'Baldeweg SE et al. Society for Endocrinology Clinical Guidance: Inpatient management of cranial diabetes insipidus. Endocrine Connections. 2018;7:G8–G11. doi:10.1530/EC-18-0154. Decompensated CDI sections §§1–6: circulation, fluid replacement, reassessment, desmopressin, and continuing specialist care. Current issuing-body AVP-D page retains this guidance; authored checkpoints are not clinical intervals.',
         'Tomkins M et al. Diagnosis and Management of Central Diabetes Insipidus in Adults. Journal of Clinical Endocrinology & Metabolism. 2022;107:2701–2715. doi:10.1210/clinem/dgac381. Management of chronic CDI and inpatient/perioperative care: medication omission, water access, and coordinated care; review article, not a new guideline.',
