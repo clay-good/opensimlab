@@ -154,6 +154,18 @@ export interface ReadyMessage {
  * request rather than the result teaches the learner to trust a number that is
  * not true (cockpit/action-cockpit → the tray reflects the patient).
  */
+export interface AdrenalCrisisSnapshot {
+  readonly supportActive: boolean;
+  readonly hydrocortisoneAtTick: number | null; readonly salineAtTick: number | null;
+  readonly recordReviewed: boolean; readonly preventionPlanned: boolean; readonly responseObserved: boolean;
+  readonly alertness: string;
+  readonly observation: { readonly atTick: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
+    readonly meanArterialMmHg: number; readonly heartRateBpm: number; readonly respiratoryRateBpm: number; readonly alertness: string } | null;
+  readonly responseDueInSeconds: number | null; readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true; readonly doseModelAvailable: false; readonly durableRecoveryProven: false;
+}
+
 export interface SevereHypoglycemiaSnapshot {
   readonly choiceFeedback: string | null;
   readonly glucoseMgPerDl: number | null; readonly measuredAtTick: number | null;
@@ -3189,6 +3201,7 @@ export interface EquipmentSnapshot {
       readonly outcomePredicted: false;
     };
     readonly severeHypoglycemia?: SevereHypoglycemiaSnapshot;
+    readonly adrenalCrisis?: AdrenalCrisisSnapshot;
     readonly endocrineHhsAssessment?: {
       readonly supportAtTick: number | null; readonly contextAtTick: number | null;
       readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;

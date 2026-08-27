@@ -1,7 +1,41 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 285,
+  "sourceCount": 288,
   "sources": [
+    {
+      "id": "endocrine-society-primary-adrenal-insufficiency-2016",
+      "authors": "Endocrine Society",
+      "title": "Diagnosis and Treatment of Primary Adrenal Insufficiency",
+      "publication": "Endocrine Society clinical practice guideline",
+      "year": 2016,
+      "locator": "Recommendations 1.1–1.3 and 4.1–4.6",
+      "usedFor": "Adrenal-crisis recognition, treatment before diagnostic results, combined qualified rescue, and emergency-card, injection-kit, education, and follow-up ownership. Does not validate authored patient values or response times.",
+      "verifiedAgainst": "Official recommendation text at https://www.endocrine.org/clinical-practice-guidelines/primary-adrenal-insufficiency",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "society-endocrinology-adrenal-crisis",
+      "authors": "Society for Endocrinology",
+      "title": "Adrenal Crisis Information",
+      "publication": "Society for Endocrinology clinical guidance",
+      "year": 2026,
+      "unpinned": true,
+      "locator": "current emergency treatment and prevention web guidance, consulted 2026-08-26",
+      "usedFor": "Do not delay qualified parenteral hydrocortisone for diagnostic measures; isotonic rehydration and ongoing steroid coverage; vomiting and illness as replacement-risk context.",
+      "verifiedAgainst": "The issuing body's current unversioned web guidance at https://www.endocrinology.org/clinical-practice/clinical-guidance/adrenal-crisis/",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "nice-adrenal-insufficiency-ng243",
+      "authors": "National Institute for Health and Care Excellence",
+      "title": "Adrenal insufficiency: identification and management",
+      "publication": "NICE",
+      "year": 2024,
+      "locator": "NG243, sections 1.6–1.7",
+      "usedFor": "Whole-patient crisis recognition, emergency parenteral treatment, individualized ongoing fluid care, and repeated hemodynamic, electrolyte, and glucose monitoring.",
+      "verifiedAgainst": "Official NICE recommendations and indexed guideline PDF at https://www.nice.org.uk/guidance/ng243",
+      "verifiedOn": "2026-08-26"
+    },
     {
       "id": "ada-hypoglycemia-2026",
       "authors": "American Diabetes Association Professional Practice Committee",

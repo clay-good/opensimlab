@@ -377,6 +377,13 @@ Unassisted practice without changing the patient. An optional worked example fol
 actions and observed responses through both rescues, supports pause, and gives control back
 without resetting the patient. Clinical review and complete inclusive-runtime evidence remain pending.
 
+The fourth Endocrine lab adds adrenal crisis with independent dose-free steroid and saline
+pathways. Treatment does not wait for cortisol, the medication record, or a support acknowledgment.
+Delay and partial treatment produce distinct authored shock states; a fresh reassessment and
+continuity plan are needed before handoff. Quiet in-tray guidance remains readable alongside
+alarms and disappears in Unassisted mode. Exact-version expert, error, and recovery fixtures
+preserve early mistakes after correction. Clinical review and the full completion contract remain pending.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

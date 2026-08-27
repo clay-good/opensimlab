@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "moduleId": "endocrine-metabolic",
   "capabilityVersion": "0.1.0-alpha.48",
-  "scenarioCount": 3,
+  "scenarioCount": 4,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -379,6 +379,132 @@
           "status": "missing",
           "evidence": [
             "The shared reporting control and exact-version report records exist; the centered modal, length limit, and keyboard dismissal were checked on the briefing. Complete per-scenario evidence across briefing, live, debrief, and provenance is still pending."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "adrenal-crisis-treatment-before-tests",
+      "title": "Adrenal crisis: treatment cannot wait for tests",
+      "moduleId": "endocrine-metabolic",
+      "environment": "ward",
+      "estimatedMinutes": 15,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario adrenal-crisis-treatment-before-tests carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "4 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "Fixed fictional patient, no randomized adrenal transitions; reference seed 4902. tests/unit/endocrine-adrenal-crisis.test.ts verifies real-engine whole-state replay across all three guidance levels."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "src/modules/endocrine-metabolic/adrenal-crisis.ts advances incomplete rescue, combined-treatment response, and instructor takeover from the shared clock. Bedside observation does not control the underlying state. Exact-boundary tests distinguish untreated and partial care."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "Nine declared decisions include independent steroid and saline pathways, support, record review, reassessment, delay, oral-only refusal, prevention, and handoff. No diagnostic result or support acknowledgment gates urgent steroid treatment."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "The branch ends at ongoing-treatment handoff or instructor takeover when combined rescue remains incomplete. Later actions cannot restart an ended branch. No real outcome or safe waiting interval is predicted."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "Five observed-state tutor rules at version 0.1.0 support guidance levels. An in-product worked example is not yet bound to this lesson."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "src/modules/anesthesia/ui/Debrief.tsx maps four objectives to accepted events, retains early errors after recovery, and names the incomplete-treatment trajectory as an authored counterfactual."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "3 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "src/modules/endocrine-metabolic/adrenal-crisis-fixtures.ts binds expert, commonError, and recovery decisions to content 0.1.0 and seed 4902. Real-engine tests assert distinct end states and debriefs with identical replay hashes."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Automated UI, observed-state and replay checks exist. Complete per-scenario screen-reader, reduced-motion, color-vision, 320 px, offline, and performance evidence remains pending."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

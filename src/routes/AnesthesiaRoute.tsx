@@ -236,6 +236,27 @@ function boundedScalars(value: unknown, limit: number): Record<string, ReportCon
   return result;
 }
 
+export function collectReportEquipmentContext(equipment: SessionState['equipment']): Record<string, ReportContextScalar> {
+  const adrenal = equipment?.resuscitation.adrenalCrisis;
+  // Preserve the active lesson within the existing privacy budget. Never copy
+  // feedback, prose, arbitrary nested values, or hidden medication findings.
+  const priority = adrenal ? boundedScalars({ resuscitation: { adrenalCrisis: {
+    supportActive: adrenal.supportActive, hydrocortisoneAtTick: adrenal.hydrocortisoneAtTick,
+    salineAtTick: adrenal.salineAtTick, recordReviewed: adrenal.recordReviewed,
+    preventionPlanned: adrenal.preventionPlanned, responseObserved: adrenal.responseObserved,
+    responseDueInSeconds: adrenal.responseDueInSeconds, ended: adrenal.ended,
+    observation: adrenal.observation ? {
+      atTick: adrenal.observation.atTick, systolicMmHg: adrenal.observation.systolicMmHg,
+      diastolicMmHg: adrenal.observation.diastolicMmHg, meanArterialMmHg: adrenal.observation.meanArterialMmHg,
+      heartRateBpm: adrenal.observation.heartRateBpm, respiratoryRateBpm: adrenal.observation.respiratoryRateBpm,
+    } : null,
+  } } }, REPORT_CONTEXT_SNAPSHOT_LIMIT) : {};
+  const remaining = adrenal && equipment
+    ? { ...equipment, resuscitation: { ...equipment.resuscitation, adrenalCrisis: undefined } }
+    : equipment;
+  return { ...priority, ...boundedScalars(remaining, REPORT_CONTEXT_SNAPSHOT_LIMIT - Object.keys(priority).length) };
+}
+
 function collectReportRecentContext(session: SessionState, seed: number): ScenarioReportRecentContext {
   const actions = sessionInternals().recorder?.build('pending').actions ?? [];
   return {
@@ -252,7 +273,7 @@ function collectReportRecentContext(session: SessionState, seed: number): Scenar
         .filter((entry): entry is [string, number] => Number.isFinite(entry[1]))
         .sort(([left], [right]) => left.localeCompare(right))
         .slice(0, REPORT_CONTEXT_SNAPSHOT_LIMIT)),
-      equipment: boundedScalars(session.equipment, REPORT_CONTEXT_SNAPSHOT_LIMIT),
+      equipment: collectReportEquipmentContext(session.equipment),
     },
   };
 }

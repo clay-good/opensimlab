@@ -1,6 +1,6 @@
 import type { Scenario } from '@anesthesia/scenarios/types';
 import { validateScenario } from '@anesthesia/scenarios/schema';
-import { hypoglycemiaCompletionEvidence } from '../../endocrine-metabolic/completion';
+import { adrenalCompletionEvidence, hypoglycemiaCompletionEvidence } from '../../endocrine-metabolic/completion';
 import {
   COMPLETION_SCHEMA_VERSION,
   type CompletionRequirementAudit,
@@ -80,7 +80,10 @@ export function auditClinicalScenario(
       'The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces.'),
   ];
 
-  const exactEvidence = new Map(hypoglycemiaCompletionEvidence(scenario, capabilityVersion, moduleId).map((entry) => [entry.id, entry]));
+  const exactEvidence = new Map([
+    ...hypoglycemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...adrenalCompletionEvidence(scenario, capabilityVersion, moduleId),
+  ].map((entry) => [entry.id, entry]));
   const auditedRequirements = requirements.map((entry) => exactEvidence.get(entry.id) ?? entry);
   return {
     scenarioId: scenario.metadata.id,

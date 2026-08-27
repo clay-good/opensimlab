@@ -8,13 +8,15 @@
  */
 
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
-import type { LearnerAction, SevereHypoglycemiaSnapshot } from '@platform/kernel/protocol';
+import type { LearnerAction, SevereHypoglycemiaSnapshot, AdrenalCrisisSnapshot } from '@platform/kernel/protocol';
 import { HYPOGLYCEMIA_TUTOR_RULES } from '../../endocrine-metabolic/tutor/hypoglycemia-guidance';
+import { ADRENAL_TUTOR_RULES } from '../../endocrine-metabolic/tutor/adrenal-guidance';
 import type { ContentMaturity } from '@platform/catalog/maturity';
 
 export type GuidanceLevel = 'guided' | 'coached' | 'unassisted';
 export type TutorAssistanceLevel = 'orient' | 'notice' | 'connect' | 'prioritize' | 'direct' | 'explain';
 export type TutorTriggerId =
+  | 'adrenal-observation'
   | 'hypoglycemia-observation'
   | 'pre-induction-low-fio2'
   | 'preoxygenation-established'
@@ -41,6 +43,7 @@ export interface GuidanceInput {
   readonly scenarioId?: string;
   readonly scenarioVersion?: string;
   readonly hypoglycemia?: SevereHypoglycemiaSnapshot;
+  readonly adrenalCrisis?: AdrenalCrisisSnapshot;
   readonly tick: number;
   readonly state: Readonly<Record<string, number>> | null;
   readonly actions: readonly LearnerAction[];
@@ -256,6 +259,7 @@ export const TUTOR_RULES: readonly TutorRule[] = [
 export const PROMPTS = TUTOR_RULES;
 
 function rulesFor(input: GuidanceInput): readonly TutorRule[] {
+  if (input.scenarioId === 'adrenal-crisis-treatment-before-tests') return ADRENAL_TUTOR_RULES;
   return input.scenarioId === 'severe-hypoglycemia-recurrence' ? HYPOGLYCEMIA_TUTOR_RULES : TUTOR_RULES;
 }
 

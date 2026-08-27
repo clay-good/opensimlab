@@ -24,6 +24,7 @@ import { getFluid, MAX_FLUID_BOLUS_ML } from '@anesthesia/content/fluids';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { MaturityMarker } from '@platform/governance/MaturityMarker';
 import { supportsSevereHypoglycemia } from '../../endocrine-metabolic/severe-hypoglycemia';
+import { supportsAdrenalCrisis } from '../../endocrine-metabolic/adrenal-crisis';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -185,6 +186,8 @@ export function Debrief(props: DebriefProps) {
               ? { activityContext: `assessing ${sentenceCaseTitle(props.scenario.metadata.title)} in the emergency department` }
               : props.moduleId === 'cardiology'
                 ? { activityContext: `reassessing ${sentenceCaseTitle(props.scenario.metadata.title)} in cardiology` }
+              : supportsAdrenalCrisis(props.scenario)
+                ? { activityContext: 'coordinating emergency treatment and reassessment for a patient with suspected adrenal crisis' }
               : {}),
           })}</p>
           <label className="field__label" htmlFor="reactions-account">Your account</label>
@@ -565,6 +568,27 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.startsWith('adrenal-')) {
+      if (!supportsAdrenalCrisis(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The adrenal-crisis lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^adrenal-crisis-${id}-\\d+$`).test(entry.eventId));
+      const steroid = event('hydrocortisone'); const fluid = event('saline'); const support = event('support');
+      const delay = event('diagnostic-delay-choice'); const oral = event('oral-only-refused'); const incomplete = event('incomplete-rescue');
+      const reassessment = event('post-rescue-reassessment'); const handoff = event('handoff');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'adrenal-urgent-steroid': { met: !!steroid && !delay && !oral && !(incomplete && incomplete.tick <= steroid.tick),
+          finding: delay || oral || (incomplete && (!steroid || incomplete.tick <= steroid.tick))
+            ? (steroid ? 'A diagnostic delay, oral-only choice, or untreated interval preceded qualified parenteral rescue. Later correction is credited without erasing that earlier decision.' : 'Qualified parenteral rescue was not started. Waiting for diagnostic certainty or relying on oral absorption left the emergency untreated.')
+            : steroid ? 'Qualified parenteral hydrocortisone began without waiting for diagnostic results. The record and support acknowledgment were not treatment prerequisites.' : 'No qualified parenteral hydrocortisone pathway was recorded.', tick: steroid?.tick },
+        'adrenal-combined-rescue': { met: !!steroid && !!fluid && !!support,
+          finding: steroid && fluid && support ? `${incomplete ? 'Incomplete early rescue was later corrected. ' : ''}Steroid coverage, fluid resuscitation, and support were coordinated. Authored counterfactual: either treatment alone leaves this branch in shock and leads to instructor takeover.` : 'One or more rescue components were missing. Authored counterfactual: the combined pathway permits later improvement, not guaranteed recovery.', tick: fluid?.tick },
+        'adrenal-reassessment': { met: !!reassessment, finding: reassessment ? 'A fresh bedside assessment observed the combined response. Initial electrolytes and glucose were not silently updated; repeat laboratory and fluid-balance work remain.' : 'No post-rescue bedside reassessment was recorded. The monitor changing did not supply that missing observation.', tick: reassessment?.tick },
+        'adrenal-continuity': { met: !!handoff, finding: handoff ? 'Interrupted replacement, ongoing steroids, precipitant care, monitoring, and prevention ownership were handed off. This did not prove recovery, injection competence, or safe discharge.' : 'The medication, prevention, and ongoing-treatment handoff remains incomplete.', tick: handoff?.tick },
+      };
+      const result = results[objective.id];
+      return result ? { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding
+        : { ...base, outcome: 'not-exercised', finding: 'No evidence mapping exists for this objective.' } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.startsWith('hypoglycemia-')) {
       if (!supportsSevereHypoglycemia(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The adult hypoglycemia recurrence lesson was not active.' } satisfies ObjectiveFinding;

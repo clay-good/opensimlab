@@ -40,6 +40,7 @@ import { WaveformEngine, restingDrive, type ArtifactId, type RhythmId, type Wave
 import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/types';
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 import { SevereHypoglycemia, supportsSevereHypoglycemia } from '../endocrine-metabolic/severe-hypoglycemia';
+import { AdrenalCrisis, supportsAdrenalCrisis } from '../endocrine-metabolic/adrenal-crisis';
 
 /** The engine's own version, recorded in every transcript. */
 export const ENGINE_VERSION = '0.1.0-alpha.48';
@@ -1706,6 +1707,7 @@ export class AnesthesiaEngine {
   private endocrineHhsReassessmentAtTick: number | null = null;
   private endocrineHhsHandoffAtTick: number | null = null;
   private readonly severeHypoglycemia: SevereHypoglycemia | null;
+  private readonly adrenalCrisis: AdrenalCrisis | null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1812,6 +1814,7 @@ export class AnesthesiaEngine {
   constructor(options: EngineOptions) {
     this.scenario = options.scenario;
     this.severeHypoglycemia = supportsSevereHypoglycemia(options.scenario) ? new SevereHypoglycemia() : null;
+    this.adrenalCrisis = supportsAdrenalCrisis(options.scenario) ? new AdrenalCrisis() : null;
     this.practiceRegion = options.practiceRegion;
     this.seed = options.seed;
     if (options.scenario.timeline.some((event) => event.type === 'narrative'
@@ -1945,6 +1948,11 @@ export class AnesthesiaEngine {
       || typeof action.payload !== 'object' || Array.isArray(action.payload)) {
       this.log('warning', 'assessment', `malformed-action-refused-${this.currentTick}`,
         'That action was malformed and was safely ignored. Nothing changed.');
+      return;
+    }
+    if (this.adrenalCrisis && action.type !== 'adrenal-crisis-response' && action.type !== 'silence-alarm') {
+      this.log('warning', 'assessment', `adrenal-crisis-generic-action-refused-${this.currentTick}`,
+        'Only this lesson’s qualified rescue, assessment, and handoff choices are available. No generic drug, dose, fluid, procedure, or adjacent-scenario action was performed.');
       return;
     }
     if (this.severeHypoglycemia && action.type !== 'severe-hypoglycemia-response' && action.type !== 'silence-alarm') {
@@ -2829,6 +2837,16 @@ export class AnesthesiaEngine {
         'This HHS lesson exposes no generic history, examination, testing, calculation, interpretation, diagnosis, fluid, insulin, dextrose, electrolyte, drug, dose, rate, route, access, infusion, nutrition, precipitant treatment, thrombosis or pressure-injury prevention, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
+      case 'adrenal-crisis-response': {
+        if (!this.adrenalCrisis || Object.keys(action.payload).some((key) => key !== 'action')) {
+          this.log('warning', 'assessment', `adrenal-crisis-action-refused-${this.currentTick}`, 'Only the declared dose-free adrenal-crisis choices are available in this lesson.');
+          break;
+        }
+        for (const event of this.adrenalCrisis.apply(action.payload.action, this.currentTick)) {
+          this.log('warning', 'assessment', `adrenal-crisis-${event.id}-${this.currentTick}`, event.message);
+        }
+        break;
+      }
       case 'severe-hypoglycemia-response': {
         if (!this.severeHypoglycemia) {
           this.log('warning', 'assessment', `severe-hypoglycemia-action-refused-${this.currentTick}`, 'These choices are available only in the declared adult hypoglycemia lesson.');
@@ -14258,6 +14276,9 @@ export class AnesthesiaEngine {
 
   /** Advance exactly one tick. */
   step(): EngineTick {
+    for (const event of this.adrenalCrisis?.advance(this.currentTick) ?? []) {
+      this.log('warning', 'assessment', `adrenal-crisis-${event.id}-${this.currentTick}`, event.message);
+    }
     for (const event of this.severeHypoglycemia?.advance(this.currentTick) ?? []) {
       this.log('warning', 'assessment', `severe-hypoglycemia-${event.id}-${this.currentTick}`, event.message);
     }
@@ -15067,6 +15088,13 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: this.endocrineDkaResolutionReassessmentAtTick !== null ? 16 : 18,
         spo2Percent: 98, systolicMmHg: 118, diastolicMmHg: 70, meanArterialMmHg: 86,
         coreTemperatureC: 36.9 };
+    }
+    if (this.adrenalCrisis) {
+      const adrenal = this.adrenalCrisis.vitals();
+      crisisState = { ...crisisState, heartRateBpm: adrenal.heartRateBpm,
+        respiratoryRateBpm: adrenal.respiratoryRateBpm, spo2Percent: 98,
+        systolicMmHg: adrenal.systolicMmHg, diastolicMmHg: adrenal.diastolicMmHg,
+        meanArterialMmHg: adrenal.meanArterialMmHg, coreTemperatureC: 38.1 };
     }
     if (this.severeHypoglycemia) {
       const hypoglycemia = this.severeHypoglycemia.snapshot(this.currentTick);
@@ -19761,6 +19789,7 @@ export class AnesthesiaEngine {
             },
           } : {}),
         ...(this.severeHypoglycemia ? { severeHypoglycemia: this.severeHypoglycemia.snapshot(this.currentTick) } : {}),
+        ...(this.adrenalCrisis ? { adrenalCrisis: this.adrenalCrisis.snapshot(this.currentTick) } : {}),
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,
           classification: this.aspirationRiskClassification,

@@ -2806,6 +2806,21 @@ history, examination, testing, calculation, interpretation, diagnosis, fluid, in
 drug, dose, rate, route, access, infusion, nutrition, precipitant treatment, thrombosis or pressure-
 injury prevention, disposition, or outcome control exists.
 
+### Wave E endocrine-metabolic slice 4: adrenal crisis before diagnostic certainty
+
+This preview begins with known primary adrenal insufficiency, persistent vomiting, and shock.
+Independent qualified parenteral hydrocortisone and isotonic saline actions are available before
+history, laboratory review, or support acknowledgment. Incomplete rescue worsens with elapsed
+time; fluid alone gives only an authored partial response. Combined rescue permits a later
+response but does not perform the learner's bedside reassessment. Initial laboratory results
+stay initial rather than normalizing automatically. Ongoing-treatment and prevention ownership
+close the handoff, not the clinical illness. Delay and oral-only mistakes remain visible after
+correction; stale versions of those actions are refused after steroids begin. Five observed-state
+rules provide quiet in-tray guidance during alarms without interrupting the monitor. Unassisted
+removes the tutor text. Exact-version fixtures and source, limitation, and report records bind
+the preview; the worked example, clinical review, and complete inclusive verification remain pending.
+See `docs/evidence-briefs/adrenal-crisis-treatment-before-tests.md` for the fictional parameters.
+
 #### Renal and electrolyte medicine: 12
 
 Hyperkalemia with ECG change; severe hypokalemia; symptomatic hyponatremia; hypernatremic

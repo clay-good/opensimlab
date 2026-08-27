@@ -364,11 +364,12 @@ export function Cockpit({
   // never feeds anything back, which is what makes the trajectory identical at
   // every guidance level.
   useEffect(() => {
-    if (tutorIntroductionOpen || demonstrating) return;
+    if (tutorIntroductionOpen || demonstrating || scenario.metadata.id === 'adrenal-crisis-treatment-before-tests') return;
     const input = {
       scenarioId: scenario.metadata.id,
       scenarioVersion: scenario.metadata.version,
       hypoglycemia: session.equipment?.resuscitation.severeHypoglycemia,
+      adrenalCrisis: session.equipment?.resuscitation.adrenalCrisis,
       tick: session.tick,
       state: session.state,
       actions: sessionInternals().recorder?.build('pending').actions ?? [],
@@ -680,6 +681,8 @@ export function Cockpit({
 
       <div className="cockpit__actions">
         <ActionCockpit
+          adrenalGuidance={session.guidance}
+          onAdrenalTutorSource={session.pause}
           hypoglycemiaDemonstrating={demonstrating && hypoglycemiaDemoSupported}
           scenario={scenario}
           region={region}
@@ -1241,6 +1244,9 @@ export function Cockpit({
           onSevereHypoglycemiaResponse={(action) => session.act({
             type: 'severe-hypoglycemia-response', payload: { action },
           })}
+          onAdrenalCrisisResponse={(action) => session.act({
+            type: 'adrenal-crisis-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}
@@ -1289,12 +1295,12 @@ export function Cockpit({
       </div>
 
       {/* Guidance. Non-blocking, dismissible, and never shown during an alarm. */}
-      {!demonstrating && tutorIntroductionOpen && session.alarms.length === 0 ? (
+      {!demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && tutorIntroductionOpen && session.alarms.length === 0 ? (
         <TutorIntroduction onDismissPermanently={() => {
           setTutorIntroductionDismissed(true);
           setTutorIntroductionOpen(false);
         }} />
-      ) : !demonstrating && !tutorIntroductionOpen && prompt ? (
+      ) : !demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && !tutorIntroductionOpen && prompt ? (
         <TutorPromptCard
           prompt={prompt}
           collapsed={tutorCollapsed}
@@ -1405,12 +1411,12 @@ export function Cockpit({
             and cue is also shown.
           </p>
         </div>
-        <Button onClick={() => {
+        {scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && <Button onClick={() => {
           setShortcutsOpen(false);
           setTutorIntroductionOpen(true);
         }}>
           Show private tutor introduction
-        </Button>
+        </Button>}
         <h3>Keyboard shortcuts</h3>
         <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 'var(--space-2) var(--space-4)' }}>
           {SHORTCUTS.filter((shortcut) => moduleId === 'anesthesia'

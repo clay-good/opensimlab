@@ -9,9 +9,9 @@ import { DEFAULT_ENDOCRINE_METABOLIC_SCENARIO_ID, ENDOCRINE_METABOLIC_SCENARIOS,
 const json = (path: string) => JSON.parse(readFileSync(join(process.cwd(), path), 'utf8'));
 
 describe('Endocrine and Metabolic Medicine module foundation', () => {
-  it('registers three bounded previews and exact discoverable routes', () => {
+  it('registers four bounded previews and exact discoverable routes', () => {
     expect(getModule('endocrine-metabolic')).toMatchObject({ route: 'endocrine-metabolic', status: 'available' });
-    expect(ENDOCRINE_METABOLIC_SCENARIOS).toHaveLength(3);
+    expect(ENDOCRINE_METABOLIC_SCENARIOS).toHaveLength(4);
     expect(DEFAULT_ENDOCRINE_METABOLIC_SCENARIO_ID).toBe('dka-resolution-transition');
     expect(getEndocrineMetabolicScenario('missing')).toBeUndefined();
     expect(routeFor('/endocrine-metabolic')).toMatchObject({ indexable: true, structuredData: ['SoftwareApplication'] });
@@ -26,8 +26,8 @@ describe('Endocrine and Metabolic Medicine module foundation', () => {
     const completion = json('public/catalog/endocrine-metabolic-completion-audit.json');
     const maturity = json('public/catalog/endocrine-metabolic-maturity.json');
     const reports = json('workers/reports/src/report-catalog.generated.json');
-    expect(completion.scenarios).toHaveLength(3);
-    expect(maturity.recordCount).toBe(3);
+    expect(completion.scenarios).toHaveLength(4);
+    expect(maturity.recordCount).toBe(4);
     for (const { metadata } of ENDOCRINE_METABOLIC_SCENARIOS) {
       expect(reviewableItems()).toContainEqual(expect.objectContaining({ id: metadata.id, domains: ['endocrine-metabolic'] }));
       expect(completion.scenarios).toContainEqual(expect.objectContaining({ scenarioId: metadata.id, moduleId: 'endocrine-metabolic', maturity: 'preview' }));

@@ -4,6 +4,27 @@ import { SEVERE_HYPOGLYCEMIA_RECURRENCE } from './scenarios/severe-hypoglycemia-
 import { HYPOGLYCEMIA_FIXTURES } from './severe-hypoglycemia-fixtures';
 import { HYPOGLYCEMIA_TUTOR_VERSION } from './tutor/hypoglycemia-guidance';
 import { HYPOGLYCEMIA_DEMONSTRATION_VERSION } from './demo/hypoglycemia-demonstration';
+import { ADRENAL_CRISIS_TREATMENT_BEFORE_TESTS } from './scenarios/adrenal-crisis-treatment-before-tests';
+import { ADRENAL_FIXTURES } from './adrenal-crisis-fixtures';
+import { ADRENAL_TUTOR_VERSION } from './tutor/adrenal-guidance';
+
+export function adrenalCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
+  if (moduleId !== 'endocrine-metabolic' || capabilityVersion !== '0.1.0-alpha.48'
+    || scenario.metadata.id !== ADRENAL_FIXTURES.scenarioId
+    || scenario.metadata.version !== '0.1.0' || ADRENAL_FIXTURES.contentVersion !== '0.1.0'
+    || JSON.stringify(scenario) !== JSON.stringify(ADRENAL_CRISIS_TREATMENT_BEFORE_TESTS)) return [];
+  return [
+    { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['Fixed fictional patient, no randomized adrenal transitions; reference seed 4902. tests/unit/endocrine-adrenal-crisis.test.ts verifies real-engine whole-state replay across all three guidance levels.'] },
+    { id: 'meaningful-progression', status: 'satisfied', evidence: ['src/modules/endocrine-metabolic/adrenal-crisis.ts advances incomplete rescue, combined-treatment response, and instructor takeover from the shared clock. Bedside observation does not control the underlying state. Exact-boundary tests distinguish untreated and partial care.'] },
+    { id: 'meaningful-actions-and-choices', status: 'satisfied', evidence: ['Nine declared decisions include independent steroid and saline pathways, support, record review, reassessment, delay, oral-only refusal, prevention, and handoff. No diagnostic result or support acknowledgment gates urgent steroid treatment.'] },
+    { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The branch ends at ongoing-treatment handoff or instructor takeover when combined rescue remains incomplete. Later actions cannot restart an ended branch. No real outcome or safe waiting interval is predicted.'] },
+    { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['src/modules/anesthesia/ui/Debrief.tsx maps four objectives to accepted events, retains early errors after recovery, and names the incomplete-treatment trajectory as an authored counterfactual.'] },
+    { id: 'reference-transcripts', status: 'satisfied', evidence: ['src/modules/endocrine-metabolic/adrenal-crisis-fixtures.ts binds expert, commonError, and recovery decisions to content 0.1.0 and seed 4902. Real-engine tests assert distinct end states and debriefs with identical replay hashes.'] },
+    { id: 'guidance-and-demonstration', status: 'missing', evidence: [`Five observed-state tutor rules at version ${ADRENAL_TUTOR_VERSION} support guidance levels. An in-product worked example is not yet bound to this lesson.`] },
+    { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Automated UI, observed-state and replay checks exist. Complete per-scenario screen-reader, reduced-motion, color-vision, 320 px, offline, and performance evidence remains pending.'] },
+    { id: 'report-control-coverage', status: 'missing', evidence: ['The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound.'] },
+  ];
+}
 
 /** Exact-version evidence, not a general claim about other narrative scenarios. */
 export function hypoglycemiaCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {

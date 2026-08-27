@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "endocrine-metabolic",
-  "scenarioCount": 3,
+  "scenarioCount": 4,
   "playableScenarioCount": 0,
   "scenarios": [
     {
@@ -107,6 +107,42 @@
           "status": "missing",
           "evidence": [
             "No version-bound state-space-verification record exists for severe-hypoglycemia-recurrence 0.1.2."
+          ]
+        }
+      ],
+      "playable": false
+    },
+    {
+      "scenarioId": "adrenal-crisis-treatment-before-tests",
+      "contentVersion": "0.1.0",
+      "completionComplete": false,
+      "qualityRecords": [
+        {
+          "kind": "training-value",
+          "status": "missing",
+          "evidence": [
+            "No version-bound training-value record exists for adrenal-crisis-treatment-before-tests 0.1.0."
+          ]
+        },
+        {
+          "kind": "authored-defaults",
+          "status": "missing",
+          "evidence": [
+            "No version-bound authored-defaults record exists for adrenal-crisis-treatment-before-tests 0.1.0."
+          ]
+        },
+        {
+          "kind": "scenario-hazard",
+          "status": "missing",
+          "evidence": [
+            "No version-bound scenario-hazard record exists for adrenal-crisis-treatment-before-tests 0.1.0."
+          ]
+        },
+        {
+          "kind": "state-space-verification",
+          "status": "missing",
+          "evidence": [
+            "No version-bound state-space-verification record exists for adrenal-crisis-treatment-before-tests 0.1.0."
           ]
         }
       ],

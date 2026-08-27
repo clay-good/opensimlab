@@ -20,6 +20,7 @@ import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import type { RegionProfile } from '@anesthesia/region/profiles';
 import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
 import { supportsSevereHypoglycemia } from '../../endocrine-metabolic/severe-hypoglycemia';
+import { supportsAdrenalCrisis } from '../../endocrine-metabolic/adrenal-crisis';
 
 export const FICTION_CONTRACT =
   'This is a simulation. The patient is not real, nothing you do here reaches anyone, and an '
@@ -187,6 +188,13 @@ export function Prebrief({
               Qualified findings and response reports are authored. This lab practices early recognition,
               coordinated ownership, reassessment, and handoff, not examination, dosing, procedures, or delivery.
             </p>
+          </>
+        ) : supportsAdrenalCrisis(scenario) ? (
+          <>
+            <p>Choose urgent qualified rescue, review the interrupted replacement record, and
+              reassess the patient as time passes. Pause freely; use 60× speed for observation periods.</p>
+            <p>Choices and elapsed time change authored patient states. No test result unlocks
+              steroid treatment. This is not a dosing, fluid-rate, cortisol-kinetics, or discharge model.</p>
           </>
         ) : hypoglycemia ? (
           <>

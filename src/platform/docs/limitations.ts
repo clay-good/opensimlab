@@ -27,6 +27,30 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'adrenal-authored-response-not-kinetics',
+    headline: 'Pressure, alertness, and response checkpoints are authored states, not cortisol or fluid kinetics.',
+    simplification: 'Fixed 5-minute incomplete-rescue, 10-minute combined-response, and 30-minute takeover checkpoints create distinct decision paths. Initial laboratory values do not update automatically.',
+    whereItMisleads: 'A learner treats a checkpoint as permission to delay care or as an individual treatment-response prediction.',
+    correctUnderstanding: 'Suspected crisis requires immediate qualified rescue with frequent reassessment. Response, fluid needs, laboratory trends, and shock causes vary; the numeric states here are fictional.',
+    briefIn: ['adrenal-crisis-treatment-before-tests'],
+  },
+  {
+    id: 'adrenal-rescue-not-dose-or-technique',
+    headline: 'Rescue actions represent qualified steroid and fluid pathways, not dosing or administration technique.',
+    simplification: 'The learner selects dose-free parenteral hydrocortisone and isotonic saline pathways, with no rate, volume, access, preparation, or individualized prescription controls.',
+    whereItMisleads: 'A successful action is taken as competence to prescribe, prepare, or administer emergency treatment.',
+    correctUnderstanding: 'Real treatment follows qualified protocols and repeated assessment. Diagnostic sampling should not delay rescue. Other causes of shock and the precipitating illness need parallel care.',
+    briefIn: ['adrenal-crisis-treatment-before-tests'],
+  },
+  {
+    id: 'adrenal-handoff-not-resolution',
+    headline: 'Improvement and a completed handoff do not establish recovery or safe discharge.',
+    simplification: 'A bounded handoff ends the rehearsal after observed response and continuity planning, without modeling later steroid taper, electrolyte correction, or recurrence.',
+    whereItMisleads: 'The improved pressure is treated as diagnostic proof or permission to stop treatment or send the patient home.',
+    correctUnderstanding: 'Ongoing steroid coverage, monitoring, precipitant treatment, education, emergency identification and supplies, medication access, and follow-up require qualified ownership.',
+    briefIn: ['adrenal-crisis-treatment-before-tests'],
+  },
+  {
     id: 'adult-hypoglycemia-authored-timed-states-not-kinetics',
     headline: 'Glucose, alertness, recurrence, and rescue responses are authored timed states, not drug kinetics.',
     simplification: 'The model uses fixed observation and response checkpoints and an instructor-takeover stop, with no individualized glucose kinetics.',
