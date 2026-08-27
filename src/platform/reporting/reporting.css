@@ -1,7 +1,7 @@
 .problem-report {
   position: fixed;
   inset-inline-end: var(--space-4);
-  inset-block-end: var(--space-4);
+  inset-block-end: calc(var(--demo-bar-height, 0px) + var(--space-4));
   z-index: 58;
   padding: var(--space-1);
   border: 1px solid var(--line);
@@ -45,7 +45,6 @@
   .problem-report {
     inset-inline-start: var(--space-3);
     inset-inline-end: auto;
-    inset-block-end: var(--space-4);
   }
   .problem-report > .button {
     min-block-size: 44px;
@@ -62,7 +61,6 @@
   .problem-report {
     inset-inline-start: var(--space-3);
     inset-inline-end: auto;
-    inset-block-end: var(--space-4);
   }
   .problem-report__label-long { display: none; }
   .problem-report__label-short { display: inline; }

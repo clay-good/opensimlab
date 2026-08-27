@@ -62,6 +62,7 @@ export interface BreathingCircuitStatus {
 }
 
 export interface ActionCockpitProps {
+  readonly hypoglycemiaDemonstrating?: boolean;
   readonly scenario: Scenario;
   readonly region: RegionProfile;
   readonly infusions: readonly RunningInfusion[];
@@ -5250,6 +5251,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasSevereHypoglycemiaResponse && (
               <SevereHypoglycemiaTray assessment={props.resuscitation.severeHypoglycemia}
+                demonstrating={props.hypoglycemiaDemonstrating}
                 onAction={props.onSevereHypoglycemiaResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (

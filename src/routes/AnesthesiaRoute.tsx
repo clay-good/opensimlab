@@ -20,6 +20,7 @@ import { ENGINE_VERSION } from '@anesthesia/engine';
 import { MODEL_SET_REVISION } from '@anesthesia/pharmacology/registry';
 import { Prebrief } from '@anesthesia/ui/Prebrief';
 import { DEMONSTRATION_SCENARIO_ID, demonstrationRequested } from '@anesthesia/demo/demonstration';
+import { supportsHypoglycemiaDemonstration } from '../modules/endocrine-metabolic/demo/hypoglycemia-demonstration';
 import { Cockpit } from '@anesthesia/ui/Cockpit';
 import { Debrief } from '@anesthesia/ui/Debrief';
 import { assertTranscriptIsAnonymous, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
@@ -417,10 +418,11 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
     if (!autoDemo.current) return;
     if (session.phase !== 'briefing' && session.phase !== 'idle') return;
     if (!session.ready) return;
-    if (config.id !== 'anesthesia' || scenario.metadata.id !== DEMONSTRATION_SCENARIO_ID) return;
+    const hypoglycemiaDemo = config.id === 'endocrine-metabolic' && supportsHypoglycemiaDemonstration(scenario);
+    if (!hypoglycemiaDemo && (config.id !== 'anesthesia' || scenario.metadata.id !== DEMONSTRATION_SCENARIO_ID)) return;
     autoDemo.current = false;
     setDemonstrating(true);
-    session.setSpeed(5);
+    session.setSpeed(hypoglycemiaDemo ? 60 : 5);
     session.play();
   }, [session, scenario.metadata.id]);
 
@@ -515,6 +517,8 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
           onStart={() => { setDemonstrating(false); session.play(); }}
           {...(config.id === 'anesthesia' && scenario.metadata.id === DEMONSTRATION_SCENARIO_ID
             ? { onWatch: () => { setDemonstrating(true); session.setSpeed(5); session.play(); } }
+            : config.id === 'endocrine-metabolic' && supportsHypoglycemiaDemonstration(scenario)
+            ? { onWatch: () => { setDemonstrating(true); session.setSpeed(60); session.play(); } }
             : {})}
           {...(assignment.label ? { assignmentLabel: assignment.label } : {})}
         />

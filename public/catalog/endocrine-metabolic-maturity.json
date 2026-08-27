@@ -26,14 +26,14 @@
       ]
     },
     {
-      "recordId": "scenario:severe-hypoglycemia-recurrence@0.1.1",
+      "recordId": "scenario:severe-hypoglycemia-recurrence@0.1.2",
       "subjectKind": "scenario",
       "subjectId": "severe-hypoglycemia-recurrence",
-      "contentVersion": "0.1.1",
+      "contentVersion": "0.1.2",
       "status": "preview",
       "evidence": [
-        "/catalog/endocrine-metabolic-completion-audit.json#severe-hypoglycemia-recurrence@0.1.1",
-        "/catalog/endocrine-metabolic-quality-audit.json#severe-hypoglycemia-recurrence@0.1.1"
+        "/catalog/endocrine-metabolic-completion-audit.json#severe-hypoglycemia-recurrence@0.1.2",
+        "/catalog/endocrine-metabolic-quality-audit.json#severe-hypoglycemia-recurrence@0.1.2"
       ]
     }
   ]

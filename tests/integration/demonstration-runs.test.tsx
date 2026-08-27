@@ -25,7 +25,9 @@ import {
 import { AnesthesiaEngine, ENGINE_VERSION, type Scenario } from '@anesthesia/engine';
 import { MODEL_SET_REVISION } from '@anesthesia/pharmacology/registry';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
-import { useSession } from '@platform/session/session-store';
+import { useSession, sessionInternals } from '@platform/session/session-store';
+import { useHypoglycemiaDemonstration } from '../../src/modules/endocrine-metabolic/demo/useHypoglycemiaDemonstration';
+import { SEVERE_HYPOGLYCEMIA_RECURRENCE } from '../../src/modules/endocrine-metabolic/scenarios/severe-hypoglycemia-recurrence';
 import type { PatientState } from '@anesthesia/physiology';
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import { useDemonstration } from '@anesthesia/demo/useDemonstration';
@@ -261,4 +263,62 @@ describe('the demonstration, run for its full length', () => {
     expect(blocks.length).toBeGreaterThan(0);
     for (const block of blocks) expect(block.samples.length).toBeGreaterThan(0);
   });
+
+  it('runs the hypoglycemia example through the real session clock, recorder, and worker protocol', () => {
+    act(() => root.unmount());
+    const exampleRoot = createRoot(container); const scenario = SEVERE_HYPOGLYCEMIA_RECURRENCE;
+    const worker = new InProcessWorker(); let finishes = 0;
+    function HypoglycemiaHarness() {
+      const session = useSession();
+      useHypoglycemiaDemonstration({ active: true, running: session.transport === 'running',
+        patient: session.equipment?.resuscitation.severeHypoglycemia, act: session.act,
+        onFinished: () => { finishes += 1; session.pause(); },
+      });
+      return null;
+    }
+    try {
+      act(() => {
+        useSession.getState().begin({ scenarioId: scenario.metadata.id, scenarioVersion: scenario.metadata.version,
+          contentVersion: scenario.metadata.version, modelSetRevision: MODEL_SET_REVISION, engineVersion: ENGINE_VERSION,
+          practiceRegion: 'US', seed: 4901, scenario,
+        }, () => worker as unknown as Worker, { engine: ENGINE_VERSION, content: scenario.metadata.version,
+          modelSet: MODEL_SET_REVISION, scenario: scenario.metadata.version }, 'endocrine-metabolic');
+        exampleRoot.render(createElement(HypoglycemiaHarness));
+        useSession.getState().setSpeed(60); useSession.getState().play();
+      });
+      for (let batch = 0; batch < 600 && !useSession.getState().equipment?.resuscitation.severeHypoglycemia?.ended; batch += 1) {
+        if (batch === 25) {
+          act(() => useSession.getState().pause());
+          const pausedTick = useSession.getState().tick; const count = worker.applied.length;
+          act(() => useSession.getState().frame(100));
+          expect(useSession.getState().tick).toBe(pausedTick); expect(worker.applied).toHaveLength(count);
+          act(() => useSession.getState().play());
+        }
+        if (batch === 50) act(() => worker.sendReadyAgain());
+        if (batch === 100) {
+          act(() => useSession.getState().frame(1000));
+          const cappedTick = useSession.getState().tick;
+          expect(useSession.getState().transport).toBe('paused');
+          act(() => useSession.getState().frame(1000 / 60));
+          expect(useSession.getState().tick).toBe(cappedTick);
+          act(() => useSession.getState().play());
+          expect(useSession.getState().catchUpNotice).toBe(false);
+        }
+        act(() => { for (let frame = 0; frame < 6; frame += 1) useSession.getState().frame(1000 / 60); });
+      }
+      expect(finishes, JSON.stringify({ tick: useSession.getState().tick, phase: useSession.getState().phase,
+        patient: useSession.getState().equipment?.resuscitation.severeHypoglycemia, applied: worker.applied })).toBe(1);
+      expect(worker.applied).toHaveLength(10);
+      expect(useSession.getState().equipment?.resuscitation.severeHypoglycemia?.ended).toBe('handoff');
+      const transcript = sessionInternals().recorder!.build('pending');
+      const replay = new AnesthesiaEngine({ scenario, seed: 4901, practiceRegion: 'US' });
+      let last;
+      for (let tick = 0; tick < useSession.getState().tick; tick += 1) {
+        for (const action of transcript.actions) if (action.tick === tick) replay.apply(action);
+        last = replay.step();
+      }
+      expect(last?.state).toEqual(useSession.getState().state);
+      expect(replay.equipment().resuscitation.severeHypoglycemia).toEqual(useSession.getState().equipment?.resuscitation.severeHypoglycemia);
+    } finally { act(() => exampleRoot.unmount()); container.remove(); }
+  }, 30_000);
 });

@@ -585,9 +585,9 @@
    move the traces the narration is asking you to look at.
    --------------------------------------------------------------------------- */
 
-/* Set on the cockpit only while a demonstration is running, so the reservation
-   above and the strip's own height are driven by one value and cannot drift. */
-.cockpit[data-demo-focus] { --demo-bar-height: 5rem; }
+/* Share the height with the sibling report launcher only during a demonstration,
+   so both overlays and the cockpit reservation stay clear of each other. */
+:root:has(.cockpit[data-demo-focus]) { --demo-bar-height: 5rem; }
 
 /* The strip's height comes out of the ACTION COCKPIT, not out of the monitor.
    Taking it from the fluid row shortened the monitor, which is the region most
@@ -676,7 +676,7 @@
 @media (width <= 900px) {
   /* Stacked, so the narration is not squeezed into a column narrower than a
      sentence — which costs height, and the cockpit gives up that much more. */
-  .cockpit[data-demo-focus] { --demo-bar-height: 10rem; }
+  :root:has(.cockpit[data-demo-focus]) { --demo-bar-height: 10rem; }
 
   .demo-bar__body {
     grid-template-columns: minmax(0, 1fr);

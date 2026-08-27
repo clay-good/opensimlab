@@ -26,6 +26,8 @@ import { AnalysisRegion } from './AnalysisRegion';
 import { ActionCockpit, crisisResponseAvailability } from './ActionCockpit';
 import { DemonstrationBar } from './DemonstrationBar';
 import { useDemonstration } from '@anesthesia/demo/useDemonstration';
+import { useHypoglycemiaDemonstration } from '../../endocrine-metabolic/demo/useHypoglycemiaDemonstration';
+import { supportsHypoglycemiaDemonstration } from '../../endocrine-metabolic/demo/hypoglycemia-demonstration';
 import { WhyPanel } from './WhyPanel';
 import {
   announcementsFor, arterialLineSummary, breathingCircuitSummary, mechanicalPulseFromState, stateSummary,
@@ -149,12 +151,19 @@ export function Cockpit({
   const reducedMotion = usePrefersReducedMotion();
   // The demonstration performs the same actions through the same path a learner
   // does, so what it shows is the engine and not a recording of it.
-  const demonstration = useDemonstration({
-    active: demonstrating,
+  const hypoglycemiaDemoSupported = supportsHypoglycemiaDemonstration(scenario);
+  const inductionDemonstration = useDemonstration({
+    active: demonstrating && !hypoglycemiaDemoSupported,
     tick: session.tick,
     act: session.act,
     onFinished: () => onTakeControls?.(),
   });
+  const hypoglycemiaDemonstration = useHypoglycemiaDemonstration({
+    active: demonstrating && hypoglycemiaDemoSupported,
+    running: session.transport === 'running', patient: session.equipment?.resuscitation.severeHypoglycemia,
+    act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const demonstration = hypoglycemiaDemoSupported ? hypoglycemiaDemonstration : inductionDemonstration;
   const [colorblindSafe] = useLocalPreference('colorblind-safe', false);
   const [whyField, setWhyField] = useState<StateField | null>(null);
   const [explainerId, setExplainerId] = useState<string | null>(null);
@@ -355,7 +364,7 @@ export function Cockpit({
   // never feeds anything back, which is what makes the trajectory identical at
   // every guidance level.
   useEffect(() => {
-    if (tutorIntroductionOpen) return;
+    if (tutorIntroductionOpen || demonstrating) return;
     const input = {
       scenarioId: scenario.metadata.id,
       scenarioVersion: scenario.metadata.version,
@@ -382,7 +391,7 @@ export function Cockpit({
       setPrompt(next);
     }
   }, [session.tick, session.guidance, session.state, session.alarms.length, prompt,
-    tutorIntroductionOpen, invalidParameters]);
+    tutorIntroductionOpen, invalidParameters, demonstrating]);
 
   const speak = useCallback((text: string) => setAnnouncement(text), []);
 
@@ -671,6 +680,7 @@ export function Cockpit({
 
       <div className="cockpit__actions">
         <ActionCockpit
+          hypoglycemiaDemonstrating={demonstrating && hypoglycemiaDemoSupported}
           scenario={scenario}
           region={region}
           infusions={infusions}
@@ -1279,12 +1289,12 @@ export function Cockpit({
       </div>
 
       {/* Guidance. Non-blocking, dismissible, and never shown during an alarm. */}
-      {tutorIntroductionOpen && session.alarms.length === 0 ? (
+      {!demonstrating && tutorIntroductionOpen && session.alarms.length === 0 ? (
         <TutorIntroduction onDismissPermanently={() => {
           setTutorIntroductionDismissed(true);
           setTutorIntroductionOpen(false);
         }} />
-      ) : !tutorIntroductionOpen && prompt ? (
+      ) : !demonstrating && !tutorIntroductionOpen && prompt ? (
         <TutorPromptCard
           prompt={prompt}
           collapsed={tutorCollapsed}

@@ -270,7 +270,7 @@
         "GB"
       ],
       "fidelityClass": "state_transition",
-      "contentVersion": "0.1.1",
+      "contentVersion": "0.1.2",
       "capabilityVersion": "0.1.0-alpha.48",
       "maturity": "preview",
       "complete": false,
@@ -279,7 +279,7 @@
           "id": "identity-and-versions",
           "status": "satisfied",
           "evidence": [
-            "Scenario severe-hypoglycemia-recurrence carries stable content version 0.1.1.",
+            "Scenario severe-hypoglycemia-recurrence carries stable content version 0.1.2.",
             "Capability version 0.1.0-alpha.48 is bound by this audit."
           ]
         },
@@ -334,9 +334,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Eight observed-state tutor rules at version 0.1.0 provide Guided, Coached, and Unassisted behavior. An in-product expert demonstration is not yet bound to this lesson."
+            "Eight observed-state tutor rules at version 0.1.0 provide Guided, Coached, and Unassisted behavior. Worked example 0.1.0 follows accepted actions and observed responses through the real engine; tests/unit/endocrine-hypoglycemia-demonstration.test.ts and tests/ui/endocrine-hypoglycemia-demonstration.test.tsx verify timing, pause, takeover, and objective evidence."
           ]
         },
         {
@@ -364,7 +364,7 @@
           "id": "reference-transcripts",
           "status": "satisfied",
           "evidence": [
-            "src/modules/endocrine-metabolic/severe-hypoglycemia-fixtures.ts binds expert, commonError, and recovery fixtures to content 0.1.1 and seed 4901. Real-engine replay tests verify distinct outcomes and guidance independence."
+            "src/modules/endocrine-metabolic/severe-hypoglycemia-fixtures.ts binds expert, commonError, and recovery fixtures to content 0.1.2 and seed 4901. Real-engine replay tests verify distinct outcomes and guidance independence."
           ]
         },
         {

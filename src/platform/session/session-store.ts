@@ -190,7 +190,7 @@ export const useSession = create<SessionState>((set, get) => ({
 
   play() {
     internals.clock.play();
-    set({ transport: 'running', phase: 'running' });
+    set({ transport: 'running', phase: 'running', catchUpNotice: false });
   },
 
   pause() {
@@ -268,7 +268,10 @@ export const useSession = create<SessionState>((set, get) => ({
     const ticks = internals.clock.ticksFor(elapsedMs);
     if (ticks > 0) internals.client?.advance(ticks);
     const snapshot = internals.clock.snapshot();
-    if (snapshot.catchUpWasCapped) set({ catchUpNotice: true, transport: 'paused' });
+    if (snapshot.catchUpWasCapped) {
+      internals.clock.pause();
+      set({ catchUpNotice: true, transport: 'paused' });
+    }
     if (get().tick !== snapshot.tick) set({ tick: snapshot.tick, elapsed: snapshot.elapsed });
   },
 

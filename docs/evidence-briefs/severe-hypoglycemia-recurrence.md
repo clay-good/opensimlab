@@ -45,3 +45,31 @@ The 0.1.1 full CI run passed 438 test files and 3,263 tests. Live browser checks
 Guided orientation, rationale, collapse control, authoritative source link, and transition to
 rescue guidance only after a glucose observation. These checks do not replace moderated
 accessibility or clinical validation.
+
+Content 0.1.2 adds a worked example driven by accepted observations and actions, not absolute
+script times. It sends ten ordinary decisions across the two rescue cycles, waits for actual
+post-rescue checkpoints, and stops if the first recheck is missed. Display-cadence tests verify
+the same decision sequence and successful objective evidence at 1-, 37-, and 600-tick intervals,
+then replay each recorded action trace exactly. React tests cover duplicate renders, pause,
+readable findings with disabled decision controls, and takeover without a patient reset. The
+session-level test includes the real clock, transcript recorder, and in-process worker protocol.
+The 60× default is a presentation choice; learners may pause or change speed. No new clinical
+parameter, treatment claim, or validation sign-off is introduced.
+
+The session test also exposed a catch-up defect: the transport displayed “paused” while later
+frames advanced the internal clock. A failing regression observed tick 50 become 60 during this
+claimed pause. The session now pauses the internal clock too, and Resume clears the notice.
+
+A 1,280 × 720 browser check also found the fixed report launcher intercepting the worked
+example's takeover button. Both overlays now share the responsive demonstration-height
+reservation. The report launcher remains available above the strip; a regression checks
+the shared desktop and stacked-height definitions. These are engineering checks, not
+moderated accessibility approval.
+
+The repaired browser flow preserved simulated time 00:08:31 and the observed glucose of
+36 mg/dL on takeover, removed the narration strip, enabled decision controls, and selected
+1× speed. The live report dialog was centered at (640, 360) in a 1,280 × 720 viewport,
+accepted 160 characters, and remained unavailable on localhost without sending a report.
+
+The final 0.1.2 CI run passed 440 test files and 3,273 tests, including the clock-freeze,
+report-overlay, real-session replay, and worked-example regressions.

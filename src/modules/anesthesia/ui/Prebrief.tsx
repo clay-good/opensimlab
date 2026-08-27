@@ -319,12 +319,12 @@ export function Prebrief({
       <div className="prebrief__start">
         <Button variant="primary" onClick={onStart}>Start the scenario</Button>
         {onWatch && (
-          <Button onClick={onWatch}>Watch a 90-second demonstration</Button>
+          <Button onClick={onWatch}>{hypoglycemia ? 'Watch a worked example' : 'Watch a 90-second demonstration'}</Button>
         )}
       </div>
       {onWatch && (
         <p className="field__hint">
-          The demonstration runs this scenario at five times speed and explains what to look at.
+          {hypoglycemia ? 'The worked example runs at 60× speed, waits for accepted actions and observed responses, and explains each phase. Pause to read whenever you like. ' : 'The demonstration runs this scenario at five times speed and explains what to look at. '}
           You can take the controls at any point and carry on from where it got to.
         </p>
       )}

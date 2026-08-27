@@ -79,6 +79,6 @@ export const HYPOGLYCEMIA_TUTOR_RULES: readonly TutorRule[] = rules.map(({ obser
   cooldownSeconds: 90,
   prompt: { ...rule.prompt, sourceHref: HYPOGLYCEMIA_TUTOR_SOURCE_URL },
   applies: (input: GuidanceInput) => input.scenarioId === 'severe-hypoglycemia-recurrence'
-    && input.scenarioVersion === '0.1.1'
+    && input.scenarioVersion === '0.1.2'
     && !!input.hypoglycemia && !input.hypoglycemia.ended && observed(input.hypoglycemia),
 }));

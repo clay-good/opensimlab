@@ -66,6 +66,7 @@ When the browser throttles or suspends timers, the engine SHALL cap the number o
 
 - **WHEN** the tab is hidden for 10 minutes at 1× speed and then made visible
 - **THEN** at most 5 simulated seconds of catch-up are executed, a notice states that the simulation was paused while hidden, and the learner may choose to resume or reset
+- **AND** subsequent animation frames do not advance the internal clock until the learner explicitly resumes; resuming dismisses the notice
 
 ### Requirement: Deterministic Session Transcript
 

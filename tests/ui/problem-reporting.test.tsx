@@ -24,6 +24,16 @@ const serviceConfig = {
 };
 
 describe('shared problem report dialog', () => {
+  it('keeps the report launcher above the shared demonstration strip at every breakpoint', () => {
+    const cockpitCss = readFileSync(join(process.cwd(), 'src/modules/anesthesia/ui/cockpit.css'), 'utf8');
+    // Both are fixed overlays. Share the responsive height through their common
+    // root so the report launcher cannot intercept the takeover button.
+    expect(cockpitCss).toContain(':root:has(.cockpit[data-demo-focus]) { --demo-bar-height: 5rem; }');
+    expect(cockpitCss).toContain(':root:has(.cockpit[data-demo-focus]) { --demo-bar-height: 10rem; }');
+    const offsets = [...reportingCss.matchAll(/inset-block-end:\s*([^;]+);/g)].map((match) => match[1]);
+    expect(offsets).toEqual(['calc(var(--demo-bar-height, 0px) + var(--space-4))']);
+  });
+
   let container: HTMLDivElement;
   let root: Root;
   const fetchMock = vi.fn(async (_input?: RequestInfo | URL, _init?: RequestInit) =>

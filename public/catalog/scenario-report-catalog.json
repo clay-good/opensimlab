@@ -1856,6 +1856,23 @@
       "limitationManifestHash": "sha256:a70c4e46b188581d62668b022f9da517523f0fcf74fa43d8692d97b18a3bf0fc"
     },
     {
+      "scenarioId": "severe-hypoglycemia-recurrence",
+      "contentVersion": "0.1.2",
+      "moduleId": "endocrine-metabolic",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:4696f671e8680dc0e8550c8204e57733fd9f1d51b0bd42dfe9f588b4807bbfa5",
+      "defaultsHash": "sha256:5407d5519d7df9d93c4c0c6cf6b65dc0b0ec2bf07f06d2e385cf2a20f09c858a",
+      "maturityHash": "sha256:5bbb861457fcefad35c58502ad4b618534d48650e5f0032e535c7fa91b7b14d3",
+      "sourceManifestHash": "sha256:0897ebc60f9d7b2ad067d68734ed6f838176664163e11272c47b9079f47e79f5",
+      "limitationManifestHash": "sha256:a70c4e46b188581d62668b022f9da517523f0fcf74fa43d8692d97b18a3bf0fc"
+    },
+    {
       "scenarioId": "delivery-room-to-nicu-handoff",
       "contentVersion": "0.1.0",
       "moduleId": "neonatology",

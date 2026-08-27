@@ -298,6 +298,13 @@ describe('The worker protocol, the store, and the interface values', () => {
     expect(useSession.getState().tick).toBeLessThanOrEqual(5 * TICKS_PER_SECOND);
     expect(useSession.getState().catchUpNotice).toBe(true);
     expect(useSession.getState().transport).toBe('paused');
+    const pausedTick = useSession.getState().tick;
+    useSession.getState().frame(1000);
+    expect(useSession.getState().tick).toBe(pausedTick);
+    useSession.getState().play();
+    useSession.getState().frame(100);
+    expect(useSession.getState().tick).toBeGreaterThan(pausedTick);
+    expect(useSession.getState().catchUpNotice).toBe(false);
   });
 
   it('Scenario: Reset requires confirmation and clears state', () => {

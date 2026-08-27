@@ -2,14 +2,16 @@ import { Button } from '@platform/ui';
 import type { SevereHypoglycemiaSnapshot } from '@platform/kernel/protocol';
 import type { HypoglycemiaAction } from './severe-hypoglycemia';
 
-export function SevereHypoglycemiaTray({ assessment, onAction }: {
+export function SevereHypoglycemiaTray({ assessment, onAction, demonstrating = false }: {
   readonly assessment?: SevereHypoglycemiaSnapshot;
   readonly onAction: (action: HypoglycemiaAction) => void;
+  readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
   const rescueAvailable = assessment.firstRescueAtTick === null
     || (assessment.recurrenceActive && assessment.secondRescueAtTick === null);
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
     <section className="syringe" aria-labelledby="hypoglycemia-observe-title">
       <div id="hypoglycemia-observe-title" className="syringe__name">Notice the person. Verify the glucose.</div>
       <p className="syringe__remaining" role="status">
@@ -19,9 +21,9 @@ export function SevereHypoglycemiaTray({ assessment, onAction }: {
       </p>
       <p className="syringe__remaining">{assessment.medicationReviewed ? 'Record: glimepiride, kidney disease, and poor intake for 2 days. Qualified medication, nutrition, and recurrence review remain necessary.' : 'The medication and intake record is available to review.'}</p>
       {!assessment.ended && <div className="crisis-drug__actions">
-        <Button onClick={() => onAction('check-glucose')}>Check bedside glucose</Button>
-        {!assessment.medicationReviewed && <Button onClick={() => onAction('review-medications')}>Review medication and intake record</Button>}
-        {!assessment.supportActive && <Button onClick={() => onAction('call-support')}>Call qualified support</Button>}
+        <Button disabled={demonstrating} onClick={() => onAction('check-glucose')}>Check bedside glucose</Button>
+        {!assessment.medicationReviewed && <Button disabled={demonstrating} onClick={() => onAction('review-medications')}>Review medication and intake record</Button>}
+        {!assessment.supportActive && <Button disabled={demonstrating} onClick={() => onAction('call-support')}>Call qualified support</Button>}
       </div>}
     </section>
     <section className="syringe" aria-labelledby="hypoglycemia-act-title">
@@ -30,12 +32,12 @@ export function SevereHypoglycemiaTray({ assessment, onAction }: {
       {assessment.recheckDueInSeconds !== null && !assessment.ended && <p className="syringe__remaining">Post-rescue check due in {assessment.recheckDueInSeconds} simulated seconds. Use the 60× clock speed to move through the observation period.</p>}
       {!assessment.ended && <div className="crisis-drug__actions">
         {rescueAvailable && <>
-          <Button disabled={!assessment.supportActive || assessment.glucoseMgPerDl === null} onClick={() => onAction('iv-rescue')}>{assessment.recurrenceActive ? 'Request repeat qualified IV rescue' : 'Request qualified IV rescue'}</Button>
-          <Button onClick={() => onAction('oral-glucose')}>Choose oral glucose</Button>
+          <Button disabled={demonstrating || !assessment.supportActive || assessment.glucoseMgPerDl === null} onClick={() => onAction('iv-rescue')}>{assessment.recurrenceActive ? 'Request repeat qualified IV rescue' : 'Request qualified IV rescue'}</Button>
+          <Button disabled={demonstrating} onClick={() => onAction('oral-glucose')}>Choose oral glucose</Button>
         </>}
-        {(assessment.firstRecheckComplete || assessment.secondRecheckComplete) && !assessment.monitoringActive && <Button onClick={() => onAction('continue-monitoring')}>Continue supervised monitoring</Button>}
-        {assessment.firstRecheckComplete && !assessment.recurrenceActive && !assessment.secondRecheckComplete && <Button onClick={() => onAction('close-case')}>Close the episode after this result</Button>}
-        {assessment.secondRecheckComplete && <Button onClick={() => onAction('handoff')}>Hand off with ongoing monitoring</Button>}
+        {(assessment.firstRecheckComplete || assessment.secondRecheckComplete) && !assessment.monitoringActive && <Button disabled={demonstrating} onClick={() => onAction('continue-monitoring')}>Continue supervised monitoring</Button>}
+        {assessment.firstRecheckComplete && !assessment.recurrenceActive && !assessment.secondRecheckComplete && <Button disabled={demonstrating} onClick={() => onAction('close-case')}>Close the episode after this result</Button>}
+        {assessment.secondRecheckComplete && <Button disabled={demonstrating} onClick={() => onAction('handoff')}>Hand off with ongoing monitoring</Button>}
       </div>}
     </section>
   </>;
