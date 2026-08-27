@@ -72,10 +72,10 @@ Seed 4903 and exact-version expert, common-error, recovery, and no-action fixtur
 shared engine. Model tests cover boundaries, partial care, stale observations, duplicate actions,
 recovery, and both stop conditions. Real-engine checks cover replay hashes, five debrief findings,
 generic-action isolation, and bounded report context. Inline tutor text reads accepted actions and
-observations only; it stays quiet during alarms and is hidden in Unassisted mode. Its source link
+observations only; its static aside makes no live announcement and is hidden in Unassisted mode. Its source link
 pauses the simulation before opening.
 
-A worked example, full inclusive-runtime evidence, independent clinical review, exact-version
+Full inclusive-runtime evidence, independent clinical review, complete exact-version
 four-surface reporting coverage, and production submission verification remain pending. Catalog
 registration, authored fixtures, and passing development checks do not establish full completion.
 
@@ -101,3 +101,57 @@ Final full CI passed 3,422 tests across 450 files, all 30 specs, lint, TypeScrip
 asset-budget, and font checks. The indexable build verified 218 routes. The 212 preview-channel
 blockers remain explicit. Long real-engine replay tests retain every tick and use a test-specific
 two-minute timeout for full-suite contention; production performance budgets were not raised.
+
+## Learner-paced worked example, 2026-08-27
+
+Worked-example version 0.1.0 adds nine explicit decisions through the ordinary action path:
+synthesis blockade, supportive care, qualified support, circulation assessment, individualized
+rate-control review, early reassessment, sequence-compliant iodine, fresh later reassessment, and
+ongoing-care handoff. Accepted actions and observations select the next narration. Reading pauses
+the patient; Continue sends one decision, then resumes at 60× for the next accepted snapshot or
+observation interval. The source-derived one-hour interval remains separate from the authored
+two-hour partial-support checkpoint. No clinical behavior, patient default, or source changes.
+
+Only one tutor narration appears while watching. Manual treatment buttons remain mounted but
+unavailable until takeover, and the pausing source link remains available. Takeover preserves the
+patient, cancels pending decisions, and restores 1× speed. Reset followed by manual Start also
+restores 1×. Callback guards reject duplicate activation, old steps, previous runs, and disposed
+controllers. Reporting captures pause intent at opening and never automatically resumes an
+example on dismissal, even if a pending final frame finishes it meanwhile.
+
+Pure-model tests exercise nine decisions at three display cadences, whole-state/event replay,
+both exact timing boundaries, recovery with retained errors, hidden-observation limits, and both
+stop conditions. UI tests exercise stopped reading, stable focus, one decision per activation,
+stale callbacks, explicit takeover/restart, and both independently paused waiting phases. The
+shared-session integration drives the actual clock, recorder, worker protocol, and engine, then
+reconstructs the full transcript and compares patient state and the thyroid snapshot.
+
+Route/form tests use the real briefing, debrief, shared report modal, payload projection, and
+Worker validator, with local session/transport and network stubs. They cover exact-version
+identity, unknown-version rejection, 160-character client/server limits, opt-in default/reset,
+20-action and 32-scalar bounds, excluded prose and reflections, and briefing/live/example/debrief/
+replay/source entry. Worked examples and replay use the existing `live` report surface; no new
+unverifiable client label is invented. These tests call neither production Turnstile nor D1.
+
+Browser checks used the real development route at 1,280 × 720 and a temporary same-origin
+320 × 568 iframe. On desktop, six explicit Continue activations reached the iodine observation
+period; each treatment decision paused for reading. The report measured 560 × 619.1875 px,
+centered at (640, 360), with a 160-character note and unchecked context choice. Cancel preserved
+the displayed 00:00:28 time, returned focus to Report, and required an explicit Play. Continue,
+takeover, and Report all passed center-point hit tests after dismissing the browser's protective
+hidden-tab pause.
+
+On the phone-size view, the narration had its own visible scrollbar and both example controls
+remained unobscured beneath it. Report opened centered in the iframe; Cancel and Continue were
+reachable. Taking over after the first decision preserved the 00:00:03 time and accepted synthesis
+blockade, removed example narration, and restored the other choices in Actions. These screenshots
+and interactions are engineering evidence, not native keyboard, screen-reader, or 400% zoom
+conformance. The browser's hidden-tab safeguard interrupted long unattended waits; the complete
+three-hour handoff is proved by session/engine replay tests, not claimed as a completed browser run.
+No challenge was solved and no browser report was submitted. The temporary page was removed.
+
+Final frozen-state CI passed 3,450 tests across 453 files, all 30 specs, lint, TypeScript,
+static-host, asset budgets, and font checks. The indexable build again verified 218 routes;
+197 scenarios remain registered and 212 preview-channel blockers remain explicit. The four-hour
+boundary replay now shares the other long thyroid tests' two-minute timeout to accommodate
+full-suite contention; all simulated ticks and assertions remain, and runtime budgets are unchanged.

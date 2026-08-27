@@ -30,6 +30,8 @@ import { useHypoglycemiaDemonstration } from '../../endocrine-metabolic/demo/use
 import { supportsHypoglycemiaDemonstration } from '../../endocrine-metabolic/demo/hypoglycemia-demonstration';
 import { useAdrenalDemonstration } from '../../endocrine-metabolic/demo/useAdrenalDemonstration';
 import { supportsAdrenalDemonstration } from '../../endocrine-metabolic/demo/adrenal-demonstration';
+import { useThyroidDemonstration } from '../../endocrine-metabolic/demo/useThyroidDemonstration';
+import { supportsThyroidDemonstration } from '../../endocrine-metabolic/demo/thyroid-demonstration';
 import { WhyPanel } from './WhyPanel';
 import {
   announcementsFor, arterialLineSummary, breathingCircuitSummary, mechanicalPulseFromState, stateSummary,
@@ -155,8 +157,9 @@ export function Cockpit({
   // does, so what it shows is the engine and not a recording of it.
   const hypoglycemiaDemoSupported = supportsHypoglycemiaDemonstration(scenario);
   const adrenalDemoSupported = supportsAdrenalDemonstration(scenario);
+  const thyroidDemoSupported = supportsThyroidDemonstration(scenario);
   const inductionDemonstration = useDemonstration({
-    active: demonstrating && !hypoglycemiaDemoSupported && !adrenalDemoSupported,
+    active: demonstrating && !hypoglycemiaDemoSupported && !adrenalDemoSupported && !thyroidDemoSupported,
     tick: session.tick,
     act: session.act,
     onFinished: () => onTakeControls?.(),
@@ -173,7 +176,13 @@ export function Cockpit({
     pause: session.pause, play: session.play,
     act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = adrenalDemoSupported ? adrenalDemonstration
+  const thyroidDemonstration = useThyroidDemonstration({
+    active: demonstrating && thyroidDemoSupported,
+    running: session.transport === 'running', patient: session.equipment?.resuscitation.thyroidStorm,
+    pause: session.pause, play: session.play,
+    act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const demonstration = thyroidDemoSupported ? thyroidDemonstration : adrenalDemoSupported ? adrenalDemonstration
     : hypoglycemiaDemoSupported ? hypoglycemiaDemonstration : inductionDemonstration;
   const [colorblindSafe] = useLocalPreference('colorblind-safe', false);
   const [whyField, setWhyField] = useState<StateField | null>(null);
@@ -701,6 +710,7 @@ export function Cockpit({
       <div className="cockpit__actions">
         <ActionCockpit
           thyroidGuidance={session.guidance}
+          thyroidDemonstrating={demonstrating && thyroidDemoSupported}
           onThyroidTutorSource={session.pause}
           adrenalGuidance={session.guidance}
           adrenalDemonstrating={demonstrating && adrenalDemoSupported}

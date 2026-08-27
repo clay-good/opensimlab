@@ -2579,6 +2579,7 @@ export interface ActionCockpitProps {
   readonly onAdrenalCrisisResponse?: (action: AdrenalCrisisAction) => void;
   readonly onThyroidStormResponse?: (action: ThyroidStormAction) => void;
   readonly thyroidGuidance?: GuidanceLevel;
+  readonly thyroidDemonstrating?: boolean;
   readonly onThyroidTutorSource?: () => void;
   readonly adrenalGuidance?: GuidanceLevel;
   readonly adrenalDemonstrating?: boolean;
@@ -5289,6 +5290,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasThyroidStormResponse && (
               <ThyroidStormTray assessment={props.resuscitation.thyroidStorm} guidance={props.thyroidGuidance}
+                demonstrating={props.thyroidDemonstrating}
                 scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onThyroidTutorSource}
                 onAction={props.onThyroidStormResponse ?? (() => {})} />
             )}

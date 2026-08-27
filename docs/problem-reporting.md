@@ -35,6 +35,11 @@ note, context choice, and prior security token. Cockpit shortcuts do not run whi
 control or dialog owns keyboard focus. Regression tests cover success, failure, pending sends,
 focus restoration, and fresh reopening without contacting the live service.
 
+Reporting pauses the simulation. Ordinary practice resumes only if it was running when the
+dialog opened. A worked example stays paused after either cancellation or confirmation; the
+learner explicitly chooses Play or the next Continue decision. This intent is captured at opening,
+so a late final example frame cannot silently change the dismissal behavior.
+
 When a report opens above a source drawer, only the top dialog handles Escape and Tab.
 Closing the report preserves the drawer and returns focus to its report control; a pending
 send cannot dismiss either layer with Escape. Nonmodal drawers still permit background

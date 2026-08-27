@@ -70,7 +70,8 @@ describe('Thyroid storm: real engine decisions, time, and replay', () => {
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'endocrine-metabolic', 'ward', 'state_transition');
     expect(audit.complete).toBe(false);
     expect(audit.requirements.filter(({ status }) => status === 'missing').map(({ id }) => id))
-      .toEqual(['guidance-and-demonstration', 'inclusive-runtime-verification', 'report-control-coverage']);
+      .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
+    expect(audit.requirements.find(({ id }) => id === 'guidance-and-demonstration')?.status).toBe('satisfied');
     expect(thyroidCompletionEvidence(SCENARIO, ENGINE_VERSION, 'endocrine-metabolic').length).toBeGreaterThan(0);
     expect(thyroidCompletionEvidence({ ...SCENARIO, metadata: { ...SCENARIO.metadata, version: '0.1.1' } }, ENGINE_VERSION, 'endocrine-metabolic')).toEqual([]);
     expect(thyroidCompletionEvidence({ ...SCENARIO, patient: { ...SCENARIO.patient, weightKg: SCENARIO.patient.weightKg + 1 } }, ENGINE_VERSION, 'endocrine-metabolic')).toEqual([]);
@@ -150,7 +151,8 @@ describe('Thyroid storm: real engine decisions, time, and replay', () => {
     expect(result.patient.ended).toBe('instructor-takeover');
     expect(result.events.filter(({ eventId }) => eventId.startsWith('thyroid-storm-response-'))).toHaveLength(1);
     expect(result.events.filter(({ eventId }) => eventId.startsWith('thyroid-storm-instructor-takeover-'))).toHaveLength(1);
-  }, 60_000);
+  // Four hours of whole-tick evidence shares CI workers with other long replays.
+  }, 120_000);
 
   it('rejects generic, malformed, and injected payloads and never lets a forged tick advance care', () => {
     const engine = newEngine(); const control = newEngine();

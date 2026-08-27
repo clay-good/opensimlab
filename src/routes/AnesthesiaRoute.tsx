@@ -22,6 +22,7 @@ import { Prebrief } from '@anesthesia/ui/Prebrief';
 import { DEMONSTRATION_SCENARIO_ID, demonstrationRequested } from '@anesthesia/demo/demonstration';
 import { supportsHypoglycemiaDemonstration } from '../modules/endocrine-metabolic/demo/hypoglycemia-demonstration';
 import { supportsAdrenalDemonstration } from '../modules/endocrine-metabolic/demo/adrenal-demonstration';
+import { supportsThyroidDemonstration } from '../modules/endocrine-metabolic/demo/thyroid-demonstration';
 import { Cockpit } from '@anesthesia/ui/Cockpit';
 import { Debrief } from '@anesthesia/ui/Debrief';
 import { assertTranscriptIsAnonymous, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
@@ -374,7 +375,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
       candidate === null || (typeof candidate === 'string' && REGIONS.some((r) => r.id === candidate)),
   );
   const audio = useMemo(() => new SonificationEngine(), []);
-  const reportWasRunning = useRef(false);
+  const reportShouldResume = useRef(false);
   const reportRequestSequence = useRef(0);
   const [reportRequest, setReportRequest] = useState<{
     id: number;
@@ -411,12 +412,14 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
       }}
       {...(reportRequest ? { openRequest: reportRequest.id } : {})}
       onOpen={() => {
-        reportWasRunning.current = session.transport === 'running';
-        if (reportWasRunning.current) session.pause();
+        // Capture intent before a pending final frame can finish the example.
+        reportShouldResume.current = session.transport === 'running' && !demonstrating;
+        if (session.transport === 'running') session.pause();
       }}
       onClose={() => {
-        if (reportWasRunning.current) session.play();
-        reportWasRunning.current = false;
+        // Closing a report is not consent to restart a 60× worked example.
+        if (reportShouldResume.current) session.play();
+        reportShouldResume.current = false;
         setReportRequest(null);
       }}
     />
@@ -462,7 +465,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
     if (session.phase !== 'briefing' && session.phase !== 'idle') return;
     if (!session.ready) return;
     const endocrineDemo = config.id === 'endocrine-metabolic'
-      && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario));
+      && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario));
     if (!endocrineDemo && (config.id !== 'anesthesia' || scenario.metadata.id !== DEMONSTRATION_SCENARIO_ID)) return;
     autoDemo.current = false;
     setDemonstrating(true);
@@ -558,10 +561,14 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
           guidance={session.guidance}
           onGuidance={session.setGuidance}
           onReportLimitation={() => requestReport('limitation')}
-          onStart={() => { setDemonstrating(false); session.play(); }}
+          onStart={() => {
+            // Resetting an example returns here with its accelerated clock.
+            if (demonstrating) session.setSpeed(1);
+            setDemonstrating(false); session.play();
+          }}
           {...(config.id === 'anesthesia' && scenario.metadata.id === DEMONSTRATION_SCENARIO_ID
             ? { onWatch: () => { setDemonstrating(true); session.setSpeed(5); session.play(); } }
-            : config.id === 'endocrine-metabolic' && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario))
+            : config.id === 'endocrine-metabolic' && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario))
             ? { onWatch: () => { setDemonstrating(true); session.setSpeed(60); session.play(); } }
             : {})}
           {...(assignment.label ? { assignmentLabel: assignment.label } : {})}

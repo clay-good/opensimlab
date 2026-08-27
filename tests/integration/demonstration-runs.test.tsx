@@ -30,6 +30,9 @@ import { useHypoglycemiaDemonstration } from '../../src/modules/endocrine-metabo
 import { SEVERE_HYPOGLYCEMIA_RECURRENCE } from '../../src/modules/endocrine-metabolic/scenarios/severe-hypoglycemia-recurrence';
 import { useAdrenalDemonstration } from '../../src/modules/endocrine-metabolic/demo/useAdrenalDemonstration';
 import { ADRENAL_CRISIS_TREATMENT_BEFORE_TESTS } from '../../src/modules/endocrine-metabolic/scenarios/adrenal-crisis-treatment-before-tests';
+import { useThyroidDemonstration } from '../../src/modules/endocrine-metabolic/demo/useThyroidDemonstration';
+import { THYROID_STORM_HEMODYNAMIC_RISK } from '../../src/modules/endocrine-metabolic/scenarios/thyroid-storm-hemodynamic-risk';
+import { THYROID_IODINE_WAIT_TICKS, THYROID_RESPONSE_TICKS } from '../../src/modules/endocrine-metabolic/thyroid-storm';
 import type { PatientState } from '@anesthesia/physiology';
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import { useDemonstration } from '@anesthesia/demo/useDemonstration';
@@ -423,6 +426,83 @@ describe('the demonstration, run for its full length', () => {
       expect(finishes).toBe(1); expect(worker.applied).toHaveLength(7);
     } finally { act(() => exampleRoot.unmount()); exampleContainer.remove(); }
   }, 30_000);
+
+  it('runs the thyroid example through both distinct waits and replays its real session transcript', () => {
+    const exampleContainer = document.createElement('div'); document.body.appendChild(exampleContainer);
+    const exampleRoot = createRoot(exampleContainer); const scenario = THYROID_STORM_HEMODYNAMIC_RISK;
+    const worker = new InProcessWorker(); let finishes = 0; let decisions = 0;
+    const advance = { current: undefined as (() => void) | undefined };
+    const pausedWaits = new Set<string>();
+    function ThyroidHarness() {
+      const session = useSession();
+      const demonstration = useThyroidDemonstration({ active: true, running: session.transport === 'running',
+        patient: session.equipment?.resuscitation.thyroidStorm, act: session.act,
+        pause: session.pause, play: session.play, onFinished: () => { finishes += 1; },
+      });
+      advance.current = demonstration.onAdvance;
+      return null;
+    }
+    try {
+      act(() => {
+        useSession.getState().begin({ scenarioId: scenario.metadata.id, scenarioVersion: scenario.metadata.version,
+          contentVersion: scenario.metadata.version, modelSetRevision: MODEL_SET_REVISION, engineVersion: ENGINE_VERSION,
+          practiceRegion: 'US', seed: 4903, scenario,
+        }, () => worker as unknown as Worker, { engine: ENGINE_VERSION, content: scenario.metadata.version,
+          modelSet: MODEL_SET_REVISION, scenario: scenario.metadata.version }, 'endocrine-metabolic');
+        exampleRoot.render(createElement(ThyroidHarness));
+        useSession.getState().setSpeed(60); useSession.getState().play();
+      });
+      for (let batch = 0; batch < 2000 && !useSession.getState().equipment?.resuscitation.thyroidStorm?.ended; batch += 1) {
+        if (advance.current) { advancePausedDecision(advance.current, worker); decisions += 1; }
+        const patient = useSession.getState().equipment?.resuscitation.thyroidStorm;
+        const wait = patient && patient.iodineAtTick === null && patient.observation
+          && patient.iodineDueInSeconds !== null && patient.iodineDueInSeconds > 0 ? 'iodine'
+          : patient && patient.iodineAtTick !== null && patient.responseDueInSeconds !== null
+            && patient.responseDueInSeconds > 0 ? 'partial-support' : null;
+        if (wait && !pausedWaits.has(wait)) {
+          pausedWaits.add(wait);
+          act(() => useSession.getState().pause());
+          const tick = useSession.getState().tick; const count = worker.applied.length;
+          act(() => { for (let frame = 0; frame < 60; frame += 1) useSession.getState().frame(1000 / 60); });
+          expect(useSession.getState().tick).toBe(tick);
+          expect(useSession.getState().equipment?.resuscitation.thyroidStorm).toEqual(patient);
+          expect(worker.applied).toHaveLength(count);
+          act(() => useSession.getState().play());
+        }
+        act(() => { for (let frame = 0; frame < 6; frame += 1) useSession.getState().frame(1000 / 60); });
+      }
+      expect(finishes).toBe(1); expect(decisions).toBe(9);
+      expect(pausedWaits).toEqual(new Set(['iodine', 'partial-support']));
+      expect(useSession.getState().transport).toBe('paused');
+      expect(worker.applied).toEqual([
+        'synthesis-blockade', 'supportive-care', 'call-support', 'assess-circulation', 'rate-control-review',
+        'reassess', 'iodine', 'reassess', 'handoff',
+      ].map((action) => ({ type: 'thyroid-storm-response', payload: { action } })));
+      expect(useSession.getState().equipment?.resuscitation.thyroidStorm).toMatchObject({
+        ended: 'handoff', responseObserved: true, urgentCoverageDelayed: false, earlyIodineAttempted: false,
+        durableRecoveryProven: false, observation: { heartRateBpm: 132, coreTemperatureC: 39.3 },
+      });
+      const transcript = sessionInternals().recorder!.build('pending');
+      const actions = transcript.actions.filter((action) => action.type === 'thyroid-storm-response');
+      const synthesis = actions.find((action) => action.payload.action === 'synthesis-blockade')!;
+      const iodine = actions.find((action) => action.payload.action === 'iodine')!;
+      const reassessments = actions.filter((action) => action.payload.action === 'reassess');
+      expect(iodine.tick - synthesis.tick).toBeGreaterThanOrEqual(THYROID_IODINE_WAIT_TICKS);
+      expect(reassessments[0]!.tick).toBeLessThan(iodine.tick);
+      expect(reassessments[1]!.tick - iodine.tick).toBeGreaterThanOrEqual(THYROID_RESPONSE_TICKS);
+      const replay = new AnesthesiaEngine({ scenario, seed: 4903, practiceRegion: 'US' });
+      let last;
+      for (let tick = 0; tick < useSession.getState().tick; tick += 1) {
+        for (const action of transcript.actions) if (action.tick === tick) replay.apply(action);
+        last = replay.step();
+      }
+      expect(last?.state).toEqual(useSession.getState().state);
+      expect(replay.equipment().resuscitation.thyroidStorm).toEqual(useSession.getState().equipment?.resuscitation.thyroidStorm);
+      act(() => { exampleRoot.render(createElement(ThyroidHarness)); useSession.getState().frame(100); });
+      expect(finishes).toBe(1); expect(worker.applied).toHaveLength(9);
+    } finally { act(() => exampleRoot.unmount()); exampleContainer.remove(); }
+  // Two complete three-hour, whole-tick runs include session recording and replay.
+  }, 120_000);
 
   it('invalidates a pending adrenal decision when the learner takes over the session', () => {
     const exampleContainer = document.createElement('div'); document.body.appendChild(exampleContainer);

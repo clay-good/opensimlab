@@ -14,6 +14,12 @@ frame and SHALL NOT implement private reporting variants.
 - **THEN** the report dialog opens in one activation, pauses a running local simulation, and retains
   the exact local state if canceled or completed
 
+#### Scenario: Reporting does not restart a worked example
+
+- **WHEN** a report opens during a worked example and is canceled or completed
+- **THEN** the example remains paused until the learner explicitly resumes or continues a decision
+- **AND** a pending final example frame cannot change that captured pause intent
+
 #### Scenario: A keyboard-only report is quick
 
 - **WHEN** the documented keyboard procedure starts from the live frame

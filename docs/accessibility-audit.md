@@ -89,6 +89,22 @@ Full CI passed 3,371 tests across 447 files, including 22 added regressions. All
 lint, TypeScript, static-host checks, asset budgets, and font checks passed. The indexable
 build verified 217 routes; its 211 preview-channel blockers remain open.
 
+## Thyroid worked-example controls, 2026-08-27
+
+The exact content 0.1.0 worked example uses stopped-clock reading, a stable Continue control,
+and one narration at a time. Desktop browser checks passed hit tests for Continue, takeover,
+and Report. Reporting was centered at (640, 360) in a 1,280 × 720 viewport, kept context opt-in
+off, and returned focus without restarting the accelerated example. A 320 × 568 same-origin
+iframe showed independently scrolling narration and unobscured Continue/takeover controls;
+Report, cancellation, one decision, and takeover were exercised through the actual route.
+
+Shared-controller regressions reject callbacks from earlier steps, previous runs, and unmounted
+cockpits. Route regressions preserve report pause intent across a late final frame and restore
+1× speed when an example is reset into manual practice. Final CI passed 3,450 tests across
+453 files. Browser observation did not establish full timed handoff, native keyboard completion,
+screen-reader usability, or 400% zoom conformance; those claims are not promoted. Detailed
+scope is in the [thyroid evidence brief](evidence-briefs/thyroid-storm-hemodynamic-risk.md).
+
 ## Still owed, and only a person can do it
 
 The thyroid-storm content 0.1.0 engineering check is recorded in

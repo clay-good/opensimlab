@@ -4,18 +4,19 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { ThyroidStormAction, ThyroidStormSnapshot } from './thyroid-storm';
 import { thyroidInlinePrompt, THYROID_SOURCE_HREF } from './tutor/thyroid-guidance';
 
-export function ThyroidStormTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', onOpenSource }: {
+export function ThyroidStormTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', onOpenSource, demonstrating = false }: {
   readonly assessment?: ThyroidStormSnapshot;
   readonly scenarioVersion: string;
   readonly onAction: (action: ThyroidStormAction) => void;
   readonly guidance?: GuidanceLevel;
   readonly onOpenSource?: () => void;
+  readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
   const prompt = thyroidInlinePrompt(guidance, { scenarioVersion, thyroidStorm: assessment });
   const observation = assessment.observation;
   const decision = (action: ThyroidStormAction, label: string, accepted = false) => {
-    const unavailable = !!assessment.ended || accepted;
+    const unavailable = demonstrating || !!assessment.ended || accepted;
     // Retain the focused control after accepted care; unavailable clicks do nothing.
     return <Button aria-disabled={unavailable} onClick={unavailable ? undefined : () => onAction(action)}>{label}</Button>;
   };
@@ -23,7 +24,8 @@ export function ThyroidStormTray({ assessment, scenarioVersion, onAction, guidan
     assessment.blanketBetaBlockadeChosen && 'blanket beta-blockade request',
     assessment.earlyIodineAttempted && 'early iodine request'].filter(Boolean);
   return <>
-    {prompt && <aside className="syringe" aria-label="Private tutor">
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
       <div className="syringe__name">A moment to think</div>
       <p className="syringe__remaining">{prompt.suggestion}</p>
       <p className="syringe__remaining">{prompt.because}</p>

@@ -586,9 +586,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Exact-version observed-state inline tutoring supports Guided, Coached, and Unassisted. A learner-paced worked example is not yet implemented."
+            "Exact-version observed-state inline tutoring supports Guided, Coached, and Unassisted. Worked example 0.1.0 pauses before nine real decisions and follows accepted iodine and partial-support intervals. tests/unit/endocrine-thyroid-demonstration.test.ts, tests/ui/endocrine-thyroid-demonstration.test.tsx, and tests/integration/demonstration-runs.test.tsx verify reading pauses, stale-callback rejection, takeover, both waiting phases, fresh reassessment, handoff, and real-session transcript replay."
           ]
         },
         {
@@ -630,7 +630,7 @@
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control, exact-version Worker catalog, and bounded opt-in thyroid context are integrated. Complete four-surface reporting and production Turnstile/D1 verification remain pending."
+            "The shared report control, exact-version Worker catalog, and bounded opt-in thyroid context are integrated. tests/ui/thyroid-report-surfaces.test.tsx verifies real route/form projection on briefing, live, example, debrief, replay, and source entry with local transport/network stubs. Complete inclusive four-surface reporting and production Turnstile/D1 verification remain pending."
           ]
         }
       ]

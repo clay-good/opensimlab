@@ -21,6 +21,7 @@ import type { RegionProfile } from '@anesthesia/region/profiles';
 import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
 import { supportsSevereHypoglycemia } from '../../endocrine-metabolic/severe-hypoglycemia';
 import { supportsAdrenalCrisis } from '../../endocrine-metabolic/adrenal-crisis';
+import { supportsThyroidDemonstration } from '../../endocrine-metabolic/demo/thyroid-demonstration';
 
 export const FICTION_CONTRACT =
   'This is a simulation. The patient is not real, nothing you do here reaches anyone, and an '
@@ -336,12 +337,12 @@ export function Prebrief({
       <div className="prebrief__start">
         <Button variant="primary" onClick={onStart}>Start the scenario</Button>
         {onWatch && (
-          <Button onClick={onWatch}>{hypoglycemia || supportsAdrenalCrisis(scenario) ? 'Watch a worked example' : 'Watch a 90-second demonstration'}</Button>
+          <Button onClick={onWatch}>{hypoglycemia || supportsAdrenalCrisis(scenario) || supportsThyroidDemonstration(scenario) ? 'Watch a worked example' : 'Watch a 90-second demonstration'}</Button>
         )}
       </div>
       {onWatch && (
         <p className="field__hint">
-          {hypoglycemia || supportsAdrenalCrisis(scenario) ? 'The worked example pauses before each decision so you can read. Choose “Continue example” when ready; observation periods run at 60× speed. Reading time does not advance the patient. ' : 'The demonstration runs this scenario at five times speed and explains what to look at. '}
+          {hypoglycemia || supportsAdrenalCrisis(scenario) || supportsThyroidDemonstration(scenario) ? 'The worked example pauses before each decision so you can read. Choose “Continue example” when ready; observation periods run at 60× speed. Reading time does not advance the patient. ' : 'The demonstration runs this scenario at five times speed and explains what to look at. '}
           You can take the controls at any point and carry on from where it got to.
         </p>
       )}

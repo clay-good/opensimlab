@@ -861,8 +861,14 @@ credited toward the catalog until every item in the completion contract passes.
     sequence, independent deterioration and partial-support states, fresh reassessment, and
     ongoing critical-care handoff. The August 2026 consensus and Japanese alternative are
     distinguished from authored clocks. Exact-version replay, five-objective debrief, quiet
-    inline tutoring, and bounded report context are implemented. Worked-example, clinical,
-    inclusive-runtime, and complete four-surface reporting evidence remain pending.
+    inline tutoring, and bounded report context are implemented. Clinical, inclusive-runtime,
+    and complete four-surface reporting evidence remain pending.
+  - [x] Thyroid-storm content 0.1.0 adds a learner-paced nine-decision worked example with
+    explicit early and later reassessments, source-derived iodine sequencing, and an authored
+    partial-support wait. Shared-session transcript replay verifies both intervals. Reading,
+    reporting, takeover, reset, and stale callbacks preserve learner control; restarting manual
+    practice after an example restores 1× speed. Local route/form tests cover briefing, live,
+    example, debrief, replay, and source reporting without claiming production submission.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
   - [x] Toxicology slice 1/15 establishes the indexable `/toxicology` module with one authored
     methemoglobinemia lab after documented topical benzocaine exposure. The learner reconciles
