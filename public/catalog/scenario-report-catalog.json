@@ -3114,6 +3114,23 @@
       "limitationManifestHash": "sha256:47c5afc640259fff8e75ce81224b5256dc7757597d03828509d8f88485251588"
     },
     {
+      "scenarioId": "hypermagnesemia-antagonism-and-removal",
+      "contentVersion": "0.1.0",
+      "moduleId": "renal-electrolyte",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:fcbf66e9287bd5069fc30e48ca9931105cb5dea14ee1e896dbcf8d819ea58ae1",
+      "defaultsHash": "sha256:d30e37857cfe7a8ea444352e2fffc9ab20991d42e4c212bb393e60e0bc23c3c6",
+      "maturityHash": "sha256:87876d355b609e030301cee9b290d7e74162a25c3d51b4b99992a1b68329c4f3",
+      "sourceManifestHash": "sha256:a9655c33326df4b21efd0536c84a602cfed76401115ba212317d2d5724a263ef",
+      "limitationManifestHash": "sha256:c126e14c7253499308ab2962ead322aceb36c51d564eccceb885dfd48eda8a50"
+    },
+    {
       "scenarioId": "hypernatremia-water-access-and-losses",
       "contentVersion": "0.1.0",
       "moduleId": "renal-electrolyte",

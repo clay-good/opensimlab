@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "moduleId": "renal-electrolyte",
   "capabilityVersion": "0.1.0-alpha.48",
-  "scenarioCount": 5,
+  "scenarioCount": 6,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -617,6 +617,132 @@
           "status": "satisfied",
           "evidence": [
             "hypocalcemia-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "hypermagnesemia-antagonism-and-removal",
+      "title": "Hypermagnesemia: antagonism and removal",
+      "moduleId": "renal-electrolyte",
+      "environment": "ward",
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario hypermagnesemia-antagonism-and-removal carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "5 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "hypermagnesemia-fixtures.ts binds seed 4999 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No stochastic magnesium kinetics is claimed."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "hypermagnesemia.ts separates breathing support, temporary calcium antagonism, clinical recurrence as its benefit ends, and qualified removal response. Calcium does not lower magnesium or restore reflexes. Residual weakness and respiratory-support needs persist after removal; unrequested magnesium and neuromuscular findings remain private."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "Dose-free choices independently provide breathing support, calcium antagonism, and qualified removal without administrative or repeat-test prerequisites. Stopping exposure, context review, monitoring, support, partial checks, and full reassessment remain distinct. Qualified repeat calcium requires fresh clinical review; routine diuresis and equating antagonism with clearance are refused."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "Stopped exposure, breathing and specialist support, context, monitoring, delivered removal, and current full findings after calcium or removal response permit unresolved-risk handoff. Observed removal response does not require unnecessary late calcium or every earlier panel. Instructor takeover bounds a run with no breathing support, calcium, or removal at 30 minutes, or an unfinished session at 180 minutes."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "satisfied",
+          "evidence": [
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary recorded actions. Unassisted mode remains silent; prompts do not reveal unrequested magnesium, neuromuscular findings, or latent removal response."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "Five event-bound objectives distinguish urgent support, exposure and kidney context, delivered removal and its observed response, current reassessment, and accountable handoff. Refused shortcuts and observed clinical recurrence remain available after later care; supported respiratory values do not prove spontaneous recovery."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "4 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "hypermagnesemia-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
           ]
         },
         {

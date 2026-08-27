@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: Renal hypocalcemia state has protocol version 177', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(177);
+  it('Scenario: Renal hypermagnesemia state has protocol version 178', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(178);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

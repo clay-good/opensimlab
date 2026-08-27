@@ -449,7 +449,7 @@ describe('Requirement: Footer Carries The Trust Signals', () => {
 describe('Requirement: Crawlability Basics', () => {
   it('Scenario: The sitemap is generated and complete', () => {
     const indexable = indexableRoutes();
-    expect(indexable).toHaveLength(231);
+    expect(indexable).toHaveLength(232);
     expect(indexable.every((route) => route.indexable)).toBe(true);
     expect(indexable.map((route) => route.path)).toContain('/');
     expect(indexable.map((route) => route.path)).toContain('/anesthesia');

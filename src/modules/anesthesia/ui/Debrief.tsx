@@ -38,6 +38,7 @@ import { supportsRenalHypokalemia } from '../../renal-electrolyte/hypokalemia';
 import { supportsRenalHyponatremia } from '../../renal-electrolyte/hyponatremia';
 import { supportsRenalHypernatremia } from '../../renal-electrolyte/hypernatremia';
 import { supportsRenalHypocalcemia } from '../../renal-electrolyte/hypocalcemia';
+import { supportsRenalHypermagnesemia } from '../../renal-electrolyte/hypermagnesemia';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -219,6 +220,8 @@ export function Debrief(props: DebriefProps) {
                 ? { activityContext: 'restoring circulation while coordinating water and continuing-loss replacement, reliable assisted access, fresh reassessment, and ongoing care for hypernatremic dehydration' }
               : supportsRenalHypocalcemia(props.scenario)
                 ? { activityContext: 'responding to measured ionized hypocalcemia despite reassuring adjusted total calcium, coordinating monitored rescue and continuing calcium care, and preserving kidney-specific follow-up after denosumab exposure' }
+              : supportsRenalHypermagnesemia(props.scenario)
+                ? { activityContext: 'supporting ventilation and circulation during magnesium toxicity, distinguishing temporary calcium antagonism from delivered magnesium removal, and handing off unresolved renal and respiratory risk' }
               : supportsPerioperativeDiabetes(props.scenario)
                 ? { activityContext: 'restoring reliable insulin delivery during delayed surgery, distinguishing glucose-only checks from full reassessment, and handing off continued perioperative care' }
               : supportsRefeeding(props.scenario)
@@ -610,6 +613,44 @@ export function objectiveFindings(
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
 
+    if (objective.id.startsWith('renal-hypermagnesemia-')) {
+      if (!supportsRenalHypermagnesemia(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The renal hypermagnesemia lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^renal-hypermagnesemia-${id}-\\d+$`).test(entry.eventId));
+      const calcium = event('calcium-antagonism'); const breathing = event('breathing-support'); const removal = event('removal-care');
+      const stopped = event('magnesium-stopped'); const support = event('support'); const context = event('context-review');
+      const monitoring = event('monitoring'); const handoff = event('handoff');
+      const full = (entry: EngineEvent) => /^renal-hypermagnesemia-(calcium|recurrence|removal)-reassessment-\d+$/.test(entry.eventId);
+      const later = log.find(full);
+      const afterCare = (care: EngineEvent | undefined, observed: (entry: EngineEvent) => boolean) => care && log.find((entry, index) =>
+        index > log.indexOf(care) && entry.tick >= care.tick && observed(entry));
+      const afterRemoval = afterCare(removal, (entry) => /^renal-hypermagnesemia-removal-reassessment-\d+$/.test(entry.eventId));
+      const afterBreathing = afterCare(breathing, full);
+      const afterCalcium = afterCare(calcium, full);
+      const supported = !!afterBreathing && (!!afterCalcium || !!afterRemoval);
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'renal-hypermagnesemia-support': { met: supported, tick: breathing?.tick,
+          finding: (supported ? 'Qualified respiratory support and subsequent full clinical findings were recorded. ' : 'Respiratory support or its subsequent full assessment remains incomplete. ')
+            + (calcium ? 'Calcium antagonism was requested with qualified review of repeat care. ' : 'No calcium request was recorded; an observed removal response does not require unnecessary late calcium. ')
+            + 'Supported respiratory rate and saturation are not proof of spontaneous breathing recovery. Calcium can counter toxicity without removing magnesium; the authored interval is not a redosing schedule.' },
+        'renal-hypermagnesemia-context': { met: !!stopped && !!support && !!context, tick: context?.tick,
+          finding: (stopped && support && context ? 'Further magnesium exposure was stopped with qualified support and kidney, medication, bowel, and volume-context review. ' : 'Exposure control, qualified support, or context review remains incomplete. ')
+            + (event('routine-diuresis-refused') ? 'Routine forced diuresis was refused. ' : '')
+            + 'Stopping intake does not instantly remove absorbed magnesium. Reduced renal clearance and possible continued intestinal absorption require individualized review, not a blanket fluid or diuretic prescription or an inferred bowel obstruction.' },
+        'renal-hypermagnesemia-removal': { met: !!afterRemoval && !!monitoring, tick: removal?.tick,
+          finding: (afterRemoval && monitoring ? 'Delivered magnesium-removal care was followed by its requested full response, with continuing surveillance arranged. ' : 'Delivered removal, its observed response, or continuing surveillance remains incomplete or pending. ')
+            + (event('calcium-clearance-refused') ? 'The claim that calcium established magnesium clearance was refused. ' : '')
+            + 'Neither a calcium response nor a later click after removal started proves magnesium has fallen. No dialysis modality, dose, clearance rate, renal recovery, or normal magnesium is certified.' },
+        'renal-hypermagnesemia-reassessment': { met: !!later, tick: later?.tick,
+          finding: (later ? 'A requested full magnesium, neuromuscular, and bedside assessment made an authored response available for review. ' : 'A requested full response assessment is missing. ')
+            + (event('recurrence-reassessment') ? 'Observed recurrent clinical toxicity remains in the history; it is not a measured magnesium rebound. ' : '')
+            + 'Separate magnesium-only and neuromuscular-only observations preserve the full panel’s age. Historical potassium, calcium, sodium, glucose, and kidney context do not become new measurements.' },
+        'renal-hypermagnesemia-handoff': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'Current full findings and continuing respiratory, renal, exposure-control, and monitoring responsibilities were handed off. Removal may still be pending. ' : 'Current full findings or continuing-care ownership remains incomplete. ')
+            + 'Normal magnesium, every earlier teaching panel, and an error-free history are not required. Handoff ends rehearsal, not respiratory support, surveillance, or clinical risk; no discharge clearance is supplied.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (objective.id.startsWith('renal-hypocalcemia-')) {
       if (!supportsRenalHypocalcemia(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The renal hypocalcemia lesson was not active.' } satisfies ObjectiveFinding;
       const event = (id: string) => log.find((entry) => new RegExp(`^renal-hypocalcemia-${id}-\\d+$`).test(entry.eventId));

@@ -3096,6 +3096,22 @@ See `docs/evidence-briefs/hypocalcemia-ionized-calcium-and-ckd.md` for authored 
 boundaries. Clinical review, four quality records, complete inclusive-runtime verification, and
 production reporting evidence remain pending.
 
+The sixth renal preview, `hypermagnesemia-antagonism-and-removal@0.1.0`, separates respiratory
+support, temporary calcium antagonism, and delivered magnesium removal in a nonobstetric patient
+with kidney disease and oral magnesium exposure. Stopping further input does not instantly clear
+absorbed magnesium. Qualified care proceeds independently of administrative or repeat-test gates;
+routine fluid loading or forced diuresis is not a universal renal-treatment strategy.
+
+Thirteen choices and a twelve-decision paused example preserve explicit repeat-care confirmation.
+The finite calcium contrast can reveal recurrent clinical toxicity without a new magnesium rise.
+Partial magnesium and neuromuscular observations retain full-panel history; supported breathing
+does not become spontaneous recovery. Current full findings can support ongoing-care handoff with
+removal response pending, while an observed removal response does not require unnecessary late
+calcium. Shared reports carry seven live vitals and at most 31 explicit care/observation scalars.
+See `docs/evidence-briefs/hypermagnesemia-antagonism-and-removal.md` for source and numerical limits.
+Independent clinical review, four quality records, complete inclusive-runtime checks, and
+production reporting evidence remain pending.
+
 #### Infectious disease: 10
 
 Sepsis without shock; septic shock; meningitis; neutropenic fever; severe community-acquired

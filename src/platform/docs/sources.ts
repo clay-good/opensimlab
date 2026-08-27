@@ -64,6 +64,39 @@ const CHECKED = '2026-08-20';
 
 export const SOURCES: readonly Source[] = [
   {
+    id: 'renal-hypermagnesemia-series-2018', pmid: '29988705', authors: 'Nishikawa M, Shimada N, Kanzaki M, et al',
+    title: 'The characteristics of patients with hypermagnesemia who underwent emergency hemodialysis', publication: 'Acute Medicine & Surgery', year: 2018,
+    locator: '5(3):222–229; doi:10.1002/ams2.334; Methods, Results, and Discussion',
+    usedFor: 'Oral magnesium exposure, impaired renal function, and serious clinical findings warrant coordinated review. Dialysis selection in this series was based on clinical severity and multidisciplinary judgment, not a universal magnesium threshold or removal clock.',
+    verifiedAgainst: 'PubMed PMID 29988705 bibliographic record and indexed PMC6028801 methods/results/discussion; 15 emergency-hemodialysis patients, excluding maintenance dialysis. All received magnesium oxide, not the fictional hydroxide exposure. Selection bias and unknown pre-event renal function limit inference.',
+    verifiedOn: '2026-08-27',
+  },
+  {
+    id: 'renal-hypermagnesemia-antagonism-2016', pmid: '26915350', authors: 'Bansal AD, Negoianu D, Warburton KM',
+    title: 'An Unusual yet “Mg”nificent Indication for Hemodialysis', publication: 'Seminars in Dialysis', year: 2016,
+    locator: '29(3):247–250; doi:10.1111/sdi.12479; Case Report and Discussion',
+    usedFor: 'Calcium antagonism and magnesium removal are different interventions. In this case, magnesium rose despite attempted calcium support and subsequently fell with renal replacement. The report does not establish a reproducible calcium-response duration or routine postdialysis rebound.',
+    verifiedAgainst: 'PubMed PMID 26915350 bibliographic record and indexed PMC5492508 case/discussion; Renacidin bladder irrigation with acute kidney injury, not an oral-laxative cohort. The limited discussion of postdialysis rebound is not used to author biochemical rebound.',
+    verifiedOn: '2026-08-27',
+  },
+  {
+    id: 'renal-hypermagnesemia-hydroxide-2023', pmid: '38152602', authors: 'Jou DH, Kim SI, Choi IH, et al',
+    title: 'Fatal Hypermagnesemia in Patients Taking Magnesium Hydroxide', publication: 'Electrolyte & Blood Pressure', year: 2023,
+    locator: '21(2):66–71; doi:10.5049/EBP.2023.21.2.66; two case reports',
+    usedFor: 'Magnesium-hydroxide exposure and kidney or intestinal context need review. Falling magnesium did not establish clinical recovery in one reported patient. The fictional exposure, examination, and response are not extracted patient data or outcome predictions.',
+    verifiedAgainst: 'PubMed PMID 38152602 bibliographic record, original journal metadata, and indexed PMC10751210 cases/discussion. The two different courses do not validate a universal severity threshold, hydration/diuresis rule, or timing of response.',
+    verifiedOn: '2026-08-27',
+  },
+  {
+    id: 'renal-hypermagnesemia-label-2026', authors: 'Hospira, Inc.; DailyMed',
+    title: 'Magnesium Sulfate in 5% Dextrose Injection prescribing information', publication: 'DailyMed', year: 2026,
+    currency: { lastAmended: '2026-06', checkedAt: '2026-08-27' },
+    locator: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=03ebeabb-8386-4af4-3086-bdf3c3fc4a5a; sections 5.2, 8.6, and 10',
+    usedFor: 'Renal impairment increases magnesium-toxicity risk. Significant toxicity requires stopping exposure, respiratory support when needed, and qualified calcium antagonism. Parenteral/obstetric dosing, concentration ranges, and pharmacokinetics are not transferred into an oral-exposure treatment protocol.',
+    verifiedAgainst: 'Current full DailyMed HTML, updated August 24, 2026, with prescribing information revised 6/2026; renal-risk and overdose sections read directly. No formulation, dose, respiratory device, dialysis prescription, or clinical waiting interval is adopted.',
+    verifiedOn: '2026-08-27',
+  },
+  {
     id: 'renal-hypocalcemia-measurement-2008', authors: 'Gauci C, Moranne O, Fouqueray B, et al; NephroTest Study Group',
     title: 'Pitfalls of measuring total blood calcium in patients with CKD', publication: 'Journal of the American Society of Nephrology', year: 2008,
     locator: '19(8):1592–1598; doi:10.1681/ASN.2007040449; abstract, discussion, and analytical methods',

@@ -451,8 +451,13 @@ The fifth Renal lab follows symptomatic ionized hypocalcemia in advanced kidney 
 recent denosumab. A reassuring adjusted total does not erase low measured ionized calcium.
 Coordinate rescue and immediate continuing calcium care, then distinguish response, recurrence,
 and ongoing mineral and medication follow-up. The ten-decision example pauses for reading, and
-the shared private report preserves separate observation histories. Five of 12 renal scenarios
-are registered previews, with independent validation pending.
+the shared private report preserves separate observation histories.
+
+The sixth Renal lab separates supported breathing and temporary calcium antagonism from actual
+magnesium removal. Reassess recurrent clinical toxicity without calling it biochemical rebound,
+and preserve ongoing respiratory and renal care after a lower magnesium result. The paused
+example requires explicit confirmation for repeat care; reporting follows the shared private
+pattern. Six of 12 renal scenarios are registered previews, with independent validation pending.
 
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage

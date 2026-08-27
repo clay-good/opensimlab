@@ -299,12 +299,15 @@
 .renal-hyperkalemia__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .renal-hypokalemia__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
 .renal-hypokalemia__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.renal-hypermagnesemia__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
+.renal-hypermagnesemia__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .renal-hypocalcemia__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
 .renal-hypocalcemia__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .renal-hypernatremia__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
 .renal-hypernatremia__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .renal-hyponatremia__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
 .renal-hyponatremia__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.renal-hypermagnesemia__section .button[aria-disabled='true'],
 .renal-hypocalcemia__section .button[aria-disabled='true'],
 .renal-hypernatremia__section .button[aria-disabled='true'],
 .renal-hyponatremia__section .button[aria-disabled='true'],

@@ -122,6 +122,8 @@ describe('Requirement: No Telemetry, No Analytics, No Third-Party Requests', () 
           && url === 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
         const renalCalciumGuidanceLink = file.path === 'src/modules/renal-electrolyte/renal-hypocalcemia-tutor.ts'
           && url === 'https://www.fda.gov/drugs/drug-safety-communications/fda-adds-boxed-warning-increased-risk-severe-hypocalcemia-patients-advanced-chronic-kidney-disease';
+        const renalMagnesiumGuidanceLink = file.path === 'src/modules/renal-electrolyte/renal-hypermagnesemia-tutor.ts'
+          && url === 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6028801/';
         const renalWaterGuidanceLink = file.path === 'src/modules/renal-electrolyte/renal-hypernatremia-tutor.ts'
           && url === 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10175862/';
         // Explicit guidance and its evidence record, not an application request or host-wide exception.
@@ -138,7 +140,7 @@ describe('Requirement: No Telemetry, No Analytics, No Third-Party Requests', () 
           && ['https://sps.nhs.uk/articles/hypokalaemia/',
             'https://sps.nhs.uk/articles/treating-acute-hypomagnesaemia-in-adults/'].includes(url);
         expect(
-          documentationHosts.test(url) || namespaceUris.test(url) || lazyTurnstile || sodiumGuidanceLink || renalGuidanceLink || hypokalemiaGuidanceLink || renalWaterGuidanceLink || renalCalciumGuidanceLink,
+          documentationHosts.test(url) || namespaceUris.test(url) || lazyTurnstile || sodiumGuidanceLink || renalGuidanceLink || hypokalemiaGuidanceLink || renalWaterGuidanceLink || renalCalciumGuidanceLink || renalMagnesiumGuidanceLink,
           `${file.path} references ${url}`,
         ).toBe(true);
       }

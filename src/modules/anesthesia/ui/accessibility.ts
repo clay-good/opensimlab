@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -109,6 +109,7 @@ export function stateSummary(
     readonly renalHyponatremia?: RenalHyponatremiaSnapshot;
     readonly renalHypernatremia?: RenalHypernatremiaSnapshot;
     readonly renalHypocalcemia?: RenalHypocalcemiaSnapshot;
+    readonly renalHypermagnesemia?: RenalHypermagnesemiaSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -162,7 +163,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -186,6 +187,37 @@ export function stateSummary(
           + ' intravenous.');
       }
     }
+  }
+  if (options.renalHypermagnesemia) {
+    const patient = options.renalHypermagnesemia;
+    const examination = (value: { reflexesPresent: boolean; severeWeakness: boolean }) =>
+      `reflexes ${value.reflexesPresent ? 'present' : 'absent'}; ${value.severeWeakness ? 'severe' : 'residual'} weakness persists`;
+    for (const field of ['systolicMmHg', 'diastolicMmHg'] as const) {
+      const value = state[field];
+      if (!options.invalid.has(field) && Number.isFinite(value)) {
+        lines.push(`${FIELDS[field].label}: ${value.toFixed(FIELDS[field].precision)} ${FIELDS[field].unit}.`);
+      }
+    }
+    lines.push('Supplied magnesium was 4.6 millimoles per liter, with drowsiness, absent reflexes, severe weakness, and slow breathing. These remain historical starting findings.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push(patient.breathingAtTick === null ? 'Qualified breathing support has not yet started.'
+      : 'Qualified breathing support is active. The displayed respiratory rate is supported, not proof of independent breathing.');
+    lines.push(`Calcium requests: ${patient.calciumRequests}. Magnesium exposure: ${patient.stopMagnesiumAtTick === null ? 'not yet stopped' : 'stopped'}. Removal: ${patient.removalAtTick === null ? 'not yet delivered' : 'delivered'}.`);
+    lines.push('Calcium temporarily counters toxicity without removing magnesium. No ECG interval is supplied. Oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.magnesiumObservation
+      ? `Last requested magnesium at simulated ${formatElapsed(patient.magnesiumObservation.atTick)}: ${patient.magnesiumObservation.magnesiumMmolL.toFixed(1)} millimoles per liter. A magnesium-only check does not refresh the neuromuscular or full assessment.`
+      : 'No new magnesium-only measurement has been requested.');
+    lines.push(patient.neuromuscularObservation
+      ? `Last requested neuromuscular assessment at simulated ${formatElapsed(patient.neuromuscularObservation.atTick)}: ${examination(patient.neuromuscularObservation)}. A neuromuscular-only check does not refresh magnesium.`
+      : 'No new neuromuscular-only assessment has been requested.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: magnesium ${patient.observation.magnesiumMmolL.toFixed(1)} millimoles per liter; ${examination(patient.observation)}; ${patient.observation.alertness}. These are historical observations, not live measurements.`
+      : 'No new full magnesium, neuromuscular, and bedside assessment has been requested.');
+    if (patient.recurrenceObserved) lines.push('A full assessment recorded recurrent clinical toxicity, not a new magnesium rise.');
+    lines.push('Residual weakness and respiratory support remain ongoing responsibilities. A removal response does not establish durable recovery or authorize withdrawal of support.');
+    lines.push(options.alarms.length === 0 ? 'No active alarms.'
+      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    return lines.join(' ');
   }
   if (options.renalHypocalcemia) {
     const patient = options.renalHypocalcemia;

@@ -1291,6 +1291,32 @@ credited toward the catalog until every item in the completion contract passes.
     complete inclusive-runtime validation, and production Turnstile/D1 evidence. No local check
     substitutes for clinical approval or production validation. Publish the additive Worker
     identity catalog before the new client; retain pending gates explicitly.
+  - [x] Renal/electrolyte slice 6/12 registers `hypermagnesemia-antagonism-and-removal@0.1.0`
+    as a distinct nonobstetric toxicity preview. Respiratory support, temporary calcium antagonism,
+    stopping further exposure, and delivered removal are independent responsibilities. Recurrent
+    clinical toxicity is not a measured magnesium rebound. Nishikawa 2018, Bansal 2016, Jou 2023,
+    and current Hospira prescribing information were checked August 27. The values and response
+    clocks are authored, not validated calcium durations, dialysis kinetics, or clinical waits.
+  - [x] Add thirteen choices, a twelve-decision paused example, private tutor, five-objective
+    debrief, nonvisual summaries, and shared reporting. Repeat calcium requires an explicit
+    confirmation, not automatic redosing. Partial observations preserve full-panel history;
+    supported breathing remains supported. Handoff can transfer current toxicity with removal
+    pending; an observed removal response does not require unnecessary late calcium. Optional
+    reports have seven live vitals and at most 31 observed/care scalars, excluding hidden values,
+    timers, and learner prose. An incorrect citation title was corrected and regression-tested.
+  - [x] Verify all 5,154 tests in 561 files with two workers, plus all CI components and the
+    additional indexability check. The build contains 210 scenarios, 235 static routes,
+    232 crawlable routes, 47 catalog artifacts, and 240 classified media assets. Budgets pass
+    at 148.6/1,613.3/3,568.3 KiB for landing/cockpit/offline and 86.2 KiB for fonts. Revalidate
+    824 neighboring tests in 62 files before repinning only 6/10/12 changed shared hashes;
+    quality records and all 217 older report identities remain unchanged. The catalog now
+    contains 218 report identities. Fix the privacy test's accidental seed substring match
+    with a precise forbidden-scalar assertion; preserve the exact field allowlist. Actual
+    release still refuses 225 blockers. See the evidence brief for desktop QA and test details.
+  - [ ] Complete hypermagnesemia independent clinical review, four exact-version quality records,
+    complete inclusive-runtime validation, and production Turnstile/D1 evidence. Local checks
+    do not replace those requirements. Publish the additive Worker identity catalog before
+    the new client, and preserve pending gates explicitly.
   - [x] Repair service-worker release consistency. Build-stamped SHA-256 integrity checks reject
     mixed or incomplete installations; active snapshots are immutable. Explicit acceptance waits
     for the intended controller before reloading only that tab. Durable per-client release pins

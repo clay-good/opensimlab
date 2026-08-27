@@ -27,6 +27,30 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'renal-hypermagnesemia-antagonism',
+    headline: 'Calcium can counter magnesium toxicity without removing magnesium.',
+    simplification: 'Qualified calcium care produces a temporary authored circulation response. Respiratory support changes supported respiratory rate and saturation independently; neither intervention lowers the modeled magnesium.',
+    whereItMisleads: 'An improved pulse, pressure, or supported breathing pattern is interpreted as magnesium clearance, spontaneous respiratory recovery, or permission to stop support.',
+    correctUnderstanding: 'Separate respiratory and circulatory support from magnesium removal. Reassess the whole patient and magnesium with qualified teams; a temporary symptom response does not establish correction or replace renal-aware elimination care.',
+    briefIn: ['hypermagnesemia-antagonism-and-removal'],
+  },
+  {
+    id: 'renal-hypermagnesemia-authored-contrasts',
+    headline: 'Response and recurrent toxicity use authored contrasts, not a calcium redosing clock.',
+    simplification: 'The case uses a finite 30-minute calcium benefit and a selected 60-minute removal response. Clinical toxicity can recur without a magnesium rise. Supported breathing remains supported after partial improvement.',
+    whereItMisleads: 'These clocks become expected drug durations, required waits, automatic calcium repeats, dialysis prescriptions, biochemical rebound, or guaranteed recovery.',
+    correctUnderstanding: 'Clinical support and removal proceed independently of administrative or repeat-test gates. Repeat calcium requires qualified clinical review. No exact patient trajectory, dialysis kinetics, obligatory rebound, or validated outcome follows from this authored model.',
+    briefIn: ['hypermagnesemia-antagonism-and-removal'],
+  },
+  {
+    id: 'renal-hypermagnesemia-continuing-care',
+    headline: 'A lower magnesium level does not close renal or respiratory care.',
+    simplification: 'Stopping further intake does not instantly clear absorbed magnesium. The later partial response preserves residual weakness and respiratory-support needs; historical kidney and other laboratory values are not refreshed.',
+    whereItMisleads: 'Constipation proves bowel obstruction, all renal impairment receives forced diuresis, or handoff requires normal magnesium and unnecessary late calcium after an observed removal response.',
+    correctUnderstanding: 'Individualize exposure, bowel, urine-output, volume, elimination, and serial clinical review. Current full findings can support transfer with removal still pending. Handoff closes rehearsal, not ventilation, surveillance, or unresolved risk.',
+    briefIn: ['hypermagnesemia-antagonism-and-removal'],
+  },
+  {
     id: 'renal-hypocalcemia-measurement',
     headline: 'Albumin-adjusted total calcium is not a measured ionized-calcium result.',
     simplification: 'The case supplies discordant historical total and adjusted calcium alongside low measured ionized calcium at actual pH. No protein-binding, pH-correction, or laboratory-error solver is supplied.',

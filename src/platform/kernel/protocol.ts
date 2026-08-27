@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 177 adds the authored renal hypocalcemia snapshot. */
-export const WORKER_PROTOCOL_VERSION = 177;
+/** Version 178 adds the authored renal hypermagnesemia snapshot. */
+export const WORKER_PROTOCOL_VERSION = 178;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -154,6 +154,40 @@ export interface ReadyMessage {
  * request rather than the result teaches the learner to trust a number that is
  * not true (cockpit/action-cockpit → the tray reflects the patient).
  */
+export interface RenalHypermagnesemiaSnapshot {
+  readonly supportActive: boolean;
+  readonly stopMagnesiumAtTick: number | null;
+  readonly breathingAtTick: number | null;
+  readonly calciumAtTick: number | null;
+  readonly lastCalciumAtTick: number | null;
+  readonly calciumRequests: number;
+  readonly contextReviewedAtTick: number | null;
+  readonly removalAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly calciumDueInSeconds: number | null;
+  readonly removalDueInSeconds: number | null;
+  readonly calciumResponseObserved: boolean;
+  readonly removalResponseObserved: boolean;
+  readonly recurrenceObserved: boolean;
+  readonly calciumClearanceAttempted: boolean;
+  readonly routineDiuresisAttempted: boolean;
+  readonly magnesiumObservation: { readonly atTick: number; readonly magnesiumMmolL: number } | null;
+  readonly neuromuscularObservation: { readonly atTick: number; readonly reflexesPresent: boolean; readonly severeWeakness: boolean } | null;
+  readonly observation: {
+    readonly atTick: number; readonly magnesiumMmolL: number;
+    readonly reflexesPresent: boolean; readonly severeWeakness: boolean;
+    readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
+    readonly meanArterialMmHg: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true;
+  readonly doseModelAvailable: false;
+  readonly durableRecoveryProven: false;
+}
+
 export interface RenalHypocalcemiaSnapshot {
   readonly supportActive: boolean;
   readonly rescueAtTick: number | null; readonly continuingAtTick: number | null;
@@ -3489,6 +3523,7 @@ export interface EquipmentSnapshot {
     readonly renalHyponatremia?: RenalHyponatremiaSnapshot;
     readonly renalHypernatremia?: RenalHypernatremiaSnapshot;
     readonly renalHypocalcemia?: RenalHypocalcemiaSnapshot;
+    readonly renalHypermagnesemia?: RenalHypermagnesemiaSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

@@ -1,0 +1,61 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+
+export const RENAL_HYPERMAGNESEMIA_ANTAGONISM_AND_REMOVAL: Scenario = {
+  schemaVersion: 1,
+  metadata: {
+    id: 'hypermagnesemia-antagonism-and-removal', version: '0.1.0', maturity: 'preview',
+    title: 'Hypermagnesemia: antagonism and removal', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
+    estimatedMinutes: 60, difficulty: 'intermediate',
+    objectives: [
+      { id: 'renal-hypermagnesemia-support', statement: 'Support breathing and circulation while stopping further magnesium exposure.', measure: 'Arrange qualified breathing support and calcium antagonism independently of administrative or repeat-test prerequisites. Stop the magnesium source; calcium can improve circulation without lowering magnesium or restoring reflexes. Actual observed removal response does not require unnecessary late calcium.' },
+      { id: 'renal-hypermagnesemia-context', statement: 'Interpret magnesium exposure alongside kidney function and bedside toxicity.', measure: 'Review magnesium hydroxide exposure, constipation, known stage 4 chronic kidney disease, reduced urine, measured magnesium, and neuromuscular and cardiorespiratory findings with qualified support. Do not infer a new clearance estimate, acute kidney injury diagnosis, or established bowel obstruction.' },
+      { id: 'renal-hypermagnesemia-removal', statement: 'Separate temporary antagonism from qualified magnesium removal.', measure: 'Arrange individualized specialist-led removal without requiring calcium first. Calcium does not remove magnesium, and a transient circulation response is not durable recovery. Routine diuresis is not an adequate stand-alone plan for this patient.' },
+      { id: 'renal-hypermagnesemia-reassessment', statement: 'Distinguish current magnesium, neuromuscular findings, and supported breathing.', measure: 'Request fresh full reassessment after care. Partial checks do not refresh other findings. Reassess clinical recurrence as calcium benefit ends and review qualified repeat antagonism when appropriate; do not confuse recurrence with biochemical rebound or supported respiratory values with spontaneous recovery.' },
+      { id: 'renal-hypermagnesemia-handoff', statement: 'Transfer unresolved toxicity with explicit support and removal ownership.', measure: 'Hand off stopped exposure, breathing support, specialist support, context, monitoring, delivered removal, and current full findings after calcium or removal response. Residual weakness, ongoing respiratory support, and pending removal response can remain unresolved. Observed removal response does not require unnecessary late calcium or every earlier panel.' },
+    ],
+    clinicalReview: {
+      reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED', competingInterests: 'None declared',
+      reviewedOn: '1970-01-01', reviewBy: '1970-01-01', contentVersion: '0.1.0',
+      sources: [
+        'Nishikawa M, et al. The characteristics of patients with hypermagnesemia who underwent emergency hemodialysis. Acute Medicine & Surgery. 2018;5:222–229. doi:10.1002/ams2.334. A 15-patient primary series supports the clinical distinction between toxicity and qualified removal; it is not a treatment protocol or validation of this authored trajectory.',
+        'Bansal AD, Negoianu D, Warburton KM. An Unusual yet “Mg”nificent Indication for Hemodialysis. Seminars in Dialysis. 2016;29:247–250. doi:10.1111/sdi.12479. A single Renacidin-associated case, not an oral magnesium protocol; it does not validate the authored calcium-effect duration.',
+        'Jou DH, et al. Fatal hypermagnesemia in patients taking magnesium hydroxide. Electrolyte & Blood Pressure. 2023;21:66–71. doi:10.5049/EBP.2023.21.2.66. Two oral magnesium hydroxide cases support exposure and gastrointestinal-context review, not a predicted response curve or universal threshold.',
+        'DailyMed. Hospira magnesium sulfate in 5% dextrose injection prescribing information. Revised June 2026; updated August 24, 2026; checked August 27, 2026. Respiratory assessment, calcium antagonism, and renal risk inform safety boundaries; this intravenous-product label is not an oral-toxicity treatment protocol.',
+      ],
+    },
+    limitations: ['renal-hypermagnesemia-antagonism', 'renal-hypermagnesemia-authored-contrasts', 'renal-hypermagnesemia-continuing-care'],
+  },
+  patient: {
+    ageYears: 78, sex: 'female', heightCm: 160, weightKg: 64, asaClass: 3,
+    diagnosis: 'Symptomatic hypermagnesemia with stage 4 chronic kidney disease and magnesium hydroxide exposure',
+    procedure: 'Qualified breathing and circulation support, exposure review, individualized magnesium removal, reassessment, and unresolved-risk handoff',
+    comorbidities: ['Stage 4 chronic kidney disease; supplied eGFR 18 mL/min/1.73 m²; not receiving dialysis',
+      'Five days without a bowel movement; no established bowel obstruction is supplied',
+      'Reduced urine without a new clearance estimate or acute kidney injury diagnosis',
+      'Pretreatment magnesium 4.6 mmol/L, potassium 4.8 mmol/L, calcium 2.24 mmol/L, sodium 138 mmol/L, and glucose 108 mg/dL; no dynamic ECG intervals are supplied'],
+    medications: ['Magnesium hydroxide used for constipation for 14 days; no dose is supplied'],
+    allergies: ['No known drug allergies'], fasting: 'Not a fasting lesson; airway, swallowing safety, and individualized treatment route require qualified assessment',
+    baseline: { heartRateBpm: 44, meanArterialMmHg: 61, strokeVolumeMl: 70, hemoglobinGPerDl: 10.8,
+      bloodVolumeMl: 4200, coreTemperatureC: 36.3, arterialStiffness: 1, baroreflexGain: 1, fixedStrokeVolume: true },
+    airway: { difficulty: 0.1, difficultMaskVentilation: false, assessment: 'Drowsy with severe weakness, absent reflexes, and depressed breathing; qualified breathing support is a separate urgent decision' },
+    respiratory: { profile: 'healthy' },
+  },
+  equipment: { monitoring: ['ecg', 'nibp', 'pulse-oximetry', 'temperature'], ventilator: { mode: 'manual', fio2: 0.21,
+    tidalVolumeMl: 450, respiratoryRateBpm: 8, freshGasFlowLPerMin: 10, delivering: false } },
+  formulary: [],
+  timeline: [
+    { id: 'renal-hypermagnesemia-presentation', type: 'narrative', target: 'renal-hypermagnesemia', atTick: 0, severity: 'critical',
+      message: 'A fictional 78-year-old woman is drowsy with severe weakness, absent reflexes, and depressed breathing. She has known stage 4 chronic kidney disease, supplied eGFR 18 mL/min/1.73 m², and is not receiving dialysis. She used magnesium hydroxide for constipation for 14 days and has had no bowel movement for five days; no established obstruction or new kidney-clearance estimate is supplied. Urine is reduced. Pretreatment magnesium is 4.6 mmol/L, potassium 4.8 mmol/L, calcium 2.24 mmol/L, sodium 138 mmol/L, and glucose 108 mg/dL. BP is 86/48 mmHg, HR 44/min, RR 8/min, SpO2 90%, and temperature 36.3°C. Stop further magnesium exposure and arrange qualified breathing and circulation support and individualized removal. Repeat magnesium and neuromuscular findings require explicit assessment.' },
+    { id: 'renal-hypermagnesemia-boundary', type: 'narrative', target: 'renal-hypermagnesemia-boundary', atTick: 0, severity: 'warning',
+      message: 'Breathing support, calcium antagonism, and specialist-led removal are independent urgent decisions. Calcium can improve circulation without removing magnesium or restoring reflexes. The 30-minute calcium-benefit expiry and 60-minute removal response are authored contrasts, not pharmacokinetics, clinical waiting instructions, dosing, or dialysis prescriptions. Clinical recurrence is not biochemical rebound. Qualified repeat calcium requires fresh clinical review; no automatic redosing is taught. Respiratory values after breathing care remain supported total values, not spontaneous recovery or ventilator settings. Residual weakness and respiratory-support needs persist after the authored magnesium reduction. Partial checks do not refresh full assessment. No new electrolyte panel, ECG interval, kidney recovery, normal magnesium, durable recovery, or discharge clearance is claimed. Current full findings and continuing-care ownership support unresolved-risk handoff without requiring every earlier panel. Exhaled CO2 and FiO2 are unavailable.' },
+  ],
+  replayPoints: [{ id: 'renal-hypermagnesemia-first-response', label: 'Return to support, antagonism, and removal', objectiveId: 'renal-hypermagnesemia-support', atTick: 1,
+    reason: 'Separate breathing and circulation support from stopping magnesium exposure and arranging qualified removal.' }],
+  debrief: { rubric: [
+    { id: 'renal-hypermagnesemia-support-review', objectiveId: 'renal-hypermagnesemia-support', question: 'What did breathing support and calcium improve, and what did neither prove?' },
+    { id: 'renal-hypermagnesemia-context-review', objectiveId: 'renal-hypermagnesemia-context', question: 'How did magnesium exposure, kidney disease, reduced urine, and constipation inform qualified review?' },
+    { id: 'renal-hypermagnesemia-removal-review', objectiveId: 'renal-hypermagnesemia-removal', question: 'How did temporary antagonism differ from delivered removal and its observed response?' },
+    { id: 'renal-hypermagnesemia-reassessment-review', objectiveId: 'renal-hypermagnesemia-reassessment', question: 'Which magnesium and bedside findings were current, and which respiratory values still represented support?' },
+    { id: 'renal-hypermagnesemia-handoff-review', objectiveId: 'renal-hypermagnesemia-handoff', question: 'Who owns ongoing breathing support, repeat clinical review, magnesium reassessment, and removal care?' },
+  ] },
+};

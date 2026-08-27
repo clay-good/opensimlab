@@ -26,15 +26,16 @@ const read = (file: string) => readFileSync(join(process.cwd(), file), 'utf8');
 const json = (file: string) => JSON.parse(read(file));
 
 describe('Renal and Electrolyte Medicine module foundation', () => {
-  it('registers five separate previews toward twelve planned lessons without changing the default', () => {
+  it('registers six separate previews toward twelve planned lessons without changing the default', () => {
     expect(getModule('renal-electrolyte')).toMatchObject({ route: 'renal-electrolyte',
       displayName: 'Renal and Electrolyte Medicine', status: 'available',
       timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] } });
     expect(getModule('renal-electrolyte').plannedScope).toContain('Twelve bounded');
-    expect(RENAL_ELECTROLYTE_SCENARIOS).toHaveLength(5);
+    expect(RENAL_ELECTROLYTE_SCENARIOS).toHaveLength(6);
     expect(RENAL_ELECTROLYTE_SCENARIOS.map(({ metadata }) => metadata.id)).toEqual([
       id, 'hypokalemia-magnesium-and-ongoing-losses', 'hyponatremia-symptoms-and-reassessment',
       'hypernatremia-water-access-and-losses', 'hypocalcemia-ionized-calcium-and-ckd',
+      'hypermagnesemia-antagonism-and-removal',
     ]);
     expect(DEFAULT_RENAL_ELECTROLYTE_SCENARIO_ID).toBe(id);
     expect(getRenalElectrolyteScenario(id)).toBe(scenario);
@@ -206,10 +207,53 @@ describe('Renal and Electrolyte Medicine module foundation', () => {
       contentVersion: '0.1.0', domains: ['renal-electrolyte'] }));
   });
 
+  it('adds hypermagnesemia as a separate antagonism and removal lesson with explicit support boundaries', () => {
+    const next = getRenalElectrolyteScenario('hypermagnesemia-antagonism-and-removal')!;
+    expect(validateScenario(next)).toEqual([]);
+    expect(next.metadata).toMatchObject({ version: '0.1.0', maturity: 'preview', estimatedMinutes: 60 });
+    expect(next.metadata.objectives.map((objective) => objective.id)).toEqual([
+      'renal-hypermagnesemia-support', 'renal-hypermagnesemia-context', 'renal-hypermagnesemia-removal',
+      'renal-hypermagnesemia-reassessment', 'renal-hypermagnesemia-handoff',
+    ]);
+    expect(next.metadata.clinicalReview.sources).toHaveLength(4);
+    expect(next.metadata.clinicalReview.sources[1]).toContain('An Unusual yet “Mg”nificent Indication for Hemodialysis');
+    expect(next.metadata.clinicalReview.sources[1]).toContain('doi:10.1111/sdi.12479');
+    expect(next.metadata.objectives[0]!.measure).toContain('does not require unnecessary late calcium');
+    expect(next.metadata.clinicalReview.reviewer).toBe('UNSIGNED');
+    expect(next.metadata.limitations).toEqual(['renal-hypermagnesemia-antagonism',
+      'renal-hypermagnesemia-authored-contrasts', 'renal-hypermagnesemia-continuing-care']);
+    expect(next.patient).toMatchObject({ ageYears: 78, sex: 'female', weightKg: 64, heightCm: 160,
+      baseline: { heartRateBpm: 44, meanArterialMmHg: 61, hemoglobinGPerDl: 10.8, bloodVolumeMl: 4200, fixedStrokeVolume: true } });
+    expect(next.patient.comorbidities?.join(' ')).toContain('eGFR 18 mL/min/1.73 m²');
+    expect(next.patient.comorbidities?.join(' ')).toContain('not receiving dialysis');
+    expect(next.patient.comorbidities?.join(' ')).toContain('no established bowel obstruction');
+    expect(next.patient.comorbidities?.join(' ')).toContain('without a new clearance estimate or acute kidney injury diagnosis');
+    expect(next.patient.medications?.join(' ')).toContain('Magnesium hydroxide used for constipation for 14 days');
+    expect(next.formulary).toEqual([]);
+    expect(next.equipment.ventilator).toMatchObject({ delivering: false, tidalVolumeMl: 450, respiratoryRateBpm: 8 });
+    expect(next.timeline.map((event) => event.target)).toEqual(['renal-hypermagnesemia', 'renal-hypermagnesemia-boundary']);
+    const boundary = next.timeline[1]!.message;
+    expect(boundary).toContain('independent urgent decisions');
+    expect(boundary).toContain('without removing magnesium or restoring reflexes');
+    expect(boundary).toContain('Clinical recurrence is not biochemical rebound');
+    expect(boundary).toContain('supported total values, not spontaneous recovery');
+    expect(boundary).toContain('Residual weakness and respiratory-support needs persist');
+    const nextPath = `/renal-electrolyte/scenario/${next.metadata.id}`;
+    expect(routeFor(nextPath)).toMatchObject({ indexable: true, heading: next.metadata.title });
+    expect(structuredDataFor(['LearningResource'], nextPath)[0]).toMatchObject({
+      name: next.metadata.title, url: `https://opensimlab.com${nextPath}`, timeRequired: 'PT60M',
+    });
+    const markup = renderToStaticMarkup(createElement(PrerenderedBody, { path: nextPath }));
+    expect(markup).toContain('Acute Medicine &amp; Surgery');
+    expect(markup).toContain('Not clinically reviewed');
+    expect(reviewableItems()).toContainEqual(expect.objectContaining({ id: next.metadata.id,
+      contentVersion: '0.1.0', domains: ['renal-electrolyte'] }));
+  });
+
   it('mounts the live module and preserves unknown-address feedback', async () => {
     const { RenalElectrolyteRoute } = await import('@routes/AnesthesiaRoute');
     const directory = renderToStaticMarkup(createElement(RenalElectrolyteRoute, { path: '/renal-electrolyte' }));
-    expect(directory).toContain('5 of 12 planned Renal and Electrolyte Medicine labs');
+    expect(directory).toContain('6 of 12 planned Renal and Electrolyte Medicine labs');
     expect(directory).toContain(`href="${path}"`);
     vi.stubGlobal('localStorage', { getItem: (key: string) => key === ACKNOWLEDGEMENT_KEY ? 'true' : null });
     try {
@@ -250,10 +294,10 @@ describe('Renal and Electrolyte Medicine module foundation', () => {
   it('keeps registry, landing, routes, and published artifact counts aligned', () => {
     expect(availableModules()).toHaveLength(12);
     expect(READY_MODULE_COUNT).toBe(12);
-    expect(READY_SCENARIO_COUNT).toBe(209);
-    expect(reviewableItems().filter((item) => item.kind === 'scenario')).toHaveLength(209);
-    expect(ROUTES).toHaveLength(234);
-    expect(indexableRoutes()).toHaveLength(231);
+    expect(READY_SCENARIO_COUNT).toBe(210);
+    expect(reviewableItems().filter((item) => item.kind === 'scenario')).toHaveLength(210);
+    expect(ROUTES).toHaveLength(235);
+    expect(indexableRoutes()).toHaveLength(232);
     expect(PUBLIC_CATALOG_ARTIFACTS).toHaveLength(47);
     expect(new Set(PUBLIC_CATALOG_ARTIFACTS).size).toBe(47);
     expect(PUBLIC_CATALOG_ARTIFACTS).toEqual(expect.arrayContaining([
@@ -314,15 +358,32 @@ describe('Renal and Electrolyte Medicine module foundation', () => {
       '0.1.0-alpha.48', 'renal-electrolyte')).toEqual([]);
   });
 
+  it('binds hypermagnesemia completion to the exact patient and keeps validation gates pending', async () => {
+    const { renalHypermagnesemiaCompletionEvidence } = await import('../../src/modules/renal-electrolyte/hypermagnesemia-completion');
+    const next = getRenalElectrolyteScenario('hypermagnesemia-antagonism-and-removal')!;
+    const evidence = renalHypermagnesemiaCompletionEvidence(next, '0.1.0-alpha.48', 'renal-electrolyte');
+    expect(evidence).toHaveLength(9);
+    expect(evidence.filter((item) => item.status === 'satisfied')).toHaveLength(7);
+    expect(evidence.filter((item) => item.status === 'missing').map((item) => item.id))
+      .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
+    expect(renalHypermagnesemiaCompletionEvidence(next, '0.1.0-alpha.49', 'renal-electrolyte')).toEqual([]);
+    expect(renalHypermagnesemiaCompletionEvidence(next, '0.1.0-alpha.48', 'endocrine-metabolic')).toEqual([]);
+    expect(renalHypermagnesemiaCompletionEvidence(scenario, '0.1.0-alpha.48', 'renal-electrolyte')).toEqual([]);
+    expect(renalHypermagnesemiaCompletionEvidence({ ...next, metadata: { ...next.metadata, version: '0.1.1' } },
+      '0.1.0-alpha.48', 'renal-electrolyte')).toEqual([]);
+    expect(renalHypermagnesemiaCompletionEvidence({ ...next, patient: { ...next.patient, weightKg: 65 } },
+      '0.1.0-alpha.48', 'renal-electrolyte')).toEqual([]);
+  });
+
   it('publishes exact preview, quality-gap, maturity, and secure-report artifacts', () => {
     const completion = json('public/catalog/renal-electrolyte-completion-audit.json');
     const quality = json('public/catalog/renal-electrolyte-quality-audit.json');
     const maturity = json('public/catalog/renal-electrolyte-maturity.json');
     const reports = json('workers/reports/src/report-catalog.generated.json');
-    expect(completion).toMatchObject({ moduleId: 'renal-electrolyte', scenarioCount: 5, completeScenarioCount: 0 });
-    expect(completion.scenarios).toHaveLength(5);
-    expect(quality).toMatchObject({ moduleId: 'renal-electrolyte', scenarioCount: 5, playableScenarioCount: 0 });
-    expect(maturity).toMatchObject({ moduleId: 'renal-electrolyte', recordCount: 5 });
+    expect(completion).toMatchObject({ moduleId: 'renal-electrolyte', scenarioCount: 6, completeScenarioCount: 0 });
+    expect(completion.scenarios).toHaveLength(6);
+    expect(quality).toMatchObject({ moduleId: 'renal-electrolyte', scenarioCount: 6, playableScenarioCount: 0 });
+    expect(maturity).toMatchObject({ moduleId: 'renal-electrolyte', recordCount: 6 });
     for (const { metadata } of RENAL_ELECTROLYTE_SCENARIOS) {
       expect(completion.scenarios).toContainEqual(expect.objectContaining({ scenarioId: metadata.id, moduleId: 'renal-electrolyte',
         contentVersion: metadata.version, maturity: 'preview', complete: false, fidelityClass: 'state_transition' }));
@@ -334,8 +395,13 @@ describe('Renal and Electrolyte Medicine module foundation', () => {
       expect(reports.scenarios).toContainEqual(expect.objectContaining({ moduleId: 'renal-electrolyte', scenarioId: metadata.id,
         contentVersion: metadata.version, maturity: 'preview' }));
     }
-    expect(reports.scenarios).toHaveLength(217);
-    const prior216 = reports.scenarios.filter((entry: { moduleId: string; scenarioId: string }) =>
+    expect(reports.scenarios).toHaveLength(218);
+    const prior217 = reports.scenarios.filter((entry: { moduleId: string; scenarioId: string }) =>
+      !(entry.moduleId === 'renal-electrolyte' && entry.scenarioId === 'hypermagnesemia-antagonism-and-removal'));
+    expect(prior217).toHaveLength(217);
+    expect(createHash('sha256').update(JSON.stringify(prior217)).digest('hex'))
+      .toBe('a4c06bf98b1d0f2c4c995cfe62a0a582fcfbdf82d7332675b798d000e2fb8d0f');
+    const prior216 = prior217.filter((entry: { moduleId: string; scenarioId: string }) =>
       !(entry.moduleId === 'renal-electrolyte' && entry.scenarioId === 'hypocalcemia-ionized-calcium-and-ckd'));
     expect(prior216).toHaveLength(216);
     expect(createHash('sha256').update(JSON.stringify(prior216)).digest('hex'))
