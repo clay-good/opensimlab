@@ -64,6 +64,33 @@ const CHECKED = '2026-08-20';
 
 export const SOURCES: readonly Source[] = [
   {
+    id: 'renal-hyponatremia-symptom-led-2022', authors: 'Society for Endocrinology',
+    title: 'Emergency management of severe and moderately severely symptomatic hyponatraemia in adult patients',
+    publication: 'Society for Endocrinology Emergency Guidance', year: 2022,
+    locator: '2022 revision; pp. 3–6, recommendation 1 and Figures 2–3',
+    usedFor: 'Selected symptom-led rescue pathway and limited additional correction when symptoms do not improve after an initial +5 mmol/L rise, alongside expert investigation and continued surveillance. The authored +6 handoff is not a treatment-stopping rule. No dose is adopted.',
+    verifiedAgainst: 'Official issuing-body 2022 PDF, treatment and monitoring text plus rendered Figures 2–3 inspected. This selected first-hour pathway differs from the European 2014 moderately symptomatic schedule; neither is presented as a completed US/GB regional matrix.',
+    verifiedOn: '2026-08-27',
+  },
+  {
+    id: 'renal-hyponatremia-diagnostic-caution-2014', authors: 'Spasovski G, Vanholder R, Allolio B, et al',
+    title: 'Clinical practice guideline on diagnosis and treatment of hyponatraemia',
+    publication: 'European Journal of Endocrinology', year: 2014,
+    locator: '170:G1–G47; doi:10.1530/EJE-13-1020; §§6.3 and 7.2',
+    usedFor: 'Contemporaneous blood and urine interpretation, caution with diuretic exposure and SIAD classification, unknown-duration precautions, and symptom-based reassessment. Moderately symptomatic timing is not silently equated with the selected 2022 pathway.',
+    verifiedAgainst: 'ESE issuing-body guideline directory and official ERBP condensed field version, diagnostic §2.3 and moderately symptomatic §3.2. The field version identifies the joint guideline and companion NDT publication doi:10.1093/ndt/gfu040.',
+    verifiedOn: '2026-08-27',
+  },
+  {
+    id: 'renal-hyponatremia-correction-review-2024', authors: 'Sterns RH, Rondon-Berrios H, Adrogué HJ, et al',
+    title: 'Treatment Guidelines for Hyponatremia: Stay the Course',
+    publication: 'Clinical Journal of the American Society of Nephrology', year: 2024,
+    locator: '19:129–135; doi:10.2215/CJN.0000000000000244',
+    usedFor: 'Correction ceilings are not routine targets; continue sodium and urine-output monitoring with individualized risk assessment. Recent poor intake alone does not establish severe malnutrition or an osmotic-demyelination risk category. No injury prediction is modeled.',
+    verifiedAgainst: 'PubMed publication record and PMC full-text indexed treatment-guideline discussion; January 2024 issue follows online publication in 2023. This is a review reaffirming safeguards, not a new guideline.',
+    verifiedOn: '2026-08-27',
+  },
+  {
     id: 'association-jbds-perioperative-diabetes-2026', authors: 'Levy NA, El-Boghdadly K, Lobo DN, et al',
     title: 'Peri-operative management of diabetes mellitus: a multidisciplinary consensus statement from the Association of Anaesthetists and the Joint British Diabetes Societies for Inpatient Care group',
     publication: 'Anaesthesia', year: 2026, locator: '81(8):1116–1131; doi:10.1111/anae.70181; Table 3, Box 1, postoperative handover sections',

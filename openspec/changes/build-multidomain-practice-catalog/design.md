@@ -3050,6 +3050,20 @@ and centered report remain available. Optional reports contain at most 28 observ
 scalars and seven live vitals, never hidden results or learner prose. Clinical review, four quality
 records, full inclusive-runtime checks, and production reporting evidence remain pending.
 
+The third renal preview, `hyponatremia-symptoms-and-reassessment@0.1.0`, distinguishes a sodium
+rise from persistent confusion, headache, and nausea. Initial rescue is independent of support
+or diagnostic classification. Current full findings gate selected additional rescue; partial
+sodium and neurologic observations preserve separate timestamps. Alternative-cause investigation
+is available at any time and does not generate a cure. The selected Society for Endocrinology
+2022 pathway differs from European 2014 moderately symptomatic timing; +6 is an authored handoff
+checkpoint, never an automatic treatment stop. Numerical and source boundaries are recorded in
+`docs/evidence-briefs/hyponatremia-symptoms-and-reassessment.md`.
+
+Thirteen choices, a nine-decision paused example, five-objective debrief, and nonvisual summaries
+use the shared tutor and reporting surfaces. Optional context has seven live vitals and at most
+31 observed/care scalars, excluding hidden results, timers, and prose. Clinical, quality-matrix,
+inclusive-runtime, and production reporting evidence remains pending.
+
 #### Infectious disease: 10
 
 Sepsis without shock; septic shock; meningitis; neutropenic fever; severe community-acquired

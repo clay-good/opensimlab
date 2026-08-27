@@ -1214,6 +1214,32 @@ credited toward the catalog until every item in the completion contract passes.
     and pauses again. This is not phone or native assistive-technology validation. Local reporting
     is disabled; no production report was sent. Publish the updated Worker catalog before the
     new client and keep pending gates explicit.
+  - [x] Renal/electrolyte slice 3/12 registers `hyponatremia-symptoms-and-reassessment@0.1.0`
+    as a distinct persistent-symptom preview. Selected qualified rescue improves authored sodium
+    from 118 to 123 and then 124 while confusion, headache, and nausea persist. Current full
+    assessment gates additional rescue; initial rescue and parallel neurologic investigation do
+    not wait for administrative steps. SfE 2022, European 2014, and the 2024 CJASN review were
+    checked August 27, including rendered treatment and diagnostic figures. The selected pathway
+    is not a universal regional pace; +6 is not a treatment-stop rule. See the evidence brief.
+  - [x] Add thirteen choices, nine-decision paused example, private tutor, five-objective debrief,
+    nonvisual summaries, and shared centered reporting. Partial sodium and neurologic findings
+    retain full-panel history. Care credit requires later event order, even at one tick. Optional
+    reports have seven live vitals and at most 31 observed/care scalars, excluding hidden results,
+    timers, and prose. All 509 neighboring checks passed before repinning 6/10/12 shared quality
+    dependencies; authored records remain unchanged.
+  - [x] Verify final indexable CI: 4,805 tests in 537 files, all 30 strict specifications,
+    typecheck, lint, public readiness, build, static-host checks, budgets, and fonts pass. There
+    are 207 scenarios, 232 static routes, 229 crawlable routes, and 47 artifacts. All 214 prior
+    report identities remain unchanged; 215 are accepted. Landing/cockpit/offline assets total
+    148.7/1,576.2/3,501.2 KiB, with 86.2 KiB fonts. Final audit caught premature additional-response
+    debrief credit; targeted regressions and 99 affected neighbor checks pass after correction.
+    Re-pin only the changed debrief hashes. Actual release still refuses 222 publication blockers.
+  - [ ] Complete hyponatremia independent clinical review, four exact-version quality records,
+    full inclusive-runtime validation, and production Turnstile/D1 evidence. Desktop QA at
+    1,280 × 720 confirms a centered 560 × 619 dialog, 160-character cap, unchecked context,
+    cancel focus return, and paused reading/reporting clock. One continuation applies one rescue
+    decision and pauses again. Local reporting is disabled; no production report was sent.
+    Publish the additive Worker identity catalog before the new client; keep pending gates explicit.
   - [x] Repair service-worker release consistency. Build-stamped SHA-256 integrity checks reject
     mixed or incomplete installations; active snapshots are immutable. Explicit acceptance waits
     for the intended controller before reloading only that tab. Durable per-client release pins

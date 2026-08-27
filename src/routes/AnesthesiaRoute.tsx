@@ -42,6 +42,9 @@ import { RENAL_HYPERKALEMIA_ACTIONS, supportsRenalHyperkalemia } from '../module
 import { renalHyperkalemiaReportActions } from '../modules/renal-electrolyte/hyperkalemia-reporting';
 import { supportsRenalHyperkalemiaDemonstration } from '../modules/renal-electrolyte/demo/renal-hyperkalemia-demonstration';
 import { RENAL_HYPOKALEMIA_ACTIONS, supportsRenalHypokalemia } from '../modules/renal-electrolyte/hypokalemia';
+import { RENAL_HYPONATREMIA_ACTIONS, supportsRenalHyponatremia } from '../modules/renal-electrolyte/hyponatremia';
+import { renalHyponatremiaReportActions } from '../modules/renal-electrolyte/hyponatremia-reporting';
+import { supportsRenalHyponatremiaDemonstration } from '../modules/renal-electrolyte/demo/renal-hyponatremia-demonstration';
 import { renalHypokalemiaReportActions } from '../modules/renal-electrolyte/hypokalemia-reporting';
 import { supportsRenalHypokalemiaDemonstration } from '../modules/renal-electrolyte/demo/renal-hypokalemia-demonstration';
 import { supportsPerioperativeDiabetesDemonstration } from '../modules/endocrine-metabolic/demo/perioperative-diabetes-demonstration';
@@ -275,6 +278,34 @@ function boundedScalars(value: unknown, limit: number): Record<string, ReportCon
 }
 
 export function collectReportEquipmentContext(equipment: SessionState['equipment']): Record<string, ReportContextScalar> {
+  const sodium = equipment?.resuscitation.renalHyponatremia;
+  if (sodium) {
+    return boundedScalars({ resuscitation: { renalHyponatremia: {
+      supportActive: sodium.supportActive, contextReviewedAtTick: sodium.contextReviewedAtTick,
+      monitoringAtTick: sodium.monitoringAtTick, rescueAtTick: sodium.rescueAtTick,
+      additionalRescueAtTick: sodium.additionalRescueAtTick, neurologicReviewAtTick: sodium.neurologicReviewAtTick,
+      initialResponseObserved: sodium.initialResponseObserved, additionalResponseObserved: sodium.additionalResponseObserved,
+      persistentSymptomsObserved: sodium.persistentSymptomsObserved, sodiumNormalizationAttempted: sodium.sodiumNormalizationAttempted,
+      numberOnlyRecoveryAttempted: sodium.numberOnlyRecoveryAttempted, siadhLabelAttempted: sodium.siadhLabelAttempted,
+      ended: sodium.ended,
+      sodiumObservation: sodium.sodiumObservation ? {
+        atTick: sodium.sodiumObservation.atTick, sodiumMmolL: sodium.sodiumObservation.sodiumMmolL,
+        changeFromBaselineMmolL: sodium.sodiumObservation.changeFromBaselineMmolL,
+      } : null,
+      neurologicObservation: sodium.neurologicObservation ? {
+        atTick: sodium.neurologicObservation.atTick, headache: sodium.neurologicObservation.headache, nausea: sodium.neurologicObservation.nausea,
+      } : null,
+      observation: sodium.observation ? {
+        atTick: sodium.observation.atTick, sodiumMmolL: sodium.observation.sodiumMmolL,
+        changeFromBaselineMmolL: sodium.observation.changeFromBaselineMmolL,
+        headache: sodium.observation.headache, nausea: sodium.observation.nausea,
+        systolicMmHg: sodium.observation.systolicMmHg, diastolicMmHg: sodium.observation.diastolicMmHg,
+        meanArterialMmHg: sodium.observation.meanArterialMmHg, heartRateBpm: sodium.observation.heartRateBpm,
+        respiratoryRateBpm: sodium.observation.respiratoryRateBpm, spo2Percent: sodium.observation.spo2Percent,
+        coreTemperatureC: sodium.observation.coreTemperatureC,
+      } : null,
+    } } }, REPORT_CONTEXT_SNAPSHOT_LIMIT);
+  }
   const hypokalemia = equipment?.resuscitation.renalHypokalemia;
   if (hypokalemia) {
     return boundedScalars({ resuscitation: { renalHypokalemia: {
@@ -516,18 +547,20 @@ export function collectReportEquipmentContext(equipment: SessionState['equipment
   return { ...priority, ...boundedScalars(remaining, REPORT_CONTEXT_SNAPSHOT_LIMIT - Object.keys(priority).length) };
 }
 
-function collectReportRecentContext(session: SessionState, seed: number, sodiumLesson: boolean, avpLesson: boolean, refeedingLesson: boolean, diabetesLesson: boolean, renalLesson: boolean, hypokalemiaLesson: boolean): ScenarioReportRecentContext {
+function collectReportRecentContext(session: SessionState, seed: number, sodiumLesson: boolean, avpLesson: boolean, refeedingLesson: boolean, diabetesLesson: boolean, renalLesson: boolean, hypokalemiaLesson: boolean, renalSodiumLesson: boolean): ScenarioReportRecentContext {
   const actions = sessionInternals().recorder?.build('pending').actions ?? [];
   return {
     seed: Math.trunc(seed),
-    actions: hypokalemiaLesson ? renalHypokalemiaReportActions(actions, session.log)
+    actions: renalSodiumLesson ? renalHyponatremiaReportActions(actions, session.log)
+      : hypokalemiaLesson ? renalHypokalemiaReportActions(actions, session.log)
       : renalLesson ? renalHyperkalemiaReportActions(actions, session.log)
       : diabetesLesson ? perioperativeDiabetesReportActions(actions, session.log)
       : refeedingLesson ? refeedingReportActions(actions, session.log)
       : avpLesson ? avpDeficiencyReportActions(actions, session.log)
       : sodiumLesson ? hyponatremiaCorrectionReportActions(actions, session.log)
       : actions.slice(-REPORT_CONTEXT_ACTION_LIMIT).map((action) => {
-      const lessonActions = action.type === 'renal-hypokalemia-response' ? RENAL_HYPOKALEMIA_ACTIONS
+      const lessonActions = action.type === 'renal-hyponatremia-response' ? RENAL_HYPONATREMIA_ACTIONS
+        : action.type === 'renal-hypokalemia-response' ? RENAL_HYPOKALEMIA_ACTIONS
         : action.type === 'renal-hyperkalemia-response' ? RENAL_HYPERKALEMIA_ACTIONS
         : action.type === 'perioperative-diabetes-response' ? PERIOPERATIVE_DIABETES_ACTIONS
         : action.type === 'refeeding-response' ? REFEEDING_ACTIONS
@@ -548,14 +581,14 @@ function collectReportRecentContext(session: SessionState, seed: number, sodiumL
         // Invalid lesson payloads remain refused attempts, without reproducing
         // an injected note or making their named action look accepted.
         payload: lessonActions ? lessonChoice !== undefined ? { action: lessonChoice } : {}
-          : (session.equipment?.resuscitation.hyponatremiaCorrection || session.equipment?.resuscitation.avpDeficiency || session.equipment?.resuscitation.refeeding || session.equipment?.resuscitation.perioperativeDiabetes || session.equipment?.resuscitation.renalHyperkalemia || session.equipment?.resuscitation.renalHypokalemia) ? {}
+          : (session.equipment?.resuscitation.hyponatremiaCorrection || session.equipment?.resuscitation.avpDeficiency || session.equipment?.resuscitation.refeeding || session.equipment?.resuscitation.perioperativeDiabetes || session.equipment?.resuscitation.renalHyperkalemia || session.equipment?.resuscitation.renalHypokalemia || session.equipment?.resuscitation.renalHyponatremia) ? {}
           : boundedScalars(action.payload, 12),
       };
     }),
     snapshot: {
       patient: Object.fromEntries(Object.entries(session.state ?? {})
         .filter((entry): entry is [string, number] => Number.isFinite(entry[1]))
-        .filter(([field]) => !(sodiumLesson || avpLesson || refeedingLesson || diabetesLesson || renalLesson || hypokalemiaLesson)
+        .filter(([field]) => !(sodiumLesson || avpLesson || refeedingLesson || diabetesLesson || renalLesson || hypokalemiaLesson || renalSodiumLesson)
           || ['systolicMmHg', 'diastolicMmHg', 'meanArterialMmHg', 'heartRateBpm',
             'respiratoryRateBpm', 'spo2Percent', 'coreTemperatureC'].includes(field))
         // These authored cases supply neither a continuous CO2 measurement nor oxygen settings.
@@ -569,6 +602,7 @@ function collectReportRecentContext(session: SessionState, seed: number, sodiumL
         || (diabetesLesson && !session.equipment?.resuscitation.perioperativeDiabetes)
         || (renalLesson && !session.equipment?.resuscitation.renalHyperkalemia)
         || (hypokalemiaLesson && !session.equipment?.resuscitation.renalHypokalemia)
+        || (renalSodiumLesson && !session.equipment?.resuscitation.renalHyponatremia)
         ? {} : collectReportEquipmentContext(session.equipment),
     },
   };
@@ -681,7 +715,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
           : session.phase === 'briefing' || session.phase === 'idle' ? 'prebrief' : 'live'),
         simulatedTick: session.tick,
         canonicalUrl: `${SITE_ORIGIN}${config.basePath}/scenario/${scenario.metadata.id}`,
-        collectRecentContext: () => collectReportRecentContext(session, assignment.seed, supportsHyponatremiaCorrection(scenario), supportsAvpDeficiency(scenario), supportsRefeeding(scenario), supportsPerioperativeDiabetes(scenario), supportsRenalHyperkalemia(scenario), supportsRenalHypokalemia(scenario)),
+        collectRecentContext: () => collectReportRecentContext(session, assignment.seed, supportsHyponatremiaCorrection(scenario), supportsAvpDeficiency(scenario), supportsRefeeding(scenario), supportsPerioperativeDiabetes(scenario), supportsRenalHyperkalemia(scenario), supportsRenalHypokalemia(scenario), supportsRenalHyponatremia(scenario)),
       }}
       {...(reportRequest ? { openRequest: reportRequest.id } : {})}
       onOpen={() => {
@@ -739,7 +773,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
     if (!session.ready) return;
     const endocrineDemo = (config.id === 'endocrine-metabolic'
       && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario) || supportsRefeedingDemonstration(scenario) || supportsPerioperativeDiabetesDemonstration(scenario)))
-      || (config.id === 'renal-electrolyte' && (supportsRenalHyperkalemiaDemonstration(scenario) || supportsRenalHypokalemiaDemonstration(scenario)));
+      || (config.id === 'renal-electrolyte' && (supportsRenalHyperkalemiaDemonstration(scenario) || supportsRenalHypokalemiaDemonstration(scenario) || supportsRenalHyponatremiaDemonstration(scenario)));
     if (!endocrineDemo && (config.id !== 'anesthesia' || scenario.metadata.id !== DEMONSTRATION_SCENARIO_ID)) return;
     autoDemo.current = false;
     setDemonstrating(true);
@@ -843,7 +877,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
           {...(config.id === 'anesthesia' && scenario.metadata.id === DEMONSTRATION_SCENARIO_ID
             ? { onWatch: () => { setDemonstrating(true); session.setSpeed(5); session.play(); } }
             : (config.id === 'endocrine-metabolic' && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario) || supportsRefeedingDemonstration(scenario) || supportsPerioperativeDiabetesDemonstration(scenario)))
-              || (config.id === 'renal-electrolyte' && (supportsRenalHyperkalemiaDemonstration(scenario) || supportsRenalHypokalemiaDemonstration(scenario)))
+              || (config.id === 'renal-electrolyte' && (supportsRenalHyperkalemiaDemonstration(scenario) || supportsRenalHypokalemiaDemonstration(scenario) || supportsRenalHyponatremiaDemonstration(scenario)))
             ? { onWatch: () => { setDemonstrating(true); session.setSpeed(60); session.play(); } }
             : {})}
           {...(assignment.label ? { assignmentLabel: assignment.label } : {})}

@@ -274,6 +274,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       hasPerioperativeDiabetesResponse: false,
       hasRenalHyperkalemiaResponse: false,
       hasRenalHypokalemiaResponse: false,
+      hasRenalHyponatremiaResponse: false,
       hasPulmonaryEmbolismResponse: false,
       hasStemiResponse: false,
       hasUnstableNarrowTachycardiaResponse: false,

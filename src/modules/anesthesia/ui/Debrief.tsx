@@ -35,6 +35,7 @@ import { supportsRefeeding } from '../../endocrine-metabolic/refeeding';
 import { supportsPerioperativeDiabetes } from '../../endocrine-metabolic/perioperative-diabetes';
 import { supportsRenalHyperkalemia } from '../../renal-electrolyte/hyperkalemia';
 import { supportsRenalHypokalemia } from '../../renal-electrolyte/hypokalemia';
+import { supportsRenalHyponatremia } from '../../renal-electrolyte/hyponatremia';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -210,6 +211,8 @@ export function Debrief(props: DebriefProps) {
                 ? { activityContext: 'coordinating cardiac protection, temporary potassium shifting, individualized elimination, and ongoing reassessment for hyperkalemia' }
               : supportsRenalHypokalemia(props.scenario)
                 ? { activityContext: 'coordinating potassium and magnesium replacement, continuing-loss care, fresh reassessment, and receiving-team ownership for severe hypokalemia' }
+              : supportsRenalHyponatremia(props.scenario)
+                ? { activityContext: 'coordinating symptom-led sodium rescue, fresh neurologic and laboratory reassessment, alternative-cause investigation, and continuing expert care for unresolved symptoms' }
               : supportsPerioperativeDiabetes(props.scenario)
                 ? { activityContext: 'restoring reliable insulin delivery during delayed surgery, distinguishing glucose-only checks from full reassessment, and handing off continued perioperative care' }
               : supportsRefeeding(props.scenario)
@@ -601,6 +604,40 @@ export function objectiveFindings(
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
 
+    if (objective.id.startsWith('renal-hyponatremia-')) {
+      if (!supportsRenalHyponatremia(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The renal hyponatremia lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^renal-hyponatremia-${id}-\\d+$`).test(entry.eventId));
+      const rescue = event('rescue'); const additional = event('additional-rescue');
+      const support = event('support'); const context = event('context-review');
+      const monitoring = event('monitoring'); const review = event('neurologic-review'); const handoff = event('handoff');
+      const full = (entry: EngineEvent) => /^renal-hyponatremia-(persistent-symptoms|additional-response)-reassessment-\d+$/.test(entry.eventId);
+      const later = log.find(full);
+      const afterCare = (care: EngineEvent | undefined, additionalResponse = false) => care && log.find((entry, index) => index > log.indexOf(care)
+        && entry.tick >= care.tick && (additionalResponse ? /^renal-hyponatremia-additional-response-reassessment-\d+$/.test(entry.eventId) : full(entry)));
+      const partial = event('sodium-check') || event('neurologic-check');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'renal-hyponatremia-rescue': { met: !!afterCare(rescue) && !!monitoring, tick: rescue?.tick,
+          finding: (afterCare(rescue) && monitoring ? 'Qualified symptom-led rescue was followed by a requested full response assessment and ongoing surveillance. ' : 'Rescue, a later full assessment after care, or surveillance remains incomplete. ')
+            + 'Initial treatment does not wait for administrative acknowledgment or cause classification. No dose or universal response is inferred.' },
+        'renal-hyponatremia-context': { met: !!support && !!context, tick: context?.tick,
+          finding: (support && context ? 'Qualified support and the pretreatment context were reviewed. ' : 'Support or contributor review remains incomplete. ')
+            + (event('siadh-label-refused') ? 'The premature SIAD label was refused. ' : '')
+            + 'Contemporaneous pretreatment urine and blood findings, recent thiazide exposure, and unknown duration require diagnostic caution. Urine sodium alone does not establish SIAD; keep the original correction baseline.' },
+        'renal-hyponatremia-reassessment': { met: !!later, tick: later?.tick,
+          finding: (later ? 'Fresh combined findings showed a sodium rise without resolution of confusion, headache, or nausea. ' : 'A requested later full sodium, neurologic, and bedside assessment is missing. ')
+            + (partial ? 'Sodium-only and neurologic-only checks remained partial and did not refresh the older full panel. ' : '')
+            + 'Elapsed time or a better number cannot establish neurologic recovery.' },
+        'renal-hyponatremia-persistent': { met: !!review && !!afterCare(additional, true), tick: additional?.tick,
+          finding: (review && afterCare(additional, true) ? 'Selected qualified additional rescue, fresh full findings, and parallel alternative-cause investigation were recorded. ' : 'Additional rescue, its later full assessment, or neurologic and alternate-cause investigation remains incomplete. ')
+            + (event('normalization-refused') || event('number-only-recovery-refused') ? 'The attempted normalization or number-only recovery shortcut remains visible. ' : '')
+            + 'Symptoms persist. The selected Society for Endocrinology 2022 pathway is not a universal regional pace; investigation is available at any time and does not itself cure symptoms.' },
+        'renal-hyponatremia-handoff': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The receiving expert team owns unresolved symptoms, cumulative correction, continuing monitoring, further treatment decisions, investigation, and escalation. ' : 'Continuing expert ownership or current combined findings after the selected response remains incomplete. ')
+            + 'The +6 mmol/L teaching checkpoint is not a treatment-stopping rule, normalization, or discharge clearance. Handoff ends rehearsal, not clinical care; durable safety and competence are not certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (objective.id.startsWith('renal-hypokalemia-')) {
       if (!supportsRenalHypokalemia(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The renal hypokalemia lesson was not active.' } satisfies ObjectiveFinding;
       const event = (id: string) => log.find((entry) => new RegExp(`^renal-hypokalemia-${id}-\\d+$`).test(entry.eventId));

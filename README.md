@@ -434,7 +434,12 @@ Coordinate both replacement lanes and delivered loss care, then compare partial 
 recurrence. Potassium does not wait for magnesium normalization. Separate potassium-only and ECG
 checks from a fresh full assessment; hand off unresolved risk without declaring durable safety.
 The nine-decision example pauses for reading, and the shared private report stays available.
-Two of 12 renal scenarios are registered previews; independent validation remains pending.
+
+The third Renal lab separates sodium improvement from neurologic recovery. Confusion, headache,
+and nausea persist after selected qualified rescue; partial sodium or neurologic checks cannot
+refresh the full assessment. The paused tutor example, debrief, and shared 160-character report
+preserve ongoing investigation and treatment ownership. A +6 mmol/L handoff is not a stopping
+rule. Three of 12 renal scenarios are registered previews, with independent validation pending.
 
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage

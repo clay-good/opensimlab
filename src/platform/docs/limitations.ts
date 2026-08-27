@@ -27,6 +27,30 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'renal-hyponatremia-authored-contrasts',
+    headline: 'Sodium changes are authored assessment contrasts, not treatment kinetics.',
+    simplification: 'Selected qualified rescue yields authored 118-to-123 and then 124 mmol/L checkpoints after 60 and 30 minutes. No dose, clearance, urine-loss, or delayed-injury model is supplied.',
+    whereItMisleads: 'A fixed change predicts a patient response, a clock becomes a required wait, or a +6 mmol/L handoff becomes an automatic treatment stop.',
+    correctUnderstanding: 'Individualize symptom-led treatment and close sodium, neurologic, urine-output, and fluid-balance surveillance. The selected 2022 Society for Endocrinology pathway is not a universal regional schedule; correction limits are ceilings, not routine targets.',
+    briefIn: ['hyponatremia-symptoms-and-reassessment'],
+  },
+  {
+    id: 'renal-hyponatremia-persistent-symptoms',
+    headline: 'A better sodium number does not resolve the supplied neurologic symptoms.',
+    simplification: 'Confusion, headache, and nausea persist through both authored response checkpoints. Qualified alternative-cause evaluation is available at any time but generates no diagnosis or cure.',
+    whereItMisleads: 'Numeric improvement becomes neurologic recovery, concentrated urine during thiazide exposure proves SIAD, or recent symptoms prove acute duration.',
+    correctUnderstanding: 'Continue expert treatment decisions and investigate unresolved symptoms. Interpret contemporaneous pretreatment specimens with medications and alternative causes, preserve the original correction window, and do not infer severe malnutrition from poor intake alone.',
+    briefIn: ['hyponatremia-symptoms-and-reassessment'],
+  },
+  {
+    id: 'renal-hyponatremia-observed-findings',
+    headline: 'Partial sodium or neurologic checks do not refresh the older full assessment.',
+    simplification: 'Each requested partial and full observation keeps its own timestamp; care acknowledgments and elapsed time do not acquire results.',
+    whereItMisleads: 'A newer sodium result silently updates symptoms, or an old full panel authorizes further treatment or completed handoff after a changed response.',
+    correctUnderstanding: 'Request current combined findings and transfer unresolved symptoms, cumulative correction, surveillance, investigation, and escalation. Handoff ends rehearsal, not clinical care, and establishes neither discharge readiness nor durable safety.',
+    briefIn: ['hyponatremia-symptoms-and-reassessment'],
+  },
+  {
     id: 'renal-hypokalemia-authored-contrasts',
     headline: 'Replacement and recurrent losses use authored contrasts, not potassium or magnesium kinetics.',
     simplification: 'Separate potassium and magnesium care can produce partial observations before combined improvement. Continuing unmanaged losses can cause an authored recurrence; the 30-, 60-, and 120-minute checkpoints are not clinical waits or grading deadlines.',

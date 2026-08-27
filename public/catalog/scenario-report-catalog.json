@@ -3131,6 +3131,23 @@
       "limitationManifestHash": "sha256:06248f950890ed2e1b755ab0489ba2cf7ffca0d34aa2169c192e05a134901aa1"
     },
     {
+      "scenarioId": "hyponatremia-symptoms-and-reassessment",
+      "contentVersion": "0.1.0",
+      "moduleId": "renal-electrolyte",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:844485226db1df305122d6139fd4542cd8fd6dd576b5b3bd7c35ffc0cb751a0b",
+      "defaultsHash": "sha256:3d22a393de5d2832566417271420418092c15fda3650d57a82c46fc06a70c3b4",
+      "maturityHash": "sha256:86915ba5e002802129d720f7bae0dcdf1f7b9177842000c5c56c174389ca6994",
+      "sourceManifestHash": "sha256:4ba967c1ae8a531332582cd75628b78b25418c94514e8e120367ca0c767372ff",
+      "limitationManifestHash": "sha256:54ed8a115dc5342606f2fe0fd5ffeccb04813b4a2ad4d3a6395bc42e5facb5ce"
+    },
+    {
       "scenarioId": "acute-pulmonary-edema-respiratory-support-reassessment",
       "contentVersion": "0.1.0",
       "moduleId": "respiratory-medicine",

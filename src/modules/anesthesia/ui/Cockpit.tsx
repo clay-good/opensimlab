@@ -46,6 +46,8 @@ import { supportsRenalHyperkalemiaDemonstration } from '../../renal-electrolyte/
 import { useRenalHyperkalemiaDemonstration } from '../../renal-electrolyte/demo/useRenalHyperkalemiaDemonstration';
 import { supportsRenalHypokalemiaDemonstration } from '../../renal-electrolyte/demo/renal-hypokalemia-demonstration';
 import { useRenalHypokalemiaDemonstration } from '../../renal-electrolyte/demo/useRenalHypokalemiaDemonstration';
+import { supportsRenalHyponatremiaDemonstration } from '../../renal-electrolyte/demo/renal-hyponatremia-demonstration';
+import { useRenalHyponatremiaDemonstration } from '../../renal-electrolyte/demo/useRenalHyponatremiaDemonstration';
 import { useRefeedingDemonstration } from '../../endocrine-metabolic/demo/useRefeedingDemonstration';
 import { supportsRefeedingDemonstration } from '../../endocrine-metabolic/demo/refeeding-demonstration';
 import { useAvpDeficiencyDemonstration } from '../../endocrine-metabolic/demo/useAvpDeficiencyDemonstration';
@@ -186,8 +188,9 @@ export function Cockpit({
   const perioperativeDiabetesDemoSupported = supportsPerioperativeDiabetesDemonstration(scenario);
   const renalHyperkalemiaDemoSupported = supportsRenalHyperkalemiaDemonstration(scenario);
   const renalHypokalemiaDemoSupported = supportsRenalHypokalemiaDemonstration(scenario);
+  const renalHyponatremiaDemoSupported = supportsRenalHyponatremiaDemonstration(scenario);
   const inductionDemonstration = useDemonstration({
-    active: demonstrating && !hypoglycemiaDemoSupported && !adrenalDemoSupported && !thyroidDemoSupported && !myxedemaDemoSupported && !hypercalcemiaDemoSupported && !hypocalcemiaDemoSupported && !hyponatremiaCorrectionDemoSupported && !avpDeficiencyDemoSupported && !refeedingDemoSupported && !perioperativeDiabetesDemoSupported && !renalHyperkalemiaDemoSupported && !renalHypokalemiaDemoSupported,
+    active: demonstrating && !hypoglycemiaDemoSupported && !adrenalDemoSupported && !thyroidDemoSupported && !myxedemaDemoSupported && !hypercalcemiaDemoSupported && !hypocalcemiaDemoSupported && !hyponatremiaCorrectionDemoSupported && !avpDeficiencyDemoSupported && !refeedingDemoSupported && !perioperativeDiabetesDemoSupported && !renalHyperkalemiaDemoSupported && !renalHypokalemiaDemoSupported && !renalHyponatremiaDemoSupported,
     tick: session.tick,
     act: session.act,
     onFinished: () => onTakeControls?.(),
@@ -262,7 +265,13 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypokalemia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = renalHypokalemiaDemoSupported ? renalHypokalemiaDemonstration
+  const renalHyponatremiaDemonstration = useRenalHyponatremiaDemonstration({
+    active: demonstrating && renalHyponatremiaDemoSupported,
+    running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyponatremia,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const demonstration = renalHyponatremiaDemoSupported ? renalHyponatremiaDemonstration
+    : renalHypokalemiaDemoSupported ? renalHypokalemiaDemonstration
     : renalHyperkalemiaDemoSupported ? renalHyperkalemiaDemonstration
     : perioperativeDiabetesDemoSupported ? perioperativeDiabetesDemonstration
     : refeedingDemoSupported ? refeedingDemonstration
@@ -450,13 +459,13 @@ export function Cockpit({
   useEffect(() => {
     if (!session.state) return;
     const announcements = announcementsFor(previousState.current, session.state, session.alarms,
-      equipment?.resuscitation.myxedema || equipment?.resuscitation.hypercalcemia || equipment?.resuscitation.hypocalcemia || equipment?.resuscitation.hyponatremiaCorrection || equipment?.resuscitation.avpDeficiency || equipment?.resuscitation.refeeding || equipment?.resuscitation.perioperativeDiabetes || equipment?.resuscitation.renalHyperkalemia || equipment?.resuscitation.renalHypokalemia ? invalidParameters : undefined);
+      equipment?.resuscitation.myxedema || equipment?.resuscitation.hypercalcemia || equipment?.resuscitation.hypocalcemia || equipment?.resuscitation.hyponatremiaCorrection || equipment?.resuscitation.avpDeficiency || equipment?.resuscitation.refeeding || equipment?.resuscitation.perioperativeDiabetes || equipment?.resuscitation.renalHyperkalemia || equipment?.resuscitation.renalHypokalemia || equipment?.resuscitation.renalHyponatremia ? invalidParameters : undefined);
     previousState.current = session.state;
     if (announcements.length === 0) return;
     const critical = announcements.filter((entry) => entry.severity === 'critical');
     if (critical.length > 0) setCriticalAnnouncement(critical.map((entry) => entry.text).join('. '));
     else setAnnouncement(announcements.map((entry) => entry.text).join('. '));
-  }, [session.state, session.alarms, equipment?.resuscitation.myxedema, equipment?.resuscitation.hypercalcemia, equipment?.resuscitation.hypocalcemia, equipment?.resuscitation.hyponatremiaCorrection, equipment?.resuscitation.avpDeficiency, equipment?.resuscitation.refeeding, equipment?.resuscitation.perioperativeDiabetes, equipment?.resuscitation.renalHyperkalemia, equipment?.resuscitation.renalHypokalemia, invalidParameters]);
+  }, [session.state, session.alarms, equipment?.resuscitation.myxedema, equipment?.resuscitation.hypercalcemia, equipment?.resuscitation.hypocalcemia, equipment?.resuscitation.hyponatremiaCorrection, equipment?.resuscitation.avpDeficiency, equipment?.resuscitation.refeeding, equipment?.resuscitation.perioperativeDiabetes, equipment?.resuscitation.renalHyperkalemia, equipment?.resuscitation.renalHypokalemia, equipment?.resuscitation.renalHyponatremia, invalidParameters]);
 
   // The pulse tone sounds once per beat, at the pitch saturation implies.
   useEffect(() => {
@@ -483,7 +492,8 @@ export function Cockpit({
       || scenario.metadata.id === 'refeeding-electrolyte-shift'
       || scenario.metadata.id === 'perioperative-diabetes-insulin-continuity'
       || scenario.metadata.id === 'hyperkalemia-cardioprotection-and-rebound'
-      || scenario.metadata.id === 'hypokalemia-magnesium-and-ongoing-losses') return;
+      || scenario.metadata.id === 'hypokalemia-magnesium-and-ongoing-losses'
+      || scenario.metadata.id === 'hyponatremia-symptoms-and-reassessment') return;
     const input = {
       scenarioId: scenario.metadata.id,
       scenarioVersion: scenario.metadata.version,
@@ -531,6 +541,7 @@ export function Cockpit({
       perioperativeDiabetes: equipment?.resuscitation.perioperativeDiabetes,
       renalHyperkalemia: equipment?.resuscitation.renalHyperkalemia,
       renalHypokalemia: equipment?.resuscitation.renalHypokalemia,
+      renalHyponatremia: equipment?.resuscitation.renalHyponatremia,
       showTrainOfFour: scenario.equipment.monitoring.includes('train-of-four'),
       jawThrustCpapSecondsRemaining: airway.jawThrustCpapSecondsRemaining,
       capnographyLine,
@@ -553,7 +564,7 @@ export function Cockpit({
     scenario.equipment.monitoring, scenario.patient.weightKg, airway.jawThrustCpapSecondsRemaining,
     resuscitation, region, lastExposure, hasAnaphylaxisResponse, hasHypermetabolicResponse,
     hasCardiacArrestResponse, hasHighSpinalResponse, hasVenousAirEmbolismResponse,
-    hasBronchospasmResponse, capnographyLine, hasArterialLine, equipment?.resuscitation.myxedema, equipment?.resuscitation.hypercalcemia, equipment?.resuscitation.hypocalcemia, equipment?.resuscitation.hyponatremiaCorrection, equipment?.resuscitation.avpDeficiency, equipment?.resuscitation.refeeding, equipment?.resuscitation.perioperativeDiabetes, equipment?.resuscitation.renalHyperkalemia, equipment?.resuscitation.renalHypokalemia,
+    hasBronchospasmResponse, capnographyLine, hasArterialLine, equipment?.resuscitation.myxedema, equipment?.resuscitation.hypercalcemia, equipment?.resuscitation.hypocalcemia, equipment?.resuscitation.hyponatremiaCorrection, equipment?.resuscitation.avpDeficiency, equipment?.resuscitation.refeeding, equipment?.resuscitation.perioperativeDiabetes, equipment?.resuscitation.renalHyperkalemia, equipment?.resuscitation.renalHypokalemia, equipment?.resuscitation.renalHyponatremia,
     arterialLine.cuff.meanArterialMmHg, hasCircuitScenario, breathingCircuit,
   ]);
 
@@ -564,7 +575,7 @@ export function Cockpit({
       airwayPatencyFraction: airway.patencyFraction,
       perfusionIndex: session.state?.perfusionIndex ?? 0.8,
       artifacts: waveformArtifacts,
-      capnographyUnavailable: !!equipment?.resuscitation.myxedema || !!equipment?.resuscitation.hypercalcemia || !!equipment?.resuscitation.hypocalcemia || !!equipment?.resuscitation.hyponatremiaCorrection || !!equipment?.resuscitation.avpDeficiency || !!equipment?.resuscitation.refeeding || !!equipment?.resuscitation.perioperativeDiabetes || !!equipment?.resuscitation.renalHyperkalemia || !!equipment?.resuscitation.renalHypokalemia,
+      capnographyUnavailable: !!equipment?.resuscitation.myxedema || !!equipment?.resuscitation.hypercalcemia || !!equipment?.resuscitation.hypocalcemia || !!equipment?.resuscitation.hyponatremiaCorrection || !!equipment?.resuscitation.avpDeficiency || !!equipment?.resuscitation.refeeding || !!equipment?.resuscitation.perioperativeDiabetes || !!equipment?.resuscitation.renalHyperkalemia || !!equipment?.resuscitation.renalHypokalemia || !!equipment?.resuscitation.renalHyponatremia,
       capnographySampleObstructed: capnographyLine.obstructed,
       tracheostomyPatencyFraction: equipment?.tracheostomy?.patencyFraction,
       arterialDamped: arterialLine.dynamicResponse === 'overdamped',
@@ -574,7 +585,7 @@ export function Cockpit({
     }).map((entry) => `${entry.label}: ${entry.description}`).join(' '));
   }, [session.state, speak, rhythm, waveformArtifacts, airway, capnographyLine.obstructed,
     arterialLine.dynamicResponse, breathingCircuit.inspiredCo2MmHg, ventilator.delivering,
-    equipment?.tracheostomy?.patencyFraction, equipment?.resuscitation.myxedema, equipment?.resuscitation.hypercalcemia, equipment?.resuscitation.hypocalcemia, equipment?.resuscitation.hyponatremiaCorrection, equipment?.resuscitation.avpDeficiency, equipment?.resuscitation.refeeding, equipment?.resuscitation.perioperativeDiabetes, equipment?.resuscitation.renalHyperkalemia, equipment?.resuscitation.renalHypokalemia]);
+    equipment?.tracheostomy?.patencyFraction, equipment?.resuscitation.myxedema, equipment?.resuscitation.hypercalcemia, equipment?.resuscitation.hypocalcemia, equipment?.resuscitation.hyponatremiaCorrection, equipment?.resuscitation.avpDeficiency, equipment?.resuscitation.refeeding, equipment?.resuscitation.perioperativeDiabetes, equipment?.resuscitation.renalHyperkalemia, equipment?.resuscitation.renalHypokalemia, equipment?.resuscitation.renalHyponatremia]);
 
   useEffect(() => {
     if (arterialLine.mislevelingCm > 0 || arterialLine.dynamicResponse === 'overdamped') {
@@ -760,7 +771,7 @@ export function Cockpit({
                 spo2Percent: 'Pulse-derived saturation unavailable',
                 etco2MmHg: 'Exhaled carbon dioxide not supplied',
               }
-            : hypercalcemiaDemoSupported || hypocalcemiaDemoSupported || hyponatremiaCorrectionDemoSupported || avpDeficiencyDemoSupported || refeedingDemoSupported || perioperativeDiabetesDemoSupported || renalHyperkalemiaDemoSupported || renalHypokalemiaDemoSupported
+            : hypercalcemiaDemoSupported || hypocalcemiaDemoSupported || hyponatremiaCorrectionDemoSupported || avpDeficiencyDemoSupported || refeedingDemoSupported || perioperativeDiabetesDemoSupported || renalHyperkalemiaDemoSupported || renalHypokalemiaDemoSupported || renalHyponatremiaDemoSupported
               ? { etco2MmHg: 'Exhaled carbon dioxide is not supplied in this lesson',
                   fio2: 'Oxygen setting is not modeled' }
             : myxedemaDemoSupported
@@ -841,6 +852,10 @@ export function Cockpit({
           renalHyperkalemiaGuidance={session.guidance}
           renalHypokalemia={equipment?.resuscitation.renalHypokalemia}
           renalHypokalemiaGuidance={session.guidance}
+          renalHyponatremia={equipment?.resuscitation.renalHyponatremia}
+          renalHyponatremiaGuidance={session.guidance}
+          renalHyponatremiaDemonstrating={demonstrating && renalHyponatremiaDemoSupported}
+          onRenalHyponatremiaTutorSource={session.pause}
           renalHypokalemiaDemonstrating={demonstrating && renalHypokalemiaDemoSupported}
           onRenalHypokalemiaTutorSource={session.pause}
           renalHyperkalemiaDemonstrating={demonstrating && renalHyperkalemiaDemoSupported}
@@ -1440,6 +1455,9 @@ export function Cockpit({
           onHyponatremiaCorrectionResponse={(action) => session.act({
             type: 'hyponatremia-correction-response', payload: { action },
           })}
+          onRenalHyponatremiaResponse={(action) => session.act({
+            type: 'renal-hyponatremia-response', payload: { action },
+          })}
           onRenalHypokalemiaResponse={(action) => session.act({
             type: 'renal-hypokalemia-response', payload: { action },
           })}
@@ -1506,12 +1524,12 @@ export function Cockpit({
       </div>
 
       {/* Guidance. Non-blocking, dismissible, and never shown during an alarm. */}
-      {!demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !hypercalcemiaDemoSupported && !hypocalcemiaDemoSupported && !hyponatremiaCorrectionDemoSupported && !avpDeficiencyDemoSupported && !refeedingDemoSupported && !perioperativeDiabetesDemoSupported && !renalHyperkalemiaDemoSupported && !renalHypokalemiaDemoSupported && tutorIntroductionOpen && session.alarms.length === 0 ? (
+      {!demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !hypercalcemiaDemoSupported && !hypocalcemiaDemoSupported && !hyponatremiaCorrectionDemoSupported && !avpDeficiencyDemoSupported && !refeedingDemoSupported && !perioperativeDiabetesDemoSupported && !renalHyperkalemiaDemoSupported && !renalHypokalemiaDemoSupported && !renalHyponatremiaDemoSupported && tutorIntroductionOpen && session.alarms.length === 0 ? (
         <TutorIntroduction onDismissPermanently={() => {
           setTutorIntroductionDismissed(true);
           setTutorIntroductionOpen(false);
         }} />
-      ) : !demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !hypercalcemiaDemoSupported && !hypocalcemiaDemoSupported && !hyponatremiaCorrectionDemoSupported && !avpDeficiencyDemoSupported && !refeedingDemoSupported && !perioperativeDiabetesDemoSupported && !renalHyperkalemiaDemoSupported && !renalHypokalemiaDemoSupported && !tutorIntroductionOpen && prompt ? (
+      ) : !demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !hypercalcemiaDemoSupported && !hypocalcemiaDemoSupported && !hyponatremiaCorrectionDemoSupported && !avpDeficiencyDemoSupported && !refeedingDemoSupported && !perioperativeDiabetesDemoSupported && !renalHyperkalemiaDemoSupported && !renalHypokalemiaDemoSupported && !renalHyponatremiaDemoSupported && !tutorIntroductionOpen && prompt ? (
         <TutorPromptCard
           prompt={prompt}
           collapsed={tutorCollapsed}
@@ -1538,9 +1556,11 @@ export function Cockpit({
       <WhyPanel
         open={whyField !== null}
         field={whyField}
-        value={whyField && session.state && !((equipment?.resuscitation.myxedema || equipment?.resuscitation.hypercalcemia || equipment?.resuscitation.hypocalcemia || equipment?.resuscitation.hyponatremiaCorrection || equipment?.resuscitation.avpDeficiency || equipment?.resuscitation.refeeding || equipment?.resuscitation.perioperativeDiabetes || equipment?.resuscitation.renalHyperkalemia || equipment?.resuscitation.renalHypokalemia) && invalidParameters.has(whyField))
+        value={whyField && session.state && !((equipment?.resuscitation.myxedema || equipment?.resuscitation.hypercalcemia || equipment?.resuscitation.hypocalcemia || equipment?.resuscitation.hyponatremiaCorrection || equipment?.resuscitation.avpDeficiency || equipment?.resuscitation.refeeding || equipment?.resuscitation.perioperativeDiabetes || equipment?.resuscitation.renalHyperkalemia || equipment?.resuscitation.renalHypokalemia || equipment?.resuscitation.renalHyponatremia) && invalidParameters.has(whyField))
           ? session.state[whyField] ?? null : null}
-        authoredExplanation={equipment?.resuscitation.renalHypokalemia
+        authoredExplanation={equipment?.resuscitation.renalHyponatremia
+          ? 'These are authored teaching states, not predicted sodium kinetics or neurologic recovery. Sodium-only and neurologic-only checks are separate requested historical observations and do not refresh the full paired assessment. The original sodium of 118 remains the correction baseline. A sodium rise does not establish symptom resolution or a clinical stopping rule. Expert treatment review and cause evaluation continue. Exhaled carbon dioxide and oxygen settings are not supplied.'
+          : equipment?.resuscitation.renalHypokalemia
           ? 'These are authored teaching states, not predicted potassium or magnesium kinetics. Potassium-only and ECG-only checks are separate requested historical observations; neither refreshes the full magnesium and bedside assessment. The qualitative flattened-T waveform supplies no U-wave or QTc measurement. Ongoing-loss care does not instantly stop diarrhea. Improved findings do not prove durable control. Exhaled carbon dioxide and oxygen settings are not supplied.'
           : equipment?.resuscitation.renalHyperkalemia
           ? 'These are authored teaching states, not predicted potassium or treatment kinetics. Calcium cardioprotection does not lower potassium. ECG-only and glucose-only checks are separate requested historical observations and do not refresh potassium. The ECG waveform is not calibrated to QRS duration or potassium concentration. Improved findings do not prove durable control. Exhaled carbon dioxide and oxygen settings are not supplied.'
@@ -1643,7 +1663,7 @@ export function Cockpit({
             and cue is also shown.
           </p>
         </div>
-        {scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !hypercalcemiaDemoSupported && !hypocalcemiaDemoSupported && !hyponatremiaCorrectionDemoSupported && !avpDeficiencyDemoSupported && !refeedingDemoSupported && !perioperativeDiabetesDemoSupported && !renalHyperkalemiaDemoSupported && !renalHypokalemiaDemoSupported && <Button onClick={() => {
+        {scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !hypercalcemiaDemoSupported && !hypocalcemiaDemoSupported && !hyponatremiaCorrectionDemoSupported && !avpDeficiencyDemoSupported && !refeedingDemoSupported && !perioperativeDiabetesDemoSupported && !renalHyperkalemiaDemoSupported && !renalHypokalemiaDemoSupported && !renalHyponatremiaDemoSupported && <Button onClick={() => {
           setShortcutsOpen(false);
           setTutorIntroductionOpen(true);
         }}>

@@ -122,6 +122,7 @@ describe('Requirement: No Telemetry, No Analytics, No Third-Party Requests', () 
           && url === 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
         // Explicit guidance and its evidence record, not an application request or host-wide exception.
         const sodiumGuidanceLink = ['src/modules/endocrine-metabolic/hyponatremia-correction-tutor.ts',
+          'src/modules/renal-electrolyte/renal-hyponatremia-tutor.ts',
           'src/modules/endocrine-metabolic/hyponatremia-correction-quality.ts',
           'src/modules/endocrine-metabolic/scenarios/hyponatremia-aquaresis-and-overcorrection.ts'].includes(file.path)
           && url === 'https://www.endocrinology.org/media/xhrhxhxm/emergency-management-of-severe-and-moderately-severely-symptomatic-hyponatraemia-in-adult-patients-2022.pdf';
