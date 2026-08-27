@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: Refeeding electrolyte state has protocol version 171', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(171);
+  it('Scenario: Perioperative insulin-continuity state has protocol version 172', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(172);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

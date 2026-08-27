@@ -28,6 +28,7 @@ import { supportsHypocalcemiaDemonstration } from '../../endocrine-metabolic/dem
 import { supportsHyponatremiaCorrectionDemonstration } from '../../endocrine-metabolic/demo/hyponatremia-correction-demonstration';
 import { supportsAvpDeficiencyDemonstration } from '../../endocrine-metabolic/demo/avp-deficiency-demonstration';
 import { supportsRefeedingDemonstration } from '../../endocrine-metabolic/demo/refeeding-demonstration';
+import { supportsPerioperativeDiabetesDemonstration } from '../../endocrine-metabolic/demo/perioperative-diabetes-demonstration';
 
 export const FICTION_CONTRACT =
   'This is a simulation. The patient is not real, nothing you do here reaches anyone, and an '
@@ -195,6 +196,17 @@ export function Prebrief({
               Qualified findings and response reports are authored. This lab practices early recognition,
               coordinated ownership, reassessment, and handoff, not examination, dosing, procedures, or delivery.
             </p>
+          </>
+        ) : scenario.metadata.id === 'perioperative-diabetes-insulin-continuity' ? (
+          <>
+            <p>Protect insulin continuity after a pump interruption during prolonged fasting. Qualified,
+              verified alternative delivery does not wait for a new laboratory result or administrative
+              acknowledgment. This lesson prescribes no fixed insulin route, dose, or glucose infusion.</p>
+            <p>Blood-glucose-only checks and full glucose, ketone, and bedside assessments stay distinct.
+              A newer glucose does not refresh older ketones or automatically clear the operation.
+              The 30- and 60-minute contrasts are authored, not clinical waits. The eight-decision
+              example pauses for reading and uses 60× observation periods; continuing-care handoff
+              preserves insulin, fasting, monitoring, and postoperative responsibilities.</p>
           </>
         ) : scenario.metadata.id === 'refeeding-electrolyte-shift' ? (
           <>
@@ -406,12 +418,12 @@ export function Prebrief({
       <div className="prebrief__start">
         <Button variant="primary" onClick={onStart}>Start the scenario</Button>
         {onWatch && (
-          <Button onClick={onWatch}>{hypoglycemia || supportsAdrenalCrisis(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario) || supportsRefeedingDemonstration(scenario) ? 'Watch a worked example' : 'Watch a 90-second demonstration'}</Button>
+          <Button onClick={onWatch}>{hypoglycemia || supportsAdrenalCrisis(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario) || supportsRefeedingDemonstration(scenario) || supportsPerioperativeDiabetesDemonstration(scenario) ? 'Watch a worked example' : 'Watch a 90-second demonstration'}</Button>
         )}
       </div>
       {onWatch && (
         <p className="field__hint">
-          {hypoglycemia || supportsAdrenalCrisis(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario) || supportsRefeedingDemonstration(scenario) ? 'The worked example pauses before each decision so you can read. Choose “Continue example” when ready; observation periods run at 60× speed. Reading time does not advance the patient. ' : 'The demonstration runs this scenario at five times speed and explains what to look at. '}
+          {hypoglycemia || supportsAdrenalCrisis(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario) || supportsRefeedingDemonstration(scenario) || supportsPerioperativeDiabetesDemonstration(scenario) ? 'The worked example pauses before each decision so you can read. Choose “Continue example” when ready; observation periods run at 60× speed. Reading time does not advance the patient. ' : 'The demonstration runs this scenario at five times speed and explains what to look at. '}
           You can take the controls at any point and carry on from where it got to.
         </p>
       )}

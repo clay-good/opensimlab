@@ -32,6 +32,7 @@ import { supportsHypocalcemia, HYPOCALCEMIA_CALCIUM_RESPONSE_TICKS, HYPOCALCEMIA
 import { supportsHyponatremiaCorrection } from '../../endocrine-metabolic/hyponatremia-correction';
 import { supportsAvpDeficiency } from '../../endocrine-metabolic/avp-deficiency';
 import { supportsRefeeding } from '../../endocrine-metabolic/refeeding';
+import { supportsPerioperativeDiabetes } from '../../endocrine-metabolic/perioperative-diabetes';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -203,6 +204,8 @@ export function Debrief(props: DebriefProps) {
                 ? { activityContext: 'coordinating monitored hydration, calcium-lowering treatment, and continuing care for severe malignancy-associated hypercalcemia' }
               : supportsHypocalcemia(props.scenario)
                 ? { activityContext: 'coordinating monitored calcium rescue, postoperative risk assessment, and continuing calcium and magnesium care' }
+              : supportsPerioperativeDiabetes(props.scenario)
+                ? { activityContext: 'restoring reliable insulin delivery during delayed surgery, distinguishing glucose-only checks from full reassessment, and handing off continued perioperative care' }
               : supportsRefeeding(props.scenario)
                 ? { activityContext: 'coordinating electrolyte and vitamin care, individualized nutrition review, fresh reassessment, and continuing support after nutrition restarts' }
               : supportsAvpDeficiency(props.scenario)
@@ -592,6 +595,42 @@ export function objectiveFindings(
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
 
+    if (objective.id.startsWith('perioperative-diabetes-')) {
+      if (!supportsPerioperativeDiabetes(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The insulin-continuity lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^perioperative-diabetes-${id}-\\d+$`).test(entry.eventId));
+      const support = event('support'); const context = event('context-review'); const insulin = event('insulin-restored');
+      const plan = event('fasting-plan'); const monitoring = event('monitoring'); const response = event('response-reassessment');
+      const assessedAfterCare = insulin && log.find((entry) => entry.tick >= insulin.tick
+        && /^perioperative-diabetes-(early-response|response)-reassessment-\d+$/.test(entry.eventId));
+      const glucoseOnly = event('glucose-check'); const deterioration = event('deterioration-reassessment');
+      const omit = event('insulin-omission-refused'); const cgm = event('cgm-only-refused');
+      const clearance = event('clearance-refused'); const handoff = event('handoff');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'perioperative-diabetes-context': { met: !!support && !!context, tick: context?.tick,
+          finding: support && context ? 'Qualified support reviewed type 1 diabetes, interrupted pump delivery, absent long-acting backup, and prolonged fasting. Urgent reliable coverage did not require an administrative or laboratory gate.'
+            : 'Qualified support or the interrupted-delivery context remains unreviewed. Coordinate these tasks while restoring insulin; fasting does not remove basal needs.' },
+        'perioperative-diabetes-insulin': { met: !!assessedAfterCare, tick: insulin?.tick,
+          finding: (insulin ? `Verified qualified insulin coverage began ${(insulin.tick / TICKS_PER_SECOND).toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} simulated seconds into practice. ` : 'Verified qualified insulin coverage was not recorded. ')
+            + (assessedAfterCare ? 'A requested full assessment made the subsequent response available for review. ' : 'A fresh full post-care response assessment is missing. ')
+            + (omit ? 'Attempted insulin omission was refused and remains learning evidence. ' : '')
+            + 'Elapsed time is not a clinical deadline or grading cutoff. Authored counterfactual: continued interrupted delivery leaves the metabolic problem unresolved; a pump display is not proof of delivery.' },
+        'perioperative-diabetes-plan': { met: !!plan && !!monitoring, tick: plan?.tick,
+          finding: (plan && monitoring ? 'Individualized fasting, insulin, substrate, fluid, electrolyte, procedural, and postoperative planning was paired with serial point-of-care surveillance. ' : 'The individualized fasting plan or serial surveillance is incomplete. ')
+            + (cgm ? 'Reliance on CGM alone was refused; adjunct CGM use is not prohibited. ' : '')
+            + 'No universal infusion, dose, or target is selected. Planning does not cause the authored insulin response.' },
+        'perioperative-diabetes-reassessment': { met: !!response, tick: response?.tick,
+          finding: (response ? 'Fresh later glucose, ketones, and bedside findings showed an authored response, not durable recovery. ' : 'A fresh later full assessment is missing. ')
+            + (glucoseOnly ? 'Glucose-only checks were valid partial information and did not refresh older ketones. ' : '')
+            + (deterioration ? 'Earlier observed deterioration remains part of the run despite later care. ' : '')
+            + 'Neither elapsed clocks nor better glucose alone establish ketone correction, an acid-base diagnosis, or readiness for surgery.' },
+        'perioperative-diabetes-handoff': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The receiving team owns reliable insulin delivery, repeat assessment, fasting and intake plans, device suitability, and procedural review. ' : 'Continuing perioperative ownership remains incomplete. ')
+            + (clearance ? 'Attempted automatic surgical clearance was refused and remains visible. ' : '')
+            + 'Handoff ends the rehearsal, not insulin need. No surgery, discharge, or competence certification is implied.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (objective.id.startsWith('refeeding-')) {
       if (!supportsRefeeding(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The refeeding lesson was not active.' } satisfies ObjectiveFinding;
       const event = (id: string) => log.find((entry) => new RegExp(`^refeeding-${id}-\\d+$`).test(entry.eventId));

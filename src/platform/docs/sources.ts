@@ -64,6 +64,14 @@ const CHECKED = '2026-08-20';
 
 export const SOURCES: readonly Source[] = [
   {
+    id: 'association-jbds-perioperative-diabetes-2026', authors: 'Levy NA, El-Boghdadly K, Lobo DN, et al',
+    title: 'Peri-operative management of diabetes mellitus: a multidisciplinary consensus statement from the Association of Anaesthetists and the Joint British Diabetes Societies for Inpatient Care group',
+    publication: 'Anaesthesia', year: 2026, locator: '81(8):1116–1131; doi:10.1111/anae.70181; Table 3, Box 1, postoperative handover sections',
+    usedFor: 'Prompt alternative insulin after pump-delivery disruption, individualized device suitability, point-of-care monitoring, and perioperative handover. No dosing table, response clock, or surgical-clearance rule is adopted.',
+    verifiedAgainst: 'Full publisher HTML, published February 16, 2026. The hybrid-loop paragraph contains an apparent unit-conversion error; no numerical target is copied from that paragraph.',
+    verifiedOn: '2026-08-27',
+  },
+  {
     id: 'aspen-refeeding-2020', authors: 'da Silva JSV, Seres DS, Sabino K, et al',
     title: 'ASPEN Consensus Recommendations for Refeeding Syndrome', publication: 'Nutrition in Clinical Practice',
     year: 2020, locator: '35:178–195; doi:10.1002/ncp.10474; adult Table 6 and treatment discussion; erratum doi:10.1002/ncp.10491',
@@ -1669,9 +1677,10 @@ export const SOURCES: readonly Source[] = [
     locator: '49(Suppl 1):S339-S355',
     usedFor: 'The perioperative glucose lesson: monitor blood glucose before, during, and after '
       + 'surgery; use a 100–180 mg/dL target; do not use continuous glucose monitoring alone '
-      + 'during surgery; and avoid stricter targets that increase hypoglycemia risk.',
-    verifiedAgainst: 'Current Diabetes Care Standards of Care 2026 article',
-    verifiedOn: '2026-08-24',
+      + 'during surgery; and avoid stricter targets that increase hypoglycemia risk. The insulin-continuity '
+      + 'lesson also uses fasting basal requirements and individualized device plans; no dose schedule is reproduced.',
+    verifiedAgainst: 'Current Diabetes Care Standards of Care 2026 article, including Type 1 Diabetes and Perioperative Care.',
+    verifiedOn: '2026-08-27',
   },
   {
     id: 'endocrine-society-inpatient-hyperglycemia-2022',

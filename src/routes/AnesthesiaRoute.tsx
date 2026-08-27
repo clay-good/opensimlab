@@ -36,6 +36,9 @@ import { supportsAvpDeficiencyDemonstration } from '../modules/endocrine-metabol
 import { REFEEDING_ACTIONS, supportsRefeeding } from '../modules/endocrine-metabolic/refeeding';
 import { refeedingReportActions } from '../modules/endocrine-metabolic/refeeding-reporting';
 import { supportsRefeedingDemonstration } from '../modules/endocrine-metabolic/demo/refeeding-demonstration';
+import { PERIOPERATIVE_DIABETES_ACTIONS, supportsPerioperativeDiabetes } from '../modules/endocrine-metabolic/perioperative-diabetes';
+import { perioperativeDiabetesReportActions } from '../modules/endocrine-metabolic/perioperative-diabetes-reporting';
+import { supportsPerioperativeDiabetesDemonstration } from '../modules/endocrine-metabolic/demo/perioperative-diabetes-demonstration';
 import { Cockpit } from '@anesthesia/ui/Cockpit';
 import { Debrief } from '@anesthesia/ui/Debrief';
 import { assertTranscriptIsAnonymous, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
@@ -252,6 +255,28 @@ function boundedScalars(value: unknown, limit: number): Record<string, ReportCon
 }
 
 export function collectReportEquipmentContext(equipment: SessionState['equipment']): Record<string, ReportContextScalar> {
+  const diabetes = equipment?.resuscitation.perioperativeDiabetes;
+  if (diabetes) {
+    return boundedScalars({ resuscitation: { perioperativeDiabetes: {
+      supportActive: diabetes.supportActive, contextReviewedAtTick: diabetes.contextReviewedAtTick,
+      fastingPlanAtTick: diabetes.fastingPlanAtTick, monitoringAtTick: diabetes.monitoringAtTick,
+      insulinAtTick: diabetes.insulinAtTick, earlyResponseObserved: diabetes.earlyResponseObserved,
+      responseObserved: diabetes.responseObserved, deteriorationObserved: diabetes.deteriorationObserved,
+      omitInsulinAttempted: diabetes.omitInsulinAttempted, cgmOnlyAttempted: diabetes.cgmOnlyAttempted,
+      clearanceAttempted: diabetes.clearanceAttempted, ended: diabetes.ended,
+      glucoseObservation: diabetes.glucoseObservation ? {
+        atTick: diabetes.glucoseObservation.atTick, glucoseMgDl: diabetes.glucoseObservation.glucoseMgDl,
+      } : null,
+      observation: diabetes.observation ? {
+        atTick: diabetes.observation.atTick, glucoseMgDl: diabetes.observation.glucoseMgDl,
+        ketonesMmolL: diabetes.observation.ketonesMmolL,
+        systolicMmHg: diabetes.observation.systolicMmHg, diastolicMmHg: diabetes.observation.diastolicMmHg,
+        meanArterialMmHg: diabetes.observation.meanArterialMmHg, heartRateBpm: diabetes.observation.heartRateBpm,
+        respiratoryRateBpm: diabetes.observation.respiratoryRateBpm, spo2Percent: diabetes.observation.spo2Percent,
+        coreTemperatureC: diabetes.observation.coreTemperatureC,
+      } : null,
+    } } }, REPORT_CONTEXT_SNAPSHOT_LIMIT);
+  }
   const refeeding = equipment?.resuscitation.refeeding;
   if (refeeding) {
     return boundedScalars({ resuscitation: { refeeding: {
@@ -425,15 +450,17 @@ export function collectReportEquipmentContext(equipment: SessionState['equipment
   return { ...priority, ...boundedScalars(remaining, REPORT_CONTEXT_SNAPSHOT_LIMIT - Object.keys(priority).length) };
 }
 
-function collectReportRecentContext(session: SessionState, seed: number, sodiumLesson: boolean, avpLesson: boolean, refeedingLesson: boolean): ScenarioReportRecentContext {
+function collectReportRecentContext(session: SessionState, seed: number, sodiumLesson: boolean, avpLesson: boolean, refeedingLesson: boolean, diabetesLesson: boolean): ScenarioReportRecentContext {
   const actions = sessionInternals().recorder?.build('pending').actions ?? [];
   return {
     seed: Math.trunc(seed),
-    actions: refeedingLesson ? refeedingReportActions(actions, session.log)
+    actions: diabetesLesson ? perioperativeDiabetesReportActions(actions, session.log)
+      : refeedingLesson ? refeedingReportActions(actions, session.log)
       : avpLesson ? avpDeficiencyReportActions(actions, session.log)
       : sodiumLesson ? hyponatremiaCorrectionReportActions(actions, session.log)
       : actions.slice(-REPORT_CONTEXT_ACTION_LIMIT).map((action) => {
-      const lessonActions = action.type === 'refeeding-response' ? REFEEDING_ACTIONS
+      const lessonActions = action.type === 'perioperative-diabetes-response' ? PERIOPERATIVE_DIABETES_ACTIONS
+        : action.type === 'refeeding-response' ? REFEEDING_ACTIONS
         : action.type === 'avp-deficiency-response' ? AVP_DEFICIENCY_ACTIONS
         : action.type === 'hypocalcemia-response' ? HYPOCALCEMIA_ACTIONS
         : action.type === 'hyponatremia-correction-response' ? HYPONATREMIA_CORRECTION_ACTIONS : undefined;
@@ -451,14 +478,14 @@ function collectReportRecentContext(session: SessionState, seed: number, sodiumL
         // Invalid lesson payloads remain refused attempts, without reproducing
         // an injected note or making their named action look accepted.
         payload: lessonActions ? lessonChoice !== undefined ? { action: lessonChoice } : {}
-          : (session.equipment?.resuscitation.hyponatremiaCorrection || session.equipment?.resuscitation.avpDeficiency || session.equipment?.resuscitation.refeeding) ? {}
+          : (session.equipment?.resuscitation.hyponatremiaCorrection || session.equipment?.resuscitation.avpDeficiency || session.equipment?.resuscitation.refeeding || session.equipment?.resuscitation.perioperativeDiabetes) ? {}
           : boundedScalars(action.payload, 12),
       };
     }),
     snapshot: {
       patient: Object.fromEntries(Object.entries(session.state ?? {})
         .filter((entry): entry is [string, number] => Number.isFinite(entry[1]))
-        .filter(([field]) => !(sodiumLesson || avpLesson || refeedingLesson)
+        .filter(([field]) => !(sodiumLesson || avpLesson || refeedingLesson || diabetesLesson)
           || ['systolicMmHg', 'diastolicMmHg', 'meanArterialMmHg', 'heartRateBpm',
             'respiratoryRateBpm', 'spo2Percent', 'coreTemperatureC'].includes(field))
         // These authored cases supply neither a continuous CO2 measurement nor oxygen settings.
@@ -469,6 +496,7 @@ function collectReportRecentContext(session: SessionState, seed: number, sodiumL
       equipment: (sodiumLesson && !session.equipment?.resuscitation.hyponatremiaCorrection)
         || (avpLesson && !session.equipment?.resuscitation.avpDeficiency)
         || (refeedingLesson && !session.equipment?.resuscitation.refeeding)
+        || (diabetesLesson && !session.equipment?.resuscitation.perioperativeDiabetes)
         ? {} : collectReportEquipmentContext(session.equipment),
     },
   };
@@ -581,7 +609,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
           : session.phase === 'briefing' || session.phase === 'idle' ? 'prebrief' : 'live'),
         simulatedTick: session.tick,
         canonicalUrl: `${SITE_ORIGIN}${config.basePath}/scenario/${scenario.metadata.id}`,
-        collectRecentContext: () => collectReportRecentContext(session, assignment.seed, supportsHyponatremiaCorrection(scenario), supportsAvpDeficiency(scenario), supportsRefeeding(scenario)),
+        collectRecentContext: () => collectReportRecentContext(session, assignment.seed, supportsHyponatremiaCorrection(scenario), supportsAvpDeficiency(scenario), supportsRefeeding(scenario), supportsPerioperativeDiabetes(scenario)),
       }}
       {...(reportRequest ? { openRequest: reportRequest.id } : {})}
       onOpen={() => {
@@ -638,7 +666,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
     if (session.phase !== 'briefing' && session.phase !== 'idle') return;
     if (!session.ready) return;
     const endocrineDemo = config.id === 'endocrine-metabolic'
-      && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario) || supportsRefeedingDemonstration(scenario));
+      && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario) || supportsRefeedingDemonstration(scenario) || supportsPerioperativeDiabetesDemonstration(scenario));
     if (!endocrineDemo && (config.id !== 'anesthesia' || scenario.metadata.id !== DEMONSTRATION_SCENARIO_ID)) return;
     autoDemo.current = false;
     setDemonstrating(true);
@@ -741,7 +769,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
           }}
           {...(config.id === 'anesthesia' && scenario.metadata.id === DEMONSTRATION_SCENARIO_ID
             ? { onWatch: () => { setDemonstrating(true); session.setSpeed(5); session.play(); } }
-            : config.id === 'endocrine-metabolic' && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario) || supportsRefeedingDemonstration(scenario))
+            : config.id === 'endocrine-metabolic' && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario) || supportsRefeedingDemonstration(scenario) || supportsPerioperativeDiabetesDemonstration(scenario))
             ? { onWatch: () => { setDemonstrating(true); session.setSpeed(60); session.play(); } }
             : {})}
           {...(assignment.label ? { assignmentLabel: assignment.label } : {})}

@@ -2992,6 +2992,28 @@ calorie calculator, or instant thiamine effect is exposed. Clinical review, all 
 full inclusive-runtime verification, and production reporting remain pending. See
 `docs/evidence-briefs/refeeding-electrolyte-shift.md` for the authored values and source boundary.
 
+### Wave E endocrine-metabolic slice 12: insulin continuity during delayed surgery
+
+The twelfth preview uses a fasting adult with type 1 diabetes, interrupted pump delivery,
+no long-acting backup, and delayed elective surgery. Reliable qualified alternative insulin
+coverage is available immediately; no administrative or new-laboratory click gates it. Fasting,
+substrate, fluid, electrolyte, procedural, and postoperative planning is individualized and
+does not cause the biochemical response. Current ADA and Association/JBDS 2026 guidance
+anchors these boundaries; there is no universal dose, route, device instruction, or target score.
+
+Authored untreated deterioration and early/later insulin responses use 30- and 60-minute
+contrasts. A glucose-only check refreshes its own observation but preserves older full glucose,
+ketone, and bedside findings. Complete reassessment is required to observe the full response.
+An eight-decision example pauses for reading. Errors remain visible but do not prevent later
+appropriate handoff. Instructor stops bound untreated and unfinished runs without predicting
+DKA or injury. Handoff transfers ongoing care, not permission for surgery or discharge.
+
+The shared centered report accepts 160 characters and opt-in observed-state context, excluding
+private glucose/ketones, CGM, clocks, and prose. All four quality records, independent clinical
+review, full inclusive-runtime checks, and live Turnstile/D1 evidence remain pending. All 12
+endocrine entries are registered, not clinically complete. The authored values are documented
+in `docs/evidence-briefs/perioperative-diabetes-insulin-continuity.md`.
+
 #### Renal and electrolyte medicine: 12
 
 Hyperkalemia with ECG change; severe hypokalemia; symptomatic hyponatremia; hypernatremic

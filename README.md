@@ -414,6 +414,14 @@ The nine-decision example pauses for reading; the same private report dialog is 
 No universal feeding rate, dose, predicted injury, or discharge clearance is taught. Clinical,
 quality-matrix, full inclusive-runtime, and production reporting evidence remain pending.
 
+The twelfth Endocrine lab follows interrupted pump delivery while elective surgery is delayed.
+Restore verified insulin coverage, coordinate individualized fasting care, and distinguish a
+glucose-only check from fresh glucose, ketone, and bedside reassessment. The eight-decision
+example pauses for reading; the same private report dialog remains available throughout.
+No universal dose, device instruction, DKA diagnosis, or surgical clearance is supplied.
+All 12 planned endocrine scenarios are registered previews, not clinically completed labs;
+clinical, quality-matrix, full inclusive-runtime, and production reporting evidence remain pending.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

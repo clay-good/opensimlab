@@ -1125,6 +1125,37 @@ credited toward the catalog until every item in the completion contract passes.
     160-character limit, unchecked optional context, cancel focus return, and unchanged patient
     clock. This does not establish phone, assistive-technology, or live-service validation. Deploy
     the reports catalog before new client content; 211 current/historical report identities exist.
+  - [x] Endocrine/metabolic slice 12/12 registers interrupted insulin delivery during delayed elective
+    surgery in a fasting adult with type 1 diabetes. Qualified verified alternative coverage is
+    independent of new laboratory, support, or planning prerequisites. Glucose-only checks remain
+    valid partial observations with separate timestamps; older full ketone and bedside findings
+    stay historical. Authored untreated, early-response, and later-response paths preserve delay
+    without an arbitrary grading cutoff. Individualized fasting planning does not cause a response.
+    The registry contains 204 scenarios, including all 12 planned endocrine previews, not 204
+    clinically completed labs. ADA and Association/JBDS 2026 sources were checked August 27, 2026.
+  - [x] Add the eight-decision learner-paused example, observed-state private tutor, five-objective
+    debrief, nonvisual summaries, and the shared centered report on all new scenario surfaces.
+    Nineteen model, ten full-engine, five real-session, 21 report-attribution, and five rendered
+    debrief checks pass, alongside 19 new UI/accessibility and ten shared-form route checks.
+    Expert/error/recovery/no-action replay compares every engine frame across
+    guidance modes. Glucose-only checks cannot earn full-response credit; earlier mistakes do not
+    block appropriate later handoff. Independent code review found no remaining concrete blocker.
+    Opt-in context contains seven live vitals and at most 24 observed equipment scalars; all 211
+    previous client and Worker report identities remain unchanged, with 212 identities now accepted.
+  - [x] Verify perioperative integration with full CI: 4,464 tests across 512 files, 30 strict specs,
+    type/lint, public readiness, 228 static routes, and 44 catalog artifacts pass. All 225 crawlable
+    routes pass indexability checks. Landing/cockpit/offline budgets are 148.2/1,537.7/3,424.1 KiB;
+    fonts are 86.2 KiB. Neighboring replay, UI, accessibility, reporting, and quality checks were
+    re-run before repinning only changed shared dependencies: six hypocalcemia, ten hyponatremia,
+    and twelve AVP entries. Their authored quality records remain unchanged. The actual preview
+    release refuses 219 publication blockers; local CI does not replace missing clinical evidence.
+  - [ ] Complete perioperative-diabetes independent clinical review, four exact-version quality
+    records, full inclusive-runtime verification, and production Turnstile/D1 evidence. Desktop
+    browser checks at 1,280 × 720 confirmed the paused example, a centered 560 × 619 report dialog,
+    160-character limit, unchecked context, cancel focus return, and unchanged clock. Continuing
+    the example performs one decision and pauses again. This does not establish phone, native
+    assistive-technology, or live-service validation. No production report was sent. Deploy the
+    updated reports catalog before new client content; do not relabel pending gates as passes.
   - [x] Repair service-worker release consistency. Build-stamped SHA-256 integrity checks reject
     mixed or incomplete installations; active snapshots are immutable. Explicit acceptance waits
     for the intended controller before reloading only that tab. Durable per-client release pins

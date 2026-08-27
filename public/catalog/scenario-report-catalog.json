@@ -1992,6 +1992,23 @@
       "limitationManifestHash": "sha256:11918f0365bdd85369a425c3ec76ed885963697d37b4e670ac8e753325e8707d"
     },
     {
+      "scenarioId": "perioperative-diabetes-insulin-continuity",
+      "contentVersion": "0.1.0",
+      "moduleId": "endocrine-metabolic",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:d16558f729e1c1177519dfc4479461b5d460e39a97fc1fbce16e69984bc85c49",
+      "defaultsHash": "sha256:58c6e5441979d32bbe3ffb76014c5acb88945ea55cf0a98510ff15fc10942b04",
+      "maturityHash": "sha256:611698b2b2487256d86d78d0295d6f9fa1bd56040c6f2474ff54bec37e200e00",
+      "sourceManifestHash": "sha256:9b41058b48c193e805303f2ec341f11d5d4c3633edb9355670a4845ba9b69007",
+      "limitationManifestHash": "sha256:ad872305e8a5827cb8892aa6f1805bcaa393fef75cb3e10bbb888bbf3091d182"
+    },
+    {
       "scenarioId": "refeeding-electrolyte-shift",
       "contentVersion": "0.1.0",
       "moduleId": "endocrine-metabolic",

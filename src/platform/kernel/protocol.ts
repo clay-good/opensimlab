@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 171 adds the authored refeeding electrolyte-shift snapshot. */
-export const WORKER_PROTOCOL_VERSION = 171;
+/** Version 172 adds the authored perioperative insulin-continuity snapshot. */
+export const WORKER_PROTOCOL_VERSION = 172;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -154,6 +154,25 @@ export interface ReadyMessage {
  * request rather than the result teaches the learner to trust a number that is
  * not true (cockpit/action-cockpit → the tray reflects the patient).
  */
+export interface PerioperativeDiabetesSnapshot {
+  readonly supportActive: boolean;
+  readonly contextReviewedAtTick: number | null; readonly fastingPlanAtTick: number | null;
+  readonly monitoringAtTick: number | null; readonly insulinAtTick: number | null;
+  readonly earlyDueInSeconds: number | null; readonly responseDueInSeconds: number | null;
+  readonly earlyResponseObserved: boolean; readonly responseObserved: boolean; readonly deteriorationObserved: boolean;
+  readonly omitInsulinAttempted: boolean; readonly cgmOnlyAttempted: boolean; readonly clearanceAttempted: boolean;
+  readonly glucoseObservation: { readonly atTick: number; readonly glucoseMgDl: number } | null;
+  readonly observation: {
+    readonly atTick: number; readonly glucoseMgDl: number; readonly ketonesMmolL: number;
+    readonly systolicMmHg: number; readonly diastolicMmHg: number; readonly meanArterialMmHg: number;
+    readonly heartRateBpm: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string; readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true; readonly doseModelAvailable: false; readonly durableRecoveryProven: false;
+}
+
 export interface RefeedingSnapshot {
   readonly supportActive: boolean;
   readonly contextReviewedAtTick: number | null; readonly monitoringAtTick: number | null;
@@ -3343,6 +3362,7 @@ export interface EquipmentSnapshot {
     readonly hypercalcemia?: HypercalcemiaSnapshot;
     readonly avpDeficiency?: AvpDeficiencySnapshot;
     readonly refeeding?: RefeedingSnapshot;
+    readonly perioperativeDiabetes?: PerioperativeDiabetesSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

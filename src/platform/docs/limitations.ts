@@ -27,6 +27,30 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'perioperative-diabetes-authored-contrasts',
+    headline: 'Glucose, ketones, and vital signs follow authored contrasts, not insulin kinetics.',
+    simplification: 'The adult pump-interruption lesson has fixed untreated and response checkpoints at 30 and 60 minutes. Acidosis, dose response, insulin overlap, and surgery are not modeled.',
+    whereItMisleads: 'Teaching clocks become safe waiting intervals, modest ketonemia becomes a DKA diagnosis, or fixed responses become expected clinical results.',
+    correctUnderstanding: 'Restore reliable insulin delivery promptly and reassess as needed. Acidosis and other diagnostic components require qualified evaluation; this lesson predicts neither DKA nor its resolution.',
+    briefIn: ['perioperative-diabetes-insulin-continuity'],
+  },
+  {
+    id: 'perioperative-diabetes-individualized-care',
+    headline: 'Insulin continuity is verified care, not a universal pump, dose, or infusion instruction.',
+    simplification: 'Qualified alternative insulin coverage and individualized fasting planning are dose-free requests. The planning request does not trigger a biochemical effect.',
+    whereItMisleads: 'Fasting is treated as a reason to omit all insulin, a pump restart is assumed to prove delivery, or all fasting patients receive identical insulin and substrate infusions.',
+    correctUnderstanding: 'Choose a reliable regimen with qualified oversight, including device suitability, insulin, substrate, fluids, electrolytes, monitoring, and procedural changes. Preserve appropriate patient participation and individualized local care.',
+    briefIn: ['perioperative-diabetes-insulin-continuity'],
+  },
+  {
+    id: 'perioperative-diabetes-observed-findings',
+    headline: 'A glucose-only check does not update older ketones or authorize surgery.',
+    simplification: 'Separate timestamps distinguish glucose-only checks from requested full glucose, ketone, and bedside observations. No CGM or automatic laboratory stream is modeled.',
+    whereItMisleads: 'A better glucose value, accepted care, or elapsed time becomes proof of ketone correction, surgical readiness, or permission to interrupt insulin.',
+    correctUnderstanding: 'Use appropriate point-of-care and full clinical reassessment; CGM may be an adjunct. Handoff preserves continuing treatment and review, not discharge, automatic clearance, or competence certification.',
+    briefIn: ['perioperative-diabetes-insulin-continuity'],
+  },
+  {
     id: 'refeeding-authored-contrasts',
     headline: 'Electrolyte and vital-sign changes are authored contrasts, not replacement kinetics.',
     simplification: 'Fixed partial, comprehensive, recurrent, and combined-care branches use 30- and 60-minute observation checkpoints. No dose, route, calorie calculation, or physiologic nutrition solver exists.',

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "moduleId": "endocrine-metabolic",
   "capabilityVersion": "0.1.0-alpha.48",
-  "scenarioCount": 11,
+  "scenarioCount": 12,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -1387,6 +1387,132 @@
           "status": "missing",
           "evidence": [
             "Shared reporting and local context tests do not establish full inclusive coverage or production Turnstile/D1 verification for this content version."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "perioperative-diabetes-insulin-continuity",
+      "title": "Surgery delayed: protect insulin continuity",
+      "moduleId": "endocrine-metabolic",
+      "environment": "ward",
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario perioperative-diabetes-insulin-continuity carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "5 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "Seed 4931 binds fixed expert, partial-observation/error, recovery, and no-action contrasts. No stochastic insulin kinetics or dosing model is claimed."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "Unresolved interruption, early verified-delivery response, and later response differ. Glucose-only and full observations retain separate timestamps; clocks do not disclose unrequested laboratory values."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "Eleven dose-free decisions separate reliable insulin, fasting planning, surveillance, partial/full observation, and handoff. Insulin omission, CGM-only surveillance, and automatic surgical clearance are refused and retained."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "Continuing-care handoff or instructor takeover bounds practice without predicting DKA, surgery, injury, or discharge. Earlier mistakes do not bar later handoff."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "satisfied",
+          "evidence": [
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary actions. Unassisted mode remains silent; no private patient-state mutation is used."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "Five event-bound findings distinguish verified coverage, planning, partial observations, full response, and ongoing ownership. Actual elapsed delay is descriptive, not an arbitrary grade."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "2 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "perioperative-diabetes-fixtures.ts binds four exact-content pathways; real-engine replay tests compare complete frames, not merely final glucose."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Local UI and replay checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "Shared reporting and local context tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version."
           ]
         }
       ]

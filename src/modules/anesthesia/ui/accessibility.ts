@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -103,6 +103,7 @@ export function stateSummary(
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly avpDeficiency?: AvpDeficiencySnapshot;
     readonly refeeding?: RefeedingSnapshot;
+    readonly perioperativeDiabetes?: PerioperativeDiabetesSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -156,7 +157,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -180,6 +181,30 @@ export function stateSummary(
           + ' intravenous.');
       }
     }
+  }
+  if (options.perioperativeDiabetes) {
+    const patient = options.perioperativeDiabetes;
+    for (const field of ['systolicMmHg', 'diastolicMmHg'] as const) {
+      const value = state[field];
+      if (!options.invalid.has(field) && Number.isFinite(value)) {
+        lines.push(`${FIELDS[field].label}: ${value.toFixed(FIELDS[field].precision)} ${FIELDS[field].unit}.`);
+      }
+    }
+    lines.push('Supplied glucose was 180 milligrams per deciliter and blood ketones 0.6 millimoles per liter. These remain historical starting findings.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push(`Qualified insulin delivery: ${patient.insulinAtTick === null ? 'not yet requested' : 'requested'}. Individualized fasting plan: ${patient.fastingPlanAtTick === null ? 'not yet requested' : 'requested'}.`);
+    lines.push('Oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.glucoseObservation
+      ? `Last requested blood glucose at simulated ${formatElapsed(patient.glucoseObservation.atTick)}: ${patient.glucoseObservation.glucoseMgDl} milligrams per deciliter. A glucose-only check does not refresh ketones.`
+      : 'No new blood-glucose measurement has been requested.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: glucose ${patient.observation.glucoseMgDl} milligrams per deciliter and blood ketones ${patient.observation.ketonesMmolL.toFixed(1)} millimoles per liter. These are historical observations, not live measurements.`
+      : 'No new full glucose, ketone, and bedside assessment has been requested.');
+    if (patient.deteriorationObserved) lines.push('A requested full assessment recorded deterioration; later care does not erase that observation.');
+    lines.push('Improved glucose alone does not establish the full response, diagnose or exclude ketoacidosis, or automatically clear surgery. Continued insulin, fasting, and monitoring ownership remain necessary.');
+    lines.push(options.alarms.length === 0 ? 'No active alarms.'
+      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    return lines.join(' ');
   }
   if (options.refeeding) {
     const patient = options.refeeding;
