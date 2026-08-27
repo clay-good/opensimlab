@@ -1385,6 +1385,11 @@ export interface ActionCockpitProps {
       readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly endocrineHhsAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2549,6 +2554,14 @@ export interface ActionCockpitProps {
       | 'review-dka-resolution-fixed-four-hour-qualified-report'
       | 'handoff-dka-recurrence-insulin-potassium-nutrition-precipitant-education-follow-up-and-outcome-risk',
   ) => void;
+  readonly onEndocrineHhsResponse?: (
+    action: 'activate-hhs-endocrine-resuscitation-nursing-renal-cardiac-and-monitoring-support'
+      | 'reconcile-hhs-glucose-sodium-osmolality-ketone-perfusion-cognition-and-whole-person'
+      | 'recognize-hhs-hyperosmolality-without-glucose-sodium-or-ketone-only-closure'
+      | 'review-qualified-hhs-cautious-correction-osmolality-potassium-monitoring-and-harm-prevention'
+      | 'review-hhs-fixed-four-hour-qualified-report'
+      | 'handoff-hhs-osmolality-cognition-fluid-electrolyte-precipitant-and-outcome-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2687,6 +2700,11 @@ export function crisisResponseAvailability(
     && scenario.timeline.every((event) => event.type === 'narrative')
     && scenario.timeline.filter((event) => event.target === 'dka-resolution-transition').length === 1
     && scenario.timeline.filter((event) => event.target === 'dka-resolution-transition-boundary').length === 1;
+  const hasEndocrineHhsResponse =
+    scenario.metadata.id === 'hhs-osmolality-trajectory'
+    && scenario.timeline.every((event) => event.type === 'narrative')
+    && scenario.timeline.filter((event) => event.target === 'hhs-osmolality-trajectory').length === 1
+    && scenario.timeline.filter((event) => event.target === 'hhs-osmolality-trajectory-boundary').length === 1;
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -3256,6 +3274,7 @@ export function crisisResponseAvailability(
     hasNeonatologyNicuHandoffResponse,
     hasNeonatologyTensionPneumothoraxResponse,
     hasEndocrineDkaResolutionResponse,
+    hasEndocrineHhsResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3497,6 +3516,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'delivery-room-to-nicu-handoff')
       || (event.type === 'narrative' && event.target === 'neonatal-tension-pneumothorax')
       || (event.type === 'narrative' && event.target === 'dka-resolution-transition')
+      || (event.type === 'narrative' && event.target === 'hhs-osmolality-trajectory')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3626,6 +3646,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeonatologyNicuHandoffResponse,
     hasNeonatologyTensionPneumothoraxResponse,
     hasEndocrineDkaResolutionResponse,
+    hasEndocrineHhsResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3782,8 +3803,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeonatologyNicuHandoffResponse
     || hasNeonatologyTensionPneumothoraxResponse
     || hasEndocrineDkaResolutionResponse
+    || hasEndocrineHhsResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasEndocrineDkaResolutionResponse
+  const responseTray = hasEndocrineHhsResponse
+    ? { id: 'crisis', label: 'Osmolality + whole person' } as const
+    : hasEndocrineDkaResolutionResponse
     ? { id: 'crisis', label: 'Resolution + continuity' } as const
     : hasNeonatologyTensionPneumothoraxResponse
     ? { id: 'crisis', label: 'Asymmetry + collapse' } as const
@@ -4232,6 +4256,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeonatologyNicuHandoffResponse
     || hasNeonatologyTensionPneumothoraxResponse
     || hasEndocrineDkaResolutionResponse
+    || hasEndocrineHhsResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -5205,6 +5230,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasEndocrineDkaResolutionResponse && (
               <EndocrineDkaResolutionTray assessment={props.resuscitation.endocrineDkaResolutionAssessment}
                 onAction={props.onEndocrineDkaResolutionResponse ?? (() => {})} />
+            )}
+            {hasEndocrineHhsResponse && (
+              <EndocrineHhsTray assessment={props.resuscitation.endocrineHhsAssessment}
+                onAction={props.onEndocrineHhsResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -12867,6 +12896,38 @@ function EndocrineDkaResolutionTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-dka-resolution-fixed-four-hour-qualified-report')}>Review the fixed 4-hour report</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-dka-recurrence-insulin-potassium-nutrition-precipitant-education-follow-up-and-outcome-risk')}>Hand off active recurrence risk</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function EndocrineHhsTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['endocrineHhsAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onEndocrineHhsResponse']>;
+}) {
+  const support = assessment?.supportAtTick != null;
+  const context = assessment?.contextAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const readiness = assessment?.readinessAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="endocrine-hhs-now-title">
+      <div id="endocrine-hhs-now-title" className="syringe__name">Follow the whole trajectory.</div>
+      <p className="syringe__remaining">{reassessment ? 'Supplied 4-hour report: glucose 540 mg/dL, sodium 149 mmol/L, total osmolality 343 mOsm/kg, potassium 3.8 mmol/L. Urine output 0.4 mL/kg/h; cognition still below baseline.' : 'Supplied presentation: glucose 900 mg/dL, sodium 146 mmol/L, total osmolality 362 mOsm/kg, ketones 1.1 mmol/L, pH 7.36. Dehydration and cognitive change matter together.'}</p>
+      <div className="crisis-drug__actions">
+        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-hhs-endocrine-resuscitation-nursing-renal-cardiac-and-monitoring-support')}>Confirm prepared support</Button>}
+        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-hhs-glucose-sodium-osmolality-ketone-perfusion-cognition-and-whole-person')}>Connect the whole trajectory</Button>}
+        {context && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-hhs-hyperosmolality-without-glucose-sodium-or-ketone-only-closure')}>Recognize the coupled pattern</Button>}
+        {recognition && !readiness && <Button className="crisis-drug__action" onClick={() => onAction('review-qualified-hhs-cautious-correction-osmolality-potassium-monitoring-and-harm-prevention')}>Review qualified boundaries</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="endocrine-hhs-later-title">
+      <div id="endocrine-hhs-later-title" className="syringe__name">A falling number is not recovery.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Osmolality, cognition, urine output, fluid tolerance, electrolyte, precipitant, access, and outcome risks handed off.' : reassessment ? 'Glucose and osmolality fell while sodium rose. Persistent hyperosmolality, reduced urine output, and cognitive change keep resolution open.' : readiness ? 'Qualified cautious correction and surveillance continue. Review the fixed report after time passes.' : support ? 'Connect heart and kidney tolerance, cognition, intake, access, and the biochemical pattern.' : 'Begin with calm shared ownership. Pause or leave whenever you need.'}</p>
+      <div className="crisis-drug__actions">
+        {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-hhs-fixed-four-hour-qualified-report')}>Review the fixed 4-hour report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-hhs-osmolality-cognition-fluid-electrolyte-precipitant-and-outcome-risk')}>Hand off active risks</Button>}
       </div>
     </section>
   </>;

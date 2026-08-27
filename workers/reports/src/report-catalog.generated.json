@@ -1805,6 +1805,23 @@
       "limitationManifestHash": "sha256:3a951370e8234cec0765cf43f31f0f4d1fb65b247ab6ddfa0a3cb4a9f1ab9138"
     },
     {
+      "scenarioId": "hhs-osmolality-trajectory",
+      "contentVersion": "0.1.0",
+      "moduleId": "endocrine-metabolic",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:859b20b74fc76fa28f011fb1dfc10077ae9ee73bb29d15fef612a58ee71993b3",
+      "defaultsHash": "sha256:6e4f3495265906a8682b2da6c714478bf881464a1759e0648dd1250e7f6bd5a2",
+      "maturityHash": "sha256:94bdceed50b50994044588bbc95f6a7911edc793dd730bf566dd61def5d09f74",
+      "sourceManifestHash": "sha256:f97023865dd1056f60c0f8f8c89cc1fce034a1c05560370e988ded0246bc6c79",
+      "limitationManifestHash": "sha256:f6d99838445f4baf74b712bb8f3343b8bb0104940ea87ae57b0017526c733e13"
+    },
+    {
       "scenarioId": "delivery-room-to-nicu-handoff",
       "contentVersion": "0.1.0",
       "moduleId": "neonatology",

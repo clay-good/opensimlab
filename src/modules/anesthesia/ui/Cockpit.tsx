@@ -1222,6 +1222,9 @@ export function Cockpit({
           onEndocrineDkaResolutionResponse={(action) => session.act({
             type: 'dka-resolution-transition-response', payload: { action },
           })}
+          onEndocrineHhsResponse={(action) => session.act({
+            type: 'hhs-osmolality-trajectory-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

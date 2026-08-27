@@ -2766,6 +2766,22 @@ dose, concentration, rate, route, access, infusion, nutrition, basal administrat
 precipitant treatment, education, prescription, access or follow-up arrangement, transition,
 disposition, or outcome control.
 
+### Wave E endocrine-metabolic slice 2: HHS correction and reassessment
+
+This lab owns the coupled osmolality, circulation, and cognition trajectory in a 74-year-old with
+type 2 diabetes, heart failure, kidney disease, poor intake, and confusion. The supplied initial
+panel includes glucose 900 mg/dL, sodium 146 mmol/L, total osmolality 362 mOsm/kg, ketones 1.1 mmol/L,
+pH 7.36, and bicarbonate 24 mmol/L. The learner confirms qualified support, connects biochemical
+and whole-person findings, recognizes serious hyperosmolar illness without low-ketone reassurance,
+and reviews individualized cautious correction, monitoring, and harm-prevention boundaries.
+A fixed 4-hour report lowers glucose to 540 mg/dL and total osmolality to 343 mOsm/kg while sodium
+rises to 149 mmol/L. Urine output remains 0.4 mL/kg/h and cognition below baseline. The average
+declines do not prove safe intervals, resolution, or outcome. One action at a time and a visible
+panel keep attention on reassessment; active-risk handoff preserves uncertainty. No learner
+history, examination, testing, calculation, interpretation, diagnosis, fluid, insulin, electrolyte,
+drug, dose, rate, route, access, infusion, nutrition, precipitant treatment, thrombosis or pressure-
+injury prevention, disposition, or outcome control exists.
+
 #### Renal and electrolyte medicine: 12
 
 Hyperkalemia with ECG change; severe hypokalemia; symptomatic hyponatremia; hypernatremic

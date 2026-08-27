@@ -27,6 +27,30 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'hhs-panels-osmolality-trajectory-qualified-care-and-later-report-are-authored',
+    headline: 'The HHS panels, osmolality trajectory, qualified care, and later report are authored.',
+    simplification: 'Two fixed reports illustrate correction without modeling glucose, sodium, urea, osmolality, fluid, insulin, or kidney kinetics.',
+    whereItMisleads: 'A learner assumes that an average decline proves safe correction between measurements or that better glucose proves HHS resolution.',
+    correctUnderstanding: 'Qualified serial clinical and biochemical assessment, including cognition and urine output, is required. Persistent hyperosmolality keeps this fictional case unresolved.',
+    briefIn: ['hhs-osmolality-trajectory'],
+  },
+  {
+    id: 'hhs-controls-activate-reconcile-recognize-review-reassess-and-handoff-only',
+    headline: 'The HHS controls confirm support, connect facts, recognize, review, reassess, and hand off only.',
+    simplification: 'The six ordered actions record cognitive review, not delivery of qualified-team care.',
+    whereItMisleads: 'A button is mistaken for fluid replacement, insulin administration, monitoring, or a real clinical handoff.',
+    correctUnderstanding: 'This rehearsal cannot assess treatment delivery, bedside technique, or team performance.',
+    briefIn: ['hhs-osmolality-trajectory'],
+  },
+  {
+    id: 'no-live-hhs-testing-calculation-fluid-insulin-electrolyte-correction-or-outcome',
+    headline: 'This lab does not test, calculate, prescribe, correct HHS, or determine outcome.',
+    simplification: 'There is no learner-selected fluid, insulin, electrolyte, medication, dose, rate, route, access, infusion, nutrition, or disposition.',
+    whereItMisleads: 'The fictional panels are used as a bedside calculator, protocol, or prediction for a real patient.',
+    correctUnderstanding: 'Use local protocols and qualified individualized assessment. This preview is not clinical decision support.',
+    briefIn: ['hhs-osmolality-trajectory'],
+  },
+  {
     id: 'pulse-oximeter-artifact-display-and-corroboration-are-authored',
     headline: 'The false 82% display, poor pleth, pulse mismatch, arterial panel, and clean-site response are fixed teaching facts, not device predictions.',
     simplification: 'One declared motion and low-local-perfusion state produces a fixed false 82% '

@@ -813,6 +813,14 @@ credited toward the catalog until every item in the completion contract passes.
     fluid, electrolyte, dextrose, insulin, bicarbonate, drug, dose, rate, route, access, infusion,
     nutrition, basal administration, IV-insulin stop, precipitant treatment, education, prescription,
     follow-up, transition, disposition, or outcome controls.
+  - [x] Endocrine/metabolic slice 2/12 adds HHS correction and reassessment in an older adult with
+    heart and kidney disease. The learner confirms support, connects hyperglycemia, osmolality,
+    dehydration, cognition and whole-person context, recognizes the coupled illness, and reviews
+    qualified cautious correction and harm-prevention boundaries. A strict later report supplies
+    lower glucose, rising sodium, persistent hyperosmolality, reduced urine output, and cognition
+    below baseline before elapsed active-risk handoff. No learner testing, calculation, diagnosis,
+    fluid, insulin, electrolyte, drug, dose, rate, route, infusion, nutrition, procedure, disposition,
+    or outcome control exists.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
   - [x] Toxicology slice 1/15 establishes the indexable `/toxicology` module with one authored
     methemoglobinemia lab after documented topical benzocaine exposure. The learner reconciles

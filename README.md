@@ -360,6 +360,13 @@ boundaries; then reads a fixed resolution report without turning it into dischar
 learner laboratory interpretation, drug, dose, fluid, electrolyte, infusion, nutrition, transition,
 prescription, disposition, or outcome control is exposed.
 
+The second Endocrine lab adds HHS in an older adult with heart and kidney disease. It connects
+hyperglycemia, hyperosmolality, dehydration, cognition, and fluid tolerance; reviews qualified
+cautious correction; and compares a fixed 4-hour report with falling glucose, rising sodium,
+persistent hyperosmolality, reduced urine output, and cognition still below baseline. The panel
+stays visible beside one cognitive action at a time. Better numbers do not close the case, and
+the lab exposes no testing, calculation, dosing, fluid, insulin, or disposition control.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

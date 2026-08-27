@@ -9,6 +9,30 @@ import { DEFAULT_ENDOCRINE_METABOLIC_SCENARIO_ID, ENDOCRINE_METABOLIC_SCENARIOS,
 const json = (path: string) => JSON.parse(readFileSync(join(process.cwd(), path), 'utf8'));
 
 describe('Endocrine and Metabolic Medicine module foundation', () => {
-  it('registers one bounded preview and exact discoverable routes', () => { expect(getModule('endocrine-metabolic')).toMatchObject({ route: 'endocrine-metabolic', status: 'available' }); expect(ENDOCRINE_METABOLIC_SCENARIOS).toHaveLength(1); expect(DEFAULT_ENDOCRINE_METABOLIC_SCENARIO_ID).toBe('dka-resolution-transition'); expect(getEndocrineMetabolicScenario(DEFAULT_ENDOCRINE_METABOLIC_SCENARIO_ID)).toBe(ENDOCRINE_METABOLIC_SCENARIOS[0]); expect(getEndocrineMetabolicScenario('missing')).toBeUndefined(); expect(routeFor('/endocrine-metabolic')).toMatchObject({ indexable: true, structuredData: ['SoftwareApplication'] }); const path = '/endocrine-metabolic/scenario/dka-resolution-transition'; expect(routeFor(path)).toMatchObject({ indexable: true, structuredData: ['LearningResource'] }); expect(structuredDataFor(['LearningResource'], path)[0]).toMatchObject({ url: `https://opensimlab.com${path}`, name: 'DKA resolution: glucose is not the finish line' }); });
-  it('publishes exact review, completion, maturity, and secure-report records', () => { expect(reviewableItems()).toContainEqual(expect.objectContaining({ id: 'dka-resolution-transition', domains: ['endocrine-metabolic'] })); const completion = json('public/catalog/endocrine-metabolic-completion-audit.json'); expect(completion.scenarios).toHaveLength(1); expect(completion.scenarios[0]).toMatchObject({ scenarioId: 'dka-resolution-transition', moduleId: 'endocrine-metabolic', maturity: 'preview' }); const maturity = json('public/catalog/endocrine-metabolic-maturity.json'); expect(maturity.recordCount).toBe(1); expect(maturity.records[0]).toMatchObject({ subjectId: 'dka-resolution-transition', status: 'preview' }); const reports = json('workers/reports/src/report-catalog.generated.json'); expect(reports.scenarios).toContainEqual(expect.objectContaining({ scenarioId: 'dka-resolution-transition', moduleId: 'endocrine-metabolic', contentVersion: '0.1.0' })); });
+  it('registers two bounded previews and exact discoverable routes', () => {
+    expect(getModule('endocrine-metabolic')).toMatchObject({ route: 'endocrine-metabolic', status: 'available' });
+    expect(ENDOCRINE_METABOLIC_SCENARIOS).toHaveLength(2);
+    expect(DEFAULT_ENDOCRINE_METABOLIC_SCENARIO_ID).toBe('dka-resolution-transition');
+    expect(getEndocrineMetabolicScenario('missing')).toBeUndefined();
+    expect(routeFor('/endocrine-metabolic')).toMatchObject({ indexable: true, structuredData: ['SoftwareApplication'] });
+    for (const scenario of ENDOCRINE_METABOLIC_SCENARIOS) {
+      expect(getEndocrineMetabolicScenario(scenario.metadata.id)).toBe(scenario);
+      const path = `/endocrine-metabolic/scenario/${scenario.metadata.id}`;
+      expect(routeFor(path)).toMatchObject({ indexable: true, structuredData: ['LearningResource'] });
+      expect(structuredDataFor(['LearningResource'], path)[0]).toMatchObject({ url: `https://opensimlab.com${path}`, name: scenario.metadata.title });
+    }
+  });
+  it('publishes exact review, completion, maturity, and secure-report records', () => {
+    const completion = json('public/catalog/endocrine-metabolic-completion-audit.json');
+    const maturity = json('public/catalog/endocrine-metabolic-maturity.json');
+    const reports = json('workers/reports/src/report-catalog.generated.json');
+    expect(completion.scenarios).toHaveLength(2);
+    expect(maturity.recordCount).toBe(2);
+    for (const { metadata } of ENDOCRINE_METABOLIC_SCENARIOS) {
+      expect(reviewableItems()).toContainEqual(expect.objectContaining({ id: metadata.id, domains: ['endocrine-metabolic'] }));
+      expect(completion.scenarios).toContainEqual(expect.objectContaining({ scenarioId: metadata.id, moduleId: 'endocrine-metabolic', maturity: 'preview' }));
+      expect(maturity.records).toContainEqual(expect.objectContaining({ subjectId: metadata.id, status: 'preview' }));
+      expect(reports.scenarios).toContainEqual(expect.objectContaining({ scenarioId: metadata.id, moduleId: 'endocrine-metabolic', contentVersion: metadata.version }));
+    }
+  });
 });

@@ -3176,6 +3176,22 @@ export interface EquipmentSnapshot {
       readonly dischargeReadinessProven: false; readonly safetyDispositionDetermined: false;
       readonly outcomePredicted: false;
     };
+    readonly endocrineHhsAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly authoredHyperosmolarIllness: true; readonly authoredQualifiedFourHourReport: boolean;
+      readonly historyTakenOrPatientExaminedByLearner: false;
+      readonly testObtainedCalculatedOrInterpretedByLearner: false;
+      readonly fluidInsulinDextroseElectrolyteOrDrugSelectedOrDeliveredByLearner: false;
+      readonly doseRateRouteOrAccessSelectedByLearner: false;
+      readonly infusionOperatedByLearner: false; readonly nutritionPrescribedOrDeliveredByLearner: false;
+      readonly precipitantTreatedThrombosisOrPressureInjuryPreventedByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly procedurePerformedByLearner: false;
+      readonly hhsResolutionProven: false; readonly correctionSafetyBetweenReportsProven: false;
+      readonly durableStabilityProven: false; readonly safetyDispositionDetermined: false;
+      readonly outcomePredicted: false;
+    };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {
       readonly cuesReviewedAtTick: number | null;

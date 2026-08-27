@@ -605,6 +605,10 @@ const ENDOCRINE_DKA_RESOLUTION_BLOCKED_ACTION_TYPES = new Set([
   ...NEONATOLOGY_TENSION_PNEUMOTHORAX_BLOCKED_ACTION_TYPES,
   'neonatal-tension-pneumothorax-response',
 ]);
+const ENDOCRINE_HHS_BLOCKED_ACTION_TYPES = new Set([
+  ...ENDOCRINE_DKA_RESOLUTION_BLOCKED_ACTION_TYPES,
+  'dka-resolution-transition-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1694,6 +1698,12 @@ export class AnesthesiaEngine {
   private endocrineDkaResolutionReadinessAtTick: number | null = null;
   private endocrineDkaResolutionReassessmentAtTick: number | null = null;
   private endocrineDkaResolutionHandoffAtTick: number | null = null;
+  private endocrineHhsSupportAtTick: number | null = null;
+  private endocrineHhsContextAtTick: number | null = null;
+  private endocrineHhsRecognitionAtTick: number | null = null;
+  private endocrineHhsReadinessAtTick: number | null = null;
+  private endocrineHhsReassessmentAtTick: number | null = null;
+  private endocrineHhsHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2801,6 +2811,14 @@ export class AnesthesiaEngine {
     if (endocrineDkaResolution && ENDOCRINE_DKA_RESOLUTION_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `endocrine-dka-resolution-generic-action-refused-${this.currentTick}`,
         'This Endocrine and Metabolic Medicine lesson exposes no generic history, examination, measurement, test acquisition or interpretation, diagnosis, fluid, electrolyte, dextrose, insulin, bicarbonate, drug, dose, rate, route, access, infusion, nutrition, basal-insulin or IV-insulin transition, precipitant treatment, education, prescription, follow-up, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const endocrineHhs = this.scenario.metadata.id === 'hhs-osmolality-trajectory'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'hhs-osmolality-trajectory').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'hhs-osmolality-trajectory-boundary').length === 1;
+    if (endocrineHhs && ENDOCRINE_HHS_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `endocrine-hhs-generic-action-refused-${this.currentTick}`,
+        'This HHS lesson exposes no generic history, examination, testing, calculation, interpretation, diagnosis, fluid, insulin, dextrose, electrolyte, drug, dose, rate, route, access, infusion, nutrition, precipitant treatment, thrombosis or pressure-injury prevention, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -11868,6 +11886,28 @@ export class AnesthesiaEngine {
         if (this.endocrineDkaResolutionHandoffAtTick !== null) break;
         this.endocrineDkaResolutionHandoffAtTick = this.currentTick; this.log('warning', 'assessment', `endocrine-dka-resolution-active-risk-handoff-recorded-${this.currentTick}`, 'Recurrence, hypoglycemia, hypokalemia, fluid and kidney risk, precipitant, insulin access and technique, nutrition, education, follow-up, disposition, and outcome uncertainty were handed off.', { independentInsulinSafetyProven: false, durableGlucoseOrPotassiumStabilityProven: false, precipitantResolved: false, dischargeReadinessProven: false, outcomePredicted: false }); break;
       }
+      case 'hhs-osmolality-trajectory-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'hhs-osmolality-trajectory'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'hhs-osmolality-trajectory').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'hhs-osmolality-trajectory-boundary').length === 1;
+        const actions = this.scenario.metadata.objectives.map((objective) => objective.id);
+        if (!supported || typeof response !== 'string' || !actions.includes(response)) { this.log('warning', 'assessment', `endocrine-hhs-response-refused-${this.currentTick}`, 'These choices are available only in the exact declared HHS lesson. Nothing changed.'); break; }
+        if (response === actions[0]) { if (this.endocrineHhsSupportAtTick !== null) break; this.endocrineHhsSupportAtTick = this.currentTick; this.log('warning', 'assessment', `endocrine-hhs-support-activated-${this.currentTick}`, 'Qualified endocrine, resuscitation, nursing, laboratory, renal, cardiac, pharmacy, precipitant, and escalation ownership was confirmed. No learner call, monitoring, medication, or other care occurred.'); break; }
+        if (this.endocrineHhsSupportAtTick === null) { this.log('warning', 'assessment', `endocrine-hhs-support-order-refused-${this.currentTick}`, 'Confirm qualified metabolic, resuscitation, renal, cardiac, and monitoring support first.'); break; }
+        if (response === actions[1]) { if (this.endocrineHhsContextAtTick !== null) break; this.endocrineHhsContextAtTick = this.currentTick; this.log('warning', 'assessment', `endocrine-hhs-context-reconciled-${this.currentTick}`, 'The supplied symptom clock, glucose, sodium, total and effective osmolality, ketone and acid-base findings, potassium, kidney trajectory, perfusion, urine output, cognition, heart failure, intake, medication access, preferences, and whole person were connected without learner assessment, calculation, or treatment.'); break; }
+        if (this.endocrineHhsContextAtTick === null) { this.log('warning', 'assessment', `endocrine-hhs-context-order-refused-${this.currentTick}`, 'Connect the biochemical and whole-person trajectory before pattern recognition.'); break; }
+        if (response === actions[2]) { if (this.endocrineHhsRecognitionAtTick !== null) break; this.endocrineHhsRecognitionAtTick = this.currentTick; this.log('warning', 'assessment', `endocrine-hhs-pattern-recognized-${this.currentTick}`, 'The supplied glucose 900 mg/dL, total osmolality 362 mOsm/kg, dehydration, and cognitive change form a serious hyperosmolar pattern despite ketones 1.1 mmol/L, pH 7.36, and bicarbonate 24 mmol/L. Low ketones and near-normal pH do not establish a mild illness or exclude a competing cause.'); break; }
+        if (this.endocrineHhsRecognitionAtTick === null) { this.log('warning', 'assessment', `endocrine-hhs-recognition-order-refused-${this.currentTick}`, 'Recognize the coupled hyperosmolar illness before reviewing correction boundaries.'); break; }
+        if (response === actions[3]) { if (this.endocrineHhsReadinessAtTick !== null) break; this.endocrineHhsReadinessAtTick = this.currentTick; this.log('warning', 'assessment', `endocrine-hhs-readiness-reviewed-${this.currentTick}`, 'Qualified individualized cautious fluids, insulin timing, potassium surveillance, serial osmolality, fluid balance, cardiac and renal tolerance, precipitant care, thrombosis and pressure-injury prevention, and escalation were reviewed. A sodium rise as glucose falls does not alone justify hypotonic fluid. No learner treatment occurred.'); break; }
+        if (this.endocrineHhsReadinessAtTick === null) { this.log('warning', 'assessment', `endocrine-hhs-readiness-order-refused-${this.currentTick}`, 'Review qualified correction and surveillance boundaries before the fixed report.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.endocrineHhsReadinessAtTick) { this.log('warning', 'assessment', `endocrine-hhs-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed qualified-team report.'); break; } if (this.endocrineHhsReassessmentAtTick !== null) break; this.endocrineHhsReassessmentAtTick = this.currentTick; this.log('warning', 'assessment', `endocrine-hhs-four-hour-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report 4 hours later: HR 98/min, BP 110/64 mm Hg, RR 20/min, room-air SpO2 96%, temperature 37.6°C, glucose 540 mg/dL, sodium 149 mmol/L, potassium 3.8 mmol/L, BUN 42 mg/dL, creatinine 1.6 mg/dL, total osmolality 343 mOsm/kg, effective osmolality 328 mOsm/kg, and urine output 0.4 mL/kg/h. Cognition has improved but remains below baseline. Qualified individualized fluid-led care is reported. The average glucose fall of 90 mg/dL/h and total-osmolality fall of 4.75 mOsm/kg/h do not prove safe intervals, HHS resolution, learner care, durable stability, disposition, or outcome.', { hhsResolutionProven: false, correctionSafetyBetweenReportsProven: false, outcomePredicted: false }); break; }
+        if (this.endocrineHhsReassessmentAtTick === null) { this.log('warning', 'assessment', `endocrine-hhs-handoff-order-refused-${this.currentTick}`, 'Review the fixed osmolality, urine, and cognition report before active-risk handoff.'); break; }
+        if (this.currentTick <= this.endocrineHhsReassessmentAtTick) { this.log('warning', 'assessment', `endocrine-hhs-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.endocrineHhsHandoffAtTick !== null) break;
+        this.endocrineHhsHandoffAtTick = this.currentTick; this.log('warning', 'assessment', `endocrine-hhs-active-risk-handoff-recorded-${this.currentTick}`, 'Persistent hyperosmolality, reduced urine output, cognitive change, fluid tolerance, glucose and potassium safety, cardiac and kidney function, precipitant, medication and drinking access, thrombosis, pressure injury, disposition, and outcome uncertainty were handed off.', { hhsResolutionProven: false, correctionSafetyBetweenReportsProven: false, safetyDispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -15006,6 +15046,17 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: this.endocrineDkaResolutionReassessmentAtTick !== null ? 16 : 18,
         spo2Percent: 98, systolicMmHg: 118, diastolicMmHg: 70, meanArterialMmHg: 86,
         coreTemperatureC: 36.9 };
+    }
+    if (this.scenario.metadata.id === 'hhs-osmolality-trajectory'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'hhs-osmolality-trajectory').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'hhs-osmolality-trajectory-boundary').length === 1) {
+      crisisState = { ...crisisState, heartRateBpm: this.endocrineHhsReassessmentAtTick !== null ? 98 : 110,
+        respiratoryRateBpm: this.endocrineHhsReassessmentAtTick !== null ? 20 : 22, spo2Percent: 96,
+        systolicMmHg: this.endocrineHhsReassessmentAtTick !== null ? 110 : 96,
+        diastolicMmHg: this.endocrineHhsReassessmentAtTick !== null ? 64 : 58,
+        meanArterialMmHg: this.endocrineHhsReassessmentAtTick !== null ? 79 : 71,
+        coreTemperatureC: this.endocrineHhsReassessmentAtTick !== null ? 37.6 : 37.8 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -19656,6 +19707,28 @@ export class AnesthesiaEngine {
               universalDoseOrTreatmentEffectProven: false as const, independentInsulinSafetyProven: false as const,
               durableGlucoseOrPotassiumStabilityProven: false as const, precipitantResolved: false as const,
               dischargeReadinessProven: false as const, safetyDispositionDetermined: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'hhs-osmolality-trajectory'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'hhs-osmolality-trajectory').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'hhs-osmolality-trajectory-boundary').length === 1 ? {
+            endocrineHhsAssessment: {
+              supportAtTick: this.endocrineHhsSupportAtTick, contextAtTick: this.endocrineHhsContextAtTick,
+              recognitionAtTick: this.endocrineHhsRecognitionAtTick, readinessAtTick: this.endocrineHhsReadinessAtTick,
+              reassessmentAtTick: this.endocrineHhsReassessmentAtTick, handoffAtTick: this.endocrineHhsHandoffAtTick,
+              authoredHyperosmolarIllness: true as const,
+              authoredQualifiedFourHourReport: this.endocrineHhsReassessmentAtTick !== null,
+              historyTakenOrPatientExaminedByLearner: false as const,
+              testObtainedCalculatedOrInterpretedByLearner: false as const,
+              fluidInsulinDextroseElectrolyteOrDrugSelectedOrDeliveredByLearner: false as const,
+              doseRateRouteOrAccessSelectedByLearner: false as const,
+              infusionOperatedByLearner: false as const, nutritionPrescribedOrDeliveredByLearner: false as const,
+              precipitantTreatedThrombosisOrPressureInjuryPreventedByLearner: false as const,
+              diagnosisMadeByLearner: false as const, procedurePerformedByLearner: false as const,
+              hhsResolutionProven: false as const, correctionSafetyBetweenReportsProven: false as const,
+              durableStabilityProven: false as const, safetyDispositionDetermined: false as const,
               outcomePredicted: false as const,
             },
           } : {}),

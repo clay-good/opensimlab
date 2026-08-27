@@ -5475,6 +5475,31 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['activate-hhs-endocrine-resuscitation-nursing-renal-cardiac-and-monitoring-support',
+      'reconcile-hhs-glucose-sodium-osmolality-ketone-perfusion-cognition-and-whole-person',
+      'recognize-hhs-hyperosmolality-without-glucose-sodium-or-ketone-only-closure',
+      'review-qualified-hhs-cautious-correction-osmolality-potassium-monitoring-and-harm-prevention',
+      'review-hhs-fixed-four-hour-qualified-report',
+      'handoff-hhs-osmolality-cognition-fluid-electrolyte-precipitant-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'hhs-osmolality-trajectory'
+        && scenario.timeline.every((event) => event.type === 'narrative')
+        && scenario.timeline.filter((event) => event.target === 'hhs-osmolality-trajectory').length === 1
+        && scenario.timeline.filter((event) => event.target === 'hhs-osmolality-trajectory-boundary').length === 1;
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The declared HHS trajectory lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['support-activated', 'Qualified metabolic, resuscitation, renal, cardiac, and monitoring ownership was confirmed first.'],
+        ['context-reconciled', 'The supplied biochemical, perfusion, cognition, heart, kidney, intake, access, and whole-person trajectory was connected.'],
+        ['pattern-recognized', 'Serious hyperosmolar illness was recognized without glucose-, sodium-, ketone-, or pH-only reassurance.'],
+        ['readiness-reviewed', 'Qualified cautious correction, osmolality and potassium surveillance, fluid tolerance, precipitant, and harm-prevention boundaries were reviewed.'],
+        ['four-hour-report-reviewed', 'The fixed lower-glucose, rising-sodium report was reviewed with persistent hyperosmolality, reduced urine output, and cognitive change.'],
+        ['active-risk-handoff-recorded', 'Osmolality, cognition, fluid tolerance, urine, electrolytes, precipitant, access, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^endocrine-hhs-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^endocrine-hhs-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['activate-obstetrics-cord-prolapse-response-diagnosis-clock-theatre-anesthesia-newborn-and-support-roles',
       'reconcile-obstetrics-cord-prolapse-membrane-rupture-fetal-heart-exam-birth-imminence-and-whole-person',
       'review-obstetrics-cord-prolapse-pressure-relief-minimal-handling-position-and-no-delay-boundaries',

@@ -178,7 +178,7 @@ const ENDOCRINE_METABOLIC_CONFIG: ClinicalModuleConfig = {
   id: 'endocrine-metabolic', basePath: '/endocrine-metabolic',
   heading: 'Endocrine and metabolic medicine simulator',
   catalogIntroduction: 'Calm metabolic rehearsals for reading the biochemical trajectory without losing the whole person. Keep treatment continuity, transition safety, and recurrence prevention visible.',
-  catalogStatus: `${ENDOCRINE_METABOLIC_SCENARIOS.length} of 12 bounded Endocrine and Metabolic Medicine labs is playable.`,
+  catalogStatus: `${ENDOCRINE_METABOLIC_SCENARIOS.length} of 12 bounded Endocrine and Metabolic Medicine labs are playable.`,
   scenarios: ENDOCRINE_METABOLIC_SCENARIOS,
   defaultScenarioId: DEFAULT_ENDOCRINE_METABOLIC_SCENARIO_ID,
   getScenario: getEndocrineMetabolicScenario,
