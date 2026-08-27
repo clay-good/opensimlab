@@ -10,18 +10,22 @@ const harness = vi.hoisted(() => ({
   records: [] as unknown,
   writes: new Map<string, string>(),
   mkdir: vi.fn(),
+  dependencies: vi.fn(),
   calls: [] as { completions: readonly ScenarioCompletionCatalog[]; inputs: unknown;
     result?: ReadonlyMap<string, ScenarioQualityCatalog> }[],
 }));
 
-// Execute both real consumers and real validators. Only authored input and
-// filesystem writes are replaced; importing the build must never publish files.
+// Execute both real consumers and the real record validator. Dependency receipts
+// are checked separately with the real verifier in quality-dependency-consumers.
 vi.mock('node:fs', async (importOriginal) => {
   const actual = await importOriginal<typeof FileSystem>();
   return { ...actual, mkdirSync: harness.mkdir,
     writeFileSync: (path: unknown, data: unknown) => { harness.writes.set(String(path), String(data)); } };
 });
-vi.mock('../../scripts/quality-records', () => ({ get QUALITY_RECORDS() { return harness.records; } }));
+vi.mock('../../scripts/quality-records', () => ({
+  get QUALITY_RECORDS() { return harness.records; }, QUALITY_DEPENDENCY_RECEIPTS: [],
+}));
+vi.mock('../../scripts/quality-dependencies', () => ({ assertQualityDependencies: harness.dependencies }));
 vi.mock('@platform/catalog/scenario-quality', async (importOriginal) => {
   const actual = await importOriginal<typeof Quality>();
   return { ...actual, buildScenarioQualityCatalogs: (completions: readonly ScenarioCompletionCatalog[], inputs: unknown) => {
@@ -49,6 +53,7 @@ describe('Build and release consume the same fail-closed quality registry', () =
   let argv: string[];
   beforeEach(() => {
     vi.resetModules(); harness.records = []; harness.writes.clear(); harness.mkdir.mockClear(); harness.calls.length = 0;
+    harness.dependencies.mockClear();
     argv = process.argv; process.argv = [process.execPath, 'quality-record-consumers.test.ts'];
     vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
     vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
@@ -79,6 +84,8 @@ describe('Build and release consume the same fail-closed quality registry', () =
     expect(gate.inputs).toBe(harness.records);
     expect(gate.completions.map(({ moduleId }) => moduleId)).toEqual(MODULES);
     expect(gate.result).toEqual(build.result);
+    expect(harness.dependencies).toHaveBeenCalledTimes(2);
+    expect(harness.dependencies).toHaveBeenLastCalledWith(harness.records, [], expect.any(String));
     // Preserve the existing consumer-specific cardiology setting; this change
     // does not silently normalize unrelated completion data.
     const cardiacSetting = (catalogs: readonly ScenarioCompletionCatalog[]) => catalogs.find(({ moduleId }) => moduleId === 'cardiology')!
@@ -165,6 +172,7 @@ describe('Build and release consume the same fail-closed quality registry', () =
       expect(harness.calls[0]!.inputs).toBe(harness.records);
       expect(harness.calls[0]!.completions.map(({ moduleId }) => moduleId)).toEqual(MODULES);
       expect(harness.calls[0]!.result).toBeUndefined();
+      expect(harness.dependencies).not.toHaveBeenCalled();
       expect(harness.writes.size).toBe(0); expect(harness.mkdir).not.toHaveBeenCalled();
       expect(process.stdout.write).not.toHaveBeenCalled(); expect(process.stderr.write).not.toHaveBeenCalled();
     });

@@ -259,3 +259,12 @@ machine-readable form.
   non-finite scalar values, or a presence flag without its matching valid payload
 - **THEN** validation rejects it without treating that behavior as evidence; source references
   remain inert text and are not fetched or executed by ingestion
+
+#### Scenario: Declared dependency drift cannot silently refresh evidence
+
+- **WHEN** a supplied quality record's declared local dependency changes without a content-version
+  change, its receipt is absent, or a cited local file is missing from the receipt
+- **THEN** catalog generation and release evaluation reject the stale or incomplete evidence before
+  writes or publication evaluation, including in development mode
+- **AND** a checked-in receipt binds record bodies and exact file bytes, never refreshes during a
+  normal build, and does not substitute for clinical review or remote-source currency

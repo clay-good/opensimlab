@@ -1,0 +1,135 @@
+[
+  {
+    "moduleId": "endocrine-metabolic",
+    "scenarioId": "hypocalcemic-tetany-rescue-and-recurrence",
+    "contentVersion": "0.1.0",
+    "algorithm": "sha256-files-v1",
+    "recordsSha256": "041538ba2dfa9d84c828d4052c9856c543caf1f22339ddd063b29a76f9987fa4",
+    "files": [
+      {
+        "path": "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md",
+        "sha256": "1d2b85276c91f4bd96322d5e29ee3a5a4758752ed4d4c679bebd50195d0ece52"
+      },
+      {
+        "path": "package-lock.json",
+        "sha256": "87ac3b4895c682cc68b41ad327dd66ba822c62254e2b5ee83aa9286a69ced167"
+      },
+      {
+        "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
+        "sha256": "372caee48af2434cac4bbd58881b1d2007868568590f7b89aa1f5aed82a6639f"
+      },
+      {
+        "path": "src/modules/anesthesia/engine.ts",
+        "sha256": "95105b466d03798c4d86ba1bed78595ca1ef466ca0550d34048baffc7e5772fa"
+      },
+      {
+        "path": "src/modules/anesthesia/region/profiles.ts",
+        "sha256": "6f2476883c6ab3f9dbb7e34f8775bceb97914a6d75e3e6aa4ecdb1d161bc36a8"
+      },
+      {
+        "path": "src/modules/anesthesia/ui/Debrief.tsx",
+        "sha256": "d7529d7ae13cbdfb420f443c40992fc6a37477a5f0742b6017e98561d646b774"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/HypocalcemiaTray.tsx",
+        "sha256": "79390697f9d6c554a37b9ca0b4523f73d0c87690b30b49d2f8e2c6cf40696a0f"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/demo/hypocalcemia-demonstration.ts",
+        "sha256": "a47470b7e26febb797287c95fc4bdb809655a022cd4dd4ab29c9bfa5556ff650"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/hypocalcemia-fixtures.ts",
+        "sha256": "1ad22a363eced86bfb7c041a6a9342f5ca94da9866de35f44910b12474fd2b67"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/hypocalcemia-quality.ts",
+        "sha256": "aaedb9c3bee6b47a103421bec54b94199a2c7657ed8d885b40cbdf6f3c48ccc0"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/hypocalcemia.ts",
+        "sha256": "c1382845a6cc2337b2089007d76e0205670b68d6efede0b9315cdfdae8e1f6dc"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/scenarios/hypocalcemic-tetany-rescue-and-recurrence.ts",
+        "sha256": "d0ccbe2dabf9ea277a7a3c4bb0dd92ba05145e03131b21f9564722fbe23e3fe0"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/tutor/hypocalcemia-guidance.ts",
+        "sha256": "1ed3fd056b80acdda021b4304503beef738e1319b58fbdecd68aff4f884da09d"
+      },
+      {
+        "path": "src/platform/catalog/maturity.ts",
+        "sha256": "69970d4d7fae816e935846572b4943ec38ae86ac6da0410fb78ccf17b757e913"
+      },
+      {
+        "path": "src/platform/catalog/scenario-quality.ts",
+        "sha256": "e0f40ab3ac2d787ffba19b5e65a8b76b9a019d4cbba2e996ed5e05b5964190f2"
+      },
+      {
+        "path": "src/platform/clock/simulation-clock.ts",
+        "sha256": "1e757dd6474e3a5046382b3031008094fd2b20ba9e1a13b4a19689db50acadeb"
+      },
+      {
+        "path": "src/platform/docs/limitations.ts",
+        "sha256": "a5cc754808f8dab28020e14f1a4f1db5e3f7bc0bc56ac440f66bb6eca1749d31"
+      },
+      {
+        "path": "src/platform/docs/sources.ts",
+        "sha256": "e2207142371a19cedb718a2156c8f8af6b949b61f97091224fffac05cc77772a"
+      },
+      {
+        "path": "src/platform/governance/publication.ts",
+        "sha256": "b1ab5cb0cbc8d1894b079f842ad40bfad309c9cb1aa212bc1b803f9473fc5a9e"
+      },
+      {
+        "path": "src/platform/governance/records.ts",
+        "sha256": "3558c073643a4a1b0af47b722f56e0355c21f16657a9479e4c059f825722e76f"
+      },
+      {
+        "path": "src/platform/governance/review-gate.ts",
+        "sha256": "ad779f6e639a0ec3933622b405ce56cbc7e11b5eff0975b835497b0efa80f157"
+      },
+      {
+        "path": "src/platform/governance/review-notes.ts",
+        "sha256": "8c2f789a4fecbaac8b75e3dfd3cec1f7758ef4927db17460bd801154e47a29c0"
+      },
+      {
+        "path": "src/platform/session/session-store.ts",
+        "sha256": "761d2694863617d9ea5ecbf102fdfa24c790cbdfba391b1c743b0d859d1ce4a6"
+      },
+      {
+        "path": "src/platform/tokens/base.css",
+        "sha256": "d316dcc5504d59ab9d68651a47cf2835ab161288d9f663fcf831c5455700e385"
+      },
+      {
+        "path": "src/routes/AnesthesiaRoute.tsx",
+        "sha256": "07991513c0ee3fc56f6920124f68fd5a1cd7a049c297367c6b627f277355c033"
+      },
+      {
+        "path": "tests/integration/demonstration-runs.test.tsx",
+        "sha256": "4d4131b6be96d5915e4cb2a4187836687b6d248904e5319f725ca1bea7274e59"
+      },
+      {
+        "path": "tests/integration/hypocalcemia-runs.test.ts",
+        "sha256": "fce546a33a81caa2449a99a91b5c12c26946d394215760adc7328063c2ed9449"
+      },
+      {
+        "path": "tests/ui/endocrine-hypocalcemia.test.tsx",
+        "sha256": "eb5b3829e7ee8581bfccbafb038a8d7f51e9c01c560bdd042a5ffeb92069314d"
+      },
+      {
+        "path": "tests/ui/hypocalcemia-accessibility.test.tsx",
+        "sha256": "552d170bd14f45a4060afa70c26de57e7e5d2293ce9b0586cdedcc0c6cc42a51"
+      },
+      {
+        "path": "tests/ui/hypocalcemia-report-surfaces.test.tsx",
+        "sha256": "3ec7cc2237bb1a03155cd6b43a2f94bb758676a1a6a2dd7eea4c54aeaa4af557"
+      },
+      {
+        "path": "tests/unit/endocrine-hypocalcemia.test.ts",
+        "sha256": "5b5254bb74ceefb789d417618e080feca8697f4c999ecc9a3e62c5779a8f12df"
+      }
+    ]
+  }
+]

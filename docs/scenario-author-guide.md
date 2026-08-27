@@ -49,5 +49,7 @@ leave unverified work open. Whitespace-only strings technically satisfy the exis
 Run `npm run catalog`, the relevant tests, and `npm run ci` after changing records. The
 hypocalcemia records demonstrate partial publication with honest missing matrix evidence; synthetic
 all-passing validator fixtures belong only in tests. Capability, source, and review changes still
-require an evidence review even when the content version is unchanged; automatic dependency-hash
-invalidation is not implemented by this identity-bound registry.
+require an evidence review even when the content version is unchanged. Register a literal
+[dependency receipt](quality-evidence-receipts.md) before either build consumer may use supplied
+records. Changed or missing declared dependencies stop publication; receipts never refresh as a
+side effect of building.

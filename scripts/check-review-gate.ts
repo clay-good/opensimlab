@@ -18,7 +18,8 @@ import { OBSTETRICS_SCENARIOS } from '../src/modules/obstetrics/scenarios';
 import { NEONATOLOGY_SCENARIOS } from '../src/modules/neonatology/scenarios';
 import { ENDOCRINE_METABOLIC_SCENARIOS } from '../src/modules/endocrine-metabolic/scenarios';
 import { buildScenarioQualityCatalogs } from '@platform/catalog/scenario-quality';
-import { QUALITY_RECORDS } from './quality-records';
+import { QUALITY_DEPENDENCY_RECEIPTS, QUALITY_RECORDS } from './quality-records';
+import { assertQualityDependencies } from './quality-dependencies';
 import {
   buildMaturityCatalog, maturityFor, type MaturitySubjectKind,
 } from '@platform/catalog/maturity';
@@ -101,6 +102,7 @@ export function main(): void {
     neonatologyCompletion,
     endocrineMetabolicCompletion,
   ], QUALITY_RECORDS);
+  assertQualityDependencies(QUALITY_RECORDS, QUALITY_DEPENDENCY_RECEIPTS, root);
   const quality = qualityCatalogs.get('anesthesia')!;
   const emergencyQuality = qualityCatalogs.get('emergency-medicine')!;
   const criticalCareQuality = qualityCatalogs.get('critical-care')!;

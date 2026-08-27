@@ -29,9 +29,22 @@ credited toward the catalog until every item in the completion contract passes.
   offline; the final indexable build verifies 221 routes. An explicit preview-release attempt still
   refuses unmet gates, including hypocalcemia's completion and matrix evidence. No production
   service was changed.
-- [ ] Add dependency-bound invalidation for quality evidence when capability, source, or review
-  changes without a content-version change. Exact identity validation is not a substitute for
-  proving that referenced tests, sources, or independent reviews remain applicable.
+- [x] Add literal dependency receipts for supplied quality records and verify them in both catalog
+  and release consumers before writes or publication evaluation. Pin complete record bodies and
+  declared file bytes, require shared boundaries and cited local files, and reject drift without
+  refreshing receipts. The initial hypocalcemia snapshot covers 31 files and its three records;
+  it does not add matrix evidence, clinical review, or playable credit.
+- [x] Verify receipt integrity with 91 new tests, including real build/development/preview/reviewed
+  consumer refusals, payload identity, missing coverage, file drift, path/symlink safety, reference
+  grammar, and no automatic writes. All 108 focused checks and full CI's 3,971 tests across 480
+  files pass, along with 30 specs and the change delta. Final static-host checks cover 224 routes
+  and 44 catalog artifacts; 221 routes remain indexable. Compressed budgets remain 148.2 KiB
+  landing, 1,487.6 KiB cockpit, and 3,319.9 KiB offline. All generated catalogs and 207 historical
+  report records are unchanged. A real preview-release attempt still refuses outstanding gates.
+- [ ] Complete dependency-bound invalidation with public stale-gate reporting, applicable maturity
+  downgrade, and comprehensive transitive dependency coverage. The prepublication receipt check
+  does not update a previously deployed catalog or establish remote-source currency, review expiry,
+  test execution, or independent review. See `docs/quality-evidence-receipts.md`.
 - [x] Add architecture tests rejecting standalone calculators, scores, classifications,
   conversions, lookups, checklist answers, documentation generators, real-patient entry, and public
   compute endpoints while permitting calculations internal to fictional patient response.
