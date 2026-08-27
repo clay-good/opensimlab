@@ -17,7 +17,8 @@ import { TOXICOLOGY_SCENARIOS } from '../src/modules/toxicology/scenarios';
 import { OBSTETRICS_SCENARIOS } from '../src/modules/obstetrics/scenarios';
 import { NEONATOLOGY_SCENARIOS } from '../src/modules/neonatology/scenarios';
 import { ENDOCRINE_METABOLIC_SCENARIOS } from '../src/modules/endocrine-metabolic/scenarios';
-import { buildScenarioQualityCatalog } from '@platform/catalog/scenario-quality';
+import { buildScenarioQualityCatalogs } from '@platform/catalog/scenario-quality';
+import { QUALITY_RECORDS } from './quality-records';
 import {
   buildMaturityCatalog, maturityFor, type MaturitySubjectKind,
 } from '@platform/catalog/maturity';
@@ -49,67 +50,80 @@ function subjectKind(kind: ReturnType<typeof reviewableItems>[number]['kind']): 
   return kind;
 }
 
-function main(): void {
+export function main(): void {
   const release = process.argv.includes('--release');
   const channel = releaseChannelFrom(process.argv.slice(2));
   const completion = buildAnesthesiaCompletionCatalog(SCENARIOS, ENGINE_VERSION);
-  const quality = buildScenarioQualityCatalog(completion);
-  const maturity = buildMaturityCatalog(completion, quality, additionalMaturitySubjects());
   const emergencyCompletion = buildModuleCompletionCatalog(
     EMERGENCY_MEDICINE_SCENARIOS, ENGINE_VERSION, 'emergency-medicine',
     'emergency-department', 'state_transition',
   );
-  const emergencyQuality = buildScenarioQualityCatalog(emergencyCompletion);
-  const emergencyMaturity = buildMaturityCatalog(emergencyCompletion, emergencyQuality);
   const criticalCareCompletion = buildModuleCompletionCatalog(
     CRITICAL_CARE_SCENARIOS, ENGINE_VERSION, 'critical-care',
     'icu', 'state_transition',
   );
-  const criticalCareQuality = buildScenarioQualityCatalog(criticalCareCompletion);
-  const criticalCareMaturity = buildMaturityCatalog(criticalCareCompletion, criticalCareQuality);
   const cardiologyCompletion = buildModuleCompletionCatalog(
     CARDIOLOGY_SCENARIOS, ENGINE_VERSION, 'cardiology', 'clinic', 'state_transition',
   );
-  const cardiologyQuality = buildScenarioQualityCatalog(cardiologyCompletion);
-  const cardiologyMaturity = buildMaturityCatalog(cardiologyCompletion, cardiologyQuality);
   const respiratoryMedicineCompletion = buildModuleCompletionCatalog(
     RESPIRATORY_MEDICINE_SCENARIOS, ENGINE_VERSION, 'respiratory-medicine',
     'icu', 'state_transition',
-  );
-  const respiratoryMedicineQuality = buildScenarioQualityCatalog(respiratoryMedicineCompletion);
-  const respiratoryMedicineMaturity = buildMaturityCatalog(
-    respiratoryMedicineCompletion, respiratoryMedicineQuality,
   );
   const pediatricsCompletion = buildModuleCompletionCatalog(
     PEDIATRICS_SCENARIOS, ENGINE_VERSION, 'pediatrics',
     'emergency-department', 'state_transition',
   );
-  const pediatricsQuality = buildScenarioQualityCatalog(pediatricsCompletion);
-  const pediatricsMaturity = buildMaturityCatalog(pediatricsCompletion, pediatricsQuality);
   const neurologyCompletion = buildModuleCompletionCatalog(
     NEUROLOGY_SCENARIOS, ENGINE_VERSION, 'neurology', 'ward', 'state_transition',
   );
-  const neurologyQuality = buildScenarioQualityCatalog(neurologyCompletion);
-  const neurologyMaturity = buildMaturityCatalog(neurologyCompletion, neurologyQuality);
   const toxicologyCompletion = buildModuleCompletionCatalog(
     TOXICOLOGY_SCENARIOS, ENGINE_VERSION, 'toxicology', 'emergency-department', 'state_transition',
   );
-  const toxicologyQuality = buildScenarioQualityCatalog(toxicologyCompletion);
-  const toxicologyMaturity = buildMaturityCatalog(toxicologyCompletion, toxicologyQuality);
   const obstetricsCompletion = buildModuleCompletionCatalog(
     OBSTETRICS_SCENARIOS, ENGINE_VERSION, 'obstetrics', 'delivery-room', 'state_transition',
   );
-  const obstetricsQuality = buildScenarioQualityCatalog(obstetricsCompletion);
-  const obstetricsMaturity = buildMaturityCatalog(obstetricsCompletion, obstetricsQuality);
   const neonatologyCompletion = buildModuleCompletionCatalog(
     NEONATOLOGY_SCENARIOS, ENGINE_VERSION, 'neonatology', 'delivery-room', 'state_transition',
   );
-  const neonatologyQuality = buildScenarioQualityCatalog(neonatologyCompletion);
-  const neonatologyMaturity = buildMaturityCatalog(neonatologyCompletion, neonatologyQuality);
   const endocrineMetabolicCompletion = buildModuleCompletionCatalog(
     ENDOCRINE_METABOLIC_SCENARIOS, ENGINE_VERSION, 'endocrine-metabolic', 'ward', 'state_transition',
   );
-  const endocrineMetabolicQuality = buildScenarioQualityCatalog(endocrineMetabolicCompletion);
+  const qualityCatalogs = buildScenarioQualityCatalogs([
+    completion,
+    emergencyCompletion,
+    criticalCareCompletion,
+    cardiologyCompletion,
+    respiratoryMedicineCompletion,
+    pediatricsCompletion,
+    neurologyCompletion,
+    toxicologyCompletion,
+    obstetricsCompletion,
+    neonatologyCompletion,
+    endocrineMetabolicCompletion,
+  ], QUALITY_RECORDS);
+  const quality = qualityCatalogs.get('anesthesia')!;
+  const emergencyQuality = qualityCatalogs.get('emergency-medicine')!;
+  const criticalCareQuality = qualityCatalogs.get('critical-care')!;
+  const cardiologyQuality = qualityCatalogs.get('cardiology')!;
+  const respiratoryMedicineQuality = qualityCatalogs.get('respiratory-medicine')!;
+  const pediatricsQuality = qualityCatalogs.get('pediatrics')!;
+  const neurologyQuality = qualityCatalogs.get('neurology')!;
+  const toxicologyQuality = qualityCatalogs.get('toxicology')!;
+  const obstetricsQuality = qualityCatalogs.get('obstetrics')!;
+  const neonatologyQuality = qualityCatalogs.get('neonatology')!;
+  const endocrineMetabolicQuality = qualityCatalogs.get('endocrine-metabolic')!;
+  const maturity = buildMaturityCatalog(completion, quality, additionalMaturitySubjects());
+  const emergencyMaturity = buildMaturityCatalog(emergencyCompletion, emergencyQuality);
+  const criticalCareMaturity = buildMaturityCatalog(criticalCareCompletion, criticalCareQuality);
+  const cardiologyMaturity = buildMaturityCatalog(cardiologyCompletion, cardiologyQuality);
+  const respiratoryMedicineMaturity = buildMaturityCatalog(
+    respiratoryMedicineCompletion, respiratoryMedicineQuality,
+  );
+  const pediatricsMaturity = buildMaturityCatalog(pediatricsCompletion, pediatricsQuality);
+  const neurologyMaturity = buildMaturityCatalog(neurologyCompletion, neurologyQuality);
+  const toxicologyMaturity = buildMaturityCatalog(toxicologyCompletion, toxicologyQuality);
+  const obstetricsMaturity = buildMaturityCatalog(obstetricsCompletion, obstetricsQuality);
+  const neonatologyMaturity = buildMaturityCatalog(neonatologyCompletion, neonatologyQuality);
   const endocrineMetabolicMaturity = buildMaturityCatalog(endocrineMetabolicCompletion, endocrineMetabolicQuality);
   const moduleCatalogs = [
     { completion, quality, maturity },

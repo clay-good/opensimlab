@@ -20,7 +20,8 @@ import { OBSTETRICS_SCENARIOS } from '../src/modules/obstetrics/scenarios';
 import { NEONATOLOGY_SCENARIOS } from '../src/modules/neonatology/scenarios';
 import { ENDOCRINE_METABOLIC_SCENARIOS } from '../src/modules/endocrine-metabolic/scenarios';
 import { SCENARIO_COMPLETION_SCHEMA } from '@platform/catalog/scenario-completion';
-import { buildScenarioQualityCatalog, QUALITY_SCHEMAS } from '@platform/catalog/scenario-quality';
+import { buildScenarioQualityCatalogs, QUALITY_SCHEMAS } from '@platform/catalog/scenario-quality';
+import { QUALITY_RECORDS } from './quality-records';
 import { buildMaturityCatalog, MATURITY_RECORD_SCHEMA } from '@platform/catalog/maturity';
 import { additionalMaturitySubjects } from '@platform/governance/records';
 import { ASSET_LICENSE_MANIFEST, buildEvidenceSourceManifest } from '@platform/catalog/provenance';
@@ -34,11 +35,8 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 const REPORT_EVIDENCE_ALGORITHM = 'scenario-evidence-v1';
 const target = join(root, 'public', 'catalog');
 const reportTarget = join(root, 'workers', 'reports', 'src');
-mkdirSync(target, { recursive: true });
-mkdirSync(reportTarget, { recursive: true });
 
 const completion = buildAnesthesiaCompletionCatalog(SCENARIOS, ENGINE_VERSION);
-const quality = buildScenarioQualityCatalog(completion);
 const emergencyCompletion = buildModuleCompletionCatalog(
   EMERGENCY_MEDICINE_SCENARIOS,
   ENGINE_VERSION,
@@ -46,47 +44,62 @@ const emergencyCompletion = buildModuleCompletionCatalog(
   'emergency-department',
   'state_transition',
 );
-const emergencyQuality = buildScenarioQualityCatalog(emergencyCompletion);
 const criticalCareCompletion = buildModuleCompletionCatalog(
   CRITICAL_CARE_SCENARIOS, ENGINE_VERSION, 'critical-care', 'icu', 'state_transition',
 );
-const criticalCareQuality = buildScenarioQualityCatalog(criticalCareCompletion);
 const cardiologyCompletion = buildModuleCompletionCatalog(
   CARDIOLOGY_SCENARIOS, ENGINE_VERSION, 'cardiology',
   (scenario) => scenario.metadata.id === 'post-infarction-cardiogenic-shock-escalation'
     ? 'icu' : 'clinic',
   'state_transition',
 );
-const cardiologyQuality = buildScenarioQualityCatalog(cardiologyCompletion);
 const respiratoryMedicineCompletion = buildModuleCompletionCatalog(
   RESPIRATORY_MEDICINE_SCENARIOS, ENGINE_VERSION, 'respiratory-medicine',
   'icu', 'state_transition',
 );
-const respiratoryMedicineQuality = buildScenarioQualityCatalog(respiratoryMedicineCompletion);
 const pediatricsCompletion = buildModuleCompletionCatalog(
   PEDIATRICS_SCENARIOS, ENGINE_VERSION, 'pediatrics', 'emergency-department', 'state_transition',
 );
-const pediatricsQuality = buildScenarioQualityCatalog(pediatricsCompletion);
 const neurologyCompletion = buildModuleCompletionCatalog(
   NEUROLOGY_SCENARIOS, ENGINE_VERSION, 'neurology', 'ward', 'state_transition',
 );
-const neurologyQuality = buildScenarioQualityCatalog(neurologyCompletion);
 const toxicologyCompletion = buildModuleCompletionCatalog(
   TOXICOLOGY_SCENARIOS, ENGINE_VERSION, 'toxicology', 'emergency-department', 'state_transition',
 );
-const toxicologyQuality = buildScenarioQualityCatalog(toxicologyCompletion);
 const obstetricsCompletion = buildModuleCompletionCatalog(
   OBSTETRICS_SCENARIOS, ENGINE_VERSION, 'obstetrics', 'delivery-room', 'state_transition',
 );
-const obstetricsQuality = buildScenarioQualityCatalog(obstetricsCompletion);
 const neonatologyCompletion = buildModuleCompletionCatalog(
   NEONATOLOGY_SCENARIOS, ENGINE_VERSION, 'neonatology', 'delivery-room', 'state_transition',
 );
-const neonatologyQuality = buildScenarioQualityCatalog(neonatologyCompletion);
 const endocrineMetabolicCompletion = buildModuleCompletionCatalog(
   ENDOCRINE_METABOLIC_SCENARIOS, ENGINE_VERSION, 'endocrine-metabolic', 'ward', 'state_transition',
 );
-const endocrineMetabolicQuality = buildScenarioQualityCatalog(endocrineMetabolicCompletion);
+
+const qualityCatalogs = buildScenarioQualityCatalogs([
+  completion,
+  emergencyCompletion,
+  criticalCareCompletion,
+  cardiologyCompletion,
+  respiratoryMedicineCompletion,
+  pediatricsCompletion,
+  neurologyCompletion,
+  toxicologyCompletion,
+  obstetricsCompletion,
+  neonatologyCompletion,
+  endocrineMetabolicCompletion,
+], QUALITY_RECORDS);
+const quality = qualityCatalogs.get('anesthesia')!;
+const emergencyQuality = qualityCatalogs.get('emergency-medicine')!;
+const criticalCareQuality = qualityCatalogs.get('critical-care')!;
+const cardiologyQuality = qualityCatalogs.get('cardiology')!;
+const respiratoryMedicineQuality = qualityCatalogs.get('respiratory-medicine')!;
+const pediatricsQuality = qualityCatalogs.get('pediatrics')!;
+const neurologyQuality = qualityCatalogs.get('neurology')!;
+const toxicologyQuality = qualityCatalogs.get('toxicology')!;
+const obstetricsQuality = qualityCatalogs.get('obstetrics')!;
+const neonatologyQuality = qualityCatalogs.get('neonatology')!;
+const endocrineMetabolicQuality = qualityCatalogs.get('endocrine-metabolic')!;
 
 function stableJson(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(stableJson).join(',')}]`;
@@ -191,6 +204,8 @@ const reportCatalog = {
     `${a.moduleId}:${a.scenarioId}@${a.contentVersion}`
       .localeCompare(`${b.moduleId}:${b.scenarioId}@${b.contentVersion}`)),
 };
+mkdirSync(target, { recursive: true });
+mkdirSync(reportTarget, { recursive: true });
 writeFileSync(
   reportCatalogPath,
   `${JSON.stringify(reportCatalog, null, 2)}\n`,

@@ -263,23 +263,799 @@
       "qualityRecords": [
         {
           "kind": "training-value",
-          "status": "missing",
+          "status": "present",
+          "record": {
+            "causalDebrief": true,
+            "consequence": true,
+            "contentVersion": "0.1.0",
+            "evidence": [
+              "src/modules/endocrine-metabolic/hypocalcemia.ts#Hypocalcemia.advance: accepted rescue, missing continuing care and elapsed support select distinct authored courses independently of observations.",
+              "src/modules/endocrine-metabolic/HypocalcemiaTray.tsx: cause findings require explicit review; historical calcium is never silently refreshed.",
+              "tests/unit/endocrine-hypocalcemia.test.ts: immediate rescue, refused/stale choices, recurrence, two-phase credit and late-only handoff are asserted.",
+              "tests/integration/hypocalcemia-runs.test.ts: real-engine expert/common-error/recovery/no-action runs bind actions, states, events and five objectives to this version.",
+              "src/modules/anesthesia/ui/Debrief.tsx#hypocalcemia-reassessment: recorded delay and recurrence remain distinct from recovery, durable correction, or competence.",
+              "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md: source boundaries and fictional clocks explain why a static calcium lookup cannot rehearse this action/observation sequence. These records do not establish independent clinical review."
+            ],
+            "fictionalTimeEvolvingState": true,
+            "incompleteInformation": true,
+            "learnerAction": true,
+            "reassessment": true,
+            "scenarioId": "hypocalcemic-tetany-rescue-and-recurrence",
+            "schemaVersion": 1,
+            "staticOutputSubstitute": false
+          },
           "evidence": [
-            "No version-bound training-value record exists for hypocalcemic-tetany-rescue-and-recurrence 0.1.0."
+            "Validated version-bound training-value record for hypocalcemic-tetany-rescue-and-recurrence 0.1.0; structural validity does not establish independent review."
           ]
         },
         {
           "kind": "authored-defaults",
-          "status": "missing",
+          "status": "present",
+          "record": {
+            "contentVersion": "0.1.0",
+            "defaults": [
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "starting-setting",
+                "educationalEffect": "Establishes context without a dosing exercise.",
+                "id": "patient-demographics",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Fictional postoperative adult, not a population estimate or weight-based dose input.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/scenarios/hypocalcemic-tetany-rescue-and-recurrence.ts",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md"
+                ],
+                "value": "{\"ageYears\":46,\"sex\":\"female\",\"heightCm\":165,\"weightKg\":68,\"asaClass\":3}"
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "starting-setting",
+                "educationalEffect": "Connects tetany with ongoing postoperative and neck-risk review.",
+                "id": "postoperative-day",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored day after total thyroidectomy; sources establish relevant differential, not this patient or timing.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/scenarios/hypocalcemic-tetany-rescue-and-recurrence.ts",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md",
+                  "https://doi.org/10.1530/EC-16-0056",
+                  "https://doi.org/10.1111/anae.15585"
+                ],
+                "value": 1
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "starting-setting",
+                "educationalEffect": "Keeps continuing surveillance and cause review necessary.",
+                "id": "history-and-initial-safety",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Supplied history is intentionally incomplete; absence of a scripted catastrophe does not establish durable safety.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/scenarios/hypocalcemic-tetany-rescue-and-recurrence.ts",
+                  "src/modules/endocrine-metabolic/hypocalcemia.ts",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md"
+                ],
+                "value": "Tetany and perioral tingling; patent airway; no supplied neck swelling, hematoma, or seizure; no known drug allergies. Medication, supplement, intake and vitamin D context need qualified review."
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "starting-setting",
+                "educationalEffect": "Prevents placeholder parameters becoming inferred clinical targets.",
+                "id": "schema-baseline",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Schema-compatible baseline; unused generic physiology values do not generate the hypocalcemia states.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/scenarios/hypocalcemic-tetany-rescue-and-recurrence.ts",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md"
+                ],
+                "value": "{\"heartRateBpm\":98,\"meanArterialMmHg\":83,\"strokeVolumeMl\":70,\"hemoglobinGPerDl\":12.5,\"bloodVolumeMl\":4400,\"coreTemperatureC\":36.8,\"arterialStiffness\":1,\"baroreflexGain\":1,\"fixedStrokeVolume\":true}"
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "starting-setting",
+                "educationalEffect": "Separates qualified risk assessment from procedural competence.",
+                "id": "schema-airway-respiratory",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Compatibility settings, not predicted airway difficulty or proof of respiratory safety.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/scenarios/hypocalcemic-tetany-rescue-and-recurrence.ts",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md"
+                ],
+                "value": "{\"difficulty\":0.1,\"difficultMaskVentilation\":false,\"respiratoryProfile\":\"healthy\"}"
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "starting-setting",
+                "educationalEffect": "Supplies visible physiology while requested calcium remains historical.",
+                "id": "monitoring",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored monitor availability; the source supports ECG-monitored rescue, not a dynamically measured QTc.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/scenarios/hypocalcemic-tetany-rescue-and-recurrence.ts",
+                  "https://doi.org/10.1530/EC-16-0056"
+                ],
+                "value": "[\"ecg\",\"nibp\",\"pulse-oximetry\",\"temperature\"]"
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "preselected-action",
+                "educationalEffect": "Avoids treating generic equipment defaults as care already delivered.",
+                "id": "inactive-ventilator",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Inactive schema defaults, not a delivered respiratory prescription. FiO2 and exhaled CO2 are not supplied in this lesson.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/scenarios/hypocalcemic-tetany-rescue-and-recurrence.ts",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md",
+                  "src/modules/anesthesia/engine.ts#invalidParameters"
+                ],
+                "value": "{\"mode\":\"manual\",\"fio2\":0.21,\"tidalVolumeMl\":450,\"respiratoryRateBpm\":20,\"freshGasFlowLPerMin\":10,\"delivering\":false}"
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "stocked-action",
+                "educationalEffect": "Prevents dosage or access competence claims.",
+                "id": "formulary",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "No selectable drug doses or preparations; preparation equivalence requires qualified real-world prescribing.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/scenarios/hypocalcemic-tetany-rescue-and-recurrence.ts",
+                  "https://doi.org/10.1530/EC-16-0056a"
+                ],
+                "value": "[]"
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "preselected-action",
+                "educationalEffect": "The learner must initiate care and request evidence.",
+                "id": "initial-model-state",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "No treatment, observation, delay, error, or recovery credit is preselected.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/hypocalcemia.ts"
+                ],
+                "value": "{\"supportActive\":false,\"riskAssessedAtTick\":null,\"causeReviewedAtTick\":null,\"calciumAtTick\":null,\"magnesiumAtTick\":null,\"continuingCareAtTick\":null,\"calciumDueInSeconds\":null,\"responseDueInSeconds\":null,\"calciumResponseObserved\":false,\"responseObserved\":false,\"urgentTreatmentDelayed\":false,\"recurrenceOccurred\":false,\"oralOnlyChosen\":false,\"waitForLabsChosen\":false,\"waitForMagnesiumChosen\":false,\"stopAfterReliefAttempted\":false,\"observation\":null,\"choiceFeedback\":null,\"ended\":null,\"authoredStateTransitions\":true,\"doseModelAvailable\":false,\"durableRecoveryProven\":false}"
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "starting-setting",
+                "educationalEffect": "Keeps the lesson centered on rescue and recurrence.",
+                "id": "fixed-vital-values",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored constants across every branch, not hemodynamic or oxygenation predictions.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/hypocalcemia.ts",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md"
+                ],
+                "value": "{\"systolicMmHg\":112,\"diastolicMmHg\":68,\"meanArterialMmHg\":83,\"spo2Percent\":98,\"coreTemperatureC\":36.8}"
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "starting-setting",
+                "educationalEffect": "Shows a symptomatic low-calcium emergency without a threshold calculator.",
+                "id": "initial-response-values",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored initial tetany state; 6.6 mg/dL is approximately 1.65 mmol/L, not an independently measured result.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/hypocalcemia.ts",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md"
+                ],
+                "value": "{\"heartRateBpm\":98,\"respiratoryRateBpm\":20,\"adjustedCalciumMgDl\":6.6}"
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "starting-setting",
+                "educationalEffect": "Makes omitted urgent care consequential without scripting catastrophe.",
+                "id": "delay-response-values",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored distress contrast after missing rescue, not a prediction of deterioration.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/hypocalcemia.ts",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md"
+                ],
+                "value": "{\"heartRateBpm\":110,\"respiratoryRateBpm\":24,\"adjustedCalciumMgDl\":6.6}"
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "starting-setting",
+                "educationalEffect": "Tests whether relief is mistaken for durable correction.",
+                "id": "relief-response-values",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored partial symptom relief; not calcium kinetics or normalization.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/hypocalcemia.ts",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md"
+                ],
+                "value": "{\"heartRateBpm\":90,\"respiratoryRateBpm\":18,\"adjustedCalciumMgDl\":7}"
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "starting-setting",
+                "educationalEffect": "Supports an explicit recovery path and retained omission evidence.",
+                "id": "recurrence-response-values",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored recurrent-spasm contrast with missing magnesium or continuing care, not isolated clinical causality.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/hypocalcemia.ts",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md"
+                ],
+                "value": "{\"heartRateBpm\":106,\"respiratoryRateBpm\":22,\"adjustedCalciumMgDl\":6.7}"
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "starting-setting",
+                "educationalEffect": "Requires continuing-risk handoff, not discharge or treatment cessation.",
+                "id": "later-response-values",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored incomplete stabilization under full support; low calcium and tingling remain.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/hypocalcemia.ts",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md"
+                ],
+                "value": "{\"heartRateBpm\":86,\"respiratoryRateBpm\":18,\"adjustedCalciumMgDl\":7.2}"
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "starting-setting",
+                "educationalEffect": "QTc is neither calculated from the waveform nor normalized after a button.",
+                "id": "supplied-qtc-ms",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Fictional fixed ECG report; the source motivates cardiac surveillance but does not validate this value.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/scenarios/hypocalcemic-tetany-rescue-and-recurrence.ts",
+                  "src/modules/endocrine-metabolic/HypocalcemiaTray.tsx",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md",
+                  "https://doi.org/10.1530/EC-16-0056"
+                ],
+                "value": 520
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "hidden-trait",
+                "educationalEffect": "Informs qualified magnesium and continuing care without diagnosing permanent hypoparathyroidism or supplying normal follow-up values.",
+                "id": "supplied-cause-panel",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored low-magnesium/low-PTH/high-phosphate panel with preserved renal function and illustrative assay ranges; revealed only after cause review.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/HypocalcemiaTray.tsx",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md",
+                  "https://doi.org/10.1530/EC-16-0056",
+                  "https://doi.org/10.1093/ejendo/lvaf222"
+                ],
+                "value": "{\"magnesiumMmolL\":0.45,\"pthPgMl\":4,\"pthReferenceLow\":15,\"pthReferenceHigh\":65,\"phosphateMgDl\":5.4,\"phosphateReferenceLow\":2.5,\"phosphateReferenceHigh\":4.5,\"creatinineMgDl\":0.9}"
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "stocked-action",
+                "educationalEffect": "Makes sequencing, refusal and later correction observable without simulating prescriptions.",
+                "id": "declared-actions",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Twelve dose-free care intents and distractors; calcium rescue has no prerequisite, and cause review gates only magnesium/continuing care.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/hypocalcemia.ts",
+                  "https://doi.org/10.1530/EC-16-0056",
+                  "https://doi.org/10.1093/ejendo/lvaf222",
+                  "https://doi.org/10.1530/EC-16-0056a"
+                ],
+                "value": "[\"call-support\",\"assess-risk\",\"calcium-rescue\",\"review-cause\",\"magnesium\",\"continuing-care\",\"reassess\",\"handoff\",\"oral-only\",\"wait-for-labs\",\"wait-for-magnesium\",\"stop-after-relief\"]"
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "stocked-action",
+                "educationalEffect": "Prevents checkbox completion from substituting for a later observation.",
+                "id": "complete-care-elements",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Six accepted care elements start the later authored clock from the last acceptance; no biological effect is inferred from completion.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/hypocalcemia.ts"
+                ],
+                "value": "[\"calcium-rescue\",\"assess-risk\",\"review-cause\",\"magnesium\",\"continuing-care\",\"call-support\"]"
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "time-scale",
+                "educationalEffect": "Makes authored deadlines and replay timestamps deterministic.",
+                "id": "ticks-per-second",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Simulation clock resolution, not a clinical measurement interval.",
+                "sourceRefs": [
+                  "src/platform/clock/simulation-clock.ts"
+                ],
+                "value": 10
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "scripted-delay",
+                "educationalEffect": "Retains treatment-delay evidence after correction.",
+                "id": "urgent-delay-ticks",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored five-minute missing-rescue flag; not a safe delay or clinical deadline.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/hypocalcemia.ts",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md"
+                ],
+                "value": 3000
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "scripted-delay",
+                "educationalEffect": "Separates accepted rescue from observed initial response.",
+                "id": "calcium-response-ticks",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored 15-minute relief checkpoint after rescue; not administration time or calcium kinetics.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/hypocalcemia.ts",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md"
+                ],
+                "value": 9000
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "scripted-delay",
+                "educationalEffect": "Contrasts incomplete care with ongoing support; no drug-duration prediction.",
+                "id": "recurrence-ticks",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored 45-minute recurrence checkpoint after rescue if either magnesium or continuing care remains absent.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/hypocalcemia.ts",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md"
+                ],
+                "value": 27000
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "scripted-delay",
+                "educationalEffect": "Requires an explicitly requested later assessment.",
+                "id": "later-response-ticks",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored 60-minute partial-support checkpoint after all six care elements, not activated-vitamin-D efficacy.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/hypocalcemia.ts",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md"
+                ],
+                "value": 36000
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "scripted-delay",
+                "educationalEffect": "Bounds the no-action lesson without claiming a safe treatment window.",
+                "id": "no-rescue-takeover-ticks",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored 30-minute instructor stop without calcium rescue; no predicted seizure, arrest or airway obstruction.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/hypocalcemia.ts",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md"
+                ],
+                "value": 18000
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "scripted-delay",
+                "educationalEffect": "Keeps every branch bounded.",
+                "id": "unfinished-session-ticks",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored 180-minute unfinished-session stop regardless of omitted step.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/hypocalcemia.ts",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md"
+                ],
+                "value": 108000
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "time-scale",
+                "educationalEffect": "Keeps catalog and search duration honest.",
+                "id": "estimated-simulated-minutes",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Approximate prompt-care observation duration, not the maximum branch or wall-clock reading time.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/scenarios/hypocalcemic-tetany-rescue-and-recurrence.ts",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md"
+                ],
+                "value": 60
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "starting-setting",
+                "educationalEffect": "Preserves presentation, limitations and a repeatable counterfactual start.",
+                "id": "timeline-and-replay-ticks",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Two initial narrative records and an authored return point immediately before early actions.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/scenarios/hypocalcemic-tetany-rescue-and-recurrence.ts"
+                ],
+                "value": "{\"hypocalcemia-presentation\":0,\"hypocalcemia-boundary\":0,\"hypocalcemia-first-response\":1}"
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "randomization-range",
+                "educationalEffect": "Reproduces reference courses without implying tested stochastic outcome ranges.",
+                "id": "fixture-seed",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Reference replay seed; this model has no seeded clinical variation or hidden random trait.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/hypocalcemia-fixtures.ts",
+                  "tests/integration/hypocalcemia-runs.test.ts"
+                ],
+                "value": 4906
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "scripted-delay",
+                "educationalEffect": "Observes initial and later phases before handoff.",
+                "id": "expert-fixture",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored transcript timestamps in ticks; rapid parallel-care ordering is not a clinical speed requirement.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/hypocalcemia-fixtures.ts",
+                  "tests/integration/hypocalcemia-runs.test.ts"
+                ],
+                "value": "[[0,\"calcium-rescue\"],[1,\"assess-risk\"],[2,\"review-cause\"],[3,\"magnesium\"],[4,\"continuing-care\"],[6,\"call-support\"],[9000,\"reassess\"],[36006,\"reassess\"],[36007,\"handoff\"]]"
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "scripted-delay",
+                "educationalEffect": "Preserves diagnostic delay and missing rescue as learning evidence.",
+                "id": "common-error-fixture",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored omission branch ending at the model takeover bound.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/hypocalcemia-fixtures.ts",
+                  "tests/integration/hypocalcemia-runs.test.ts"
+                ],
+                "value": "[[0,\"oral-only\"],[1,\"wait-for-labs\"],[2,\"wait-for-magnesium\"],[3,\"call-support\"],[3000,\"reassess\"]]"
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "scripted-delay",
+                "educationalEffect": "Separates correcting a decision from retroactively earning all objective credit.",
+                "id": "recovery-fixture",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Authored recovery observes recurrence before completing cause care; errors are never erased.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/hypocalcemia-fixtures.ts",
+                  "tests/integration/hypocalcemia-runs.test.ts"
+                ],
+                "value": "[[0,\"oral-only\"],[1,\"wait-for-labs\"],[2,\"wait-for-magnesium\"],[3,\"call-support\"],[3000,\"reassess\"],[3001,\"calcium-rescue\"],[3002,\"assess-risk\"],[3003,\"review-cause\"],[12001,\"reassess\"],[12002,\"stop-after-relief\"],[30001,\"reassess\"],[30002,\"magnesium\"],[30003,\"continuing-care\"],[66003,\"reassess\"],[66004,\"handoff\"]]"
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "scripted-delay",
+                "educationalEffect": "Tests intentional absence of care rather than an undefined run.",
+                "id": "no-action-fixture",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "No learner actions before the authored takeover.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/hypocalcemia-fixtures.ts",
+                  "tests/integration/hypocalcemia-runs.test.ts"
+                ],
+                "value": "[]"
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "time-scale",
+                "educationalEffect": "Keeps the full authored interval available without forcing an hour of wall time.",
+                "id": "example-playback-speed",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Optional 60x simulated observation speed; decision reading pauses the patient clock.",
+                "sourceRefs": [
+                  "src/routes/AnesthesiaRoute.tsx",
+                  "tests/integration/demonstration-runs.test.tsx"
+                ],
+                "value": 60
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "time-scale",
+                "educationalEffect": "Prevents inherited example speed from surprising the learner.",
+                "id": "manual-restart-speed",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Manual restart returns to normal speed; this is a transport default, not care.",
+                "sourceRefs": [
+                  "src/routes/AnesthesiaRoute.tsx",
+                  "tests/ui/hypocalcemia-report-surfaces.test.tsx"
+                ],
+                "value": 1
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "tutor-threshold",
+                "educationalEffect": "Explains example position without grading physiology.",
+                "id": "example-progress-landmarks",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Display progress fractions for nine decisions and two observed waits; not a competence score.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/demo/hypocalcemia-demonstration.ts"
+                ],
+                "value": "{\"preparing\":0,\"calcium-rescue\":0.05,\"risk\":0.15,\"cause\":0.25,\"magnesium\":0.35,\"continuing-care\":0.4,\"support\":0.45,\"calcium-observation\":0.5,\"calcium-reassessment\":0.6,\"continuing-observation\":0.7,\"continuing-reassessment\":0.85,\"handoff\":0.95,\"finished\":1}"
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "tutor-threshold",
+                "educationalEffect": "Avoids hidden numeric rules, late-only reassessment loops, and tutor state mutation.",
+                "id": "guidance-thresholds",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "Author-selected guidance policy follows the same care/observation state and six clocks.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/tutor/hypocalcemia-guidance.ts",
+                  "src/modules/endocrine-metabolic/demo/hypocalcemia-demonstration.ts",
+                  "tests/ui/endocrine-hypocalcemia.test.tsx"
+                ],
+                "value": "Guided offers the next accepted-state decision; Coached suppresses nonurgent waits/handoff prompts; Unassisted is silent. Version 0.1.0 only. No additional clinical numeric threshold."
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "preselected-action",
+                "educationalEffect": "Makes the initial assistance level explicit and keeps the optional quiet mode available.",
+                "id": "initial-guidance",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "The shared session defaults to Coached; the standalone tray falls back to Unassisted if no guidance prop is supplied.",
+                "sourceRefs": [
+                  "src/platform/session/session-store.ts",
+                  "src/modules/endocrine-metabolic/HypocalcemiaTray.tsx"
+                ],
+                "value": "coached"
+              },
+              {
+                "applicability": "Authored content 0.1.0 in US and GB practice profiles; not an individual treatment prediction.",
+                "category": "tutor-threshold",
+                "educationalEffect": "Missed early evidence affects feedback without blocking appropriate continuing-care handoff.",
+                "id": "observation-credit-and-handoff",
+                "practiceRegions": [
+                  "US",
+                  "GB"
+                ],
+                "rationale": "An educational evidence distinction, not a clinical rule requiring recovery to be observed twice.",
+                "sourceRefs": [
+                  "src/modules/endocrine-metabolic/hypocalcemia.ts",
+                  "src/modules/anesthesia/ui/Debrief.tsx",
+                  "tests/unit/endocrine-hypocalcemia.test.ts",
+                  "tests/integration/hypocalcemia-runs.test.ts"
+                ],
+                "value": "Pre-final relief or recurrence observation plus later fresh observation earns full reassessment credit; full care and later fresh observation alone permit handoff."
+              }
+            ],
+            "scenarioId": "hypocalcemic-tetany-rescue-and-recurrence",
+            "schemaVersion": 1
+          },
           "evidence": [
-            "No version-bound authored-defaults record exists for hypocalcemic-tetany-rescue-and-recurrence 0.1.0."
+            "Validated version-bound authored-defaults record for hypocalcemic-tetany-rescue-and-recurrence 0.1.0; structural validity does not establish independent review."
           ]
         },
         {
           "kind": "scenario-hazard",
-          "status": "missing",
+          "status": "present",
+          "record": {
+            "contentVersion": "0.1.0",
+            "hazards": [
+              {
+                "category": "premature-closure",
+                "description": "Reduced spasm could be mistaken for durable correction, permanent diagnosis, or discharge readiness.",
+                "disposition": "mitigated",
+                "evidence": [
+                  "src/modules/endocrine-metabolic/hypocalcemia.ts#Hypocalcemia.apply: stop-after-relief never stops care; handoff retains active risk.",
+                  "tests/unit/endocrine-hypocalcemia.test.ts: late-only handoff and retained mistakes.",
+                  "https://doi.org/10.1093/ejendo/lvaf222",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md#hazards-verification-and-remaining-work"
+                ]
+              },
+              {
+                "category": "cue-leakage",
+                "description": "Hidden cause values or a not-yet-requested calcium result could leak through tutor, reporting, or nonvisual output.",
+                "disposition": "tested",
+                "evidence": [
+                  "tests/ui/endocrine-hypocalcemia.test.tsx: cause findings remain hidden until review.",
+                  "tests/ui/hypocalcemia-report-surfaces.test.tsx: opted-in context omits hidden findings and prose.",
+                  "tests/ui/hypocalcemia-accessibility.test.tsx: requested calcium stays historical.",
+                  "src/modules/endocrine-metabolic/HypocalcemiaTray.tsx: title names the known condition because the objective is rescue and recurrence, not diagnosis."
+                ]
+              },
+              {
+                "category": "negative-transfer",
+                "description": "A dose-free button could imply calcium, magnesium, access, infusion, airway, or seizure-management competence.",
+                "disposition": "limited",
+                "evidence": [
+                  "https://doi.org/10.1530/EC-16-0056a",
+                  "https://doi.org/10.1530/EC-16-0056",
+                  "src/modules/endocrine-metabolic/scenarios/hypocalcemic-tetany-rescue-and-recurrence.ts#hypocalcemia-boundary",
+                  "src/platform/docs/limitations.ts#hypocalcemia-qualified-care-and-cause-limits",
+                  "src/modules/endocrine-metabolic/hypocalcemia.ts: rescue includes qualified monitoring but selects no prescription."
+                ]
+              },
+              {
+                "category": "unsupported-precision",
+                "description": "Fictional response times, calcium magnitudes, or a fixed QTc might be mistaken for kinetics or live measurement.",
+                "disposition": "limited",
+                "evidence": [
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md#fictional-defaults-and-clocks",
+                  "src/platform/docs/limitations.ts#hypocalcemia-authored-response-and-recurrence",
+                  "tests/integration/hypocalcemia-runs.test.ts: automatic checkpoints do not refresh stored calcium.",
+                  "src/modules/endocrine-metabolic/HypocalcemiaTray.tsx: QTc is explicitly supplied, never calculated."
+                ]
+              },
+              {
+                "category": "omitted-alternatives",
+                "description": "A postoperative low-PTH/low-magnesium branch does not cover every hypocalcemia cause, treatment alternative, or new neck emergency.",
+                "disposition": "limited",
+                "evidence": [
+                  "https://doi.org/10.1530/EC-16-0056",
+                  "https://doi.org/10.1093/ejendo/lvaf222",
+                  "https://doi.org/10.1111/anae.15585",
+                  "src/modules/endocrine-metabolic/scenarios/hypocalcemic-tetany-rescue-and-recurrence.ts#hypocalcemia-risk",
+                  "src/platform/docs/limitations.ts#hypocalcemia-postoperative-airway-and-handoff",
+                  "src/modules/endocrine-metabolic/hypocalcemia.ts: risk review retains postoperative airway/surgical escalation."
+                ]
+              },
+              {
+                "category": "invalid-actions",
+                "description": "Unknown payloads, generic actions, premature cause therapy, or stale delay choices could mutate care or create false evidence.",
+                "disposition": "tested",
+                "evidence": [
+                  "tests/unit/endocrine-hypocalcemia.test.ts: cause prerequisites, same-tick ordering, stale delay and ended-state guards.",
+                  "tests/integration/hypocalcemia-runs.test.ts: generic action isolation and payload rejection.",
+                  "tests/ui/hypocalcemia-report-surfaces.test.tsx: rejected payload content is omitted from reports."
+                ]
+              },
+              {
+                "category": "model-boundary-crossing",
+                "description": "Generic monitor equipment or published source scope could imply an unmodeled measurement, treatment effect, or real-patient decision tool.",
+                "disposition": "limited",
+                "evidence": [
+                  "src/modules/anesthesia/engine.ts#invalidParameters",
+                  "tests/ui/hypocalcemia-accessibility.test.tsx: unavailable oxygen/CO2 and historical calcium in actual Cockpit output.",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md: schema-only defaults, no magnesium/QT normalization or activated-vitamin-D efficacy."
+                ]
+              },
+              {
+                "category": "catastrophic-outcome-framing",
+                "description": "A teaching delay or timeout could be read as a prediction of seizure, arrest, airway obstruction, or punishment.",
+                "disposition": "mitigated",
+                "evidence": [
+                  "src/modules/endocrine-metabolic/hypocalcemia.ts#Hypocalcemia.advance: both takeovers are explicitly instructor stops; airway remains patent.",
+                  "src/modules/endocrine-metabolic/scenarios/hypocalcemic-tetany-rescue-and-recurrence.ts#hypocalcemia-boundary",
+                  "tests/unit/endocrine-hypocalcemia.test.ts: bounded no-action and unfinished paths without catastrophe."
+                ]
+              },
+              {
+                "category": "accessibility-misunderstanding",
+                "description": "Visual changes, focus loss, or announcements could hide uncertainty or imply a stronger finding than the supplied report.",
+                "disposition": "limited",
+                "evidence": [
+                  "tests/ui/hypocalcemia-accessibility.test.tsx: live-region, keyboard summary and Why-panel checks.",
+                  "tests/integration/demonstration-runs.test.tsx: paused waits and duplicate-dispatch protection.",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md: local desktop/320 px checks are limited; full screen-reader, keyboard, reduced-motion, color-vision, zoom, offline and performance verification remain pending. No state-space pass record is supplied."
+                ]
+              },
+              {
+                "category": "regional-variation",
+                "description": "UK/European source guidance and illustrative assay ranges could be mistaken for a universal local prescription or for verification of every supported profile.",
+                "disposition": "limited",
+                "evidence": [
+                  "https://doi.org/10.1530/EC-16-0056",
+                  "https://doi.org/10.1530/EC-16-0056a",
+                  "https://doi.org/10.1093/ejendo/lvaf222",
+                  "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md: illustrative assay ranges and excluded dose/preparation decisions.",
+                  "src/modules/anesthesia/catalog/scenario-completion.ts: US and GB profiles are declared; a complete region/state-space matrix remains pending."
+                ]
+              }
+            ],
+            "scenarioId": "hypocalcemic-tetany-rescue-and-recurrence",
+            "schemaVersion": 1
+          },
           "evidence": [
-            "No version-bound scenario-hazard record exists for hypocalcemic-tetany-rescue-and-recurrence 0.1.0."
+            "Validated version-bound scenario-hazard record for hypocalcemic-tetany-rescue-and-recurrence 0.1.0; structural validity does not establish independent review."
           ]
         },
         {

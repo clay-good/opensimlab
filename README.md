@@ -893,9 +893,10 @@ complete by trusting a card or a boolean.
 The same catalog directory publishes training-value, authored-defaults, scenario-hazard, and
 state-space-verification schemas plus `/catalog/anesthesia-quality-audit.json`. A scenario is
 playable only when its completion contract and all four version-bound quality records pass. The
-current audit honestly reports 0 playable scenarios. Record ingestion is not yet implemented:
-the catalog builder emits missing records for every scenario. Authoring evidence alone will not
-satisfy this gate until validated exact-version records are wired into the builder.
+current audit honestly reports 0 playable scenarios. Catalog generation and release checking share
+one strict, version-bound record registry. Hypocalcemia supplies training-value, authored-defaults,
+and hazard records; its state-space matrix remains missing. Valid record structure does not prove
+that cited checks occurred or establish clinical review. See the [author guide](docs/scenario-author-guide.md).
 
 `/catalog/asset-licenses.json` classifies every shipped media asset by source, author, license,
 modification, and redistribution terms; `/catalog/evidence-sources.json` publishes the complete

@@ -238,3 +238,24 @@ machine-readable form.
 - **WHEN** the planned release date arrives with fewer than 256 scenarios passing every gate
 - **THEN** the product publishes the smaller honest playable count and does not waive, hide, or
   weaken a requirement to reach the target
+
+#### Scenario: Partial evidence stays inspectable without becoming completion
+
+- **WHEN** a scenario has valid exact-version training-value, defaults, or hazard records but
+  lacks any required verification evidence
+- **THEN** its public audit exposes the supplied record bodies, leaves absent records missing,
+  and does not count it playable or infer independent review from structural validity
+
+#### Scenario: Catalog and release reject the same invalid registry
+
+- **WHEN** the shared quality registry contains malformed data, an unknown module or scenario,
+  a stale version, or duplicate evidence for one module/scenario/version/kind
+- **THEN** both catalog generation and release evaluation stop before using partial results,
+  including in development mode, rather than silently discarding or overwriting the record
+
+#### Scenario: Evidence is data rather than executable behavior
+
+- **WHEN** a record or imported audit supplies getters, array overrides, sparse entries,
+  non-finite scalar values, or a presence flag without its matching valid payload
+- **THEN** validation rejects it without treating that behavior as evidence; source references
+  remain inert text and are not fetched or executed by ingestion

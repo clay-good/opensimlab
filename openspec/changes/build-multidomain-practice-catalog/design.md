@@ -103,6 +103,15 @@ A scenario counts toward the 256-scenario catalog only when it has all of the fo
 A title card, static vignette, multiple-choice question, prerecorded animation, cosmetic monitor
 change, or unscored script does not satisfy this contract.
 
+Quality evidence uses a shared registry of module, record-kind, and exact-scenario/version payloads.
+Catalog generation and release checking validate the whole registry before using any record;
+unknown identities, stale versions, duplicate evidence, and malformed payloads stop both paths.
+Accepted record bodies are public audit evidence. A present record denotes structural acceptance,
+not proof that a referenced check occurred or an award of clinical maturity. Partial records may
+be published while the missing kinds and completion gates remain unmet. The first three records
+cover hypocalcemia training value, authored defaults, and hazards; its matrix remains missing.
+Capability/source/review invalidation beyond exact content identity remains follow-up work.
+
 ### 3.2 Product boundary: rehearsal, not work execution
 
 Open Sim Lab exists to change what a learner notices, understands, and rehearses before supervised

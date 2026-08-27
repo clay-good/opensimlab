@@ -81,8 +81,9 @@ layout check, not a native phone, screen-reader, or full keyboard certification.
 fixtures, tabs, and the preview server were removed; no production report was submitted.
 
 The evidence matrix keeps independent clinical review, full inclusive-runtime verification and
-production Turnstile/D1 submission pending. Separate version-bound quality records for training
-value, authored defaults and hazards also remain missing; this brief does not satisfy those gates.
+production Turnstile/D1 submission pending. Separate exact-version training-value, authored-defaults,
+and hazard records are published in the quality audit; the state-space matrix remains missing.
+Their structural validity does not establish independent review or complete scenario validation.
 Local tests and browser checks are recorded separately in the implementation task log and do not
 replace independent review. Reporting follows the shared
 160-character note and opt-in bounded context pattern; hidden cause findings must not leak.

@@ -22,3 +22,32 @@ the whole objective, it does not belong in the playable catalog.
 Do not reveal a diagnosis when recognition is an objective. Do not invent precision, silently reuse
 browser defaults, or copy another product's behavior. Use shared capabilities and preserve honest
 fidelity. A planned title remains distinct from a playable scenario until every public audit passes.
+
+## Publish quality evidence
+
+Keep records beside the scenario and register them in
+`scripts/quality-records.ts`, the build-only shared registry. Each entry is an envelope with `moduleId`, `kind`, and
+`record`. The four kinds are `training-value`, `authored-defaults`, `scenario-hazard`, and
+`state-space-verification`; payloads follow their published `/catalog/*.schema.json` contracts.
+Bind `scenarioId` and `contentVersion` explicitly in each payload. Do not derive the version from
+the current scenario: a content update must trigger reconsideration of its evidence.
+
+Both catalog generation and release checking validate the entire registry before using any
+record. Unknown identities, stale versions, duplicate kinds, malformed payloads, duplicate default
+IDs, incomplete hazard coverage, and an incomplete or unpassed verification matrix are rejected.
+Records are optional while work proceeds; absence stays visibly missing. Do not fabricate a
+complete matrix to publish the other three records.
+
+Accepted payloads appear inside the scenario's public quality audit. They must contain only
+publishable authored facts and evidence references, never patient information or private reviewer
+data. References are inert text: ingestion neither fetches a source nor proves a referenced test
+or review occurred. Structural validation does not award clinical review or bypass the completion
+contract. Review the cited evidence, distinguish authored conventions from sourced findings, and
+leave unverified work open. Whitespace-only strings technically satisfy the existing schemas'
+`minLength` rule; they are not meaningful authoring evidence.
+
+Run `npm run catalog`, the relevant tests, and `npm run ci` after changing records. The
+hypocalcemia records demonstrate partial publication with honest missing matrix evidence; synthetic
+all-passing validator fixtures belong only in tests. Capability, source, and review changes still
+require an evidence review even when the content version is unchanged; automatic dependency-hash
+invalidation is not implemented by this identity-bound registry.

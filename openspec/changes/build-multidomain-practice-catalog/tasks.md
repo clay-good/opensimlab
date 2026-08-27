@@ -14,9 +14,24 @@ credited toward the catalog until every item in the completion contract passes.
   scenarios against it without changing their behavior.
 - [x] Publish machine-readable training-value, authored-defaults, scenario-hazard, and state-space
   verification schemas; require all four before a scenario counts as playable.
-- [ ] Wire validated exact-scenario/version quality records into the catalog builder, which
-  currently emits every quality record as missing. Reject duplicate, stale, and malformed records;
-  preserve missing state-space and inclusive-runtime evidence rather than infer it from fixtures.
+- [x] Wire validated exact-module/scenario/version quality records into both catalog generation
+  and release checking. Reject duplicate, stale, unknown, and malformed records before writes or
+  gate continuation; publish accepted payloads rather than trusting presence flags. Hypocalcemia
+  supplies training-value, authored-defaults, and hazard records. Its state-space matrix and
+  inclusive-runtime evidence remain missing, and every scenario's playable count remains zero.
+- [x] Verify quality ingestion with 96 new checks, including actual catalog/release consumer
+  execution, all four schema payloads, exact identities, duplicate/stale refusal, detached evidence,
+  array/getter boundary regressions, and 39 hypocalcemia default entries checked against code and
+  visible content. Full CI passes 3,856 tests across 476 files and all 30 specs; this change's delta
+  specification also validates. Only the endocrine quality audit changes among generated catalogs;
+  all 207 historical report records remain byte-identical. Static-host checks cover 224 routes and
+  44 catalog artifacts. Compressed budgets are 147.9 KiB landing, 1,487.3 KiB cockpit, and 3,316.2 KiB
+  offline; the final indexable build verifies 221 routes. An explicit preview-release attempt still
+  refuses unmet gates, including hypocalcemia's completion and matrix evidence. No production
+  service was changed.
+- [ ] Add dependency-bound invalidation for quality evidence when capability, source, or review
+  changes without a content-version change. Exact identity validation is not a substitute for
+  proving that referenced tests, sources, or independent reviews remain applicable.
 - [x] Add architecture tests rejecting standalone calculators, scores, classifications,
   conversions, lookups, checklist answers, documentation generators, real-patient entry, and public
   compute endpoints while permitting calculations internal to fictional patient response.
@@ -953,7 +968,7 @@ credited toward the catalog until every item in the completion contract passes.
     build verifies 221 routes; development publication blockers remain explicit, not overridden.
     All 206 historical report records remain identical, with one new record added.
   - [ ] Complete hypocalcemia independent clinical review, full inclusive-runtime verification,
-    version-bound quality records, and production Turnstile/D1 evidence. Local tests and browser
+    the remaining version-bound state-space record, and production Turnstile/D1 evidence. Local tests and browser
     checks do not satisfy these separate gates. Deploy the reports Worker's updated catalog before
     publishing the new client content version; retain all 206 previously published report records.
   - [x] Repair service-worker release consistency. Build-stamped SHA-256 integrity checks reject
