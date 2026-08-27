@@ -1,215 +1,7 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
+  "evidenceAlgorithm": "scenario-evidence-v1",
   "scenarios": [
-    {
-      "scenarioId": "routine-induction",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "rapid-desaturation",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "hypotension-after-induction",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "bronchospasm",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "unexpected-intraoperative-hemorrhage",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "rapid-sequence-induction",
-      "contentVersion": "0.2.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "awareness-under-paralysis",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "laryngospasm-after-airway-stimulation",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "perioperative-anaphylaxis-after-antibiotic",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "early-malignant-hyperthermia-during-volatile-anesthesia",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "routine-pediatric-iv-induction",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "difficult-airway-supraglottic-rescue",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "local-anesthetic-systemic-toxicity",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "persistent-vf-cardiac-arrest",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "high-spinal-after-epidural-top-up",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "venous-air-embolism-during-line-removal",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "repeated-laryngoscopy-harm",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "capnography-sampling-line-obstruction",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "dilutional-coagulopathy",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
     {
       "scenarioId": "arterial-pressure-transducer-artifact",
       "contentVersion": "0.1.0",
@@ -219,106 +11,13 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "circle-system-rebreathing",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "routine-inhalational-maintenance",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "blood-bank-handoff",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "routine-geriatric-induction",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "quantitative-neuromuscular-reversal",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "routine-pediatric-inhalational-induction",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "obstetric-general-anesthesia",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "preeclampsia-urgent-delivery",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
-    },
-    {
-      "scenarioId": "pneumothorax-under-positive-pressure",
-      "contentVersion": "0.1.0",
-      "moduleId": "anesthesia",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "closed_loop_physiology"
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:04ec4bbeff9a20f98f7b88dc2f774baf4292f12e716914813a7a23e291358468",
+      "defaultsHash": "sha256:b39028908e8d44134aa7ab23836704c1ca478b023b9684bc91311adc08fa49e6",
+      "maturityHash": "sha256:f5d82b503a88fce3d67ba91d33875c4b449274c392e02df5a6b3e26d9ab05a0e",
+      "sourceManifestHash": "sha256:a269fc09d9b62bafeee7bb9b5532571d00edbeecf472881ebe90410655ffb287",
+      "limitationManifestHash": "sha256:0f733e4deeb8b3b6e3bfc9a1820b2c48afdbab97060e6b9f9486962e1ece22c9"
     },
     {
       "scenarioId": "aspiration-risk-recognition",
@@ -329,10 +28,16 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "closed_loop_physiology"
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:e2a54c054a0206be1602dc266126ac02899e4d4b25880daec8f14f6983144946",
+      "defaultsHash": "sha256:4e69db3f85595d4089ef8c80d22eb88a9c6a607dad95bb98dda4db86e4b0f6c8",
+      "maturityHash": "sha256:58085c5a8c02a773091ea32a3bddd1699e3e1ab5b75215864922e3d9cdf4575a",
+      "sourceManifestHash": "sha256:82c72dd02798f18047c528c064f3bfb2d36aa8cc23fcf5bd20002e9c5fb7c55e",
+      "limitationManifestHash": "sha256:3ee7237a45e477bc1b6c1cecccdb42253fbc865fd69082b8a1914bc2fccc1435"
     },
     {
-      "scenarioId": "emergence-with-residual-blockade",
+      "scenarioId": "awareness-under-paralysis",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
       "maturity": "preview",
@@ -340,7 +45,81 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "closed_loop_physiology"
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:a4813b2ea9501e4465ee292994ab97bbdcba07ced4512809109f26470bf4e7b4",
+      "defaultsHash": "sha256:c740f727b1fd3024d41b6c057d7936d0a2834899c77191c2ed2c9f7484ee1e47",
+      "maturityHash": "sha256:dce63319132e4a6e1136a2453264ec145ec3ba281217013f293793b88440ef23",
+      "sourceManifestHash": "sha256:e41cc6a884522cfcf5e9b8559acc9a0d3615780c5941969bd6cae2a4987e3a78",
+      "limitationManifestHash": "sha256:9c4dbb97e785049c098adf9048a3b6044eb1223644d4e13d091a3638c71a2dca"
+    },
+    {
+      "scenarioId": "blood-bank-handoff",
+      "contentVersion": "0.1.0",
+      "moduleId": "anesthesia",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:903bbaf758af1ca374f6fb7fb3c33300146f86a7cfe2282727f7a7a8747b0dfa",
+      "defaultsHash": "sha256:9749abdd117d3683f8a2990659437da2740e7590d696f1925ebba1a8228931a4",
+      "maturityHash": "sha256:3837d96186269149c8e7a1d2f23df311edf93aa1895c41e75c1b757acd89e53b",
+      "sourceManifestHash": "sha256:768de01ba749da98898b5fa956da92aaa59123ab04a5ac7eaebee896e9e708a2",
+      "limitationManifestHash": "sha256:6c29418777d8018ef4d82f5a3671be46750952a669addbbefefda76cf90311be"
+    },
+    {
+      "scenarioId": "bronchospasm",
+      "contentVersion": "0.1.0",
+      "moduleId": "anesthesia",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:3d7b67048fe0d80642899d8e2b22b9dcd3d027fbad8d3b0fed2aa024063a100c",
+      "defaultsHash": "sha256:10758656a58744cc78d757e26e4495a3dfaa0af9a0177d1c8f8752e6393bd903",
+      "maturityHash": "sha256:8600674737a2be52bc2c1cafe47afe8c1a5944ea5a51e3feb5437d7e8ed5c43e",
+      "sourceManifestHash": "sha256:446d111a8ac6bcc6ca57edb33d2146708dca27d9342492ba905f1f5532b4b3be",
+      "limitationManifestHash": "sha256:9d8775dc2e92c7cf733771be778e009839ca6c4069a58610c0a7bb357d772885"
+    },
+    {
+      "scenarioId": "capnography-sampling-line-obstruction",
+      "contentVersion": "0.1.0",
+      "moduleId": "anesthesia",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:bfa5852e5f7be779bc0b94cd404ba3e8b413a16f56c950a781e38f92a8d5e292",
+      "defaultsHash": "sha256:837676c24114d2d0c78e3643cd6ac80f6e9a8464e8c3eb6a7f9595449d262e96",
+      "maturityHash": "sha256:31dc718fff10b28e2f261bf680ce5c59b7905b94253965e82a37cb43bf5bed66",
+      "sourceManifestHash": "sha256:2242a1eec9382003eec635d8095328bad19926e239ce521ca82334e857aaa1fe",
+      "limitationManifestHash": "sha256:eb953de8020970290f6cbb743301a5e83c247dd8bb792f4df2719e740e567a37"
+    },
+    {
+      "scenarioId": "circle-system-rebreathing",
+      "contentVersion": "0.1.0",
+      "moduleId": "anesthesia",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:10a9e8f5d84db53ae09128861725d2fbe3cb01d27b3b8351297271b4b978a275",
+      "defaultsHash": "sha256:0758d6b4d5a70723166323867967b87fcca47159cee62c3e5165272a37399d16",
+      "maturityHash": "sha256:9e9cea536315c5646090569083af891b350c7d0d35da41995888f6f06e03540b",
+      "sourceManifestHash": "sha256:57d38f4639329aa85028b0c372f12dcd47063b4082529ffa6be57834032e2742",
+      "limitationManifestHash": "sha256:677289af6a43c933032d99bb293877bc230e70a3b9cea4959a8423d010948cfb"
     },
     {
       "scenarioId": "delayed-emergence-differential",
@@ -351,7 +130,81 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "closed_loop_physiology"
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:5f0f161915a337eb59db5b3fee649248c690840fc1fb740050496aae8cdda10f",
+      "defaultsHash": "sha256:e9fa8ea23b607ce198ce4f9adad1ff4bc78e443f0586b9b3648ad7e1e2cbe608",
+      "maturityHash": "sha256:1d0f425b4a59998992ce23e0652b3ee7028283c58689a32569ab21b2304a96e9",
+      "sourceManifestHash": "sha256:e5a25fcb826093625303eae589ef88276fcf0a7bd73ab38fb5ada5fd3b3ec1de",
+      "limitationManifestHash": "sha256:bdfd80acd58d58dd1af6e7c0e17e747f16291c982884d5eb61533b7eb43a8138"
+    },
+    {
+      "scenarioId": "difficult-airway-supraglottic-rescue",
+      "contentVersion": "0.1.0",
+      "moduleId": "anesthesia",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:ae67b8d4cd2f6f3cd66680c44b396395edfd578ec1d7db9ff3d304aa7e5bb3e4",
+      "defaultsHash": "sha256:6c8271453a504c34a1e21accdf87e2878643b4aac37a16d0bdb8d819d56bac43",
+      "maturityHash": "sha256:3d72bd9ecc4ca2bdc885408bf0cc714a05459809a40c4f515acd2dadbd604766",
+      "sourceManifestHash": "sha256:c9b2afa4b80a53e702eb6b61f42350f31e5717f8cf3efd22301aaf9f1ebbd8f6",
+      "limitationManifestHash": "sha256:0ec30584b5db58d999f1f8c465b5ebeb16b7674ef5cc229875cb55e961f6a5cc"
+    },
+    {
+      "scenarioId": "dilutional-coagulopathy",
+      "contentVersion": "0.1.0",
+      "moduleId": "anesthesia",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:7122522df8599120ed45fc62a2e666d43e609811dbaf6737174aae7c6e3e8d9c",
+      "defaultsHash": "sha256:230bf6dd29132f874c70e24ffb14ed1ae995e18eda08aa59af516dba6c5bf2e1",
+      "maturityHash": "sha256:1ea370caf7c28fe1c6998a8c368777f4a3d35b077e07b073e1a0ec6d7f364fa4",
+      "sourceManifestHash": "sha256:8336c7a2aa295cb1caf30251c83922c925d4d586774c503272aa33a80a93b290",
+      "limitationManifestHash": "sha256:7eb63928d416e95a7a423a1fee2c838fe0bb0f6f7559b7538ec12644b2d6787f"
+    },
+    {
+      "scenarioId": "early-malignant-hyperthermia-during-volatile-anesthesia",
+      "contentVersion": "0.1.0",
+      "moduleId": "anesthesia",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:f69a0f08be5722d49e49101ec3cced2732dc6bb8b9821be7b38c379d50c012cd",
+      "defaultsHash": "sha256:011b8d1f3d4816f7bcb36b8006a63de5dce6895f4af101c75e79c6ababdbae56",
+      "maturityHash": "sha256:8f8aaf2bfdcdadac84e5e8f0a9c969f27202bb4f519d2e408295a032049a20ec",
+      "sourceManifestHash": "sha256:9f7f935679250fa66de5f8839093c84b16f3ef987412743c322c735f79e5d815",
+      "limitationManifestHash": "sha256:4797962f50fe9c9568e0fa3b542a37bf8cacb6f16466ee0eb517e36970a38617"
+    },
+    {
+      "scenarioId": "emergence-with-residual-blockade",
+      "contentVersion": "0.1.0",
+      "moduleId": "anesthesia",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:49efd3ca7db44c2d3ce16930bac76448b71cbcfe35d08bd916ef5c9a2fa6ca1d",
+      "defaultsHash": "sha256:521623597a951e93da6491cc0047dbba4e83708b81f226d9cbdafa184adba56c",
+      "maturityHash": "sha256:3c2e8bec2d48e9d6a1e1b0e8f2982cf866060abaf8c9f8fdb2058239466d232d",
+      "sourceManifestHash": "sha256:513a48ee04aff6a46a0e490089e66b4ad5906c8fc0686230588c62fdc1679398",
+      "limitationManifestHash": "sha256:99794cf553c468d9c0d3a33b8e5b0071107d241e12e04dfa6dfd1fb9f4dd6a54"
     },
     {
       "scenarioId": "extubation-readiness",
@@ -362,10 +215,16 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "closed_loop_physiology"
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:a4cffb1dfa04ed108acd26c197026f587f1778adef3171124464491adf813051",
+      "defaultsHash": "sha256:cff53d8d13fb2f85ddf45425d237a05878d463cbce74e74a88160f37beeba341",
+      "maturityHash": "sha256:adf6ece5e66c14130656fcf6872dd4277582a0fd192a064428cf330eb2862cd2",
+      "sourceManifestHash": "sha256:2111038154b0ae1df6f1e2dbf214b5c387daa2072d71cd54212ada3ce9fb98af",
+      "limitationManifestHash": "sha256:221adff66d2f8ba49e1d73e5e0c31dbb4f39c721152f566c47b4c14cf1d2de59"
     },
     {
-      "scenarioId": "post-extubation-obstruction",
+      "scenarioId": "high-spinal-after-epidural-top-up",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
       "maturity": "preview",
@@ -373,10 +232,16 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "closed_loop_physiology"
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:3857f4af98391cf334797132de1800bd19c053137417f90a76037be98f5afbb3",
+      "defaultsHash": "sha256:71e5f6422a5f2082e5659301f93802231a55090ef8e53add3f9dfd8b56f66ca4",
+      "maturityHash": "sha256:dfc6e45d0fdaf4fa92a417f656540ec470a7b8116ecfd159b0a82da6643c48d6",
+      "sourceManifestHash": "sha256:4376e3010471d8bc79650b928357e6f6cc5062556886af1802521a709c8de9f0",
+      "limitationManifestHash": "sha256:4936248a4e48fe8b9682fc4085db2657ede2d5d457836e59bee7f019120b6527"
     },
     {
-      "scenarioId": "opioid-induced-ventilatory-impairment",
+      "scenarioId": "hypotension-after-induction",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
       "maturity": "preview",
@@ -384,7 +249,13 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "closed_loop_physiology"
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:e3e356371858bf6ad5be148f8c9fa011056e61539137aac418f19d5cf634e7d5",
+      "defaultsHash": "sha256:c2966f28e70a05dc71b95d95ae0e387375f230842b048d3402483fea9aad4658",
+      "maturityHash": "sha256:b73665b53c0a6475657d05bf153c09ad4fb04cf28c80d0d815fa82db6fdc15ec",
+      "sourceManifestHash": "sha256:24116f28e31f22a49670ca8f8fcd3b50a39dc0c6b7c7ac02816400e2c4ec9544",
+      "limitationManifestHash": "sha256:81c9499c640e6fa05517d164797f9c1b2e0d21afbd26c4013a5452d05a88fc19"
     },
     {
       "scenarioId": "hypothermia-and-rewarming",
@@ -395,10 +266,16 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "closed_loop_physiology"
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:e2d95697e3b60005e3d5a47277ce183fdbba9e921f768019e813f69829b74772",
+      "defaultsHash": "sha256:037a55d464e7478122ab311bdc3c67b6b11c5b9b18faca4e6e6005a679d59f65",
+      "maturityHash": "sha256:3d730d13336b95ffa0fd4f26229d212bfe59167a113252b5cbe2cb3ee1e79270",
+      "sourceManifestHash": "sha256:124ae76026ab1f91306f994f4ac0f116d4e1dd33411de6fe7cf6dc53fce74e94",
+      "limitationManifestHash": "sha256:e301533f8981de1c914d49f1f7c89cc847e3e6a3eedfee1498dcb2e93efa5369"
     },
     {
-      "scenarioId": "perioperative-hyperglycemia",
+      "scenarioId": "laryngospasm-after-airway-stimulation",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
       "maturity": "preview",
@@ -406,7 +283,64 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "closed_loop_physiology"
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:dc9611cfe409f81c75db54e388e4ec5be72b12b934e7ebf8ac55297577aa9354",
+      "defaultsHash": "sha256:fa47817d2ae8ea55c3b23fee08cdad9f6235e0374018017a070cdbd872072a50",
+      "maturityHash": "sha256:a9bf7b619604e65720a047a0bec3fe97b291b5124677c82b612513ed6c0a3a65",
+      "sourceManifestHash": "sha256:f5b138416185e396950f898eb8e529c660eec55c122c90e77663065ef9e383cc",
+      "limitationManifestHash": "sha256:8a32c285c4c8ceb2acf1bea511d9ca5c059fb01cd9716ff70a192336e4ee851b"
+    },
+    {
+      "scenarioId": "local-anesthetic-systemic-toxicity",
+      "contentVersion": "0.1.0",
+      "moduleId": "anesthesia",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:9443552e7f451119bf1fc95761039ee05f44c929ac144db860c71a4214a0625f",
+      "defaultsHash": "sha256:c44d1122775ceade2170755c5dbb3967a8026268c1f755d9b8707d93df825a47",
+      "maturityHash": "sha256:22c01b7a9758207498eb6e1a604d9869af0246ecfac1cd2ce8b72f16dc52683d",
+      "sourceManifestHash": "sha256:d1919c9e3d67e2f9fece41b1225945d4e7152f65d2adf2e25d5ef4a191d703c8",
+      "limitationManifestHash": "sha256:2e7ea74abd29e0373d8ae39b01133ba0722df606e8e6f7d307d8d1a50a1ee322"
+    },
+    {
+      "scenarioId": "obstetric-general-anesthesia",
+      "contentVersion": "0.1.0",
+      "moduleId": "anesthesia",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:f33628609ac9cfcbd08db8468b6802930074341accfde73fd972750731235b75",
+      "defaultsHash": "sha256:f6a5287d1ff4c66a0a7f766ad3ac3f8ea00c412fcbb74150282a8ba840aaa22a",
+      "maturityHash": "sha256:3a525f1ab3f70fcbf78c5f77ed13a14e2e05aabb9a97223e12c0c20a0569e51f",
+      "sourceManifestHash": "sha256:9bf093218d9328838bb7aeb0db560070f349e176cdfa2df314deef34b9816a77",
+      "limitationManifestHash": "sha256:d1f15e8be36157dfbf2f378ebb08cbd773dc717a12df37d8e2502a964cacd652"
+    },
+    {
+      "scenarioId": "opioid-induced-ventilatory-impairment",
+      "contentVersion": "0.1.0",
+      "moduleId": "anesthesia",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:926aa599a25555d08c2314168d7fe4c7d342c43bd3b23377966521c03359318b",
+      "defaultsHash": "sha256:8459f325c0f9e4bf82a35f130651a3b706f99980b3352a70d0405f8966a5e32a",
+      "maturityHash": "sha256:1515b9522f62f643cab3006712272c52e75942a72149180ea05598e2c18a17ed",
+      "sourceManifestHash": "sha256:ace2d021b281d2d8cd79f68475c5d4072604fc1cdde1a783dfc7f32aaedbdd4e",
+      "limitationManifestHash": "sha256:3a57f4e1899dfac4a39b8cf4783cf33d645d3ddcfd3d8949bd533d6874e66142"
     },
     {
       "scenarioId": "pacemaker-and-cautery-planning",
@@ -417,7 +351,98 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "closed_loop_physiology"
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:c92c7629a0d0c01ddd5ad99b15db849feec2b6c2179416e1aa728fc0730402b2",
+      "defaultsHash": "sha256:6d0b20623aa88ca80039303db182d28dd384347436659ed8e5cb874b6db51133",
+      "maturityHash": "sha256:2084e25e0b37f119ae2f5d0af727d5ea9278a7228ffcc7a3ab296778c87268c5",
+      "sourceManifestHash": "sha256:8eff99e7e4d835b5bb56d4c09e0614cc396634f945439376a963433a02b6a05f",
+      "limitationManifestHash": "sha256:934c402e09183a2d68ec748bd3a6ef808327e770ec4a6834c3df2c06978676e6"
+    },
+    {
+      "scenarioId": "perioperative-anaphylaxis-after-antibiotic",
+      "contentVersion": "0.1.0",
+      "moduleId": "anesthesia",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:77d086128a3789130bc1a920d903cb479f65e8fd0702a0b0089de5ffbe83a100",
+      "defaultsHash": "sha256:e9c5b5d22b4dd11feda3e82d39711df2c034f782d33d0ef24f6a4525c89f6e09",
+      "maturityHash": "sha256:11cc606691629ca2f7c6e90e9b9f1b55b61f11126e8bd2b04bc4f8f6c7e41461",
+      "sourceManifestHash": "sha256:e74b0378631464a81fa337e7a041b32c049f95bfc058e26dc4f26157078d18d7",
+      "limitationManifestHash": "sha256:d20915b7a5b240c1eb44428d77992a719b566c1cfe49f4a1147d224b7c08c413"
+    },
+    {
+      "scenarioId": "perioperative-hyperglycemia",
+      "contentVersion": "0.1.0",
+      "moduleId": "anesthesia",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:38278727b7ea909a3ab1c8efe0aeaf5b95b671e87f328b9d66b7edfdf2298dff",
+      "defaultsHash": "sha256:61303d82fe83ee8f735dbf2bb487ac2cd4de90c562980b25761a0bf020121874",
+      "maturityHash": "sha256:5b33898d80e62926bc7f5e383925e1221c726d1a77bdeec3210a13cd7bc9613e",
+      "sourceManifestHash": "sha256:1952f821483c2d9fac70c195a1312d867da37c6d339ff0500862074bd10a55ef",
+      "limitationManifestHash": "sha256:06cf46693d70ed8981d9c9cc234300b75793b5fc9c4135755c443d275fa18c7c"
+    },
+    {
+      "scenarioId": "persistent-vf-cardiac-arrest",
+      "contentVersion": "0.1.0",
+      "moduleId": "anesthesia",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:9190d3b4d4f8a111b5779455879e5d6b192ef743b27d192ddecfefd541945486",
+      "defaultsHash": "sha256:9251e76a2f29a755a24217e58ae6273e0e5f37991e8ff4c338eb00c74a15e229",
+      "maturityHash": "sha256:7afde1bec78a5df755929326cc45de7188238c7590b4af960321c3798b3cc883",
+      "sourceManifestHash": "sha256:c46bf816fb4272d14af5756d6bb195eec3fc8851a2d51852ddf0ad7c0a2db6d0",
+      "limitationManifestHash": "sha256:e9e5ad53d03fd57d249f85947bd1456ad8364fcc271add8ee11379a27972e546"
+    },
+    {
+      "scenarioId": "pneumothorax-under-positive-pressure",
+      "contentVersion": "0.1.0",
+      "moduleId": "anesthesia",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:ddac1694ac94b44c6a4053866e40d08e3bc7c5e42557cf3872274b32b49f37e4",
+      "defaultsHash": "sha256:aa27d50f0e1f4f0318a0b54fe4ad87963beff4263bc39da4392d05854cca4255",
+      "maturityHash": "sha256:0294cf2777e8284bdf96c79a7f3ebd1b877e3402f1a32e5049e4f2ce7d87953a",
+      "sourceManifestHash": "sha256:70b9612af4625680bd198c1a9536d831a26c3401f44c37e4910c1d855c8e950d",
+      "limitationManifestHash": "sha256:c7d51dfc56a13331f8b4443c548d6f8949a0d0c48263766a55f75914573591bb"
+    },
+    {
+      "scenarioId": "post-extubation-obstruction",
+      "contentVersion": "0.1.0",
+      "moduleId": "anesthesia",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:bed2cec05feb862433684c69ddd283dd575d628de682bf3f28908460b2b3e228",
+      "defaultsHash": "sha256:16ad67d7410bff481a248ff6fe3414b287a1be797e888d109c827e3e113333bd",
+      "maturityHash": "sha256:914358e492008f255bbcfe38b6faccaa4d18e895f2364baf3119ba95cceee119",
+      "sourceManifestHash": "sha256:36ace27ab56c9ef374d76d1dfd91f73c1fe7b7b48c0736b762129ac939011a5e",
+      "limitationManifestHash": "sha256:0379427e432dd3bd373de210db5b44dcc456c49a9dfd502f2bbacf4c19c2b8de"
     },
     {
       "scenarioId": "postoperative-handoff",
@@ -428,579 +453,217 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "closed_loop_physiology"
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:197758067f2104a6c68fe8cfa23c2e1f2267aaa15c9b0782749e5c18ae3bbee3",
+      "defaultsHash": "sha256:31d2a42497819997776e953a3903ccd557f504aad6d5ac0c629f9d192629e990",
+      "maturityHash": "sha256:fe79379e19e6ac2fc4e5de4e887f554582471a8e73386dfb4fa889395f9243e7",
+      "sourceManifestHash": "sha256:14e7b80f7ad69f7f01446170f66475ea02ac47e909bff6553ab2bd86fc676b49",
+      "limitationManifestHash": "sha256:cfe4b405dab70a6f28735e2a89184ce8cd142dc3e43b71340bb314533c2fcb4a"
     },
     {
-      "scenarioId": "undifferentiated-shock",
+      "scenarioId": "preeclampsia-urgent-delivery",
       "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
+      "moduleId": "anesthesia",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:81153c74c07d92068eba2e63c8972f232fa591921d70ffbaa7c4b0a181fa8eb5",
+      "defaultsHash": "sha256:bc654000ff53454c27e285a3f6c57eb3842ccbf42948db531eede95a9e2ec968",
+      "maturityHash": "sha256:98b4c378c78c7f6cbbd6958f15e49c16eb731329f8609372760a42cf4ccec157",
+      "sourceManifestHash": "sha256:1edb8bbc372036083eac7e9862866219b47955c863a279bed35a050fc88aa477",
+      "limitationManifestHash": "sha256:f05b2b2a97ffc434ca92dfb6921834774506db6176541435b588c611fde4ed42"
     },
     {
-      "scenarioId": "septic-shock",
+      "scenarioId": "quantitative-neuromuscular-reversal",
       "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
+      "moduleId": "anesthesia",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:c9fc403b8fe88c0e7d38c0b9c05018fc93c897a068712731f486466aff864072",
+      "defaultsHash": "sha256:f9871bb203285c6e163d5ef226a41dacb84cde10c71e7c447c216da32eb16450",
+      "maturityHash": "sha256:a055427572f2451eab870b795d63f2a285474afffec201b80fb7bb2a050e6bda",
+      "sourceManifestHash": "sha256:f7899180554ca52bb1a7095baad288676a517a5da2a92b7e5a214ee169c9fad0",
+      "limitationManifestHash": "sha256:dbc5fa470e6e51df273be0bdf91d618dfbc4d1d45384efc6eddbeaa5d45dde62"
     },
     {
-      "scenarioId": "hemorrhagic-shock",
+      "scenarioId": "rapid-desaturation",
       "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
+      "moduleId": "anesthesia",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:6944ca95dab9eddafe26a495c9f1f5e3e800ab413dad21356cc6ad3ed6e34ad2",
+      "defaultsHash": "sha256:db17f9eb9bfe9db625750524f283feeaa79b6facab4a28c1a8489eb32100840d",
+      "maturityHash": "sha256:72c9a70f163552238a4a66ba8832630430eb6b3a8559eda8380fd9c974bc2c0f",
+      "sourceManifestHash": "sha256:cb359026af9a4d98d0ee905664936e22d4741db9e4e7657fed94525bb47a55af",
+      "limitationManifestHash": "sha256:ff9506a4e42ba21473cc97f2c20308d2efe710a7e1c4e67c0b9911ee8fa0d960"
     },
     {
-      "scenarioId": "obstructive-shock-tension-pneumothorax",
-      "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
+      "scenarioId": "rapid-sequence-induction",
+      "contentVersion": "0.2.0",
+      "moduleId": "anesthesia",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:e977885993a81b5f915bf664632619a22020d672499f021f2a4f16463cde5c81",
+      "defaultsHash": "sha256:e71b5e5429a9429605be23ba4fcc2b1a73bcd94e529447351466369ef1673177",
+      "maturityHash": "sha256:981bbd95f65d258ed2be71c0934bdd56c772d7e6288c632f8e76f2e20cbcf21c",
+      "sourceManifestHash": "sha256:8a3d8edc12f1e1835b7ac189f69b7fa9bc9d660155245e6d4f14f6a3288b3c74",
+      "limitationManifestHash": "sha256:66c889862d44ad62088dae615ee8913a3ae07ffbd9c353deb540ee6c54389c8a"
     },
     {
-      "scenarioId": "cardiac-tamponade",
+      "scenarioId": "repeated-laryngoscopy-harm",
       "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
+      "moduleId": "anesthesia",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:c8bbf68c7ce4a7f5acb0f632d0b84748da3511d7591ec4f20a1fbe79aa08a32b",
+      "defaultsHash": "sha256:f1c5d2cecf861e9fe129024049957133b3971c78f98e749a870fc0b9c5abb6a2",
+      "maturityHash": "sha256:ee6fa4f34c22442613b2f780ee7d2de342ab14e78f6f942817b5bbccbdd8e544",
+      "sourceManifestHash": "sha256:cf9580395f095da8e0c24eb91faa39159e57b3cee26a0ad42b821c9b8b21ac4a",
+      "limitationManifestHash": "sha256:8e8084ec2630b47e774db4fe2a73856b0036670f7c0cf8bb759ca31a68a378d9"
     },
     {
-      "scenarioId": "anaphylaxis",
+      "scenarioId": "routine-geriatric-induction",
       "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
+      "moduleId": "anesthesia",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:f1f1451d72cfc91ac29cfe57670ab8e5a3c5197ab69db4080706666291d58e06",
+      "defaultsHash": "sha256:d97bfc89841498a1acb14fb5838ca0111fa58579394a35e4de4889e6d2bec5ae",
+      "maturityHash": "sha256:dd936d356e4695e664e7e87cebb304f2bb23b75e5e44de50537d982822a9b9cb",
+      "sourceManifestHash": "sha256:5b59755c1e81b5e12509108c59cfa1bd59fdc4a2bdbab794d6caaa4b822e9a6a",
+      "limitationManifestHash": "sha256:0c79c43b46c59dac1e951586ed4661875c3811dc16a768fcc59b8009d9ec0e6b"
     },
     {
-      "scenarioId": "adult-asthma",
+      "scenarioId": "routine-induction",
       "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
+      "moduleId": "anesthesia",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:79b96680b5f2e6e9d007fb5deb3b4f7e40c1cba57329ddae5e972255d9c72484",
+      "defaultsHash": "sha256:d520871b057b74725252ce7712e76e52b7d0890f259d935c70af81eda763f220",
+      "maturityHash": "sha256:e59cfcb9bd8581bfe6f1a3292b0ef88f4d2fbd7bece6e7cc3b975b20398962f5",
+      "sourceManifestHash": "sha256:472b4016a2359bcf0d3750bf23ba02fca4b8b6810bddda1135e1d385262ec03b",
+      "limitationManifestHash": "sha256:782370ff9988b4b392231d7eef3b82a4c1a6d143de59722c96e826409c103672"
     },
     {
-      "scenarioId": "copd-exacerbation",
+      "scenarioId": "routine-inhalational-maintenance",
       "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
+      "moduleId": "anesthesia",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:9597606ef877e103216a38e5079270a99b48910a1a1d2fe6476aac5a129df25f",
+      "defaultsHash": "sha256:d01696fa93f46d75940bad9f455e4bc2e4ace2bf9a9eb53c02feb8b0c30e5b8a",
+      "maturityHash": "sha256:0875a251bef51314a204c54b180be68e6369fe9d88878d1cc218826a32e9d713",
+      "sourceManifestHash": "sha256:337f4ffa94b95328793e30f792564d39c019b233d5495270c4c147ca39021e29",
+      "limitationManifestHash": "sha256:3518b1ddacd902835988ab6960de504636982af93593c59de3a923b3b652674c"
     },
     {
-      "scenarioId": "acute-pulmonary-edema",
+      "scenarioId": "routine-pediatric-inhalational-induction",
       "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
+      "moduleId": "anesthesia",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:b2ae2bc17531a1df19707dd16958db85d86df25ec074621acd8098c6a2a2152f",
+      "defaultsHash": "sha256:b73e6a85ee57328b820206d56e7ec305eff571a00298cd6759d30d84dda72678",
+      "maturityHash": "sha256:0b33ba81348c0bc94edd10642fed2bc83f017b0f8ff0de2e9f0e20645e161d59",
+      "sourceManifestHash": "sha256:2dcf330cac519d6e03a1c788b069a9892a4359c0749228ace307ab0be84e5d50",
+      "limitationManifestHash": "sha256:e2a41c6f3dbe53e9ef360a3048585a47fd67f30d99df532920d6c248a1cae251"
     },
     {
-      "scenarioId": "pulmonary-embolism-deterioration",
+      "scenarioId": "routine-pediatric-iv-induction",
       "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
+      "moduleId": "anesthesia",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:23e62b58d8a07cfdb557d024c2064ab13a419057d75781a7dc1b791155665404",
+      "defaultsHash": "sha256:541ff4ba953ffa726676b24d1c814523a10181ae1fc8cb6b34f508bac1d902f1",
+      "maturityHash": "sha256:57f93139610e9dd04517d6bddd7435c37e9e3c1e36162e47b8d9813773cdaa22",
+      "sourceManifestHash": "sha256:c33863b6c618b3459e000799dba71e2c089ecc3bc07353e258dfe4a2e3b918a2",
+      "limitationManifestHash": "sha256:046ea6b93782d0fead265b4c6c02163f5b3e5c83b578edec85e3d9ffe1efa0d5"
     },
     {
-      "scenarioId": "stemi",
+      "scenarioId": "unexpected-intraoperative-hemorrhage",
       "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
+      "moduleId": "anesthesia",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:f3c7bf7de6af4d6a92c48a5e474e409a195c572adb73a079b4c446880b81fb9b",
+      "defaultsHash": "sha256:85f3ca1abbf16018a32387ff48c5fa58ea9efc4d6b39eecaa193d274bde2acc4",
+      "maturityHash": "sha256:15889b5f6147a724ad06c223bc8489f790051b33c84202867ea1cf9f2f7050b0",
+      "sourceManifestHash": "sha256:eb0bdbd62c49afc7511547d647594f906088abeababfddaa5cc6e7e9d2496854",
+      "limitationManifestHash": "sha256:90cae7b765741434151fe4c9899e891fe39983572081677a6ae21382e0e3a7d7"
     },
     {
-      "scenarioId": "unstable-narrow-complex-tachycardia",
+      "scenarioId": "venous-air-embolism-during-line-removal",
       "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
+      "moduleId": "anesthesia",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "unstable-bradycardia",
-      "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "persistent-vf-arrest",
-      "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "pea-arrest",
-      "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "status-epilepticus",
-      "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "acute-ischemic-stroke",
-      "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "intracranial-hemorrhage-deterioration",
-      "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "diabetic-ketoacidosis",
-      "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "hyperkalemia-with-ecg-change",
-      "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "severe-hyponatremia-with-seizure",
-      "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "opioid-toxicity",
-      "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "exertional-heat-stroke",
-      "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "trauma-primary-survey",
-      "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "acute-aortic-syndrome",
-      "contentVersion": "0.1.0",
-      "moduleId": "emergency-medicine",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "ards-lung-protective-ventilation",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "escalating-hypoxemia",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "ventilator-dyssynchrony",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "auto-peep",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "mucus-plugging",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "unplanned-extubation",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "spontaneous-breathing-trial",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "post-intubation-hypotension",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "cardiogenic-shock",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "mixed-shock",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "right-ventricular-failure",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "massive-pulmonary-embolism",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "upper-gi-hemorrhage",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "status-epilepticus",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "targeted-temperature-management",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "intracranial-hypertension",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "acute-kidney-injury-with-fluid-overload",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "severe-acidemia",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "icu-handoff-with-hidden-deterioration",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "ventilator-circuit-disconnection",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "delayed-vasopressor-delivery",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "pulse-oximeter-motion-artifact",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "endotracheal-tube-migration-after-repositioning",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "septic-shock-resuscitation",
-      "contentVersion": "0.1.0",
-      "moduleId": "critical-care",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "stable-chest-pain-evaluation",
-      "contentVersion": "0.1.0",
-      "moduleId": "cardiology",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "stemi-recognition-and-first-actions",
-      "contentVersion": "0.1.0",
-      "moduleId": "cardiology",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "nstemi-risk-reassessment",
-      "contentVersion": "0.1.0",
-      "moduleId": "cardiology",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:ed8b52df36f93002f8c3408fac039567ea121293d63370a3b02b198268ed11a8",
+      "defaultsHash": "sha256:7bbc90e634e986ff2972af59fe540c92c424e45ea8df01524a257e04c9f89439",
+      "maturityHash": "sha256:3db7dc182a30132e9484953adcc89a443eafff77ab5164362a094de3ec1b1025",
+      "sourceManifestHash": "sha256:36e9a2b67e9b56e8c78489735944a16aced7df789645cbcb6428f3039b183449",
+      "limitationManifestHash": "sha256:3f9beb6b7879573d3db5d428eccdae3b282e5367dbe46ba7047f133444c529ca"
     },
     {
       "scenarioId": "acute-decompensated-heart-failure",
@@ -1011,18 +674,13 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "post-infarction-cardiogenic-shock-escalation",
-      "contentVersion": "0.1.0",
-      "moduleId": "cardiology",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:52a4d0012f643f6d2df6cee4459f3ba9528f214d4c7f3839ba756fdee3901dfb",
+      "defaultsHash": "sha256:a7ba64167cab2bdf91d53b2a3f5a0ea866842a3a9d4b9b4ae31f540835e93f93",
+      "maturityHash": "sha256:69abac0f24b97aa27688e248898b477b11cfc763b39afd6a66ef97fcc2f141ce",
+      "sourceManifestHash": "sha256:d68f3532290296e2f3145d95d70c351d97252df380e48eed21ed212213c61de4",
+      "limitationManifestHash": "sha256:8e07020ef93a404c8ad270c9d1bce2d49ec16a60a2a4ef5fd8facaab7fc70493"
     },
     {
       "scenarioId": "atrial-fibrillation-with-rapid-response",
@@ -1033,40 +691,13 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "regular-narrow-complex-tachycardia",
-      "contentVersion": "0.1.0",
-      "moduleId": "cardiology",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "wide-complex-tachycardia",
-      "contentVersion": "0.1.0",
-      "moduleId": "cardiology",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "symptomatic-sinus-bradycardia-reassessment",
-      "contentVersion": "0.1.0",
-      "moduleId": "cardiology",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:195802e72548e096d4bc9889dce0960faef083d4eb6fc83a7024c15655403dc2",
+      "defaultsHash": "sha256:1135cc7d79ecc5a2a68c4b1fc9db546c70872d03bfbd7b46433c35a40f165217",
+      "maturityHash": "sha256:2b57143517588053f672a455a5b84cfb25f46bd447a36618a61c73e13d7428d3",
+      "sourceManifestHash": "sha256:e7119be90e0afcb66c9c3ec0b6712e8cb1040112fae5dc3cbc02600a38b9104a",
+      "limitationManifestHash": "sha256:35bcd93bf28e4d4a71cae278de0185b7a3c792e2fe581d1bcc6e0388767c5549"
     },
     {
       "scenarioId": "complete-heart-block",
@@ -1077,18 +708,13 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "torsades-de-pointes",
-      "contentVersion": "0.1.0",
-      "moduleId": "cardiology",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:a1d3a28f3e4748788a7d79a74fd83540f0e7f3a847085158c35dc31a29e905da",
+      "defaultsHash": "sha256:bd15c86cacbcf7da51d7aa55f0e647cc28c0a8eb3809c38b15ae5a44e8347361",
+      "maturityHash": "sha256:aec360af754bb6c8816ce9340b88070184b041144f9c63c86edef0d171fe81d0",
+      "sourceManifestHash": "sha256:8b9b71115293b1b3f424ca0a0330015c648f0693ee7fd07c1af806fadd623840",
+      "limitationManifestHash": "sha256:0dc79d45e4ed5528dfefffc446ecee0abe5d07099f1edad9332b5f024a308591"
     },
     {
       "scenarioId": "hyperkalemic-conduction-disturbance",
@@ -1099,29 +725,13 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "pericardial-tamponade",
-      "contentVersion": "0.1.0",
-      "moduleId": "cardiology",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "right-ventricular-infarction",
-      "contentVersion": "0.1.0",
-      "moduleId": "cardiology",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:9f02b6a94a3e604d358d6e84d573e64d6c1c828d645977972c8abde9329fea3b",
+      "defaultsHash": "sha256:863ce2535bf109ad3ed16c3d0d9feb97413f08074184593443d96f0bdcbae1e9",
+      "maturityHash": "sha256:936f4d23d1744cdbeb21c4f4f08cfc5c625216ee566ca77ae9a4366976ef7204",
+      "sourceManifestHash": "sha256:4012de037f88668c9b337cdcb0ca3177b02f3b4bbfce0912566257b2d464cf4e",
+      "limitationManifestHash": "sha256:bfed538bba79d03c7945751d7953451b3f2bc19cba014855cdedf8840291c837"
     },
     {
       "scenarioId": "hypertensive-emergency",
@@ -1132,7 +742,30 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:d09ca9a936d30c6c6e805052e180ad1abe3de81580ff80281d75463233f50186",
+      "defaultsHash": "sha256:0af2be1ba11f4b51c969a24e15b2b8d27e33747c21ad11e3e81d6f1cd7891357",
+      "maturityHash": "sha256:4b16624b76f3a19e54c3af55aead9c3b77a5a96d659b213bf5faacf6462d315c",
+      "sourceManifestHash": "sha256:c352b203f8f36d787baf3f6014050bc958939c5d3136f4c989c5867d946d2591",
+      "limitationManifestHash": "sha256:dae4b075253737d49ed8a517707703b2ef739dd4a3fa253f44975948be637a68"
+    },
+    {
+      "scenarioId": "nstemi-risk-reassessment",
+      "contentVersion": "0.1.0",
+      "moduleId": "cardiology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:5ff0ad01d3c42f9f4439ad13722dcbd43bbb11c00710f574a54d464b55d8afbb",
+      "defaultsHash": "sha256:ba0de23a7dad894367d62afa09b0780fafdae2b42abb25c4731a045ffd24402e",
+      "maturityHash": "sha256:f09275aa9f18c5ea57d37fff45204fcbe5418b6f949745f015ae0b61f03f5e1c",
+      "sourceManifestHash": "sha256:c5af7ecfb3f8c8be60564dc36faae9d931cea0b2f58e252f981f83a578489dab",
+      "limitationManifestHash": "sha256:aae52ab994d83f89029b27be0d7a8fa3f616273a7bf1e74377357ea9357edc36"
     },
     {
       "scenarioId": "pacemaker-capture-failure",
@@ -1143,7 +776,149 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:04d58ada0c9adab2ef9ca539c4f11590f8b2b857f38ca8a2e1ecc8d4609cb258",
+      "defaultsHash": "sha256:fa0137777d466972573ae47d51b99b65aa1409ea4e9ba77d7fec19e24a8cbba6",
+      "maturityHash": "sha256:be9a457ced6f155c9dd50ba2c038fe8ad81d19c971ad8003e95e0b8980bbd5df",
+      "sourceManifestHash": "sha256:812077cca2d4640e31df2cff22eb480206cca6a1ef37f8a94a80f5a04da7c58f",
+      "limitationManifestHash": "sha256:1b18166aefb3edd76cad80bbb00460ba74da8cca379ae8597702d9e1fc13f705"
+    },
+    {
+      "scenarioId": "pericardial-tamponade",
+      "contentVersion": "0.1.0",
+      "moduleId": "cardiology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:49f291e926803bbf42dce18d2e75ed802bdd0952020e303d18fa82952a3aef1a",
+      "defaultsHash": "sha256:a6ebe97e4424b43c7056e8cf043d918ac69585517b779282482dce11fd8bd450",
+      "maturityHash": "sha256:bef0bb4b90caf863884acbaf41baae6ac0e6fcb21ff06844f704be3e2e798f14",
+      "sourceManifestHash": "sha256:1b93eeeaf6c9119dca31deb25ca953a5cf7e75e9fdf36f9b5221337337c7a2c2",
+      "limitationManifestHash": "sha256:26ee24fc62f240d29ef1193be87281bcee831e414d45e09e02a79b42c2c91494"
+    },
+    {
+      "scenarioId": "post-infarction-cardiogenic-shock-escalation",
+      "contentVersion": "0.1.0",
+      "moduleId": "cardiology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:f3c3f37c8d54f803ba279e110a33c5d066fdcfb18ee3e5ef73c51aff27cb6e3d",
+      "defaultsHash": "sha256:74d2cf6fad90bf1ae3a2b820c6850ad1144801d6440ba279fda0b2abeb782a06",
+      "maturityHash": "sha256:a7635be3c1a3b621c4d50d069b74294ce5e9123a5c23940e7f13507e5f6efc07",
+      "sourceManifestHash": "sha256:a6810826c361d103eb450fc17312286b9bbccec62cda145a5d63ceeaa6fb8b73",
+      "limitationManifestHash": "sha256:29dfe6e18f7d6c05dbc421d9cd0ac90429ab166253e69155eccef616033d6536"
+    },
+    {
+      "scenarioId": "regular-narrow-complex-tachycardia",
+      "contentVersion": "0.1.0",
+      "moduleId": "cardiology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:c386c66a8c11285c25187ca53ff37e1a05a01fe68f767c281043f2a72e920524",
+      "defaultsHash": "sha256:024d07fb685b44396b14172c9f848e7be329c96025baf43d2424c6b7c4606834",
+      "maturityHash": "sha256:17df5f8680f94fdb421f60b3615e6890af92f4454180742dd38a7cb03f49539e",
+      "sourceManifestHash": "sha256:01aca20db15310b1584ce9197f41a1f4a83f6bb157f7dc21af83d1d35ee06c4a",
+      "limitationManifestHash": "sha256:b123c96e7a3ba32b76e1c4f17c60ca3bf9ee534fefe32e461bb579d73eda66f1"
+    },
+    {
+      "scenarioId": "right-ventricular-infarction",
+      "contentVersion": "0.1.0",
+      "moduleId": "cardiology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:88e67cee31e4913b0b0317920539aa9e7f5320dbc8b572336af97e29c33bf0f3",
+      "defaultsHash": "sha256:5041997fea557015e1423af55a417ba9e9fa1180b19f49019890f5743bb84843",
+      "maturityHash": "sha256:7cbbabf7af15da3f095ab72c4c816d3b920a9cebf1cb49125108e9fc4b822608",
+      "sourceManifestHash": "sha256:e408c2201ccbbcdd9e63a10ce8443b3a004f10e68b7d991856a704885821b692",
+      "limitationManifestHash": "sha256:ff8296da4095c3451d55b4da592f75f00db900c72f04d93d2d8de41d4ad730ad"
+    },
+    {
+      "scenarioId": "stable-chest-pain-evaluation",
+      "contentVersion": "0.1.0",
+      "moduleId": "cardiology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:e0e2c1ea6333ba6c5932592a2632d4eefb196b480410cd2b375fb96ba2bc5394",
+      "defaultsHash": "sha256:18cd5a3cb62d27d2cb972b222dadcccc8f327af6a2ba39bf9386ba9996d6d954",
+      "maturityHash": "sha256:d0049624416dd192279f43bd8f298776573ad6cb64b074b40ddc31faf9bc008f",
+      "sourceManifestHash": "sha256:c47279f6c1f8a083aa2ccb07df1eb0c3055970ff1b907e454b2feb46bcf67f8b",
+      "limitationManifestHash": "sha256:a99a1c9212cdafe6d940f0efded882041a4c38b0f6126f5bb7fd0b743899a059"
+    },
+    {
+      "scenarioId": "stemi-recognition-and-first-actions",
+      "contentVersion": "0.1.0",
+      "moduleId": "cardiology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:a7f6f9a6a6e019b2148eb46b8c0aed78b37d294a63ab4549e362e8a0be33119c",
+      "defaultsHash": "sha256:e0d74d15c952676f975e78acaa694d89202523c22cafe0e12699e7907ca0ff39",
+      "maturityHash": "sha256:f4154184c38404a6e3a2b38c87944c541b6d80b1139fbdb457e7b72d9efefc5c",
+      "sourceManifestHash": "sha256:93b5827182791d9174742a0255e4c63ed56be5326eb50650d916e228777b6873",
+      "limitationManifestHash": "sha256:4e0d07f09820a555d943a7c7f4b64c225361d7dea5988cddeb8b783e8dc4fc88"
+    },
+    {
+      "scenarioId": "symptomatic-sinus-bradycardia-reassessment",
+      "contentVersion": "0.1.0",
+      "moduleId": "cardiology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:beb5048205b4718b91046017f5057f33189865721f8c7c0dad8b6ccc9201b2b9",
+      "defaultsHash": "sha256:826e18876f0aa3693ab5a24b09f13bde3de2bce0d400adc5683a1bdccb2c9660",
+      "maturityHash": "sha256:aec360af754bb6c8816ce9340b88070184b041144f9c63c86edef0d171fe81d0",
+      "sourceManifestHash": "sha256:8b9b71115293b1b3f424ca0a0330015c648f0693ee7fd07c1af806fadd623840",
+      "limitationManifestHash": "sha256:78af5a9543c417b1ecea670fba71bcde25cd37e7785349cbf3c39f9297a847d9"
+    },
+    {
+      "scenarioId": "torsades-de-pointes",
+      "contentVersion": "0.1.0",
+      "moduleId": "cardiology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:4dfc217d1a438a001a24e33c47535aa5c687a7cfe4c16d4acea1fd5ec8faa400",
+      "defaultsHash": "sha256:f23b03ca0f2dd38b38e4d963870e9933382cbfb88070c23b9d8378ff6fa3773b",
+      "maturityHash": "sha256:71c8c7740cac68f5f7afcd678051254ab3a563a9997d3d06b64ee3945476d5e6",
+      "sourceManifestHash": "sha256:f4c080e94620eedde143c29b192a541b3bac4d48700d0af3a19a3b460d924efc",
+      "limitationManifestHash": "sha256:adcd25242e94e250614a94583699aa8d8dc2382dd33a4776d64fa3110f440061"
     },
     {
       "scenarioId": "transcutaneous-pacing-mechanical-capture-reassessment",
@@ -1154,436 +929,863 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:562927f17b0dbc234922a3175ec54742a39d6016ec30710071f530b511f3b515",
+      "defaultsHash": "sha256:0b0adc2cb3fde3d0696f13444d15bc7722afac5aa36d497d65ffd059cc289590",
+      "maturityHash": "sha256:e10cee2d7ad6c19c3b271c8628639644fe92ee804520c785e744643ba1b8c7e7",
+      "sourceManifestHash": "sha256:dcc5d69b4e165dbd2ba5eebace0c2d0be65c4768e8ad16a5570abc4b5624b5e3",
+      "limitationManifestHash": "sha256:ec5a4eae1f003f281c382b361bda0059cc780a6c2ac8e3b87df6152d5f371ac5"
     },
     {
-      "scenarioId": "acute-severe-asthma",
+      "scenarioId": "wide-complex-tachycardia",
       "contentVersion": "0.1.0",
-      "moduleId": "respiratory-medicine",
+      "moduleId": "cardiology",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:68cedac4583a6eb63b77f305db237973e159fa329c377a8b4a10605dd560e293",
+      "defaultsHash": "sha256:ea064218ca34a7dad1384b9a049825c2d9b1f3858bdb1cb9f9c8ef8f30ab008a",
+      "maturityHash": "sha256:03f610ad2b4065cbd7a00a49860f9a6a71c8dfac79d8a794aad0ee0dca9282f6",
+      "sourceManifestHash": "sha256:76c6e2d0fcba1f7f008421535531ded1c108215405a08abf64772b1065de40e4",
+      "limitationManifestHash": "sha256:a1bb07fed424911b347ffa6a624a71b6102c7a7cb396722f67b35fdb0782c013"
     },
     {
-      "scenarioId": "copd-exacerbation-transition-reassessment",
+      "scenarioId": "acute-kidney-injury-with-fluid-overload",
       "contentVersion": "0.1.0",
-      "moduleId": "respiratory-medicine",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:8f1ef99549fa66b3d96db12db05323a4d934b8be90a79228a308af06b4557df4",
+      "defaultsHash": "sha256:95fa769cf83c0fa88ca8c473290595784537965a3f076cea3bad17c6794b64cb",
+      "maturityHash": "sha256:d32a9740e8c458912719bbd86fbe52341241f14d1270db8140ddc33940a6b5d4",
+      "sourceManifestHash": "sha256:0cd5d5163e8aa391481a716ab8bebd28bf5fee3f858eb15cd8e1638a2c51cf71",
+      "limitationManifestHash": "sha256:f66d7ef24133d4a8303dfd8177639689d8572f801bf9ba5e23c9d31e4be1fa35"
     },
     {
-      "scenarioId": "community-acquired-pneumonia-hypoxemia-reassessment",
+      "scenarioId": "ards-lung-protective-ventilation",
       "contentVersion": "0.1.0",
-      "moduleId": "respiratory-medicine",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:288116845f5e0a7ca70106bf03c44d21fc5c457f88cc7771514db4a44cc9189c",
+      "defaultsHash": "sha256:e647e3ee81db35f8b41adca51b982863357cbf4d37d53889fa8475ba206432c5",
+      "maturityHash": "sha256:fa2813c3763234eb1c04d6de4e3c43602de6a3a30daacacb478caad80a66cbb8",
+      "sourceManifestHash": "sha256:80daa12995d396d6ec6454fe680928f94bcf583fc04640e3c901fc0091ac7f91",
+      "limitationManifestHash": "sha256:d75a511ceb4aab9217a9156d470250d0230ecdccc72f13e5f22cb0eff0c75d8b"
     },
     {
-      "scenarioId": "post-pulmonary-embolism-persistent-dyspnea",
+      "scenarioId": "auto-peep",
       "contentVersion": "0.1.0",
-      "moduleId": "respiratory-medicine",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:b91399023f460e46f045cbea53b7bf0548447cfedb73dab37da42bf7951767c4",
+      "defaultsHash": "sha256:e710bbcb5d49b6cbd4e951a7150d206a91786c3bf6808e38fbba03e40a15a333",
+      "maturityHash": "sha256:4f70f9e65d6e52842c910051dbc62b13dfd04f0179e124427ed3cb92ef176ff2",
+      "sourceManifestHash": "sha256:51f602cbc356bf3bfded2c26df6630d17bce76c0012acf1ede90c2b52c292fc0",
+      "limitationManifestHash": "sha256:128c7bd2e2045bb36afe707ab6950b2d81dcc02e15684c2886dd5cfb0fff2a12"
     },
     {
-      "scenarioId": "acute-pulmonary-edema-respiratory-support-reassessment",
+      "scenarioId": "cardiogenic-shock",
       "contentVersion": "0.1.0",
-      "moduleId": "respiratory-medicine",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:ff11285907b5a6ff01d2663818e90268691a94c3c0469723e2508a1727e94f36",
+      "defaultsHash": "sha256:49d3571eb71617824d7389d93f9606aa36cef809f28830a56b0a1ca3b92a20b6",
+      "maturityHash": "sha256:651e79f18d0918714ba696679e2e21f0d46fcd9008769b8fe85b7e8adb0efe8c",
+      "sourceManifestHash": "sha256:2e34a8e2bb81318da23c2cb26b3edf718e40aaabc5ea44e1658a17544809f720",
+      "limitationManifestHash": "sha256:7ed2b8aad96a9a359241dbc643d8e405d1efd801c66fc433f1668c36e4e596fc"
     },
     {
-      "scenarioId": "spontaneous-tension-pneumothorax-post-drainage-reassessment",
+      "scenarioId": "delayed-vasopressor-delivery",
       "contentVersion": "0.1.0",
-      "moduleId": "respiratory-medicine",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:bfeb8a17d8c1ebb9812b5a985ba3e772a452dc8c5f54a552c0513d3f08e6a48d",
+      "defaultsHash": "sha256:ede761474c150721762b49e5b06df7c850dc1ae8fa3a62735e2b79dbf39c37e2",
+      "maturityHash": "sha256:2b946427f6cc2a355e4fa6e76e84f406dd7f31741f99e3fdbfada31638977d80",
+      "sourceManifestHash": "sha256:7f5a1b076299c5159a39c8f5ebf23fad53d604813ec1b786c8d17e115f77c211",
+      "limitationManifestHash": "sha256:91e01ff32660ebcd2fc85e1dee440b1ca0776f17fea2c2d93b860bf8b271b9f0"
     },
     {
-      "scenarioId": "large-unilateral-pleural-effusion-reassessment",
+      "scenarioId": "endotracheal-tube-migration-after-repositioning",
       "contentVersion": "0.1.0",
-      "moduleId": "respiratory-medicine",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:7c8af9507e981afcaaf6cb57b62290d2c237d1ee72b3e53ba21534addaa648f2",
+      "defaultsHash": "sha256:143a46a1e46e617d721d9422f6a1a17e547f0b9324e183f9c8c0da27b93f76e4",
+      "maturityHash": "sha256:47450fecc53ef90c556c07fee39b0ae2ce80364f98e1d94a4a055c6c35ef1a7e",
+      "sourceManifestHash": "sha256:46e18d96a4873ed38f3f4a1f117316d5c4b3448006acf3fc4df5358f85ee4c9d",
+      "limitationManifestHash": "sha256:151fea8be4a6b6b2cc6bdc0cfa0cd8c8342cad2a158c7d0f0f09d17a79e22f8b"
     },
     {
-      "scenarioId": "bronchiectasis-mucus-plugging-reassessment",
+      "scenarioId": "escalating-hypoxemia",
       "contentVersion": "0.1.0",
-      "moduleId": "respiratory-medicine",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:246889fa7fce13d589272891237a5c2a4114310448919501b552c4e768aa0f9b",
+      "defaultsHash": "sha256:61f9670f1f39b79cf477b07e9d7f61291d5c99c01ab13dd9c013175a06827894",
+      "maturityHash": "sha256:d40694a37526fd0be0cf33c7f4e7341438466295d43abb686c4ecafaa14078d4",
+      "sourceManifestHash": "sha256:730c4d590dc7b3715986e8dc6b0d9457752f539e4d830eab28d7f17558210c5c",
+      "limitationManifestHash": "sha256:efae4c8684614d345d81af77ef86b286c14d3c392281674600884eab489754ed"
     },
     {
-      "scenarioId": "chronic-opioid-related-hypoventilation-reassessment",
+      "scenarioId": "icu-handoff-with-hidden-deterioration",
       "contentVersion": "0.1.0",
-      "moduleId": "respiratory-medicine",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:9c78828e8a26fc08fe90340d959b7db81fd1f3d26c78e5c1149c7fe1384f08a2",
+      "defaultsHash": "sha256:964f09bb08ff749798fcd9cdd4bbbded229c809d7a65c6208c83636c2bcf431b",
+      "maturityHash": "sha256:8ca5ed108e4b90969951991cf2ce9ca7289c8680593e2af0c7c057f7a4c83549",
+      "sourceManifestHash": "sha256:9b2178f9ba15d17bf565db0a5b4b168d27a7c10d5581edb0e9ffbb931fab4ea0",
+      "limitationManifestHash": "sha256:8cda447ee62f372308979463702ee3c776d41fdf01f52d9e7fc2a645cb62ec12"
     },
     {
-      "scenarioId": "neuromuscular-respiratory-failure-reassessment",
+      "scenarioId": "intracranial-hypertension",
       "contentVersion": "0.1.0",
-      "moduleId": "respiratory-medicine",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:fe5255a18e1aad1b9e305371d5cbab27deac640f9fc909756e89ef3c2f972ec8",
+      "defaultsHash": "sha256:0101dc7e0b987292745315cd9b4c987b4d233512cf2b0f9d792d636c4d2cf9cf",
+      "maturityHash": "sha256:3a7d3cf074301d96c6746a6d8ea02f139f31dd67eda9873f0544635195a85657",
+      "sourceManifestHash": "sha256:be77dea6435b07f48932a129a06f1ba1c59562a1e2b0a6f26245a2f256306f4a",
+      "limitationManifestHash": "sha256:85e0b1a1ddc8358cffaefa71c505003ef55a78724fcdfaaaebebe2073d52cf70"
     },
     {
-      "scenarioId": "obesity-hypoventilation-reassessment",
+      "scenarioId": "massive-pulmonary-embolism",
       "contentVersion": "0.1.0",
-      "moduleId": "respiratory-medicine",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:3231337a81459ef22458e5b87e46394b3b039575b4951e58e579cae6d0a58d4f",
+      "defaultsHash": "sha256:7d284403f536e9efee1fa2268f824ab04011b3d76ceaa0fd34d31e5548011dd2",
+      "maturityHash": "sha256:ceebf7c53aa6dc06105bf671e5c2c0f89289196ea94d0630dcdd03aa4ba64ad1",
+      "sourceManifestHash": "sha256:f119dcbfc5f9dce76550dd70f1320d5ae7aafbb4025a38524d50e20d4aca8bab",
+      "limitationManifestHash": "sha256:139707990853485cc3039a96016da9cdc64530a234030cb55591092257061e43"
     },
     {
-      "scenarioId": "noninvasive-ventilation-selection",
+      "scenarioId": "mixed-shock",
       "contentVersion": "0.1.0",
-      "moduleId": "respiratory-medicine",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:3726128858e2a38a3883391e59462005955662742f3f90eb62aaed4b5877e53e",
+      "defaultsHash": "sha256:86d023161b1cbf86df2b46b90aefa0d04617c147758caa12af757471be3e1e07",
+      "maturityHash": "sha256:99732fd4a8d259a124f9e1ce7dbbdc15d48df3f16ffa95702d9232d1fdf688e2",
+      "sourceManifestHash": "sha256:2673b0051d72f6f4e057732642b98f7e41a08d0f97b724d305f6acc78f4b23e8",
+      "limitationManifestHash": "sha256:3100b0788dd7cac6a6ca2612b08b581c00e59acd2b8a66d3a9bc0c8610688dfe"
     },
     {
-      "scenarioId": "high-flow-nasal-oxygen-escalation",
+      "scenarioId": "mucus-plugging",
       "contentVersion": "0.1.0",
-      "moduleId": "respiratory-medicine",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:c034a15548a8255a2ce26007f615263d061595a0f3c54b4e0e121cfb98dc42fb",
+      "defaultsHash": "sha256:039af86b0ce2e02e81571e41c7f41c6b1ab538de7f41d31cedac8b0d5e5f8ecc",
+      "maturityHash": "sha256:5cb0dc18764f10912a287d7b2472299f9a29e8e7d316ffa92edcc49b921c783f",
+      "sourceManifestHash": "sha256:07f6e706407c132e7c8a3a15d0dde84aa27138b441fa63d86d853dba8346b3ac",
+      "limitationManifestHash": "sha256:387696fc9726dd03b4f099274bcd3746bdbb4b47374a383bd4b230fdaaadd8fe"
     },
     {
-      "scenarioId": "oxygen-device-failure",
+      "scenarioId": "post-intubation-hypotension",
       "contentVersion": "0.1.0",
-      "moduleId": "respiratory-medicine",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:6a65e76f3140b6b53328a51b9bb82ea245da7a0c4fad2890c58a8e9de12cdb99",
+      "defaultsHash": "sha256:4466d75128bca5f0fda3fab7ef87197eae5dc2f5ffc6b0c8f34f4263a3e1f397",
+      "maturityHash": "sha256:a299b6526f0b07b090e1ea89f2958c4e2974a9f0b9c978c397a7f8f42f325b52",
+      "sourceManifestHash": "sha256:9e2a1fa343a3b53fe07a2bb406833fc1943f6e65eca3a46dcebf05e27da49312",
+      "limitationManifestHash": "sha256:561be33dd7b5480d19deef40b32250f11f510f4a29d268ff3cf0552a7756649b"
     },
     {
-      "scenarioId": "acute-tracheostomy-obstruction",
+      "scenarioId": "pulse-oximeter-motion-artifact",
       "contentVersion": "0.1.0",
-      "moduleId": "respiratory-medicine",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:8d4ebf0112eea6ce8090a61bc2b9a0aa6bfb1c62d00fcf9933407e8e50c3c1e7",
+      "defaultsHash": "sha256:59815d02c4a58077e113acb38a7caa06604e1313451c97dc7cc7423d513faa8b",
+      "maturityHash": "sha256:aba69ccb8220211f445de44f9776facc50e96df8305d997716b7458c4b1fa043",
+      "sourceManifestHash": "sha256:eb6d11fa43fe70db27df4a0d63a548b0b4c2385cf97d9eccc65970fc4dbcc442",
+      "limitationManifestHash": "sha256:62f7e7d42429d64fb5c0aa2c51ef56bac17bd21e6d8f714bfcbef7da752b0214"
     },
     {
-      "scenarioId": "pediatric-respiratory-distress",
+      "scenarioId": "right-ventricular-failure",
       "contentVersion": "0.1.0",
-      "moduleId": "pediatrics",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:df1847945907daa4940aea1a2a6567d72f8f22440396b2f4c9047db0975df2f6",
+      "defaultsHash": "sha256:ea797d55747375d314111b6b8ad819ab5f666e5a0089520324a01f1fa836b60d",
+      "maturityHash": "sha256:4cf60bd03794cfd600becd1ea25a9310fbaaa3390df965083276738e398ab840",
+      "sourceManifestHash": "sha256:52e8559b250f93f1a40a4859f69595e13c7285c9a984cd74e223d13d202b390c",
+      "limitationManifestHash": "sha256:efcc09e9af9f8df487bdfd9c0fe4e39d95192dfe3e9c02c8eea6e7d1a52f63b6"
     },
     {
-      "scenarioId": "bronchiolitis",
+      "scenarioId": "septic-shock-resuscitation",
       "contentVersion": "0.1.0",
-      "moduleId": "pediatrics",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:a89633d29eb81a0b90bb9e6ca8154303d95312978db89618f072e36a7d90dc94",
+      "defaultsHash": "sha256:ea1015db9d540f0e17189396bcd6fbcf4a355b74ba837378b6f265a6d37af24d",
+      "maturityHash": "sha256:09a2f880d88d0ee6f3832ac1800054327587b89ad8927e167cecce28157af778",
+      "sourceManifestHash": "sha256:4bb0ed4e81d40f1bb6ac68f33430e8c2d844647c44ca33389a703d1c2677c56b",
+      "limitationManifestHash": "sha256:e7978db6433a930ef010d5e76f73337925b15de4c08e0617358b6667e62d8b4a"
     },
     {
-      "scenarioId": "croup",
+      "scenarioId": "severe-acidemia",
       "contentVersion": "0.1.0",
-      "moduleId": "pediatrics",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:22275ab9de3c457496d68223b69f25acba5185e2458168a4dab2fe8e32d09695",
+      "defaultsHash": "sha256:38987813bd524314babce021ce38ae2fe6c2d8e183502d6dfcaa1d5896941289",
+      "maturityHash": "sha256:6742be35a350ea54cdb7263ec4acda43942f6c9926a99117ebec47043ccf6426",
+      "sourceManifestHash": "sha256:c790ab15532f1459997dd4760f9c3a870ba0e1626d6e11e7cf22378390dd61f1",
+      "limitationManifestHash": "sha256:7081ff7e296a0f70f2a8f17dceb9115f0ac90d9ce330239a5154dbcc5e8881ef"
     },
     {
-      "scenarioId": "pediatric-status-asthmaticus",
+      "scenarioId": "spontaneous-breathing-trial",
       "contentVersion": "0.1.0",
-      "moduleId": "pediatrics",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:3bdd23b6013515c87620a8f257b484da19c3285eba0a3f773a81c32566e592bd",
+      "defaultsHash": "sha256:9806f8ad08f45de0b5ab21d2b114a1dbc4f33269a36909e18a73d11c0cd3e7bb",
+      "maturityHash": "sha256:de61eb3e80d940e01eac25d797f022c08f79eecfe96600673105ca3c92701191",
+      "sourceManifestHash": "sha256:98b16b0de9427515995aa5425c9ac62debd8c53f242026409757505e7464f63a",
+      "limitationManifestHash": "sha256:81aa9d36f5c9005fc4a1458b3c3fb0a24bda73dd4fc7b7fbb401b3ea79693d59"
     },
     {
-      "scenarioId": "pediatric-sepsis",
+      "scenarioId": "status-epilepticus",
       "contentVersion": "0.1.0",
-      "moduleId": "pediatrics",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:05147d9448300b65e63bb653918b267c691bd647dbbd6395c3e06a050b69cc71",
+      "defaultsHash": "sha256:c4ef2555a6327072571fff8bc4e5f16b7159441dc708bae0591844147a6fffa4",
+      "maturityHash": "sha256:0418b7b94e8c2edb8b81b5e31211edc448a1aa0961e72f6ed544ce0242ddf42f",
+      "sourceManifestHash": "sha256:c90cc2e91a9f5ed0710653356145dbc0f62badfb5066dc4db9d53cebf7f11496",
+      "limitationManifestHash": "sha256:5b3b5731906d7b3e74c378cf1b3d9906b3c8edb732b1647b53ac49d5601b3e52"
     },
     {
-      "scenarioId": "pediatric-septic-shock",
+      "scenarioId": "targeted-temperature-management",
       "contentVersion": "0.1.0",
-      "moduleId": "pediatrics",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:c88ff1b00280a96ffa78798beeeba8d30e1e0332302f96a235e7124b9b18f697",
+      "defaultsHash": "sha256:0dbbe76a69ed9ffbfdc345a3d9be91705c72f80d82d9550a24c1e6ac687fe822",
+      "maturityHash": "sha256:132cdf2dfa9a3bab17767af44ac528e92ebc5facdd4b0d735ad20717fb0120b2",
+      "sourceManifestHash": "sha256:595d1a8198c9235f98c41b58accac12e013ec545126da56d8c8f2c518c6c168a",
+      "limitationManifestHash": "sha256:0cade6a3c11f8b076fb98af749d369925eb19d5bc874744aa93dd3f242befded"
     },
     {
-      "scenarioId": "pediatric-dehydration-with-hypovolemia",
+      "scenarioId": "unplanned-extubation",
       "contentVersion": "0.1.0",
-      "moduleId": "pediatrics",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:39cb3b2fb5da23c86b664883993a245d48e01b6c81920c0a292a8bef458e3569",
+      "defaultsHash": "sha256:372031c5302b18c2a2b9c499849706329907249d2d17d00549f60913c0e0b824",
+      "maturityHash": "sha256:5259a34133e6b0937ecb35b7ea43f893833c2fef7e6f553c51a7b34a7dbf208e",
+      "sourceManifestHash": "sha256:030307b57a9573c18659a80191a08e6a324c6073c1191bedb8a9ed249825414d",
+      "limitationManifestHash": "sha256:840e502edeb75f00af03e106b0ae301ae5734bdf6ce89fe5b6ef780a357c229a"
     },
     {
-      "scenarioId": "pediatric-diabetic-ketoacidosis",
+      "scenarioId": "upper-gi-hemorrhage",
       "contentVersion": "0.1.0",
-      "moduleId": "pediatrics",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:f6f91ea3f17b415ca1ebada48750f8b6e9e2fb2aa70a6b295b786e87981a251a",
+      "defaultsHash": "sha256:950943e4ccbe73cd8661cf0d07b0271520551b9cd08fc18c1423e611254e4e4e",
+      "maturityHash": "sha256:932b0e557872fb8b2fc43b9b2fc51a4aed0714f774de43d46a512ce225b742b2",
+      "sourceManifestHash": "sha256:7f4b56d854fe40e0ec3af8a5d2790ab66db513a61d480d21cd32457dd998c33b",
+      "limitationManifestHash": "sha256:4ff1eb9bfc1e7e3699590f656a59a5f522b5d5b927fe4e9b2f71e92e9fd359f7"
     },
     {
-      "scenarioId": "pediatric-hypoglycemic-seizure",
+      "scenarioId": "ventilator-circuit-disconnection",
       "contentVersion": "0.1.0",
-      "moduleId": "pediatrics",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:6ae80c20f56f82b9baebe9af4b52215fdc21abdac642cfba97d65a1c0b61710f",
+      "defaultsHash": "sha256:69444252ebffa17be4ea3485055b34fc7690078e31287e95488cdc7afbd30d96",
+      "maturityHash": "sha256:ee6b37a7ba4999837956c2fd0cf2214496423a488fd535e3d7c81a0dda4718b4",
+      "sourceManifestHash": "sha256:8270e3b542f785548614bb340678b37cf880f19578c1431601725508ce475577",
+      "limitationManifestHash": "sha256:f62a2b4c088758ed212e8260ae3fdfc9627e7e1d1faa3ece6e3b9455d39ab66b"
     },
     {
-      "scenarioId": "pediatric-febrile-seizure",
+      "scenarioId": "ventilator-dyssynchrony",
       "contentVersion": "0.1.0",
-      "moduleId": "pediatrics",
+      "moduleId": "critical-care",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:c07d50840e175eb71378ed1fde2b856aee48e041ff5ad6681d4c6fa356098aa4",
+      "defaultsHash": "sha256:3120bf9f32150930a8c8ebbb5919582be1fcab587fc591a72457f75773e59ec2",
+      "maturityHash": "sha256:fdd30eefd8b4b58c42097b446702b62d232b7f23e26d5f8a697ac13187b63fb8",
+      "sourceManifestHash": "sha256:2b657ace64ef94d0751f0f4f95fa650ef8d68db0a60ce3b73e1356600b1bdce7",
+      "limitationManifestHash": "sha256:2d39aadf5a5c0113883f1dbd2cbd43aad8598c27342e0ba8afd7d23198b49bbe"
     },
     {
-      "scenarioId": "pediatric-status-epilepticus",
+      "scenarioId": "acute-aortic-syndrome",
       "contentVersion": "0.1.0",
-      "moduleId": "pediatrics",
+      "moduleId": "emergency-medicine",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:3d7bad8a1b5aac3deab2399d7cb1ced9cd95131a7ea9f7dcc3ca2dbde40355ab",
+      "defaultsHash": "sha256:c258837fa8da85f1b1b8deafdf00efe29de30d39b0c3753f93ff8fd5980195df",
+      "maturityHash": "sha256:6f4ead755becd187e6f3cc75b1773969a6f2d5a33506b01ca04c5c3ea8f443dc",
+      "sourceManifestHash": "sha256:68ffbe9fe392732c917470c9db5eed0bdef92ae9c74ed0e4bb1823e23dad08c9",
+      "limitationManifestHash": "sha256:697d4d6cae2f0c110b452190b6d1c8358cf378b52ed6c16e06b413d21109c38f"
     },
     {
-      "scenarioId": "pediatric-anaphylaxis",
+      "scenarioId": "acute-ischemic-stroke",
       "contentVersion": "0.1.0",
-      "moduleId": "pediatrics",
+      "moduleId": "emergency-medicine",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:ba4bec1a9f244a685e08007d4ecec9408248b1f55f720bcc81a654999c991e87",
+      "defaultsHash": "sha256:b6e62eb9935dfde13150e912a4e523f6b47cf1bd2153d06209ed7998851c1f09",
+      "maturityHash": "sha256:448db034a77d73e11e50f7c14f300dc505edb606e03c1981670995b805f63165",
+      "sourceManifestHash": "sha256:1c8eb87fcbe919d26e35bc29f74aba47ecaa93a7d4c23958191efc347ca42be4",
+      "limitationManifestHash": "sha256:c325f9630916bb215682ddf559938e2f3a0f864bc2bdaf68b18d545dc8ae8dcd"
     },
     {
-      "scenarioId": "pediatric-supraventricular-tachycardia",
+      "scenarioId": "acute-pulmonary-edema",
       "contentVersion": "0.1.0",
-      "moduleId": "pediatrics",
+      "moduleId": "emergency-medicine",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:18ed2b25fa5ad1dd1cd373d7278076cd21cf95a51544acbb372764ebf799df7f",
+      "defaultsHash": "sha256:8833af9a18143ec29ac7b4df495e1a1fb0b971259d36581e7e4b8bb0236ad5f1",
+      "maturityHash": "sha256:98f52b35dbdd3fdd0cd6f81a4f264aa6cf2970907ffada95b8ff39203611e5fb",
+      "sourceManifestHash": "sha256:e37c0667a6c5e1e1d810ac9845d9f13f93efe32e62e269319732081aabf0a508",
+      "limitationManifestHash": "sha256:1fa925cb5cf4c837d94d865e0928104855b05b9f4ed7205a7f5044a00e7c3747"
     },
     {
-      "scenarioId": "pediatric-bradycardic-arrest",
+      "scenarioId": "adult-asthma",
       "contentVersion": "0.1.0",
-      "moduleId": "pediatrics",
+      "moduleId": "emergency-medicine",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:eaa9a25bf1c0a960db6d3acbaf91bb10cc830a67b76ee55d01351e664f6c3e1a",
+      "defaultsHash": "sha256:0ae6a85f0e4fd87b09a12c82b868ba631b7989661260e97be40af21634b50b43",
+      "maturityHash": "sha256:3929d1d0a4daff3405268b06c95b755c79895e9b7e591f1c08bc154b59edc870",
+      "sourceManifestHash": "sha256:b4933242d24e50d705b093380b1b226b35a2928c9ffad7a38068e9f8ab192f36",
+      "limitationManifestHash": "sha256:27d87ffbacebd2e27514343fbefeb0443445bdcce8c05a0bd2abb9d77378d3f1"
     },
     {
-      "scenarioId": "pediatric-foreign-body-airway-obstruction",
+      "scenarioId": "anaphylaxis",
       "contentVersion": "0.1.0",
-      "moduleId": "pediatrics",
+      "moduleId": "emergency-medicine",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:ecf1e1973f9980bd9a9fe6ec09b2563d355e3a49c86dc6e65b08e2706eb5549c",
+      "defaultsHash": "sha256:589fd451f3cf1c56d49e9212f4a71fd0d17192844777d3fa4faf3b4301200a37",
+      "maturityHash": "sha256:3e8e46090faa4817afdacfc56ae856ad2e60d140bd0ed4f82aeab2a1027cacff",
+      "sourceManifestHash": "sha256:691f281ef92d80e28681a9b7c8325fa5ddb2778c0009315c7ce7c6121724d40e",
+      "limitationManifestHash": "sha256:e7357f167b21331c506fb2385bbf6c0888be93144f63bbd6ee4f74720f4e88f2"
     },
     {
-      "scenarioId": "pediatric-injury-safeguarding-escalation",
+      "scenarioId": "cardiac-tamponade",
       "contentVersion": "0.1.0",
-      "moduleId": "pediatrics",
+      "moduleId": "emergency-medicine",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:6699bb49a31d210eec2d6f5bb541411fc355108af17934e18890bd38d33b5dd8",
+      "defaultsHash": "sha256:69cf90ffe20119ad2b3fd782456ae511d4cd5cc635617bfec470584eb1e76efb",
+      "maturityHash": "sha256:ee570dc6271b1d07f3b17ad375116ed54ebc919fda1640374d1250772391a2c0",
+      "sourceManifestHash": "sha256:88ba56df65159bf306da1ab43e469c6b87092d40c8553ce4b0543f1b5ee60a84",
+      "limitationManifestHash": "sha256:36a29fc679cce5ebaad5c7324b33a27f6b9d92f7825f32063059aba57947d3ec"
     },
     {
-      "scenarioId": "minor-nondisabling-acute-ischemic-stroke",
+      "scenarioId": "copd-exacerbation",
       "contentVersion": "0.1.0",
-      "moduleId": "neurology",
+      "moduleId": "emergency-medicine",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:7ba573c737d9afb265731201a7a97b22f946534993be4b6886471436834a4691",
+      "defaultsHash": "sha256:c0a3b380b2a7ada06b6ba3a7c4ce19bec77f0576b8fbbc795c2d15d24215ae14",
+      "maturityHash": "sha256:b9511e529369c8df17119598c72ace0df17c3ca6a7f858587355de805d128ed3",
+      "sourceManifestHash": "sha256:423487745b3ec6b8114ce2903539c483be70b1567fa7c91afeb4129a102c9bb8",
+      "limitationManifestHash": "sha256:1d79c7d4c6d1c55b2642fa40f192580a301a69dcdab320376e33197e844e17ee"
     },
     {
-      "scenarioId": "basilar-artery-occlusion-escalation",
+      "scenarioId": "diabetic-ketoacidosis",
       "contentVersion": "0.1.0",
-      "moduleId": "neurology",
+      "moduleId": "emergency-medicine",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:4299b3271c6d25130dc4b401e882b661c24a5403e7dfa0616b1f4c40dd1342f1",
+      "defaultsHash": "sha256:4628ae1c23c03092378da2752fa6ccc0bfabd09122d6d37c3ede24b536bd5d8f",
+      "maturityHash": "sha256:2160a838cebf91b95dd3989359554a5f8da45afa1263d58d618c91b70c22bd6d",
+      "sourceManifestHash": "sha256:72ee9dcfa3e0063ab9582535964b3af2e07b31c8c5fe3fab9dcdf9d33376a493",
+      "limitationManifestHash": "sha256:b338b9f229c0e02e514d9e35c836044daa7410c86e5f8220ba7cbb8657e9d8d9"
     },
     {
-      "scenarioId": "spontaneous-cerebellar-intracerebral-hemorrhage",
+      "scenarioId": "exertional-heat-stroke",
       "contentVersion": "0.1.0",
-      "moduleId": "neurology",
+      "moduleId": "emergency-medicine",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:0e8fd00f48e7fd1f185484e3a9c869de4947f772d14e37d48012c27bbba51ee9",
+      "defaultsHash": "sha256:cf6c85b47289179aa32051f86f502c3338238fe6a59256f6c5bfc337cba5e715",
+      "maturityHash": "sha256:bcded300f3b7a8c47c8b7495ea305c75dd5d9058bcd3315ad89500f8568091b4",
+      "sourceManifestHash": "sha256:066c55a66182f351c751112c4287b4c65232b0a1592b4a0f8f29b6877f4392cc",
+      "limitationManifestHash": "sha256:74bf4d7a85fdf0338d9aed2cfbcddcef28f3a93baffad9655769dcfceacbbc92"
     },
     {
-      "scenarioId": "aneurysmal-subarachnoid-hemorrhage-deterioration",
+      "scenarioId": "hemorrhagic-shock",
       "contentVersion": "0.1.0",
-      "moduleId": "neurology",
+      "moduleId": "emergency-medicine",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:22d724c7f028dac37f6f575c64dc85ca0893068b4e7ce41b5287f2621fb4193d",
+      "defaultsHash": "sha256:3852e64df3eb2ca91eaa43caf296a798b6b287c8282d9f13a2c3348c7b3ec5d0",
+      "maturityHash": "sha256:84f117b878c381d0ccf25463d37db0b9208243392fafd96270f98bf8501a01da",
+      "sourceManifestHash": "sha256:e7c91a145efcbeaa7bcc45960482699ed91124d61c0286ec9536de0296f6db7d",
+      "limitationManifestHash": "sha256:7c38e890562b5d1e450305e73884e4108c10317f5a1bd149f392833a0da9390a"
     },
     {
-      "scenarioId": "focal-motor-status-epilepticus-escalation",
+      "scenarioId": "hyperkalemia-with-ecg-change",
       "contentVersion": "0.1.0",
-      "moduleId": "neurology",
+      "moduleId": "emergency-medicine",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:388f4fcadd9a9808787695dccfa70cec4186741a0aa8b2ebace79720f05a096c",
+      "defaultsHash": "sha256:7b19b3657d9f728ec13f343c2b013ba153d2f2634e2ef223efd062494b9028a9",
+      "maturityHash": "sha256:f672f60c9bf68e680623466f884c3e2f23c9d644006c7bc2ca60099f4ebb81e2",
+      "sourceManifestHash": "sha256:c5a15792738a700d5e8f278fe52c0b89f4d9602ecefeb216b936022437808f3d",
+      "limitationManifestHash": "sha256:c8ad1734201e24dc1faec7f2ffc35378a7dc058c4d2f27f6cce753c4cf32ed53"
     },
     {
-      "scenarioId": "nonconvulsive-status-epilepticus-recognition",
+      "scenarioId": "intracranial-hemorrhage-deterioration",
       "contentVersion": "0.1.0",
-      "moduleId": "neurology",
+      "moduleId": "emergency-medicine",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:6ea6f0ef1ccaec3739ea5bb3a4c477c103bf20d70e1cd9aae2f20b85c3d04e58",
+      "defaultsHash": "sha256:e083fb26acf1e8029edaa882ffbf834d17176668aff57b552be0122f5ce43994",
+      "maturityHash": "sha256:041365ab93139ad360c323b3c7565bc36203d519921ed54ee8ff7d6ec4380bbe",
+      "sourceManifestHash": "sha256:dc5fc557a5d3f17d6d29098b6727426fd4ec06ba3701dfc482b2a02f385387e0",
+      "limitationManifestHash": "sha256:86df64003256beff4d24cdb84892b747766a500857e8e37bbc84d76b5b611dd2"
     },
     {
-      "scenarioId": "myasthenic-crisis-escalation",
+      "scenarioId": "obstructive-shock-tension-pneumothorax",
       "contentVersion": "0.1.0",
-      "moduleId": "neurology",
+      "moduleId": "emergency-medicine",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:9feaa96327ac6f52a440f69f989a80c215ecb4a09723dd0ae4b4ccd6b728e152",
+      "defaultsHash": "sha256:047f3d4b0126afdbf9a8c29c7613d952d17dead6eaa94dd81905182c926bf70e",
+      "maturityHash": "sha256:06af5c7996098de46684bbc83784309f53a563fd23e96a78cddd5b661be2a3a1",
+      "sourceManifestHash": "sha256:ca0b9085a9ea31ee4dacd2e9ec231b0454e0c03602639c30439d6e6b4d0b2f8e",
+      "limitationManifestHash": "sha256:3452bbb682a21d10e678fe5c96a428d2d862987dff17192c255d683e90a7b62d"
     },
     {
-      "scenarioId": "guillain-barre-respiratory-decline",
+      "scenarioId": "opioid-toxicity",
       "contentVersion": "0.1.0",
-      "moduleId": "neurology",
+      "moduleId": "emergency-medicine",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:801267826607b9ede26947ad633819ea477afec3a3efcd00742bfda01f13df3a",
+      "defaultsHash": "sha256:910adab245d41cba5e3abc9455fde736825f7036280145d6f8dd14ff0c3cb605",
+      "maturityHash": "sha256:255885606f94b5c7a7c151a1f26c5a83741f746f35f82695f36fce91f7b82a6a",
+      "sourceManifestHash": "sha256:9672ed631d0c1e51346cd94fff4b7ce96308ae0739c56a936832ad6ebf7c4de2",
+      "limitationManifestHash": "sha256:f4e51f340417290324e583dd5af219a1803599e340b020f6e4ed9a1a9ba2c755"
+    },
+    {
+      "scenarioId": "pea-arrest",
+      "contentVersion": "0.1.0",
+      "moduleId": "emergency-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:7386436377d657b35a7b752674e3f6a916b9d72963af474071a7cb532f0d8416",
+      "defaultsHash": "sha256:917bfb3f22060260a11aa5dba90829d7fdf0528e7c63772fd7fde6f117cdcd84",
+      "maturityHash": "sha256:1ea88ccca2716a5ec86e63c4794787b9876f7df5871392d039078aa67c035c7f",
+      "sourceManifestHash": "sha256:31805e726053ca9276c9017f1e1ed9a532d67b981f07e342c5e069a6c4c22d3e",
+      "limitationManifestHash": "sha256:e9e5ad53d03fd57d249f85947bd1456ad8364fcc271add8ee11379a27972e546"
+    },
+    {
+      "scenarioId": "persistent-vf-arrest",
+      "contentVersion": "0.1.0",
+      "moduleId": "emergency-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:a91d04728dc82dd09a9b37ca8191b39803c5b8aa652ccfb7b59c1e03d56ddeba",
+      "defaultsHash": "sha256:6c038f00127947db5e07a3b777fea90bdea417e0322611b36da83e9355c7009d",
+      "maturityHash": "sha256:1ea88ccca2716a5ec86e63c4794787b9876f7df5871392d039078aa67c035c7f",
+      "sourceManifestHash": "sha256:31805e726053ca9276c9017f1e1ed9a532d67b981f07e342c5e069a6c4c22d3e",
+      "limitationManifestHash": "sha256:e9e5ad53d03fd57d249f85947bd1456ad8364fcc271add8ee11379a27972e546"
+    },
+    {
+      "scenarioId": "pulmonary-embolism-deterioration",
+      "contentVersion": "0.1.0",
+      "moduleId": "emergency-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:84d31efdb6f5af620cb5fac0307895c412e48366bd16c2f1322ddb381c99d72c",
+      "defaultsHash": "sha256:cc781c6ebf6d95cf86f3779048651cce0cad6b6f3f440d3cfd7c74ec0ccb0017",
+      "maturityHash": "sha256:19b2d00271e641df8b79a013ebd189adbba08840fbb04692e0cae8b4e79f386b",
+      "sourceManifestHash": "sha256:c245590d77aceea29ccc2e9ffeee04174e51a2a2d676336a5af67ca8e8723bea",
+      "limitationManifestHash": "sha256:ae4579383fea4c90f30add2e0bfb8bbbaa83f239e9fccee0a7e516a6ce3453f8"
+    },
+    {
+      "scenarioId": "septic-shock",
+      "contentVersion": "0.1.0",
+      "moduleId": "emergency-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:3b53aedad42ec45f165df59b18df8ed5162e8bc8eba03f055b05962f05ee1b4c",
+      "defaultsHash": "sha256:877944fc0ee2453af752c15b4d656a69452d1c2db8edaec613722d010a4eef65",
+      "maturityHash": "sha256:2a010433d6224a90c06b155b26aeba543de428a4b1c0996afb0c74cbbd537b41",
+      "sourceManifestHash": "sha256:0d97f7881afa346cf0e7c1d05dc5f31a217453fefc06bec22863deb054c49a57",
+      "limitationManifestHash": "sha256:78bbcb235c3aef6eea6a3a4209bb5f7045e928fef3141f7549a6544abbce52df"
+    },
+    {
+      "scenarioId": "severe-hyponatremia-with-seizure",
+      "contentVersion": "0.1.0",
+      "moduleId": "emergency-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:19afdf9a1f91ec8ef6611a912b48019420155f1d70b7b19c9df0ae36c65fa99f",
+      "defaultsHash": "sha256:dbe8dd3737595cde366a076bc348dad15d8f4ca1eb0ff9df244580503c9a59c3",
+      "maturityHash": "sha256:1eb599d33ceb42fae86b8d5ddac78afb2d6a7657959ffb3f6138de649c36f07e",
+      "sourceManifestHash": "sha256:257cf56eec1301c4e65018a6b5063ff842d45b3bb6d5dfe6882b92fd4a4faff8",
+      "limitationManifestHash": "sha256:d41bd6d4508542db1f0dde8d94a6ad977402e388267aae6ee1dc4a7f80b1c06a"
+    },
+    {
+      "scenarioId": "status-epilepticus",
+      "contentVersion": "0.1.0",
+      "moduleId": "emergency-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:210488e26cbb18e1edbdeb6f913f62d4fb15cfedacd4fe4eab988ec8482cb164",
+      "defaultsHash": "sha256:2686b0f60fa140c22d1574ebd49eb526199ecdd4b59b060b076ef177e9162831",
+      "maturityHash": "sha256:412ab7c75af341f5eeffc72281ace26621c326cf3de53856f96c9f15bb893283",
+      "sourceManifestHash": "sha256:ace9b46e1283f7c4565fdc73d650cb0d1a3108c6057c409be8a49ec584582f73",
+      "limitationManifestHash": "sha256:94571d19bd83d8f42ee2ec234fb38b36f7a3794e831be9efad50e141cc7c83c7"
+    },
+    {
+      "scenarioId": "stemi",
+      "contentVersion": "0.1.0",
+      "moduleId": "emergency-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:687576ce3a4ae8f71892a8b3546e1888a728d0dc487bf18eea9e14e2519c8bcf",
+      "defaultsHash": "sha256:a8c3609bcbd481141567f352d2f00abf19a0430ae8dbc98c0fbd7cde4a8e6b12",
+      "maturityHash": "sha256:c084271448f2bc2153c4d039ac8cec3e21befa7c9a122dbcc99b2d126394af26",
+      "sourceManifestHash": "sha256:e67af4dbc72cad267e4ab983787a89ba46e8e15ee882f1dd667120a72d796aa0",
+      "limitationManifestHash": "sha256:3c5764745eb80236d4d9bb4476860a20156a71df38efcc4146786cc1eb38ac34"
+    },
+    {
+      "scenarioId": "trauma-primary-survey",
+      "contentVersion": "0.1.0",
+      "moduleId": "emergency-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:b875df501279023d288bd313f0acf7335d6922db90586d5b4579e30a45ca3f7b",
+      "defaultsHash": "sha256:e24913e0b57482422044c60296f933d7f11c4f6d9015d1462aeb65ac10779124",
+      "maturityHash": "sha256:d32f338ea3b187d2e1824fdaba617df20b676c8c9da1edb467b8abb542afc673",
+      "sourceManifestHash": "sha256:e3af6f353a03b0a430a2580ad27a85eb70f52ec205ebedb17eea344bb3addbf2",
+      "limitationManifestHash": "sha256:5e94744f644740d2372b6cc42bda3a941bf5bc4fe77bf23990960bee0e43018f"
+    },
+    {
+      "scenarioId": "undifferentiated-shock",
+      "contentVersion": "0.1.0",
+      "moduleId": "emergency-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:25b793e39bec4ef3b0d4220dcdeafdcff728301001c86b362a167b6e1694509a",
+      "defaultsHash": "sha256:b493c9aab18d03045684732e5d2dba0df177e4049efa86673f0605822b6efad3",
+      "maturityHash": "sha256:192c61eb0377146543ebf99c777a48f0d6901327c7c72702d48b0a392cf57552",
+      "sourceManifestHash": "sha256:96990a0739248cca90250e0e2cdda2c12639102a31ff08d1b9f9874654d8b556",
+      "limitationManifestHash": "sha256:9b685ad712eb4eec67292e89ffc74f009ce935f2b0fc208e89f1f3fff12fe92f"
+    },
+    {
+      "scenarioId": "unstable-bradycardia",
+      "contentVersion": "0.1.0",
+      "moduleId": "emergency-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:7aef6266f1b674f65371bf15b1e4dd566d2ea7a25417925ea6f81db83a983021",
+      "defaultsHash": "sha256:ab961093ccb8b06bb488157071085f49e1646d95e4844f96789c2263e924be7d",
+      "maturityHash": "sha256:cef4d15742e61fb1c8bd39ed081de24c012d97e60e7525128296c0517187eda4",
+      "sourceManifestHash": "sha256:11743cbf5df781a0c04a7d4d85729dc7e75cd4225d921c71163faafb1e791e89",
+      "limitationManifestHash": "sha256:65129ae6949c194f89975a9f7a062430a9d590b5456ed87db220fcd22b24683b"
+    },
+    {
+      "scenarioId": "unstable-narrow-complex-tachycardia",
+      "contentVersion": "0.1.0",
+      "moduleId": "emergency-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:7b91405c777f3607dba1d313e3766b539c84c85c72fbee5e6c4bcb0980d46d2d",
+      "defaultsHash": "sha256:9b1472dcb6ff0704407007efd4e5c5280e9f31c5fa4de489aedd74a570a70f16",
+      "maturityHash": "sha256:5553f37bcccc4a40ffa25bee091cadf4e27479f1ef9b781fa14a2f98ec4f9fd4",
+      "sourceManifestHash": "sha256:588c902e7771caf3d3dae6c8940254e53c108c492b4df413ad315dc6a8386990",
+      "limitationManifestHash": "sha256:d8d5c11c34520fdaa59a4969e3c22f30681f10f186a6d5c2337e6a9449273ca2"
     },
     {
       "scenarioId": "acute-bacterial-meningitis-first-hour",
@@ -1594,51 +1796,13 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "suspected-herpes-simplex-encephalitis",
-      "contentVersion": "0.1.0",
-      "moduleId": "neurology",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "raised-intracranial-pressure-visual-threat",
-      "contentVersion": "0.1.0",
-      "moduleId": "neurology",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "acute-transtentorial-herniation-pattern",
-      "contentVersion": "0.1.0",
-      "moduleId": "neurology",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "metastatic-spinal-cord-compression",
-      "contentVersion": "0.1.0",
-      "moduleId": "neurology",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:0c4b74e08168df801a57e2cb6fad3bd3dbe638b93083eba71162ccb103a50498",
+      "defaultsHash": "sha256:5a00809bed553572a90c041da98463b9a793d53d809e3f53ff84031437b0e96b",
+      "maturityHash": "sha256:f87d7b39dc3b0929a1be7ed28c3d326970c73009a157bed5960a0c2889a51f5e",
+      "sourceManifestHash": "sha256:a5ad72f3a6e0e72ed2371ed0dce76a1aad01b8221a597ebb6cf485c7c31e3b25",
+      "limitationManifestHash": "sha256:4badaacc9b26a8465bb49440c2b7fa488cde3f0db7f589f8a472eea4b61f5c67"
     },
     {
       "scenarioId": "acute-delirium-reversible-causes",
@@ -1649,7 +1813,47 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:5a2dd7e3ba65dd6bdc0b24b956c1bcbc51a581099bd6df765d26658250300059",
+      "defaultsHash": "sha256:dd46d0ea5cf9c7f1a09d196200e3cf7345f9840251a4fd592ce7fc7d81207e5e",
+      "maturityHash": "sha256:822f7e28348b2ea66de933df9e4924d496a5cb0f70b813f668a82065f81fc753",
+      "sourceManifestHash": "sha256:4ba7e798e970d7c58f0d11e8e5828979056b6d443dac97156bfb867b700ec6bd",
+      "limitationManifestHash": "sha256:ce48f337f90a11983578169d33e5567d7f97b92e01f58ae03b97032e3a5d4c25"
+    },
+    {
+      "scenarioId": "acute-transtentorial-herniation-pattern",
+      "contentVersion": "0.1.0",
+      "moduleId": "neurology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:2a79d4248e8a1594fe1c23b9cb47a12d9a9369126f324c1f79d065dbed0f8c84",
+      "defaultsHash": "sha256:9cf6082f083d1cbceae4193e4569b460b54b3152049163ee8171ed27841361fa",
+      "maturityHash": "sha256:bda20052103de21ae6fd03f02202c61a60641fc7ef0205c15c432320f0e55b9b",
+      "sourceManifestHash": "sha256:0bbacec828681ef660e7d465527234c2479967c33ecb7b1b7d530fbe55ed3db6",
+      "limitationManifestHash": "sha256:bd0fd1c2bbeaa2ecb8c576b630a90e6d83696004c38445de7dfdcfc196002b6c"
+    },
+    {
+      "scenarioId": "aneurysmal-subarachnoid-hemorrhage-deterioration",
+      "contentVersion": "0.1.0",
+      "moduleId": "neurology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:286298d76791fbb01e2f336471923bd28ab772d13586d004d874e49aca967349",
+      "defaultsHash": "sha256:5bed53d73963bf076e38ebcfda89a87adef3489894df78e5da1d95cef5aefa2e",
+      "maturityHash": "sha256:310f62ffb5b285f8940648d981dc33a8542af96990e581d6fa4ca8aaace62a7d",
+      "sourceManifestHash": "sha256:f903d56275eeaa2abeeadcfaff6770b04bea4db3b64e100d3798eeacea3bc5ce",
+      "limitationManifestHash": "sha256:f50b983801fb724a645d77528127a51fcef5be48660633ba48d44d428ec768e7"
     },
     {
       "scenarioId": "autonomic-dysreflexia-authored-trigger",
@@ -1660,194 +1864,183 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:90dbe5e54a9beedc4200d23f4a8bdc069a5a848c5dc2316fcd7a10ccb5636de8",
+      "defaultsHash": "sha256:defa3b66d1e47271a065a6a5c372731904fc88024af2d7401808160cbaf938ac",
+      "maturityHash": "sha256:3d68eed53de9fd3d22d91f7d157cba765eefe1619099b3647900f8f2f7ef2a28",
+      "sourceManifestHash": "sha256:74e3503c8ee4c5fe5c4602d1d1cb320d45769303d92823093b4a313695de3327",
+      "limitationManifestHash": "sha256:405db0c5ce9210dbfdc08134aafe5390915d784466e881ea83f415b497473839"
     },
     {
-      "scenarioId": "methemoglobinemia-saturation-gap",
+      "scenarioId": "basilar-artery-occlusion-escalation",
       "contentVersion": "0.1.0",
-      "moduleId": "toxicology",
+      "moduleId": "neurology",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:afb94798f4167a19ba90a6969924f749b730796209f2315d61c7d3e6c0a9cf75",
+      "defaultsHash": "sha256:f8eebbae5e213f41c3c94f5ca1a998a5c13b1cc3bb85bd44e6c3d6e114f7bab3",
+      "maturityHash": "sha256:56730d67e1ecb9b3558f5b531730556194206c66f98bd8379519720864e148d3",
+      "sourceManifestHash": "sha256:326134c6ae0511c8ade0f9ea745004cf93255a4219eeb64264c29bca0781b0bd",
+      "limitationManifestHash": "sha256:089324ade3c1c4fb281268dabee7b77415b99eac07bfc06ebe63c4151dc650d8"
     },
     {
-      "scenarioId": "carbon-monoxide-reassuring-monitor",
+      "scenarioId": "focal-motor-status-epilepticus-escalation",
       "contentVersion": "0.1.0",
-      "moduleId": "toxicology",
+      "moduleId": "neurology",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:474de138306d02c7c13ff1e6b92fc173f639d3f753ca7eea1d7f47c6b31eb591",
+      "defaultsHash": "sha256:d56c8ecb1c8c1b434608280a76f858b539e257287aa80d8bb50c7da9f3d83024",
+      "maturityHash": "sha256:89e6b1b52b75cd57bc4f2e1c028ba4907a244ba4434455c76bd8a91ad5e7455a",
+      "sourceManifestHash": "sha256:bc543deffd91fa9846015fcfdad4957e410fcf905a58d15edf062d29a1faf5a9",
+      "limitationManifestHash": "sha256:95d6dd102cfa07d2f8d30bd4d5a642856465ff459a1c9156e9602cc0c1d4fa06"
     },
     {
-      "scenarioId": "acetaminophen-clock-and-nomogram",
+      "scenarioId": "guillain-barre-respiratory-decline",
       "contentVersion": "0.1.0",
-      "moduleId": "toxicology",
+      "moduleId": "neurology",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:23e96fc2b69f4cec2cb8daf8a99b46c49439abe63acb825df269d5e90c432a30",
+      "defaultsHash": "sha256:6aaaab51a6906f9bdc3d0de787e93e526673badb4edd09bc59b857ff46c28ab5",
+      "maturityHash": "sha256:8f2464af9a6c4fe3aa3559e9ff2d736aba536af24cc5f832946cbbf1f176a4c7",
+      "sourceManifestHash": "sha256:f849a1aa1d02fb7631176761c10342c6a1a4cf4d2f8cb425dd5b9def114e04ff",
+      "limitationManifestHash": "sha256:959b2cdbc7f7af492f9c73aaf33d639451ff300cf626697eab312f3568f04620"
     },
     {
-      "scenarioId": "salicylate-falling-number",
+      "scenarioId": "metastatic-spinal-cord-compression",
       "contentVersion": "0.1.0",
-      "moduleId": "toxicology",
+      "moduleId": "neurology",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:214ee8ba05c09b1292dd816f41e92736e052079094389e37fcc203bf8169bbc2",
+      "defaultsHash": "sha256:3fc32641375e11957878c446f46c86a2d746b90cdbcf14e9e83316b4394efa8c",
+      "maturityHash": "sha256:21522750957d3774078cfe3528843ea18787082dccc5613c0c24a87baa702a20",
+      "sourceManifestHash": "sha256:192440d61fd82a04a2df19a30ee750ae4bba4928ef37c82d1922c250f3de0438",
+      "limitationManifestHash": "sha256:54c6d54310e29f9f3d52eee580655592e7d82aaa682ea4ca30aca1ea750149ca"
     },
     {
-      "scenarioId": "tricyclic-sodium-channel-cardiotoxicity",
+      "scenarioId": "minor-nondisabling-acute-ischemic-stroke",
       "contentVersion": "0.1.0",
-      "moduleId": "toxicology",
+      "moduleId": "neurology",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:66609287c453b757192ee7d5f5bc69b565484017dde31c6a769d7034003a8882",
+      "defaultsHash": "sha256:e7e740eaebb725b64cc2ca69581f3c84c5f9581a94a74fe3ecbdecbf95f343b2",
+      "maturityHash": "sha256:efea84469ead1735d076378f3cbc32b5cf12aa6e6233c34c2d57eeff5da9c72d",
+      "sourceManifestHash": "sha256:d5b1ecddc40f05a045a08559e6130d6b5522ab2818eed8715231ea6e2dcc936d",
+      "limitationManifestHash": "sha256:cda816c79a733376b1c8eeb96a507d74eb6282376d2467e916667586d5d9560a"
     },
     {
-      "scenarioId": "beta-blocker-cardiogenic-shock",
+      "scenarioId": "myasthenic-crisis-escalation",
       "contentVersion": "0.1.0",
-      "moduleId": "toxicology",
+      "moduleId": "neurology",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:570521b08472b0ce87d58058cfbeadb4fbefa823a8cecac9abcdf3e87989ec2c",
+      "defaultsHash": "sha256:71b122ba7fdf502d4063b42ca4fefe9a4eb8c6a05864593147019836798590e5",
+      "maturityHash": "sha256:3d32df6018f65fab54a23bee0beac512346985e5ffccfdafbe7dc616c80975a1",
+      "sourceManifestHash": "sha256:c71c22b3da9f22b748776c9ce9315cd5ffa2e6137bdfc6f5ab9e5a935391887b",
+      "limitationManifestHash": "sha256:d6263ff1c824eb496ed7e986330f73374d88ed640faad2d7c9880c167615e579"
     },
     {
-      "scenarioId": "calcium-channel-blocker-shock",
+      "scenarioId": "nonconvulsive-status-epilepticus-recognition",
       "contentVersion": "0.1.0",
-      "moduleId": "toxicology",
+      "moduleId": "neurology",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:9df2b8bc4146cb04bc15a30ec498ba4ec960573b89f4ea566103f4033377dc10",
+      "defaultsHash": "sha256:3ba55f696bf34a212fb47c5d82ba8dcceca2e1d3097ca7441f7ffc461e38a8f8",
+      "maturityHash": "sha256:4e879636ecc8ee0eabdfe616e1e208ae773791e2d4a6e5dd7df908a47ab9f6af",
+      "sourceManifestHash": "sha256:86a264a09d57a0190703d34da38b901cfa48e3728c5c7d09486692c6b5613ee1",
+      "limitationManifestHash": "sha256:2f533c86304dfa5646c736128da5847b1b7fae43dfe75a9c349f91c90f292ae6"
     },
     {
-      "scenarioId": "digoxin-rhythm-potassium",
+      "scenarioId": "raised-intracranial-pressure-visual-threat",
       "contentVersion": "0.1.0",
-      "moduleId": "toxicology",
+      "moduleId": "neurology",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:a95c3df8be242ddeec36f25515a9b3b1512403942e89fc60649e374761e7d773",
+      "defaultsHash": "sha256:7b54fb569fd754754eb415260e6e0253e5b9c647bb1e1af85f13717bb1e9924e",
+      "maturityHash": "sha256:106d866531f209067f197bfaad768fde78077b73fef39271c51ed1542a3b9ff0",
+      "sourceManifestHash": "sha256:c27732080ec53b6d7475a06df42f2c4e8851127789997450f3c0f60a7a1329a0",
+      "limitationManifestHash": "sha256:0432b0681fa14b1cd746e8945419b297d42222fe25d84c3076661bdb6997c515"
     },
     {
-      "scenarioId": "cholinergic-pesticide-respiratory-failure",
+      "scenarioId": "spontaneous-cerebellar-intracerebral-hemorrhage",
       "contentVersion": "0.1.0",
-      "moduleId": "toxicology",
+      "moduleId": "neurology",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:5529f95dd6f963a45cd9f2e2e966a1610ec03e5120f2c845b8f38ce85a0a4ebe",
+      "defaultsHash": "sha256:561e1390a3394dbfb043da7b82666fad54e6f984d27003543da4f1f2060ff3ee",
+      "maturityHash": "sha256:1c35d2cce1e4ba489ab591333f203ec9b16df7bf6c613d468b578fce08cbf94d",
+      "sourceManifestHash": "sha256:f4f97101bb2ad6ff48bf311426bec42f3f674ac813d08365184ac02dacc71b24",
+      "limitationManifestHash": "sha256:d4d5ae3de158bbe2066e324034707e4ff1acc06883e403a397cbd076ce337e87"
     },
     {
-      "scenarioId": "anticholinergic-hyperthermia-delirium",
+      "scenarioId": "suspected-herpes-simplex-encephalitis",
       "contentVersion": "0.1.0",
-      "moduleId": "toxicology",
+      "moduleId": "neurology",
       "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "serotonin-toxicity-hyperthermia-clonus",
-      "contentVersion": "0.1.0",
-      "moduleId": "toxicology",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "sympathomimetic-hyperadrenergic-hyperthermia",
-      "contentVersion": "0.1.0",
-      "moduleId": "toxicology",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "methanol-visual-acidosis-gaps",
-      "contentVersion": "0.1.0",
-      "moduleId": "toxicology",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "delayed-local-anesthetic-cns-cardiac-toxicity",
-      "contentVersion": "0.1.0",
-      "moduleId": "toxicology",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "opioid-xylazine-persistent-sedation",
-      "contentVersion": "0.1.0",
-      "moduleId": "toxicology",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "postpartum-hemorrhage-uterine-atony",
-      "contentVersion": "0.1.0",
-      "moduleId": "obstetrics",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "maternal-sepsis-postpartum-deterioration",
-      "contentVersion": "0.1.0",
-      "moduleId": "obstetrics",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:de3af9fc777026a979666d4ccf3e4ecdce0cb32926da2dd352d146f1936b362e",
+      "defaultsHash": "sha256:2b34c80f94fe31bfe8abef1a8ebdfc5f6b2011113c450b391817849a7a4a36c0",
+      "maturityHash": "sha256:6ab9bd9de416dd8e8dbc0fb3147a2b8c4df18ad7529898e14affe2112211c837",
+      "sourceManifestHash": "sha256:21a57489a6477680eba945a9d4432a187a82367716f27d4eea43dd9ed3cbfc59",
+      "limitationManifestHash": "sha256:7aead721aab61b59d55a6c8aa32994ff3273bb5e9bef701f2956917cac6db256"
     },
     {
       "scenarioId": "concealed-placental-abruption-hemorrhage",
@@ -1858,18 +2051,13 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "postpartum-severe-preeclampsia-warning-signs",
-      "contentVersion": "0.1.0",
-      "moduleId": "obstetrics",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:6f710cd36ed3bc9cace7681db068d54c303ba003c53aacc982479525b2566f9c",
+      "defaultsHash": "sha256:96e2deb4c1680383359e943d55f699c149fa0b636d36f6b228445b4af20b3155",
+      "maturityHash": "sha256:dfc549c15181da7c1d14965dbda05e6a4dfe37f6632945611214f51e3aa4b911",
+      "sourceManifestHash": "sha256:01f19cb16c042317ae3879073ff8982a999f7760519aee5e622245894dfb5006",
+      "limitationManifestHash": "sha256:a9b96bde9ea2f0d55798853f408f9df8ae012bf71b7768acc9da02df7e57cbff"
     },
     {
       "scenarioId": "eclampsia-first-seizure-response",
@@ -1880,84 +2068,13 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "suspected-amniotic-fluid-embolism-pattern",
-      "contentVersion": "0.1.0",
-      "moduleId": "obstetrics",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "maternal-cardiac-arrest-coordinated-response",
-      "contentVersion": "0.1.0",
-      "moduleId": "obstetrics",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "shoulder-dystocia-cognitive-sequence",
-      "contentVersion": "0.1.0",
-      "moduleId": "obstetrics",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "umbilical-cord-prolapse-urgent-birth-coordination",
-      "contentVersion": "0.1.0",
-      "moduleId": "obstetrics",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "suspected-uterine-rupture-recognition",
-      "contentVersion": "0.1.0",
-      "moduleId": "obstetrics",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "magnesium-sulfate-toxicity-recognition",
-      "contentVersion": "0.1.0",
-      "moduleId": "obstetrics",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
-    },
-    {
-      "scenarioId": "high-neuraxial-block-obstetric-coordination",
-      "contentVersion": "0.1.0",
-      "moduleId": "obstetrics",
-      "maturity": "preview",
-      "practiceRegions": [
-        "US",
-        "GB"
-      ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:045de07d09bb1416c8e2547ebcffb6b4dea91d99da444b71c066c5217693f366",
+      "defaultsHash": "sha256:2efef158f0822a991e9aeef519afa004d9a255a36c199f5edaf4ab2fbbc675ea",
+      "maturityHash": "sha256:c0c9e735c8837a9127b7830dfa1b7fc529d28098130a579783a06fb417768264",
+      "sourceManifestHash": "sha256:9f8e198dfcef60bf71bf2ccba17f8c1d7b64b6c69418222c9e09e649b6eadaee",
+      "limitationManifestHash": "sha256:11949ae4067f7b758e5a6430f11a788f27650d0b576fbddd2ab6323079b4be0c"
     },
     {
       "scenarioId": "failed-obstetric-intubation-oxygenation-first",
@@ -1968,7 +2085,965 @@
         "US",
         "GB"
       ],
-      "fidelityClass": "state_transition"
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:97a3050d98326244a6b846b51157b25c7bc8c25174bf7a2dd8332a45b90a9a25",
+      "defaultsHash": "sha256:5a911b3089e7e9464cf47e3e7faf8eb27ea39401fe4e23b5d47685f1482f59ef",
+      "maturityHash": "sha256:a6b134c0511b829b036ef013c7f8a0485e7474cd4ebb7348adc0e080aa826d05",
+      "sourceManifestHash": "sha256:2d6ae8f911316f91e5691918d680a7cc9a7d5c31d8adac77a67509c39f0802f4",
+      "limitationManifestHash": "sha256:4c9a550a2bc6bbcadfb873c8904b5246deb3586bf138e08f8a217dacb1099f2f"
+    },
+    {
+      "scenarioId": "high-neuraxial-block-obstetric-coordination",
+      "contentVersion": "0.1.0",
+      "moduleId": "obstetrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:6b6b37a8e5d28b64ec0ace2f5d0ed5f23848e4f2e633e70fadc8deb4a17c728e",
+      "defaultsHash": "sha256:8a5df075f366e409dd52092c554ea7d984590b0a732b127176ba646ea7babebf",
+      "maturityHash": "sha256:385c8bb6bc1e500e36a32221b7379d7500ba23726492760039652ad83da92a14",
+      "sourceManifestHash": "sha256:4e8e35f1591b9f14be2dc162a97ae40c5093ab85f8a50103dcdff39a7697602b",
+      "limitationManifestHash": "sha256:3a56701832f2eb664b913112862d46d420c795e11dcf5d6c845714d9b4b1564a"
+    },
+    {
+      "scenarioId": "magnesium-sulfate-toxicity-recognition",
+      "contentVersion": "0.1.0",
+      "moduleId": "obstetrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:ab2cbe54d11b75f373a27b9b12803143ce3e9f84ff3ec5068d9983af3e0b6ba7",
+      "defaultsHash": "sha256:540865e50ee15a01ee58f6335f38bfdf85dfc13234b3911d1c0de1ba36406704",
+      "maturityHash": "sha256:7f533c323653a96876b8208b8a7f3dd96a957f70db92c205154367ef58c8f62a",
+      "sourceManifestHash": "sha256:eb6d90302454bdf9f449e07b03f40766410d8ee5f96ddc9e1d01f2852880e7cb",
+      "limitationManifestHash": "sha256:cd9ba56cc4309c09f69f85c2691a7ed52f08d837e4bfb5a46eb6858d0cad7861"
+    },
+    {
+      "scenarioId": "maternal-cardiac-arrest-coordinated-response",
+      "contentVersion": "0.1.0",
+      "moduleId": "obstetrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:aa8ea16fc266ad9b67bbb066f982b4429dd8df89d8c0e788b61f0402bed958c2",
+      "defaultsHash": "sha256:8f8a80d5ffca35c8572fd7a9468087b5342c2eb25c85274734da7d133090b997",
+      "maturityHash": "sha256:82f6231c58fc06c80d9e18c9f6cc7fd006f6f7634f768194602b54ab3ffcc9a4",
+      "sourceManifestHash": "sha256:8b045c2c8d7eaa00d492b40724136b94df106eba3a44c7a8c1153de6fac53291",
+      "limitationManifestHash": "sha256:c9929526eac499b02cbc3b95ec3e7dc255d7d90772cc0ecfd9f869874d693b20"
+    },
+    {
+      "scenarioId": "maternal-sepsis-postpartum-deterioration",
+      "contentVersion": "0.1.0",
+      "moduleId": "obstetrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:c3be78e9998322ac8c2408c5dba87dd9bf495777410f1a3d34b259e2f2939331",
+      "defaultsHash": "sha256:e20a5720d09c1afa25d977d5d42c140bd60b268c7173f3d78eb0a00e5d1289b7",
+      "maturityHash": "sha256:1cf978c48580c4f9269733eeb86b49cb6f4f637f134708c77b9d0fdbe958189d",
+      "sourceManifestHash": "sha256:ad60ca79f69f0cc82707ac830d5b014af09a716c95d553f0b883a9e48d537ee8",
+      "limitationManifestHash": "sha256:7fad1edc1db81477b05ca77fff2b3fb3782de3f2448baedafa215ec97b886891"
+    },
+    {
+      "scenarioId": "postpartum-hemorrhage-uterine-atony",
+      "contentVersion": "0.1.0",
+      "moduleId": "obstetrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:54f7b1899f44b641b81252907c2ffba49958c1079375b5494ca1336678e356b6",
+      "defaultsHash": "sha256:cb8e53d69137df2d23bf4652a685f759c82a7f448c4d70c09da174f39e7c61d6",
+      "maturityHash": "sha256:792037c1ed792000041cb354f94ec415a9b1f6b23b9e3d2ef5dc444187ec343c",
+      "sourceManifestHash": "sha256:e089fb478704dacb36ed4cce042b416468e82061c6f5a61e0f9cd9b38c5c8c3a",
+      "limitationManifestHash": "sha256:6f5546006e30a639945affe8d0c52908f62e3fbbb7d4369de8caee794a5c4881"
+    },
+    {
+      "scenarioId": "postpartum-severe-preeclampsia-warning-signs",
+      "contentVersion": "0.1.0",
+      "moduleId": "obstetrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:86f0de1705580a6fb62b82a88d7d1b2e46914da500251ab60a5bafeb407d7997",
+      "defaultsHash": "sha256:6b8a7672b40b96daf69c1af88ca248aba3f2aaed9088de1fb015f178adb1d210",
+      "maturityHash": "sha256:833fa48c432f7ca020aec63e349a376650614e1b00a8958766038e85fdb3d7db",
+      "sourceManifestHash": "sha256:e3c7143038589ab5b765a2e7fc23484672d4b96bb1b6feba0ad8060539562bdd",
+      "limitationManifestHash": "sha256:d69c5936bc2a1e157bae9a99f5694fd78afd5b0de8f124fa9304531a3f4f8911"
+    },
+    {
+      "scenarioId": "shoulder-dystocia-cognitive-sequence",
+      "contentVersion": "0.1.0",
+      "moduleId": "obstetrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:aabd4d84676ca4356c5c31056007c6d1c00aaaabdd9f16b64c439fb26cf7750f",
+      "defaultsHash": "sha256:b25bbd338e3a3f96ec5d298f2a009d119a25ba09bcd71dd3f1a4484a4786cefd",
+      "maturityHash": "sha256:4c5a27c77999a795dc546af810167f622c14fb5725f6671b1175bc4b61289e90",
+      "sourceManifestHash": "sha256:1fe1a61caaaeb35ab6cbe9515b8d114f43a3e9a5223941bb856c20ac6aee64c8",
+      "limitationManifestHash": "sha256:9bae6b822137edf060e423860ebb0aa0590897aa21d6f518ad327dccaeaa46dc"
+    },
+    {
+      "scenarioId": "suspected-amniotic-fluid-embolism-pattern",
+      "contentVersion": "0.1.0",
+      "moduleId": "obstetrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:0bd14e5786332fe512235f36a3822e225c247207e212365a318191c6ca06a8aa",
+      "defaultsHash": "sha256:d32c6416cda232e5648fd5a34731b90d1b0c8bb37edda42d81c967504d2349e0",
+      "maturityHash": "sha256:26c8aa4ea4fc1f3cc39086cbe71fe7c069e79aa041c44fb91bca8ad92bb7c254",
+      "sourceManifestHash": "sha256:ffcd5a518dda87d89871a66d68f89155a3e5edc428c45a368719c43e3df02e6c",
+      "limitationManifestHash": "sha256:7ec5def15daba2b092adeabc7846d3384f61fd9246ecd537cad7f5d2b129d892"
+    },
+    {
+      "scenarioId": "suspected-uterine-rupture-recognition",
+      "contentVersion": "0.1.0",
+      "moduleId": "obstetrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:bed585d4978d8a60fe4dc7ddc9a958d1b857946bd15609eadef26ea7d8b68351",
+      "defaultsHash": "sha256:787ac8cc3f4ec447786eaf89d3c57d12360e1f5f790a9108853aefb45276c245",
+      "maturityHash": "sha256:6fde23e1a9c966241d4283c164d46ef82f3768cad522fbf9e49f631a5076a111",
+      "sourceManifestHash": "sha256:0b3ce41ba13ca1df12eec803004c49035273c072d8988375db89c828f89bc9a0",
+      "limitationManifestHash": "sha256:3fa71ec4ca93857c705d8336f4b6452f321fa8e64a7c86317259dc4270f2b780"
+    },
+    {
+      "scenarioId": "umbilical-cord-prolapse-urgent-birth-coordination",
+      "contentVersion": "0.1.0",
+      "moduleId": "obstetrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:d00544b98fc5e7bc88db4293fe4789c7faa57566fc2c9085a4e2c819c085c959",
+      "defaultsHash": "sha256:c78fdf7bc8655bd45f80b8460a626177b11fe5f570ef074fe58d6ae97dcccd8c",
+      "maturityHash": "sha256:a4e8d79e1d7a8d2e571602a7630d7fcccfe7385aed912a181f553a64627d60bc",
+      "sourceManifestHash": "sha256:59a3eaea402c941502d99d080d94821ab0a03266e1df1c55e2238e8cf4f29adf",
+      "limitationManifestHash": "sha256:d1eb52219e4f7dff2c297a97991c7764c837a44e5c8decbc3817905a12ca79db"
+    },
+    {
+      "scenarioId": "bronchiolitis",
+      "contentVersion": "0.1.0",
+      "moduleId": "pediatrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:34369f9d1cd72f8f1d3064c372f2b3314e80b300c7fa3513976825688a61448b",
+      "defaultsHash": "sha256:22a73468b65c0f2267fbd13e270aaf83cbcea7b963d570b5202e0864c494eb4e",
+      "maturityHash": "sha256:0cc14ed57a5a9554e0012f0dfc04ced3e1ac3972a4a4a80bcff647793838651e",
+      "sourceManifestHash": "sha256:161aaf2cc18b722c69d0727c2b198ac09801d3859e6eb5cf2df6881900895ba6",
+      "limitationManifestHash": "sha256:c0952624b172e3511e3b4e4ab79838f632002dab7f8425d73a6e3458a4608468"
+    },
+    {
+      "scenarioId": "croup",
+      "contentVersion": "0.1.0",
+      "moduleId": "pediatrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:a19d07096b70ce74543fda7f7cf04612f06b879775f6af9704d268123237f864",
+      "defaultsHash": "sha256:bb4d4a5c58c37e4fa219ae251408b0c63476e9d355fad1bf59a0d547d62c074b",
+      "maturityHash": "sha256:da7232a9ffcc57e542137f8fdb384cc65ddea8aaf5f4714bd25ba31e18aeacfd",
+      "sourceManifestHash": "sha256:e83d4199f7be329101aa6dea41a6e7c4c510df05169e3ee6f8c2f591c9829255",
+      "limitationManifestHash": "sha256:092eebfa9963a330dd673f06bf9d10c95752f068af3c68203cb4fd88f283cb99"
+    },
+    {
+      "scenarioId": "pediatric-anaphylaxis",
+      "contentVersion": "0.1.0",
+      "moduleId": "pediatrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:d258dd381bea73dd773c127ef7484669124eb13c4e12d42cc57ff57c45ea12e8",
+      "defaultsHash": "sha256:8c6f72ec64837042474bc42262949d88f7ba3148c06a7fe3c17699b4df687e8e",
+      "maturityHash": "sha256:247bcbc5edf3cf38a15742c52013f02725cac48b8b112fa370b0f11e3fb30887",
+      "sourceManifestHash": "sha256:e7a3aa55ea28ffc0970dd6a73ad2f17c33791fbbff3f134da025ffa66017029e",
+      "limitationManifestHash": "sha256:75f06b4a48813f27ed9fdbcfedda5858e3e1f82b28a4d4f045a93f0c9fa0fe48"
+    },
+    {
+      "scenarioId": "pediatric-bradycardic-arrest",
+      "contentVersion": "0.1.0",
+      "moduleId": "pediatrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:1503e9000dbf94ea7e25d168466f0b99d6717c0e418e7f71730e8c8e5ada582c",
+      "defaultsHash": "sha256:31f758679aca6ba994dc45e6f88ff561017c2fd8de3d5fdcf20b5633a18acc85",
+      "maturityHash": "sha256:d5075f898d7e79350744a424157684d5ee1565e317ddecf19e9e73a7b010263f",
+      "sourceManifestHash": "sha256:86f2a6b0ec997bac89b7a49abe46c766978620281e9153bdfbb43c146aa64e3f",
+      "limitationManifestHash": "sha256:7939e47813482a4a961835046323974a81268215e39e8125c7d563f8450896f1"
+    },
+    {
+      "scenarioId": "pediatric-dehydration-with-hypovolemia",
+      "contentVersion": "0.1.0",
+      "moduleId": "pediatrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:2483b77e63662412f255f7996dea36e2b2fba037c2bdec0e8c56e30cdc8f1fa7",
+      "defaultsHash": "sha256:7ccce442972aa7fc130f3a4ac1d43ffa10c0c390a245575f09efed8777c6a1b8",
+      "maturityHash": "sha256:f18ad2d417e78b55e21c386c772b28d232764ca08ab65cdafbc78f7d77042937",
+      "sourceManifestHash": "sha256:46bf81b91d5ddcfcae1698df5a3f6473c04c00f20ab9de7dd7b93ad5c56c57b4",
+      "limitationManifestHash": "sha256:4695c17cfb9853fee574a386160c63a5ba9aee628c3e80ebebed9c2379e45bed"
+    },
+    {
+      "scenarioId": "pediatric-diabetic-ketoacidosis",
+      "contentVersion": "0.1.0",
+      "moduleId": "pediatrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:02d75bb7b3f4778e2456fde06267b2e032f9d3fb8ba407a40c151fe68faa6f2e",
+      "defaultsHash": "sha256:9d8f1ef7a1035c8bf121d20ae29efd63e9756a8345fc8cf103c2047b3aee4ec5",
+      "maturityHash": "sha256:1bf242ec761211f6f361301dafbafa712fde9282b09f25da40bc75cd70422686",
+      "sourceManifestHash": "sha256:aad6a8c0a372ee4a145003fc6f4fc6a68eeef78ec249ba9b5514a118dfa71e47",
+      "limitationManifestHash": "sha256:5c9b647fd30f893c44b9c6a27d1056dcc4629516540126e26967edfea3fd9a5d"
+    },
+    {
+      "scenarioId": "pediatric-febrile-seizure",
+      "contentVersion": "0.1.0",
+      "moduleId": "pediatrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:aa03fe8b76fce8a7036e08a88b3cafd574ffe61b6d8be84a067cf8cf0c683ea5",
+      "defaultsHash": "sha256:3de4d235c60787b1a977c12adb8309b40755e321bc1741318640bf5d8ca8651b",
+      "maturityHash": "sha256:1f9393b330bbfcd5537bdf1d945ec00c62695d6a51c097ed3945d4a7115c3fc5",
+      "sourceManifestHash": "sha256:9dff8c87c9435fb3066128ddb30a64517e78cfcb6d583199ef9b58817fa56780",
+      "limitationManifestHash": "sha256:c0fc34a55ba62060984dc2fc0422550241327782afb5df6624057064e592c048"
+    },
+    {
+      "scenarioId": "pediatric-foreign-body-airway-obstruction",
+      "contentVersion": "0.1.0",
+      "moduleId": "pediatrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:b4bf87301ca701bc9d6460df36d35b41be3b78582e2cfa5c595b40b619d06862",
+      "defaultsHash": "sha256:80ed29ccde8d113708e191a4ff08dbe432ccd4ccdc50831c4254d63da9a75aa3",
+      "maturityHash": "sha256:8a8afdbdc8cf3dd2cbfb2d1fec497fa025babe2426b12f23b829ebb65fd3a105",
+      "sourceManifestHash": "sha256:5be76396d59c6c988901b8f7adf0304e91336ac06ef0e42a61bb67f2a53aefd0",
+      "limitationManifestHash": "sha256:b7b895caa5130834a3ca4f36a03a9391a03b44e5856fbbfc1fc21da237d674f0"
+    },
+    {
+      "scenarioId": "pediatric-hypoglycemic-seizure",
+      "contentVersion": "0.1.0",
+      "moduleId": "pediatrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:e2b9e2318611bd4288cd26d92281f7b25a8748bfa105b3802168fc497e48ab85",
+      "defaultsHash": "sha256:64027af34b75766a86607946a20cbbb2eed942ed9622edc4d54c61f30f0a7ec3",
+      "maturityHash": "sha256:2f5c3331676cd5616180a5b1f35416c5d2fa5ac762d373c2ba6e4c5e6006abd8",
+      "sourceManifestHash": "sha256:f11d04fb72ea8b8b086021a43aefae90217442c62f8c42b0742d16fa99d1132b",
+      "limitationManifestHash": "sha256:82a229baf51283061874795b5404aa9b08f89c559adb37b2c8143e81d3f65384"
+    },
+    {
+      "scenarioId": "pediatric-injury-safeguarding-escalation",
+      "contentVersion": "0.1.0",
+      "moduleId": "pediatrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:fb2335494c41e2196f06464d77df87495d997dfb93dfb6a9d26bb7d3b7df749c",
+      "defaultsHash": "sha256:2b93e6b8a946ccb0ad5b68395d010b4f9b7ac021c19562b3f53495d018c733ca",
+      "maturityHash": "sha256:91d6307fc36269c334ecb36070d1ae0c58e45e3f76d89b0d37fa3194287b963c",
+      "sourceManifestHash": "sha256:2f3610358a6e23132d97b858389fea0d3fca1e1c614fb0ad0107a8daa018b4a8",
+      "limitationManifestHash": "sha256:a92d377ea83f194db44dcd934dd2056b93e58e0663eee3e78f222f6dac2d98c6"
+    },
+    {
+      "scenarioId": "pediatric-respiratory-distress",
+      "contentVersion": "0.1.0",
+      "moduleId": "pediatrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:0ee805e4dd2af0d5bbcb8b4a3051fa2b95838c5abf52720bcdfb92208c4350ef",
+      "defaultsHash": "sha256:f873c48f1bc54d53386c059ad8355a494fccefdd94fe55dd59d5e0b7e553c724",
+      "maturityHash": "sha256:7fff3a5a168dfddc244e44460a2020ba8e485975f5a1728238870a79ee78243d",
+      "sourceManifestHash": "sha256:a08a7a3e54b2343bb5b6ae9540b428b31ac87c4416ebf24c9bc2846883c7aad7",
+      "limitationManifestHash": "sha256:825100f820d33c05f409a95186d89c8c01c2b3aa0ca3545dcc33f8915e069b12"
+    },
+    {
+      "scenarioId": "pediatric-sepsis",
+      "contentVersion": "0.1.0",
+      "moduleId": "pediatrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:bae43016ba3d8ced54afa65467d3682fc7c81b2f66686560e4f10b579ad888ad",
+      "defaultsHash": "sha256:6cd8fc86d77b3906ca7707fb011af52ff5a2468054732a2b5b7f0dcbd03b2a9b",
+      "maturityHash": "sha256:da76236d170192a242dd0319d6385a56b193884efbaceed858646f11fc915b98",
+      "sourceManifestHash": "sha256:2c8da3d02a08e6206e8f447682d663f9bc8e76c4f4f62b8b5c13b70be199ffb4",
+      "limitationManifestHash": "sha256:d3e7b83a1f5e8d9f0e1610c10c678b78a8290b1d4d89a4b2ad2ac17e06714496"
+    },
+    {
+      "scenarioId": "pediatric-septic-shock",
+      "contentVersion": "0.1.0",
+      "moduleId": "pediatrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:8d9726e83f942030c59b62f7c5cd8713c9f6d63be294954ce78db64a29cc046e",
+      "defaultsHash": "sha256:a0c664307af06a2f1f1afc4370daecb9bfbd1f9a4c56879609aa8d65d69e3c98",
+      "maturityHash": "sha256:da76236d170192a242dd0319d6385a56b193884efbaceed858646f11fc915b98",
+      "sourceManifestHash": "sha256:2c8da3d02a08e6206e8f447682d663f9bc8e76c4f4f62b8b5c13b70be199ffb4",
+      "limitationManifestHash": "sha256:174a7824246dcc7795384e3451dafcfba65b1416ac8ef7a7c496240be5f1505d"
+    },
+    {
+      "scenarioId": "pediatric-status-asthmaticus",
+      "contentVersion": "0.1.0",
+      "moduleId": "pediatrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:9ea421e9bb4dccb876ced3aa22e6ded46c6e354e729688b0ff42364a3a61f96f",
+      "defaultsHash": "sha256:894e6fd4c4ab0de581c90c5e0122b43ca82e4e4f4f5028422253c4158f27a04a",
+      "maturityHash": "sha256:a16087be894d85fc33ef244952abd9d83ff9931ebccc8c9209cb62e18c0dc3fa",
+      "sourceManifestHash": "sha256:c33b9d514b55bb453cbc95538121e931abc3efc358b49c39713b96458f42b9ee",
+      "limitationManifestHash": "sha256:c9212e85ceaf0fa7380531fa9284dc1c83b2cf55e5cac1dc1447b9e493a2d562"
+    },
+    {
+      "scenarioId": "pediatric-status-epilepticus",
+      "contentVersion": "0.1.0",
+      "moduleId": "pediatrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:3779ac5c2232f6b20bc70636dc716e7b54bd741c8210029f1a0959e6911d5db0",
+      "defaultsHash": "sha256:5a775da4f0ee8ee2edbf075f91d566896b120849ab65e0bbeea83ec9a79957c7",
+      "maturityHash": "sha256:508110294bfe51a274ae4fe1ef2daf44688f77c8cefa88e123bccf75475a7425",
+      "sourceManifestHash": "sha256:15938d645c7baca80f785753b66b77788e722175b2fca184dc920f4b9366294e",
+      "limitationManifestHash": "sha256:f3ce8f4d156d81cc5b1708e14a11568c2c7daf0d5644f85db7575cb3c4201ade"
+    },
+    {
+      "scenarioId": "pediatric-supraventricular-tachycardia",
+      "contentVersion": "0.1.0",
+      "moduleId": "pediatrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:fa06667cf31821b6d590bcd39485fdd41c517475c4920e61bf4c850d4edbf86f",
+      "defaultsHash": "sha256:2e99f9c9e3da6de86ca6a9d527a3142ff3703e587f352274537653a77b8a4148",
+      "maturityHash": "sha256:39ab4cefea66f734e07b9b2bd2449340353705760d21621d3ef922b4c52314f2",
+      "sourceManifestHash": "sha256:8c78a5612259f4d07e1239ecb4ad47db2f029396ba0df3923f5f5fc6e03f36a1",
+      "limitationManifestHash": "sha256:203d1b752628e3ffdd19ceb6de98e240f3083a4cb2f471d460245f782a13a3c9"
+    },
+    {
+      "scenarioId": "acute-pulmonary-edema-respiratory-support-reassessment",
+      "contentVersion": "0.1.0",
+      "moduleId": "respiratory-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:a556fdf1bbe6ca24fff27595b1c59d9690798656493aa4014d8f79630f1f473f",
+      "defaultsHash": "sha256:b2e7e74b0100643009aeb94c4ab350a3a97ef03215d4d42942a4813ab100e1d8",
+      "maturityHash": "sha256:38eb96257ab34b30902ae5f0a34f391eb8d775d5fd4041aa118cadc342c30aca",
+      "sourceManifestHash": "sha256:03bcbedd7483d18438b44b08c252e1c25a521ea21cd1f7edf99d48e0a3b7913f",
+      "limitationManifestHash": "sha256:d0d74a808537b6dffb7d0be488159d8c30c9c1a16932e22332ddd4cb10ac9e39"
+    },
+    {
+      "scenarioId": "acute-severe-asthma",
+      "contentVersion": "0.1.0",
+      "moduleId": "respiratory-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:6a8d2b5ce9dd88b13df255c881593ab5373b6d03b97210ad7e503adb3e406b4f",
+      "defaultsHash": "sha256:f9d4a6b9228a11b972b80440a96ece7be2108c3f97d4a63faff7bb5c25ef4126",
+      "maturityHash": "sha256:3929d1d0a4daff3405268b06c95b755c79895e9b7e591f1c08bc154b59edc870",
+      "sourceManifestHash": "sha256:b4933242d24e50d705b093380b1b226b35a2928c9ffad7a38068e9f8ab192f36",
+      "limitationManifestHash": "sha256:78ba846a2f2007a0f13b0415990dd84f0a6e84c4d1f0ac1b6f8f9e9aeed7da29"
+    },
+    {
+      "scenarioId": "acute-tracheostomy-obstruction",
+      "contentVersion": "0.1.0",
+      "moduleId": "respiratory-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:dd78ac7ba266e727893fcd7b2e13889e6640c8c50239c68ca1d7bd5380341f3f",
+      "defaultsHash": "sha256:abc771fdefb2d820d675a42444c8b43c2deca56d0d27ced6e848256e5b07006e",
+      "maturityHash": "sha256:7f4d28117f764d4346110e116da16d7c825a226dadf8ccf4ee48ea9479168640",
+      "sourceManifestHash": "sha256:e56f523e321cc20f79866bde5b916bda7dacf61121ffeca5b812a7faf833d5cd",
+      "limitationManifestHash": "sha256:c26cfd1c46595d720da0d7df38ffc083ab2b25b0f560a5b4c08373a00d015f90"
+    },
+    {
+      "scenarioId": "bronchiectasis-mucus-plugging-reassessment",
+      "contentVersion": "0.1.0",
+      "moduleId": "respiratory-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:2c93ed7a091e08259d8ea2aadc1d57507ac44286a5dc94d0142f1d65471bcc78",
+      "defaultsHash": "sha256:b025431b25242c673897a6e5321b4aa37acd8436f6ba8a17b79084c08ea60b6c",
+      "maturityHash": "sha256:7bf7ceb8e38f813e6c0ae78dd50caed00e4919c9f28ee7eb60b4820d8287e28a",
+      "sourceManifestHash": "sha256:b5e9aac050b5b8b832c9443ac8af38eaed1ae0ad5d6c2e6c891f4e544dd9e816",
+      "limitationManifestHash": "sha256:7f38ca53b2c5a66a81ab3842832af7b2cbc5e96450fb1bdaebd8c52b909ebf5b"
+    },
+    {
+      "scenarioId": "chronic-opioid-related-hypoventilation-reassessment",
+      "contentVersion": "0.1.0",
+      "moduleId": "respiratory-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:9b6629415a6df57c6a59c89b561f90cde3f53a85bc4ffa147b5d5b54f172dc3a",
+      "defaultsHash": "sha256:2eaae11c47a5a07666b53a9d76f5dcc1e5a80bb5453446ee21f8bce414ffb171",
+      "maturityHash": "sha256:0de24d525a8db3e144e5d65fcd04fa632cac9a7362a9436902618510392acaad",
+      "sourceManifestHash": "sha256:f65c2453791662a8cc0062a56a02bf98e09a09dede9dd64facacd831ccb63408",
+      "limitationManifestHash": "sha256:0c00d6060df5d77095f0612996abc487d088b688c4e85ca0a3b8b4bf1d14b1f6"
+    },
+    {
+      "scenarioId": "community-acquired-pneumonia-hypoxemia-reassessment",
+      "contentVersion": "0.1.0",
+      "moduleId": "respiratory-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:fb14383eec393c041c1c699e73b5bb68532a468054b0aea691d1e81b86869fbd",
+      "defaultsHash": "sha256:7620b250950e61bfec51f6a579a70a7f563dde473fb132a62c99460d01710667",
+      "maturityHash": "sha256:5701e5369f3addca94f81333a50d6dc1f14f75055215e7cf072a388490fd19ca",
+      "sourceManifestHash": "sha256:86ebf013d08e3001f35b990b891d9fba4d44f25df1a3dfe6214fd08734ba9205",
+      "limitationManifestHash": "sha256:46b54725856b9a09f9102127c6486a1b79e0cb27e4793252c95cc2dfa35e34c1"
+    },
+    {
+      "scenarioId": "copd-exacerbation-transition-reassessment",
+      "contentVersion": "0.1.0",
+      "moduleId": "respiratory-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:8156ad23c5f444c3948ae99e66264d816545b610e87a27d26c03e7495f252be5",
+      "defaultsHash": "sha256:d7d0c5769a7fd107dcd259863ccc8eb7d191af6d332b02b2ce4d00753f372199",
+      "maturityHash": "sha256:dbd51df44d6266407059f86c746e28b523a04ee2a1720923120f1aa240eea393",
+      "sourceManifestHash": "sha256:b07e8498eaac5818e110879de8e827a1c6dff6cfc03207f50cec7cd5c6259691",
+      "limitationManifestHash": "sha256:3ea02d8fca78a2622e22d4fab405697053b78f2f3a71360c8e4965c037c8d678"
+    },
+    {
+      "scenarioId": "high-flow-nasal-oxygen-escalation",
+      "contentVersion": "0.1.0",
+      "moduleId": "respiratory-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:dcbca7a7da4873cde891f6dae8f5f97dac534f3623657818a38261e603a15688",
+      "defaultsHash": "sha256:cdabf02eb94d85bec211f3dd34986fb72e2162381c249e77aa49dfdf05f34633",
+      "maturityHash": "sha256:6ff2fc6743e8408598cebea8a8e0dbba8bf7167d25e2ca914c7d2955be7bf501",
+      "sourceManifestHash": "sha256:2507b5f3d4d64b33aef827ef4b89c678c71865bf11b5a129eb0e17cce9f71057",
+      "limitationManifestHash": "sha256:74e16129658b75fd07b37cd882cde2adea92611cba9ac08dc3d724d5d0034ca9"
+    },
+    {
+      "scenarioId": "large-unilateral-pleural-effusion-reassessment",
+      "contentVersion": "0.1.0",
+      "moduleId": "respiratory-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:8104b565ffd865a0dabc344b06d97e03d4976fb2f730c301d47289e3f85c6d24",
+      "defaultsHash": "sha256:22673f9a311ec78a04084e746b5fb302b9fda407a42f4f339b15b0569da67f77",
+      "maturityHash": "sha256:a04d0dad4d57c65a7a4eab93b64b5bff26d4fee800b8270d592c6e4a6912ae2c",
+      "sourceManifestHash": "sha256:fbce81d1b6e548b2e8b9eae9fdc1698e88c3fc224b4e9c448c2743b68b69e3ba",
+      "limitationManifestHash": "sha256:11a34d8f947d0d022455a933709d97df407b624c45d45c57d682d428e8f4a367"
+    },
+    {
+      "scenarioId": "neuromuscular-respiratory-failure-reassessment",
+      "contentVersion": "0.1.0",
+      "moduleId": "respiratory-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:8f054e814bb4147802e1e6a67687321081e71d85a558869230d627eb67adac55",
+      "defaultsHash": "sha256:d72acff52532cebdb638c246e968fb7b75c556019e62747bc64e94c27e4f0fa3",
+      "maturityHash": "sha256:1e0d960be1280ce3586d7178513d14908a7b04ba6c70843701e199b5e8151dc1",
+      "sourceManifestHash": "sha256:823ea3b3b85f90670545e249f83c0182a41df1af3b39436e5ae79498231d5627",
+      "limitationManifestHash": "sha256:98c3d72a2bade35c516e116c2922c9713e129f525c631436664129a4015219cb"
+    },
+    {
+      "scenarioId": "noninvasive-ventilation-selection",
+      "contentVersion": "0.1.0",
+      "moduleId": "respiratory-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:23b415b53b99d465cb30d9e81c950540bea85ae5052191e03a6a3bf87994ba8d",
+      "defaultsHash": "sha256:8eeec2f22fdeb6169ea9c9672aaf0528d764aa9014a8f98ae32a39dcd505aa45",
+      "maturityHash": "sha256:fae209492c60478f92013c39969ac5b8c3902f18f6b74a5e956a563d064d4162",
+      "sourceManifestHash": "sha256:9fb3f867d0c15a3c865a3bd09ac5977c0d24e90b74a0a1d8cc37b0f84b956977",
+      "limitationManifestHash": "sha256:26f0fe34821cd188006b907d8e03411213aee32ad04ffc053e579a20e5f5ded6"
+    },
+    {
+      "scenarioId": "obesity-hypoventilation-reassessment",
+      "contentVersion": "0.1.0",
+      "moduleId": "respiratory-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:e55bea245eda177abce61c4463328e4e2b76159374cadca994604d650f7ec6a8",
+      "defaultsHash": "sha256:76bbe0f588f8a8a12a1d8f8671e08822e5807087f6c8a7c49db8059e4d4f3000",
+      "maturityHash": "sha256:ac4afba64fbe32ca1b30db99c47ac4543ad7e459706c8728d40a4eb8d751e6b3",
+      "sourceManifestHash": "sha256:cec04ced414e91bd067ae1388d2b06fa25e53f9cc456137fd3d5560240200bff",
+      "limitationManifestHash": "sha256:a78b778f03d29badd06ceca2fe5489755bd15b668f1d9cff5be668788f8f1ff4"
+    },
+    {
+      "scenarioId": "oxygen-device-failure",
+      "contentVersion": "0.1.0",
+      "moduleId": "respiratory-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:4fcd6010364b6d5ed22d0881485f491ee2b3984da02477b797072716d8de8ff6",
+      "defaultsHash": "sha256:b5ba3f5fb584b27b70f71627117f47f8601909b898f79ea68cd11cd692c2774f",
+      "maturityHash": "sha256:3724fcbd0266cf50eb8d13b98ca5e0d75797f6acfd77cec124f0cb690aec0b48",
+      "sourceManifestHash": "sha256:96f264a252d54b3c000950637ef70771ddb1c626091c8e90dc525d6eeef3ebfa",
+      "limitationManifestHash": "sha256:abf3561f62a722302129df07c9721ddaa01dfc0781c8cec2f030727ca7aa0bf2"
+    },
+    {
+      "scenarioId": "post-pulmonary-embolism-persistent-dyspnea",
+      "contentVersion": "0.1.0",
+      "moduleId": "respiratory-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:b808a886d393e7087a613b30d3af9cdd74375512f598d1149719555002417e5e",
+      "defaultsHash": "sha256:582efcbd646df0ee0dfa1b23e6b6c551311f02b8bed4b2fe732a0563dbd40b33",
+      "maturityHash": "sha256:fcc3e5e11af80ae38ebac3ab39fe982343e5b97fce1cd53c8f70515dff1d98e9",
+      "sourceManifestHash": "sha256:26bfb3dac884f73e6a44c8969ee032b7a12e9b8ff892f8e0ce29792ba980c189",
+      "limitationManifestHash": "sha256:ab63a57b16213d6817ac20f38597f47b2e83ae9d35563e382e368da3586605f4"
+    },
+    {
+      "scenarioId": "spontaneous-tension-pneumothorax-post-drainage-reassessment",
+      "contentVersion": "0.1.0",
+      "moduleId": "respiratory-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:6c9575f1efdf009b7b37b0594d6e479649cd289a6ce156523f2d2da5e7345e24",
+      "defaultsHash": "sha256:348c514ef7af43286f6cbe1310459ea7aedca8e48e0271246cdf69484079d352",
+      "maturityHash": "sha256:fce1baf3431146f1628a1f4cd9073ec3830e1b6c389aaab7616dc89db2e4cd73",
+      "sourceManifestHash": "sha256:189f4a79de8fe87bbda63e16a382fb13f5e7ef8bb469728632dca88f8d907a9b",
+      "limitationManifestHash": "sha256:a2fac1717c71d9139473457163b62e64223dd36b9b570ee22a3f17965cd9e686"
+    },
+    {
+      "scenarioId": "acetaminophen-clock-and-nomogram",
+      "contentVersion": "0.1.0",
+      "moduleId": "toxicology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:cb77fc73ef7945987650655d5945592bde199f4c55cfc556918e62716629c5f8",
+      "defaultsHash": "sha256:65ab84dcef25ce65524f2dff536540e7fe43136fb092c90e036877d10c3ac814",
+      "maturityHash": "sha256:85f4f03f84c18afaf5844ff0985303aae8aa2a826753d11761b8a07fbe38f11e",
+      "sourceManifestHash": "sha256:5d08ab2741e27aed1f74dab8a34dc465a512c3f949781a4af05bf21940e56741",
+      "limitationManifestHash": "sha256:147a5183e907bc4a5799264d1116b854774f3a44b4c7620f29bd1b18f131f387"
+    },
+    {
+      "scenarioId": "anticholinergic-hyperthermia-delirium",
+      "contentVersion": "0.1.0",
+      "moduleId": "toxicology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:96cfcdb809170997a510d4a29c756f4ad134dbd257e6e157e5b3aaead17e0eee",
+      "defaultsHash": "sha256:8cad2513348992a2d48a3919a53385545841c5a2268eff2bce2c16bee184209f",
+      "maturityHash": "sha256:04b7e1e9be8831824966374970293900d40c92ff639ae91ec0bfa244779118be",
+      "sourceManifestHash": "sha256:52439e961eca03c0b721a3d3f173c869e4a7d9a3165c28b2025d63485030a985",
+      "limitationManifestHash": "sha256:55a1c10394683f6c99b3bdc543e1115470b71fe14081a407ec6bd0faffd1ee59"
+    },
+    {
+      "scenarioId": "beta-blocker-cardiogenic-shock",
+      "contentVersion": "0.1.0",
+      "moduleId": "toxicology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:c84b10bb11c2c0649218aa22b77643cbdb5a12898db0fc3cd0f97dfee45d0a15",
+      "defaultsHash": "sha256:f3c6c1926ff352e3e289080994c265786112ce2ad6f5b8862534dae3a97e7bcf",
+      "maturityHash": "sha256:85e902a6569438cee4136fa1e83e75abced6078b18b0375587a035e9695dbd9b",
+      "sourceManifestHash": "sha256:3b9bb068e70bcfad9c88b031a7925ff70e965bb3467e401603fa8931e744c1f4",
+      "limitationManifestHash": "sha256:7cfbe881dedafbb696f1b6be3acbe7200a6cede29c73694e7a4ab1f0d08165bf"
+    },
+    {
+      "scenarioId": "calcium-channel-blocker-shock",
+      "contentVersion": "0.1.0",
+      "moduleId": "toxicology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:d9ed8347efec9b54c608ca51a416b07aa33d41cae868d4bcad789e950893465f",
+      "defaultsHash": "sha256:5b4bacfce100555d34897d880c88b227159425477fae7cb8159c3e29dac88113",
+      "maturityHash": "sha256:8b83621f2f6607a89f1e8b2e63487dd4cb0d3c26d416dff4693cde4d916f937e",
+      "sourceManifestHash": "sha256:f67c8ec73f645002fa4de6874d9e5b9580338c210af5bc1e8e545cf5fcd91f4c",
+      "limitationManifestHash": "sha256:1a068d59e1f33a3d56315f2cabd1a3131bae2a9a1cd724e56c800343aef69e50"
+    },
+    {
+      "scenarioId": "carbon-monoxide-reassuring-monitor",
+      "contentVersion": "0.1.0",
+      "moduleId": "toxicology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:fd48c12b80de255601219e567bd8b373bb380aa656b41e999b8fa90c2706f733",
+      "defaultsHash": "sha256:db4a67527d0d99b80095315c78e483e2f9c9c5c30fb2cb88c1eb44b04abac9a3",
+      "maturityHash": "sha256:ef2f1c07dbcd9cd0b8e7d48af5aa64bd1460ea312d09e5579b91bbb210d73749",
+      "sourceManifestHash": "sha256:dca6914322405c390b524317bb655cbea35f586a68bf393ed58e67f022dd5b81",
+      "limitationManifestHash": "sha256:5b8ad8d0524f28fc4362a695bb6d0a675b3a78a9ee49d9d686f9f5ae5416011b"
+    },
+    {
+      "scenarioId": "cholinergic-pesticide-respiratory-failure",
+      "contentVersion": "0.1.0",
+      "moduleId": "toxicology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:3b7e616b921e3d72ff6372561a55e7f96f72a89cb7308d039e527e5c032c8ebc",
+      "defaultsHash": "sha256:bf14d11043a9cc4c45ee6f8ff00bc291e8afd011f4b84ae6530502d90199b5db",
+      "maturityHash": "sha256:35aba7f8d7501543cfbd4d4ef46ff996edd06429d3686d72aa0b294b401fe299",
+      "sourceManifestHash": "sha256:04d3c90698c741d2c6ad29c97b5b535abd6c9245d3fb51100103fa675c7f375d",
+      "limitationManifestHash": "sha256:c114cd5ce464e3668b65649627c7d5437925305e89d99fa947276f72b9ca0ce0"
+    },
+    {
+      "scenarioId": "delayed-local-anesthetic-cns-cardiac-toxicity",
+      "contentVersion": "0.1.0",
+      "moduleId": "toxicology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:914a1afd6eba3a9cfacfd234c25540856011f358bb76a5cac3f5e74defcb0831",
+      "defaultsHash": "sha256:08780840f224ece1514f2cd783e8ea5ff50f6619f32c21aaadda114d99236c61",
+      "maturityHash": "sha256:32e4cda014cf0452837698c52b4fe4b6870c7dd3e9ef43e6569ed84b5abe470e",
+      "sourceManifestHash": "sha256:6ae77fa3eecc71f8454f595ec11ebf56995d0a3726d7eb7cb6cf6bc64b1c7e2d",
+      "limitationManifestHash": "sha256:36421a8b136d399202bbd5e6d27e7f93a5e6926486d57b6d42c39bd3289d99ca"
+    },
+    {
+      "scenarioId": "digoxin-rhythm-potassium",
+      "contentVersion": "0.1.0",
+      "moduleId": "toxicology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:c3fffa8625a78f5b3e801d63a405831fae6c0938cdb095147e36f0ac1d863f3a",
+      "defaultsHash": "sha256:3ad8f809b597d2f6e758dbfed652d88fa9a1abe40381b4f5b8b94709a5eb5b24",
+      "maturityHash": "sha256:f42ac3bf65b2e03da49c4109a9c5932a118e84b0c54cb675021343a77992ee2b",
+      "sourceManifestHash": "sha256:4f4348e95d01a9ceaba948fa3dedb4e8e7d5d520e268687c804c429e7aecb8b6",
+      "limitationManifestHash": "sha256:f7443a45f40317732dc94f4de9c43eff84b1773e826c039103435f0a6fe85319"
+    },
+    {
+      "scenarioId": "methanol-visual-acidosis-gaps",
+      "contentVersion": "0.1.0",
+      "moduleId": "toxicology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:151f96d54d9e9253f5bbf1b50d89dc93f2aa1394e34b3a993a4d02add9803c4e",
+      "defaultsHash": "sha256:4d6d379529234ec0ad99d6df8a2ae6541daa048f33a83dbb0471e49e82485688",
+      "maturityHash": "sha256:31851c7550ea949ed062eaef932ce10cb254e81d255cf64c35b2d1f28fb4b7ea",
+      "sourceManifestHash": "sha256:67b2a61e8b44612fb65b08348f478fb853a9cbae7a6fa6a7fab276b7f19c8dbf",
+      "limitationManifestHash": "sha256:b532694dcecbca38aec3967f424dff91eac5752958591b47859d9d7bc3601053"
+    },
+    {
+      "scenarioId": "methemoglobinemia-saturation-gap",
+      "contentVersion": "0.1.0",
+      "moduleId": "toxicology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:bcaa2cbb943ce9814aef69d6f25c55cac54835ea51b648e0cb6f75e53ce4996c",
+      "defaultsHash": "sha256:d5dbd062ab3b1a870fbc20ce5ddd6e0298d89c8b4b8580624f9050f51c2ba966",
+      "maturityHash": "sha256:8271659376af2350d7d7a3410688edc39ae596a7a64a3cd0d4350bb7630bb212",
+      "sourceManifestHash": "sha256:dc59c76cc7ad6661ce46db326c01968a8a22ced93533cd4ce6b8a6d35f383853",
+      "limitationManifestHash": "sha256:bbd0cecbafa548f502c2dc28140682d46738e37a5ae1259b1eff4d209e72a0a1"
+    },
+    {
+      "scenarioId": "opioid-xylazine-persistent-sedation",
+      "contentVersion": "0.1.0",
+      "moduleId": "toxicology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:a0709a79eac2e2ed9a804607795d200356e4f8775e047cabd77a0284c5a272c2",
+      "defaultsHash": "sha256:9cf50bc3c2358b8c5c2368efb00299ab3c9b2d974451da071f75850f831bc867",
+      "maturityHash": "sha256:0ecf2384558442ff631dc6135b15dd8be98ec8c51b0104418e04a5a792c10061",
+      "sourceManifestHash": "sha256:8b8aaef092479e3c56da8b50f894e54943c62f73a6a334c9412fb1ae7d67ec1a",
+      "limitationManifestHash": "sha256:79e0c8e3686ca7becbdfc1c4029dfa37f7a2491506de4e7ef699b06eb43d2240"
+    },
+    {
+      "scenarioId": "salicylate-falling-number",
+      "contentVersion": "0.1.0",
+      "moduleId": "toxicology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:58078bf79d0c9f276f17c2b52087838df2d2cda2a8018a92994e4d5c0d2a7510",
+      "defaultsHash": "sha256:5e87871c555ebcf43eba302bd3cd3bece38854373ecf34fa03ed51682d8adf83",
+      "maturityHash": "sha256:026e3075e7870efea1edb96bbed0d839c1b85fba4f9c9ff97c524e9e5046c152",
+      "sourceManifestHash": "sha256:e5998e54746fdacb0e6ce5508d499d049dba858c89603a6c94570ffbb296081f",
+      "limitationManifestHash": "sha256:80a36bb16ce7ad14d9b3d1134fac6812cc9ef1704d43d954db55cbbdc55a65a7"
+    },
+    {
+      "scenarioId": "serotonin-toxicity-hyperthermia-clonus",
+      "contentVersion": "0.1.0",
+      "moduleId": "toxicology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:1d9e6f832fbb95d6ebfbdc918c7c0172814b43e54482f2f28c9eac261edc430a",
+      "defaultsHash": "sha256:d8d5115e696c6f53107bdc7e87a9ad33440c52f05c7300bed4e1b3d8aa29c233",
+      "maturityHash": "sha256:1482cd901face36e2039a0cb6f14fa2b5a4a8bcfd5eef48d51ff5180e06a5c3c",
+      "sourceManifestHash": "sha256:30ae4a6ab1521aeb0467802bace17075389b2aede90b1666a1521f0a40ceaab8",
+      "limitationManifestHash": "sha256:07900fb1d1722f594f238d9257c632c2ddd8cdc81df5e1b1e40deafa5608b06c"
+    },
+    {
+      "scenarioId": "sympathomimetic-hyperadrenergic-hyperthermia",
+      "contentVersion": "0.1.0",
+      "moduleId": "toxicology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:b6e0b7878d8f8abb9672875e50dbb3a4991655b0b9f7321f6920a0820c672312",
+      "defaultsHash": "sha256:968452cf94252bbd6af638332a710e1e9fd032d01a56ce3febad003dd94cb92b",
+      "maturityHash": "sha256:351ccbcec715cf1af7556009721a6a22f3ece1d77c2ba487e1ed2c8e941259a2",
+      "sourceManifestHash": "sha256:756964d6b4fa533e09aa1ce3cce0b47f90fa07a951ce60567397c3d917baa2ce",
+      "limitationManifestHash": "sha256:5fa9a9d901d575d115b599bd5636e43eb37700b9d2e5e1e65795cede48a8e736"
+    },
+    {
+      "scenarioId": "tricyclic-sodium-channel-cardiotoxicity",
+      "contentVersion": "0.1.0",
+      "moduleId": "toxicology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:a1372adb66730154c2b712c8f308beafb6558ca08554ef488b74624449808205",
+      "defaultsHash": "sha256:96c103617d53076c1a0d4af2f3acbe2289061b410193aebd0b536e7dc9d91f15",
+      "maturityHash": "sha256:7f9d7831fe875e4e18977316a794993d1ebb9fc8f3a74afd52f75242da052871",
+      "sourceManifestHash": "sha256:90046273438a9d075a7a65353985e57f88fe394730a609581aaaaaa28c0fe646",
+      "limitationManifestHash": "sha256:71f077e5b37d5bfa5d2cca15ef51877ed073022e57842c8e6a4bf31a84f151e2"
     }
   ]
 }

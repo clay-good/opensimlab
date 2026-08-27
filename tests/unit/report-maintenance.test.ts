@@ -8,7 +8,8 @@ const hash = (character: string) => `sha256:${character.repeat(64)}`;
 const row = (overrides: Record<string, unknown> = {}) => ({
   created_at: '2026-08-26T12:00:00.000Z',
   module_id: 'anesthesia', scenario_id: 'routine-induction', content_version: '0.1.0',
-  release_ref: `git:${'a'.repeat(40)}`, defaults_hash: hash('b'), maturity: 'preview',
+  capability_version: '0.1.0-alpha.48', release_ref: hash('a'),
+  defaults_hash: hash('b'), maturity: 'preview',
   maturity_hash: hash('c'), source_manifest_hash: hash('d'), limitation_manifest_hash: hash('e'),
   fidelity_class: 'closed_loop_physiology', practice_region: 'US',
   canonical_url: 'https://opensimlab.com/anesthesia/scenario/routine-induction',
@@ -62,7 +63,7 @@ describe('safe report maintenance projection', () => {
   });
 
   it('preserves immutable stale and withdrawn evidence rather than substituting main', () => {
-    const staleRelease = `git:${'f'.repeat(40)}`;
+    const staleRelease = hash('f');
     const batch = projectMaintenanceBatch([row({
       release_ref: staleRelease, maturity: 'withdrawn', content_version: '0.0.7',
     })], options);

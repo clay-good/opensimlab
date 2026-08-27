@@ -30,6 +30,7 @@ interface MaintenanceRow {
   readonly module_id: string;
   readonly scenario_id: string;
   readonly content_version: string;
+  readonly capability_version: string;
   readonly release_ref: string;
   readonly defaults_hash: string;
   readonly maturity: string;
@@ -128,7 +129,8 @@ function parseContext(value: unknown): MaintenanceContext | null | undefined {
 
 function validateRow(value: unknown): { row: MaintenanceRow; context: MaintenanceContext | null } | null {
   const keys = [
-    'created_at', 'module_id', 'scenario_id', 'content_version', 'release_ref', 'defaults_hash',
+    'created_at', 'module_id', 'scenario_id', 'content_version', 'capability_version',
+    'release_ref', 'defaults_hash',
     'maturity', 'maturity_hash', 'source_manifest_hash', 'limitation_manifest_hash',
     'fidelity_class', 'practice_region', 'canonical_url', 'surface', 'simulated_tick', 'category',
     'note', 'recent_context_json',
@@ -137,7 +139,8 @@ function validateRow(value: unknown): { row: MaintenanceRow; context: Maintenanc
     || typeof value.module_id !== 'string' || !ID.test(value.module_id)
     || typeof value.scenario_id !== 'string' || !ID.test(value.scenario_id)
     || typeof value.content_version !== 'string' || !/^\d+\.\d+\.\d+$/.test(value.content_version)
-    || typeof value.release_ref !== 'string' || !/^git:[a-f0-9]{40}$/.test(value.release_ref)
+    || typeof value.capability_version !== 'string' || value.capability_version.length > 80
+    || typeof value.release_ref !== 'string' || !HASH.test(value.release_ref)
     || typeof value.defaults_hash !== 'string' || !HASH.test(value.defaults_hash)
     || typeof value.maturity !== 'string' || !MATURITIES.has(value.maturity)
     || typeof value.maturity_hash !== 'string' || !HASH.test(value.maturity_hash)
@@ -184,7 +187,8 @@ export function projectMaintenanceBatch(rows: readonly unknown[], options: Proje
     const { row, context } = valid;
     const evidence = {
       moduleId: row.module_id, scenarioId: row.scenario_id, contentVersion: row.content_version,
-      releaseRef: row.release_ref, defaultsHash: row.defaults_hash, maturity: row.maturity,
+      capabilityVersion: row.capability_version, releaseRef: row.release_ref,
+      defaultsHash: row.defaults_hash, maturity: row.maturity,
       maturityHash: row.maturity_hash, sourceManifestHash: row.source_manifest_hash,
       limitationManifestHash: row.limitation_manifest_hash, fidelityClass: row.fidelity_class,
       practiceRegion: row.practice_region, canonicalUrl: row.canonical_url,
@@ -281,7 +285,8 @@ export function validateMaintenanceProjection(value: unknown): string[] {
       errors.push(`/groups/${index}: invalid identity, count, or interval`);
     }
     const evidenceKeys = [
-      'moduleId', 'scenarioId', 'contentVersion', 'releaseRef', 'defaultsHash', 'maturity',
+      'moduleId', 'scenarioId', 'contentVersion', 'capabilityVersion', 'releaseRef',
+      'defaultsHash', 'maturity',
       'maturityHash', 'sourceManifestHash', 'limitationManifestHash', 'fidelityClass',
       'practiceRegion', 'canonicalUrl',
     ];
@@ -290,8 +295,9 @@ export function validateMaintenanceProjection(value: unknown): string[] {
       || typeof group.evidence.scenarioId !== 'string' || !ID.test(group.evidence.scenarioId)
       || typeof group.evidence.contentVersion !== 'string'
       || !/^\d+\.\d+\.\d+$/.test(group.evidence.contentVersion)
-      || typeof group.evidence.releaseRef !== 'string'
-      || !/^git:[a-f0-9]{40}$/.test(group.evidence.releaseRef)
+      || typeof group.evidence.capabilityVersion !== 'string'
+      || group.evidence.capabilityVersion.length > 80
+      || typeof group.evidence.releaseRef !== 'string' || !HASH.test(group.evidence.releaseRef)
       || typeof group.evidence.defaultsHash !== 'string' || !HASH.test(group.evidence.defaultsHash)
       || typeof group.evidence.maturity !== 'string' || !MATURITIES.has(group.evidence.maturity)
       || typeof group.evidence.maturityHash !== 'string' || !HASH.test(group.evidence.maturityHash)

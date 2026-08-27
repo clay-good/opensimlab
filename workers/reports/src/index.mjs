@@ -151,6 +151,10 @@ export function validateReportPayload(value, allowedOrigin = 'https://opensimlab
   return { ok: true, value: {
     scenarioId: record.scenarioId, contentVersion: record.contentVersion,
     moduleId: record.moduleId, maturity: record.maturity, fidelityClass: record.fidelityClass,
+    capabilityVersion: record.capabilityVersion, releaseRef: record.releaseRef,
+    defaultsHash: record.defaultsHash, maturityHash: record.maturityHash,
+    sourceManifestHash: record.sourceManifestHash,
+    limitationManifestHash: record.limitationManifestHash,
     practiceRegion: value.practice_region, surface: value.surface,
     simulatedTick: value.simulated_tick, category: value.category, note: value.note.trim(),
     canonicalUrl: expected, appVersion: value.app_version, engineVersion: value.engine_version,
@@ -201,8 +205,9 @@ async function storeReport(db, report, reporter, env, now = new Date()) {
     INSERT OR IGNORE INTO scenario_reports (
       id, created_at, scenario_id, content_version, module_id, maturity, practice_region,
       fidelity_class, surface, simulated_tick, category, note, canonical_url,
-      app_version, engine_version, recent_context_json, dedupe_key
-    ) SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+      app_version, engine_version, recent_context_json, dedupe_key, capability_version,
+      release_ref, defaults_hash, maturity_hash, source_manifest_hash, limitation_manifest_hash
+    ) SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
     WHERE COALESCE((SELECT count FROM report_counters WHERE day=? AND kind='accepted' AND scope='global' AND subject='all'), 0) < ?
       AND COALESCE((SELECT count FROM report_counters WHERE day=? AND kind='accepted' AND scope='reporter' AND subject=?), 0) < ?
   `).bind(
@@ -210,6 +215,8 @@ async function storeReport(db, report, reporter, env, now = new Date()) {
     report.practiceRegion, report.fidelityClass, report.surface, report.simulatedTick, report.category,
     report.note || null, report.canonicalUrl, report.appVersion, report.engineVersion,
     report.recentContext ? JSON.stringify(report.recentContext) : null, `${day}:${dedupe}`,
+    report.capabilityVersion, report.releaseRef, report.defaultsHash, report.maturityHash,
+    report.sourceManifestHash, report.limitationManifestHash,
     day, acceptedGlobal, day, reporter, acceptedReporter,
   );
   const incrementAccepted = (scope, subject) => db.prepare(`

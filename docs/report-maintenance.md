@@ -10,7 +10,8 @@ The trusted exporter selects only the columns below, never `SELECT *`. It must u
 token limited to D1 read access and must not print query results or persist shell history:
 
 ```sql
-SELECT created_at, module_id, scenario_id, content_version, release_ref, defaults_hash,
+SELECT created_at, module_id, scenario_id, content_version, capability_version,
+       release_ref, defaults_hash,
        maturity, maturity_hash, source_manifest_hash, limitation_manifest_hash,
        fidelity_class, practice_region, canonical_url, surface, simulated_tick, category,
        note, recent_context_json
@@ -21,9 +22,11 @@ ORDER BY created_at, scenario_id
 LIMIT 1000
 ```
 
-The current database does not yet contain the immutable evidence columns in this query. Until the
-catalog-v2 migration and exact-release archive land, the exporter must fail closed; it must not
-substitute current `main`, invent hashes, or silently omit the missing evidence.
+Rows created before migration `0003_report_evidence.sql` have null immutable-evidence columns and
+the exporter must exclude them from automation for manual review. It must not substitute current
+`main`, invent hashes, or silently omit missing evidence. New rows bind a content-addressed release
+reference plus exact defaults, capability, maturity, source, and limitation evidence selected by
+the Worker from its generated catalog, never from browser input.
 
 `npm run triage:project -- trusted-export.json private-projection.json` converts the fixed export
 into the only object a maintenance agent may receive. The input envelope contains exactly

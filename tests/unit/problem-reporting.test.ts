@@ -64,10 +64,23 @@ describe('scenario report contract', () => {
   it('publishes an exact-version server catalog for every current playable scenario', () => {
     const catalog = JSON.parse(readFileSync(
       join(process.cwd(), 'workers/reports/src/report-catalog.generated.json'), 'utf8',
-    )) as { scenarios: { moduleId: string; scenarioId: string; contentVersion: string }[] };
+    )) as { schemaVersion: number; evidenceAlgorithm: string; scenarios: {
+      moduleId: string; scenarioId: string; contentVersion: string; capabilityVersion: string;
+      releaseRef: string; defaultsHash: string; maturityHash: string;
+      sourceManifestHash: string; limitationManifestHash: string;
+    }[] };
+    expect(catalog.schemaVersion).toBe(2);
+    expect(catalog.evidenceAlgorithm).toBe('scenario-evidence-v1');
     expect(catalog.scenarios).toHaveLength(179);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
       .toBe(179);
+    for (const entry of catalog.scenarios) {
+      expect(entry.capabilityVersion).toMatch(/^0\.1\.0-alpha\./);
+      for (const hash of [entry.releaseRef, entry.defaultsHash, entry.maturityHash,
+        entry.sourceManifestHash, entry.limitationManifestHash]) {
+        expect(hash).toMatch(/^sha256:[a-f0-9]{64}$/);
+      }
+    }
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'toxicology', scenarioId: 'methemoglobinemia-saturation-gap',
       contentVersion: '0.1.0',
@@ -384,6 +397,23 @@ describe('scenario report contract', () => {
     expect(response.status).toBe(202);
     expect(database.batch).toHaveBeenCalledOnce();
     expect(bindings.flat()).toContain(JSON.stringify(maximum));
+    const accepted = validateReportPayload({ ...valid(), recent_context: maximum });
+    expect(accepted).toMatchObject({
+      ok: true,
+      value: {
+        capabilityVersion: expect.stringMatching(/^0\.1\.0-alpha\./),
+        releaseRef: expect.stringMatching(/^sha256:[a-f0-9]{64}$/),
+        defaultsHash: expect.stringMatching(/^sha256:[a-f0-9]{64}$/),
+        maturityHash: expect.stringMatching(/^sha256:[a-f0-9]{64}$/),
+        sourceManifestHash: expect.stringMatching(/^sha256:[a-f0-9]{64}$/),
+        limitationManifestHash: expect.stringMatching(/^sha256:[a-f0-9]{64}$/),
+      },
+    });
+    const evidence = (accepted as { value: Record<string, unknown> }).value;
+    for (const field of ['capabilityVersion', 'releaseRef', 'defaultsHash', 'maturityHash',
+      'sourceManifestHash', 'limitationManifestHash']) {
+      expect(bindings.flat()).toContain(evidence[field]);
+    }
     vi.unstubAllGlobals();
   });
 
@@ -759,6 +789,17 @@ describe('scenario report contract', () => {
     expect(wrangler).toContain('preview_urls = false');
     expect(wrangler).not.toContain('[assets]');
     expect(wrangler.match(/pattern = /g)).toHaveLength(2);
+  });
+
+  it('migrates immutable server-derived evidence without fabricating legacy rows', () => {
+    const migration = readFileSync(join(
+      process.cwd(), 'workers/reports/migrations/0003_report_evidence.sql',
+    ), 'utf8');
+    for (const column of ['capability_version', 'release_ref', 'defaults_hash', 'maturity_hash',
+      'source_manifest_hash', 'limitation_manifest_hash']) {
+      expect(migration).toContain(`ADD COLUMN ${column} TEXT`);
+    }
+    expect(migration).not.toContain('DEFAULT');
   });
 
   it('keeps report configuration out of the offline cache and available to the kill switch', () => {

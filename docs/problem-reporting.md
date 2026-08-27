@@ -29,6 +29,13 @@ or an explicit real-patient description. Pattern screening cannot reliably ident
 clinical identifier; it supplements the warning, short retention, restricted access, and private
 weekly review rather than guaranteeing that a note contains no sensitive information.
 
+The Worker, not the browser, binds every accepted row to the generated catalog's capability
+version and content-addressed release, defaults, maturity, source-manifest, and
+limitation-manifest hashes. Weekly review can therefore detect drift without treating current
+`main` as equivalent. Historical schema-v2 catalog entries remain accepted, and changing scenario
+behavior, maturity, sources, limitations, fidelity, region, or capability without advancing its
+content version blocks catalog generation.
+
 ## Abuse and cost boundaries
 
 The API Worker is separately deployed and accepts only exact GET config and POST report routes.

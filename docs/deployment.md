@@ -132,6 +132,8 @@ at launch rather than treating these August 2026 assumptions as permanent.
 Launch checklist:
 
 - Apply every D1 migration and inspect the resulting tables and indexes.
+- Confirm new report rows contain all 6 immutable evidence fields; legacy rows with null evidence
+  remain manual-review-only and must never be silently projected against current `main`.
 - Set the production site key, Turnstile secret, and an independent random HMAC secret; verify none
   appears in source, build output, shell history, or Worker logs.
 - Deploy with `workers_dev`, preview URLs, and observability disabled; confirm only the 2 exact routes

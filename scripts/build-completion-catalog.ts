@@ -1,8 +1,10 @@
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ENGINE_VERSION } from '@anesthesia/engine';
 import { SCENARIOS } from '@anesthesia/scenarios';
+import type { Scenario } from '@anesthesia/scenarios/types';
 import {
   buildAnesthesiaCompletionCatalog,
   buildModuleCompletionCatalog,
@@ -27,6 +29,7 @@ import {
 } from '@anesthesia/catalog/public-catalog';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
+const REPORT_EVIDENCE_ALGORITHM = 'scenario-evidence-v1';
 const target = join(root, 'public', 'catalog');
 const reportTarget = join(root, 'workers', 'reports', 'src');
 mkdirSync(target, { recursive: true });
@@ -74,23 +77,110 @@ const obstetricsCompletion = buildModuleCompletionCatalog(
   OBSTETRICS_SCENARIOS, ENGINE_VERSION, 'obstetrics', 'delivery-room', 'state_transition',
 );
 const obstetricsQuality = buildScenarioQualityCatalog(obstetricsCompletion);
+
+function stableJson(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(stableJson).join(',')}]`;
+  if (value && typeof value === 'object') {
+    const record = value as Record<string, unknown>;
+    return `{${Object.keys(record).sort().map((key) => `${JSON.stringify(key)}:${stableJson(record[key])}`).join(',')}}`;
+  }
+  return JSON.stringify(value);
+}
+
+function evidenceHash(value: unknown): string {
+  return `sha256:${createHash('sha256').update(stableJson(value)).digest('hex')}`;
+}
+
+const authoredScenarios = [
+  ['anesthesia', SCENARIOS],
+  ['emergency-medicine', EMERGENCY_MEDICINE_SCENARIOS],
+  ['critical-care', CRITICAL_CARE_SCENARIOS],
+  ['cardiology', CARDIOLOGY_SCENARIOS],
+  ['respiratory-medicine', RESPIRATORY_MEDICINE_SCENARIOS],
+  ['pediatrics', PEDIATRICS_SCENARIOS],
+  ['neurology', NEUROLOGY_SCENARIOS],
+  ['toxicology', TOXICOLOGY_SCENARIOS],
+  ['obstetrics', OBSTETRICS_SCENARIOS],
+] as const;
+const authoredByKey = new Map<string, Scenario>(authoredScenarios.flatMap(([moduleId, scenarios]) => scenarios.map(
+  (scenario) => [`${moduleId}:${scenario.metadata.id}@${scenario.metadata.version}`, scenario] as const,
+)));
+const currentReportRecords = [
+  completion, emergencyCompletion, criticalCareCompletion, cardiologyCompletion,
+  respiratoryMedicineCompletion, pediatricsCompletion, neurologyCompletion, toxicologyCompletion,
+  obstetricsCompletion,
+].flatMap((catalog) => catalog.scenarios).map((scenario) => {
+  const key = `${scenario.moduleId}:${scenario.scenarioId}@${scenario.contentVersion}`;
+  const authored = authoredByKey.get(key);
+  if (!authored) throw new Error(`report catalog: missing authored scenario ${key}`);
+  const releaseContent = {
+    schemaVersion: authored.schemaVersion,
+    metadata: {
+      id: authored.metadata.id, version: authored.metadata.version,
+      title: authored.metadata.title, author: authored.metadata.author,
+      license: authored.metadata.license, estimatedMinutes: authored.metadata.estimatedMinutes,
+      difficulty: authored.metadata.difficulty, objectives: authored.metadata.objectives,
+    },
+    patient: authored.patient, equipment: authored.equipment, formulary: authored.formulary,
+    timeline: authored.timeline, replayPoints: authored.replayPoints ?? [], debrief: authored.debrief,
+  };
+  return {
+    scenarioId: scenario.scenarioId,
+    contentVersion: scenario.contentVersion,
+    moduleId: scenario.moduleId,
+    maturity: scenario.maturity,
+    practiceRegions: scenario.practiceRegions,
+    fidelityClass: scenario.fidelityClass,
+    capabilityVersion: scenario.capabilityVersion,
+    releaseRef: evidenceHash(releaseContent),
+    defaultsHash: evidenceHash({
+      patient: authored.patient, equipment: authored.equipment,
+      formulary: authored.formulary, timeline: authored.timeline,
+    }),
+    maturityHash: evidenceHash({
+      contentVersion: authored.metadata.version, maturity: authored.metadata.maturity,
+      clinicalReview: authored.metadata.clinicalReview,
+    }),
+    sourceManifestHash: evidenceHash(authored.metadata.clinicalReview.sources),
+    limitationManifestHash: evidenceHash(authored.metadata.limitations ?? []),
+  };
+});
+const reportCatalogPath = join(reportTarget, 'report-catalog.generated.json');
+const previousReportRecords: typeof currentReportRecords = [];
+if (existsSync(reportCatalogPath)) {
+  const previous = JSON.parse(readFileSync(reportCatalogPath, 'utf8')) as {
+    schemaVersion?: unknown; evidenceAlgorithm?: unknown; scenarios?: unknown;
+  };
+  if (previous.schemaVersion === 2 && previous.evidenceAlgorithm === REPORT_EVIDENCE_ALGORITHM
+    && Array.isArray(previous.scenarios)) {
+    previousReportRecords.push(...previous.scenarios as typeof currentReportRecords);
+  }
+}
+const currentByKey = new Map(currentReportRecords.map((record) => [
+  `${record.moduleId}:${record.scenarioId}@${record.contentVersion}`, record,
+]));
+for (const previous of previousReportRecords) {
+  const key = `${previous.moduleId}:${previous.scenarioId}@${previous.contentVersion}`;
+  const current = currentByKey.get(key);
+  const evidenceChanged = current && [
+    'capabilityVersion', 'releaseRef', 'defaultsHash', 'maturity', 'maturityHash',
+    'sourceManifestHash', 'limitationManifestHash', 'fidelityClass', 'practiceRegions',
+  ].some((field) => stableJson(current[field as keyof typeof current])
+    !== stableJson(previous[field as keyof typeof previous]));
+  if (evidenceChanged) {
+    throw new Error(`report catalog: immutable evidence for ${key} changed without a content-version bump`);
+  }
+  if (!current) currentByKey.set(key, previous);
+}
 const reportCatalog = {
-  schemaVersion: 1,
-  scenarios: [completion, emergencyCompletion, criticalCareCompletion, cardiologyCompletion,
-    respiratoryMedicineCompletion, pediatricsCompletion, neurologyCompletion, toxicologyCompletion,
-    obstetricsCompletion]
-    .flatMap((catalog) => catalog.scenarios)
-    .map((scenario) => ({
-      scenarioId: scenario.scenarioId,
-      contentVersion: scenario.contentVersion,
-      moduleId: scenario.moduleId,
-      maturity: scenario.maturity,
-      practiceRegions: scenario.practiceRegions,
-      fidelityClass: scenario.fidelityClass,
-    })),
+  schemaVersion: 2,
+  evidenceAlgorithm: REPORT_EVIDENCE_ALGORITHM,
+  scenarios: [...currentByKey.values()].sort((a, b) =>
+    `${a.moduleId}:${a.scenarioId}@${a.contentVersion}`
+      .localeCompare(`${b.moduleId}:${b.scenarioId}@${b.contentVersion}`)),
 };
 writeFileSync(
-  join(reportTarget, 'report-catalog.generated.json'),
+  reportCatalogPath,
   `${JSON.stringify(reportCatalog, null, 2)}\n`,
   'utf8',
 );
