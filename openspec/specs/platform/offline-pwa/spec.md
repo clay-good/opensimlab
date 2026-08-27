@@ -29,6 +29,13 @@ A service worker SHALL serve all application assets cache-first using a versione
 - **WHEN** a new version is detected while a session is in progress
 - **THEN** the running session continues on the current version, and a non-blocking notice offers to reload when the learner is ready
 
+#### Scenario: Update availability never covers practice controls
+
+- **WHEN** an update becomes ready during practice
+- **THEN** an indicator with a textual accessible description appears inside the existing More options gateway without resizing the cockpit, covering controls, changing transport, or moving focus
+- **AND** the update details and unsaved-session warning appear only in the learner-opened More options dialog; readiness and retry state survive closing it, and dismissing the page nudge does not remove this update action
+- **AND** outside practice, the optional notice stays in document flow and does not compete with modal reading or focus
+
 #### Scenario: Version activation is atomic
 
 - **WHEN** the learner accepts an update

@@ -9,6 +9,8 @@ import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { SonificationEngine } from '@platform/audio/sonification';
 import { useSession } from '@platform/session/session-store';
+import { UpdateProvider } from '@platform/offline/UpdateNotice';
+import { UPDATE_READY_EVENT, UPDATE_FAILED_EVENT } from '@platform/offline/register';
 
 // Keep the real cockpit, controls, dialogs, store subscription, and keyboard
 // effect. Only the two canvas-rendering regions are irrelevant to these tests.
@@ -33,8 +35,8 @@ describe('Cockpit shortcuts respect the focused interaction', () => {
         unit: 'mmHg', message: 'Test alarm', sinceTick: 0, silencedUntilTick: null }],
     });
     container = document.createElement('div'); document.body.append(container); root = createRoot(container);
-    act(() => root.render(<Cockpit scenario={ROUTINE_INDUCTION} region={UNITED_STATES}
-      audio={new SonificationEngine()} onEnd={() => {}} />));
+    act(() => root.render(<UpdateProvider><Cockpit scenario={ROUTINE_INDUCTION} region={UNITED_STATES}
+      audio={new SonificationEngine()} onEnd={() => {}} /></UpdateProvider>));
   });
   afterEach(() => {
     act(() => root.unmount()); container.remove();
@@ -107,6 +109,40 @@ describe('Cockpit shortcuts respect the focused interaction', () => {
   it('does not run shortcuts while reading the real More options dialog', () => {
     act(() => container.querySelector<HTMLButtonElement>('[aria-label="More options"]')!.click());
     expectNoShortcuts(container.querySelector('[role="dialog"] h2')!);
+  });
+
+  it.each(['running', 'paused'] as const)('offers updates without changing the %s session or taking focus', async (transport) => {
+    act(() => useSession.setState({ transport, tick: 420, elapsed: '00:00:42' }));
+    const more = container.querySelector<HTMLButtonElement>('[aria-label="More options"]')!;
+    more.focus();
+    const before = useSession.getState();
+    act(() => window.dispatchEvent(new Event(UPDATE_READY_EVENT)));
+    expect(document.activeElement).toBe(more);
+    expect(container.querySelector('[role="dialog"]')).toBeNull();
+    expect(more.getAttribute('aria-describedby')).toBeTruthy();
+    expect(useSession.getState()).toBe(before);
+    expect(play).not.toHaveBeenCalled(); expect(pause).not.toHaveBeenCalled();
+    expect(singleStep).not.toHaveBeenCalled(); expect(perform).not.toHaveBeenCalled();
+
+    await act(async () => more.click());
+    const dialog = container.querySelector<HTMLElement>('[role="dialog"]')!;
+    expect(dialog.textContent).toContain('Reloading ends this session and clears its unsaved progress.');
+    const reload = [...dialog.querySelectorAll('button')].find((button) => button.textContent === 'Reload to update')!;
+    // Opening routine settings must not make the session-ending action the
+    // default Enter/Space target just because an update became available.
+    expect(document.activeElement).not.toBe(reload);
+    expect(dialog.querySelector('button')).toBe(document.activeElement);
+    reload.focus();
+    act(() => window.dispatchEvent(new Event(UPDATE_FAILED_EVENT)));
+    expect(document.activeElement).toBe(reload);
+    expect(dialog.textContent).toContain('Update could not be prepared. Your session is unchanged.');
+    expectNoShortcuts(dialog.querySelector('h2')!);
+    await act(async () => { press(reload, 'Escape'); });
+    expect(container.querySelector('[role="dialog"]')).toBeNull();
+    expect(document.activeElement).toBe(more);
+    expect(useSession.getState()).toBe(before);
+    await act(async () => more.click());
+    expect(container.querySelector('[role="dialog"]')?.textContent).toContain('Update could not be prepared.');
   });
 
   it('preserves transport, action, announcement, and help shortcuts on neutral cockpit surfaces', () => {

@@ -3598,6 +3598,13 @@ build. Offline readiness therefore requires installation followed by a controlle
 reload, and remains subject to browser storage eviction. These guarantees protect bundled practice,
 not the network-only report API or Turnstile.
 
+Update availability uses the existing More options gateway during practice. A small arrow and
+textual accessible description occupy the same button without moving or covering the four cockpit
+regions. The learner-opened menu retains the explicit update/retry action and an unsaved-progress
+warning; ordinary settings keep initial focus. Elsewhere, a dismissible notice stays in page flow.
+A shared provider retains readiness and failure across menu mounts and reconciles an already
+waiting worker after subscribing, so an early registration event cannot strand the update.
+
 ## 12. Authoritative platform behavior
 
 The reporting design assumes that simulation contains sensitive learner context. The note limit is

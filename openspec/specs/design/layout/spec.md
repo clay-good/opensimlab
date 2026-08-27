@@ -113,7 +113,7 @@ The application SHALL define exactly five breakpoints — `xs: 360`, `sm: 768`, 
 #### Scenario: Landscape phone prioritizes the monitor
 
 - **WHEN** a phone is rotated to landscape below 500 px height
-- **THEN** the Status Bar compacts to 40 px, the Action Cockpit becomes a floating action button opening a sheet, and the Monitor occupies the remaining area
+- **THEN** the Status Bar compacts to 48 px so its 44 px controls remain fully visible, the Action Cockpit becomes a floating action button opening a sheet, and the Monitor occupies the remaining area
 
 ### Requirement: Sacrifice Order Is Explicit
 

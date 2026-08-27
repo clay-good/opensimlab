@@ -7,16 +7,20 @@ import { renderTurnstile } from '@platform/reporting/client';
 describe('report security check in a narrow dialog', () => {
   it('hides the optional update notice while a modal owns the reading surface', () => {
     const css = readFileSync(join(process.cwd(), 'src/platform/tokens/base.css'), 'utf8');
-    const rule = css.match(/body:has\(\[aria-modal='true'\]\)\s+\.update-notice\s*\{[^}]+\}/)?.[0];
+    const rule = css.match(/body:has\(\[aria-modal='true'\]\)\s+\.update-notice--page\s*\{[^}]+\}/)?.[0];
     expect(rule).toContain('visibility: hidden');
     const style = document.createElement('style'); style.textContent = rule!;
-    const notice = document.createElement('div'); notice.className = 'update-notice';
+    const notice = document.createElement('div'); notice.className = 'update-notice update-notice--page';
     const dialog = document.createElement('div'); dialog.setAttribute('aria-modal', 'true');
+    const inlineNotice = document.createElement('div'); inlineNotice.className = 'update-notice update-notice--session';
+    dialog.append(inlineNotice);
     document.head.append(style); document.body.append(notice);
     try {
       expect(getComputedStyle(notice).visibility).toBe('visible');
       document.body.append(dialog);
       expect(getComputedStyle(notice).visibility).toBe('hidden');
+      expect(getComputedStyle(inlineNotice).visibility).toBe('visible');
+      expect(getComputedStyle(inlineNotice).display).not.toBe('none');
       dialog.remove();
       expect(getComputedStyle(notice).visibility).toBe('visible');
     } finally { style.remove(); notice.remove(); dialog.remove(); }

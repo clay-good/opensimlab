@@ -15,7 +15,7 @@ import {
   ROOT_ROUTE, canonicalUrl, formatTitle, socialImageUrl, type RouteMetadata,
 } from './site-metadata';
 import { SiteBar } from '@platform/ui';
-import { UpdateNotice } from '@platform/offline/UpdateNotice';
+import { UpdateNotice, UpdateProvider } from '@platform/offline/UpdateNotice';
 import { ErrorBoundary } from '@platform/ui/ErrorBoundary';
 
 /**
@@ -107,19 +107,19 @@ export function updateDocumentMetadata(metadata: RouteMetadata) {
 }
 
 /**
- * The shell. The update offer rides above the router rather than inside each
- * branch, because a learner may be anywhere when a new build lands.
+ * The shell retains update availability across routes and the optional session
+ * menu. Its in-flow page offer is hidden while the cockpit supplies that menu.
  */
 export function App() {
   return (
-    <>
+    <UpdateProvider>
       <UpdateNotice />
       {/* Two boundaries, not one. A crash inside the simulator leaves the rest
           of the site reachable, and a crash anywhere still leaves a page. */}
       <ErrorBoundary surface="page">
         <CurrentRoute />
       </ErrorBoundary>
-    </>
+    </UpdateProvider>
   );
 }
 

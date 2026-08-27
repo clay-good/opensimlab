@@ -91,7 +91,7 @@
 
   /* Layout. */
   --status-bar-height: 56px;
-  --status-bar-height-compact: 40px;
+  --status-bar-height-compact: 48px;
   --action-cockpit-height: clamp(160px, 32dvh, 560px);
   --divider-thickness: 1px;
   --divider-hit: 12px;

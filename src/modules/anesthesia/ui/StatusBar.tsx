@@ -7,6 +7,7 @@
  * requires.
  */
 
+import { useId } from 'react';
 import { SPEED_MULTIPLIERS, type SpeedMultiplier } from '@platform/clock/simulation-clock';
 import { IconButton, SegmentedControl } from '@platform/ui';
 import { PERSISTENT_MARKER_TEXT } from '@platform/safety/not-for-clinical-use';
@@ -25,12 +26,14 @@ export interface StatusBarProps {
   readonly onSpeed: (speed: SpeedMultiplier) => void;
   readonly onOverflow: () => void;
   readonly moduleId?: string;
+  readonly updateAvailable?: boolean;
 }
 
 export function StatusBar({
   scenario, elapsed, transport, speed, onPlay, onPause, onStep, onReset, onSpeed, onOverflow,
-  moduleId = 'anesthesia',
+  moduleId = 'anesthesia', updateAvailable = false,
 }: StatusBarProps) {
+  const updateDescriptionId = useId();
   const patient = scenario.patient;
   const age = patient.ageYears === 0 ? 'Newborn' : `${patient.ageYears} y`;
   const summary = `${age} ${patient.sex === 'male' ? 'M' : 'F'} · `
@@ -88,7 +91,12 @@ export function StatusBar({
         }))}
       />
 
-      <IconButton label="More options" onClick={onOverflow}>⋯</IconButton>
+      <IconButton label="More options" className="status-bar__more" onClick={onOverflow}
+        aria-describedby={updateAvailable ? updateDescriptionId : undefined}>
+        ⋯
+        {updateAvailable && <span className="status-bar__update-indicator" aria-hidden="true">↑</span>}
+      </IconButton>
+      {updateAvailable && <span id={updateDescriptionId} className="visually-hidden">An update is ready in More options.</span>}
     </div>
   );
 }

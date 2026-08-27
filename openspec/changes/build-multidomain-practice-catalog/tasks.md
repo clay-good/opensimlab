@@ -939,11 +939,23 @@ credited toward the catalog until every item in the completion contract passes.
     landing, 1,474.2 KiB for the interactive cockpit, and 3,285.2 KiB for the full offline bundle.
     This infrastructure evidence does not replace independent clinical, inclusive-runtime, or
     production Turnstile/D1 verification.
-  - [ ] Fix the existing update strip covering the cockpit transport controls before the next
-    scenario slice. Browser inspection reproduced the overlap; dismissing “Not now” restores
-    stepping and the old solver remains healthy. Preserve modal focus/reading isolation, phone
-    layout, and visible transport access while offering an optional update. Release-consistency
-    verification does not establish this separate nonblocking-layout requirement.
+  - [x] Keep optional updates out of the cockpit transport row. A shared provider preserves
+    readiness, dismissal, and retry state; More options offers the update with an explicit
+    unsaved-progress warning, while other pages use an in-flow notice. Opening the menu focuses
+    an ordinary speed control, not reload. A waiting-worker reconciliation covers early readiness
+    events. Desktop speed controls no longer wrap into clipping; the compact bar is 48 px high
+    for 44 px controls, with 8 px between Play and More options at narrow widths.
+  - [x] Verify the update placement with full CI (3,677 tests across 467 files) and a final
+    indexable build, followed by 189 focused UI, release, offline, and static-host checks after
+    the final spacing adjustment. A real local release transition leaves desktop and 320 px
+    transport geometry unchanged, keeps paused clocks unchanged, and restores focus on closing
+    More options. At 320 × 180, both 44 px controls remain fully visible; the warning wraps and
+    the dialog's Close control is reachable by scrolling. The temporary iframe layout harness
+    permits same-origin framing only in its test copy; production framing restrictions remain
+    unchanged. This is a layout smoke check, not physical-device, screen-reader, zoom, clinical,
+    or production reporting signoff. Final indexable checks verify 220 routes, 223 static routes,
+    and 44 catalog artifacts. Compressed budgets are 147.9 KiB landing, 1,474.6 KiB cockpit, and
+    3,281.4 KiB offline. Scenario counts and pending independent gates are unchanged.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
   - [x] Toxicology slice 1/15 establishes the indexable `/toxicology` module with one authored
     methemoglobinemia lab after documented topical benzocaine exposure. The learner reconciles

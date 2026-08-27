@@ -177,7 +177,8 @@ describe('Requirement: Sacrifice Order Is Explicit', () => {
   it('Scenario: Landscape phone prioritizes the monitor', () => {
     expect(cockpitCss).toContain('@media (max-height: 499px) and (orientation: landscape)');
     expect(cockpitCss).toContain('var(--status-bar-height-compact) minmax(0, 1fr)');
-    expect(LAYOUT.statusBarCompactHeightPx).toBe(40);
+    expect(LAYOUT.statusBarCompactHeightPx).toBe(48);
+    expect(LAYOUT.statusBarCompactHeightPx - 1).toBeGreaterThanOrEqual(44);
   });
 
   it('Scenario: a viewport too short for four regions gets the overlay layout', () => {

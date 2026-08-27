@@ -47,6 +47,16 @@
 
 .cockpit__status { grid-area: status; min-inline-size: 0; overflow: hidden; }
 
+.status-bar__more { position: relative; }
+.status-bar__update-indicator {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: var(--space-1);
+  font: var(--type-micro);
+  color: var(--focus);
+  pointer-events: none;
+}
+
 .rehearsal-branch {
   position: fixed;
   z-index: 53;
@@ -155,6 +165,8 @@
   margin-inline-start: auto;
 }
 .status-bar__transport { display: flex; gap: var(--space-1); align-items: center; }
+/* A wrapped speed row would be clipped by the fixed-height status bar. */
+.status-bar > .segmented { flex: 0 0 auto; flex-wrap: nowrap; }
 .status-bar__marker-short { display: none; }
 .status-bar__marker {
   font: var(--type-micro);
@@ -486,6 +498,8 @@
  * into More options so the gateway itself cannot be clipped. */
 @media (max-width: 400px) {
   .status-bar__step { display: none; }
+  .cockpit .status-bar { gap: 0; }
+  .cockpit .status-bar__more { margin-inline-start: var(--space-2); }
 }
 
 /* A landscape phone prioritizes the monitor: the status bar compacts and the

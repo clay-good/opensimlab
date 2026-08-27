@@ -136,7 +136,7 @@ export const MIN_TARGET_GAP = 8;
 /** Layout constants from design/layout. */
 export const LAYOUT = {
   statusBarHeightPx: 56,
-  statusBarCompactHeightPx: 40,
+  statusBarCompactHeightPx: 48,
   /**
    * The action region's default height. It is a FLOOR and a preference, not a
    * fixed geometry: the region's real default is `clamp(minPx, viewportShare of

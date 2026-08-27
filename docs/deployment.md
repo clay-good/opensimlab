@@ -232,6 +232,12 @@ requires a completed installation and a subsequent navigation or reload under wo
 control, and remains subject to browser storage eviction. First-install activation does
 not take over an already-running page whose files may belong to an earlier deployment.
 
+During practice, update availability appears in the existing More options gateway, not
+as an overlay on the transport controls. Opening that menu shows the explicit reload
+action and warns that reloading clears the current session's unsaved progress. Closing
+the menu preserves update/retry state; “Not now” on the in-flow page notice suppresses
+the nudge but leaves the action available in More options.
+
 Use `npm run preview:worker` for offline-installation checks. Vite's generic SPA preview
 can serve the root document for extensionless routes; those responses correctly fail the
 per-route integrity checks and cannot establish offline readiness.

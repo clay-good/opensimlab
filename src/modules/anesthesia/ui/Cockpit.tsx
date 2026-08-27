@@ -17,6 +17,7 @@ import { isUnreviewed, UNREVIEWED_NOTICE } from '@platform/governance/review-gat
 import { FlagControl } from '@platform/governance/FlagControl';
 import { reviewModeFrom } from '@platform/governance/review-notes';
 import { APP_VERSION } from '@platform/governance/status';
+import { UpdateNotice, useUpdateAvailable } from '@platform/offline/UpdateNotice';
 import type { StateField } from '@anesthesia/physiology';
 import type { Scenario } from '@anesthesia/engine';
 import { term, type RegionProfile } from '@anesthesia/region/profiles';
@@ -209,6 +210,7 @@ export function Cockpit({
   const [explainerId, setExplainerId] = useState<string | null>(null);
   const [drugCardId, setDrugCardId] = useState<string | null>(null);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const updateAvailable = useUpdateAvailable();
   const [branchNoticeOpen, setBranchNoticeOpen] = useState(false);
   const [crisisInjectorOpen, setCrisisInjectorOpen] = useState(false);
   useEffect(() => {
@@ -642,6 +644,7 @@ export function Cockpit({
           onSpeed={(speed: SpeedMultiplier) => session.setSpeed(speed)}
           onOverflow={() => setShortcutsOpen(true)}
           moduleId={moduleId}
+          updateAvailable={updateAvailable}
         />
       </div>
 
@@ -1480,6 +1483,7 @@ export function Cockpit({
           <Button onClick={session.singleStep}>Advance one simulated second</Button>
           <Button onClick={resetScenario}>Reset the scenario</Button>
         </div>
+        <UpdateNotice surface="session" />
         <div className="overflow-menu__sound">
           <Toggle
             checked={soundOn}

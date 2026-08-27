@@ -182,14 +182,11 @@ a:hover { text-decoration-color: var(--text-secondary); }
   .catalog-path__facts { grid-template-columns: minmax(0, 1fr); }
 }
 
-/* The offer to take a newer build. A strip, not a modal: a learner in the middle
- * of an induction is not interrupted for this. */
+/* Update offers never float over page controls. The cockpit uses its existing
+ * More options menu instead of adding a strip or changing region geometry. */
 .update-notice {
-  position: fixed;
-  inset-block-start: 0;
-  inset-inline: 0;
-  z-index: 90;
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-3);
   align-items: center;
   justify-content: center;
@@ -200,9 +197,21 @@ a:hover { text-decoration-color: var(--text-secondary); }
   letter-spacing: var(--type-micro-tracking);
   color: var(--text-secondary);
 }
+.update-notice__message { min-inline-size: 0; overflow-wrap: anywhere; }
+.update-notice--session {
+  align-items: flex-start;
+  justify-content: flex-start;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-control);
+  font: var(--type-body);
+  letter-spacing: var(--type-body-tracking);
+}
+.update-notice--session .update-notice__message { flex-basis: 100%; }
+.update-notice--session .update-notice__message > p + p { margin-block-start: var(--space-2); }
+body:has(.cockpit) .update-notice--page { display: none; }
 
 /* Keep the optional update offer out of modal reading and focus surfaces. */
-body:has([aria-modal='true']) .update-notice { visibility: hidden; }
+body:has([aria-modal='true']) .update-notice--page { visibility: hidden; }
 
 /* --- Trust documents ------------------------------------------------------
  * The validation report, governance, limitations and privacy. A reader arriving
