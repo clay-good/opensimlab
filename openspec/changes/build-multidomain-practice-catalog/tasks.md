@@ -995,6 +995,31 @@ credited toward the catalog until every item in the completion contract passes.
     the remaining version-bound state-space record, and production Turnstile/D1 evidence. Local tests and browser
     checks do not satisfy these separate gates. Deploy the reports Worker's updated catalog before
     publishing the new client content version; retain all 206 previously published report records.
+  - [x] Endocrine/metabolic slice 9/12 registers post-rescue hyponatremia with emerging water
+    diuresis, the original 106 mmol/L baseline and first correction hour, qualified water-loss
+    management, conditional relowering in either request order, fresh historical observations,
+    retained observed peak, and continuing-care handoff. The seven-decision worked example
+    pauses for reading; the scheduled reassessment timer and notifications depend only on public
+    requests and observations, not a hidden correction breach. Debrief prevention credit requires
+    a later requested response, not merely a treatment button. The registry has 201 scenarios,
+    nine endocrine previews, and 222 indexable routes; registration is not completion.
+  - [x] Hyponatremia local verification passes the indexable full CI run: 4,041 tests across
+    485 files, 30 specs, typecheck, lint, 225 static routes, 44 catalog artifacts, fonts, and
+    222 crawlable routes. Compressed budgets are 148.2 KiB landing, 1,500.8 KiB cockpit, and
+    3,343.3 KiB offline. Desktop browser checks confirm a centered 160-character report form,
+    opt-in context disabled by default, learner-confirmed example decisions, and takeover focus
+    on Play. A 320 × 568 iframe check confirms wrapped briefing and report-dialog content; it
+    does not establish full phone keyboard or screen-reader coverage. Temporary fixtures, tabs,
+    and preview server were removed. All 207 historical client and Worker report records remain
+    unchanged; one new record is added. Existing hypocalcemia checks revalidate its six changed
+    shared dependency hashes without changing its three quality records. The actual preview
+    release command still refuses 216 unmet publication items; no production report was sent.
+  - [ ] Complete hyponatremia independent clinical review, version-bound quality records,
+    full inclusive-runtime coverage, and production Turnstile/D1 evidence. The selected high-risk
+    ceiling is not a universal regional rule, and authored checkpoints predict neither drug
+    kinetics nor ODS prevention. Deploy the updated reports catalog before new client content;
+    all 207 older report identities must remain intact. Local engineering checks do not waive
+    these publication gates.
   - [x] Repair service-worker release consistency. Build-stamped SHA-256 integrity checks reject
     mixed or incomplete installations; active snapshots are immutable. Explicit acceptance waits
     for the intended controller before reloading only that tab. Durable per-client release pins

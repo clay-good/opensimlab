@@ -120,8 +120,12 @@ describe('Requirement: No Telemetry, No Analytics, No Third-Party Requests', () 
         const url = match[0];
         const lazyTurnstile = file.path === 'src/platform/reporting/client.ts'
           && url === 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+        // Explicit learner-opened guidance, not an application request or host-wide exception.
+        const sodiumGuidanceLink = ['src/modules/endocrine-metabolic/hyponatremia-correction-tutor.ts',
+          'src/modules/endocrine-metabolic/scenarios/hyponatremia-aquaresis-and-overcorrection.ts'].includes(file.path)
+          && url === 'https://www.endocrinology.org/media/xhrhxhxm/emergency-management-of-severe-and-moderately-severely-symptomatic-hyponatraemia-in-adult-patients-2022.pdf';
         expect(
-          documentationHosts.test(url) || namespaceUris.test(url) || lazyTurnstile,
+          documentationHosts.test(url) || namespaceUris.test(url) || lazyTurnstile || sodiumGuidanceLink,
           `${file.path} references ${url}`,
         ).toBe(true);
       }

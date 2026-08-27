@@ -27,6 +27,30 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'hyponatremia-correction-authored-checkpoints',
+    headline: 'Sodium and urine changes are authored contrasts, not predicted water balance or drug effects.',
+    simplification: 'Water diuresis at 30 minutes, excessive rise at 60 minutes without control, a 60-minute response checkpoint, and 120- or 240-minute teaching stops are fictional. Results appear only when requested; they remain historical afterward.',
+    whereItMisleads: 'A learner waits for a teaching timer, assumes a fixed desmopressin or fluid effect, or reads an old sodium result as current.',
+    correctUnderstanding: 'Reassess promptly and as clinically required. Water losses and sodium can change unpredictably. The model has no fluid-balance solver, dose kinetics, ODS outcome prediction, or proven safety endpoint.',
+    briefIn: ['hyponatremia-aquaresis-and-overcorrection'],
+  },
+  {
+    id: 'hyponatremia-correction-high-risk-window',
+    headline: 'Transfer and relowering never reset the original correction window or erase the observed peak.',
+    simplification: 'This selected high-risk patient starts one hour after sodium 106 mmol/L, already at 111. Both profiles use an explicit 4–6 mmol/L daily goal and an 8 mmol/L ceiling in any 24 hours; general regional recommendations differ.',
+    whereItMisleads: 'A learner treats 111 as the starting baseline, targets normal sodium, applies this ceiling universally, or assumes relowering removes prior exposure.',
+    correctUnderstanding: 'Preserve pretreatment values, timings, and the maximum observed rise. Unknown duration and high-risk features require qualified conservative planning. Improved appearance does not exclude later neurologic harm; no safe margin or guaranteed ODS prevention is established here.',
+    briefIn: ['hyponatremia-aquaresis-and-overcorrection'],
+  },
+  {
+    id: 'hyponatremia-correction-qualified-care',
+    headline: 'Water-loss control and relowering are qualified requests, not prescriptions or discharge clearance.',
+    simplification: 'Reactive water-loss management requires an observed emerging problem. After an observed breach, qualified control and relowering can be requested in either order without administrative prerequisites. Prophylactic clamp strategies and actual replacement prescriptions are outside this lesson.',
+    whereItMisleads: 'A learner considers all early clamp strategies wrong, treats thiazide use as proof of SIADH, delays rescue for an acknowledgment, ignores potassium contribution, or withholds necessary resuscitation from an unstable patient.',
+    correctUnderstanding: 'Qualified teams individualize water-loss control, relowering, potassium and nutrition treatment, and cause assessment. Continue sodium, urine, potassium, neurologic, and cause surveillance over the next 24–48 hours. Handoff transfers active care; it does not prove recovery.',
+    briefIn: ['hyponatremia-aquaresis-and-overcorrection'],
+  },
+  {
     id: 'hypocalcemia-authored-response-and-recurrence',
     headline: 'Relief, recurrence, and calcium changes are authored contrasts, not treatment kinetics.',
     simplification: 'Five-minute delay, 30-minute no-rescue takeover, 15-minute initial relief, 45-minute recurrence without magnesium or continuing care, 60-minute complete-care partial stabilization, and 180-minute unfinished stop are fictional lesson clocks. Calcium remains low; magnesium and the supplied QTc do not normalize.',

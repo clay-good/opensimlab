@@ -87,6 +87,32 @@ indefinitely because an event or objective was missed.
 
 ## MODIFIED Requirements
 
+### Requirement: Post-Rescue Sodium Correction Preserves History
+
+The post-rescue hyponatremia lesson SHALL preserve the pretreatment sodium, elapsed correction
+window, and highest supplied or requested result. Qualified requests SHALL remain dose-free,
+and authored timing SHALL not imply safe waiting intervals or predicted treatment kinetics.
+
+#### Scenario: A quiet patient still needs surveillance
+
+- **WHEN** water diuresis and sodium change after emergency seizure rescue
+- **THEN** the learner must request fresh results; tutor, report, monitor, and accessibility
+  surfaces do not expose latent sodium, urine output, or an unobserved correction-limit breach
+
+#### Scenario: Late control does not undo earlier correction
+
+- **WHEN** excessive correction is observed and water-loss control is requested
+- **THEN** control alone does not relower sodium, qualified control and relowering may be
+  requested in either order without administrative prerequisites, and the observed peak remains
+  in the record after a lower later result
+
+#### Scenario: Prevention and recovery end in continuing care
+
+- **WHEN** the necessary qualified response, support, review, surveillance, and a fresh later
+  observation are recorded
+- **THEN** handoff transfers the original correction history and ongoing risk without requiring
+  unnecessary relowering after successful prevention or claiming discharge, recovery, or ODS prevention
+
 ### Requirement: Declarative Scenario Format Includes Quality Records
 
 A scenario SHALL be a declarative document validated against a published schema and SHALL include or

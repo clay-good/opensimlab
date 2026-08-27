@@ -1,7 +1,44 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 299,
+  "sourceCount": 302,
   "sources": [
+    {
+      "id": "sfe-emergency-hyponatremia-2022",
+      "authors": "Society for Endocrinology",
+      "title": "Emergency management of severe and moderately severely symptomatic hyponatraemia in adult patients",
+      "publication": "Society for Endocrinology",
+      "year": 2022,
+      "locator": "Revised 2022; treatment and overcorrection sections, PDF pp. 3–5",
+      "currency": {
+        "lastAmended": "2022",
+        "checkedAt": "2026-08-27"
+      },
+      "usedFor": "Post-rescue sodium and urine surveillance, emerging water diuresis, stopping hypertonic saline after initial improvement, and expert-directed management after excessive correction. No rescue or relowering dose is simulated.",
+      "verifiedAgainst": "Issuing-body full guidance https://www.endocrinology.org/media/xhrhxhxm/emergency-management-of-severe-and-moderately-severely-symptomatic-hyponatraemia-in-adult-patients-2022.pdf. General limits differ from the specifically selected high-risk ceiling in the sodium-correction lesson.",
+      "verifiedOn": "2026-08-27"
+    },
+    {
+      "id": "sterns-hyponatremia-correction-2024",
+      "authors": "Sterns RH, Rondon-Berrios H, Adrogué HJ, et al",
+      "title": "Treatment Guidelines for Hyponatremia: Stay the Course",
+      "publication": "Clinical Journal of the American Society of Nephrology",
+      "year": 2024,
+      "locator": "19:129–135; doi:10.2215/CJN.0000000000000244; pp. 131–133; online June 28, 2023",
+      "usedFor": "Expert reaffirmation of a high-risk 4–6 mmol/L daily goal and no more than 8 mmol/L in any 24 hours, risk from malnutrition, alcohol-use disorder and hypokalemia, aquaresis surveillance, and consideration of relowering after an excessive rise. This is not a new 2024 guideline or evidence for authored response times.",
+      "verifiedAgainst": "Full publisher article in the author institution repository https://pure.eur.nl/ws/files/128279642/treatment_guidelines_for_hyponatremia_stay_the.21.pdf; DOI https://doi.org/10.2215/CJN.0000000000000244. Numerical targets describe the selected high-risk plan, not universal regional rules.",
+      "verifiedOn": "2026-08-27"
+    },
+    {
+      "id": "european-hyponatremia-guideline-2014",
+      "authors": "Spasovski G, Vanholder R, Allolio B, et al",
+      "title": "Clinical practice guideline on diagnosis and treatment of hyponatraemia",
+      "publication": "European Journal of Endocrinology",
+      "year": 2014,
+      "locator": "170:G1–G47; doi:10.1530/EJE-13-1020; §§7.1, 7.4.4 and 7.5",
+      "usedFor": "Unknown-duration precaution, urine-output surveillance with intensified sodium checks during aquaresis, potassium correction contributing to sodium rise, qualified overcorrection response, and priority of necessary resuscitation during instability. The general first-day European limit is not substituted for the selected high-risk ceiling.",
+      "verifiedAgainst": "Official ERBP abbreviated guideline https://www.european-renal-best-practice.org/sites/default/files/u33/short%20version%20hyponatraemia%20English%20FINAL.pdf, §§2.1, 3.1, 3.4.4 and 3.5, with original-section cross-references. No formula, procedural instruction, or replacement dose is taken into the lesson.",
+      "verifiedOn": "2026-08-27"
+    },
     {
       "id": "sfe-acute-hypocalcemia-2016",
       "authors": "Turner J, Gittoes N, Selby P, and the Society for Endocrinology Clinical Committee",

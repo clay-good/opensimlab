@@ -16,11 +16,11 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "372caee48af2434cac4bbd58881b1d2007868568590f7b89aa1f5aed82a6639f"
+        "sha256": "cf9489644984d8b280338ae17e1ab1fe29196dce300b46d5d59311baf99154ae"
       },
       {
         "path": "src/modules/anesthesia/engine.ts",
-        "sha256": "95105b466d03798c4d86ba1bed78595ca1ef466ca0550d34048baffc7e5772fa"
+        "sha256": "a0eec1692921b771f1ed73dd1325a7331d186367bf108bfdd0fccf752bccb0f7"
       },
       {
         "path": "src/modules/anesthesia/region/profiles.ts",
@@ -28,7 +28,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "d7529d7ae13cbdfb420f443c40992fc6a37477a5f0742b6017e98561d646b774"
+        "sha256": "487354b2d22b439b5ba305548809362eae67d4f20873c2426a0944c0aa72cf2c"
       },
       {
         "path": "src/modules/endocrine-metabolic/HypocalcemiaTray.tsx",
@@ -72,11 +72,11 @@
       },
       {
         "path": "src/platform/docs/limitations.ts",
-        "sha256": "a5cc754808f8dab28020e14f1a4f1db5e3f7bc0bc56ac440f66bb6eca1749d31"
+        "sha256": "18e3efa74a7d03cd6cd61f7d10a7c65a6024c5bf5c69e9b6f38aa2a8d6aa30d3"
       },
       {
         "path": "src/platform/docs/sources.ts",
-        "sha256": "e2207142371a19cedb718a2156c8f8af6b949b61f97091224fffac05cc77772a"
+        "sha256": "0dd0a154951f88c159dfa080c306eb17bd1d2ec8ca237642f56bbc5c2ca04383"
       },
       {
         "path": "src/platform/governance/publication.ts",
@@ -104,7 +104,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "07991513c0ee3fc56f6920124f68fd5a1cd7a049c297367c6b627f277355c033"
+        "sha256": "0aeaed8dd0dc80d94d5defffab4ebdde9c844ef22e4110dcc4b6f78fe0f51d1e"
       },
       {
         "path": "tests/integration/demonstration-runs.test.tsx",

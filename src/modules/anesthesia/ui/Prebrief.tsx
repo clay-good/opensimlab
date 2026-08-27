@@ -25,6 +25,7 @@ import { supportsThyroidDemonstration } from '../../endocrine-metabolic/demo/thy
 import { supportsMyxedemaDemonstration } from '../../endocrine-metabolic/demo/myxedema-demonstration';
 import { supportsHypercalcemiaDemonstration } from '../../endocrine-metabolic/demo/hypercalcemia-demonstration';
 import { supportsHypocalcemiaDemonstration } from '../../endocrine-metabolic/demo/hypocalcemia-demonstration';
+import { supportsHyponatremiaCorrectionDemonstration } from '../../endocrine-metabolic/demo/hyponatremia-correction-demonstration';
 
 export const FICTION_CONTRACT =
   'This is a simulation. The patient is not real, nothing you do here reaches anyone, and an '
@@ -192,6 +193,17 @@ export function Prebrief({
               Qualified findings and response reports are authored. This lab practices early recognition,
               coordinated ownership, reassessment, and handoff, not examination, dosing, procedures, or delivery.
             </p>
+          </>
+        ) : scenario.metadata.id === 'hyponatremia-aquaresis-and-overcorrection' ? (
+          <>
+            <p>The seizure has stopped, but the correction window continues. Sodium already rose from
+              106 to the supplied 111 mmol/L in one hour. Review the selected high-risk plan, arrange
+              serial sodium and urine checks, and respond to newly observed water diuresis.</p>
+            <p>Original baseline and observed peak stay in the record, including after qualified
+              relowering when excessive correction is observed. Only requested results reveal sodium
+              and urine output. Authored observation and response checkpoints are not treatment
+              predictions or safe waiting intervals. Pause freely; 60× advances one simulated minute
+              each second. Continuing care is not discharge clearance.</p>
           </>
         ) : scenario.metadata.id === 'hypocalcemic-tetany-rescue-and-recurrence' ? (
           <>
@@ -370,12 +382,12 @@ export function Prebrief({
       <div className="prebrief__start">
         <Button variant="primary" onClick={onStart}>Start the scenario</Button>
         {onWatch && (
-          <Button onClick={onWatch}>{hypoglycemia || supportsAdrenalCrisis(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) ? 'Watch a worked example' : 'Watch a 90-second demonstration'}</Button>
+          <Button onClick={onWatch}>{hypoglycemia || supportsAdrenalCrisis(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) ? 'Watch a worked example' : 'Watch a 90-second demonstration'}</Button>
         )}
       </div>
       {onWatch && (
         <p className="field__hint">
-          {hypoglycemia || supportsAdrenalCrisis(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) ? 'The worked example pauses before each decision so you can read. Choose “Continue example” when ready; observation periods run at 60× speed. Reading time does not advance the patient. ' : 'The demonstration runs this scenario at five times speed and explains what to look at. '}
+          {hypoglycemia || supportsAdrenalCrisis(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) ? 'The worked example pauses before each decision so you can read. Choose “Continue example” when ready; observation periods run at 60× speed. Reading time does not advance the patient. ' : 'The demonstration runs this scenario at five times speed and explains what to look at. '}
           You can take the controls at any point and carry on from where it got to.
         </p>
       )}

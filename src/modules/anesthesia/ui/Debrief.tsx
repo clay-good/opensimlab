@@ -29,6 +29,7 @@ import { supportsThyroidStorm } from '../../endocrine-metabolic/thyroid-storm';
 import { supportsMyxedema } from '../../endocrine-metabolic/myxedema';
 import { supportsHypercalcemia, HYPERCALCEMIA_FLUID_RESPONSE_TICKS, HYPERCALCEMIA_BRIDGE_RESPONSE_TICKS } from '../../endocrine-metabolic/hypercalcemia';
 import { supportsHypocalcemia, HYPOCALCEMIA_CALCIUM_RESPONSE_TICKS, HYPOCALCEMIA_RESPONSE_TICKS } from '../../endocrine-metabolic/hypocalcemia';
+import { supportsHyponatremiaCorrection } from '../../endocrine-metabolic/hyponatremia-correction';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -200,6 +201,8 @@ export function Debrief(props: DebriefProps) {
                 ? { activityContext: 'coordinating monitored hydration, calcium-lowering treatment, and continuing care for severe malignancy-associated hypercalcemia' }
               : supportsHypocalcemia(props.scenario)
                 ? { activityContext: 'coordinating monitored calcium rescue, postoperative risk assessment, and continuing calcium and magnesium care' }
+              : supportsHyponatremiaCorrection(props.scenario)
+                ? { activityContext: 'preserving the original sodium-correction window while coordinating water-loss management and continuing surveillance after emergency rescue' }
               : {}),
           })}</p>
           <label className="field__label" htmlFor="reactions-account">Your account</label>
@@ -580,6 +583,40 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.startsWith('sodium-correction-')) {
+      if (!supportsHyponatremiaCorrection(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The post-rescue sodium lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^sodium-correction-${id}-\\d+$`).test(entry.eventId));
+      const support = event('support'); const risk = event('risk-review'); const monitoring = event('monitoring');
+      const aquaresis = event('aquaresis-reassessment'); const breach = event('overcorrection-reassessment');
+      const control = event('water-loss-control'); const relowering = event('relowering');
+      const response = event('response-reassessment'); const handoff = event('handoff');
+      const normalization = event('normalization-refused'); const waited = event('symptom-wait-choice');
+      const firstFinding = aquaresis ?? breach;
+      const surveillanceMet = !!monitoring && !!firstFinding && monitoring.tick <= firstFinding.tick && !waited;
+      const responseMet = !!control && !!response && (!breach || !!relowering) && !normalization && !waited;
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'sodium-correction-risk': { met: !!support && !!risk,
+          finding: support && risk ? 'The high-risk plan preserved sodium 106 mmol/L and the first correction hour before this lesson. Qualified review includes potassium, nutrition, withheld thiazide, and possible causes without assuming SIADH.'
+            : 'Qualified support or high-risk review is missing. Transfer does not reset the correction window; a supplied hour-1 sodium of 111 already represents a rise of 5.', tick: risk?.tick },
+        'sodium-correction-surveillance': { met: surveillanceMet,
+          finding: surveillanceMet ? 'Serial sodium and urine surveillance was established before fresh emerging findings were reviewed. Requested results stay historical; an awake appearance is not a reason to stop monitoring.'
+            : 'Missing or late surveillance, or waiting for symptoms, remains learning evidence after recovery. Authored counterfactual: water diuresis can drive a further rise even though hypertonic saline has stopped.', tick: firstFinding?.tick },
+        'sodium-correction-response': { met: responseMet,
+          finding: responseMet ? breach ? 'Qualified water-loss management and relowering followed observed excessive correction. Their order was not constrained by administrative review; no dose or neurologic protection was inferred.'
+            : 'Qualified water-loss management followed observed aquaresis. Successful prevention did not require unnecessary relowering; no immediate drug effect was inferred.'
+            : 'A normalization attempt, symptom-based delay, missing necessary response, or unconfirmed later trajectory remains visible. Control can prevent further rise but cannot undo correction already achieved; qualified relowering is a separate response after an observed breach.', tick: control?.tick },
+        'sodium-correction-reassessment': { met: !!firstFinding && !!response,
+          finding: firstFinding && response ? 'Fresh observations distinguish emerging water losses or excessive correction from the later authored response. All observed peaks remain evidence; a lower later sodium does not erase prior exposure or establish neurologic safety.'
+            : 'Fresh emerging and later response observations are incomplete. A timer, treatment request, or better appearance is not a new sodium result.', tick: response?.tick },
+        'sodium-correction-handoff': { met: !!handoff,
+          finding: handoff ? 'The receiving qualified team owns continued 24–48-hour sodium, urine-output, potassium, neurologic, fluid-balance, and cause surveillance, including the original baseline and observed peak. Handoff is not discharge or proven recovery.'
+            : 'Continuing-care ownership has not been handed off. The original correction window and unresolved neurologic risk remain active.', tick: handoff?.tick },
+      };
+      const result = results[objective.id];
+      return result ? { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding
+        : { ...base, outcome: 'not-exercised', finding: 'No evidence mapping exists for this objective.' } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.startsWith('hypocalcemia-')) {
       if (!supportsHypocalcemia(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The hypocalcemia lesson was not active.' } satisfies ObjectiveFinding;

@@ -1907,6 +1907,23 @@
       "limitationManifestHash": "sha256:b011b56a72dae60e2e516c2c9f1d79fc7f5c9418f52857266c393400c7133a37"
     },
     {
+      "scenarioId": "hyponatremia-aquaresis-and-overcorrection",
+      "contentVersion": "0.1.0",
+      "moduleId": "endocrine-metabolic",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:1df89f8702271ecaf73aa73a29611d9ce67a1918f788c941321bb08be97ef16a",
+      "defaultsHash": "sha256:e2c33cf219c9c8a5780765aa5d97aab3339100ba6eff1c177d29f68d42170e1c",
+      "maturityHash": "sha256:d52fa0b7527c2d26a227e7b66cc90f2db49255c26ff5c4e4184707b0ddacffe8",
+      "sourceManifestHash": "sha256:3e7764a3fe06199e46d328176534691a0f0d5ecb2060a6d0823fe12101dadd6d",
+      "limitationManifestHash": "sha256:93fd870b50d0165d1d0127bc0710799890d7f2e85a0f827c934a65d3207454af"
+    },
+    {
       "scenarioId": "myxedema-coma-ventilation-and-steroid-sequence",
       "contentVersion": "0.1.0",
       "moduleId": "endocrine-metabolic",

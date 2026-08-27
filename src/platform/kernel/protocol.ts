@@ -154,6 +154,25 @@ export interface ReadyMessage {
  * request rather than the result teaches the learner to trust a number that is
  * not true (cockpit/action-cockpit → the tray reflects the patient).
  */
+export interface HyponatremiaCorrectionSnapshot {
+  readonly supportActive: boolean;
+  readonly riskReviewedAtTick: number | null; readonly monitoringAtTick: number | null;
+  readonly waterLossControlAtTick: number | null; readonly reloweringAtTick: number | null;
+  readonly aquaresisDueInSeconds: number | null; readonly responseDueInSeconds: number | null;
+  readonly aquaresisObserved: boolean; readonly overcorrectionObserved: boolean; readonly responseObserved: boolean;
+  readonly peakObservedSodiumMmolL: number;
+  readonly normalizationAttempted: boolean; readonly symptomWaitChosen: boolean;
+  readonly observation: {
+    readonly atTick: number; readonly sodiumMmolL: number; readonly urineOutputMlPerHour: number;
+    readonly systolicMmHg: number; readonly diastolicMmHg: number; readonly meanArterialMmHg: number;
+    readonly heartRateBpm: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string; readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true; readonly doseModelAvailable: false; readonly durableRecoveryProven: false;
+}
+
 export interface HypocalcemiaSnapshot {
   readonly supportActive: boolean;
   readonly riskAssessedAtTick: number | null; readonly causeReviewedAtTick: number | null;
@@ -3281,6 +3300,7 @@ export interface EquipmentSnapshot {
     readonly thyroidStorm?: ThyroidStormSnapshot;
     readonly myxedema?: MyxedemaSnapshot;
     readonly hypercalcemia?: HypercalcemiaSnapshot;
+    readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {
       readonly supportAtTick: number | null; readonly contextAtTick: number | null;

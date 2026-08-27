@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -100,6 +100,7 @@ export function stateSummary(
     readonly myxedema?: MyxedemaSnapshot;
     readonly hypercalcemia?: HypercalcemiaSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
+    readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -153,7 +154,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -177,6 +178,19 @@ export function stateSummary(
           + ' intravenous.');
       }
     }
+  }
+  if (options.hyponatremiaCorrection) {
+    const patient = options.hyponatremiaCorrection;
+    lines.push('The original correction window began with sodium 106 millimoles per liter, one hour before this lesson. Supplied post-rescue sodium was 111.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push('Oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.observation
+      ? `Last requested assessment at simulated ${formatElapsed(patient.observation.atTick)}: sodium ${patient.observation.sodiumMmolL} millimoles per liter, urine output ${patient.observation.urineOutputMlPerHour} milliliters per hour. These are historical observations, not live measurements.`
+      : 'No sodium and urine-output reassessment has been requested.');
+    lines.push(`Highest observed sodium: ${patient.peakObservedSodiumMmolL} millimoles per liter. Relowering does not erase the correction history. A normal appearance does not establish safety.`);
+    lines.push(options.alarms.length === 0 ? 'No active alarms.'
+      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    return lines.join(' ');
   }
   if (options.hypocalcemia) {
     const patient = options.hypocalcemia;

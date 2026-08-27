@@ -29,6 +29,8 @@ import { MyxedemaTray } from '../../endocrine-metabolic/MyxedemaTray';
 import { supportsHypercalcemia, type HypercalcemiaAction, type HypercalcemiaSnapshot } from '../../endocrine-metabolic/hypercalcemia';
 import { supportsHypocalcemia, type HypocalcemiaAction, type HypocalcemiaSnapshot } from '../../endocrine-metabolic/hypocalcemia';
 import { HypocalcemiaTray } from '../../endocrine-metabolic/HypocalcemiaTray';
+import { supportsHyponatremiaCorrection, type HyponatremiaCorrectionAction, type HyponatremiaCorrectionSnapshot } from '../../endocrine-metabolic/hyponatremia-correction';
+import { HyponatremiaCorrectionTray } from '../../endocrine-metabolic/HyponatremiaCorrectionTray';
 import { HypercalcemiaTray } from '../../endocrine-metabolic/HypercalcemiaTray';
 import type { AdrenalCrisisSnapshot } from '@platform/kernel/protocol';
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
@@ -1412,6 +1414,7 @@ export interface ActionCockpitProps {
     readonly myxedema?: MyxedemaSnapshot;
     readonly hypercalcemia?: HypercalcemiaSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
+    readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2599,6 +2602,10 @@ export interface ActionCockpitProps {
   readonly hypocalcemiaGuidance?: GuidanceLevel;
   readonly hypocalcemiaDemonstrating?: boolean;
   readonly onHypocalcemiaTutorSource?: () => void;
+  readonly onHyponatremiaCorrectionResponse?: (action: HyponatremiaCorrectionAction) => void;
+  readonly hyponatremiaCorrectionGuidance?: GuidanceLevel;
+  readonly hyponatremiaCorrectionDemonstrating?: boolean;
+  readonly onHyponatremiaCorrectionTutorSource?: () => void;
   readonly thyroidGuidance?: GuidanceLevel;
   readonly thyroidDemonstrating?: boolean;
   readonly onThyroidTutorSource?: () => void;
@@ -2754,6 +2761,7 @@ export function crisisResponseAvailability(
   const hasMyxedemaResponse = supportsMyxedema(scenario);
   const hasHypercalcemiaResponse = supportsHypercalcemia(scenario);
   const hasHypocalcemiaResponse = supportsHypocalcemia(scenario);
+  const hasHyponatremiaCorrectionResponse = supportsHyponatremiaCorrection(scenario);
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -3326,7 +3334,7 @@ export function crisisResponseAvailability(
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
-    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse,
+    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3575,6 +3583,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'myxedema')
       || (event.type === 'narrative' && event.target === 'hypercalcemia')
       || (event.type === 'narrative' && event.target === 'hypocalcemia')
+      || (event.type === 'narrative' && event.target === 'hyponatremia-correction')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3707,7 +3716,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
-    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse,
+    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3871,8 +3880,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasMyxedemaResponse
     || hasHypercalcemiaResponse
     || hasHypocalcemiaResponse
+    || hasHyponatremiaCorrectionResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasHypocalcemiaResponse
+  const responseTray = hasHyponatremiaCorrectionResponse
+    ? { id: 'crisis', label: 'Correction + surveillance' } as const
+    : hasHypocalcemiaResponse
     ? { id: 'crisis', label: 'Rescue + continuing care' } as const
     : hasHypercalcemiaResponse
     ? { id: 'crisis', label: 'Volume + calcium' } as const
@@ -4342,6 +4354,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasMyxedemaResponse
     || hasHypercalcemiaResponse
     || hasHypocalcemiaResponse
+    || hasHyponatremiaCorrectionResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -5326,6 +5339,12 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 demonstrating={props.adrenalDemonstrating}
                 onOpenSource={props.onAdrenalTutorSource}
                 onAction={props.onAdrenalCrisisResponse ?? (() => {})} />
+            )}
+            {hasHyponatremiaCorrectionResponse && (
+              <HyponatremiaCorrectionTray assessment={props.resuscitation.hyponatremiaCorrection} guidance={props.hyponatremiaCorrectionGuidance}
+                demonstrating={props.hyponatremiaCorrectionDemonstrating}
+                scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onHyponatremiaCorrectionTutorSource}
+                onAction={props.onHyponatremiaCorrectionResponse ?? (() => {})} />
             )}
             {hasHypocalcemiaResponse && (
               <HypocalcemiaTray assessment={props.resuscitation.hypocalcemia} guidance={props.hypocalcemiaGuidance}

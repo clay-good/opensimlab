@@ -391,6 +391,14 @@ Both endocrine worked examples pause before each decision. Read the explanation,
 “Continue example”; only observation periods advance at 60×. Reading time does not delay the
 simulated patient's care. Takeover preserves the current patient and returns to 1× speed.
 
+The ninth Endocrine lab begins after severe hyponatremia rescue. Emerging water diuresis can
+drive further correction even with hypertonic saline stopped. Preserve the original sodium and
+correction window, request fresh observations, and coordinate qualified water-loss management
+with relowering when indicated. The observed peak and earlier mistakes survive later improvement.
+A learner-paced example, private report dialog, and continuing-risk debrief share the same
+authored patient. No dose, sodium formula, ODS prediction, or discharge clearance is provided;
+independent clinical review and full inclusive and production-report validation remain pending.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later
