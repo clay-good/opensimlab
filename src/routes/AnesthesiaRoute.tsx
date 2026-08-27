@@ -238,6 +238,27 @@ function boundedScalars(value: unknown, limit: number): Record<string, ReportCon
 }
 
 export function collectReportEquipmentContext(equipment: SessionState['equipment']): Record<string, ReportContextScalar> {
+  const thyroid = equipment?.resuscitation.thyroidStorm;
+  if (thyroid && equipment) {
+    const priority = boundedScalars({ resuscitation: { thyroidStorm: {
+      supportActive: thyroid.supportActive, synthesisAtTick: thyroid.synthesisAtTick,
+      supportiveCareAtTick: thyroid.supportiveCareAtTick, circulationAssessedAtTick: thyroid.circulationAssessedAtTick,
+      rateControlReviewedAtTick: thyroid.rateControlReviewedAtTick, iodineAtTick: thyroid.iodineAtTick,
+      iodineDueInSeconds: thyroid.iodineDueInSeconds, responseDueInSeconds: thyroid.responseDueInSeconds,
+      responseObserved: thyroid.responseObserved, urgentCoverageDelayed: thyroid.urgentCoverageDelayed,
+      waitForLabsChosen: thyroid.waitForLabsChosen, blanketBetaBlockadeChosen: thyroid.blanketBetaBlockadeChosen,
+      earlyIodineAttempted: thyroid.earlyIodineAttempted, ended: thyroid.ended,
+      circulationRisk: thyroid.circulationRisk,
+      observation: thyroid.observation ? {
+        atTick: thyroid.observation.atTick, systolicMmHg: thyroid.observation.systolicMmHg,
+        diastolicMmHg: thyroid.observation.diastolicMmHg, meanArterialMmHg: thyroid.observation.meanArterialMmHg,
+        heartRateBpm: thyroid.observation.heartRateBpm, respiratoryRateBpm: thyroid.observation.respiratoryRateBpm,
+        spo2Percent: thyroid.observation.spo2Percent, coreTemperatureC: thyroid.observation.coreTemperatureC,
+      } : null,
+    } } }, REPORT_CONTEXT_SNAPSHOT_LIMIT);
+    const remaining = { ...equipment, resuscitation: { ...equipment.resuscitation, thyroidStorm: undefined } };
+    return { ...priority, ...boundedScalars(remaining, REPORT_CONTEXT_SNAPSHOT_LIMIT - Object.keys(priority).length) };
+  }
   const adrenal = equipment?.resuscitation.adrenalCrisis;
   // Preserve the active lesson within the existing privacy budget. Never copy
   // feedback, prose, arbitrary nested values, or hidden medication findings.

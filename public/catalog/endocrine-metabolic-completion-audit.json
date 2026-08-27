@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "moduleId": "endocrine-metabolic",
   "capabilityVersion": "0.1.0-alpha.48",
-  "scenarioCount": 4,
+  "scenarioCount": 5,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -505,6 +505,132 @@
           "status": "missing",
           "evidence": [
             "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "thyroid-storm-hemodynamic-risk",
+      "title": "Thyroid storm: treat the person, not just the pulse",
+      "moduleId": "endocrine-metabolic",
+      "environment": "ward",
+      "estimatedMinutes": 15,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario thyroid-storm-hemodynamic-risk carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "5 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "Fixed authored thyroid transitions and reference seed 4903; tests/integration/thyroid-storm-runs.test.ts verifies real-engine replay hashes, including presentation, actions, observations, and event evidence."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "thyroid-storm.ts advances incomplete-care deterioration, a later partial-support state, and bounded instructor takeover independently of observation. The one-hour iodine sequence is distinct from authored response clocks."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "Ten dose-free decisions include parallel urgent care, circulation assessment, individualized rate review, sequenced iodine, fresh reassessment, handoff, and retained diagnostic-delay and blanket-beta-blockade mistakes."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "Ongoing-care handoff or instructor takeover ends the model; 30-minute incomplete urgent care and four-hour unfinished-lesson stops are authored, not safe treatment delays or predicted outcomes."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "Exact-version observed-state inline tutoring supports Guided, Coached, and Unassisted. A learner-paced worked example is not yet implemented."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "Debrief.tsx maps five objectives to accepted/refused events, preserves early errors after correction, and explicitly labels incomplete-coverage deterioration as an authored counterfactual."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "3 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "thyroid-storm-fixtures.ts binds expert, commonError, recovery, and noAction paths to content 0.1.0; model and real-engine tests verify distinct states and outcomes."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Automated tray, replay, and browser checks do not establish complete screen-reader, 400% zoom, color-vision, offline, and performance evidence for this exact version."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "The shared report control, exact-version Worker catalog, and bounded opt-in thyroid context are integrated. Complete four-surface reporting and production Turnstile/D1 verification remain pending."
           ]
         }
       ]

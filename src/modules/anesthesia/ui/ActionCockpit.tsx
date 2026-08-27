@@ -22,6 +22,8 @@ import { supportsSevereHypoglycemia, type HypoglycemiaAction } from '../../endoc
 import { SevereHypoglycemiaTray } from '../../endocrine-metabolic/SevereHypoglycemiaTray';
 import { supportsAdrenalCrisis, type AdrenalCrisisAction } from '../../endocrine-metabolic/adrenal-crisis';
 import { AdrenalCrisisTray } from '../../endocrine-metabolic/AdrenalCrisisTray';
+import { supportsThyroidStorm, type ThyroidStormAction, type ThyroidStormSnapshot } from '../../endocrine-metabolic/thyroid-storm';
+import { ThyroidStormTray } from '../../endocrine-metabolic/ThyroidStormTray';
 import type { AdrenalCrisisSnapshot } from '@platform/kernel/protocol';
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 
@@ -1400,6 +1402,7 @@ export interface ActionCockpitProps {
     };
     readonly severeHypoglycemia?: SevereHypoglycemiaSnapshot;
     readonly adrenalCrisis?: AdrenalCrisisSnapshot;
+    readonly thyroidStorm?: ThyroidStormSnapshot;
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2574,6 +2577,9 @@ export interface ActionCockpitProps {
   ) => void;
   readonly onSevereHypoglycemiaResponse?: (action: HypoglycemiaAction) => void;
   readonly onAdrenalCrisisResponse?: (action: AdrenalCrisisAction) => void;
+  readonly onThyroidStormResponse?: (action: ThyroidStormAction) => void;
+  readonly thyroidGuidance?: GuidanceLevel;
+  readonly onThyroidTutorSource?: () => void;
   readonly adrenalGuidance?: GuidanceLevel;
   readonly adrenalDemonstrating?: boolean;
   readonly onAdrenalTutorSource?: () => void;
@@ -2722,6 +2728,7 @@ export function crisisResponseAvailability(
     && scenario.timeline.filter((event) => event.target === 'hhs-osmolality-trajectory-boundary').length === 1;
   const hasSevereHypoglycemiaResponse = supportsSevereHypoglycemia(scenario);
   const hasAdrenalCrisisResponse = supportsAdrenalCrisis(scenario);
+  const hasThyroidStormResponse = supportsThyroidStorm(scenario);
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -3294,6 +3301,7 @@ export function crisisResponseAvailability(
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
+    hasThyroidStormResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3538,6 +3546,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'hhs-osmolality-trajectory')
       || (event.type === 'narrative' && event.target === 'severe-hypoglycemia-recurrence')
       || (event.type === 'narrative' && event.target === 'adrenal-crisis')
+      || (event.type === 'narrative' && event.target === 'thyroid-storm')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3670,6 +3679,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
+    hasThyroidStormResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3829,8 +3839,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasEndocrineHhsResponse
     || hasSevereHypoglycemiaResponse
     || hasAdrenalCrisisResponse
+    || hasThyroidStormResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasAdrenalCrisisResponse
+  const responseTray = hasThyroidStormResponse
+    ? { id: 'crisis', label: 'Treatment + circulation' } as const
+    : hasAdrenalCrisisResponse
     ? { id: 'crisis', label: 'Rescue + continuity' } as const
     : hasSevereHypoglycemiaResponse
     ? { id: 'crisis', label: 'Rescue + recurrence' } as const
@@ -4288,6 +4301,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasEndocrineHhsResponse
     || hasSevereHypoglycemiaResponse
     || hasAdrenalCrisisResponse
+    || hasThyroidStormResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -5272,6 +5286,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 demonstrating={props.adrenalDemonstrating}
                 onOpenSource={props.onAdrenalTutorSource}
                 onAction={props.onAdrenalCrisisResponse ?? (() => {})} />
+            )}
+            {hasThyroidStormResponse && (
+              <ThyroidStormTray assessment={props.resuscitation.thyroidStorm} guidance={props.thyroidGuidance}
+                scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onThyroidTutorSource}
+                onAction={props.onThyroidStormResponse ?? (() => {})} />
             )}
             {hasSevereHypoglycemiaResponse && (
               <SevereHypoglycemiaTray assessment={props.resuscitation.severeHypoglycemia}

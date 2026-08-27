@@ -25,6 +25,7 @@ import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { MaturityMarker } from '@platform/governance/MaturityMarker';
 import { supportsSevereHypoglycemia } from '../../endocrine-metabolic/severe-hypoglycemia';
 import { supportsAdrenalCrisis } from '../../endocrine-metabolic/adrenal-crisis';
+import { supportsThyroidStorm } from '../../endocrine-metabolic/thyroid-storm';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -188,6 +189,8 @@ export function Debrief(props: DebriefProps) {
                 ? { activityContext: `reassessing ${sentenceCaseTitle(props.scenario.metadata.title)} in cardiology` }
               : supportsAdrenalCrisis(props.scenario)
                 ? { activityContext: 'coordinating emergency treatment and reassessment for a patient with suspected adrenal crisis' }
+              : supportsThyroidStorm(props.scenario)
+                ? { activityContext: 'coordinating thyroid-emergency treatment, circulation assessment, and ongoing critical care' }
               : {}),
           })}</p>
           <label className="field__label" htmlFor="reactions-account">Your account</label>
@@ -568,6 +571,36 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.startsWith('thyroid-')) {
+      if (!supportsThyroidStorm(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The thyroid-storm lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^thyroid-storm-${id}-\\d+$`).test(entry.eventId));
+      const synthesis = event('synthesis-blockade'); const supportive = event('supportive-care');
+      const delayed = event('diagnostic-delay-choice') || event('incomplete-urgent-coverage');
+      const circulation = event('circulation-assessment'); const rate = event('rate-control-review');
+      const blanket = event('blanket-beta-blockade-refused'); const iodine = event('iodine');
+      const earlyIodine = event('early-iodine-refused'); const reassessment = event('post-treatment-reassessment');
+      const handoff = event('handoff');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'thyroid-urgent-treatment': { met: !!synthesis && !!supportive && !delayed,
+          finding: delayed ? 'A wait-for-laboratory choice or incomplete urgent coverage preceded care. Later correction is credited without erasing the earlier delay.'
+            : synthesis && supportive ? 'Qualified antithyroid and supportive care began without a laboratory or score prerequisite. Authored counterfactual: missing either urgent pathway leads to deterioration and instructor takeover.'
+              : 'Urgent antithyroid or supportive care was missing. Authored counterfactual: combined care permits a later partial-support observation, not guaranteed recovery.', tick: synthesis?.tick },
+        'thyroid-circulation': { met: !!circulation && !!rate && !blanket,
+          finding: blanket ? 'Blanket beta blockade was refused. A recorded clinician-led review does not erase a separate pulse-only choice; congestion and poor perfusion require individualized care.'
+            : rate ? 'Circulation findings informed qualified rate-control planning. No beta-blocker dose or universally safe drug was inferred from the pulse.' : 'The circulation-informed rate-control review remains incomplete.', tick: rate?.tick },
+        'thyroid-sequence': { met: !!iodine && !earlyIodine,
+          finding: earlyIodine ? 'Iodine was attempted before the selected pathway allowed it. Later correction preserves that earlier sequence mismatch; Japanese concurrent-treatment guidance is a different supported pathway.'
+            : iodine ? 'Iodine followed antithyroid treatment by at least one hour in the selected 2026 consensus/ATA pathway. This interval does not delay steroids, support, or precipitant care.' : 'No sequence-compliant iodine action was recorded.', tick: iodine?.tick },
+        'thyroid-reassessment': { met: !!reassessment,
+          finding: reassessment ? 'A fresh bedside assessment recorded early partial support with persistent fever and tachycardia. It did not prove biochemical resolution; marked improvement generally takes 24–72 hours.' : 'The later partial-support state was not freshly reassessed. An older observation or monitor change is not a new whole-person assessment.', tick: reassessment?.tick },
+        'thyroid-handoff': { met: !!handoff,
+          finding: handoff ? 'Ongoing critical care, antithyroid treatment, individualized circulation support, precipitant work, monitoring, and escalation were handed off. No recovery or discharge clearance was claimed.' : 'The continuing-care handoff remains incomplete.', tick: handoff?.tick },
+      };
+      const result = results[objective.id];
+      return result ? { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding
+        : { ...base, outcome: 'not-exercised', finding: 'No evidence mapping exists for this objective.' } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.startsWith('adrenal-')) {
       if (!supportsAdrenalCrisis(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The adrenal-crisis lesson was not active.' } satisfies ObjectiveFinding;

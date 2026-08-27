@@ -27,6 +27,30 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'thyroid-authored-checkpoints',
+    headline: 'Patient states and early-support checkpoints are authored, not thyroid or drug kinetics.',
+    simplification: 'Fixed presentation, incomplete-care deterioration, early partial-support response, and instructor-takeover states respond to bounded decisions and elapsed time.',
+    whereItMisleads: 'A learner treats the five-minute, 30-minute, two-hour, or four-hour teaching clock as a safe delay, outcome forecast, or expected treatment response.',
+    correctUnderstanding: 'Reassess frequently and escalate for deterioration immediately. The two-hour observation after complete care remains febrile and tachycardic; marked improvement generally takes 24–72 hours and varies by patient.',
+    briefIn: ['thyroid-storm-hemodynamic-risk'],
+  },
+  {
+    id: 'thyroid-qualified-treatment-not-prescribing',
+    headline: 'Buttons coordinate qualified care; they do not prescribe drugs, doses, fluids, or procedures.',
+    simplification: 'Antithyroid and supportive pathways are bundled intentions. A focused supplied circulation assessment informs individualized rate-control review without selecting a drug.',
+    whereItMisleads: 'A learner equates a completed pathway with prescribing competence, automatic beta-blocker safety, or completed diagnostic and organ-support work.',
+    correctUnderstanding: 'Care requires qualified endocrine and critical-care teams, local protocols, repeated assessment, individualized treatment and monitoring, and investigation and treatment of triggers and alternative causes.',
+    briefIn: ['thyroid-storm-hemodynamic-risk'],
+  },
+  {
+    id: 'thyroid-sequence-and-recovery-boundaries',
+    headline: 'One selected iodine sequence is rehearsed; another guideline pathway and later recovery are not simulated.',
+    simplification: 'The 2026 joint consensus/ATA pathway requires at least one hour after antithyroid therapy before iodine. Rehearsal ends at continuing-care handoff or instructor takeover.',
+    whereItMisleads: 'A learner labels all concurrent iodine treatment unsafe, withholds other urgent care during the interval, or treats a slower pulse as resolution.',
+    correctUnderstanding: 'JTA/JES permits concurrent treatment for selected synthesis-driven hyperthyroidism. Steroids, support, and precipitant care proceed now. Continuing ICU care, clinical and biochemical reassessment, and definitive planning remain necessary.',
+    briefIn: ['thyroid-storm-hemodynamic-risk'],
+  },
+  {
     id: 'adrenal-authored-response-not-kinetics',
     headline: 'Pressure, alertness, and response checkpoints are authored states, not cortisol or fluid kinetics.',
     simplification: 'Fixed 5-minute incomplete-rescue, 10-minute combined-response, and 30-minute takeover checkpoints create distinct decision paths. Initial laboratory values do not update automatically.',

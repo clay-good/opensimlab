@@ -91,6 +91,12 @@ build verified 217 routes; its 211 preview-channel blockers remain open.
 
 ## Still owed, and only a person can do it
 
+The thyroid-storm content 0.1.0 engineering check is recorded in
+[its evidence brief](evidence-briefs/thyroid-storm-hemodynamic-risk.md). It verifies 320 px action
+label wrapping, 8 px gaps, scroll reachability, and centered reporting. A shared briefing repair
+keeps Start above the fixed Report launcher; both passed browser hit tests. These checks do not
+replace the manual obligations below.
+
 - **Screen reader narration.** Nobody has listened to VoiceOver, NVDA or TalkBack read a
   session. The automated scan proves the markup is not broken; it does not prove the
   narration is usable, which is a different question.

@@ -3,8 +3,9 @@ import { DKA_RESOLUTION_TRANSITION } from './dka-resolution-transition';
 import { HHS_OSMOLALITY_TRAJECTORY } from './hhs-osmolality-trajectory';
 import { SEVERE_HYPOGLYCEMIA_RECURRENCE } from './severe-hypoglycemia-recurrence';
 import { ADRENAL_CRISIS_TREATMENT_BEFORE_TESTS } from './adrenal-crisis-treatment-before-tests';
+import { THYROID_STORM_HEMODYNAMIC_RISK } from './thyroid-storm-hemodynamic-risk';
 
-export const ENDOCRINE_METABOLIC_SCENARIOS: readonly Scenario[] = [DKA_RESOLUTION_TRANSITION, HHS_OSMOLALITY_TRAJECTORY, SEVERE_HYPOGLYCEMIA_RECURRENCE, ADRENAL_CRISIS_TREATMENT_BEFORE_TESTS];
+export const ENDOCRINE_METABOLIC_SCENARIOS: readonly Scenario[] = [DKA_RESOLUTION_TRANSITION, HHS_OSMOLALITY_TRAJECTORY, SEVERE_HYPOGLYCEMIA_RECURRENCE, ADRENAL_CRISIS_TREATMENT_BEFORE_TESTS, THYROID_STORM_HEMODYNAMIC_RISK];
 export const DEFAULT_ENDOCRINE_METABOLIC_SCENARIO_ID = DKA_RESOLUTION_TRANSITION.metadata.id;
 
 export function getEndocrineMetabolicScenario(id: string): Scenario | undefined {

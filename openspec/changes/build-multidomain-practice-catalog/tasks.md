@@ -856,6 +856,13 @@ credited toward the catalog until every item in the completion contract passes.
     to the top dialog, and keep the compact security check reachable through narrow-screen
     rotation without recreating it. Shared regressions and a public test-widget browser check
     do not replace exact-version reporting evidence or production Turnstile/D1 verification.
+  - [x] Endocrine/metabolic slice 5/12 registers thyroid storm with parallel urgent treatment,
+    circulation-informed rate-control review, the declared one-hour antithyroid-before-iodine
+    sequence, independent deterioration and partial-support states, fresh reassessment, and
+    ongoing critical-care handoff. The August 2026 consensus and Japanese alternative are
+    distinguished from authored clocks. Exact-version replay, five-objective debrief, quiet
+    inline tutoring, and bounded report context are implemented. Worked-example, clinical,
+    inclusive-runtime, and complete four-surface reporting evidence remain pending.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
   - [x] Toxicology slice 1/15 establishes the indexable `/toxicology` module with one authored
     methemoglobinemia lab after documented topical benzocaine exposure. The learner reconciles

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "endocrine-metabolic",
-  "recordCount": 4,
+  "recordCount": 5,
   "records": [
     {
       "recordId": "scenario:dka-resolution-transition@0.1.0",
@@ -45,6 +45,17 @@
       "evidence": [
         "/catalog/endocrine-metabolic-completion-audit.json#adrenal-crisis-treatment-before-tests@0.1.2",
         "/catalog/endocrine-metabolic-quality-audit.json#adrenal-crisis-treatment-before-tests@0.1.2"
+      ]
+    },
+    {
+      "recordId": "scenario:thyroid-storm-hemodynamic-risk@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "thyroid-storm-hemodynamic-risk",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/endocrine-metabolic-completion-audit.json#thyroid-storm-hemodynamic-risk@0.1.0",
+        "/catalog/endocrine-metabolic-quality-audit.json#thyroid-storm-hemodynamic-risk@0.1.0"
       ]
     }
   ]

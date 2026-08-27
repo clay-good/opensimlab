@@ -2746,6 +2746,29 @@ Diabetic ketoacidosis; hyperosmolar hyperglycemic state; severe hypoglycemia; ad
 thyroid storm; myxedema coma; hypercalcemic crisis; hypocalcemic tetany; severe hyponatremia;
 hypernatremic dehydration; refeeding electrolyte shift; perioperative diabetes management.
 
+### Wave E endocrine-metabolic slice 5: thyroid storm and circulatory risk
+
+The fifth preview uses a separate state-transition model with ten dose-free decisions. Urgent
+antithyroid and supportive pathways proceed without a laboratory, score, support-acknowledgment,
+or circulation-assessment prerequisite. Focused circulation findings reveal congestion and poor
+perfusion before qualified individualized rate-control review. Blanket beta blockade is refused;
+no drug, dose, access, fluid load, or universally safe agent is selected.
+
+The August 2026 joint thyroid-storm consensus and ATA sequence require iodine at least one hour
+after antithyroid therapy. The briefing and debrief distinguish the JTA/JES concurrent-treatment
+alternative. Other urgent care proceeds during this interval. Only that sequence interval is
+source-derived; five-minute deterioration, 30-minute incomplete-urgent-care takeover, a two-hour
+early partial-support checkpoint after complete care, and four-hour unfinished-lesson takeover
+are authored. Marked clinical improvement generally takes 24–72 hours; persistent fever and
+tachycardia remain in the later state. A new assessment, not the clock alone, observes it.
+
+Expert, common-error, recovery, and no-action fixtures bind content 0.1.0 to seed 4903. Five
+debrief objectives preserve early mistakes after correction and name an authored counterfactual.
+Quiet exact-version tutoring reads observed state without changing the patient. Shared reporting
+retains up to 32 equipment scalars, prioritizing whitelisted thyroid actions and observations
+without feedback or unobserved findings. The worked example and clinical, inclusive-runtime,
+and complete reporting evidence remain separate unfinished requirements.
+
 ### Wave E endocrine-metabolic slice 1: DKA resolution and transition
 
 The new module opens with a late-treatment boundary rather than duplicating Emergency Medicine's

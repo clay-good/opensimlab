@@ -271,6 +271,14 @@
   text-overflow: ellipsis;
 }
 .syringe__meta { font: var(--type-micro); color: var(--text-tertiary); }
+.thyroid-storm__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
+.thyroid-storm__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.thyroid-storm__section .button[aria-disabled='true'] {
+  color: var(--text-tertiary);
+  cursor: not-allowed;
+  background: var(--surface-2);
+  transform: none;
+}
 .syringe > .badge { white-space: normal; overflow-wrap: anywhere; }
 .syringe__presets { display: flex; gap: var(--space-2); flex-wrap: wrap; }
 .syringe__remaining { font: var(--type-micro); color: var(--text-tertiary); font-variant-numeric: tabular-nums; }
@@ -559,6 +567,7 @@
   inline-size: 100%;
 }
 /* Everything that IS meant to span the column says so. */
+.prebrief { padding-block-end: calc(64px + var(--space-6)); }
 .reading > p,
 .reading > ul,
 .reading > ol,

@@ -1,7 +1,40 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 288,
+  "sourceCount": 291,
   "sources": [
+    {
+      "id": "eta-bta-sfe-thyroid-emergencies-2026",
+      "authors": "European Thyroid Association, British Thyroid Association, Society for Endocrinology, and Welsh Endocrine and Diabetes Society",
+      "title": "Management of thyroid emergencies: joint consensus statement on management of thyroid storm",
+      "publication": "European Thyroid Journal",
+      "year": 2026,
+      "locator": "doi:10.1530/ETJ-26-0043; diagnosis, general measures, beta-blockade, antithyroid drugs, iodine, and ongoing management",
+      "usedFor": "Clinical recognition and parallel qualified care; circulation-informed rate control; antithyroid-before-iodine sequencing; repeated assessment and the distinction between early support and later marked improvement. Does not validate authored patient values or checkpoints.",
+      "verifiedAgainst": "Publisher-indexed full text at https://doi.org/10.1530/ETJ-26-0043; August 2026 joint consensus, not independent clinical review of this simulation.",
+      "verifiedOn": "2026-08-27"
+    },
+    {
+      "id": "ata-hyperthyroidism-2016",
+      "authors": "Ross DS, Burch HB, Cooper DS, et al",
+      "title": "2016 American Thyroid Association Guidelines for Diagnosis and Management of Hyperthyroidism and Other Causes of Thyrotoxicosis",
+      "publication": "Thyroid",
+      "year": 2016,
+      "locator": "26:1343–1421; doi:10.1089/thy.2016.0229; recommendations 34–35 and Table 7",
+      "usedFor": "Multimodal thyroid-storm care and the selected minimum one-hour antithyroid-before-iodine interval, not a universal response-time rule.",
+      "verifiedAgainst": "Publisher text at https://doi.org/10.1089/thy.2016.0229 and official ATA guideline directory.",
+      "verifiedOn": "2026-08-27"
+    },
+    {
+      "id": "jta-jes-thyroid-storm-2016",
+      "authors": "Satoh T, Isozaki O, Suzuki A, et al",
+      "title": "2016 Guidelines for the management of thyroid storm from The Japan Thyroid Association and Japan Endocrine Society (First edition)",
+      "publication": "Endocrine Journal",
+      "year": 2016,
+      "locator": "63:1025–1064; doi:10.1507/endocrj.EJ16-0336; iodide and beta-adrenergic antagonist sections",
+      "usedFor": "Explicit disagreement: concurrent iodide and antithyroid therapy in synthesis-driven hyperthyroidism, and individualized cardiac-risk treatment. Another supported pathway must not be labeled universally unsafe.",
+      "verifiedAgainst": "Official journal PDF https://www.jstage.jst.go.jp/article/endocrj/63/12/63_EJ16-0336/_pdf and primary prospective follow-up at https://pmc.ncbi.nlm.nih.gov/articles/PMC11651683/.",
+      "verifiedOn": "2026-08-27"
+    },
     {
       "id": "endocrine-society-primary-adrenal-insufficiency-2016",
       "authors": "Endocrine Society",

@@ -1941,6 +1941,23 @@
       "limitationManifestHash": "sha256:a70c4e46b188581d62668b022f9da517523f0fcf74fa43d8692d97b18a3bf0fc"
     },
     {
+      "scenarioId": "thyroid-storm-hemodynamic-risk",
+      "contentVersion": "0.1.0",
+      "moduleId": "endocrine-metabolic",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:a4df094d6491f56e382d48fb455cde0d385c5f84ad641d5b80af37bb56a9258a",
+      "defaultsHash": "sha256:098d300c091390b0885fed004915138ae9c9d60feac84cf7fd01592718040a8f",
+      "maturityHash": "sha256:819cdb3017284e3a0c02be780fef7b2108e5a2cf8df1bfd897dcc9b509700f8a",
+      "sourceManifestHash": "sha256:80c91127d1659ef35fa0975e90db3553a4a86c6494856073228a15cfa89fe2de",
+      "limitationManifestHash": "sha256:e80acd3fc429c1a683378d6b57471ad0b344e9437e99c71ccd5d575595087945"
+    },
+    {
       "scenarioId": "delivery-room-to-nicu-handoff",
       "contentVersion": "0.1.0",
       "moduleId": "neonatology",

@@ -1,6 +1,7 @@
 import type { Scenario } from '@anesthesia/scenarios/types';
 import { validateScenario } from '@anesthesia/scenarios/schema';
 import { adrenalCompletionEvidence, hypoglycemiaCompletionEvidence } from '../../endocrine-metabolic/completion';
+import { thyroidCompletionEvidence } from '../../endocrine-metabolic/thyroid-completion';
 import {
   COMPLETION_SCHEMA_VERSION,
   type CompletionRequirementAudit,
@@ -83,6 +84,7 @@ export function auditClinicalScenario(
   const exactEvidence = new Map([
     ...hypoglycemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...adrenalCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...thyroidCompletionEvidence(scenario, capabilityVersion, moduleId),
   ].map((entry) => [entry.id, entry]));
   const auditedRequirements = requirements.map((entry) => exactEvidence.get(entry.id) ?? entry);
   return {

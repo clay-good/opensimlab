@@ -55,7 +55,7 @@ export function Prebrief({
   return (
     <>
       <SiteBar />
-      <main className="reading" id="main">
+      <main className="reading prebrief" id="main">
       {assignmentLabel && (
         <p className="field__label">Assignment: {assignmentLabel}</p>
       )}
@@ -188,6 +188,15 @@ export function Prebrief({
               Qualified findings and response reports are authored. This lab practices early recognition,
               coordinated ownership, reassessment, and handoff, not examination, dosing, procedures, or delivery.
             </p>
+          </>
+        ) : scenario.metadata.id === 'thyroid-storm-hemodynamic-risk' ? (
+          <>
+            <p>Start qualified treatment while investigating, assess circulation before choosing
+              rate control, and return for fresh bedside reassessments. Pause freely; 60× speed
+              advances one simulated minute each second.</p>
+            <p>The selected pathway starts iodine at least one hour after antithyroid treatment.
+              Other urgent care proceeds now. Patient changes are authored, not treatment kinetics;
+              early partial improvement is not resolution or discharge readiness.</p>
           </>
         ) : supportsAdrenalCrisis(scenario) ? (
           <>

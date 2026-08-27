@@ -154,6 +154,26 @@ export interface ReadyMessage {
  * request rather than the result teaches the learner to trust a number that is
  * not true (cockpit/action-cockpit → the tray reflects the patient).
  */
+export interface ThyroidStormSnapshot {
+  readonly supportActive: boolean;
+  readonly synthesisAtTick: number | null; readonly supportiveCareAtTick: number | null;
+  readonly circulationAssessedAtTick: number | null; readonly rateControlReviewedAtTick: number | null;
+  readonly iodineAtTick: number | null;
+  readonly iodineDueInSeconds: number | null; readonly responseDueInSeconds: number | null;
+  readonly circulationRisk: 'unassessed' | 'congested-poor-perfusion';
+  readonly urgentCoverageDelayed: boolean;
+  readonly waitForLabsChosen: boolean; readonly blanketBetaBlockadeChosen: boolean; readonly earlyIodineAttempted: boolean;
+  readonly responseObserved: boolean;
+  readonly observation: {
+    readonly atTick: number; readonly systolicMmHg: number; readonly diastolicMmHg: number; readonly meanArterialMmHg: number;
+    readonly heartRateBpm: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string; readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true; readonly doseModelAvailable: false; readonly durableRecoveryProven: false;
+}
+
 export interface AdrenalCrisisSnapshot {
   readonly supportActive: boolean;
   readonly hydrocortisoneAtTick: number | null; readonly salineAtTick: number | null;
@@ -3202,6 +3222,7 @@ export interface EquipmentSnapshot {
     };
     readonly severeHypoglycemia?: SevereHypoglycemiaSnapshot;
     readonly adrenalCrisis?: AdrenalCrisisSnapshot;
+    readonly thyroidStorm?: ThyroidStormSnapshot;
     readonly endocrineHhsAssessment?: {
       readonly supportAtTick: number | null; readonly contextAtTick: number | null;
       readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;

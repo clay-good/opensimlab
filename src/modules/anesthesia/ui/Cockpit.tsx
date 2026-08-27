@@ -375,7 +375,8 @@ export function Cockpit({
   // never feeds anything back, which is what makes the trajectory identical at
   // every guidance level.
   useEffect(() => {
-    if (tutorIntroductionOpen || demonstrating || scenario.metadata.id === 'adrenal-crisis-treatment-before-tests') return;
+    if (tutorIntroductionOpen || demonstrating || scenario.metadata.id === 'adrenal-crisis-treatment-before-tests'
+      || scenario.metadata.id === 'thyroid-storm-hemodynamic-risk') return;
     const input = {
       scenarioId: scenario.metadata.id,
       scenarioVersion: scenario.metadata.version,
@@ -699,6 +700,8 @@ export function Cockpit({
 
       <div className="cockpit__actions">
         <ActionCockpit
+          thyroidGuidance={session.guidance}
+          onThyroidTutorSource={session.pause}
           adrenalGuidance={session.guidance}
           adrenalDemonstrating={demonstrating && adrenalDemoSupported}
           onAdrenalTutorSource={session.pause}
@@ -1266,6 +1269,9 @@ export function Cockpit({
           onAdrenalCrisisResponse={(action) => session.act({
             type: 'adrenal-crisis-response', payload: { action },
           })}
+          onThyroidStormResponse={(action) => session.act({
+            type: 'thyroid-storm-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}
@@ -1314,12 +1320,12 @@ export function Cockpit({
       </div>
 
       {/* Guidance. Non-blocking, dismissible, and never shown during an alarm. */}
-      {!demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && tutorIntroductionOpen && session.alarms.length === 0 ? (
+      {!demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && tutorIntroductionOpen && session.alarms.length === 0 ? (
         <TutorIntroduction onDismissPermanently={() => {
           setTutorIntroductionDismissed(true);
           setTutorIntroductionOpen(false);
         }} />
-      ) : !demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && !tutorIntroductionOpen && prompt ? (
+      ) : !demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && !tutorIntroductionOpen && prompt ? (
         <TutorPromptCard
           prompt={prompt}
           collapsed={tutorCollapsed}
@@ -1430,7 +1436,7 @@ export function Cockpit({
             and cue is also shown.
           </p>
         </div>
-        {scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && <Button onClick={() => {
+        {scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && <Button onClick={() => {
           setShortcutsOpen(false);
           setTutorIntroductionOpen(true);
         }}>
