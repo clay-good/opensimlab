@@ -271,9 +271,17 @@ The second Neonatology lab moves from quiet transition to apnea after qualified 
 connects the shared birth clock, breathing, heart rate, tone, warmth, parent, and whole dyad;
 recognizes the ventilation threshold; reviews qualified effective ventilation and escalation
 readiness; then reads a fixed early heart-rate response and hands off what remains unresolved.
-Ineffective-ventilation correction stays reserved for the next lab. No learner examination, scoring,
-monitoring interpretation, oxygen, ventilation, airway care, drug, resuscitation, procedure,
-disposition, or newborn/parent outcome control is exposed.
+No learner examination, scoring, monitoring interpretation, oxygen, ventilation, airway care, drug,
+resuscitation, procedure, disposition, or newborn/parent outcome control is exposed.
+
+The third Neonatology lab isolates ineffective face-mask ventilation before escalation. It connects
+the birth and resuscitation clocks, interface, absent chest movement, falling heart-rate trajectory,
+reliable oxygenation signal, parent, and whole dyad; recognizes absent heart-rate rise as the primary
+effectiveness failure; and reviews qualified correction, alternative-airway readiness, and the
+compression boundary. A fixed 2-minute report supplies corrected leak, visible chest movement,
+heart rate 118/min, preductal SpO2 76%, and emerging irregular respirations while qualified support
+continues. No learner examination, device handling, ventilation, corrective step, airway,
+compression, drug, procedure, disposition, or newborn/parent outcome control is exposed.
 
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage

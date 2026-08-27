@@ -1,8 +1,13 @@
 import type { Scenario } from '@anesthesia/scenarios/types';
 import { TERM_NEWBORN_TRANSITION } from './term-newborn-transition';
 import { NEONATAL_APNEA } from './neonatal-apnea';
+import { INEFFECTIVE_VENTILATION_CORRECTION } from './ineffective-ventilation-correction';
 
-export const NEONATOLOGY_SCENARIOS: readonly Scenario[] = [TERM_NEWBORN_TRANSITION, NEONATAL_APNEA];
+export const NEONATOLOGY_SCENARIOS: readonly Scenario[] = [
+  TERM_NEWBORN_TRANSITION,
+  NEONATAL_APNEA,
+  INEFFECTIVE_VENTILATION_CORRECTION,
+];
 export const DEFAULT_NEONATOLOGY_SCENARIO_ID = TERM_NEWBORN_TRANSITION.metadata.id;
 
 export function getNeonatologyScenario(id: string): Scenario | undefined {

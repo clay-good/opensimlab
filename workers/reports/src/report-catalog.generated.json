@@ -1788,6 +1788,23 @@
       "limitationManifestHash": "sha256:d8d5c11c34520fdaa59a4969e3c22f30681f10f186a6d5c2337e6a9449273ca2"
     },
     {
+      "scenarioId": "ineffective-ventilation-correction",
+      "contentVersion": "0.1.0",
+      "moduleId": "neonatology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:8009ad26040bcdc00479969276259c72b1b824dc6886fbd9cbb8d262f911f222",
+      "defaultsHash": "sha256:9b7467529c233f30694db78ad7e1281f2d8d200b11aac48b2cb196081612fead",
+      "maturityHash": "sha256:9216334d1cc5bb82d53b677ab9d86d1395c410e825e4d97ef2f5ffe926831503",
+      "sourceManifestHash": "sha256:39beb051d5326f88fdfc132d9799c4741dc5a19c90b40a06dfd2854e60165a25",
+      "limitationManifestHash": "sha256:f467a72bdc7b2c520205d17f42717b6d7f039927d6f990af437c78c27d34ec2a"
+    },
+    {
       "scenarioId": "neonatal-apnea",
       "contentVersion": "0.1.0",
       "moduleId": "neonatology",

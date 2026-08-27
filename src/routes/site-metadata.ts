@@ -31,7 +31,7 @@ export const ROOT_ROUTE: RouteMetadata = {
   path: '/',
   title: formatTitle('Free clinical simulation practice'),
   description:
-    'Practice 183 free clinical simulation scenarios across anesthesia, emergency medicine, '
+    'Practice 184 free clinical simulation scenarios across anesthesia, emergency medicine, '
     + 'cardiology, critical care, pediatrics, and more—no account required.',
   indexable: true,
   structuredData: ['WebSite', 'Organization'],

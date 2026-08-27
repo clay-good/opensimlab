@@ -546,6 +546,15 @@ credited toward the catalog until every item in the completion contract passes.
     suction, stimulation, separation, oxygen, ventilation, airway care, corrective steps,
     compressions, access, fluid, glucose, drug, dose, feeding, resuscitation, transport, counseling,
     procedure, disposition, or outcome controls.
+  - [x] Neonatology slice 3/11 adds one authored ineffective face-mask ventilation pattern after 30
+    seconds of qualified support without chest movement or heart-rate rise; exact birth, interface,
+    oxygenation, thermal, parent and whole-dyad reconciliation; effectiveness recognition using
+    heart-rate rise as the primary signal; qualified correction, alternative-airway readiness and
+    compression-boundary review; a fixed 2-minute correction-response report; and active-risk
+    handoff without learner examination, scoring, monitoring or test interpretation, device
+    handling, position, suction, stimulation, oxygen or pressure selection, ventilation, corrective
+    step, airway placement, compression, access, fluid, glucose, drug, feeding, resuscitation,
+    transport, counseling, procedure, disposition, or outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

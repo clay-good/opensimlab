@@ -4967,6 +4967,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified direct findings, current local neonatal-resuscitation protocols and equipment, immediate trained teams, continuous response assessment, respectful parent communication, and hands-on simulation.',
     briefIn: ['neonatal-apnea'],
   },
+  {
+    id: 'ineffective-neonatal-ventilation-birth-interface-response-parent-and-qualified-course-reports-are-authored',
+    headline: 'The birth, interface, response, parent, qualified correction, and 2-minute reports are authored.',
+    simplification: 'Fixed reports stand in for record review, newborn examination, heart-rate and oxygenation assessment, mask and airway assessment, ventilation delivery, chest-movement review, corrective steps, thermal care, equipment checks, parent communication, and serial reassessment. Hidden adult-oriented engine-schema minimums are scaffolding, not neonatal physiology validation.',
+    whereItMisleads: 'Treating the birth clock, interface, absent chest movement, heart-rate trajectory, oxygenation, corrected leak, or early response as learner findings, technical performance, durable breathing, stable transition, prognosis, or outcome.',
+    correctUnderstanding: 'Failure of heart rate to rise during newborn ventilation requires immediate qualified effectiveness correction, with chest movement as a secondary sign and escalation based on the response to adequate ventilation.',
+    briefIn: ['ineffective-ventilation-correction'],
+  },
+  {
+    id: 'ineffective-neonatal-ventilation-controls-activate-reconcile-review-reassess-and-handoff-only',
+    headline: 'The controls activate qualified help, connect supplied facts, review effectiveness and correction boundaries, read a fixed report, and hand off only.',
+    simplification: 'Six actions stand in for concurrent qualified newborn, airway, ventilation, heart-rate, monitoring, thermal, equipment, pharmacy, transport, leadership, timekeeping, documentation, communication, dignity, parent, family, staff-support, escalation, and handoff work.',
+    whereItMisleads: 'Equating button order with examination, scoring, mask seal, ventilation skill, corrective-step performance, airway management, oxygen titration, compression readiness, communication quality, or competence.',
+    correctUnderstanding: 'Real newborn resuscitation is concurrent, physical, time-critical, team-based, locally protocolized, and verified through direct heart-rate and chest-movement reassessment. Cognitive practice cannot replace hands-on simulation.',
+    briefIn: ['ineffective-ventilation-correction'],
+  },
+  {
+    id: 'no-live-ineffective-neonatal-ventilation-exam-monitor-device-oxygen-airway-compression-drug-procedure-disposition-or-outcome',
+    headline: 'The lab does not examine, monitor, handle a device, ventilate, manage an airway, compress, give oxygen or a drug, determine disposition, or report outcome.',
+    simplification: 'No live breathing, heart-rate, chest-movement, tone, color, temperature, glucose, neurologic, parent or other assessment; scoring; mask or device handling; position; suction; stimulation; separation; pressure, rate, PEEP or oxygen selection; ventilation; corrective step; airway placement; compression; access; fluid; glucose; drug or dose; feeding; resuscitation; transport; counseling; procedure; disposition; prognosis; or outcome is modeled.',
+    whereItMisleads: 'Using the rehearsal as mask ventilation, corrective-step, oxygen, airway, compression, medication, transfer, or disposition instruction; delaying trained response for a click; or reading completion as competence.',
+    correctUnderstanding: 'Use verified direct findings, current local neonatal-resuscitation protocols and equipment, immediate trained teams, continuous response assessment, respectful parent communication, and hands-on simulation.',
+    briefIn: ['ineffective-ventilation-correction'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

@@ -5225,6 +5225,31 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['activate-ineffective-neonatal-ventilation-qualified-airway-ventilation-clock-and-dyad-response',
+      'reconcile-ineffective-neonatal-ventilation-birth-clock-interface-chest-movement-heart-rate-and-whole-dyad',
+      'recognize-ineffective-neonatal-ventilation-from-absent-heart-rate-rise-without-cause-closure',
+      'review-qualified-neonatal-ventilation-correction-alternative-airway-and-compression-boundary',
+      'review-ineffective-neonatal-ventilation-fixed-two-minute-qualified-response-report',
+      'handoff-ineffective-neonatal-ventilation-airway-respiratory-neurologic-parent-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'ineffective-ventilation-correction'
+        && scenario.timeline.every((event) => event.type === 'narrative')
+        && scenario.timeline.filter((event) => event.target === 'ineffective-ventilation-correction-transition').length === 1
+        && scenario.timeline.filter((event) => event.target === 'ineffective-ventilation-correction-transition-boundary').length === 1;
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neonatology ineffective-ventilation lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['support-activated', 'Qualified newborn airway, ventilation, heart-rate, monitoring, clock, communication, dignity, parent, family, and support ownership was activated first.'],
+        ['context-reconciled', 'Birth and resuscitation clocks, interface, absent chest movement, heart-rate trajectory, oxygenation, temperature, equipment uncertainty, parent, and whole-dyad context were connected.'],
+        ['pattern-recognized', 'Absent heart-rate rise, supported by absent chest movement, was recognized as ineffective ventilation without cause or outcome closure.'],
+        ['readiness-reviewed', 'Qualified ventilation correction, alternative-airway readiness, monitoring, warmth, explanation, support, and the compression boundary were reviewed without learner care.'],
+        ['two-minute-report-reviewed', 'The fixed qualified correction-response report was reviewed without durable-breathing, stable-transition, airway-or-lung, neurologic, disposition, or outcome claims.'],
+        ['active-risk-handoff-recorded', 'Ventilation, airway, lung, oxygenation, heart-rate, thermal, glucose, neurologic, etiologic, parent, surveillance, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^neonatology-ineffective-ventilation-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^neonatology-ineffective-ventilation-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['activate-obstetrics-cord-prolapse-response-diagnosis-clock-theatre-anesthesia-newborn-and-support-roles',
       'reconcile-obstetrics-cord-prolapse-membrane-rupture-fetal-heart-exam-birth-imminence-and-whole-person',
       'review-obstetrics-cord-prolapse-pressure-relief-minimal-handling-position-and-no-delay-boundaries',

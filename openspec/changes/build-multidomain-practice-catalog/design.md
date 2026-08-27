@@ -2311,6 +2311,23 @@ scoring, monitoring interpretation, positioning, drying, warming, suction, stimu
 oxygen, ventilation, airway care, corrective step, compression, access, fluid, glucose, drug, dose,
 feeding, resuscitation, transport, counseling, procedure, disposition or outcome control.
 
+### Wave D neonatology slice 3: ineffective ventilation correction
+
+A term newborn remains apneic after 30 seconds of supplied qualified face-mask ventilation, with no
+visible chest movement and heart rate falling from 82/min to 78/min. The learner activates qualified
+airway, ventilation, heart-rate, monitoring, clock, parent and support ownership; connects birth and
+resuscitation clocks, interface, chest movement, heart-rate trajectory, oxygenation signal,
+temperature, equipment uncertainty and the whole dyad; recognizes ineffective ventilation using
+absent heart-rate rise as the primary signal; and reviews qualified leak or obstruction correction,
+alternative-airway readiness, and the boundary that places compressions only after adequate
+ventilation when heart rate remains below 60/min. A fixed 2-minute report supplies corrected mask
+leak, visible chest movement, heart rate 118/min, preductal SpO2 76%, and emerging irregular
+spontaneous respirations while qualified assisted ventilation continues. Six controls expose no
+learner examination, scoring, monitoring interpretation, device handling, positioning, suction,
+stimulation, oxygen or pressure selection, ventilation, corrective step, airway placement,
+compression, access, fluid, glucose, drug, feeding, resuscitation, transport, counseling, procedure,
+disposition or outcome control.
+
 ### Wave E neurology slice 1: minor nondisabling acute ischemic stroke
 
 The first Neurology lab is a function-based minor-stroke decision boundary, not another disabling

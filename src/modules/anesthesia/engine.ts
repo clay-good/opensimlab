@@ -565,6 +565,10 @@ const NEONATOLOGY_APNEA_BLOCKED_ACTION_TYPES = new Set([
   ...NEONATOLOGY_TERM_TRANSITION_BLOCKED_ACTION_TYPES,
   'term-newborn-transition-response',
 ]);
+const NEONATOLOGY_INEFFECTIVE_VENTILATION_BLOCKED_ACTION_TYPES = new Set([
+  ...NEONATOLOGY_APNEA_BLOCKED_ACTION_TYPES,
+  'neonatal-apnea-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1594,6 +1598,12 @@ export class AnesthesiaEngine {
   private neonatologyApneaReadinessAtTick: number | null = null;
   private neonatologyApneaReassessmentAtTick: number | null = null;
   private neonatologyApneaHandoffAtTick: number | null = null;
+  private neonatologyIneffectiveVentilationSupportAtTick: number | null = null;
+  private neonatologyIneffectiveVentilationContextAtTick: number | null = null;
+  private neonatologyIneffectiveVentilationRecognitionAtTick: number | null = null;
+  private neonatologyIneffectiveVentilationReadinessAtTick: number | null = null;
+  private neonatologyIneffectiveVentilationReassessmentAtTick: number | null = null;
+  private neonatologyIneffectiveVentilationHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2621,6 +2631,14 @@ export class AnesthesiaEngine {
     if (neonatologyApnea && NEONATOLOGY_APNEA_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `neonatology-apnea-generic-action-refused-${this.currentTick}`,
         'This Neonatology lesson exposes no generic examination, scoring, monitoring interpretation, positioning, drying, warming, suction, stimulation, separation, oxygen, ventilation, airway, corrective step, compression, access, fluid, glucose, drug, feeding, resuscitation, transport, procedure, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const neonatologyIneffectiveVentilation = this.scenario.metadata.id === 'ineffective-ventilation-correction'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'ineffective-ventilation-correction-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'ineffective-ventilation-correction-transition-boundary').length === 1;
+    if (neonatologyIneffectiveVentilation && NEONATOLOGY_INEFFECTIVE_VENTILATION_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `neonatology-ineffective-ventilation-generic-action-refused-${this.currentTick}`,
+        'This Neonatology lesson exposes no generic examination, scoring, monitoring interpretation, position, suction, stimulation, mask or device handling, oxygen, ventilation setting or delivery, corrective step, airway, compression, access, fluid, glucose, drug, feeding, resuscitation, transport, procedure, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -11458,6 +11476,29 @@ export class AnesthesiaEngine {
         if (this.neonatologyApneaHandoffAtTick !== null) break;
         this.neonatologyApneaHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `neonatology-apnea-active-risk-handoff-recorded-${this.currentTick}`, 'Birth and resuscitation clock, ventilation effectiveness, recurrent apnea, spontaneous breathing, oxygenation, airway, heart-rate, thermal, glucose, neurologic, etiologic, parent and family support, surveillance, escalation, transport, documentation, review, disposition, and outcome uncertainty were handed off.', { durableBreathingProven: false, stableTransitionProven: false, neurologicSafetyProven: false, safetyDispositionDetermined: false, newbornOutcomePredicted: false, parentOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'ineffective-ventilation-correction-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'ineffective-ventilation-correction'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'ineffective-ventilation-correction-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'ineffective-ventilation-correction-transition-boundary').length === 1;
+        const actions = this.scenario.metadata.objectives.map((objective) => objective.id);
+        const valid = typeof response === 'string' && actions.includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `neonatology-ineffective-ventilation-response-refused-${this.currentTick}`, supported ? 'That ventilation-correction response is not available. Nothing changed.' : 'These ventilation-correction choices are available only in the exact declared Neonatology lesson.'); break; }
+        if (response === actions[0]) { if (this.neonatologyIneffectiveVentilationSupportAtTick !== null) break; this.neonatologyIneffectiveVentilationSupportAtTick = this.currentTick; this.log('critical', 'assessment', `neonatology-ineffective-ventilation-support-activated-${this.currentTick}`, 'A trained newborn airway and ventilation team, leader, airway and ventilation owner, heart-rate assessor, monitoring, timekeeping, recording, equipment, parent communication, dignity, family, and staff-support ownership were activated. No learner examination, mask handling, ventilation, airway, compression, drug, or resuscitation action occurred.'); break; }
+        if (this.neonatologyIneffectiveVentilationSupportAtTick === null) { this.log('warning', 'assessment', `neonatology-ineffective-ventilation-support-order-refused-${this.currentTick}`, 'Activate qualified airway, ventilation, clock, communication, and dyad support before further review.'); break; }
+        if (response === actions[1]) { if (this.neonatologyIneffectiveVentilationContextAtTick !== null) break; this.neonatologyIneffectiveVentilationContextAtTick = this.currentTick; this.log('critical', 'assessment', `neonatology-ineffective-ventilation-context-reconciled-${this.currentTick}`, 'The supplied gestation, risk, birth and resuscitation clocks, completed initial steps, face-mask interface, ventilation interval, absent chest movement, falling heart-rate trajectory, reliable oxygenation signal, temperature, equipment uncertainty, parent state, preferences, support, and whole dyad were connected without learner examination, monitoring interpretation, diagnosis, or device handling.'); break; }
+        if (this.neonatologyIneffectiveVentilationContextAtTick === null) { this.log('warning', 'assessment', `neonatology-ineffective-ventilation-context-order-refused-${this.currentTick}`, 'Connect the supplied clock, interface, chest movement, heart-rate, oxygenation, thermal, parent, and whole-dyad context before recognizing ventilation effectiveness.'); break; }
+        if (response === actions[2]) { if (this.neonatologyIneffectiveVentilationRecognitionAtTick !== null) break; this.neonatologyIneffectiveVentilationRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `neonatology-ineffective-ventilation-pattern-recognized-${this.currentTick}`, 'Failure of the supplied heart rate to rise during face-mask ventilation, supported by absent visible chest movement, was recognized as ineffective ventilation requiring immediate qualified correction. Mask leak, airway obstruction, position, delivered pressure, equipment, lung response, airway disease, and other causes stayed open.'); break; }
+        if (this.neonatologyIneffectiveVentilationRecognitionAtTick === null) { this.log('warning', 'assessment', `neonatology-ineffective-ventilation-recognition-order-refused-${this.currentTick}`, 'Recognize the supplied absent heart-rate rise without cause closure before reviewing correction and escalation boundaries.'); break; }
+        if (response === actions[3]) { if (this.neonatologyIneffectiveVentilationReadinessAtTick !== null) break; this.neonatologyIneffectiveVentilationReadinessAtTick = this.currentTick; this.log('critical', 'assessment', `neonatology-ineffective-ventilation-readiness-reviewed-${this.currentTick}`, 'Qualified correction of common mask leak or obstruction, reassessment of position, delivered ventilation, chest movement, heart rate, equipment and lung response, alternative-airway readiness, warmth, monitoring, explanation, dignity, and support were reviewed. Compressions remained outside the branch unless heart rate stayed below 60/min after adequate ventilation and corrective steps, preferably through an alternative airway. No learner care was delivered.'); break; }
+        if (this.neonatologyIneffectiveVentilationReadinessAtTick === null) { this.log('warning', 'assessment', `neonatology-ineffective-ventilation-readiness-order-refused-${this.currentTick}`, 'Review qualified ventilation correction, alternative-airway readiness, and the compression boundary before the fixed report.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.neonatologyIneffectiveVentilationReadinessAtTick) { this.log('warning', 'assessment', `neonatology-ineffective-ventilation-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed qualified-team report.'); break; } if (this.neonatologyIneffectiveVentilationReassessmentAtTick !== null) break; this.neonatologyIneffectiveVentilationReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `neonatology-ineffective-ventilation-two-minute-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report at 2 minutes: mask leak has been corrected, visible chest movement is present, heart rate has risen to 118/min, and preductal SpO2 is 76% with the same reliable signal. Irregular spontaneous respirations are emerging while assisted ventilation and direct assessment continue. This response does not prove durable breathing, stable transition, absence of airway or lung disease, neurologic safety, disposition, or outcome.', { maskOrDeviceHandledByLearner: false, oxygenOrVentilationDeliveredByLearner: false, ventilationCorrectiveStepsPerformedByLearner: false, durableBreathingProven: false, stableTransitionProven: false, outcomePredicted: false }); break; }
+        if (this.neonatologyIneffectiveVentilationReassessmentAtTick === null) { this.log('warning', 'assessment', `neonatology-ineffective-ventilation-handoff-order-refused-${this.currentTick}`, 'Review the fixed 2-minute qualified-team report before active-risk handoff.'); break; }
+        if (this.currentTick <= this.neonatologyIneffectiveVentilationReassessmentAtTick) { this.log('warning', 'assessment', `neonatology-ineffective-ventilation-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.neonatologyIneffectiveVentilationHandoffAtTick !== null) break;
+        this.neonatologyIneffectiveVentilationHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `neonatology-ineffective-ventilation-active-risk-handoff-recorded-${this.currentTick}`, 'Birth and resuscitation clocks, ventilation effectiveness, recurrent leak or obstruction, spontaneous breathing, oxygenation, airway and lung disease, heart rate, thermal, glucose, neurologic, etiologic, parent and family support, surveillance, escalation, transport, documentation, review, disposition, and outcome uncertainty were handed off.', { durableBreathingProven: false, stableTransitionProven: false, airwayOrLungDiseaseExcluded: false, neurologicSafetyProven: false, safetyDispositionDetermined: false, newbornOutcomePredicted: false, parentOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -14501,6 +14542,15 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: this.neonatologyApneaReassessmentAtTick !== null ? 28 : 0,
         spo2Percent: this.neonatologyApneaReassessmentAtTick !== null ? 90 : 72,
         systolicMmHg: 60, diastolicMmHg: 36, meanArterialMmHg: 44, coreTemperatureC: 36.6 };
+    }
+    if (this.scenario.metadata.id === 'ineffective-ventilation-correction'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'ineffective-ventilation-correction-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'ineffective-ventilation-correction-transition-boundary').length === 1) {
+      crisisState = { ...crisisState, heartRateBpm: this.neonatologyIneffectiveVentilationReassessmentAtTick !== null ? 118 : 78,
+        respiratoryRateBpm: this.neonatologyIneffectiveVentilationReassessmentAtTick !== null ? 24 : 0,
+        spo2Percent: this.neonatologyIneffectiveVentilationReassessmentAtTick !== null ? 76 : 68,
+        systolicMmHg: 58, diastolicMmHg: 34, meanArterialMmHg: 42, coreTemperatureC: 36.5 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -18881,6 +18931,35 @@ export class AnesthesiaEngine {
               causeDetermined: false as const, safetyDispositionDetermined: false as const,
               newbornOutcomePredicted: false as const, parentOutcomePredicted: false as const,
               outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'ineffective-ventilation-correction'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'ineffective-ventilation-correction-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'ineffective-ventilation-correction-transition-boundary').length === 1 ? {
+            neonatologyIneffectiveVentilationAssessment: {
+              supportAtTick: this.neonatologyIneffectiveVentilationSupportAtTick,
+              contextAtTick: this.neonatologyIneffectiveVentilationContextAtTick,
+              recognitionAtTick: this.neonatologyIneffectiveVentilationRecognitionAtTick,
+              readinessAtTick: this.neonatologyIneffectiveVentilationReadinessAtTick,
+              reassessmentAtTick: this.neonatologyIneffectiveVentilationReassessmentAtTick,
+              handoffAtTick: this.neonatologyIneffectiveVentilationHandoffAtTick,
+              authoredIneffectiveVentilationPattern: true as const,
+              authoredQualifiedCorrectionResponse: this.neonatologyIneffectiveVentilationReassessmentAtTick !== null,
+              newbornExaminedOrScoredByLearner: false as const,
+              monitoringOrTestsInterpretedByLearner: false as const, diagnosisMadeByLearner: false as const,
+              maskOrDeviceHandledByLearner: false as const,
+              positioningDryingWarmingSuctionOrStimulationPerformedByLearner: false as const,
+              pressureRatePeepOrOxygenSelectedByLearner: false as const,
+              oxygenOrVentilationDeliveredByLearner: false as const,
+              ventilationCorrectiveStepsPerformedByLearner: false as const, airwayPlacedByLearner: false as const,
+              compressionsAccessFluidGlucoseOrDrugDeliveredByLearner: false as const,
+              feedingPerformedByLearner: false as const, resuscitationPerformedByLearner: false as const,
+              transportOrProcedurePerformedByLearner: false as const, durableBreathingProven: false as const,
+              stableTransitionProven: false as const, airwayOrLungDiseaseExcluded: false as const,
+              neurologicSafetyProven: false as const, causeDetermined: false as const,
+              safetyDispositionDetermined: false as const, newbornOutcomePredicted: false as const,
+              parentOutcomePredicted: false as const, outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

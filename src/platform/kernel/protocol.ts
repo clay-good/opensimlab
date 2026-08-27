@@ -2968,6 +2968,28 @@ export interface EquipmentSnapshot {
       readonly newbornOutcomePredicted: false; readonly parentOutcomePredicted: false;
       readonly outcomePredicted: false;
     };
+    readonly neonatologyIneffectiveVentilationAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly authoredIneffectiveVentilationPattern: true;
+      readonly authoredQualifiedCorrectionResponse: boolean;
+      readonly newbornExaminedOrScoredByLearner: false;
+      readonly monitoringOrTestsInterpretedByLearner: false; readonly diagnosisMadeByLearner: false;
+      readonly maskOrDeviceHandledByLearner: false;
+      readonly positioningDryingWarmingSuctionOrStimulationPerformedByLearner: false;
+      readonly pressureRatePeepOrOxygenSelectedByLearner: false;
+      readonly oxygenOrVentilationDeliveredByLearner: false;
+      readonly ventilationCorrectiveStepsPerformedByLearner: false;
+      readonly airwayPlacedByLearner: false;
+      readonly compressionsAccessFluidGlucoseOrDrugDeliveredByLearner: false;
+      readonly feedingPerformedByLearner: false; readonly resuscitationPerformedByLearner: false;
+      readonly transportOrProcedurePerformedByLearner: false; readonly durableBreathingProven: false;
+      readonly stableTransitionProven: false; readonly airwayOrLungDiseaseExcluded: false;
+      readonly neurologicSafetyProven: false; readonly causeDetermined: false;
+      readonly safetyDispositionDetermined: false; readonly newbornOutcomePredicted: false;
+      readonly parentOutcomePredicted: false; readonly outcomePredicted: false;
+    };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {
       readonly cuesReviewedAtTick: number | null;
