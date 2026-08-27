@@ -8,12 +8,14 @@
  */
 
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
-import type { LearnerAction } from '@platform/kernel/protocol';
+import type { LearnerAction, SevereHypoglycemiaSnapshot } from '@platform/kernel/protocol';
+import { HYPOGLYCEMIA_TUTOR_RULES } from '../../endocrine-metabolic/tutor/hypoglycemia-guidance';
 import type { ContentMaturity } from '@platform/catalog/maturity';
 
 export type GuidanceLevel = 'guided' | 'coached' | 'unassisted';
 export type TutorAssistanceLevel = 'orient' | 'notice' | 'connect' | 'prioritize' | 'direct' | 'explain';
 export type TutorTriggerId =
+  | 'hypoglycemia-observation'
   | 'pre-induction-low-fio2'
   | 'preoxygenation-established'
   | 'apnea-after-bolus'
@@ -28,6 +30,7 @@ export interface Prompt {
   readonly because: string;
   /** The explainer that goes deeper. */
   readonly concept?: string;
+  readonly sourceHref?: string;
   readonly ruleVersion: string;
   readonly assistanceLevel: TutorAssistanceLevel;
   readonly maturity: ContentMaturity;
@@ -36,6 +39,8 @@ export interface Prompt {
 
 export interface GuidanceInput {
   readonly scenarioId?: string;
+  readonly scenarioVersion?: string;
+  readonly hypoglycemia?: SevereHypoglycemiaSnapshot;
   readonly tick: number;
   readonly state: Readonly<Record<string, number>> | null;
   readonly actions: readonly LearnerAction[];
@@ -250,14 +255,17 @@ export const TUTOR_RULES: readonly TutorRule[] = [
 /** Backward-compatible name for consumers that enumerate current rules. */
 export const PROMPTS = TUTOR_RULES;
 
+function rulesFor(input: GuidanceInput): readonly TutorRule[] {
+  return input.scenarioId === 'severe-hypoglycemia-recurrence' ? HYPOGLYCEMIA_TUTOR_RULES : TUTOR_RULES;
+}
+
 export function promptStillEligible(
   level: GuidanceLevel,
   input: GuidanceInput,
   promptId: string,
 ): boolean {
-  if (input.scenarioId === 'severe-hypoglycemia-recurrence') return false;
   if (level === 'unassisted' || input.alarmCount > 0) return false;
-  const rule = TUTOR_RULES.find((candidate) => candidate.prompt.id === promptId);
+  const rule = rulesFor(input).find((candidate) => candidate.prompt.id === promptId);
   if (!rule || input.tick < rule.afterSeconds * TICKS_PER_SECOND) return false;
   if (level === 'coached' && !rule.urgent) return false;
   return rule.applies(input);
@@ -281,13 +289,13 @@ export function promptFor(
   if (level === 'unassisted') return null;
   if (input.alarmCount > 0) return null;
 
-  for (const candidate of PROMPTS) {
+  for (const candidate of rulesFor(input)) {
     if (!promptStillEligible(level, input, candidate.prompt.id)) continue;
     // One intervention per rule per session. A still-unresolved objective moves
     // up the authored ladder after the shared cooldown; it does not repeat the
     // same wording forever.
     if (alreadyShown.has(candidate.prompt.id)) continue;
-    const sameObjectiveShownAt = TUTOR_RULES
+    const sameObjectiveShownAt = rulesFor(input)
       .filter((rule) => rule.objectiveId === candidate.objectiveId)
       .flatMap((rule) => {
         const shownAt = alreadyShown.get(rule.prompt.id);
@@ -316,8 +324,7 @@ export function promptFor(
  * omission under Unassisted is still visible afterwards.
  */
 export function unpromptedOmissions(input: GuidanceInput): string[] {
-  if (input.scenarioId === 'severe-hypoglycemia-recurrence') return [];
-  return [...new Set(PROMPTS
+  return [...new Set(rulesFor(input)
     .filter((candidate) => input.tick >= candidate.afterSeconds * TICKS_PER_SECOND && candidate.applies(input))
     .map((candidate) => candidate.objectiveId))];
 }

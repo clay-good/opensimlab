@@ -826,8 +826,10 @@ credited toward the catalog until every item in the completion contract passes.
     authored recurrence, and an instructor-takeover branch. Unsafe oral choices are refused;
     premature monitoring closure does not stop the patient clock. Expert, error, and recovery
     fixtures preserve early mistakes in the debrief. This is a registered preview, not full
-    completion-contract approval; clinical review and scenario-specific progressive tutor rules
-    remain pending. Existing anesthesia prompts are suppressed for this lesson.
+    completion-contract approval. Content 0.1.1 adds eight observed-state tutor rules with source
+    links and exact-version completion evidence. Expert, error, and recovery whole-state hashes
+    match across all guidance modes. Clinical review, in-product demonstration, complete inclusive
+    runtime, and four-surface reporting verification remain pending; anesthesia prompts stay suppressed.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
   - [x] Toxicology slice 1/15 establishes the indexable `/toxicology` module with one authored
     methemoglobinemia lab after documented topical benzocaine exposure. The learner reconciles

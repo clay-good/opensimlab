@@ -48,6 +48,19 @@ describe('Requirement: Tutor controls stay optional and reachable', () => {
     container.remove();
   });
 
+  it('offers an authoritative source link for a scenario-specific prompt without an explainer', () => {
+    act(() => root.render(createElement(TutorPromptCard, {
+      prompt: { ...PROMPT, concept: undefined, sourceHref: 'https://doi.org/10.2337/dc26-s006' },
+      collapsed: false, whyOpen: true, onToggleCollapsed: vi.fn(), onToggleWhy: vi.fn(),
+      onDismiss: vi.fn(), onOpenSource: vi.fn(),
+    })));
+    const source = container.querySelector('a')!;
+    expect(source.textContent).toBe('Full source');
+    expect(source.href).toBe('https://doi.org/10.2337/dc26-s006');
+    expect(source.rel).toBe('noreferrer');
+    expect(source.target).toBe('_blank');
+  });
+
   it('permanently dismisses the introduction through one clearly named control', () => {
     function IntroductionHarness() {
       const [dismissed, setDismissed] = useLocalPreference(TUTOR_INTRODUCTION_PREFERENCE, false);

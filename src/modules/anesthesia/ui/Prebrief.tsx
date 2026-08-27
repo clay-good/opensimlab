@@ -265,11 +265,7 @@ export function Prebrief({
         </section>
       )}
 
-      {hypoglycemia ? <section>
-        <h2>Help in this preview</h2>
-        <p>Action feedback and the debrief explain your choices. Scenario-specific progressive tutor
-          prompts are not yet available. Pause whenever you need time to think.</p>
-      </section> : <section>
+      <section>
         <h2>How much help do you want?</h2>
         <p className="field__hint">
           Guidance changes how much you are prompted. It does not change the patient at all: the
@@ -287,7 +283,7 @@ export function Prebrief({
             </Button>
           ))}
         </div>
-      </section>}
+      </section>
 
       <Badge kind="out-of-range">{HONEST_STATUS.headline}</Badge>
       <p className="reading__aside">{HONEST_STATUS.detail}</p>

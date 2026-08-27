@@ -18,8 +18,8 @@ describe('Severe hypoglycemia experience', () => {
     expect(html).toContain('<h1>Severe hypoglycemia: rescue is not the end</h1>');
     expect(html).not.toContain('ASA 4');
     const briefing = renderToStaticMarkup(createElement(Prebrief, { scenario: SCENARIO, region: UNITED_STATES, environment: 'endocrine-metabolic', guidance: 'coached', onGuidance: () => {}, onStart: () => {} }));
-    expect(briefing).toContain('prompts are not yet available');
-    expect(briefing).not.toContain('Guided — prompt me');
+    expect(briefing).not.toContain('prompts are not yet available');
+    expect(briefing).toContain('Guided — prompt me');
     expect(crisisResponseAvailability(SCENARIO).hasSevereHypoglycemiaResponse).toBe(true);
     expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasSevereHypoglycemiaResponse).toBe(false);
   });

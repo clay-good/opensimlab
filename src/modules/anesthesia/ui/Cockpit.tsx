@@ -358,6 +358,8 @@ export function Cockpit({
     if (tutorIntroductionOpen) return;
     const input = {
       scenarioId: scenario.metadata.id,
+      scenarioVersion: scenario.metadata.version,
+      hypoglycemia: session.equipment?.resuscitation.severeHypoglycemia,
       tick: session.tick,
       state: session.state,
       actions: sessionInternals().recorder?.build('pending').actions ?? [],

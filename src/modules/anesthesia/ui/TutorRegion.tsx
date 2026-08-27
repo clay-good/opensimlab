@@ -87,6 +87,7 @@ export function TutorPromptCard({
             <Button variant="ghost" compact onClick={onOpenSource}>Full source</Button>
           </>
         )}
+        {!prompt.concept && prompt.sourceHref && <>{' '}<a href={prompt.sourceHref} target="_blank" rel="noreferrer" aria-label="Full source (opens in a new tab)">Full source</a></>}
       </Banner>
     </div>
   );

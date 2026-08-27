@@ -270,7 +270,7 @@
         "GB"
       ],
       "fidelityClass": "state_transition",
-      "contentVersion": "0.1.0",
+      "contentVersion": "0.1.1",
       "capabilityVersion": "0.1.0-alpha.48",
       "maturity": "preview",
       "complete": false,
@@ -279,7 +279,7 @@
           "id": "identity-and-versions",
           "status": "satisfied",
           "evidence": [
-            "Scenario severe-hypoglycemia-recurrence carries stable content version 0.1.0.",
+            "Scenario severe-hypoglycemia-recurrence carries stable content version 0.1.1.",
             "Capability version 0.1.0-alpha.48 is bound by this audit."
           ]
         },
@@ -299,23 +299,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "Fixed authored initial state; no randomized hypoglycemia transitions. Reference seed 4901. tests/unit/endocrine-hypoglycemia-guidance.test.ts replays expert, error, and recovery across guidance levels."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "src/modules/endocrine-metabolic/severe-hypoglycemia.ts advances deterioration, post-rescue response, recurrence, and repeat response from the shared simulation clock. tests/unit/endocrine-severe-hypoglycemia.test.ts verifies exact boundaries and stale measurements."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Eight declared actions include glucose observation, support, rescue, medication review, monitoring, premature closure, and handoff. Oral rescue is refused; delayed rescue and early closure lead to distinct error and recovery transcripts."
           ]
         },
         {
@@ -327,23 +327,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The model ends at qualified monitored handoff or instructor takeover after untreated hypoglycemia. Ended branches refuse later actions without inventing death, neurologic outcome, or discharge safety."
           ]
         },
         {
           "id": "guidance-and-demonstration",
           "status": "missing",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Eight observed-state tutor rules at version 0.1.0 provide Guided, Coached, and Unassisted behavior. An in-product expert demonstration is not yet bound to this lesson."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps five objectives to accepted engine events, preserves unsafe choices after correction, and labels the no-rescue comparison as an authored counterfactual. PEARLS reflection remains in the shared debrief."
           ]
         },
         {
@@ -362,23 +362,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "src/modules/endocrine-metabolic/severe-hypoglycemia-fixtures.ts binds expert, commonError, and recovery fixtures to content 0.1.1 and seed 4901. Real-engine replay tests verify distinct outcomes and guidance independence."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, offline architecture, deterministic replay, and desktop browser checks exist. Per-scenario moderated screen-reader, reduced-motion, color-vision, 320 px, and performance evidence remains incomplete."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The shared reporting control and exact-version report records exist; the centered modal, length limit, and keyboard dismissal were checked on the briefing. Complete per-scenario evidence across briefing, live, debrief, and provenance is still pending."
           ]
         }
       ]

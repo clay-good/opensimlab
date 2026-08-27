@@ -3,7 +3,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const SEVERE_HYPOGLYCEMIA_RECURRENCE: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'severe-hypoglycemia-recurrence', version: '0.1.0', maturity: 'preview',
+    id: 'severe-hypoglycemia-recurrence', version: '0.1.1', maturity: 'preview',
     title: 'Severe hypoglycemia: rescue is not the end', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 45, difficulty: 'intermediate',
     objectives: [
@@ -15,7 +15,7 @@ export const SEVERE_HYPOGLYCEMIA_RECURRENCE: Scenario = {
     ],
     clinicalReview: {
       reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED', competingInterests: 'None declared',
-      reviewedOn: '1970-01-01', reviewBy: '1970-01-01', contentVersion: '0.1.0',
+      reviewedOn: '1970-01-01', reviewBy: '1970-01-01', contentVersion: '0.1.1',
       sources: [
         'American Diabetes Association Professional Practice Committee. Glycemic Goals, Hypoglycemia, and Hyperglycemic Crises: Standards of Care in Diabetes—2026. Diabetes Care. 2026;49(Suppl 1). doi:10.2337/dc26-s006.',
         'Joint British Diabetes Societies for Inpatient Care. The Hospital Management of Hypoglycaemia in Adults with Diabetes Mellitus. January 2023. Severe pathway and follow-up; consulted 2026-08-26.',

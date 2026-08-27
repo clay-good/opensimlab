@@ -2776,7 +2776,13 @@ The clock, stale measurements, monitoring plan, and handoff are separate state. 
 and recovery fixtures bind scenario version and seed to distinct debrief findings, including an
 explicitly authored counterfactual. No treatment dose, glucose kinetics, durable recovery, or
 discharge claim is made. See `docs/evidence-briefs/severe-hypoglycemia-recurrence.md` for assumptions.
-Clinical review and scenario-specific progressive tutor rules remain pending. Registration counts
+Content 0.1.1 adds eight source-linked tutor rules using only the learner-visible snapshot.
+Guided mode adds orientation and risk connections; Coached mode prioritizes rescue and recheck
+gaps; Unassisted remains silent. All three reference paths have identical whole-state hashes
+across the guidance levels. First and repeat rescue have distinct recheck prompts. Exact-version
+completion evidence binds implemented behavior without turning the remaining demonstration,
+inclusive-runtime, and four-surface reporting evidence gaps into a completion claim.
+Clinical review remains pending. Registration counts
 must not be represented as the number satisfying the complete scenario contract.
 
 ### Wave E endocrine-metabolic slice 2: HHS correction and reassessment

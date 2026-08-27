@@ -372,7 +372,9 @@ timed rescue responses, recurrence, and recoverable unsafe-choice and premature-
 The patient clock continues independently of acknowledgment buttons. Expert, common-error, and
 recovery fixtures verify distinct debriefs. The dose-free state transitions are authored teaching
 assumptions, not glucose kinetics or discharge criteria. Registered preview counts do not establish
-full scenario completion; clinical review and scenario-specific progressive tutor prompts remain pending.
+full scenario completion. Eight observed-state tutor rules now support Guided, Coached, and
+Unassisted practice without changing the patient; clinical review, the in-product expert
+demonstration, and complete inclusive-runtime evidence remain pending.
 
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage

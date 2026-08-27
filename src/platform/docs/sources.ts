@@ -64,6 +64,16 @@ const CHECKED = '2026-08-20';
 
 export const SOURCES: readonly Source[] = [
   {
+    id: 'ada-hypoglycemia-2026',
+    authors: 'American Diabetes Association Professional Practice Committee',
+    title: 'Glycemic Goals, Hypoglycemia, and Hyperglycemic Crises: Standards of Care in Diabetes—2026',
+    publication: 'Diabetes Care', year: 2026,
+    locator: '49(Supplement 1), section 6: hypoglycemia treatment and prevention; recommendations 6.15–6.18; doi:10.2337/dc26-s006',
+    usedFor: 'Adult hypoglycemia tutor boundaries: assess impaired function with glucose, preserve swallowing safety, recheck after rescue, and review medication-related recurrence risk. Does not support the authored state values or recurrence clock.',
+    verifiedAgainst: 'Official ADA article and indexed recommendation text at https://doi.org/10.2337/dc26-s006; no independent clinical review claimed.',
+    verifiedOn: '2026-08-26',
+  },
+  {
     id: 'gold-copd-report-2026',
     authors: 'Global Initiative for Chronic Obstructive Lung Disease',
     title: 'Global Strategy for Prevention, Diagnosis and Management of COPD: 2026 Report',

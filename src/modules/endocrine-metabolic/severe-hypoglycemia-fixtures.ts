@@ -2,7 +2,7 @@ import type { HypoglycemiaAction } from './severe-hypoglycemia';
 
 /** Exact-version reference decisions; ticks are 100 ms and contain no learner data. */
 export const HYPOGLYCEMIA_FIXTURES = {
-  scenarioId: 'severe-hypoglycemia-recurrence', contentVersion: '0.1.0', seed: 4901,
+  scenarioId: 'severe-hypoglycemia-recurrence', contentVersion: '0.1.1', seed: 4901,
   expert: [
     [0, 'check-glucose'], [0, 'call-support'], [10, 'iv-rescue'],
     [6010, 'check-glucose'], [6011, 'review-medications'], [6012, 'continue-monitoring'],

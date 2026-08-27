@@ -29,3 +29,19 @@ visibility. Browser checks observed timed improvement and recurrence, inline ref
 the centered 160-character report modal, disabled sending on the unconfigured local host, and
 Escape dismissal with focus restored. No report was sent. This is not moderated screen-reader,
 320 px, clinical, or learning-outcome validation.
+
+Content 0.1.1 adds eight tutor rules grounded in the visible result, alertness, completed observation
+timer, and reviewed records. No rule reads hidden glucose or announces the authored recurrence
+before a visible change. The 15-second orientation delay and 90-second same-objective cooldown
+are presentation defaults, not clinical deadlines. First and repeat rescue use separate recheck
+prompts. Guidance never dispatches care, advances time, or changes the patient; exact expert,
+error, and recovery engine traces are hashed across all three modes. The ADA source register
+entry links recommendations 6.15–6.18 and the hypoglycemia treatment discussion. The source currency
+check is due February 26, 2027, or sooner if a relevant update is identified; no clinical sign-off
+is implied. The completion audit now cites implemented evidence and retains the demonstration,
+inclusive-runtime, and four-surface reporting gaps.
+
+The 0.1.1 full CI run passed 438 test files and 3,263 tests. Live browser checks confirmed the
+Guided orientation, rationale, collapse control, authoritative source link, and transition to
+rescue guidance only after a glucose observation. These checks do not replace moderated
+accessibility or clinical validation.
