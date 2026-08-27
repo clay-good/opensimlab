@@ -589,6 +589,10 @@ const NEONATOLOGY_SEPSIS_BLOCKED_ACTION_TYPES = new Set([
   ...NEONATOLOGY_HYPOGLYCEMIA_BLOCKED_ACTION_TYPES,
   'neonatal-hypoglycemia-response',
 ]);
+const NEONATOLOGY_THERMOREGULATION_BLOCKED_ACTION_TYPES = new Set([
+  ...NEONATOLOGY_SEPSIS_BLOCKED_ACTION_TYPES,
+  'neonatal-sepsis-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1654,6 +1658,12 @@ export class AnesthesiaEngine {
   private neonatologySepsisReadinessAtTick: number | null = null;
   private neonatologySepsisReassessmentAtTick: number | null = null;
   private neonatologySepsisHandoffAtTick: number | null = null;
+  private neonatologyThermoregulationSupportAtTick: number | null = null;
+  private neonatologyThermoregulationContextAtTick: number | null = null;
+  private neonatologyThermoregulationRecognitionAtTick: number | null = null;
+  private neonatologyThermoregulationReadinessAtTick: number | null = null;
+  private neonatologyThermoregulationReassessmentAtTick: number | null = null;
+  private neonatologyThermoregulationHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2729,6 +2739,14 @@ export class AnesthesiaEngine {
     if (neonatologySepsis && NEONATOLOGY_SEPSIS_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `neonatology-sepsis-generic-action-refused-${this.currentTick}`,
         'This Neonatology lesson exposes no generic history, examination, scoring, monitoring or test interpretation, risk calculation, thermal care, oxygen, respiratory or circulatory support, access, fluid, glucose, antimicrobial, drug, feeding, device, ventilation, airway, resuscitation, transport, procedure, diagnosis, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const neonatologyThermoregulation = this.scenario.metadata.id === 'thermoregulation-failure'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'thermoregulation-failure').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'thermoregulation-failure-boundary').length === 1;
+    if (neonatologyThermoregulation && NEONATOLOGY_THERMOREGULATION_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `neonatology-thermoregulation-generic-action-refused-${this.currentTick}`,
+        'This Neonatology lesson exposes no generic history, examination, scoring, temperature, monitoring or test interpretation, warming, cooling, skin-to-skin care, incubator or warmer operation, set-point or rate selection, feeding, glucose, fluid, drug, access, oxygen, respiratory support, ventilation, airway, resuscitation, transport, procedure, diagnosis, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -11704,6 +11722,29 @@ export class AnesthesiaEngine {
         if (this.neonatologySepsisHandoffAtTick !== null) break;
         this.neonatologySepsisHandoffAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-sepsis-active-risk-handoff-recorded-${this.currentTick}`, 'Birth, deterioration, culture and antimicrobial clocks; breathing and circulatory support; neurologic state; shock, respiratory failure and meningitis risk; culture and investigation status; organ, glucose and feeding risk; parent state, preferences and support; stewardship; escalation; transfer; documentation; review; disposition; and outcome uncertainty were handed off.', { sepsisDiagnosed: false, bacteremiaMeningitisOrInfectionExcluded: false, otherCauseExcluded: false, durableStabilityProven: false, antimicrobialDurationDetermined: false, safetyDispositionDetermined: false, newbornOutcomePredicted: false, parentOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'neonatal-thermoregulation-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'thermoregulation-failure'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'thermoregulation-failure').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'thermoregulation-failure-boundary').length === 1;
+        const actions = this.scenario.metadata.objectives.map((objective) => objective.id);
+        const valid = typeof response === 'string' && actions.includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `neonatology-thermoregulation-response-refused-${this.currentTick}`, supported ? 'That thermoregulation response is not available. Nothing changed.' : 'These thermoregulation choices are available only in the exact declared Neonatology lesson.'); break; }
+        if (response === actions[0]) { if (this.neonatologyThermoregulationSupportAtTick !== null) break; this.neonatologyThermoregulationSupportAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-thermoregulation-support-activated-${this.currentTick}`, 'A trained newborn team, thermal and glucose pathway, feeding, respiratory and escalation support, shared clock, parent communication, dignity, family, and follow-up ownership were confirmed. No learner examination, measurement, warming, feeding, glucose, device operation, or other care occurred.'); break; }
+        if (this.neonatologyThermoregulationSupportAtTick === null) { this.log('warning', 'assessment', `neonatology-thermoregulation-support-order-refused-${this.currentTick}`, 'Confirm prepared newborn, thermal, glucose, feeding, respiratory, escalation, clock, communication, and dyad support before further review.'); break; }
+        if (response === actions[1]) { if (this.neonatologyThermoregulationContextAtTick !== null) break; this.neonatologyThermoregulationContextAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-thermoregulation-context-reconciled-${this.currentTick}`, 'The supplied gestation, size, admission and current temperature, measurement context, environment, transfer and warming continuity, behavior, feeding, breathing, oxygenation, perfusion, glucose, parent state, preferences, support, and whole dyad were connected without learner history, examination, measurement, test interpretation, or diagnosis.'); break; }
+        if (this.neonatologyThermoregulationContextAtTick === null) { this.log('warning', 'assessment', `neonatology-thermoregulation-context-order-refused-${this.currentTick}`, 'Connect gestation, temperatures, environment, transfer, warming continuity, behavior, physiology, parent, and whole-dyad context before recognizing the urgent pattern.'); break; }
+        if (response === actions[2]) { if (this.neonatologyThermoregulationRecognitionAtTick !== null) break; this.neonatologyThermoregulationRecognitionAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-thermoregulation-pattern-recognized-${this.currentTick}`, 'Verified axillary temperature 35.5°C after an initially normal admission value was recognized as unintentional neonatal hypothermia requiring immediate qualified rewarming and evaluation. No optimal rate, cause, diagnosis, illness exclusion, or therapeutic-hypothermia indication was claimed.'); break; }
+        if (this.neonatologyThermoregulationRecognitionAtTick === null) { this.log('warning', 'assessment', `neonatology-thermoregulation-recognition-order-refused-${this.currentTick}`, 'Recognize unintentional neonatal hypothermia without rate, cause, diagnosis, therapeutic-cooling, or outcome closure before boundary review.'); break; }
+        if (response === actions[3]) { if (this.neonatologyThermoregulationReadinessAtTick !== null) break; this.neonatologyThermoregulationReadinessAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-thermoregulation-readiness-reviewed-${this.currentTick}`, 'Qualified locally protocolized warm-chain restoration, frequent or continuous temperature monitoring, glucose and feeding protection, environmental and clinical cause review, serial whole-newborn reassessment, parent explanation, dignity, and hyperthermia prevention were reviewed without learner care, set-point selection, rate selection, device operation, measurement, or procedure.'); break; }
+        if (this.neonatologyThermoregulationReadinessAtTick === null) { this.log('warning', 'assessment', `neonatology-thermoregulation-readiness-order-refused-${this.currentTick}`, 'Review qualified rewarming, monitoring, glucose, feeding, cause, reassessment, and hyperthermia-prevention boundaries before the fixed report.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.neonatologyThermoregulationReadinessAtTick) { this.log('warning', 'assessment', `neonatology-thermoregulation-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed qualified-team report.'); break; } if (this.neonatologyThermoregulationReassessmentAtTick !== null) break; this.neonatologyThermoregulationReassessmentAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-thermoregulation-forty-five-minute-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report after 45 minutes of locally protocolized rewarming: axillary temperature is 36.3°C, heart rate is 134/min, respiratory rate is 44/min with regular breathing, preductal SpO2 is 97% on room air, capillary refill is 2 seconds, glucose is 64 mg/dL, alertness has improved, and feeding assessment continues. This partial trajectory remains below the normal range and does not prescribe a rewarming rate, prove treatment effect, determine cause, exclude infection or other illness, establish durable thermal or glucose stability, prove feeding success, determine disposition, or predict outcome.', { temperatureGlucoseOrTestsObtainedOrInterpretedByLearner: false, warmingCoolingSkinToSkinOrDeviceCarePerformedByLearner: false, setPointOrRewarmingRateSelectedByLearner: false, prescribedRewarmingRateClaimed: false, treatmentEffectProven: false, outcomePredicted: false }); break; }
+        if (this.neonatologyThermoregulationReassessmentAtTick === null) { this.log('warning', 'assessment', `neonatology-thermoregulation-handoff-order-refused-${this.currentTick}`, 'Review the fixed 45-minute qualified-team report before active-risk handoff.'); break; }
+        if (this.currentTick <= this.neonatologyThermoregulationReassessmentAtTick) { this.log('warning', 'assessment', `neonatology-thermoregulation-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.neonatologyThermoregulationHandoffAtTick !== null) break;
+        this.neonatologyThermoregulationHandoffAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-thermoregulation-active-risk-handoff-recorded-${this.currentTick}`, 'Birth, admission, transfer, temperature and rewarming clocks; recurrent hypothermia and overheating risk; measurement method and environment; breathing and perfusion; glucose, feeding and nutrition; infection, neurologic and other causes; parent state, preferences and support; escalation; transfer; documentation; review; disposition; and outcome uncertainty were handed off.', { causeDetermined: false, infectionOrOtherIllnessExcluded: false, durableThermalStabilityProven: false, durableGlucoseStabilityProven: false, feedingSuccessProven: false, safetyDispositionDetermined: false, newbornOutcomePredicted: false, parentOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -14803,6 +14844,15 @@ export class AnesthesiaEngine {
         spo2Percent: this.neonatologySepsisReassessmentAtTick !== null ? 96 : 93,
         systolicMmHg: 58, diastolicMmHg: 32, meanArterialMmHg: this.neonatologySepsisReassessmentAtTick !== null ? 42 : 40,
         coreTemperatureC: this.neonatologySepsisReassessmentAtTick !== null ? 36.5 : 35.9 };
+    }
+    if (this.scenario.metadata.id === 'thermoregulation-failure'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'thermoregulation-failure').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'thermoregulation-failure-boundary').length === 1) {
+      crisisState = { ...crisisState, heartRateBpm: this.neonatologyThermoregulationReassessmentAtTick !== null ? 134 : 126,
+        respiratoryRateBpm: this.neonatologyThermoregulationReassessmentAtTick !== null ? 44 : 48,
+        spo2Percent: 97, systolicMmHg: 58, diastolicMmHg: 34, meanArterialMmHg: 42,
+        coreTemperatureC: this.neonatologyThermoregulationReassessmentAtTick !== null ? 36.3 : 35.5 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -19354,6 +19404,31 @@ export class AnesthesiaEngine {
               antimicrobialDurationDetermined: false as const, safetyDispositionDetermined: false as const,
               newbornOutcomePredicted: false as const, parentOutcomePredicted: false as const,
               outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'thermoregulation-failure'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'thermoregulation-failure').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'thermoregulation-failure-boundary').length === 1 ? {
+            neonatologyThermoregulationAssessment: {
+              supportAtTick: this.neonatologyThermoregulationSupportAtTick, contextAtTick: this.neonatologyThermoregulationContextAtTick,
+              recognitionAtTick: this.neonatologyThermoregulationRecognitionAtTick, readinessAtTick: this.neonatologyThermoregulationReadinessAtTick,
+              reassessmentAtTick: this.neonatologyThermoregulationReassessmentAtTick, handoffAtTick: this.neonatologyThermoregulationHandoffAtTick,
+              authoredUnintentionalNeonatalHypothermia: true as const,
+              authoredQualifiedFortyFiveMinuteReport: this.neonatologyThermoregulationReassessmentAtTick !== null,
+              historyTakenByLearner: false as const, newbornExaminedOrScoredByLearner: false as const,
+              temperatureGlucoseOrTestsObtainedOrInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const, warmingCoolingSkinToSkinOrDeviceCarePerformedByLearner: false as const,
+              setPointOrRewarmingRateSelectedByLearner: false as const, feedingPerformedByLearner: false as const,
+              glucoseFluidOrDrugDeliveredByLearner: false as const, accessObtainedByLearner: false as const,
+              oxygenOrRespiratorySupportDeliveredByLearner: false as const,
+              ventilationOrAirwayManagedByLearner: false as const, resuscitationPerformedByLearner: false as const,
+              transportOrProcedurePerformedByLearner: false as const, prescribedRewarmingRateClaimed: false as const,
+              treatmentEffectProven: false as const, causeDetermined: false as const,
+              infectionOrOtherIllnessExcluded: false as const, durableThermalStabilityProven: false as const,
+              durableGlucoseStabilityProven: false as const, feedingSuccessProven: false as const,
+              safetyDispositionDetermined: false as const, newbornOutcomePredicted: false as const,
+              parentOutcomePredicted: false as const, outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

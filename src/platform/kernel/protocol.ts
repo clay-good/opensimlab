@@ -3092,6 +3092,28 @@ export interface EquipmentSnapshot {
       readonly newbornOutcomePredicted: false; readonly parentOutcomePredicted: false;
       readonly outcomePredicted: false;
     };
+    readonly neonatologyThermoregulationAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly authoredUnintentionalNeonatalHypothermia: true;
+      readonly authoredQualifiedFortyFiveMinuteReport: boolean;
+      readonly historyTakenByLearner: false; readonly newbornExaminedOrScoredByLearner: false;
+      readonly temperatureGlucoseOrTestsObtainedOrInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false;
+      readonly warmingCoolingSkinToSkinOrDeviceCarePerformedByLearner: false;
+      readonly setPointOrRewarmingRateSelectedByLearner: false; readonly feedingPerformedByLearner: false;
+      readonly glucoseFluidOrDrugDeliveredByLearner: false; readonly accessObtainedByLearner: false;
+      readonly oxygenOrRespiratorySupportDeliveredByLearner: false;
+      readonly ventilationOrAirwayManagedByLearner: false; readonly resuscitationPerformedByLearner: false;
+      readonly transportOrProcedurePerformedByLearner: false;
+      readonly prescribedRewarmingRateClaimed: false; readonly treatmentEffectProven: false;
+      readonly causeDetermined: false; readonly infectionOrOtherIllnessExcluded: false;
+      readonly durableThermalStabilityProven: false; readonly durableGlucoseStabilityProven: false;
+      readonly feedingSuccessProven: false; readonly safetyDispositionDetermined: false;
+      readonly newbornOutcomePredicted: false; readonly parentOutcomePredicted: false;
+      readonly outcomePredicted: false;
+    };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {
       readonly cuesReviewedAtTick: number | null;

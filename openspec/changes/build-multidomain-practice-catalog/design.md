@@ -2411,6 +2411,23 @@ care, access, fluid, glucose, antimicrobial, drug, feeding, device, ventilation,
 resuscitation, transport, counseling, procedure, antimicrobial-duration, disposition, or outcome
 control.
 
+### Wave D neonatology slice 9: thermoregulation failure
+
+A 2.4 kg newborn at 35 weeks 4 days has an admission axillary temperature of 36.6°C followed by a
+supplied transfer and warming-continuity gap. At 3 hours, a repeated verified axillary temperature
+is 35.5°C with sleepiness and feeding difficulty, preserved regular breathing and room-air
+oxygenation, and glucose 58 mg/dL. The learner activates newborn, thermal, glucose, feeding,
+respiratory, escalation and family support; connects gestation, temperatures, environment,
+transfer, behavior, physiology and whole-dyad context; recognizes unintentional hypothermia without
+unsupported rate, cause, diagnosis or therapeutic-cooling closure; and reviews qualified
+protocolized warm-chain restoration, frequent or continuous temperature monitoring, glucose and
+feeding protection, cause review, serial reassessment and hyperthermia prevention. A fixed
+45-minute report supplies temperature 36.3°C and partial clinical improvement while still below
+the normal range. Six controls expose no learner history, examination, scoring, temperature,
+monitoring or test work, diagnosis, warming, cooling, skin-to-skin care, device operation, set-point
+or rate selection, feeding, glucose, fluid, drug, access, oxygen, respiratory support, ventilation,
+airway care, resuscitation, transport, counseling, procedure, disposition, or outcome control.
+
 ### Wave E neurology slice 1: minor nondisabling acute ischemic stroke
 
 The first Neurology lab is a function-based minor-stroke decision boundary, not another disabling

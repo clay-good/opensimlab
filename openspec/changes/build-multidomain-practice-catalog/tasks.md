@@ -606,6 +606,17 @@ credited toward the catalog until every item in the completion contract passes.
     scoring, monitoring or test work, risk calculation, diagnosis, support, access, fluid, glucose,
     antimicrobial, drug, dose, feeding, device, ventilation, airway care, resuscitation, transport,
     counseling, procedure, duration, disposition, or outcome controls.
+  - [x] Neonatology slice 9/11 adds one authored late-preterm unintentional-hypothermia pattern
+    after a transfer and warming-continuity gap; newborn, thermal, glucose, feeding, respiratory,
+    escalation and parent-dyad ownership; gestation, admission and current temperature,
+    environment, transfer, behavior, physiology and whole-dyad reconciliation; urgent rewarming
+    recognition without rate, cause, diagnosis or therapeutic-cooling closure; qualified warm-chain,
+    frequent or continuous monitoring, glucose, feeding, cause, serial-reassessment and
+    hyperthermia-prevention boundary review; a fixed 45-minute partial report; and active-risk
+    handoff without learner history, examination, scoring, temperature, monitoring or test work,
+    diagnosis, warming, cooling, skin-to-skin care, device operation, set-point or rate selection,
+    feeding, glucose, fluid, drug, access, oxygen, respiratory support, ventilation, airway care,
+    resuscitation, transport, counseling, procedure, disposition, or outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

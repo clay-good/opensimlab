@@ -5111,6 +5111,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified direct findings, the current local neonatal-infection pathway, prompt trained teams, culture before antibiotics only when it does not delay treatment, continuous supportive care and reassessment, respectful parent communication, and hands-on training.',
     briefIn: ['neonatal-sepsis'],
   },
+  {
+    id: 'neonatal-thermoregulation-gestation-temperature-environment-parent-and-qualified-course-reports-are-authored',
+    headline: 'The gestation, temperatures, environment, parent, qualified rewarming, and 45-minute report are authored.',
+    simplification: 'Fixed reports stand in for history, newborn examination, temperature and glucose acquisition, measurement-site limits, environmental and transfer review, feeding assessment, parent assessment, locally protocolized warm-chain care, device surveillance, cause evaluation, and serial review. Hidden adult-oriented engine-schema minimums are scaffolding, not neonatal thermal physiology validation.',
+    whereItMisleads: 'Treating 35.5°C, the warming-continuity gap, or the later 36.3°C as learner findings, a prescribed rewarming rate, proven treatment effect, determined cause, excluded illness, durable stability, prognosis, or outcome.',
+    correctUnderstanding: 'Newborn thermal care combines verified temperature, gestation, size, environment, transfer, direct clinical findings, glucose and feeding risk, illness review, continuous warm-chain care, serial measurement, and avoidance of hyperthermia.',
+    briefIn: ['thermoregulation-failure'],
+  },
+  {
+    id: 'neonatal-thermoregulation-controls-activate-reconcile-review-reassess-and-handoff-only',
+    headline: 'The controls confirm support, connect supplied facts, review qualified boundaries, read a fixed report, and hand off only.',
+    simplification: 'Six actions stand in for concurrent qualified newborn, thermal, glucose, feeding, respiratory, nursing, medical, infection, neurologic, leadership, timekeeping, documentation, communication, dignity, parent, family, escalation, transfer, and follow-up work.',
+    whereItMisleads: 'Equating button order with history, examination, temperature or glucose measurement, diagnosis, warming, device operation, feeding, communication quality, or competence.',
+    correctUnderstanding: 'Real neonatal thermoregulation care is concurrent, physical, relational, environment-aware, locally protocolized, continuously monitored, and serially reassessed. Cognitive practice cannot replace direct care.',
+    briefIn: ['thermoregulation-failure'],
+  },
+  {
+    id: 'no-live-neonatal-thermoregulation-exam-temperature-monitor-warming-glucose-feed-procedure-disposition-or-outcome',
+    headline: 'The lab does not examine, measure temperature, warm, feed, give glucose, determine disposition, or report outcome.',
+    simplification: 'No live history; newborn examination or scoring; temperature, glucose, monitoring or other test acquisition or interpretation; diagnosis; warming or cooling; skin-to-skin care; incubator, radiant-warmer or other device operation; set-point or rewarming-rate selection; feeding; glucose, fluid, drug, dose, route or access; oxygen or respiratory support; ventilation; airway care; resuscitation; transport; counseling; procedure; disposition; prognosis; or outcome is modeled.',
+    whereItMisleads: 'Using the rehearsal as warmer, incubator, set-point, rewarming-rate, glucose, feeding, therapeutic-hypothermia, transfer, or disposition instruction; delaying trained response for a click; or reading completion as competence.',
+    correctUnderstanding: 'Use verified direct findings, calibrated temperature measurement, the current local thermal-care and illness pathways, immediate trained teams, protocolized rewarming with frequent or continuous monitoring, glucose and feeding protection, respectful parent communication, and hands-on training.',
+    briefIn: ['thermoregulation-failure'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

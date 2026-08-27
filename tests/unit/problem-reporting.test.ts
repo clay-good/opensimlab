@@ -71,9 +71,9 @@ describe('scenario report contract', () => {
     }[] };
     expect(catalog.schemaVersion).toBe(2);
     expect(catalog.evidenceAlgorithm).toBe('scenario-evidence-v1');
-    expect(catalog.scenarios).toHaveLength(189);
+    expect(catalog.scenarios).toHaveLength(190);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(189);
+      .toBe(190);
     for (const entry of catalog.scenarios) {
       expect(entry.capabilityVersion).toMatch(/^0\.1\.0-alpha\./);
       for (const hash of [entry.releaseRef, entry.defaultsHash, entry.maturityHash,

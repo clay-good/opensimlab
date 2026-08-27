@@ -1924,6 +1924,23 @@
       "limitationManifestHash": "sha256:1538d6224696040d10e1a065b1f981a5119a3e37d2e5c4dfd5661bad13d8bd8a"
     },
     {
+      "scenarioId": "thermoregulation-failure",
+      "contentVersion": "0.1.0",
+      "moduleId": "neonatology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:9dca21e8411c1fff6e66c3cab6890f3f108960d9bab48779e00efec9c09316a2",
+      "defaultsHash": "sha256:6aad323d753388e6208c6057d0c997a9d95af786b759bca99e458353d19f7037",
+      "maturityHash": "sha256:d9e1685083f04670015b111bd40f1b3666750ef60ecc33e1d9c3c281eee16904",
+      "sourceManifestHash": "sha256:861a2706a677c7cea20f1b9d48e0b4f6426cc505199b70cbb9f5fbc8c9f380ff",
+      "limitationManifestHash": "sha256:6ba8aa3d14016f9c6aff2628904ee00a4517c0bde666466b7e65cfc22af69e83"
+    },
+    {
       "scenarioId": "acute-bacterial-meningitis-first-hour",
       "contentVersion": "0.1.0",
       "moduleId": "neurology",

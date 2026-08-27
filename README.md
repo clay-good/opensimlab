@@ -324,6 +324,15 @@ culture, stewardship, family, transfer, disposition, and outcome risk. No learne
 test, risk calculation, antimicrobial, supportive treatment, procedure, diagnosis, or outcome is
 implied.
 
+The ninth Neonatology lab restores a broken warm chain without pretending one device or rate is the
+lesson. It connects late-preterm vulnerability, admission and current temperatures, environment,
+transfer, behavior, feeding, glucose, parent, and whole-dyad context; recognizes verified
+unintentional hypothermia; reviews protocolized rewarming, frequent or continuous temperature
+monitoring, glucose and feeding protection, cause review, and hyperthermia prevention; then reads a
+fixed 45-minute partial report and hands off unresolved risk. No learner measurement, warming,
+device operation, rate selection, feeding, glucose delivery, diagnosis, procedure, disposition, or
+newborn/parent outcome control is exposed.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

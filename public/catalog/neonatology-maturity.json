@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "neonatology",
-  "recordCount": 8,
+  "recordCount": 9,
   "records": [
     {
       "recordId": "scenario:term-newborn-transition@0.1.0",
@@ -89,6 +89,17 @@
       "evidence": [
         "/catalog/neonatology-completion-audit.json#neonatal-sepsis@0.1.0",
         "/catalog/neonatology-quality-audit.json#neonatal-sepsis@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:thermoregulation-failure@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "thermoregulation-failure",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/neonatology-completion-audit.json#thermoregulation-failure@0.1.0",
+        "/catalog/neonatology-quality-audit.json#thermoregulation-failure@0.1.0"
       ]
     }
   ]

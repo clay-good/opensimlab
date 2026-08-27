@@ -5375,6 +5375,31 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['activate-neonatal-thermoregulation-newborn-thermal-glucose-feeding-and-family-support',
+      'reconcile-neonatal-thermoregulation-gestation-admission-temperature-environment-trajectory-physiology-and-whole-dyad',
+      'recognize-unintentional-neonatal-hypothermia-requiring-qualified-rewarming-without-rate-cause-or-diagnosis-closure',
+      'review-qualified-neonatal-rewarming-monitoring-glucose-feeding-cause-and-hyperthermia-prevention-boundaries',
+      'review-neonatal-thermoregulation-fixed-forty-five-minute-qualified-report',
+      'handoff-neonatal-thermoregulation-temperature-glucose-feeding-infection-neurologic-family-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'thermoregulation-failure'
+        && scenario.timeline.every((event) => event.type === 'narrative')
+        && scenario.timeline.filter((event) => event.target === 'thermoregulation-failure').length === 1
+        && scenario.timeline.filter((event) => event.target === 'thermoregulation-failure-boundary').length === 1;
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neonatology thermoregulation lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['support-activated', 'Newborn, thermal, glucose, feeding, respiratory, escalation, clock, communication, dignity, family, and follow-up ownership was confirmed first.'],
+        ['context-reconciled', 'Gestation, size, admission and current temperature, environment, transfer, warming continuity, behavior, feeding, physiology, parent, and whole-dyad context were connected.'],
+        ['pattern-recognized', 'Unintentional neonatal hypothermia was recognized without unsupported rate, cause, diagnosis, therapeutic-cooling, or outcome closure.'],
+        ['readiness-reviewed', 'Qualified warm-chain restoration, monitoring, glucose, feeding, cause, serial-reassessment, and hyperthermia-prevention boundaries were reviewed without learner care.'],
+        ['forty-five-minute-report-reviewed', 'The fixed qualified temperature and clinical report was reviewed without prescribed-rate, treatment-effect, cause, illness-exclusion, durable-stability, disposition, or outcome claims.'],
+        ['active-risk-handoff-recorded', 'Temperature, overheating, glucose, feeding, respiratory, infection, neurologic, environment, family, transfer, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^neonatology-thermoregulation-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^neonatology-thermoregulation-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['activate-obstetrics-cord-prolapse-response-diagnosis-clock-theatre-anesthesia-newborn-and-support-roles',
       'reconcile-obstetrics-cord-prolapse-membrane-rupture-fetal-heart-exam-birth-imminence-and-whole-person',
       'review-obstetrics-cord-prolapse-pressure-relief-minimal-handling-position-and-no-delay-boundaries',

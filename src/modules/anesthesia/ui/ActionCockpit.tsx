@@ -1365,6 +1365,11 @@ export interface ActionCockpitProps {
       readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly neonatologyThermoregulationAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2497,6 +2502,14 @@ export interface ActionCockpitProps {
       | 'review-neonatal-sepsis-fixed-one-hour-qualified-report'
       | 'handoff-neonatal-sepsis-respiratory-circulatory-neurologic-culture-family-and-outcome-risk',
   ) => void;
+  readonly onNeonatologyThermoregulationResponse?: (
+    action: 'activate-neonatal-thermoregulation-newborn-thermal-glucose-feeding-and-family-support'
+      | 'reconcile-neonatal-thermoregulation-gestation-admission-temperature-environment-trajectory-physiology-and-whole-dyad'
+      | 'recognize-unintentional-neonatal-hypothermia-requiring-qualified-rewarming-without-rate-cause-or-diagnosis-closure'
+      | 'review-qualified-neonatal-rewarming-monitoring-glucose-feeding-cause-and-hyperthermia-prevention-boundaries'
+      | 'review-neonatal-thermoregulation-fixed-forty-five-minute-qualified-report'
+      | 'handoff-neonatal-thermoregulation-temperature-glucose-feeding-infection-neurologic-family-and-outcome-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2615,6 +2628,11 @@ export function crisisResponseAvailability(
     && scenario.timeline.every((event) => event.type === 'narrative')
     && scenario.timeline.filter((event) => event.target === 'neonatal-sepsis').length === 1
     && scenario.timeline.filter((event) => event.target === 'neonatal-sepsis-boundary').length === 1;
+  const hasNeonatologyThermoregulationResponse =
+    scenario.metadata.id === 'thermoregulation-failure'
+    && scenario.timeline.every((event) => event.type === 'narrative')
+    && scenario.timeline.filter((event) => event.target === 'thermoregulation-failure').length === 1
+    && scenario.timeline.filter((event) => event.target === 'thermoregulation-failure-boundary').length === 1;
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -3180,6 +3198,7 @@ export function crisisResponseAvailability(
     hasNeonatologyPretermRespiratoryDistressResponse,
     hasNeonatologyHypoglycemiaResponse,
     hasNeonatologySepsisResponse,
+    hasNeonatologyThermoregulationResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3417,6 +3436,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'preterm-respiratory-distress')
       || (event.type === 'narrative' && event.target === 'neonatal-hypoglycemia')
       || (event.type === 'narrative' && event.target === 'neonatal-sepsis')
+      || (event.type === 'narrative' && event.target === 'thermoregulation-failure')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3542,6 +3562,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeonatologyPretermRespiratoryDistressResponse,
     hasNeonatologyHypoglycemiaResponse,
     hasNeonatologySepsisResponse,
+    hasNeonatologyThermoregulationResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3694,8 +3715,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeonatologyPretermRespiratoryDistressResponse
     || hasNeonatologyHypoglycemiaResponse
     || hasNeonatologySepsisResponse
+    || hasNeonatologyThermoregulationResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasNeonatologySepsisResponse
+  const responseTray = hasNeonatologyThermoregulationResponse
+    ? { id: 'crisis', label: 'Warmth + trajectory' } as const
+    : hasNeonatologySepsisResponse
     ? { id: 'crisis', label: 'Infection + trajectory' } as const
     : hasNeonatologyHypoglycemiaResponse
     ? { id: 'crisis', label: 'Glucose + trajectory' } as const
@@ -4132,6 +4156,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeonatologyPretermRespiratoryDistressResponse
     || hasNeonatologyHypoglycemiaResponse
     || hasNeonatologySepsisResponse
+    || hasNeonatologyThermoregulationResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -5089,6 +5114,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNeonatologySepsisResponse && (
               <NeonatologySepsisTray assessment={props.resuscitation.neonatologySepsisAssessment}
                 onAction={props.onNeonatologySepsisResponse ?? (() => {})} />
+            )}
+            {hasNeonatologyThermoregulationResponse && (
+              <NeonatologyThermoregulationTray assessment={props.resuscitation.neonatologyThermoregulationAssessment}
+                onAction={props.onNeonatologyThermoregulationResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -12622,6 +12651,38 @@ function NeonatologySepsisTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-neonatal-sepsis-fixed-one-hour-qualified-report')}>Review the fixed 1-hour report</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neonatal-sepsis-respiratory-circulatory-neurologic-culture-family-and-outcome-risk')}>Hand off active newborn risk</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function NeonatologyThermoregulationTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['neonatologyThermoregulationAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onNeonatologyThermoregulationResponse']>;
+}) {
+  const support = assessment?.supportAtTick != null;
+  const context = assessment?.contextAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const readiness = assessment?.readinessAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="neonatology-thermoregulation-now-title">
+      <div id="neonatology-thermoregulation-now-title" className="syringe__name">Warmth is a chain, not a switch.</div>
+      <p className="syringe__remaining">Connect gestation, temperatures, environment, transfer, behavior, feeding, physiology, parent, and whole dyad. Keep illness and therapeutic-cooling boundaries open.</p>
+      <div className="crisis-drug__actions">
+        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-neonatal-thermoregulation-newborn-thermal-glucose-feeding-and-family-support')}>Confirm prepared support</Button>}
+        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neonatal-thermoregulation-gestation-admission-temperature-environment-trajectory-physiology-and-whole-dyad')}>Connect newborn + whole dyad</Button>}
+        {context && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-unintentional-neonatal-hypothermia-requiring-qualified-rewarming-without-rate-cause-or-diagnosis-closure')}>Recognize the urgent pattern</Button>}
+        {recognition && !readiness && <Button className="crisis-drug__action" onClick={() => onAction('review-qualified-neonatal-rewarming-monitoring-glucose-feeding-cause-and-hyperthermia-prevention-boundaries')}>Review qualified boundaries</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="neonatology-thermoregulation-later-title">
+      <div id="neonatology-thermoregulation-later-title" className="syringe__name">A rising temperature is progress, not closure.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Temperature, glucose, feeding, infection, neurologic, environment, family, disposition, and outcome risks handed off.' : reassessment ? 'The supplied temperature is rising but remains below normal. Rate, cause, durable stability, feeding, and outcomes remain open.' : readiness ? 'Qualified warm-chain care and serial reassessment continue. Review the fixed report after time passes.' : support ? 'Prepared support is present. Connect the whole newborn and dyad before naming the pattern.' : 'Begin with calm shared ownership. You can pause or leave this practice at any time.'}</p>
+      <div className="crisis-drug__actions">
+        {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-neonatal-thermoregulation-fixed-forty-five-minute-qualified-report')}>Review the fixed 45-minute report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neonatal-thermoregulation-temperature-glucose-feeding-infection-neurologic-family-and-outcome-risk')}>Hand off active newborn risk</Button>}
       </div>
     </section>
   </>;
