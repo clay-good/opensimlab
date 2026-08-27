@@ -429,6 +429,13 @@ The paused example and private report dialog follow the shared pattern. No dose,
 calibrated potassium kinetics, or discharge clearance is supplied. This is the first of 12 planned
 renal previews; clinical, quality-matrix, inclusive-runtime, and production reporting evidence remain pending.
 
+The second Renal lab follows severe hypokalemia with magnesium deficiency and continuing diarrhea.
+Coordinate both replacement lanes and delivered loss care, then compare partial improvement with
+recurrence. Potassium does not wait for magnesium normalization. Separate potassium-only and ECG
+checks from a fresh full assessment; hand off unresolved risk without declaring durable safety.
+The nine-decision example pauses for reading, and the shared private report stays available.
+Two of 12 renal scenarios are registered previews; independent validation remains pending.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 308,
+  "sourceCount": 312,
   "sources": [
     {
       "id": "association-jbds-perioperative-diabetes-2026",
@@ -2155,6 +2155,50 @@
       "locator": "27:329-337; doi:10.1097/MEJ.0000000000000691",
       "usedFor": "Conference-consensus distinctions among temporary calcium benefit, intracellular shifting, and removal; ECG limitations and rebound surveillance. Fictional renal-preview clocks and numerical responses are not patient-specific predictions or required waits.",
       "verifiedAgainst": "https://kdigo.org/wp-content/uploads/2018/04/KDIGO-Acute-Hyperkalemia-conf-report-FINAL.pdf",
+      "verifiedOn": "2026-08-27"
+    },
+    {
+      "id": "sps-acute-hypokalemia-2024",
+      "authors": "NHS Specialist Pharmacy Service",
+      "title": "Treating acute hypokalaemia in adults",
+      "publication": "NHS Specialist Pharmacy Service",
+      "year": 2024,
+      "locator": "Published 2024-08-14; Safety concerns, Severe, Management, and Monitoring sections",
+      "usedFor": "Qualified monitored replacement for severe or symptomatic potassium deficiency, individualized renal safety, magnesium and contributor assessment, and serial reassessment. No dose, infusion rate, or patient-specific response curve is reproduced.",
+      "verifiedAgainst": "https://sps.nhs.uk/articles/hypokalaemia/",
+      "verifiedOn": "2026-08-27"
+    },
+    {
+      "id": "sps-acute-hypomagnesemia-2024",
+      "authors": "NHS Specialist Pharmacy Service",
+      "title": "Treating acute hypomagnesaemia in adults",
+      "publication": "NHS Specialist Pharmacy Service",
+      "year": 2024,
+      "locator": "Published 2024-12-19; Management, Duration of therapy, and Monitoring sections",
+      "usedFor": "Concurrent magnesium and associated electrolyte care, underlying-loss assessment, renal safety, and the distinction between serum improvement and replenished stores. The renal hypokalemia lesson does not prescribe universal replacement or a monitoring schedule.",
+      "verifiedAgainst": "https://sps.nhs.uk/articles/treating-acute-hypomagnesaemia-in-adults/",
+      "verifiedOn": "2026-08-27"
+    },
+    {
+      "id": "krogager-hypokalemia-2021",
+      "authors": "Krogager ML, Kragholm K, Thomassen JQ, et al",
+      "title": "Update on management of hypokalaemia and goals for the lower potassium level in patients with cardiovascular disease: a review in collaboration with the European Society of Cardiology Working Group on Cardiovascular Pharmacotherapy",
+      "publication": "European Heart Journal – Cardiovascular Pharmacotherapy",
+      "year": 2021,
+      "locator": "7:557–567; doi:10.1093/ehjcvp/pvab038; ECG findings and potassium/magnesium treatment discussion",
+      "usedFor": "Qualitative T-wave flattening and magnesium-related difficulty correcting potassium depletion. The new rhythm selects T-wave flattening only; its amplitude is authored, with no potassium calibration, U-wave generation, or quantitative QT/QU claim. This collaboration review is not a new formal ESC guideline.",
+      "verifiedAgainst": "https://academic.oup.com/ehjcvp/article/7/6/557/6270921",
+      "verifiedOn": "2026-08-27"
+    },
+    {
+      "id": "rcuk-special-circumstances-hypokalemia-2025",
+      "authors": "Resuscitation Council UK",
+      "title": "2025 Resuscitation Guidelines: Special circumstances",
+      "publication": "Resuscitation Council UK",
+      "year": 2025,
+      "locator": "2025 guidelines, Hypokalaemia section",
+      "usedFor": "Concurrent qualified potassium and magnesium correction where appropriate, severity and ECG assessment, and expert input for renal impairment. The perfusing renal lesson excludes the separate cardiac-arrest replacement protocol and creates no magnesium-first administrative gate.",
+      "verifiedAgainst": "https://www.resus.org.uk/professional-library/2025-resuscitation-guidelines/special-circumstances-guidelines",
       "verifiedOn": "2026-08-27"
     },
     {

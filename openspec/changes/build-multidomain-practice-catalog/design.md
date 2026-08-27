@@ -3036,6 +3036,20 @@ in `docs/evidence-briefs/hyperkalemia-cardioprotection-and-rebound.md`; they are
 or clinical waiting instructions. Clinical review, four quality records, full inclusive-runtime
 verification, and production reporting evidence remain pending.
 
+The second renal preview, `hypokalemia-magnesium-and-ongoing-losses@0.1.0`, separates potassium
+replacement, magnesium replacement, and delivered continuing-loss care. Potassium-only treatment
+can partially improve potassium; magnesium is not an administrative gate to urgent care. Later
+full observations distinguish partial response, combined response, and recurrence. Loss management
+does not instantly stop diarrhea. Sparse clock jumps preserve checkpoint chronology and terminal
+boundaries; later recovery retains historically observed recurrence. Qualitative flattened T waves
+do not claim a potassium measurement, U wave, or QT interval. Numerical contrasts and source
+boundaries are recorded in `docs/evidence-briefs/hypokalemia-magnesium-and-ongoing-losses.md`.
+
+The shared private tutor, nine-decision paused example, five-objective debrief, nonvisual summary,
+and centered report remain available. Optional reports contain at most 28 observed/care equipment
+scalars and seven live vitals, never hidden results or learner prose. Clinical review, four quality
+records, full inclusive-runtime checks, and production reporting evidence remain pending.
+
 #### Infectious disease: 10
 
 Sepsis without shock; septic shock; meningitis; neutropenic fever; severe community-acquired

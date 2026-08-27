@@ -141,6 +141,18 @@ const RHYTHM_LIST: readonly RhythmDefinition[] = Object.freeze([
       'A slow rhythm with faint but visible P waves, widened complexes, and tall narrow peaked T waves.',
   },
   {
+    id: 'hypokalemic-repolarization',
+    name: 'Hypokalemic repolarization pattern',
+    morphology: {
+      events: table({ T: { a: 0.12 } }),
+      mechanicalPulse: true,
+    },
+    rateRangeBpm: [60, 120],
+    rateIsMeasurable: true,
+    source: 'Qualitative T-wave flattening described by Krogager et al., European Heart Journal – Cardiovascular Pharmacotherapy 2021;7:557–567, doi:10.1093/ehjcvp/pvab038. The amplitude is authored, not a potassium-calibrated parameter; U waves, ST depression, and QT/QU measurement are not supplied.',
+    morphologyDescription: 'An organized rhythm with visible P waves, narrow complexes, and flattened T waves. This selected teaching pattern does not measure potassium or supply U waves or a QT interval.',
+  },
+  {
     id: 'torsades-de-pointes',
     name: 'Torsades de pointes',
     morphology: {

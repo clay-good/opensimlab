@@ -1185,6 +1185,35 @@ credited toward the catalog until every item in the completion contract passes.
     one decision and pauses again. This does not establish phone or assistive-technology validation.
     Local report submission remains disabled; no production report was sent. Deploy the updated
     Worker report catalog before new client content and keep pending validation explicit.
+  - [x] Renal/electrolyte slice 2/12 registers `hypokalemia-magnesium-and-ongoing-losses@0.1.0`
+    as a distinct preview. Potassium and magnesium care are independent; potassium alone has
+    partial benefit. Delivered continuing-loss care differs from planning and does not instantly
+    stop diarrhea. Recurrence cannot improve untreated magnesium; later recovery retains earlier
+    observed recurrence. NHS SPS 2024, the ESC collaborative review (2021), and RCUK 2025 were
+    checked August 27. Authored values and timing bounds are recorded in its evidence brief.
+  - [x] Add twelve choices, private tutor, nine-decision paused example, five-objective debrief,
+    qualitative flattened-T waveform, nonvisual summaries, and shared centered reporting. Partial
+    potassium and ECG findings retain older magnesium; debrief care credit respects later event
+    order even at one tick. Optional report context excludes hidden results, timers, and prose,
+    with seven live vitals and at most 28 observed/care equipment scalars.
+  - [x] Verify hypokalemia with 24 model, 13 full-engine, five real-session, 12 tutor/UI, nine
+    accessibility, seven rendered-debrief, 24 action-attribution, and ten shared-form tests.
+    Final indexable CI passes 4,696 tests in 529 files, 30 strict specs, typecheck, lint, public
+    readiness, build, static-host checks, budgets, and fonts. The catalog has 206 scenarios across
+    12 modules, 231 static routes, 228 crawlable routes, and 47 artifacts. All 213 prior client and
+    Worker identities are unchanged; 214 are accepted. Landing/cockpit/offline budgets are
+    148.7/1,563.9/3,480.2 KiB; fonts are 86.2 KiB. Neighbor checks passed before repinning six
+    hypocalcemia, ten hyponatremia, and twelve AVP shared dependencies; authored quality records
+    are unchanged. Fix the exact-source link allowance found by CI; do not allow background
+    foreign-origin requests. Confirmed host deep-idle interruptions required an awake rerun,
+    which passed without changing assertions or timeouts. Actual release refuses 221 blockers.
+  - [ ] Complete hypokalemia independent clinical review, four exact-version quality records,
+    full inclusive-runtime verification, and production Turnstile/D1 evidence. Desktop QA at
+    1,280 × 720 confirms a centered 560 × 619 report dialog, 160-character limit, unchecked
+    context, cancel focus return, and unchanged paused clock. Continuing applies one decision
+    and pauses again. This is not phone or native assistive-technology validation. Local reporting
+    is disabled; no production report was sent. Publish the updated Worker catalog before the
+    new client and keep pending gates explicit.
   - [x] Repair service-worker release consistency. Build-stamped SHA-256 integrity checks reject
     mixed or incomplete installations; active snapshots are immutable. Explicit acceptance waits
     for the intended controller before reloading only that tab. Durable per-client release pins

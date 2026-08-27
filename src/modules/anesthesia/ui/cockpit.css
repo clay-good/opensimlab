@@ -297,6 +297,9 @@
 .perioperative-diabetes__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .renal-hyperkalemia__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
 .renal-hyperkalemia__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.renal-hypokalemia__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
+.renal-hypokalemia__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.renal-hypokalemia__section .button[aria-disabled='true'],
 .renal-hyperkalemia__section .button[aria-disabled='true'],
 .perioperative-diabetes__section .button[aria-disabled='true'],
 .refeeding__section .button[aria-disabled='true'],

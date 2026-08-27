@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "renal-electrolyte",
-  "recordCount": 1,
+  "recordCount": 2,
   "records": [
     {
       "recordId": "scenario:hyperkalemia-cardioprotection-and-rebound@0.1.0",
@@ -12,6 +12,17 @@
       "evidence": [
         "/catalog/renal-electrolyte-completion-audit.json#hyperkalemia-cardioprotection-and-rebound@0.1.0",
         "/catalog/renal-electrolyte-quality-audit.json#hyperkalemia-cardioprotection-and-rebound@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:hypokalemia-magnesium-and-ongoing-losses@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "hypokalemia-magnesium-and-ongoing-losses",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/renal-electrolyte-completion-audit.json#hypokalemia-magnesium-and-ongoing-losses@0.1.0",
+        "/catalog/renal-electrolyte-quality-audit.json#hypokalemia-magnesium-and-ongoing-losses@0.1.0"
       ]
     }
   ]

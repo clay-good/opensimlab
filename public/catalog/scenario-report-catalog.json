@@ -3114,6 +3114,23 @@
       "limitationManifestHash": "sha256:47c5afc640259fff8e75ce81224b5256dc7757597d03828509d8f88485251588"
     },
     {
+      "scenarioId": "hypokalemia-magnesium-and-ongoing-losses",
+      "contentVersion": "0.1.0",
+      "moduleId": "renal-electrolyte",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:43a2371d2bd32b577f341738b0619f8eeaceaab33f10021a8c036b7a4f6d5078",
+      "defaultsHash": "sha256:e6db555cafe2ba88e0fb9ad96879e758fd3c0a0f7e0bbde7f34ea565eae75a62",
+      "maturityHash": "sha256:214cd969cc08853b7e28e4270e6912cd298a6ebeb0289556e643ecf14f38c91f",
+      "sourceManifestHash": "sha256:637a172dd04704251b943fc2d16b75ba8cec9b5ac71855fc05fc8c47545689b4",
+      "limitationManifestHash": "sha256:06248f950890ed2e1b755ab0489ba2cf7ffca0d34aa2169c192e05a134901aa1"
+    },
+    {
       "scenarioId": "acute-pulmonary-edema-respiratory-support-reassessment",
       "contentVersion": "0.1.0",
       "moduleId": "respiratory-medicine",

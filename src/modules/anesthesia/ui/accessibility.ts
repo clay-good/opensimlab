@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -105,6 +105,7 @@ export function stateSummary(
     readonly refeeding?: RefeedingSnapshot;
     readonly perioperativeDiabetes?: PerioperativeDiabetesSnapshot;
     readonly renalHyperkalemia?: RenalHyperkalemiaSnapshot;
+    readonly renalHypokalemia?: RenalHypokalemiaSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -158,7 +159,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -182,6 +183,34 @@ export function stateSummary(
           + ' intravenous.');
       }
     }
+  }
+  if (options.renalHypokalemia) {
+    const patient = options.renalHypokalemia;
+    const rhythm = (value: string) => value === 'sinus' ? 'authored ECG improvement' : 'supplied flattened-T pattern';
+    for (const field of ['systolicMmHg', 'diastolicMmHg'] as const) {
+      const value = state[field];
+      if (!options.invalid.has(field) && Number.isFinite(value)) {
+        lines.push(`${FIELDS[field].label}: ${value.toFixed(FIELDS[field].precision)} ${FIELDS[field].unit}.`);
+      }
+    }
+    lines.push('Supplied potassium was 2.3 and magnesium 0.40 millimoles per liter, with a qualitative flattened-T ECG pattern. These remain historical starting findings.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push(`Potassium care: ${patient.potassiumAtTick === null ? 'not yet requested' : 'requested'}. Magnesium care: ${patient.magnesiumAtTick === null ? 'not yet requested' : 'requested'}. Qualified ongoing-loss care: ${patient.lossManagementAtTick === null ? 'not yet delivered' : 'delivered'}.`);
+    lines.push('Potassium and magnesium care are independent. Ongoing-loss care does not instantly stop diarrhea. Oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.potassiumObservation
+      ? `Last requested potassium at simulated ${formatElapsed(patient.potassiumObservation.atTick)}: ${patient.potassiumObservation.potassiumMmolL.toFixed(1)} millimoles per liter. A potassium-only check does not refresh magnesium or the full assessment.`
+      : 'No new potassium-only measurement has been requested.');
+    lines.push(patient.ecgObservation
+      ? `Last requested ECG at simulated ${formatElapsed(patient.ecgObservation.atTick)}: ${rhythm(patient.ecgObservation.rhythm)}. An ECG-only check does not refresh electrolytes.`
+      : 'No new ECG assessment has been requested.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: potassium ${patient.observation.potassiumMmolL.toFixed(1)}, magnesium ${patient.observation.magnesiumMmolL.toFixed(2)} millimoles per liter, and ${rhythm(patient.observation.rhythm)}. These are historical observations, not live measurements.`
+      : 'No new full potassium, magnesium, ECG, and bedside assessment has been requested.');
+    if (patient.recurrenceObserved) lines.push('A full assessment recorded recurrent depletion; later care does not erase that observation.');
+    lines.push('ECG appearance does not establish electrolyte concentrations. This waveform supplies no U-wave or QTc measurement. Repeated electrolyte and ECG surveillance remain necessary; improvement does not prove durable safety.');
+    lines.push(options.alarms.length === 0 ? 'No active alarms.'
+      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    return lines.join(' ');
   }
   if (options.renalHyperkalemia) {
     const patient = options.renalHyperkalemia;

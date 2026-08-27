@@ -27,6 +27,30 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'renal-hypokalemia-authored-contrasts',
+    headline: 'Replacement and recurrent losses use authored contrasts, not potassium or magnesium kinetics.',
+    simplification: 'Separate potassium and magnesium care can produce partial observations before combined improvement. Continuing unmanaged losses can cause an authored recurrence; the 30-, 60-, and 120-minute checkpoints are not clinical waits or grading deadlines.',
+    whereItMisleads: 'Fixed laboratory changes become expected patient responses, magnesium is made a prerequisite to urgent potassium treatment, or a teaching stop predicts arrhythmia or death.',
+    correctUnderstanding: 'Treat severe deficiency promptly with qualified monitoring and individualized replacement. Magnesium deficiency can make potassium correction difficult, but potassium-only care is not necessarily ineffective. No dose, clearance, arrhythmia, or renal-recovery solver is supplied.',
+    briefIn: ['hypokalemia-magnesium-and-ongoing-losses'],
+  },
+  {
+    id: 'renal-hypokalemia-individualized-care',
+    headline: 'Continuing-loss care is delivered support, not instant diarrhea cessation or a universal medication rule.',
+    simplification: 'Potassium, magnesium, and individualized continuing-loss management are independent qualified care requests. Loss management alone does not replenish deficits or prove the underlying illness has ended.',
+    whereItMisleads: 'A planning acknowledgment stops losses, an unchanged usual replacement fits every patient, or improved serum findings establish replenished body stores.',
+    correctUnderstanding: 'Coordinate ongoing-loss replacement and contributor management with kidney, volume, medication, and clinical reassessment. Avoid unmonitored rapid potassium administration and continue appropriate electrolyte and cardiac surveillance.',
+    briefIn: ['hypokalemia-magnesium-and-ongoing-losses'],
+  },
+  {
+    id: 'renal-hypokalemia-observed-findings',
+    headline: 'A potassium-only or ECG-only check cannot refresh older magnesium findings.',
+    simplification: 'Partial and full observations retain separate timestamps. The waveform selects qualitative T-wave flattening only; it supplies no U waves or quantitative QT/QU measurement and cannot establish electrolyte concentrations.',
+    whereItMisleads: 'A better waveform, one potassium value, or an elapsed response clock becomes proof of corrected magnesium, restored stores, or durable rhythm safety.',
+    correctUnderstanding: 'Request fresh combined findings when needed and transfer unresolved deficits, recurrent-loss history, and continuing surveillance. Handoff ends rehearsal, not replacement needs, and grants no discharge or competence certification.',
+    briefIn: ['hypokalemia-magnesium-and-ongoing-losses'],
+  },
+  {
     id: 'renal-hyperkalemia-authored-contrasts',
     headline: 'Cardiac protection, shifting, removal, and rebound use fictional contrasts, not treatment kinetics.',
     simplification: 'Calcium has a finite 45-minute ECG benefit; shifting, delivered removal care, and rebound use 30-, 60-, and 150-minute checkpoints. No dose response, arrhythmia, arrest, or kidney-recovery model is supplied.',

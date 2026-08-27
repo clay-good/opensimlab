@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 173 adds the authored renal hyperkalemia snapshot. */
-export const WORKER_PROTOCOL_VERSION = 173;
+/** Version 174 adds the authored renal hypokalemia snapshot. */
+export const WORKER_PROTOCOL_VERSION = 174;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -154,6 +154,30 @@ export interface ReadyMessage {
  * request rather than the result teaches the learner to trust a number that is
  * not true (cockpit/action-cockpit → the tray reflects the patient).
  */
+export interface RenalHypokalemiaSnapshot {
+  readonly supportActive: boolean;
+  readonly contextReviewedAtTick: number | null; readonly monitoringAtTick: number | null;
+  readonly potassiumAtTick: number | null; readonly magnesiumAtTick: number | null;
+  readonly lossManagementAtTick: number | null;
+  readonly potassiumDueInSeconds: number | null; readonly magnesiumDueInSeconds: number | null;
+  readonly responseDueInSeconds: number | null; readonly recurrenceDueInSeconds: number | null;
+  readonly potassiumResponseObserved: boolean; readonly magnesiumResponseObserved: boolean;
+  readonly responseObserved: boolean; readonly recurrenceObserved: boolean;
+  readonly rapidPotassiumAttempted: boolean; readonly monitoringStopAttempted: boolean;
+  readonly potassiumObservation: { readonly atTick: number; readonly potassiumMmolL: number } | null;
+  readonly ecgObservation: { readonly atTick: number; readonly rhythm: 'hypokalemic-repolarization' | 'sinus' } | null;
+  readonly observation: {
+    readonly atTick: number; readonly potassiumMmolL: number; readonly magnesiumMmolL: number;
+    readonly rhythm: 'hypokalemic-repolarization' | 'sinus';
+    readonly systolicMmHg: number; readonly diastolicMmHg: number; readonly meanArterialMmHg: number;
+    readonly heartRateBpm: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string; readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true; readonly doseModelAvailable: false; readonly durableRecoveryProven: false;
+}
+
 export interface RenalHyperkalemiaSnapshot {
   readonly supportActive: boolean;
   readonly contextReviewedAtTick: number | null; readonly removalPlanAtTick: number | null;
@@ -3388,6 +3412,7 @@ export interface EquipmentSnapshot {
     readonly refeeding?: RefeedingSnapshot;
     readonly perioperativeDiabetes?: PerioperativeDiabetesSnapshot;
     readonly renalHyperkalemia?: RenalHyperkalemiaSnapshot;
+    readonly renalHypokalemia?: RenalHypokalemiaSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

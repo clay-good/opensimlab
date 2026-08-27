@@ -232,6 +232,29 @@ describe('Scenario: Hyperkalemic conduction has a distinct organized morphology'
   });
 });
 
+describe('Scenario: Hypokalemic repolarization is a selected qualitative pattern', () => {
+  it('flattens T waves without changing the published table, QRS, or mechanical pulse', () => {
+    const original = JSON.stringify(MCSHARRY_TABLE_1);
+    const pattern = getRhythm('hypokalemic-repolarization');
+    const sinus = getRhythm('sinus');
+    expect(pattern.morphology.events.filter(({ name }) => name !== 'T'))
+      .toEqual(sinus.morphology.events.filter(({ name }) => name !== 'T'));
+    expect(pattern.morphology.events.find(({ name }) => name === 'T')!.a)
+      .toBeLessThan(sinus.morphology.events.find(({ name }) => name === 'T')!.a);
+    expect(pattern.morphology.mechanicalPulse).toBe(true);
+    expect(pattern.morphologyDescription).toMatch(/does not measure potassium/);
+    expect(pattern.source).toMatch(/authored, not a potassium-calibrated parameter/);
+    expect(JSON.stringify(MCSHARRY_TABLE_1)).toBe(original);
+  });
+  it.each([60, 96, 120])('renders finite, distinct, deterministic repolarization at %s bpm', (heartRateBpm) => {
+    const first = render(8, { heartRateBpm }, 'hypokalemic-repolarization');
+    expect(first).toEqual(render(8, { heartRateBpm }, 'hypokalemic-repolarization'));
+    expect(first.samples.every(Number.isFinite)).toBe(true);
+    expect(first.samples).not.toEqual(render(8, { heartRateBpm }, 'sinus').samples);
+    expect(first.rWaves.length).toBeGreaterThan(5);
+  });
+});
+
 describe('Scenario: Atrial fibrillation is irregularly irregular', () => {
   it('has absent P waves and an interval distribution wider than sinus with variability', () => {
     const afib = render(60, { anesthesiaDepthFraction: 0 }, 'atrial-fibrillation');
@@ -295,7 +318,7 @@ describe('The rhythm library is complete and self-describing', () => {
     expect(RHYTHM_IDS).toEqual([
       'sinus', 'sinus-bradycardia', 'sinus-tachycardia',
       'tricyclic-sodium-channel-tachycardia', 'atrial-fibrillation', 'svt',
-      'first-degree-block', 'complete-heart-block', 'hyperkalemic-conduction',
+      'first-degree-block', 'complete-heart-block', 'hyperkalemic-conduction', 'hypokalemic-repolarization',
       'torsades-de-pointes', 'ventricular-tachycardia',
       'ventricular-fibrillation', 'asystole', 'pea', 'paced',
       'paced-electrical-no-mechanical-capture',

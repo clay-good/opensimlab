@@ -128,8 +128,12 @@ describe('Requirement: No Telemetry, No Analytics, No Third-Party Requests', () 
         const renalGuidanceLink = file.path === 'src/modules/renal-electrolyte/renal-hyperkalemia-tutor.ts'
           && ['https://www.ukkidney.org/health-professionals/guidelines/treatment-acute-hyperkalaemia-adults-0',
             'https://kdigo.org/wp-content/uploads/2018/04/KDIGO-Acute-Hyperkalemia-conf-report-FINAL.pdf'].includes(url);
+        const hypokalemiaGuidanceLink = ['src/modules/renal-electrolyte/renal-hypokalemia-tutor.ts',
+          'src/modules/renal-electrolyte/scenarios/hypokalemia-magnesium-and-ongoing-losses.ts'].includes(file.path)
+          && ['https://sps.nhs.uk/articles/hypokalaemia/',
+            'https://sps.nhs.uk/articles/treating-acute-hypomagnesaemia-in-adults/'].includes(url);
         expect(
-          documentationHosts.test(url) || namespaceUris.test(url) || lazyTurnstile || sodiumGuidanceLink || renalGuidanceLink,
+          documentationHosts.test(url) || namespaceUris.test(url) || lazyTurnstile || sodiumGuidanceLink || renalGuidanceLink || hypokalemiaGuidanceLink,
           `${file.path} references ${url}`,
         ).toBe(true);
       }

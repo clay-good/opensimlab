@@ -34,6 +34,7 @@ import { supportsAvpDeficiency } from '../../endocrine-metabolic/avp-deficiency'
 import { supportsRefeeding } from '../../endocrine-metabolic/refeeding';
 import { supportsPerioperativeDiabetes } from '../../endocrine-metabolic/perioperative-diabetes';
 import { supportsRenalHyperkalemia } from '../../renal-electrolyte/hyperkalemia';
+import { supportsRenalHypokalemia } from '../../renal-electrolyte/hypokalemia';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -207,6 +208,8 @@ export function Debrief(props: DebriefProps) {
                 ? { activityContext: 'coordinating monitored calcium rescue, postoperative risk assessment, and continuing calcium and magnesium care' }
               : supportsRenalHyperkalemia(props.scenario)
                 ? { activityContext: 'coordinating cardiac protection, temporary potassium shifting, individualized elimination, and ongoing reassessment for hyperkalemia' }
+              : supportsRenalHypokalemia(props.scenario)
+                ? { activityContext: 'coordinating potassium and magnesium replacement, continuing-loss care, fresh reassessment, and receiving-team ownership for severe hypokalemia' }
               : supportsPerioperativeDiabetes(props.scenario)
                 ? { activityContext: 'restoring reliable insulin delivery during delayed surgery, distinguishing glucose-only checks from full reassessment, and handing off continued perioperative care' }
               : supportsRefeeding(props.scenario)
@@ -598,6 +601,42 @@ export function objectiveFindings(
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
 
+    if (objective.id.startsWith('renal-hypokalemia-')) {
+      if (!supportsRenalHypokalemia(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The renal hypokalemia lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^renal-hypokalemia-${id}-\\d+$`).test(entry.eventId));
+      const potassium = event('potassium-care'); const magnesium = event('magnesium-care');
+      const support = event('support'); const context = event('context-review');
+      const losses = event('losses-care'); const monitoring = event('monitoring');
+      const later = log.find((entry) => /^renal-hypokalemia-(potassium|magnesium|partial|response|recurrence)-reassessment-\d+$/.test(entry.eventId));
+      const recurrence = event('recurrence-reassessment'); const handoff = event('handoff');
+      const partial = event('potassium-check') || event('ecg-check');
+      const rapid = event('rapid-potassium-refused'); const stop = event('monitoring-stop-refused');
+      const afterCare = (care: EngineEvent | undefined) => care && log.find((entry, index) => index > log.indexOf(care)
+        && entry.tick >= care.tick && /^renal-hypokalemia-(potassium|magnesium|partial|response|recurrence)-reassessment-\d+$/.test(entry.eventId));
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'renal-hypokalemia-replacement': { met: !!afterCare(potassium) && !!monitoring, tick: potassium?.tick,
+          finding: (afterCare(potassium) && monitoring ? 'Qualified potassium replacement was followed by requested later full findings and continued surveillance. ' : 'Qualified potassium replacement, a later full assessment after care, or surveillance remains incomplete. ')
+            + (rapid ? 'The attempted unmonitored rapid-potassium shortcut was refused and remains visible. ' : '')
+            + 'Urgent potassium care does not wait for magnesium correction or administrative acknowledgment. Potassium alone can partially improve the supplied deficit; no dose, rate, or universal response is inferred.' },
+        'renal-hypokalemia-magnesium': { met: !!afterCare(magnesium), tick: magnesium?.tick,
+          finding: (afterCare(magnesium) ? 'Qualified magnesium replacement was followed by a requested later full electrolyte and bedside assessment. ' : 'Magnesium replacement or a later full assessment after that care remains incomplete. ')
+            + 'Magnesium deficiency can hinder potassium correction. Magnesium is neither a substitute for potassium nor a prerequisite that delays urgent replacement. A serum improvement does not prove body-store repletion.' },
+        'renal-hypokalemia-losses': { met: !!support && !!context && !!losses, tick: losses?.tick,
+          finding: (support && context && losses ? 'Qualified support, contributor review, and delivered continuing-loss care were recorded separately. ' : 'Support, contributor review, or delivered continuing-loss care remains incomplete. ')
+            + (recurrence ? 'Earlier observed recurrence remains part of this run despite later care. ' : '')
+            + 'Loss management is more than a plan, but does not instantly stop diarrhea or replace potassium and magnesium by itself. Review renal function, fluids, medications, and gastrointestinal contributors individually.' },
+        'renal-hypokalemia-reassessment': { met: !!later, tick: later?.tick,
+          finding: (later ? 'Fresh later potassium, magnesium, qualitative ECG, and bedside findings made the authored partial response, combined response, or recurrence available for review. ' : 'A requested later full assessment is missing. ')
+            + (partial ? 'Potassium-only and ECG-only checks remained partial observations and did not refresh older magnesium or full bedside findings. ' : '')
+            + (stop ? 'Attempted monitoring closure was refused. ' : '')
+            + 'A flattened or improved teaching T wave is not a potassium measurement, U-wave assessment, QT interval, or proof of rhythm safety.' },
+        'renal-hypokalemia-handoff': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The receiving team owns current deficits, both replacement lanes, continuing losses, repeat findings, and escalation. Recovery may remain pending. ' : 'Continuing-care ownership or a current full later assessment remains incomplete. ')
+            + 'Handoff ends the rehearsal, not monitoring. Neither an earlier shortcut nor omitted early panels preclude later appropriate care; durable safety, discharge readiness, and competence are not certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (objective.id.startsWith('renal-hyperkalemia-')) {
       if (!supportsRenalHyperkalemia(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The renal hyperkalemia lesson was not active.' } satisfies ObjectiveFinding;
       const event = (id: string) => log.find((entry) => new RegExp(`^renal-hyperkalemia-${id}-\\d+$`).test(entry.eventId));
