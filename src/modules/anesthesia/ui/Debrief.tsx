@@ -5300,6 +5300,31 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['activate-preterm-respiratory-distress-newborn-respiratory-thermal-and-family-support',
+      'reconcile-preterm-respiratory-distress-gestation-breathing-work-heart-rate-oxygenation-temperature-and-whole-dyad',
+      'recognize-spontaneously-breathing-preterm-respiratory-distress-suitable-for-qualified-initial-cpap',
+      'review-qualified-cpap-oxygen-thermal-monitoring-and-escalation-boundaries',
+      'review-preterm-respiratory-distress-fixed-ten-minute-qualified-report',
+      'handoff-preterm-respiratory-distress-breathing-oxygen-thermal-glucose-infection-family-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'preterm-respiratory-distress'
+        && scenario.timeline.every((event) => event.type === 'narrative')
+        && scenario.timeline.filter((event) => event.target === 'preterm-respiratory-distress').length === 1
+        && scenario.timeline.filter((event) => event.target === 'preterm-respiratory-distress-boundary').length === 1;
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neonatology preterm-respiratory-distress lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['support-activated', 'Preterm-newborn, CPAP-capable, airway-ready, thermal, transfer, clock, communication, dignity, family, and support ownership was confirmed first.'],
+        ['context-reconciled', 'Gestation, birth clock, spontaneous breathing, work, heart rate, preductal oxygenation, temperature, thermal protection, parent, and whole-dyad context were connected.'],
+        ['pattern-recognized', 'The spontaneous-breathing preterm CPAP-first branch was recognized without routine-intubation, diagnosis, or stable-outcome closure.'],
+        ['readiness-reviewed', 'Qualified CPAP, pulse-oximetry-guided oxygen titration, thermal protection, surveillance, explanation, transfer, and escalation boundaries were reviewed without learner care.'],
+        ['ten-minute-report-reviewed', 'The fixed qualified respiratory and thermal report was reviewed without adequate-ventilation, excluded-disease, durable-stability, disposition, or outcome claims.'],
+        ['active-risk-handoff-recorded', 'Breathing, apnea, oxygen, CPAP, ventilation, air-leak, thermal, glucose, infection, congenital, parent, transfer, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^neonatology-preterm-respiratory-distress-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^neonatology-preterm-respiratory-distress-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['activate-obstetrics-cord-prolapse-response-diagnosis-clock-theatre-anesthesia-newborn-and-support-roles',
       'reconcile-obstetrics-cord-prolapse-membrane-rupture-fetal-heart-exam-birth-imminence-and-whole-person',
       'review-obstetrics-cord-prolapse-pressure-relief-minimal-handling-position-and-no-delay-boundaries',

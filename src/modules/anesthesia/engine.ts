@@ -577,6 +577,10 @@ const NEONATOLOGY_MECONIUM_TRANSITION_BLOCKED_ACTION_TYPES = new Set([
   ...NEONATOLOGY_BRADYCARDIA_BLOCKED_ACTION_TYPES,
   'neonatal-bradycardia-response',
 ]);
+const NEONATOLOGY_PRETERM_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES = new Set([
+  ...NEONATOLOGY_MECONIUM_TRANSITION_BLOCKED_ACTION_TYPES,
+  'meconium-stained-transition-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1624,6 +1628,12 @@ export class AnesthesiaEngine {
   private neonatologyMeconiumReadinessAtTick: number | null = null;
   private neonatologyMeconiumReassessmentAtTick: number | null = null;
   private neonatologyMeconiumHandoffAtTick: number | null = null;
+  private neonatologyPretermRespiratorySupportAtTick: number | null = null;
+  private neonatologyPretermRespiratoryContextAtTick: number | null = null;
+  private neonatologyPretermRespiratoryRecognitionAtTick: number | null = null;
+  private neonatologyPretermRespiratoryReadinessAtTick: number | null = null;
+  private neonatologyPretermRespiratoryReassessmentAtTick: number | null = null;
+  private neonatologyPretermRespiratoryHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2675,6 +2685,14 @@ export class AnesthesiaEngine {
     if (neonatologyMeconiumTransition && NEONATOLOGY_MECONIUM_TRANSITION_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `neonatology-meconium-transition-generic-action-refused-${this.currentTick}`,
         'This Neonatology lesson exposes no generic examination, scoring, monitoring interpretation, positioning, drying, warming, suction, stimulation, separation, device handling, oxygen, ventilation, airway, compression, access, fluid, glucose, drug, feeding, resuscitation, transport, procedure, diagnosis, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const neonatologyPretermRespiratoryDistress = this.scenario.metadata.id === 'preterm-respiratory-distress'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'preterm-respiratory-distress').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'preterm-respiratory-distress-boundary').length === 1;
+    if (neonatologyPretermRespiratoryDistress && NEONATOLOGY_PRETERM_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `neonatology-preterm-respiratory-distress-generic-action-refused-${this.currentTick}`,
+        'This Neonatology lesson exposes no generic examination, scoring, monitoring interpretation, positioning, drying, stimulation, wrap or warmer handling, CPAP or oxygen operation, setting selection, suction, ventilation, airway, compression, access, fluid, glucose, surfactant, drug, feeding, resuscitation, transport, procedure, diagnosis, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -11581,6 +11599,29 @@ export class AnesthesiaEngine {
         if (this.neonatologyMeconiumHandoffAtTick !== null) break;
         this.neonatologyMeconiumHandoffAtTick = this.currentTick; this.log('info', 'assessment', `neonatology-meconium-transition-active-risk-handoff-recorded-${this.currentTick}`, 'Birth clock and qualified care, evolving respiratory distress or obstruction, breathing and apnea, heart rate, oxygenation, temperature, glucose and feeding, infection, parent state, preferences and support, escalation triggers, documentation, review, disposition, and newborn or parent outcome uncertainty were handed off.', { meconiumAspirationExcluded: false, durableSafetyProven: false, feedingSuccessProven: false, safetyDispositionDetermined: false, newbornOutcomePredicted: false, parentOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'preterm-respiratory-distress-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'preterm-respiratory-distress'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'preterm-respiratory-distress').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'preterm-respiratory-distress-boundary').length === 1;
+        const actions = this.scenario.metadata.objectives.map((objective) => objective.id);
+        const valid = typeof response === 'string' && actions.includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `neonatology-preterm-respiratory-distress-response-refused-${this.currentTick}`, supported ? 'That preterm-respiratory-distress response is not available. Nothing changed.' : 'These preterm-respiratory-distress choices are available only in the exact declared Neonatology lesson.'); break; }
+        if (response === actions[0]) { if (this.neonatologyPretermRespiratorySupportAtTick !== null) break; this.neonatologyPretermRespiratorySupportAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-preterm-respiratory-distress-support-activated-${this.currentTick}`, 'A trained preterm-newborn team, CPAP-capable and airway-ready support, shared clock, thermal and transfer planning, parent communication, dignity, family, and staff-support ownership were confirmed. No learner examination, device operation, oxygen, ventilation, warming, or other care occurred.'); break; }
+        if (this.neonatologyPretermRespiratorySupportAtTick === null) { this.log('warning', 'assessment', `neonatology-preterm-respiratory-distress-support-order-refused-${this.currentTick}`, 'Confirm prepared preterm-newborn, respiratory, thermal, transfer, clock, communication, and dyad support before further review.'); break; }
+        if (response === actions[1]) { if (this.neonatologyPretermRespiratoryContextAtTick !== null) break; this.neonatologyPretermRespiratoryContextAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-preterm-respiratory-distress-context-reconciled-${this.currentTick}`, 'The supplied gestation, birth and clock, spontaneous breathing, grunting and retractions, heart rate, respiratory rate, preductal saturation, temperature, thermal protection, parent state, preferences, support, and whole dyad were connected without learner examination, scoring, monitoring interpretation, or diagnosis.'); break; }
+        if (this.neonatologyPretermRespiratoryContextAtTick === null) { this.log('warning', 'assessment', `neonatology-preterm-respiratory-distress-context-order-refused-${this.currentTick}`, 'Connect the supplied gestation, breathing, work, heart-rate, oxygenation, thermal, parent, and whole-dyad context before recognizing the support branch.'); break; }
+        if (response === actions[2]) { if (this.neonatologyPretermRespiratoryRecognitionAtTick !== null) break; this.neonatologyPretermRespiratoryRecognitionAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-preterm-respiratory-distress-pattern-recognized-${this.currentTick}`, 'Spontaneous breathing with grunting, retractions, heart rate 154/min, and low preductal saturation supported a qualified initial CPAP branch rather than routine intubation. Apnea, gasping, heart rate below 100/min, ineffective breathing, and evolving disease stayed open as escalation or diagnostic concerns.'); break; }
+        if (this.neonatologyPretermRespiratoryRecognitionAtTick === null) { this.log('warning', 'assessment', `neonatology-preterm-respiratory-distress-recognition-order-refused-${this.currentTick}`, 'Recognize the supplied spontaneous-breathing preterm support branch without routine-intubation or stable-outcome closure before boundary review.'); break; }
+        if (response === actions[3]) { if (this.neonatologyPretermRespiratoryReadinessAtTick !== null) break; this.neonatologyPretermRespiratoryReadinessAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-preterm-respiratory-distress-readiness-reviewed-${this.currentTick}`, 'Qualified CPAP, preductal pulse-oximetry-guided oxygen titration from the authored 30% start, wrap and hat thermal protection, careful temperature surveillance, respiratory reassessment, parent explanation, dignity, transfer planning, and escalation readiness were reviewed. No learner device operation, setting selection, care, or procedure occurred.'); break; }
+        if (this.neonatologyPretermRespiratoryReadinessAtTick === null) { this.log('warning', 'assessment', `neonatology-preterm-respiratory-distress-readiness-order-refused-${this.currentTick}`, 'Review qualified CPAP, oxygen-titration, thermal, monitoring, and escalation boundaries before the fixed report.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.neonatologyPretermRespiratoryReadinessAtTick) { this.log('warning', 'assessment', `neonatology-preterm-respiratory-distress-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed qualified-team report.'); break; } if (this.neonatologyPretermRespiratoryReassessmentAtTick !== null) break; this.neonatologyPretermRespiratoryReassessmentAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-preterm-respiratory-distress-ten-minute-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report at 10 minutes: CPAP continues, oxygen has been titrated to 35%, preductal SpO2 is 90%, heart rate is 148/min, respiratory rate is 62/min, temperature is 36.6°C, and mild grunting and retractions persist without observed apnea. This snapshot does not prove adequate ventilation, exclude respiratory distress syndrome, infection, air leak, congenital disease, or other pathology, establish durable stability, determine transfer or disposition, or predict outcome.', { cpapOrOxygenOperatedByLearner: false, thermalCarePerformedByLearner: false, respiratoryDiseaseExcluded: false, durableStabilityProven: false, outcomePredicted: false }); break; }
+        if (this.neonatologyPretermRespiratoryReassessmentAtTick === null) { this.log('warning', 'assessment', `neonatology-preterm-respiratory-distress-handoff-order-refused-${this.currentTick}`, 'Review the fixed 10-minute qualified-team report before active-risk handoff.'); break; }
+        if (this.currentTick <= this.neonatologyPretermRespiratoryReassessmentAtTick) { this.log('warning', 'assessment', `neonatology-preterm-respiratory-distress-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.neonatologyPretermRespiratoryHandoffAtTick !== null) break;
+        this.neonatologyPretermRespiratoryHandoffAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-preterm-respiratory-distress-active-risk-handoff-recorded-${this.currentTick}`, 'Birth clock and qualified care, breathing effort and apnea, oxygen requirement and exposure, CPAP tolerance, ventilation, air-leak and airway risk, temperature, glucose and nutrition, infection and congenital causes, parent state, preferences and support, escalation, transfer, documentation, review, disposition, and outcome uncertainty were handed off.', { respiratoryDiseaseExcluded: false, durableStabilityProven: false, neurologicSafetyProven: false, safetyDispositionDetermined: false, newbornOutcomePredicted: false, parentOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -14652,6 +14693,16 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: 44, spo2Percent: this.neonatologyMeconiumReassessmentAtTick !== null ? 96 : 88,
         systolicMmHg: 62, diastolicMmHg: 38, meanArterialMmHg: 46,
         coreTemperatureC: this.neonatologyMeconiumReassessmentAtTick !== null ? 36.7 : 36.8 };
+    }
+    if (this.scenario.metadata.id === 'preterm-respiratory-distress'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'preterm-respiratory-distress').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'preterm-respiratory-distress-boundary').length === 1) {
+      crisisState = { ...crisisState, heartRateBpm: this.neonatologyPretermRespiratoryReassessmentAtTick !== null ? 148 : 154,
+        respiratoryRateBpm: this.neonatologyPretermRespiratoryReassessmentAtTick !== null ? 62 : 68,
+        spo2Percent: this.neonatologyPretermRespiratoryReassessmentAtTick !== null ? 90 : 62,
+        systolicMmHg: 46, diastolicMmHg: 28, meanArterialMmHg: 34,
+        coreTemperatureC: this.neonatologyPretermRespiratoryReassessmentAtTick !== null ? 36.6 : 36.5 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -19118,6 +19169,37 @@ export class AnesthesiaEngine {
               durableSafetyProven: false as const, feedingSuccessProven: false as const,
               safetyDispositionDetermined: false as const, newbornOutcomePredicted: false as const,
               parentOutcomePredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'preterm-respiratory-distress'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'preterm-respiratory-distress').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'preterm-respiratory-distress-boundary').length === 1 ? {
+            neonatologyPretermRespiratoryDistressAssessment: {
+              supportAtTick: this.neonatologyPretermRespiratorySupportAtTick,
+              contextAtTick: this.neonatologyPretermRespiratoryContextAtTick,
+              recognitionAtTick: this.neonatologyPretermRespiratoryRecognitionAtTick,
+              readinessAtTick: this.neonatologyPretermRespiratoryReadinessAtTick,
+              reassessmentAtTick: this.neonatologyPretermRespiratoryReassessmentAtTick,
+              handoffAtTick: this.neonatologyPretermRespiratoryHandoffAtTick,
+              authoredSpontaneouslyBreathingPretermDistress: true as const,
+              authoredQualifiedTenMinuteReport: this.neonatologyPretermRespiratoryReassessmentAtTick !== null,
+              newbornExaminedOrScoredByLearner: false as const,
+              monitoringOrTestsInterpretedByLearner: false as const, diagnosisMadeByLearner: false as const,
+              positioningDryingStimulationOrThermalCarePerformedByLearner: false as const,
+              cpapOxygenOrOtherDeviceOperatedByLearner: false as const,
+              pressureFlowOxygenOrOtherSettingSelectedByLearner: false as const,
+              suctionPerformedByLearner: false as const, ventilationDeliveredByLearner: false as const,
+              airwayPlacedOrManagedByLearner: false as const,
+              compressionsAccessFluidGlucoseSurfactantOrDrugDeliveredByLearner: false as const,
+              feedingPerformedByLearner: false as const, resuscitationPerformedByLearner: false as const,
+              transportOrProcedurePerformedByLearner: false as const,
+              adequateVentilationProven: false as const, respiratoryDiseaseExcluded: false as const,
+              infectionExcluded: false as const, airLeakExcluded: false as const,
+              congenitalDiseaseExcluded: false as const, durableStabilityProven: false as const,
+              neurologicSafetyProven: false as const, safetyDispositionDetermined: false as const,
+              newbornOutcomePredicted: false as const, parentOutcomePredicted: false as const,
+              outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

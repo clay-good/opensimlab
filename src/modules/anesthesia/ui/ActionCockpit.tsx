@@ -1350,6 +1350,11 @@ export interface ActionCockpitProps {
       readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly neonatologyPretermRespiratoryDistressAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2458,6 +2463,14 @@ export interface ActionCockpitProps {
       | 'review-meconium-stained-transition-fixed-thirty-minute-qualified-report'
       | 'handoff-meconium-stained-transition-respiratory-thermal-feeding-parent-and-outcome-risk',
   ) => void;
+  readonly onNeonatologyPretermRespiratoryDistressResponse?: (
+    action: 'activate-preterm-respiratory-distress-newborn-respiratory-thermal-and-family-support'
+      | 'reconcile-preterm-respiratory-distress-gestation-breathing-work-heart-rate-oxygenation-temperature-and-whole-dyad'
+      | 'recognize-spontaneously-breathing-preterm-respiratory-distress-suitable-for-qualified-initial-cpap'
+      | 'review-qualified-cpap-oxygen-thermal-monitoring-and-escalation-boundaries'
+      | 'review-preterm-respiratory-distress-fixed-ten-minute-qualified-report'
+      | 'handoff-preterm-respiratory-distress-breathing-oxygen-thermal-glucose-infection-family-and-outcome-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2561,6 +2574,11 @@ export function crisisResponseAvailability(
     && scenario.timeline.every((event) => event.type === 'narrative')
     && scenario.timeline.filter((event) => event.target === 'meconium-stained-transition').length === 1
     && scenario.timeline.filter((event) => event.target === 'meconium-stained-transition-boundary').length === 1;
+  const hasNeonatologyPretermRespiratoryDistressResponse =
+    scenario.metadata.id === 'preterm-respiratory-distress'
+    && scenario.timeline.every((event) => event.type === 'narrative')
+    && scenario.timeline.filter((event) => event.target === 'preterm-respiratory-distress').length === 1
+    && scenario.timeline.filter((event) => event.target === 'preterm-respiratory-distress-boundary').length === 1;
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -3123,6 +3141,7 @@ export function crisisResponseAvailability(
     hasNeonatologyIneffectiveVentilationResponse,
     hasNeonatologyBradycardiaResponse,
     hasNeonatologyMeconiumTransitionResponse,
+    hasNeonatologyPretermRespiratoryDistressResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3357,6 +3376,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'ineffective-ventilation-correction-transition')
       || (event.type === 'narrative' && event.target === 'neonatal-bradycardia-transition')
       || (event.type === 'narrative' && event.target === 'meconium-stained-transition')
+      || (event.type === 'narrative' && event.target === 'preterm-respiratory-distress')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3479,6 +3499,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeonatologyIneffectiveVentilationResponse,
     hasNeonatologyBradycardiaResponse,
     hasNeonatologyMeconiumTransitionResponse,
+    hasNeonatologyPretermRespiratoryDistressResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3628,8 +3649,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeonatologyIneffectiveVentilationResponse
     || hasNeonatologyBradycardiaResponse
     || hasNeonatologyMeconiumTransitionResponse
+    || hasNeonatologyPretermRespiratoryDistressResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasNeonatologyMeconiumTransitionResponse
+  const responseTray = hasNeonatologyPretermRespiratoryDistressResponse
+    ? { id: 'crisis', label: 'Breathing + warmth' } as const
+    : hasNeonatologyMeconiumTransitionResponse
     ? { id: 'crisis', label: 'Transition + observation' } as const
     : hasNeonatologyBradycardiaResponse
     ? { id: 'crisis', label: 'Heart rate + response' } as const
@@ -4057,6 +4081,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeonatologyIneffectiveVentilationResponse
     || hasNeonatologyBradycardiaResponse
     || hasNeonatologyMeconiumTransitionResponse
+    || hasNeonatologyPretermRespiratoryDistressResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -5002,6 +5027,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNeonatologyMeconiumTransitionResponse && (
               <NeonatologyMeconiumTransitionTray assessment={props.resuscitation.neonatologyMeconiumTransitionAssessment}
                 onAction={props.onNeonatologyMeconiumTransitionResponse ?? (() => {})} />
+            )}
+            {hasNeonatologyPretermRespiratoryDistressResponse && (
+              <NeonatologyPretermRespiratoryDistressTray assessment={props.resuscitation.neonatologyPretermRespiratoryDistressAssessment}
+                onAction={props.onNeonatologyPretermRespiratoryDistressResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -12439,6 +12468,38 @@ function NeonatologyMeconiumTransitionTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-meconium-stained-transition-fixed-thirty-minute-qualified-report')}>Review the fixed 30-minute report</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-meconium-stained-transition-respiratory-thermal-feeding-parent-and-outcome-risk')}>Hand off active transition risk</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function NeonatologyPretermRespiratoryDistressTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['neonatologyPretermRespiratoryDistressAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onNeonatologyPretermRespiratoryDistressResponse']>;
+}) {
+  const support = assessment?.supportAtTick != null;
+  const context = assessment?.contextAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const readiness = assessment?.readinessAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="neonatology-preterm-respiratory-now-title">
+      <div id="neonatology-preterm-respiratory-now-title" className="syringe__name">Support the breaths already there.</div>
+      <p className="syringe__remaining">Connect gestation, spontaneous breathing, work, heart rate, preductal oxygenation, warmth, parent, and whole dyad. Every device and physical care step stays with the qualified team.</p>
+      <div className="crisis-drug__actions">
+        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-preterm-respiratory-distress-newborn-respiratory-thermal-and-family-support')}>Confirm prepared support</Button>}
+        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-preterm-respiratory-distress-gestation-breathing-work-heart-rate-oxygenation-temperature-and-whole-dyad')}>Connect newborn + whole dyad</Button>}
+        {context && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-spontaneously-breathing-preterm-respiratory-distress-suitable-for-qualified-initial-cpap')}>Recognize the support branch</Button>}
+        {recognition && !readiness && <Button className="crisis-drug__action" onClick={() => onAction('review-qualified-cpap-oxygen-thermal-monitoring-and-escalation-boundaries')}>Review qualified boundaries</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="neonatology-preterm-respiratory-later-title">
+      <div id="neonatology-preterm-respiratory-later-title" className="syringe__name">Gentle support still needs close watching.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Respiratory, oxygen, thermal, glucose, infection, family, transfer, and outcome risks handed off.' : reassessment ? 'The supplied report remains CPAP-supported. Ventilation, disease, durable stability, and outcomes remain open.' : readiness ? 'Qualified respiratory and thermal support continue. Review the fixed report after time passes.' : support ? 'Prepared support is present. Connect the whole newborn and dyad before naming the branch.' : 'Begin with calm shared ownership. You can pause or leave this practice at any time.'}</p>
+      <div className="crisis-drug__actions">
+        {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-preterm-respiratory-distress-fixed-ten-minute-qualified-report')}>Review the fixed 10-minute report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-preterm-respiratory-distress-breathing-oxygen-thermal-glucose-infection-family-and-outcome-risk')}>Hand off active newborn risk</Button>}
       </div>
     </section>
   </>;

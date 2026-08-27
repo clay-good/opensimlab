@@ -297,6 +297,14 @@ clearing for apparent obstruction. A fixed 30-minute report remains a checkpoint
 against evolving respiratory disease. No learner examination, scoring, suction, airway care,
 ventilation, resuscitation, procedure, disposition, or newborn/parent outcome control is exposed.
 
+The sixth Neonatology lab supports the breaths already present in a 29-week preterm newborn with
+grunting, retractions, and low preductal oxygenation. It connects gestation, breathing effort,
+heart rate, oxygenation, warmth, parent, and whole dyad; reviews qualified CPAP-first support,
+pulse-oximetry-guided oxygen titration, wrap and hat thermal protection, and escalation boundaries;
+then reads a fixed 10-minute report and hands off what remains open. No learner examination,
+monitoring interpretation, CPAP or oxygen operation, thermal or airway care, surfactant, procedure,
+disposition, or newborn/parent outcome control is exposed.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

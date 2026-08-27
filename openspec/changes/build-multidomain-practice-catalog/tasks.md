@@ -575,6 +575,16 @@ credited toward the catalog until every item in the completion contract passes.
     separation, device handling, oxygen, ventilation, airway care, compression, access, fluid,
     glucose, drug, feeding, resuscitation, transport, counseling, procedure, diagnosis, disposition,
     or outcome controls.
+  - [x] Neonatology slice 6/11 adds one authored 29-week spontaneous-breathing respiratory-distress
+    pattern; prepared preterm-newborn, respiratory, thermal, transfer and parent-dyad ownership;
+    gestation, birth-clock, breathing, work, heart-rate, preductal-oxygenation, temperature and
+    whole-dyad reconciliation; qualified CPAP-first recognition without routine intubation;
+    pulse-oximetry-guided oxygen-titration, wrap, hat, temperature-surveillance and escalation-
+    boundary review; a fixed 10-minute respiratory and thermal report; and active-risk handoff
+    without learner examination, scoring, monitoring interpretation, positioning, drying,
+    stimulation, thermal care, device handling, CPAP, oxygen or setting selection, suction,
+    ventilation, airway care, compression, access, fluid, glucose, surfactant, drug, feeding,
+    resuscitation, transport, counseling, procedure, diagnosis, disposition, or outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

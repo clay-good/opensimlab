@@ -2359,6 +2359,23 @@ warming, suction, stimulation, separation, device handling, oxygen, ventilation,
 compression, access, fluid, glucose, drug, feeding, resuscitation, transport, counseling, procedure,
 diagnosis, disposition or outcome control.
 
+### Wave D neonatology slice 6: preterm respiratory distress
+
+A 1.25 kg newborn at 29 weeks 4 days breathes spontaneously but has grunting, retractions, heart
+rate 154/min, respiratory rate 68/min, preductal SpO2 62%, and temperature 36.5°C at 90 seconds.
+The learner activates preterm-newborn, respiratory, thermal, transfer and family support; connects
+gestation, birth clock, breathing, work, heart rate, oxygenation, temperature and whole-dyad
+context; recognizes the qualified CPAP-first branch without routine intubation; and reviews
+preductal pulse-oximetry-guided oxygen titration, wrap and hat thermal protection, temperature
+surveillance, and apnea or ineffective-breathing escalation boundaries. A fixed 10-minute report
+supplies ongoing CPAP, oxygen titrated from an authored 30% start to 35%, preductal SpO2 90%, heart
+rate 148/min, respiratory rate 62/min, temperature 36.6°C, and persistent mild grunting and
+retractions without observed apnea. Six controls expose no learner examination, scoring, monitoring
+interpretation, positioning, drying, stimulation, thermal care, device handling, CPAP, oxygen or
+setting selection, suction, ventilation, airway care, compression, access, fluid, glucose,
+surfactant, drug, feeding, resuscitation, transport, counseling, procedure, diagnosis, disposition,
+or outcome control.
+
 ### Wave E neurology slice 1: minor nondisabling acute ischemic stroke
 
 The first Neurology lab is a function-based minor-stroke decision boundary, not another disabling

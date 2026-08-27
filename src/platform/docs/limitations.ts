@@ -5039,6 +5039,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified direct findings, current local newborn-transition and resuscitation protocols, trained teams, selective airway clearing only when indicated, respectful parent communication, and hands-on simulation.',
     briefIn: ['meconium-stained-transition'],
   },
+  {
+    id: 'preterm-respiratory-distress-gestation-newborn-parent-and-qualified-course-reports-are-authored',
+    headline: 'The gestation, newborn, parent, qualified support, and 10-minute respiratory reports are authored.',
+    simplification: 'Fixed reports stand in for record review, newborn examination and observation, work-of-breathing assessment, preductal pulse oximetry, CPAP and oxygen operation, thermal care, parent assessment, communication, and serial review. Hidden adult-oriented engine-schema minimums are scaffolding, not neonatal physiology validation.',
+    whereItMisleads: 'Treating gestation, breathing, work, heart rate, oxygenation, temperature, or the 10-minute report as learner findings, proof of adequate ventilation, excluded disease, durable stability, prognosis, or outcome.',
+    correctUnderstanding: 'A spontaneously breathing preterm infant with distress may benefit from qualified CPAP, oxygen titrated to verified preductal saturation, thermal protection, continuous reassessment, and escalation when breathing becomes ineffective.',
+    briefIn: ['preterm-respiratory-distress'],
+  },
+  {
+    id: 'preterm-respiratory-distress-controls-activate-reconcile-review-reassess-and-handoff-only',
+    headline: 'The controls confirm support, connect supplied facts, review respiratory and thermal boundaries, read a fixed report, and hand off only.',
+    simplification: 'Six actions stand in for concurrent qualified newborn, respiratory, airway, thermal, monitoring, transport, nursing, leadership, timekeeping, documentation, communication, dignity, parent, family, staff-support, escalation, and handoff work.',
+    whereItMisleads: 'Equating button order with newborn examination, monitoring interpretation, CPAP or oxygen operation, thermal care, airway judgment, communication quality, or competence.',
+    correctUnderstanding: 'Real preterm stabilization is concurrent, physical, time-critical, team-based, locally protocolized, and continuously reassessed. Cognitive practice cannot replace direct care or hands-on simulation.',
+    briefIn: ['preterm-respiratory-distress'],
+  },
+  {
+    id: 'no-live-preterm-newborn-exam-monitor-score-cpap-oxygen-thermal-airway-resuscitation-procedure-disposition-or-outcome',
+    headline: 'The lab does not examine, score, monitor, operate CPAP or oxygen, provide thermal or airway care, resuscitate, determine disposition, or report outcome.',
+    simplification: 'No live breathing, heart-rate, work, color, temperature, oxygenation, glucose, neurologic, parent or other assessment; scoring; positioning; drying; stimulation; wrapping; warming or cooling; device handling; CPAP; oxygen; setting selection; suction; ventilation; airway care; compression; access; fluid; glucose; surfactant; drug or dose; feeding; resuscitation; transport; counseling; procedure; diagnosis; disposition; prognosis; or outcome is modeled.',
+    whereItMisleads: 'Using the rehearsal as CPAP, oxygen, thermal, airway, surfactant, respiratory-treatment, transfer, or disposition instruction; delaying trained response for a click; or reading completion as competence.',
+    correctUnderstanding: 'Use verified direct findings, current local neonatal-resuscitation and preterm-stabilization protocols and equipment, immediate trained teams, continuous response assessment, respectful parent communication, and hands-on simulation.',
+    briefIn: ['preterm-respiratory-distress'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

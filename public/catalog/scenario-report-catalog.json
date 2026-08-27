@@ -1856,6 +1856,23 @@
       "limitationManifestHash": "sha256:f506135edd3a4c1d88b6a42c469d7d595b5bf1f8898df29a2514d457597ed692"
     },
     {
+      "scenarioId": "preterm-respiratory-distress",
+      "contentVersion": "0.1.1",
+      "moduleId": "neonatology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:b6700af3ecee40f7aad212cc2164cdb34c7fa07dc8b21b934c6949793cd5ca8b",
+      "defaultsHash": "sha256:0559be6dba85a8f76b97974044d9921a9875305be5bcd24dd55302801d587120",
+      "maturityHash": "sha256:ee41613a79fdf15e162d96da09d79e46b807b8203d79ebfb6c7da07a691d6783",
+      "sourceManifestHash": "sha256:c9efc10fac6575a337ad85b736d0017d801a5780650c0f27cd9110d590376131",
+      "limitationManifestHash": "sha256:fdd82fe7cc584527bfdd18eadf66a571a3012ab7568e74788a8502ac998f97a5"
+    },
+    {
       "scenarioId": "term-newborn-transition",
       "contentVersion": "0.1.0",
       "moduleId": "neonatology",

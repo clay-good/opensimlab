@@ -3028,6 +3028,28 @@ export interface EquipmentSnapshot {
       readonly newbornOutcomePredicted: false; readonly parentOutcomePredicted: false;
       readonly outcomePredicted: false;
     };
+    readonly neonatologyPretermRespiratoryDistressAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly authoredSpontaneouslyBreathingPretermDistress: true;
+      readonly authoredQualifiedTenMinuteReport: boolean;
+      readonly newbornExaminedOrScoredByLearner: false;
+      readonly monitoringOrTestsInterpretedByLearner: false; readonly diagnosisMadeByLearner: false;
+      readonly positioningDryingStimulationOrThermalCarePerformedByLearner: false;
+      readonly cpapOxygenOrOtherDeviceOperatedByLearner: false;
+      readonly pressureFlowOxygenOrOtherSettingSelectedByLearner: false;
+      readonly suctionPerformedByLearner: false; readonly ventilationDeliveredByLearner: false;
+      readonly airwayPlacedOrManagedByLearner: false;
+      readonly compressionsAccessFluidGlucoseSurfactantOrDrugDeliveredByLearner: false;
+      readonly feedingPerformedByLearner: false; readonly resuscitationPerformedByLearner: false;
+      readonly transportOrProcedurePerformedByLearner: false; readonly adequateVentilationProven: false;
+      readonly respiratoryDiseaseExcluded: false; readonly infectionExcluded: false;
+      readonly airLeakExcluded: false; readonly congenitalDiseaseExcluded: false;
+      readonly durableStabilityProven: false; readonly neurologicSafetyProven: false;
+      readonly safetyDispositionDetermined: false; readonly newbornOutcomePredicted: false;
+      readonly parentOutcomePredicted: false; readonly outcomePredicted: false;
+    };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {
       readonly cuesReviewedAtTick: number | null;
