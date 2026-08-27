@@ -14,6 +14,8 @@
  * monitor.
  */
 
+import { useRef } from 'react';
+
 export interface SiteBarLink {
   readonly href: string;
   readonly label: string;
@@ -46,6 +48,7 @@ export interface SiteBarProps {
 }
 
 export function SiteBar({ current, extra = [] }: SiteBarProps) {
+  const summary = useRef<HTMLElement>(null);
   const links = [
     ...SITE_BAR_LINKS,
     ...extra.filter((candidate) => !SITE_BAR_LINKS.some((shared) => shared.href === candidate.href)),
@@ -55,21 +58,30 @@ export function SiteBar({ current, extra = [] }: SiteBarProps) {
       <a className="skip-link" href="#main">Skip to main content</a>
       <header className="document__bar">
         <a className="document__home" href="/">Open Sim Lab</a>
-        <nav aria-label="Site">
-          <ul className="document__nav">
-            {links.map((link) => (
-              <li key={link.href}>
-                <a
-                  href={link.href}
-                  {...(link.href === current ? { 'aria-current': 'page' } : {})}
-                  {...(link.href.startsWith('http') ? { rel: 'noreferrer noopener' } : {})}
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <details className="document__browse" onKeyDown={(event) => {
+          if (event.key !== 'Escape' || event.defaultPrevented || !event.currentTarget.open) return;
+          event.preventDefault();
+          event.stopPropagation();
+          event.currentTarget.open = false;
+          summary.current?.focus({ preventScroll: true });
+        }}>
+          <summary className="document__browse-toggle" ref={summary}>Browse</summary>
+          <nav aria-label="Site">
+            <ul className="document__nav">
+              {links.map((link) => (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    {...(link.href === current ? { 'aria-current': 'page' } : {})}
+                    {...(link.href.startsWith('http') ? { rel: 'noreferrer noopener' } : {})}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </details>
       </header>
     </>
   );

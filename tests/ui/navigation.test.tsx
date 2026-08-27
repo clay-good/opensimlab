@@ -23,6 +23,24 @@ import { UNITED_STATES } from '@anesthesia/region/profiles';
 
 const hrefs = (markup: string) =>
   [...markup.matchAll(/href="([^"]+)"/g)].map((match) => match[1]!);
+const parseMarkup = (markup: string) => new DOMParser().parseFromString(markup, 'text/html');
+
+describe('navigation layout safeguards', () => {
+  const css = readFileSync(join(process.cwd(), 'src/platform/tokens/base.css'), 'utf8');
+
+  it('keeps expanded navigation in page flow instead of pinning a tall header over the lesson', () => {
+    const header = css.match(/\.document__bar\s*\{([^}]+)\}/)?.[1];
+    expect(header).toContain('display: grid');
+    expect(header).not.toMatch(/position:\s*(sticky|fixed|absolute)/);
+  });
+
+  it('gives enlarged home and Browse controls separate rows on narrow screens', () => {
+    // Browser measurement caught their overlapping grid areas at 200% text size.
+    const narrow = css.slice(css.indexOf('@media (max-width: 420px)'), css.indexOf('.document__nav {'));
+    expect(narrow).toContain('grid-template-columns: minmax(0, 1fr)');
+    expect(narrow).toMatch(/\.document__home,\s*\.document__browse\s*\{\s*grid-area: auto/);
+  });
+});
 
 describe('the site bar', () => {
   const markup = renderToStaticMarkup(createElement(SiteBar, {}));
@@ -35,6 +53,40 @@ describe('the site bar', () => {
     expect(hrefs(markup)[0]).toBe('#main');
     expect(markup).toContain('class="skip-link"');
     expect(markup).toContain('Skip to main content');
+    const first = parseMarkup(markup).body.firstElementChild;
+    expect(first?.matches('a.skip-link[href="#main"]')).toBe(true);
+    expect(first?.closest('details')).toBeNull();
+  });
+
+  it('server-renders a closed native Browse disclosure without a menu or dialog', () => {
+    const document = parseMarkup(markup);
+    const disclosures = document.querySelectorAll('details');
+    expect(disclosures).toHaveLength(1);
+    const disclosure = disclosures[0]!;
+    expect(disclosure.open).toBe(false);
+    expect(disclosure.hasAttribute('open')).toBe(false);
+    expect(disclosure.firstElementChild?.tagName).toBe('SUMMARY');
+    expect(disclosure.firstElementChild?.textContent).toBe('Browse');
+    expect(disclosure.querySelectorAll('summary')).toHaveLength(1);
+    expect(disclosure.querySelector('summary button, summary a')).toBeNull();
+    expect(document.querySelector('[role], [aria-modal], [aria-expanded]')).toBeNull();
+    expect(document.querySelector('.document__home')?.closest('details')).toBeNull();
+  });
+
+  it('keeps one complete server-rendered navigation list inside the native disclosure', () => {
+    const document = parseMarkup(markup);
+    expect(document.querySelectorAll('nav')).toHaveLength(1);
+    expect(document.querySelectorAll('ul')).toHaveLength(1);
+    const navigation = document.querySelector('details > nav[aria-label="Site"]')!;
+    expect(navigation).not.toBeNull();
+    expect(navigation.querySelectorAll('ul.document__nav > li')).toHaveLength(SITE_BAR_LINKS.length);
+    expect([...navigation.querySelectorAll('a')].map((link) => ({
+      href: link.getAttribute('href'), label: link.textContent,
+    }))).toEqual(SITE_BAR_LINKS);
+    // Native details owns visibility; destinations remain available to SSR crawlers
+    // without duplicated desktop/mobile lists or a JavaScript-only hidden state.
+    expect(document.querySelector('[hidden], [inert], [aria-hidden]')).toBeNull();
+    expect(document.querySelectorAll('a')).toHaveLength(SITE_BAR_LINKS.length + 2);
   });
 
   it('offers the scenario list and the two pages a sceptic wants', () => {
@@ -50,6 +102,8 @@ describe('the site bar', () => {
     const here = renderToStaticMarkup(createElement(SiteBar, { current: '/validation' }));
     expect(here).toContain('aria-current="page"');
     expect((here.match(/aria-current="page"/g) ?? [])).toHaveLength(1);
+    expect(parseMarkup(here).querySelector('details a[aria-current="page"]')?.getAttribute('href'))
+      .toBe('/validation');
   });
 
   it('is a labelled landmark, so it can be skipped', () => {
@@ -71,6 +125,28 @@ describe('the site bar', () => {
       extra: [{ href: '/limitations', label: 'Limitations' }],
     }));
     expect(hrefs(withDuplicate).filter((href) => href === '/limitations')).toHaveLength(1);
+  });
+
+  it('preserves current extra destinations and safe external links in the same closed list', () => {
+    const document = parseMarkup(renderToStaticMarkup(createElement(SiteBar, {
+      current: '/privacy',
+      extra: [
+        { href: '/limitations', label: 'Duplicate limitations' },
+        { href: '/privacy', label: 'Privacy' },
+        { href: 'https://example.org/review', label: 'External review' },
+      ],
+    })));
+    expect(document.querySelector('details')?.open).toBe(false);
+    const links = [...document.querySelectorAll<HTMLAnchorElement>('nav a')];
+    expect(links.map((link) => link.getAttribute('href'))).toEqual([
+      ...SITE_BAR_LINKS.map((link) => link.href), '/privacy', 'https://example.org/review',
+    ]);
+    expect(document.querySelectorAll('[aria-current]')).toHaveLength(1);
+    expect(document.querySelector('[aria-current="page"]')?.getAttribute('href')).toBe('/privacy');
+    const external = links.at(-1)!;
+    expect(external.relList.contains('noopener')).toBe(true);
+    expect(external.relList.contains('noreferrer')).toBe(true);
+    expect(document.querySelector('a[href="/privacy"]')?.hasAttribute('rel')).toBe(false);
   });
 
   it('every destination it offers is a path, not a guess', () => {
@@ -101,6 +177,20 @@ describe('the scenario briefing', () => {
     // Navigation was added without demoting the thing the page is for.
     expect(markup).toContain('Start the scenario');
     expect(markup.indexOf('Start the scenario')).toBeGreaterThan(markup.indexOf('href="/"'));
+  });
+
+  it('keeps the skip target and starting controls outside the closed site navigation', () => {
+    const document = parseMarkup(markup);
+    const main = document.querySelector('main#main')!;
+    expect(main).not.toBeNull();
+    expect(main.closest('details')).toBeNull();
+    expect(document.querySelectorAll('#main')).toHaveLength(1);
+    expect(document.querySelector('header details')?.hasAttribute('open')).toBe(false);
+    const start = [...main.querySelectorAll('button')]
+      .find((button) => button.textContent?.includes('Start the scenario'));
+    expect(start).toBeDefined();
+    expect(start?.closest('details')).toBeNull();
+    expect(start?.disabled).toBe(false);
   });
 });
 

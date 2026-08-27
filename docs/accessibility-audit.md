@@ -105,6 +105,25 @@ cockpits. Route regressions preserve report pause intent across a late final fra
 screen-reader usability, or 400% zoom conformance; those claims are not promoted. Detailed
 scope is in the [thyroid evidence brief](evidence-briefs/thyroid-storm-hemodynamic-risk.md).
 
+## Compact shared navigation, 2026-08-27
+
+The shared header now has a closed native Browse disclosure containing the same 15 links.
+It stays in document flow, so expanded navigation cannot pin a tall panel over the lesson.
+SSR regressions preserve the first skip link, current-page marker, extra links, and external-link
+protections. DOM tests cover Escape ownership and report-modal focus restoration.
+
+Browser checks measured a 69 px desktop header. A 320 × 568 iframe exposed a home/Browse
+collision when header text was doubled; separate rows below 420 px remove that collision.
+The repaired enlarged-text header measures 118.3 px at a 305 px content width, with equal
+client/scroll widths. This tests header text enlargement, not whole-app text-scale conformance.
+All 15 expanded links remain in normal scroll flow with at least 44 px target height.
+
+The generated briefing was loaded in an iframe without script permission. Browse opened and
+closed with native Enter/Space, and Tab reached its first link. In the hydrated briefing, Escape
+closed Browse and restored its control; dismissing Report left Browse open and restored Report
+focus. No report was sent. Full screen-reader, whole-session keyboard, and actual 400% zoom
+validation remain open. Temporary test pages are excluded from the final build.
+
 ## Still owed, and only a person can do it
 
 The thyroid-storm content 0.1.0 engineering check is recorded in

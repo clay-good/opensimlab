@@ -78,6 +78,17 @@ credited toward the catalog until every item in the completion contract passes.
 
 ## 3. Shared catalog and environment shell
 
+- [x] Replace the crowded shared header with a closed native Browse disclosure, preserving all
+  15 destinations, SSR discovery, current markers, extra links, and the first skip link. Keep the
+  expanded panel in document flow; stack narrow controls to avoid the measured 200% text overlap.
+  Verify native no-script Enter/Space/Tab, 44 px link heights, scroll reachability, and independent
+  reporting dismissal. The header measures 69 px on desktop and 113 px at a 320 px phone viewport.
+  Full CI passes 3,878 tests across 478 files; 38 focused checks also pass after adding two final
+  layout safeguards. Final lint, typecheck, 30 specs, change delta, 224 static routes, 44 catalog
+  artifacts, and 221 indexable routes pass. Final compressed budgets are 148.2 KiB landing,
+  1,487.6 KiB cockpit, and 3,319.9 KiB offline. All 207 historical report records are unchanged;
+  no clinical content, review status, or production service changes. Screen-reader and actual
+  400% zoom validation remain open; details are in the accessibility audit.
 - [ ] Implement the catalog manifest, scenario completion validator, static search index, goal paths,
   domain/environment/duration/difficulty/fidelity/maturity filters, and URL state.
   The anesthesia catalog now has bounded local search plus difficulty, duration, and maturity
