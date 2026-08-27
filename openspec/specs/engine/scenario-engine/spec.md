@@ -159,6 +159,17 @@ Every crisis scenario SHALL name the guideline it implements, its issuing body, 
 
 The initial release SHALL ship at least twelve complete, openly licensed scenarios spanning routine and emergency anesthesia care, each with stated learning objectives, an expected duration under 20 simulated minutes at 1×, and a debrief rubric.
 
+Additional longitudinal reassessment scenarios MAY declare an expected duration up to 60 simulated
+minutes at 1× when their modeled observation intervals require it. They SHALL state the simulated
+duration accurately and support pause and accelerated time; the initial anesthesia catalog retains
+its under-20-minute requirement.
+
+#### Scenario: Longer observation intervals remain honestly labeled
+
+- **GIVEN** a recurrence lesson whose rescue and repeat-assessment trajectory takes about 40 simulated minutes
+- **WHEN** its author declares a 45-minute expected duration
+- **THEN** the schema accepts that duration, rejects durations above 60 minutes, and the lesson offers pause and accelerated time
+
 #### Scenario: Library covers a defined curriculum spread
 
 - **WHEN** the bundled library is inventoried

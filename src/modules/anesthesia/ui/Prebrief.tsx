@@ -19,6 +19,7 @@ import { HONEST_STATUS } from '@platform/governance/status';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import type { RegionProfile } from '@anesthesia/region/profiles';
 import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
+import { supportsSevereHypoglycemia } from '../../endocrine-metabolic/severe-hypoglycemia';
 
 export const FICTION_CONTRACT =
   'This is a simulation. The patient is not real, nothing you do here reaches anyone, and an '
@@ -49,6 +50,7 @@ export function Prebrief({
   assignmentLabel, onReportLimitation,
 }: PrebriefProps) {
   const patient = scenario.patient;
+  const hypoglycemia = supportsSevereHypoglycemia(scenario);
   return (
     <>
       <SiteBar />
@@ -186,6 +188,13 @@ export function Prebrief({
               coordinated ownership, reassessment, and handoff, not examination, dosing, procedures, or delivery.
             </p>
           </>
+        ) : hypoglycemia ? (
+          <>
+            <p>Check the fictional glucose, uncover the medication record, choose qualified rescue,
+              and reassess as time passes. Pause freely; 60× speed advances a simulated minute each second.</p>
+            <p>Choices and elapsed time change authored patient states. This is not a glucose kinetics
+              model, dosing calculator, IV technique lesson, or discharge decision.</p>
+          </>
         ) : environment === 'endocrine-metabolic' ? (
           <>
             <p>
@@ -256,7 +265,11 @@ export function Prebrief({
         </section>
       )}
 
-      <section>
+      {hypoglycemia ? <section>
+        <h2>Help in this preview</h2>
+        <p>Action feedback and the debrief explain your choices. Scenario-specific progressive tutor
+          prompts are not yet available. Pause whenever you need time to think.</p>
+      </section> : <section>
         <h2>How much help do you want?</h2>
         <p className="field__hint">
           Guidance changes how much you are prompted. It does not change the patient at all: the
@@ -274,7 +287,7 @@ export function Prebrief({
             </Button>
           ))}
         </div>
-      </section>
+      </section>}
 
       <Badge kind="out-of-range">{HONEST_STATUS.headline}</Badge>
       <p className="reading__aside">{HONEST_STATUS.detail}</p>

@@ -23,6 +23,7 @@ import { EXPLAINERS } from '@anesthesia/content/explainers';
 import { getFluid, MAX_FLUID_BOLUS_ML } from '@anesthesia/content/fluids';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { MaturityMarker } from '@platform/governance/MaturityMarker';
+import { supportsSevereHypoglycemia } from '../../endocrine-metabolic/severe-hypoglycemia';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -390,6 +391,8 @@ function hardestThing(episodes: readonly Episode[], moduleId?: string): string {
     ? 'working through uncertainty without skipping reassessment'
     : moduleId === 'cardiology'
       ? 'reading the full trajectory without letting one result close the case'
+    : moduleId === 'endocrine-metabolic'
+      ? 'following the whole trajectory without letting one result close the case'
     : 'keeping a normal patient normal, which is harder than it looks';
   return episodes[0]!.label.toLowerCase();
 }
@@ -562,6 +565,25 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.startsWith('hypoglycemia-')) {
+      if (!supportsSevereHypoglycemia(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The adult hypoglycemia recurrence lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^severe-hypoglycemia-${id}-\\d+$`).test(entry.eventId));
+      const initial = event('initial-check'); const support = event('support-called'); const rescue = event('first-rescue');
+      const unsafe = event('unsafe-oral-choice'); const closure = event('premature-closure');
+      const repeat = event('first-recheck'); const second = event('second-rescue'); const handoff = event('handoff');
+      const recurrenceComplete = !!event('medication-reviewed') && !!event('monitoring-continued') && !!event('recurrent-check') && !!second && !!event('second-recheck');
+      const findings: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'hypoglycemia-recognize': { met: !!initial && !!rescue && initial.tick <= rescue.tick, finding: initial ? 'The low glucose was observed alongside impaired alertness; assistance, not the number alone, defines the severe event.' : 'No initial glucose check was recorded. Altered alertness needed immediate assessment.', tick: initial?.tick },
+        'hypoglycemia-safe-rescue': { met: !!support && !!rescue && !unsafe, finding: unsafe ? (rescue ? 'An unsafe oral choice was refused, then corrected with qualified IV rescue. Rehearse swallowing safety before the route choice.' : 'An unsafe oral choice was refused and qualified rescue was not completed.') : rescue ? 'Qualified support and dose-free IV rescue were activated. Authored counterfactual: without rescue this branch remains hypoglycemic and progresses to instructor takeover.' : 'Qualified rescue was absent. Authored counterfactual: the fixed rescue pathway would allow a later response and glucose recheck, not guarantee clinical recovery.', tick: rescue?.tick },
+        'hypoglycemia-reassess': { met: !!repeat, finding: repeat ? 'A fresh glucose result verified the first response at the timed checkpoint; appearance alone was not used to close the case.' : 'The first timed post-rescue glucose check was missed. Later improvement cannot reconstruct that missing observation.', tick: repeat?.tick },
+        'hypoglycemia-recurrence': { met: recurrenceComplete, finding: recurrenceComplete ? (closure ? 'Monitoring was closed prematurely, then the recurrent low was checked and repeat rescue was selected. The correction is visible, but the early closure remains part of the learning.' : 'Medication and intake review, continued surveillance, a recurrent glucose check, repeat rescue, and reassessment preserved the recurrence risk.') : 'The initial response did not remove the medication and intake risks. The recurrent low-glucose branch was not fully reassessed and treated.', tick: second?.tick },
+        'hypoglycemia-handoff': { met: !!handoff, finding: handoff ? 'The monitored handoff preserved medication, kidney, nutrition, recurrence, and follow-up work. It did not prove safe discharge or durable recovery.' : 'No complete monitored handoff was recorded; review the remaining recurrence-risk work.', tick: handoff?.tick },
+      };
+      const result = findings[objective.id];
+      if (!result) return { ...base, outcome: 'not-exercised', finding: 'No evidence mapping exists for this objective.' } satisfies ObjectiveFinding;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if ([
       'request-blood-bank-release', 'use-released-red-cells', 'reassess-red-cell-response',

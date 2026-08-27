@@ -35,6 +35,7 @@ export interface Prompt {
 }
 
 export interface GuidanceInput {
+  readonly scenarioId?: string;
   readonly tick: number;
   readonly state: Readonly<Record<string, number>> | null;
   readonly actions: readonly LearnerAction[];
@@ -254,6 +255,7 @@ export function promptStillEligible(
   input: GuidanceInput,
   promptId: string,
 ): boolean {
+  if (input.scenarioId === 'severe-hypoglycemia-recurrence') return false;
   if (level === 'unassisted' || input.alarmCount > 0) return false;
   const rule = TUTOR_RULES.find((candidate) => candidate.prompt.id === promptId);
   if (!rule || input.tick < rule.afterSeconds * TICKS_PER_SECOND) return false;
@@ -314,6 +316,7 @@ export function promptFor(
  * omission under Unassisted is still visible afterwards.
  */
 export function unpromptedOmissions(input: GuidanceInput): string[] {
+  if (input.scenarioId === 'severe-hypoglycemia-recurrence') return [];
   return [...new Set(PROMPTS
     .filter((candidate) => input.tick >= candidate.afterSeconds * TICKS_PER_SECOND && candidate.applies(input))
     .map((candidate) => candidate.objectiveId))];

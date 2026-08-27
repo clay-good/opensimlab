@@ -154,6 +154,18 @@ export interface ReadyMessage {
  * request rather than the result teaches the learner to trust a number that is
  * not true (cockpit/action-cockpit → the tray reflects the patient).
  */
+export interface SevereHypoglycemiaSnapshot {
+  readonly choiceFeedback: string | null;
+  readonly glucoseMgPerDl: number | null; readonly measuredAtTick: number | null;
+  readonly consciousness: 'drowsy' | 'hard-to-rouse' | 'more-alert';
+  readonly supportActive: boolean; readonly medicationReviewed: boolean; readonly monitoringActive: boolean;
+  readonly firstRescueAtTick: number | null; readonly secondRescueAtTick: number | null;
+  readonly firstRecheckComplete: boolean; readonly secondRecheckComplete: boolean;
+  readonly recurrenceActive: boolean; readonly recheckDueInSeconds: number | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true; readonly doseModelAvailable: false; readonly durableRecoveryProven: false;
+}
+
 export interface EquipmentSnapshot {
   readonly ventilator: {
     readonly mode: 'volume-control' | 'pressure-control' | 'manual';
@@ -3176,6 +3188,7 @@ export interface EquipmentSnapshot {
       readonly dischargeReadinessProven: false; readonly safetyDispositionDetermined: false;
       readonly outcomePredicted: false;
     };
+    readonly severeHypoglycemia?: SevereHypoglycemiaSnapshot;
     readonly endocrineHhsAssessment?: {
       readonly supportAtTick: number | null; readonly contextAtTick: number | null;
       readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;

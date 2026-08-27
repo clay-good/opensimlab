@@ -71,7 +71,7 @@ export const SCENARIO_SCHEMA: SchemaNode = {
         title: STRING_FIELD('Learner-facing title.', 3),
         author: STRING_FIELD('Who wrote the scenario.', 2),
         license: STRING_FIELD('The open content license this scenario is released under.', 2),
-        estimatedMinutes: NUMBER_FIELD('Expected duration in simulated minutes at 1x.', 1, 20),
+        estimatedMinutes: NUMBER_FIELD('Expected duration in simulated minutes at 1x.', 1, 60),
         difficulty: { type: 'string', description: 'Learner-facing difficulty.', enum: ['introductory', 'intermediate', 'advanced'] },
         objectives: {
           type: 'array', description: 'Learning objectives, stated in learner-facing language.', minItems: 1,

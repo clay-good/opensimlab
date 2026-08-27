@@ -27,6 +27,30 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'adult-hypoglycemia-authored-timed-states-not-kinetics',
+    headline: 'Glucose, alertness, recurrence, and rescue responses are authored timed states, not drug kinetics.',
+    simplification: 'The model uses fixed observation and response checkpoints and an instructor-takeover stop, with no individualized glucose kinetics.',
+    whereItMisleads: 'A learner treats the numeric response or recurrence time as a prediction for another patient.',
+    correctUnderstanding: 'The clock creates a rehearsal of reassessment and recurrence. Real responses vary and require repeated qualified assessment.',
+    briefIn: ['severe-hypoglycemia-recurrence'],
+  },
+  {
+    id: 'adult-hypoglycemia-qualified-rescue-not-dose-or-technique',
+    headline: 'The rescue choice represents qualified team care, not dosing or IV technique.',
+    simplification: 'The only rescue is a fixed simulated pathway; unsafe oral treatment is refused and no drug formulation, concentration, dose, rate, or access can be selected.',
+    whereItMisleads: 'A button is treated as medication-administration competence or a universal rescue regimen.',
+    correctUnderstanding: 'Use local protocols and qualified clinical judgment. This lesson teaches noticing, safe priorities, timing, reassessment, and handoff.',
+    briefIn: ['severe-hypoglycemia-recurrence'],
+  },
+  {
+    id: 'adult-hypoglycemia-handoff-not-durable-recovery',
+    headline: 'A completed handoff does not prove durable recovery or safe discharge.',
+    simplification: 'The branch stops after monitored handoff or instructor takeover without a later clinical outcome.',
+    whereItMisleads: 'A normal observed glucose or completed scenario is mistaken for resolved medication, nutrition, neurologic, or recurrence risk.',
+    correctUnderstanding: 'Continued surveillance and individualized cause, medication, nutrition, and prevention work remain necessary.',
+    briefIn: ['severe-hypoglycemia-recurrence'],
+  },
+  {
     id: 'hhs-panels-osmolality-trajectory-qualified-care-and-later-report-are-authored',
     headline: 'The HHS panels, osmolality trajectory, qualified care, and later report are authored.',
     simplification: 'Two fixed reports illustrate correction without modeling glucose, sodium, urea, osmolality, fluid, insulin, or kidney kinetics.',

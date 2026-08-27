@@ -46,7 +46,7 @@ function tutorViolations(file: SourceFile): string[] {
   }
   const forbiddenOperations = [
     /\b(?:dispatch|postMessage|setState)\s*\(/,
-    /\binput(?:\??\.[A-Za-z_$][\w$]*)+\s*(?:=|\+\+|--)/,
+    /\binput(?:\??\.[A-Za-z_$][\w$]*)+\s*(?:=(?!=)|\+\+|--)/,
     /\b(?:localStorage|sessionStorage|indexedDB)\b/,
   ];
   for (const pattern of forbiddenOperations) {
@@ -114,6 +114,8 @@ describe('Requirement: Tutor and reporting boundaries are structural', () => {
       path: 'src/modules/example/tutor/hostile.ts',
       text: "import { AnesthesiaEngine } from '@anesthesia/engine';\ninput.state.map = 40;",
     })).toHaveLength(2);
+    expect(tutorViolations({ path: 'read-only.ts', text: "input.scenarioId === 'example'; input.state.map == 40;" })).toEqual([]);
+    expect(tutorViolations({ path: 'mutation.ts', text: 'input.state.map++;' })).toHaveLength(1);
   });
 
   it('keeps reporting unable to discover browser storage or private learner records', () => {

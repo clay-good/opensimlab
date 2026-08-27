@@ -357,6 +357,7 @@ export function Cockpit({
   useEffect(() => {
     if (tutorIntroductionOpen) return;
     const input = {
+      scenarioId: scenario.metadata.id,
       tick: session.tick,
       state: session.state,
       actions: sessionInternals().recorder?.build('pending').actions ?? [],
@@ -1224,6 +1225,9 @@ export function Cockpit({
           })}
           onEndocrineHhsResponse={(action) => session.act({
             type: 'hhs-osmolality-trajectory-response', payload: { action },
+          })}
+          onSevereHypoglycemiaResponse={(action) => session.act({
+            type: 'severe-hypoglycemia-response', payload: { action },
           })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },

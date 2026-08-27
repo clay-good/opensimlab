@@ -367,6 +367,13 @@ persistent hyperosmolality, reduced urine output, and cognition still below base
 stays visible beside one cognitive action at a time. Better numbers do not close the case, and
 the lab exposes no testing, calculation, dosing, fluid, insulin, or disposition control.
 
+The third Endocrine lab adds severe hypoglycemia with hidden glucose and medication findings,
+timed rescue responses, recurrence, and recoverable unsafe-choice and premature-closure branches.
+The patient clock continues independently of acknowledgment buttons. Expert, common-error, and
+recovery fixtures verify distinct debriefs. The dose-free state transitions are authored teaching
+assumptions, not glucose kinetics or discharge criteria. Registered preview counts do not establish
+full scenario completion; clinical review and scenario-specific progressive tutor prompts remain pending.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

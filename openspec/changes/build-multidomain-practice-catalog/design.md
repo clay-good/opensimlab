@@ -2766,6 +2766,19 @@ dose, concentration, rate, route, access, infusion, nutrition, basal administrat
 precipitant treatment, education, prescription, access or follow-up arrangement, transition,
 disposition, or outcome control.
 
+### Wave E endocrine-metabolic slice 3: severe hypoglycemia decisions and recurrence
+
+The third registered Endocrine preview uses five objectives and an independent dose-free state
+machine. Glucose and medication findings are hidden until requested. Qualified support and rescue
+lead to a timed response, not an immediate acknowledgment result. Recurrence still occurs after
+premature closure; an unsafe oral choice is refused and remains visible after later recovery.
+The clock, stale measurements, monitoring plan, and handoff are separate state. Expert, error,
+and recovery fixtures bind scenario version and seed to distinct debrief findings, including an
+explicitly authored counterfactual. No treatment dose, glucose kinetics, durable recovery, or
+discharge claim is made. See `docs/evidence-briefs/severe-hypoglycemia-recurrence.md` for assumptions.
+Clinical review and scenario-specific progressive tutor rules remain pending. Registration counts
+must not be represented as the number satisfying the complete scenario contract.
+
 ### Wave E endocrine-metabolic slice 2: HHS correction and reassessment
 
 This lab owns the coupled osmolality, circulation, and cognition trajectory in a 74-year-old with
