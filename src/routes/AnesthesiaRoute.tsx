@@ -46,6 +46,9 @@ import { RENAL_HYPONATREMIA_ACTIONS, supportsRenalHyponatremia } from '../module
 import { RENAL_HYPERNATREMIA_ACTIONS, supportsRenalHypernatremia } from '../modules/renal-electrolyte/hypernatremia';
 import { renalHypernatremiaReportActions } from '../modules/renal-electrolyte/hypernatremia-reporting';
 import { supportsRenalHypernatremiaDemonstration } from '../modules/renal-electrolyte/demo/renal-hypernatremia-demonstration';
+import { RENAL_HYPOCALCEMIA_ACTIONS, supportsRenalHypocalcemia } from '../modules/renal-electrolyte/hypocalcemia';
+import { renalHypocalcemiaReportActions } from '../modules/renal-electrolyte/hypocalcemia-reporting';
+import { supportsRenalHypocalcemiaDemonstration } from '../modules/renal-electrolyte/demo/renal-hypocalcemia-demonstration';
 import { renalHyponatremiaReportActions } from '../modules/renal-electrolyte/hyponatremia-reporting';
 import { supportsRenalHyponatremiaDemonstration } from '../modules/renal-electrolyte/demo/renal-hyponatremia-demonstration';
 import { renalHypokalemiaReportActions } from '../modules/renal-electrolyte/hypokalemia-reporting';
@@ -281,6 +284,33 @@ function boundedScalars(value: unknown, limit: number): Record<string, ReportCon
 }
 
 export function collectReportEquipmentContext(equipment: SessionState['equipment']): Record<string, ReportContextScalar> {
+  const calcium = equipment?.resuscitation.renalHypocalcemia;
+  if (calcium) {
+    return boundedScalars({ resuscitation: { renalHypocalcemia: {
+      supportActive: calcium.supportActive, rescueAtTick: calcium.rescueAtTick, continuingAtTick: calcium.continuingAtTick,
+      contextReviewedAtTick: calcium.contextReviewedAtTick, monitoringAtTick: calcium.monitoringAtTick,
+      mineralCareAtTick: calcium.mineralCareAtTick, followUpAtTick: calcium.followUpAtTick,
+      rescueResponseObserved: calcium.rescueResponseObserved, continuingResponseObserved: calcium.continuingResponseObserved,
+      recurrenceObserved: calcium.recurrenceObserved, adjustedReassuranceAttempted: calcium.adjustedReassuranceAttempted,
+      oralOnlyAttempted: calcium.oralOnlyAttempted, stoppedAfterReliefAttempted: calcium.stoppedAfterReliefAttempted,
+      ended: calcium.ended,
+      ionizedObservation: calcium.ionizedObservation ? {
+        atTick: calcium.ionizedObservation.atTick, ionizedCalciumMmolL: calcium.ionizedObservation.ionizedCalciumMmolL,
+      } : null,
+      symptomObservation: calcium.symptomObservation ? {
+        atTick: calcium.symptomObservation.atTick, carpopedalSpasm: calcium.symptomObservation.carpopedalSpasm,
+        perioralTingling: calcium.symptomObservation.perioralTingling,
+      } : null,
+      observation: calcium.observation ? {
+        atTick: calcium.observation.atTick, ionizedCalciumMmolL: calcium.observation.ionizedCalciumMmolL,
+        carpopedalSpasm: calcium.observation.carpopedalSpasm, perioralTingling: calcium.observation.perioralTingling,
+        systolicMmHg: calcium.observation.systolicMmHg, diastolicMmHg: calcium.observation.diastolicMmHg,
+        meanArterialMmHg: calcium.observation.meanArterialMmHg, heartRateBpm: calcium.observation.heartRateBpm,
+        respiratoryRateBpm: calcium.observation.respiratoryRateBpm, spo2Percent: calcium.observation.spo2Percent,
+        coreTemperatureC: calcium.observation.coreTemperatureC,
+      } : null,
+    } } }, REPORT_CONTEXT_SNAPSHOT_LIMIT);
+  }
   const water = equipment?.resuscitation.renalHypernatremia;
   if (water) {
     return boundedScalars({ resuscitation: { renalHypernatremia: {
@@ -579,11 +609,12 @@ export function collectReportEquipmentContext(equipment: SessionState['equipment
   return { ...priority, ...boundedScalars(remaining, REPORT_CONTEXT_SNAPSHOT_LIMIT - Object.keys(priority).length) };
 }
 
-function collectReportRecentContext(session: SessionState, seed: number, sodiumLesson: boolean, avpLesson: boolean, refeedingLesson: boolean, diabetesLesson: boolean, renalLesson: boolean, hypokalemiaLesson: boolean, renalSodiumLesson: boolean, renalWaterLesson: boolean): ScenarioReportRecentContext {
+function collectReportRecentContext(session: SessionState, seed: number, sodiumLesson: boolean, avpLesson: boolean, refeedingLesson: boolean, diabetesLesson: boolean, renalLesson: boolean, hypokalemiaLesson: boolean, renalSodiumLesson: boolean, renalWaterLesson: boolean, renalCalciumLesson: boolean): ScenarioReportRecentContext {
   const actions = sessionInternals().recorder?.build('pending').actions ?? [];
   return {
     seed: Math.trunc(seed),
-    actions: renalWaterLesson ? renalHypernatremiaReportActions(actions, session.log)
+    actions: renalCalciumLesson ? renalHypocalcemiaReportActions(actions, session.log)
+      : renalWaterLesson ? renalHypernatremiaReportActions(actions, session.log)
       : renalSodiumLesson ? renalHyponatremiaReportActions(actions, session.log)
       : hypokalemiaLesson ? renalHypokalemiaReportActions(actions, session.log)
       : renalLesson ? renalHyperkalemiaReportActions(actions, session.log)
@@ -592,7 +623,8 @@ function collectReportRecentContext(session: SessionState, seed: number, sodiumL
       : avpLesson ? avpDeficiencyReportActions(actions, session.log)
       : sodiumLesson ? hyponatremiaCorrectionReportActions(actions, session.log)
       : actions.slice(-REPORT_CONTEXT_ACTION_LIMIT).map((action) => {
-      const lessonActions = action.type === 'renal-hypernatremia-response' ? RENAL_HYPERNATREMIA_ACTIONS
+      const lessonActions = action.type === 'renal-hypocalcemia-response' ? RENAL_HYPOCALCEMIA_ACTIONS
+        : action.type === 'renal-hypernatremia-response' ? RENAL_HYPERNATREMIA_ACTIONS
         : action.type === 'renal-hyponatremia-response' ? RENAL_HYPONATREMIA_ACTIONS
         : action.type === 'renal-hypokalemia-response' ? RENAL_HYPOKALEMIA_ACTIONS
         : action.type === 'renal-hyperkalemia-response' ? RENAL_HYPERKALEMIA_ACTIONS
@@ -615,14 +647,14 @@ function collectReportRecentContext(session: SessionState, seed: number, sodiumL
         // Invalid lesson payloads remain refused attempts, without reproducing
         // an injected note or making their named action look accepted.
         payload: lessonActions ? lessonChoice !== undefined ? { action: lessonChoice } : {}
-          : (session.equipment?.resuscitation.hyponatremiaCorrection || session.equipment?.resuscitation.avpDeficiency || session.equipment?.resuscitation.refeeding || session.equipment?.resuscitation.perioperativeDiabetes || session.equipment?.resuscitation.renalHyperkalemia || session.equipment?.resuscitation.renalHypokalemia || session.equipment?.resuscitation.renalHyponatremia || session.equipment?.resuscitation.renalHypernatremia) ? {}
+          : (session.equipment?.resuscitation.hyponatremiaCorrection || session.equipment?.resuscitation.avpDeficiency || session.equipment?.resuscitation.refeeding || session.equipment?.resuscitation.perioperativeDiabetes || session.equipment?.resuscitation.renalHyperkalemia || session.equipment?.resuscitation.renalHypokalemia || session.equipment?.resuscitation.renalHyponatremia || session.equipment?.resuscitation.renalHypernatremia || session.equipment?.resuscitation.renalHypocalcemia) ? {}
           : boundedScalars(action.payload, 12),
       };
     }),
     snapshot: {
       patient: Object.fromEntries(Object.entries(session.state ?? {})
         .filter((entry): entry is [string, number] => Number.isFinite(entry[1]))
-        .filter(([field]) => !(sodiumLesson || avpLesson || refeedingLesson || diabetesLesson || renalLesson || hypokalemiaLesson || renalSodiumLesson || renalWaterLesson)
+        .filter(([field]) => !(sodiumLesson || avpLesson || refeedingLesson || diabetesLesson || renalLesson || hypokalemiaLesson || renalSodiumLesson || renalWaterLesson || renalCalciumLesson)
           || ['systolicMmHg', 'diastolicMmHg', 'meanArterialMmHg', 'heartRateBpm',
             'respiratoryRateBpm', 'spo2Percent', 'coreTemperatureC'].includes(field))
         // These authored cases supply neither a continuous CO2 measurement nor oxygen settings.
@@ -638,6 +670,7 @@ function collectReportRecentContext(session: SessionState, seed: number, sodiumL
         || (hypokalemiaLesson && !session.equipment?.resuscitation.renalHypokalemia)
         || (renalSodiumLesson && !session.equipment?.resuscitation.renalHyponatremia)
         || (renalWaterLesson && !session.equipment?.resuscitation.renalHypernatremia)
+        || (renalCalciumLesson && !session.equipment?.resuscitation.renalHypocalcemia)
         ? {} : collectReportEquipmentContext(session.equipment),
     },
   };
@@ -750,7 +783,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
           : session.phase === 'briefing' || session.phase === 'idle' ? 'prebrief' : 'live'),
         simulatedTick: session.tick,
         canonicalUrl: `${SITE_ORIGIN}${config.basePath}/scenario/${scenario.metadata.id}`,
-        collectRecentContext: () => collectReportRecentContext(session, assignment.seed, supportsHyponatremiaCorrection(scenario), supportsAvpDeficiency(scenario), supportsRefeeding(scenario), supportsPerioperativeDiabetes(scenario), supportsRenalHyperkalemia(scenario), supportsRenalHypokalemia(scenario), supportsRenalHyponatremia(scenario), supportsRenalHypernatremia(scenario)),
+        collectRecentContext: () => collectReportRecentContext(session, assignment.seed, supportsHyponatremiaCorrection(scenario), supportsAvpDeficiency(scenario), supportsRefeeding(scenario), supportsPerioperativeDiabetes(scenario), supportsRenalHyperkalemia(scenario), supportsRenalHypokalemia(scenario), supportsRenalHyponatremia(scenario), supportsRenalHypernatremia(scenario), supportsRenalHypocalcemia(scenario)),
       }}
       {...(reportRequest ? { openRequest: reportRequest.id } : {})}
       onOpen={() => {
@@ -808,7 +841,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
     if (!session.ready) return;
     const endocrineDemo = (config.id === 'endocrine-metabolic'
       && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario) || supportsRefeedingDemonstration(scenario) || supportsPerioperativeDiabetesDemonstration(scenario)))
-      || (config.id === 'renal-electrolyte' && (supportsRenalHyperkalemiaDemonstration(scenario) || supportsRenalHypokalemiaDemonstration(scenario) || supportsRenalHyponatremiaDemonstration(scenario) || supportsRenalHypernatremiaDemonstration(scenario)));
+      || (config.id === 'renal-electrolyte' && (supportsRenalHyperkalemiaDemonstration(scenario) || supportsRenalHypokalemiaDemonstration(scenario) || supportsRenalHyponatremiaDemonstration(scenario) || supportsRenalHypernatremiaDemonstration(scenario) || supportsRenalHypocalcemiaDemonstration(scenario)));
     if (!endocrineDemo && (config.id !== 'anesthesia' || scenario.metadata.id !== DEMONSTRATION_SCENARIO_ID)) return;
     autoDemo.current = false;
     setDemonstrating(true);
@@ -912,7 +945,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
           {...(config.id === 'anesthesia' && scenario.metadata.id === DEMONSTRATION_SCENARIO_ID
             ? { onWatch: () => { setDemonstrating(true); session.setSpeed(5); session.play(); } }
             : (config.id === 'endocrine-metabolic' && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario) || supportsRefeedingDemonstration(scenario) || supportsPerioperativeDiabetesDemonstration(scenario)))
-              || (config.id === 'renal-electrolyte' && (supportsRenalHyperkalemiaDemonstration(scenario) || supportsRenalHypokalemiaDemonstration(scenario) || supportsRenalHyponatremiaDemonstration(scenario) || supportsRenalHypernatremiaDemonstration(scenario)))
+              || (config.id === 'renal-electrolyte' && (supportsRenalHyperkalemiaDemonstration(scenario) || supportsRenalHypokalemiaDemonstration(scenario) || supportsRenalHyponatremiaDemonstration(scenario) || supportsRenalHypernatremiaDemonstration(scenario) || supportsRenalHypocalcemiaDemonstration(scenario)))
             ? { onWatch: () => { setDemonstrating(true); session.setSpeed(60); session.play(); } }
             : {})}
           {...(assignment.label ? { assignmentLabel: assignment.label } : {})}

@@ -37,6 +37,7 @@ import { supportsRenalHyperkalemia } from '../../renal-electrolyte/hyperkalemia'
 import { supportsRenalHypokalemia } from '../../renal-electrolyte/hypokalemia';
 import { supportsRenalHyponatremia } from '../../renal-electrolyte/hyponatremia';
 import { supportsRenalHypernatremia } from '../../renal-electrolyte/hypernatremia';
+import { supportsRenalHypocalcemia } from '../../renal-electrolyte/hypocalcemia';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -216,6 +217,8 @@ export function Debrief(props: DebriefProps) {
                 ? { activityContext: 'coordinating symptom-led sodium rescue, fresh neurologic and laboratory reassessment, alternative-cause investigation, and continuing expert care for unresolved symptoms' }
               : supportsRenalHypernatremia(props.scenario)
                 ? { activityContext: 'restoring circulation while coordinating water and continuing-loss replacement, reliable assisted access, fresh reassessment, and ongoing care for hypernatremic dehydration' }
+              : supportsRenalHypocalcemia(props.scenario)
+                ? { activityContext: 'responding to measured ionized hypocalcemia despite reassuring adjusted total calcium, coordinating monitored rescue and continuing calcium care, and preserving kidney-specific follow-up after denosumab exposure' }
               : supportsPerioperativeDiabetes(props.scenario)
                 ? { activityContext: 'restoring reliable insulin delivery during delayed surgery, distinguishing glucose-only checks from full reassessment, and handing off continued perioperative care' }
               : supportsRefeeding(props.scenario)
@@ -607,6 +610,42 @@ export function objectiveFindings(
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
 
+    if (objective.id.startsWith('renal-hypocalcemia-')) {
+      if (!supportsRenalHypocalcemia(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The renal hypocalcemia lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^renal-hypocalcemia-${id}-\\d+$`).test(entry.eventId));
+      const rescue = event('calcium-rescue'); const continuing = event('calcium-continuation');
+      const support = event('support'); const context = event('context-review'); const monitoring = event('monitoring');
+      const mineral = event('mineral-care'); const followUp = event('follow-up'); const handoff = event('handoff');
+      const full = (entry: EngineEvent) => /^renal-hypocalcemia-(rescue|continuing|recurrence)-reassessment-\d+$/.test(entry.eventId);
+      const later = log.find(full);
+      const afterCare = (care: EngineEvent | undefined, observed: (entry: EngineEvent) => boolean) => care && log.find((entry, index) =>
+        index > log.indexOf(care) && entry.tick >= care.tick && observed(entry));
+      const afterRescue = afterCare(rescue, full);
+      const afterContinuing = afterCare(continuing, (entry) => /^renal-hypocalcemia-continuing-reassessment-\d+$/.test(entry.eventId));
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'renal-hypocalcemia-rescue': { met: !!afterRescue && !!monitoring, tick: rescue?.tick,
+          finding: (afterRescue && monitoring ? 'Qualified calcium rescue was followed by requested full findings and continuing surveillance. ' : 'Rescue, its later full assessment, or monitoring remains incomplete. ')
+            + (event('oral-only-refused') ? 'The oral-only shortcut was refused. ' : '')
+            + 'Urgent symptomatic care does not wait for an adjusted-calcium calculation, another test, or completion of cause review. Preparation, access, volume, and monitoring require qualified individualized decisions.' },
+        'renal-hypocalcemia-measurement': { met: !!support && !!context, tick: context?.tick,
+          finding: (support && context ? 'Qualified support and the supplied kidney, medication, and discordant calcium context were reviewed. ' : 'Qualified support or context review remains incomplete. ')
+            + (event('adjusted-reassurance-refused') ? 'Reassurance from adjusted total calcium alone was refused. ' : '')
+            + 'Measured ionized calcium at actual sample pH and symptoms must not be overwritten by a reassuring albumin-adjusted estimate. Historical total calcium, albumin, pH, magnesium, phosphate, eGFR, and QTc do not become new findings.' },
+        'renal-hypocalcemia-continuity': { met: !!afterContinuing && !!mineral && !!followUp, tick: continuing?.tick,
+          finding: (afterContinuing && mineral && followUp ? 'Delivered continuing calcium care was followed by its requested later response, with qualified mineral care and longer-term surveillance arranged. ' : 'Continuing calcium care, its observed response, mineral care, or longer-term surveillance remains incomplete or pending. ')
+            + (event('relief-stop-refused') ? 'The attempted stop after relief remains in history. ' : '')
+            + 'Mineral-care and follow-up acknowledgments do not cause the modeled calcium response. No rapid activated-vitamin-D effect or denosumab reversal is inferred; future treatment decisions and fracture-risk safeguards remain specialist-owned.' },
+        'renal-hypocalcemia-reassessment': { met: !!later, tick: later?.tick,
+          finding: (later ? 'A fresh full ionized-calcium, symptom, and bedside assessment made an authored response available for review. ' : 'A requested later full assessment is missing. ')
+            + (event('recurrence-reassessment') ? 'Earlier observed recurrence remains part of the course after later care. ' : '')
+            + 'Ionized-only and symptom-only checks retain independent timestamps. Neither refreshes an older full panel, and no new QT or kidney-function result is generated.' },
+        'renal-hypocalcemia-handoff': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The receiving team owns unresolved ionized hypocalcemia, persistent tingling, continuing treatment, kidney-specific mineral care, surveillance, and medication review. A treatment response may remain pending. ' : 'Current full findings or continuing-care ownership remains incomplete. ')
+            + 'Handoff closes rehearsal, not surveillance. Normal calcium, every earlier teaching panel, and an error-free history are not required; no discharge readiness or durable recovery is certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (objective.id.startsWith('renal-hypernatremia-')) {
       if (!supportsRenalHypernatremia(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The renal hypernatremia lesson was not active.' } satisfies ObjectiveFinding;
       const event = (id: string) => log.find((entry) => new RegExp(`^renal-hypernatremia-${id}-\\d+$`).test(entry.eventId));

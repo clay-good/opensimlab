@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -108,6 +108,7 @@ export function stateSummary(
     readonly renalHypokalemia?: RenalHypokalemiaSnapshot;
     readonly renalHyponatremia?: RenalHyponatremiaSnapshot;
     readonly renalHypernatremia?: RenalHypernatremiaSnapshot;
+    readonly renalHypocalcemia?: RenalHypocalcemiaSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -161,7 +162,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -185,6 +186,35 @@ export function stateSummary(
           + ' intravenous.');
       }
     }
+  }
+  if (options.renalHypocalcemia) {
+    const patient = options.renalHypocalcemia;
+    const symptoms = (value: { carpopedalSpasm: boolean; perioralTingling: boolean }) =>
+      `carpopedal spasm ${value.carpopedalSpasm ? 'present' : 'absent'}; perioral tingling ${value.perioralTingling ? 'present' : 'absent'}`;
+    for (const field of ['systolicMmHg', 'diastolicMmHg'] as const) {
+      const value = state[field];
+      if (!options.invalid.has(field) && Number.isFinite(value)) {
+        lines.push(`${FIELDS[field].label}: ${value.toFixed(FIELDS[field].precision)} ${FIELDS[field].unit}.`);
+      }
+    }
+    lines.push('Supplied measured ionized calcium was 0.86 millimoles per liter at pH 7.40, with carpopedal spasm and perioral tingling. These remain historical starting findings; an adjusted total estimate does not override the measured ionized result.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push(`Calcium rescue: ${patient.rescueAtTick === null ? 'not yet requested' : 'requested'}. Continuing calcium: ${patient.continuingAtTick === null ? 'not yet delivered' : 'delivered'}. Mineral care: ${patient.mineralCareAtTick === null ? 'not coordinated' : 'coordinated'}. Follow-up: ${patient.followUpAtTick === null ? 'not arranged' : 'arranged'}.`);
+    lines.push('Continuing care is available immediately after rescue, without waiting for symptom relief. The supplied QTc is historical and is not measured by the waveform. Oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.ionizedObservation
+      ? `Last requested ionized calcium at simulated ${formatElapsed(patient.ionizedObservation.atTick)}: ${patient.ionizedObservation.ionizedCalciumMmolL.toFixed(2)} millimoles per liter. An ionized-only check does not refresh symptoms or the full assessment.`
+      : 'No new ionized-calcium-only measurement has been requested.');
+    lines.push(patient.symptomObservation
+      ? `Last requested symptoms at simulated ${formatElapsed(patient.symptomObservation.atTick)}: ${symptoms(patient.symptomObservation)}. A symptom-only check does not refresh calcium.`
+      : 'No new symptom-only assessment has been requested.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: ionized calcium ${patient.observation.ionizedCalciumMmolL.toFixed(2)} millimoles per liter; ${symptoms(patient.observation)}; ${patient.observation.alertness}. These are historical observations, not live measurements.`
+      : 'No new full ionized-calcium, symptom, and bedside assessment has been requested.');
+    if (patient.recurrenceObserved) lines.push('A full assessment recorded recurrence without continuing calcium care. That history remains visible.');
+    lines.push('Symptom relief does not establish durable correction. Continuing calcium, mineral care, and longer-term follow-up remain active responsibilities.');
+    lines.push(options.alarms.length === 0 ? 'No active alarms.'
+      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    return lines.join(' ');
   }
   if (options.renalHypernatremia) {
     const patient = options.renalHypernatremia;

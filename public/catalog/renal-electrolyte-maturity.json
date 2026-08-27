@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "renal-electrolyte",
-  "recordCount": 4,
+  "recordCount": 5,
   "records": [
     {
       "recordId": "scenario:hyperkalemia-cardioprotection-and-rebound@0.1.0",
@@ -45,6 +45,17 @@
       "evidence": [
         "/catalog/renal-electrolyte-completion-audit.json#hypernatremia-water-access-and-losses@0.1.0",
         "/catalog/renal-electrolyte-quality-audit.json#hypernatremia-water-access-and-losses@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:hypocalcemia-ionized-calcium-and-ckd@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "hypocalcemia-ionized-calcium-and-ckd",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/renal-electrolyte-completion-audit.json#hypocalcemia-ionized-calcium-and-ckd@0.1.0",
+        "/catalog/renal-electrolyte-quality-audit.json#hypocalcemia-ionized-calcium-and-ckd@0.1.0"
       ]
     }
   ]

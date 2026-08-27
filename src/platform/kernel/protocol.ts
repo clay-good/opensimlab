@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 176 adds the authored renal hypernatremia snapshot. */
-export const WORKER_PROTOCOL_VERSION = 176;
+/** Version 177 adds the authored renal hypocalcemia snapshot. */
+export const WORKER_PROTOCOL_VERSION = 177;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -154,6 +154,27 @@ export interface ReadyMessage {
  * request rather than the result teaches the learner to trust a number that is
  * not true (cockpit/action-cockpit → the tray reflects the patient).
  */
+export interface RenalHypocalcemiaSnapshot {
+  readonly supportActive: boolean;
+  readonly rescueAtTick: number | null; readonly continuingAtTick: number | null;
+  readonly contextReviewedAtTick: number | null; readonly monitoringAtTick: number | null;
+  readonly mineralCareAtTick: number | null; readonly followUpAtTick: number | null;
+  readonly rescueDueInSeconds: number | null; readonly continuingDueInSeconds: number | null;
+  readonly rescueResponseObserved: boolean; readonly continuingResponseObserved: boolean; readonly recurrenceObserved: boolean;
+  readonly adjustedReassuranceAttempted: boolean; readonly oralOnlyAttempted: boolean; readonly stoppedAfterReliefAttempted: boolean;
+  readonly ionizedObservation: { readonly atTick: number; readonly ionizedCalciumMmolL: number } | null;
+  readonly symptomObservation: { readonly atTick: number; readonly carpopedalSpasm: boolean; readonly perioralTingling: boolean } | null;
+  readonly observation: {
+    readonly atTick: number; readonly ionizedCalciumMmolL: number; readonly carpopedalSpasm: boolean;
+    readonly perioralTingling: boolean; readonly alertness: string;
+    readonly systolicMmHg: number; readonly diastolicMmHg: number; readonly meanArterialMmHg: number;
+    readonly heartRateBpm: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number; readonly coreTemperatureC: number;
+  } | null;
+  readonly alertness: string; readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true; readonly doseModelAvailable: false; readonly durableRecoveryProven: false;
+}
+
 export interface RenalHypernatremiaSnapshot {
   readonly supportActive: boolean;
   readonly volumeAtTick: number | null; readonly waterAtTick: number | null;
@@ -3467,6 +3488,7 @@ export interface EquipmentSnapshot {
     readonly renalHypokalemia?: RenalHypokalemiaSnapshot;
     readonly renalHyponatremia?: RenalHyponatremiaSnapshot;
     readonly renalHypernatremia?: RenalHypernatremiaSnapshot;
+    readonly renalHypocalcemia?: RenalHypocalcemiaSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

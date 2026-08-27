@@ -53,6 +53,7 @@ import { RenalHyperkalemia, supportsRenalHyperkalemia } from '../renal-electroly
 import { RenalHypokalemia, supportsRenalHypokalemia } from '../renal-electrolyte/hypokalemia';
 import { RenalHyponatremia, supportsRenalHyponatremia } from '../renal-electrolyte/hyponatremia';
 import { RenalHypernatremia, supportsRenalHypernatremia } from '../renal-electrolyte/hypernatremia';
+import { RenalHypocalcemia, supportsRenalHypocalcemia } from '../renal-electrolyte/hypocalcemia';
 
 /** The engine's own version, recorded in every transcript. */
 export const ENGINE_VERSION = '0.1.0-alpha.48';
@@ -1732,6 +1733,7 @@ export class AnesthesiaEngine {
   private readonly renalHypokalemia: RenalHypokalemia | null;
   private readonly renalHyponatremia: RenalHyponatremia | null;
   private readonly renalHypernatremia: RenalHypernatremia | null;
+  private readonly renalHypocalcemia: RenalHypocalcemia | null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1855,6 +1857,8 @@ export class AnesthesiaEngine {
     if (this.renalHyponatremia) this.rhythm = 'sinus';
     this.renalHypernatremia = supportsRenalHypernatremia(options.scenario) ? new RenalHypernatremia() : null;
     if (this.renalHypernatremia) this.rhythm = 'sinus';
+    this.renalHypocalcemia = supportsRenalHypocalcemia(options.scenario) ? new RenalHypocalcemia() : null;
+    if (this.renalHypocalcemia) this.rhythm = 'sinus';
     this.practiceRegion = options.practiceRegion;
     this.seed = options.seed;
     if (options.scenario.timeline.some((event) => event.type === 'narrative'
@@ -1988,6 +1992,11 @@ export class AnesthesiaEngine {
       || typeof action.payload !== 'object' || Array.isArray(action.payload)) {
       this.log('warning', 'assessment', `malformed-action-refused-${this.currentTick}`,
         'That action was malformed and was safely ignored. Nothing changed.');
+      return;
+    }
+    if (this.renalHypocalcemia && action.type !== 'renal-hypocalcemia-response' && action.type !== 'silence-alarm') {
+      this.log('warning', 'assessment', `renal-hypocalcemia-generic-action-refused-${this.currentTick}`,
+        'Only this lesson’s qualified calcium care, kidney and medication review, observations, continuing surveillance, and handoff choices are available.');
       return;
     }
     if (this.renalHypernatremia && action.type !== 'renal-hypernatremia-response' && action.type !== 'silence-alarm') {
@@ -2937,6 +2946,19 @@ export class AnesthesiaEngine {
         'This HHS lesson exposes no generic history, examination, testing, calculation, interpretation, diagnosis, fluid, insulin, dextrose, electrolyte, drug, dose, rate, route, access, infusion, nutrition, precipitant treatment, thrombosis or pressure-injury prevention, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
+      case 'renal-hypocalcemia-response': {
+        if (!this.renalHypocalcemia || Reflect.ownKeys(action.payload).length !== 1
+          || !Object.hasOwn(action.payload, 'action')
+          || !Object.getOwnPropertyDescriptor(action.payload, 'action')!.enumerable
+          || !Object.hasOwn(Object.getOwnPropertyDescriptor(action.payload, 'action')!, 'value')) {
+          this.log('warning', 'assessment', `renal-hypocalcemia-action-refused-${this.currentTick}`, 'Only the declared dose-free renal hypocalcemia choices are available in this lesson.');
+          break;
+        }
+        for (const event of this.renalHypocalcemia.apply(action.payload.action, this.currentTick)) {
+          this.log('warning', 'assessment', `renal-hypocalcemia-${event.id}-${this.currentTick}`, event.message);
+        }
+        break;
+      }
       case 'renal-hypernatremia-response': {
         if (!this.renalHypernatremia || Reflect.ownKeys(action.payload).length !== 1
           || !Object.hasOwn(action.payload, 'action')
@@ -14510,6 +14532,9 @@ export class AnesthesiaEngine {
 
   /** Advance exactly one tick. */
   step(): EngineTick {
+    for (const event of this.renalHypocalcemia?.advance(this.currentTick) ?? []) {
+      this.log('warning', 'assessment', `renal-hypocalcemia-${event.id}-${this.currentTick}`, event.message);
+    }
     for (const event of this.renalHypernatremia?.advance(this.currentTick) ?? []) {
       this.log('warning', 'assessment', `renal-hypernatremia-${event.id}-${this.currentTick}`, event.message);
     }
@@ -15360,6 +15385,13 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: this.endocrineDkaResolutionReassessmentAtTick !== null ? 16 : 18,
         spo2Percent: 98, systolicMmHg: 118, diastolicMmHg: 70, meanArterialMmHg: 86,
         coreTemperatureC: 36.9 };
+    }
+    if (this.renalHypocalcemia) {
+      const patient = this.renalHypocalcemia.vitals();
+      crisisState = { ...crisisState, heartRateBpm: patient.heartRateBpm,
+        respiratoryRateBpm: patient.respiratoryRateBpm, spo2Percent: patient.spo2Percent,
+        systolicMmHg: patient.systolicMmHg, diastolicMmHg: patient.diastolicMmHg,
+        meanArterialMmHg: patient.meanArterialMmHg, coreTemperatureC: patient.coreTemperatureC };
     }
     if (this.renalHypernatremia) {
       const patient = this.renalHypernatremia.vitals();
@@ -20157,6 +20189,7 @@ export class AnesthesiaEngine {
         ...(this.renalHypokalemia ? { renalHypokalemia: this.renalHypokalemia.snapshot(this.currentTick) } : {}),
         ...(this.renalHyponatremia ? { renalHyponatremia: this.renalHyponatremia.snapshot(this.currentTick) } : {}),
         ...(this.renalHypernatremia ? { renalHypernatremia: this.renalHypernatremia.snapshot(this.currentTick) } : {}),
+        ...(this.renalHypocalcemia ? { renalHypocalcemia: this.renalHypocalcemia.snapshot(this.currentTick) } : {}),
         ...(this.avpDeficiency ? { avpDeficiency: this.avpDeficiency.snapshot(this.currentTick) } : {}),
         ...(this.hyponatremiaCorrection ? { hyponatremiaCorrection: this.hyponatremiaCorrection.snapshot(this.currentTick) } : {}),
         aspirationRiskAssessment: {
@@ -20353,7 +20386,7 @@ export class AnesthesiaEngine {
   invalidParameters(): Set<string> {
     const invalid = new Set<string>();
     // These lessons do not supply a capnogram or a modeled oxygen setting.
-    if (this.myxedema || this.hypercalcemia || this.hypocalcemia || this.hyponatremiaCorrection || this.avpDeficiency || this.refeeding || this.perioperativeDiabetes || this.renalHyperkalemia || this.renalHypokalemia || this.renalHyponatremia || this.renalHypernatremia) {
+    if (this.myxedema || this.hypercalcemia || this.hypocalcemia || this.hyponatremiaCorrection || this.avpDeficiency || this.refeeding || this.perioperativeDiabetes || this.renalHyperkalemia || this.renalHypokalemia || this.renalHyponatremia || this.renalHypernatremia || this.renalHypocalcemia) {
       invalid.add('etco2MmHg');
       invalid.add('fio2');
     }

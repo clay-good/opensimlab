@@ -8,7 +8,7 @@
  * report and the limitations register do not support.
  */
 
-export const READY_SCENARIO_COUNT = 208;
+export const READY_SCENARIO_COUNT = 209;
 export const READY_MODULE_COUNT = 12;
 
 export const ONE_LINE_DESCRIPTION =

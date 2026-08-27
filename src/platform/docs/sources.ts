@@ -64,6 +64,46 @@ const CHECKED = '2026-08-20';
 
 export const SOURCES: readonly Source[] = [
   {
+    id: 'renal-hypocalcemia-measurement-2008', authors: 'Gauci C, Moranne O, Fouqueray B, et al; NephroTest Study Group',
+    title: 'Pitfalls of measuring total blood calcium in patients with CKD', publication: 'Journal of the American Society of Nephrology', year: 2008,
+    locator: '19(8):1592–1598; doi:10.1681/ASN.2007040449; abstract, discussion, and analytical methods',
+    usedFor: 'Albumin-adjusted calcium can misclassify ionized calcium in CKD, especially with low albumin. The lesson supplies a measured actual-pH ionized result rather than deriving it from a total-calcium formula. Exact patient values are authored, not study observations.',
+    verifiedAgainst: 'PubMed PMID 18400941 and indexed PMC2488254 full text; 691 nondialysis CKD stage 3–5 participants. Actual-pH measurement and specimen-handling limitations checked; this is a measurement study, not an acute treatment guideline.',
+    verifiedOn: '2026-08-27',
+  },
+  {
+    id: 'renal-hypocalcemia-acute-2016', authors: 'Turner J, Gittoes N, Selby P; Society for Endocrinology Clinical Committee',
+    title: 'Emergency management of acute hypocalcaemia in adult patients', publication: 'Endocrine Connections', year: 2016,
+    locator: '5:G7–G8; doi:10.1530/EC-16-0056; presentation, investigations, severe hypocalcaemia, and renal exception',
+    usedFor: 'Symptom-led urgent monitored calcium care, cause evaluation, and continuing replacement. The adjusted-total threshold is not allowed to override supplied low measured ionized calcium and symptoms. No generic infusion recipe or renal-failure volume is copied.',
+    verifiedAgainst: 'Indexed PMC5314808 full text and PubMed PMID 27935815. End-stage renal failure/dialysis large-volume infusion exception retained; this fictional patient has nondialysis CKD4 and requires individualized renal-aware care.',
+    verifiedOn: '2026-08-27',
+  },
+  {
+    id: 'renal-hypocalcemia-addendum-2019', authors: 'Turner J, Gittoes N, Selby P; Society for Endocrinology Clinical Committee',
+    title: 'Emergency management of acute hypocalcaemia in adult patients: addendum', publication: 'Endocrine Connections', year: 2019,
+    locator: '8(6):X1; doi:10.1530/EC-16-0056a',
+    usedFor: 'Calcium products and concentrations are not volume-equivalent. Qualified prescription and access selection remain outside the dose-free rehearsal.',
+    verifiedAgainst: 'PMC8117371 full HTML addendum and PubMed PMID 32022081; June 2019 publication. Product-equivalence advice checked, but doses and conversion formulas are not reproduced or simulated.',
+    verifiedOn: '2026-08-27',
+  },
+  {
+    id: 'renal-hypocalcemia-denosumab-safety-2024', authors: 'US Food and Drug Administration',
+    title: 'FDA adds Boxed Warning for increased risk of severe hypocalcemia in patients with advanced chronic kidney disease taking Prolia',
+    publication: 'FDA Drug Safety Communication', year: 2024, locator: 'January 19, 2024; clinician advice and timing findings',
+    usedFor: 'Advanced CKD and recent denosumab exposure require specialist review and prolonged surveillance. The supplied 21-day exposure falls within a reported high-risk period but does not prove individual causation or predict a response or recurrence.',
+    verifiedAgainst: 'Full FDA safety communication https://www.fda.gov/drugs/drug-safety-communications/fda-adds-boxed-warning-increased-risk-severe-hypocalcemia-patients-advanced-chronic-kidney-disease; 2–10-week reported risk window and greatest risk in weeks 2–5 checked.',
+    verifiedOn: '2026-08-27',
+  },
+  {
+    id: 'renal-hypocalcemia-label-2026', authors: 'Amgen, Inc', title: 'Prolia (denosumab) prescribing information',
+    publication: 'DailyMed, US National Library of Medicine', year: 2026,
+    locator: 'Revised June 2026; boxed warning and §§2.2, 5.1, 5.6, 17',
+    usedFor: 'CKD-MBD expertise, individualized calcium and activated-vitamin-D care, surveillance beyond the acute episode, and coordinated future osteoporosis-treatment decisions. Routine weekly/monthly label surveillance is not an acute-treatment interval; stopping therapy is not an automatic harmless action.',
+    verifiedAgainst: 'Current DailyMed full HTML, updated June 26, 2026, set ID 49e5afe9-a0c7-40c4-af9f-f287a80c5c88. June 2026 prescribing-information revision distinguished from the May 2025 Medication Guide. No universal supplement dose or rapid vitamin-D effect adopted.',
+    verifiedOn: '2026-08-27',
+  },
+  {
     id: 'renal-hypernatremia-evaluation-2023', authors: 'Yun G, Baek SH, Kim S',
     title: 'Evaluation and management of hypernatremia in adults: clinical perspectives',
     publication: 'Korean Journal of Internal Medicine', year: 2023,

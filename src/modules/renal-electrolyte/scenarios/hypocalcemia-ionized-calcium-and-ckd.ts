@@ -1,0 +1,62 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+
+export const RENAL_HYPOCALCEMIA_IONIZED_CALCIUM_AND_CKD: Scenario = {
+  schemaVersion: 1,
+  metadata: {
+    id: 'hypocalcemia-ionized-calcium-and-ckd', version: '0.1.0', maturity: 'preview',
+    title: 'Hypocalcemia: ionized calcium and kidney disease', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
+    estimatedMinutes: 60, difficulty: 'intermediate',
+    objectives: [
+      { id: 'renal-hypocalcemia-rescue', statement: 'Arrange qualified monitored rescue for symptomatic hypocalcemia.', measure: 'Prioritize monitored calcium rescue without administrative or repeat-measurement prerequisites. Compare subsequent ionized calcium and bedside findings without treating relief of spasm as complete recovery.' },
+      { id: 'renal-hypocalcemia-measurement', statement: 'Interpret measured ionized calcium alongside kidney disease and albumin.', measure: 'Review measured ionized calcium 0.86 mmol/L at actual sample pH 7.40, total calcium 7.2 mg/dL, albumin 2.0 g/dL, and the supplied adjusted value of 8.8 mg/dL. A reassuring adjusted total does not override the measured ionized calcium and symptomatic presentation; no adjustment formula is taught.' },
+      { id: 'renal-hypocalcemia-continuity', statement: 'Separate continuing calcium support from mineral care and follow-up.', measure: 'Arrange individualized continuing calcium immediately after rescue is delivered, without waiting for the 15-minute observation. Review advanced kidney disease and recent denosumab with qualified mineral and activated-vitamin-D care and follow-up ownership; administrative care is not a biochemical response gate.' },
+      { id: 'renal-hypocalcemia-reassessment', statement: 'Distinguish current ionized calcium, bedside symptoms, and historical findings.', measure: 'Request fresh full reassessment to identify initial response, uncovered recurrence, or later continuing-care response. Partial checks do not refresh other findings; persistent tingling and historical QTc remain explicit, and authored intervals are not clinical waiting instructions.' },
+      { id: 'renal-hypocalcemia-handoff', statement: 'Transfer unresolved risk with explicit continuing-care ownership.', measure: 'Hand off support, measurement context, monitoring, delivered rescue and continuing calcium, mineral care, follow-up, and current full findings after rescue response. Observed recurrence may be transferred with the continuing-calcium response pending; normal calcium, symptom resolution, and every earlier panel are not handoff requirements.' },
+    ],
+    clinicalReview: {
+      reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED', competingInterests: 'None declared',
+      reviewedOn: '1970-01-01', reviewBy: '1970-01-01', contentVersion: '0.1.0',
+      sources: [
+        'Gauci C, Moranne O, Fouqueray B, et al. Pitfalls of measuring total blood calcium in patients with CKD. Journal of the American Society of Nephrology. 2008;19:1592–1598. doi:10.1681/ASN.2007040449. Observational evidence about total, albumin-adjusted, and ionized calcium in kidney disease; no correction formula or authored trajectory is validated here.',
+        'Society for Endocrinology. Emergency management of acute hypocalcaemia in adult patients. Endocrine Connections. 2016;5:G7–G8. doi:10.1530/EC-16-0056. Qualified monitored emergency treatment, reassessment, and cause-specific continuing care; no calcium dose or rate is selected here.',
+        'Society for Endocrinology. Addendum: Emergency management of acute hypocalcaemia in adult patients. Endocrine Connections. 2019. doi:10.1530/EC-16-0056a. Updated preparation guidance does not make this dose-free simulation a prescribing tool.',
+        'U.S. Food and Drug Administration. Boxed Warning for severe hypocalcemia in patients with advanced chronic kidney disease taking Prolia (denosumab). January 19, 2024. Advanced kidney disease, mineral-bone disorder review, specialist involvement, and post-dose monitoring; an association does not prove the sole cause in this fictional patient.',
+        'DailyMed. Prolia (denosumab) injection prescribing information. Revised June 2026; checked August 27, 2026. Advanced kidney disease, calcium and activated-vitamin-D support, and monitoring require qualified individualized care. No dose, treatment duration, or future denosumab decision is simulated.',
+      ],
+    },
+    limitations: ['renal-hypocalcemia-measurement', 'renal-hypocalcemia-authored-contrasts', 'renal-hypocalcemia-continuing-care'],
+  },
+  patient: {
+    ageYears: 72, sex: 'female', heightCm: 161, weightKg: 64, asaClass: 3,
+    diagnosis: 'Symptomatic ionized hypocalcemia with stage 4 chronic kidney disease and recent denosumab exposure',
+    procedure: 'Qualified monitored rescue, measurement review, individualized continuing calcium and mineral care, reassessment, and follow-up handoff',
+    comorbidities: ['Stage 4 chronic kidney disease; supplied eGFR 22 mL/min/1.73 m²; not receiving dialysis',
+      'Pretreatment total calcium 7.2 mg/dL, albumin 2.0 g/dL, supplied albumin-adjusted calcium 8.8 mg/dL, and measured ionized calcium 0.86 mmol/L at actual sample pH 7.40',
+      'Pretreatment magnesium 0.80 mmol/L and phosphate 6.2 mg/dL; prior QTc 520 ms is historical, not a dynamic ECG measurement',
+      'Recent denosumab exposure and kidney-related mineral abnormalities require qualified review; no acute kidney injury diagnosis or new baseline calculation is supplied'],
+    medications: ['Denosumab administered 21 days before presentation; current calcium, vitamin D, and other prescriptions require qualified review'],
+    allergies: ['No known drug allergies'], fasting: 'Not a fasting lesson; individualized treatment route and swallowing safety require qualified assessment',
+    baseline: { heartRateBpm: 102, meanArterialMmHg: 98, strokeVolumeMl: 70, hemoglobinGPerDl: 11,
+      bloodVolumeMl: 4200, coreTemperatureC: 36.8, arterialStiffness: 1, baroreflexGain: 1, fixedStrokeVolume: true },
+    airway: { difficulty: 0.1, difficultMaskVentilation: false, assessment: 'Awake with a patent airway, carpopedal spasm, and tingling; no airway intervention is simulated' },
+    respiratory: { profile: 'healthy' },
+  },
+  equipment: { monitoring: ['ecg', 'nibp', 'pulse-oximetry', 'temperature'], ventilator: { mode: 'manual', fio2: 0.21,
+    tidalVolumeMl: 450, respiratoryRateBpm: 22, freshGasFlowLPerMin: 10, delivering: false } },
+  formulary: [],
+  timeline: [
+    { id: 'renal-hypocalcemia-presentation', type: 'narrative', target: 'renal-hypocalcemia', atTick: 0, severity: 'critical',
+      message: 'A fictional 72-year-old woman is awake with carpopedal spasm and tingling. She has stage 4 chronic kidney disease, supplied eGFR 22 mL/min/1.73 m², and is not receiving dialysis. Denosumab was administered 21 days ago. Pretreatment total calcium is 7.2 mg/dL, albumin 2.0 g/dL, supplied albumin-adjusted calcium 8.8 mg/dL, and measured ionized calcium 0.86 mmol/L at actual sample pH 7.40. Magnesium is 0.80 mmol/L, phosphate 6.2 mg/dL, and prior QTc 520 ms is historical. BP is 138/78 mmHg, HR 102/min, RR 22/min, SpO2 98%, and temperature 36.8°C. Arrange qualified monitored rescue while reviewing measurement context and individualized continuing care. Repeat ionized calcium and bedside findings require explicit assessment.' },
+    { id: 'renal-hypocalcemia-boundary', type: 'narrative', target: 'renal-hypocalcemia-boundary', atTick: 0, severity: 'warning',
+      message: 'The supplied adjusted total calcium does not override measured ionized hypocalcemia and symptoms. Monitored rescue is independent of administrative or repeat-test prerequisites. Continuing calcium can be arranged immediately after rescue is delivered, without waiting for the 15-minute observation. Mineral and activated-vitamin-D care and follow-up remain important but do not gate the biochemical response. The 15-minute rescue, 45-minute uncovered recurrence, and 60-minute continuing-calcium checkpoints are authored contrasts, not clinical waits, dosing, pharmacokinetics, or treatment targets. Tingling persists even when spasm improves; no normal calcium, new QTc, medication causality, kidney recovery, durable recovery, or discharge clearance is claimed. Current full findings after rescue and delivered continuing care can support unresolved-risk handoff, including recurrence with the continuing-calcium response pending. Partial findings remain historical until separately reassessed. Exhaled CO2 and FiO2 are unavailable.' },
+  ],
+  replayPoints: [{ id: 'renal-hypocalcemia-first-response', label: 'Return to calcium measurement and rescue', objectiveId: 'renal-hypocalcemia-rescue', atTick: 1,
+    reason: 'Compare measured ionized calcium and symptoms with the supplied adjusted total, then distinguish emergency rescue from continuing care.' }],
+  debrief: { rubric: [
+    { id: 'renal-hypocalcemia-rescue-review', objectiveId: 'renal-hypocalcemia-rescue', question: 'What did monitored rescue improve, and which findings remained unresolved?' },
+    { id: 'renal-hypocalcemia-measurement-review', objectiveId: 'renal-hypocalcemia-measurement', question: 'Why did the supplied adjusted total not overrule measured ionized calcium and symptoms?' },
+    { id: 'renal-hypocalcemia-continuity-review', objectiveId: 'renal-hypocalcemia-continuity', question: 'How did continuing calcium, mineral care, and follow-up address different needs?' },
+    { id: 'renal-hypocalcemia-reassessment-review', objectiveId: 'renal-hypocalcemia-reassessment', question: 'Which findings were current, and what did recurrence or persistent tingling leave unresolved?' },
+    { id: 'renal-hypocalcemia-handoff-review', objectiveId: 'renal-hypocalcemia-handoff', question: 'Who owns continuing calcium, mineral review, repeat assessment, and post-denosumab follow-up?' },
+  ] },
+};

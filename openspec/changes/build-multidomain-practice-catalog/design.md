@@ -3080,6 +3080,22 @@ and source boundaries are recorded in `docs/evidence-briefs/hypernatremia-water-
 Clinical review, four quality records, full inclusive-runtime checks, and production reporting
 evidence remain pending.
 
+The fifth renal preview, `hypocalcemia-ionized-calcium-and-ckd@0.1.0`, separates symptomatic low
+measured ionized calcium from a reassuring albumin-adjusted estimate in advanced kidney disease.
+Recent denosumab exposure supports qualified risk review, not a single proven cause. Immediate
+monitored rescue and continuing calcium are independent of administrative or repeat-test gates.
+Mineral care and longer-term surveillance remain essential but do not cause the modeled response.
+Partial ionized and symptom observations preserve the full panel's historical timestamp; no new
+total calcium, albumin, pH, phosphate, kidney-function, or QTc result is inferred.
+
+Fourteen choices, a ten-decision paused example, and a five-objective debrief preserve unresolved
+risk. Current recurrence can be transferred after continuing calcium is delivered with its response
+pending; debrief response credit requires the actual later full checkpoint. Shared reporting has
+seven live vitals and at most 30 observed/care scalars, excluding hidden results, timers, and prose.
+See `docs/evidence-briefs/hypocalcemia-ionized-calcium-and-ckd.md` for authored values and source
+boundaries. Clinical review, four quality records, complete inclusive-runtime verification, and
+production reporting evidence remain pending.
+
 #### Infectious disease: 10
 
 Sepsis without shock; septic shock; meningitis; neutropenic fever; severe community-acquired

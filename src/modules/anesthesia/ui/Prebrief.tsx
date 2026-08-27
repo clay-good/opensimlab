@@ -33,6 +33,7 @@ import { supportsRenalHyperkalemiaDemonstration } from '../../renal-electrolyte/
 import { supportsRenalHypokalemiaDemonstration } from '../../renal-electrolyte/demo/renal-hypokalemia-demonstration';
 import { supportsRenalHyponatremiaDemonstration } from '../../renal-electrolyte/demo/renal-hyponatremia-demonstration';
 import { supportsRenalHypernatremiaDemonstration } from '../../renal-electrolyte/demo/renal-hypernatremia-demonstration';
+import { supportsRenalHypocalcemiaDemonstration } from '../../renal-electrolyte/demo/renal-hypocalcemia-demonstration';
 
 export const FICTION_CONTRACT =
   'This is a simulation. The patient is not real, nothing you do here reaches anyone, and an '
@@ -200,6 +201,16 @@ export function Prebrief({
               Qualified findings and response reports are authored. This lab practices early recognition,
               coordinated ownership, reassessment, and handoff, not examination, dosing, procedures, or delivery.
             </p>
+          </>
+        ) : scenario.metadata.id === 'hypocalcemia-ionized-calcium-and-ckd' ? (
+          <>
+            <p>Use measured ionized calcium and symptoms, not reassurance from an adjusted total estimate.
+              Qualified rescue is available now; continuing calcium care is available immediately afterward,
+              without waiting for symptom relief, review, or another laboratory click. No dose or infusion rate is selected.</p>
+            <p>Ionized-only and symptom-only checks leave the full assessment historical.
+              The ten-decision example pauses for reading and runs authored observation periods at 60×.
+              Handoff preserves continuing calcium, CKD mineral care, and follow-up beyond the rehearsal;
+              improved findings do not establish durable control or discharge readiness.</p>
           </>
         ) : scenario.metadata.id === 'hypernatremia-water-access-and-losses' ? (
           <>
@@ -464,12 +475,12 @@ export function Prebrief({
       <div className="prebrief__start">
         <Button variant="primary" onClick={onStart}>Start the scenario</Button>
         {onWatch && (
-          <Button onClick={onWatch}>{hypoglycemia || supportsAdrenalCrisis(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario) || supportsRefeedingDemonstration(scenario) || supportsPerioperativeDiabetesDemonstration(scenario) || supportsRenalHyperkalemiaDemonstration(scenario) || supportsRenalHypokalemiaDemonstration(scenario) || supportsRenalHyponatremiaDemonstration(scenario) || supportsRenalHypernatremiaDemonstration(scenario) ? 'Watch a worked example' : 'Watch a 90-second demonstration'}</Button>
+          <Button onClick={onWatch}>{hypoglycemia || supportsAdrenalCrisis(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario) || supportsRefeedingDemonstration(scenario) || supportsPerioperativeDiabetesDemonstration(scenario) || supportsRenalHyperkalemiaDemonstration(scenario) || supportsRenalHypokalemiaDemonstration(scenario) || supportsRenalHyponatremiaDemonstration(scenario) || supportsRenalHypernatremiaDemonstration(scenario) || supportsRenalHypocalcemiaDemonstration(scenario) ? 'Watch a worked example' : 'Watch a 90-second demonstration'}</Button>
         )}
       </div>
       {onWatch && (
         <p className="field__hint">
-          {hypoglycemia || supportsAdrenalCrisis(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario) || supportsRefeedingDemonstration(scenario) || supportsPerioperativeDiabetesDemonstration(scenario) || supportsRenalHyperkalemiaDemonstration(scenario) || supportsRenalHypokalemiaDemonstration(scenario) || supportsRenalHyponatremiaDemonstration(scenario) || supportsRenalHypernatremiaDemonstration(scenario) ? 'The worked example pauses before each decision so you can read. Choose “Continue example” when ready; observation periods run at 60× speed. Reading time does not advance the patient. ' : 'The demonstration runs this scenario at five times speed and explains what to look at. '}
+          {hypoglycemia || supportsAdrenalCrisis(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario) || supportsRefeedingDemonstration(scenario) || supportsPerioperativeDiabetesDemonstration(scenario) || supportsRenalHyperkalemiaDemonstration(scenario) || supportsRenalHypokalemiaDemonstration(scenario) || supportsRenalHyponatremiaDemonstration(scenario) || supportsRenalHypernatremiaDemonstration(scenario) || supportsRenalHypocalcemiaDemonstration(scenario) ? 'The worked example pauses before each decision so you can read. Choose “Continue example” when ready; observation periods run at 60× speed. Reading time does not advance the patient. ' : 'The demonstration runs this scenario at five times speed and explains what to look at. '}
           You can take the controls at any point and carry on from where it got to.
         </p>
       )}

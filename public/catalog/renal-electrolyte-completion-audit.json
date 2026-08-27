@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "moduleId": "renal-electrolyte",
   "capabilityVersion": "0.1.0-alpha.48",
-  "scenarioCount": 4,
+  "scenarioCount": 5,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -491,6 +491,132 @@
           "status": "satisfied",
           "evidence": [
             "hypernatremia-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "hypocalcemia-ionized-calcium-and-ckd",
+      "title": "Hypocalcemia: ionized calcium and kidney disease",
+      "moduleId": "renal-electrolyte",
+      "environment": "ward",
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario hypocalcemia-ionized-calcium-and-ckd carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "5 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "hypocalcemia-fixtures.ts binds seed 4987 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No stochastic calcium kinetics is claimed."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "hypocalcemia.ts separates monitored rescue response, uncovered recurrence, and continuing-calcium response. Spasm can improve while tingling persists. Unrequested ionized calcium and bedside findings remain private; the supplied total, adjusted total, sample pH, phosphate, magnesium, and prior QTc remain historical."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "Dose-free choices distinguish monitored rescue, immediate continuing calcium, measurement context, qualified mineral and activated-vitamin-D care, follow-up, monitoring, support, and partial or full reassessment. No administrative or repeat-test gate delays rescue; continuing calcium is available immediately after rescue, and mineral care and follow-up do not gate biochemical response."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "Delivered care, current full findings after rescue response, and continuing-care ownership permit handoff, including observed recurrence while the continuing-calcium response is pending. Instructor takeover bounds a run without rescue at 30 minutes or an unfinished session at 180 minutes. Normal calcium, resolved tingling, flawless history, and completion of every older panel are not handoff requirements."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "satisfied",
+          "evidence": [
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary recorded actions. Unassisted mode remains silent; prompts do not reveal unrequested ionized calcium, bedside findings, or latent recurrence."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "Five event-bound objectives distinguish rescue, ionized-calcium interpretation, separate continuity decisions, current reassessment, and accountable unresolved-risk handoff. Refused shortcuts and observed recurrence remain available after later care; delivery of continuing care is not automatically evidence of its response."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "5 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "hypocalcemia-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
           ]
         },
         {

@@ -1265,6 +1265,32 @@ credited toward the catalog until every item in the completion contract passes.
     cancel focus return, and paused reading/reporting clock. One continuation applies one
     circulation decision and pauses again. Local reporting is disabled; no production report
     was sent. Publish the additive Worker catalog before the new client; keep pending gates explicit.
+  - [x] Renal/electrolyte slice 5/12 registers `hypocalcemia-ionized-calcium-and-ckd@0.1.0`
+    as a distinct measurement and kidney-context preview. Low measured ionized calcium and
+    symptoms are not erased by reassuring adjusted total calcium. Monitored rescue and immediate
+    continuing calcium have no administrative or repeat-test gate. Mineral care and follow-up
+    do not drive biochemical response. Gauci 2008, SfE 2016/2019, FDA 2024, and June 2026 Prolia
+    prescribing information were checked August 27. No source validates the authored trajectory.
+  - [x] Add fourteen choices, ten-decision paused example, private tutor, five-objective debrief,
+    nonvisual summaries, and shared reporting. Partial ionized and symptom observations retain
+    separate histories. Handoff can transfer current recurrence with continuing-care response
+    pending; response credit requires its later full checkpoint. Optional reports have seven
+    live vitals and at most 30 explicit observed/care scalars, excluding hidden values and prose.
+  - [x] Verify all CI components with `SITE_INDEXABLE=true`, using `npm run test -- --maxWorkers=2`
+    for unchanged full-suite coverage and timeouts: 5,035 tests in 553 files pass in 704.33 seconds.
+    All 30 strict specifications, typecheck, lint, public readiness, build, static-host checks,
+    budgets, fonts, and the additional indexability check pass. There are 209 scenarios,
+    234 static routes, 231 crawlable routes, 47 catalog artifacts, and 239 classified media assets.
+    All 216 prior report identities are unchanged; 217 are accepted. Landing/cockpit/offline
+    assets total 148.7/1,600.5/3,546.1 KiB, with 86.2 KiB fonts. After 718 neighboring checks
+    passed, repin only 6/10/12 changed shared dependency hashes; quality records remain unchanged.
+    An initial contention-related replay timeout passed on the constrained rerun without relaxed
+    assertions or limits. Actual release still refuses 224 blockers; independent audit found no
+    additional source issues. See the evidence brief for desktop QA and verification details.
+  - [ ] Complete renal hypocalcemia independent clinical review, four exact-version quality records,
+    complete inclusive-runtime validation, and production Turnstile/D1 evidence. No local check
+    substitutes for clinical approval or production validation. Publish the additive Worker
+    identity catalog before the new client; retain pending gates explicitly.
   - [x] Repair service-worker release consistency. Build-stamped SHA-256 integrity checks reject
     mixed or incomplete installations; active snapshots are immutable. Explicit acceptance waits
     for the intended controller before reloading only that tab. Durable per-client release pins

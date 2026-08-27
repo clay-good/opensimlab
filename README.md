@@ -445,8 +445,14 @@ The fourth Renal lab separates circulation restoration, water-deficit replacemen
 care, and safe assisted water access. Compare partial sodium improvement with recurrence when
 losses remain uncovered. The ten-decision example pauses for reading; current full findings can
 support handoff while the loss-care response remains pending. The shared private report excludes
-hidden results and learner prose. Four of 12 renal scenarios are registered previews, with
-independent validation pending.
+hidden results and learner prose.
+
+The fifth Renal lab follows symptomatic ionized hypocalcemia in advanced kidney disease after
+recent denosumab. A reassuring adjusted total does not erase low measured ionized calcium.
+Coordinate rescue and immediate continuing calcium care, then distinguish response, recurrence,
+and ongoing mineral and medication follow-up. The ten-decision example pauses for reading, and
+the shared private report preserves separate observation histories. Five of 12 renal scenarios
+are registered previews, with independent validation pending.
 
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage

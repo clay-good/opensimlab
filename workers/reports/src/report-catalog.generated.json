@@ -3131,6 +3131,23 @@
       "limitationManifestHash": "sha256:95f9df630bca85a2819a3ccb5c69c42088a99edd8f79410f7f8f1e8ddb8970ab"
     },
     {
+      "scenarioId": "hypocalcemia-ionized-calcium-and-ckd",
+      "contentVersion": "0.1.0",
+      "moduleId": "renal-electrolyte",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:60fced34de91692a7c849a80e68613e02f176050ef827e95464cac07f7b80e96",
+      "defaultsHash": "sha256:9419e8769ad5705549c22a21de64238cede534dd8dafae2d3e2dcacc67644e1a",
+      "maturityHash": "sha256:95ca30ee30fffc6c2123be73cbc45d233262d4c70362a88542239f6c92ec7ea1",
+      "sourceManifestHash": "sha256:5bd73309cc0210b2c4e25d16ab8b724794c64db0de743c8e5e6e8b3a668a7bf5",
+      "limitationManifestHash": "sha256:7c1f076bf80a01308e782f1edd1e3d2657f5b2503410cba4ebe45eb4f215ee98"
+    },
+    {
       "scenarioId": "hypokalemia-magnesium-and-ongoing-losses",
       "contentVersion": "0.1.0",
       "moduleId": "renal-electrolyte",

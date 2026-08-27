@@ -27,6 +27,30 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'renal-hypocalcemia-measurement',
+    headline: 'Albumin-adjusted total calcium is not a measured ionized-calcium result.',
+    simplification: 'The case supplies discordant historical total and adjusted calcium alongside low measured ionized calcium at actual pH. No protein-binding, pH-correction, or laboratory-error solver is supplied.',
+    whereItMisleads: 'A reassuring adjusted estimate erases symptoms and low ionized calcium, or a new ionized check silently refreshes albumin, pH, phosphate, kidney function, or QTc.',
+    correctUnderstanding: 'Interpret calcium with symptoms, actual measurement conditions, and kidney context. Ionized measurement needs appropriate specimen handling. Historical values remain historical, and no formula replaces the supplied ionized result.',
+    briefIn: ['hypocalcemia-ionized-calcium-and-ckd'],
+  },
+  {
+    id: 'renal-hypocalcemia-authored-contrasts',
+    headline: 'Calcium response and recurrence use authored contrasts, not drug or mineral kinetics.',
+    simplification: 'Rescue, uncovered recurrence, and continuing calcium care produce selected 15-, 45-, and 60-minute observations. Continuing care can begin immediately after rescue; the early response does not have to be observed first.',
+    whereItMisleads: 'A teaching checkpoint becomes a required wait, a predictable drug duration, a calcium dose, or a rapid activated-vitamin-D effect.',
+    correctUnderstanding: 'Use qualified monitored rescue and individualized ongoing calcium care with renal-aware prescription and reassessment. Mineral-care and follow-up acknowledgments do not drive the modeled calcium response. No normal calcium, QT recovery, kidney recovery, or injury outcome is predicted.',
+    briefIn: ['hypocalcemia-ionized-calcium-and-ckd'],
+  },
+  {
+    id: 'renal-hypocalcemia-continuing-care',
+    headline: 'Symptom relief does not end risk after denosumab in advanced kidney disease.',
+    simplification: 'Perioral tingling and low ionized calcium persist through partial improvement. A full current assessment can support monitored transfer while a delivered treatment response remains pending.',
+    whereItMisleads: 'Handoff becomes discharge clearance, normal magnesium requires automatic replacement, or denosumab is permanently stopped without a coordinated future-treatment plan.',
+    correctUnderstanding: 'Preserve kidney-specific mineral care, continuing calcium, acute surveillance, and longer-term follow-up. Future medication decisions require qualified review and fracture-risk safeguards. Routine label follow-up intervals do not replace acute reassessment; a completed rehearsal is not durable recovery.',
+    briefIn: ['hypocalcemia-ionized-calcium-and-ckd'],
+  },
+  {
     id: 'renal-hypernatremia-authored-contrasts',
     headline: 'Circulation and sodium changes are authored contrasts, not water-replacement kinetics.',
     simplification: 'A 15-minute circulation response leaves sodium high. Water-only care can partly lower sodium before recurrence with uncovered losses; combined care later produces another partial improvement. No dose, clearance, fluid-deficit, or injury model is supplied.',
