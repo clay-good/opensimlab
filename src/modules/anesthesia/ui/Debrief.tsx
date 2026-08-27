@@ -5275,6 +5275,31 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['activate-meconium-stained-transition-prepared-newborn-airway-and-dyad-support',
+      'reconcile-meconium-stained-transition-fluid-breathing-tone-heart-rate-airway-and-whole-dyad',
+      'recognize-vigorous-meconium-stained-transition-without-routine-suction',
+      'review-qualified-selective-airway-clearing-observation-and-escalation-boundaries',
+      'review-meconium-stained-transition-fixed-thirty-minute-qualified-report',
+      'handoff-meconium-stained-transition-respiratory-thermal-feeding-parent-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'meconium-stained-transition'
+        && scenario.timeline.every((event) => event.type === 'narrative')
+        && scenario.timeline.filter((event) => event.target === 'meconium-stained-transition').length === 1
+        && scenario.timeline.filter((event) => event.target === 'meconium-stained-transition-boundary').length === 1;
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neonatology meconium-transition lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['support-activated', 'Prepared newborn, airway-ready birth-team, clock, communication, dignity, parent, family, and support ownership was confirmed first.'],
+        ['context-reconciled', 'Meconium, birth clock, breathing, cry, tone, heart rate, temperature, airway visibility, parent, preferences, and whole-dyad context were connected.'],
+        ['pattern-recognized', 'Vigorous transition was recognized without treating meconium alone as a routine-suction indication or closing evolving respiratory risk.'],
+        ['readiness-reviewed', 'Qualified protective care, respiratory observation, selective airway-clearing, explanation, and escalation boundaries were reviewed without learner care.'],
+        ['thirty-minute-report-reviewed', 'The fixed qualified respiratory report was reviewed without excluded-disease, durable-safety, feeding, disposition, or outcome claims.'],
+        ['active-risk-handoff-recorded', 'Respiratory, obstruction, thermal, glucose, feeding, infection, parent, escalation, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^neonatology-meconium-transition-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^neonatology-meconium-transition-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['activate-obstetrics-cord-prolapse-response-diagnosis-clock-theatre-anesthesia-newborn-and-support-roles',
       'reconcile-obstetrics-cord-prolapse-membrane-rupture-fetal-heart-exam-birth-imminence-and-whole-person',
       'review-obstetrics-cord-prolapse-pressure-relief-minimal-handling-position-and-no-delay-boundaries',

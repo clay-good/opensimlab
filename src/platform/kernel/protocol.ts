@@ -3010,6 +3010,24 @@ export interface EquipmentSnapshot {
       readonly newbornOutcomePredicted: false; readonly parentOutcomePredicted: false;
       readonly outcomePredicted: false;
     };
+    readonly neonatologyMeconiumTransitionAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly authoredVigorousMeconiumTransition: true; readonly authoredQualifiedThirtyMinuteReport: boolean;
+      readonly newbornExaminedOrScoredByLearner: false;
+      readonly monitoringOrTestsInterpretedByLearner: false; readonly diagnosisMadeByLearner: false;
+      readonly positioningDryingWarmingOrStimulationPerformedByLearner: false;
+      readonly suctionPerformedByLearner: false; readonly deviceHandledByLearner: false;
+      readonly oxygenOrVentilationDeliveredByLearner: false; readonly airwayPlacedOrManagedByLearner: false;
+      readonly compressionsAccessFluidGlucoseOrDrugDeliveredByLearner: false;
+      readonly feedingPerformedByLearner: false; readonly resuscitationPerformedByLearner: false;
+      readonly transportOrProcedurePerformedByLearner: false; readonly meconiumAspirationExcluded: false;
+      readonly otherRespiratoryDiseaseExcluded: false; readonly durableSafetyProven: false;
+      readonly feedingSuccessProven: false; readonly safetyDispositionDetermined: false;
+      readonly newbornOutcomePredicted: false; readonly parentOutcomePredicted: false;
+      readonly outcomePredicted: false;
+    };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {
       readonly cuesReviewedAtTick: number | null;

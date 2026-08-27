@@ -1805,6 +1805,23 @@
       "limitationManifestHash": "sha256:f467a72bdc7b2c520205d17f42717b6d7f039927d6f990af437c78c27d34ec2a"
     },
     {
+      "scenarioId": "meconium-stained-transition",
+      "contentVersion": "0.1.0",
+      "moduleId": "neonatology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:0ff0c18d374d918fcab00bd2563b3cc50d9f6ffe3a98918dd3d261c6571d4f04",
+      "defaultsHash": "sha256:ca47f1c2bed551010a0a3c7743cf6945629183087f6cbc2ec222240ac7b2a8ff",
+      "maturityHash": "sha256:9216334d1cc5bb82d53b677ab9d86d1395c410e825e4d97ef2f5ffe926831503",
+      "sourceManifestHash": "sha256:39beb051d5326f88fdfc132d9799c4741dc5a19c90b40a06dfd2854e60165a25",
+      "limitationManifestHash": "sha256:ab23ed572076135f3a2875fb488c0f68068372042f22cca9ead4cf55e42c55c5"
+    },
+    {
       "scenarioId": "neonatal-apnea",
       "contentVersion": "0.1.0",
       "moduleId": "neonatology",

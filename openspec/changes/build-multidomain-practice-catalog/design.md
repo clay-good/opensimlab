@@ -2343,6 +2343,22 @@ examination, scoring, monitoring interpretation, device handling, oxygen or vent
 airway placement or verification, compression, access, fluid, blood, glucose, epinephrine or other
 drug, feeding, resuscitation, transport, counseling, procedure, disposition or outcome control.
 
+### Wave D neonatology slice 5: meconium-stained transition
+
+A term newborn breathes spontaneously with a strong cry, good tone and heart rate 138/min after birth
+through thin meconium-stained fluid, with no apparent airway obstruction or increased work. The
+learner confirms newborn-capable and airway-ready support; connects fluid, breathing, tone, heart
+rate, airway visibility, temperature, parent and whole-dyad context; recognizes vigorous transition
+without treating meconium alone as a suction indication; and reviews qualified protected care,
+respiratory observation, selective airway clearing for apparent obstruction, and escalation
+boundaries. A fixed 30-minute report supplies regular breathing without apnea, grunting, retractions
+or cyanosis, heart rate 132/min, preductal SpO2 96%, temperature 36.7°C and continued supervised
+skin-to-skin care while evolving respiratory disease, feeding, disposition and outcomes remain open.
+Six controls expose no learner examination, scoring, monitoring interpretation, positioning, drying,
+warming, suction, stimulation, separation, device handling, oxygen, ventilation, airway care,
+compression, access, fluid, glucose, drug, feeding, resuscitation, transport, counseling, procedure,
+diagnosis, disposition or outcome control.
+
 ### Wave E neurology slice 1: minor nondisabling acute ischemic stroke
 
 The first Neurology lab is a function-based minor-stroke decision boundary, not another disabling

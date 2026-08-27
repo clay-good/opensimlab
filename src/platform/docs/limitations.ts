@@ -5015,6 +5015,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified direct findings, current local neonatal-resuscitation protocols and equipment, immediate trained teams, continuous response assessment, respectful parent communication, and hands-on simulation.',
     briefIn: ['neonatal-bradycardia'],
   },
+  {
+    id: 'meconium-stained-transition-birth-fluid-newborn-parent-and-qualified-course-reports-are-authored',
+    headline: 'The birth, meconium, newborn, parent, qualified care, and 30-minute respiratory reports are authored.',
+    simplification: 'Fixed reports stand in for record review, newborn examination and observation, fluid characterization, airway assessment, thermal care, protected skin-to-skin positioning, parent assessment, communication, and serial review. Hidden adult-oriented engine-schema minimums are scaffolding, not neonatal physiology validation.',
+    whereItMisleads: 'Treating meconium character, breathing, tone, heart rate, airway visibility, absent supplied obstruction, or the stable 30-minute report as learner findings, excluded disease, durable safety, feeding success, prognosis, or outcome.',
+    correctUnderstanding: 'Meconium staining increases observation needs but does not itself justify routine suction; direct respiratory and airway assessment determines whether selective clearing or resuscitation is needed.',
+    briefIn: ['meconium-stained-transition'],
+  },
+  {
+    id: 'meconium-stained-transition-controls-activate-reconcile-review-reassess-and-handoff-only',
+    headline: 'The controls confirm support, connect supplied facts, review transition and selective-airway-clearing boundaries, read a fixed report, and hand off only.',
+    simplification: 'Six actions stand in for concurrent qualified newborn, obstetric, midwifery, nursing, airway, thermal, feeding, leadership, timekeeping, documentation, communication, dignity, parent, family, staff-support, escalation, and handoff work.',
+    whereItMisleads: 'Equating button order with newborn examination, scoring, respiratory observation, suction or airway judgment, thermal care, communication quality, or competence.',
+    correctUnderstanding: 'Real newborn care is concurrent, physical, relational, time-aware, locally protocolized, and responsive to obstruction or respiratory change. Cognitive practice cannot replace direct care or hands-on simulation.',
+    briefIn: ['meconium-stained-transition'],
+  },
+  {
+    id: 'no-live-meconium-transition-exam-monitor-score-suction-airway-resuscitation-procedure-disposition-or-outcome',
+    headline: 'The lab does not examine, score, monitor, suction, manage an airway, resuscitate, determine disposition, or report outcome.',
+    simplification: 'No live breathing, heart-rate, tone, color, temperature, obstruction, glucose, feeding, parent or other assessment; scoring; positioning; drying; warming; suction; stimulation; separation; device handling; oxygen; ventilation; airway care; compression; access; fluid; glucose; drug or dose; feeding; resuscitation; transport; counseling; procedure; diagnosis of meconium aspiration; disposition; prognosis; or outcome is modeled.',
+    whereItMisleads: 'Using the rehearsal as suction, airway, oxygen, respiratory-treatment, feeding, transfer, or disposition instruction; delaying trained assessment for a click; or reading completion as competence.',
+    correctUnderstanding: 'Use verified direct findings, current local newborn-transition and resuscitation protocols, trained teams, selective airway clearing only when indicated, respectful parent communication, and hands-on simulation.',
+    briefIn: ['meconium-stained-transition'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

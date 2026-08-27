@@ -290,6 +290,13 @@ a fixed heart-rate rise above 60/min without claiming a universal treatment effe
 examination, monitoring interpretation, ventilation, airway, compression, access, drug, procedure,
 disposition, or newborn/parent outcome control is exposed.
 
+The fifth Neonatology lab follows a vigorous term newborn through meconium-stained transition. It
+centers breathing, cry, tone, heart rate, airway visibility, warmth, parent, and whole dyad; resists
+routine oral, nasal, or tracheal suction based on meconium alone; and preserves selective airway
+clearing for apparent obstruction. A fixed 30-minute report remains a checkpoint rather than proof
+against evolving respiratory disease. No learner examination, scoring, suction, airway care,
+ventilation, resuscitation, procedure, disposition, or newborn/parent outcome control is exposed.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

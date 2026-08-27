@@ -1345,6 +1345,11 @@ export interface ActionCockpitProps {
       readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly neonatologyMeconiumTransitionAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2445,6 +2450,14 @@ export interface ActionCockpitProps {
       | 'review-neonatal-bradycardia-fixed-three-minute-qualified-response-report'
       | 'handoff-neonatal-bradycardia-respiratory-circulatory-neurologic-parent-and-outcome-risk',
   ) => void;
+  readonly onNeonatologyMeconiumTransitionResponse?: (
+    action: 'activate-meconium-stained-transition-prepared-newborn-airway-and-dyad-support'
+      | 'reconcile-meconium-stained-transition-fluid-breathing-tone-heart-rate-airway-and-whole-dyad'
+      | 'recognize-vigorous-meconium-stained-transition-without-routine-suction'
+      | 'review-qualified-selective-airway-clearing-observation-and-escalation-boundaries'
+      | 'review-meconium-stained-transition-fixed-thirty-minute-qualified-report'
+      | 'handoff-meconium-stained-transition-respiratory-thermal-feeding-parent-and-outcome-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2543,6 +2556,11 @@ export function crisisResponseAvailability(
     && scenario.timeline.every((event) => event.type === 'narrative')
     && scenario.timeline.filter((event) => event.target === 'neonatal-bradycardia-transition').length === 1
     && scenario.timeline.filter((event) => event.target === 'neonatal-bradycardia-transition-boundary').length === 1;
+  const hasNeonatologyMeconiumTransitionResponse =
+    scenario.metadata.id === 'meconium-stained-transition'
+    && scenario.timeline.every((event) => event.type === 'narrative')
+    && scenario.timeline.filter((event) => event.target === 'meconium-stained-transition').length === 1
+    && scenario.timeline.filter((event) => event.target === 'meconium-stained-transition-boundary').length === 1;
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -3104,6 +3122,7 @@ export function crisisResponseAvailability(
     hasNeonatologyApneaResponse,
     hasNeonatologyIneffectiveVentilationResponse,
     hasNeonatologyBradycardiaResponse,
+    hasNeonatologyMeconiumTransitionResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3337,6 +3356,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'neonatal-apnea-transition')
       || (event.type === 'narrative' && event.target === 'ineffective-ventilation-correction-transition')
       || (event.type === 'narrative' && event.target === 'neonatal-bradycardia-transition')
+      || (event.type === 'narrative' && event.target === 'meconium-stained-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3458,6 +3478,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeonatologyApneaResponse,
     hasNeonatologyIneffectiveVentilationResponse,
     hasNeonatologyBradycardiaResponse,
+    hasNeonatologyMeconiumTransitionResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3606,8 +3627,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeonatologyApneaResponse
     || hasNeonatologyIneffectiveVentilationResponse
     || hasNeonatologyBradycardiaResponse
+    || hasNeonatologyMeconiumTransitionResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasNeonatologyBradycardiaResponse
+  const responseTray = hasNeonatologyMeconiumTransitionResponse
+    ? { id: 'crisis', label: 'Transition + observation' } as const
+    : hasNeonatologyBradycardiaResponse
     ? { id: 'crisis', label: 'Heart rate + response' } as const
     : hasNeonatologyIneffectiveVentilationResponse
     ? { id: 'crisis', label: 'Response + heart rate' } as const
@@ -4032,6 +4056,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeonatologyApneaResponse
     || hasNeonatologyIneffectiveVentilationResponse
     || hasNeonatologyBradycardiaResponse
+    || hasNeonatologyMeconiumTransitionResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -4973,6 +4998,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNeonatologyBradycardiaResponse && (
               <NeonatologyBradycardiaTray assessment={props.resuscitation.neonatologyBradycardiaAssessment}
                 onAction={props.onNeonatologyBradycardiaResponse ?? (() => {})} />
+            )}
+            {hasNeonatologyMeconiumTransitionResponse && (
+              <NeonatologyMeconiumTransitionTray assessment={props.resuscitation.neonatologyMeconiumTransitionAssessment}
+                onAction={props.onNeonatologyMeconiumTransitionResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -12378,6 +12407,38 @@ function NeonatologyBradycardiaTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-neonatal-bradycardia-fixed-three-minute-qualified-response-report')}>Review the fixed 3-minute report</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neonatal-bradycardia-respiratory-circulatory-neurologic-parent-and-outcome-risk')}>Hand off active newborn risk</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function NeonatologyMeconiumTransitionTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['neonatologyMeconiumTransitionAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onNeonatologyMeconiumTransitionResponse']>;
+}) {
+  const support = assessment?.supportAtTick != null;
+  const context = assessment?.contextAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const readiness = assessment?.readinessAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="neonatology-meconium-now-title">
+      <div id="neonatology-meconium-now-title" className="syringe__name">See the newborn, not just the fluid.</div>
+      <p className="syringe__remaining">Connect breathing, tone, heart rate, airway visibility, warmth, parent, and whole dyad. Meconium alone does not decide the next step; every physical care step stays with the qualified team.</p>
+      <div className="crisis-drug__actions">
+        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-meconium-stained-transition-prepared-newborn-airway-and-dyad-support')}>Confirm prepared support</Button>}
+        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-meconium-stained-transition-fluid-breathing-tone-heart-rate-airway-and-whole-dyad')}>Connect newborn + whole dyad</Button>}
+        {context && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-vigorous-meconium-stained-transition-without-routine-suction')}>Recognize the transition</Button>}
+        {recognition && !readiness && <Button className="crisis-drug__action" onClick={() => onAction('review-qualified-selective-airway-clearing-observation-and-escalation-boundaries')}>Review selective boundaries</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="neonatology-meconium-later-title">
+      <div id="neonatology-meconium-later-title" className="syringe__name">Quiet observation protects more than a reflex procedure.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Respiratory, thermal, feeding, parent, disposition, and outcome risks handed off.' : reassessment ? 'The supplied transition remains calm. Evolving respiratory disease, durable safety, and outcomes remain open.' : readiness ? 'Qualified protective care and respiratory observation continue. Review the fixed report after time passes.' : support ? 'Prepared support is present. Connect the whole newborn and dyad before naming the pattern.' : 'Begin with calm shared ownership. You can pause or leave this practice at any time.'}</p>
+      <div className="crisis-drug__actions">
+        {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-meconium-stained-transition-fixed-thirty-minute-qualified-report')}>Review the fixed 30-minute report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-meconium-stained-transition-respiratory-thermal-feeding-parent-and-outcome-risk')}>Hand off active transition risk</Button>}
       </div>
     </section>
   </>;

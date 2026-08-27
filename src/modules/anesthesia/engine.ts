@@ -573,6 +573,10 @@ const NEONATOLOGY_BRADYCARDIA_BLOCKED_ACTION_TYPES = new Set([
   ...NEONATOLOGY_INEFFECTIVE_VENTILATION_BLOCKED_ACTION_TYPES,
   'ineffective-ventilation-correction-response',
 ]);
+const NEONATOLOGY_MECONIUM_TRANSITION_BLOCKED_ACTION_TYPES = new Set([
+  ...NEONATOLOGY_BRADYCARDIA_BLOCKED_ACTION_TYPES,
+  'neonatal-bradycardia-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1614,6 +1618,12 @@ export class AnesthesiaEngine {
   private neonatologyBradycardiaReadinessAtTick: number | null = null;
   private neonatologyBradycardiaReassessmentAtTick: number | null = null;
   private neonatologyBradycardiaHandoffAtTick: number | null = null;
+  private neonatologyMeconiumSupportAtTick: number | null = null;
+  private neonatologyMeconiumContextAtTick: number | null = null;
+  private neonatologyMeconiumRecognitionAtTick: number | null = null;
+  private neonatologyMeconiumReadinessAtTick: number | null = null;
+  private neonatologyMeconiumReassessmentAtTick: number | null = null;
+  private neonatologyMeconiumHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2657,6 +2667,14 @@ export class AnesthesiaEngine {
     if (neonatologyBradycardia && NEONATOLOGY_BRADYCARDIA_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `neonatology-bradycardia-generic-action-refused-${this.currentTick}`,
         'This Neonatology lesson exposes no generic examination, scoring, monitoring interpretation, device handling, oxygen or ventilation delivery, airway placement or verification, compression, access, fluid, blood, glucose, epinephrine or other drug, feeding, resuscitation, transport, procedure, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const neonatologyMeconiumTransition = this.scenario.metadata.id === 'meconium-stained-transition'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'meconium-stained-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'meconium-stained-transition-boundary').length === 1;
+    if (neonatologyMeconiumTransition && NEONATOLOGY_MECONIUM_TRANSITION_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `neonatology-meconium-transition-generic-action-refused-${this.currentTick}`,
+        'This Neonatology lesson exposes no generic examination, scoring, monitoring interpretation, positioning, drying, warming, suction, stimulation, separation, device handling, oxygen, ventilation, airway, compression, access, fluid, glucose, drug, feeding, resuscitation, transport, procedure, diagnosis, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -11540,6 +11558,29 @@ export class AnesthesiaEngine {
         if (this.neonatologyBradycardiaHandoffAtTick !== null) break;
         this.neonatologyBradycardiaHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `neonatology-bradycardia-active-risk-handoff-recorded-${this.currentTick}`, 'Birth and resuscitation clocks, recurrent bradycardia, ventilation, airway, oxygenation, perfusion, bleeding and hypovolemia risk, thermal, glucose, neurologic, etiologic, parent and family support, surveillance, escalation, access and medication readiness, transport, documentation, review, disposition, and outcome uncertainty were handed off.', { durableCirculationProven: false, durableBreathingProven: false, stableTransitionProven: false, causeDetermined: false, neurologicSafetyProven: false, safetyDispositionDetermined: false, newbornOutcomePredicted: false, parentOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'meconium-stained-transition-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'meconium-stained-transition'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'meconium-stained-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'meconium-stained-transition-boundary').length === 1;
+        const actions = this.scenario.metadata.objectives.map((objective) => objective.id);
+        const valid = typeof response === 'string' && actions.includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `neonatology-meconium-transition-response-refused-${this.currentTick}`, supported ? 'That meconium-transition response is not available. Nothing changed.' : 'These meconium-transition choices are available only in the exact declared Neonatology lesson.'); break; }
+        if (response === actions[0]) { if (this.neonatologyMeconiumSupportAtTick !== null) break; this.neonatologyMeconiumSupportAtTick = this.currentTick; this.log('info', 'assessment', `neonatology-meconium-transition-support-activated-${this.currentTick}`, 'A trained newborn-capable clinician, airway-ready birth team, shared clock, parent communication, dignity, family, and staff-support ownership were confirmed. No learner examination, suction, airway, ventilation, or other care occurred.'); break; }
+        if (this.neonatologyMeconiumSupportAtTick === null) { this.log('warning', 'assessment', `neonatology-meconium-transition-support-order-refused-${this.currentTick}`, 'Confirm prepared newborn, airway, clock, communication, and dyad support before further review.'); break; }
+        if (response === actions[1]) { if (this.neonatologyMeconiumContextAtTick !== null) break; this.neonatologyMeconiumContextAtTick = this.currentTick; this.log('info', 'assessment', `neonatology-meconium-transition-context-reconciled-${this.currentTick}`, 'The supplied gestation, birth method and clock, thin meconium-stained fluid, breathing and strong cry, good tone, heart rate, temperature, visible mouth and nose, absent apparent obstruction or increased work, parent state, preferences, support, and whole dyad were connected without learner examination, scoring, monitoring interpretation, or diagnosis.'); break; }
+        if (this.neonatologyMeconiumContextAtTick === null) { this.log('warning', 'assessment', `neonatology-meconium-transition-context-order-refused-${this.currentTick}`, 'Connect the supplied fluid, breathing, tone, heart-rate, airway-visibility, thermal, parent, and whole-dyad context before recognizing the transition pattern.'); break; }
+        if (response === actions[2]) { if (this.neonatologyMeconiumRecognitionAtTick !== null) break; this.neonatologyMeconiumRecognitionAtTick = this.currentTick; this.log('info', 'assessment', `neonatology-meconium-transition-pattern-recognized-${this.currentTick}`, 'Spontaneous breathing with strong cry, good tone, heart rate 138/min, and no apparent airway obstruction supported vigorous transition care. Meconium staining alone was not treated as an indication for routine oral, nasal, or tracheal suction, while evolving obstruction and respiratory disease stayed open.'); break; }
+        if (this.neonatologyMeconiumRecognitionAtTick === null) { this.log('warning', 'assessment', `neonatology-meconium-transition-recognition-order-refused-${this.currentTick}`, 'Recognize the supplied vigorous transition without routine-suction or durable-safety closure before boundary review.'); break; }
+        if (response === actions[3]) { if (this.neonatologyMeconiumReadinessAtTick !== null) break; this.neonatologyMeconiumReadinessAtTick = this.currentTick; this.log('info', 'assessment', `neonatology-meconium-transition-readiness-reviewed-${this.currentTick}`, 'Qualified protected skin-to-skin transition care, warmth, airway visibility, ongoing breathing assessment, parent explanation, dignity, support, and escalation readiness were reviewed. Selective mouth or nose suction remained limited to apparent obstruction when ventilation is required; tracheal suction remained limited to uncommon apparent tracheal obstruction with ineffective ventilation despite correction. No learner care was delivered.'); break; }
+        if (this.neonatologyMeconiumReadinessAtTick === null) { this.log('warning', 'assessment', `neonatology-meconium-transition-readiness-order-refused-${this.currentTick}`, 'Review qualified protective care, observation, selective airway-clearing, and escalation boundaries before the fixed report.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.neonatologyMeconiumReadinessAtTick) { this.log('warning', 'assessment', `neonatology-meconium-transition-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed qualified-team report.'); break; } if (this.neonatologyMeconiumReassessmentAtTick !== null) break; this.neonatologyMeconiumReassessmentAtTick = this.currentTick; this.log('info', 'assessment', `neonatology-meconium-transition-thirty-minute-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report at 30 minutes: breathing remains regular without apnea, grunting, retractions, or cyanosis; heart rate is 132/min, preductal SpO2 96%, temperature 36.7°C, the airway remains visible, and supervised skin-to-skin care continues. This snapshot does not exclude evolving meconium aspiration or other respiratory disease, prove durable safety, feeding success, disposition, or outcome.', { suctionPerformedByLearner: false, airwayOrVentilationManagedByLearner: false, meconiumAspirationExcluded: false, durableSafetyProven: false, outcomePredicted: false }); break; }
+        if (this.neonatologyMeconiumReassessmentAtTick === null) { this.log('warning', 'assessment', `neonatology-meconium-transition-handoff-order-refused-${this.currentTick}`, 'Review the fixed 30-minute qualified-team report before active-risk handoff.'); break; }
+        if (this.currentTick <= this.neonatologyMeconiumReassessmentAtTick) { this.log('warning', 'assessment', `neonatology-meconium-transition-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.neonatologyMeconiumHandoffAtTick !== null) break;
+        this.neonatologyMeconiumHandoffAtTick = this.currentTick; this.log('info', 'assessment', `neonatology-meconium-transition-active-risk-handoff-recorded-${this.currentTick}`, 'Birth clock and qualified care, evolving respiratory distress or obstruction, breathing and apnea, heart rate, oxygenation, temperature, glucose and feeding, infection, parent state, preferences and support, escalation triggers, documentation, review, disposition, and newborn or parent outcome uncertainty were handed off.', { meconiumAspirationExcluded: false, durableSafetyProven: false, feedingSuccessProven: false, safetyDispositionDetermined: false, newbornOutcomePredicted: false, parentOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -14602,6 +14643,15 @@ export class AnesthesiaEngine {
         systolicMmHg: this.neonatologyBradycardiaReassessmentAtTick !== null ? 50 : 44,
         diastolicMmHg: this.neonatologyBradycardiaReassessmentAtTick !== null ? 30 : 26,
         meanArterialMmHg: this.neonatologyBradycardiaReassessmentAtTick !== null ? 37 : 34, coreTemperatureC: 36.4 };
+    }
+    if (this.scenario.metadata.id === 'meconium-stained-transition'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'meconium-stained-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'meconium-stained-transition-boundary').length === 1) {
+      crisisState = { ...crisisState, heartRateBpm: this.neonatologyMeconiumReassessmentAtTick !== null ? 132 : 138,
+        respiratoryRateBpm: 44, spo2Percent: this.neonatologyMeconiumReassessmentAtTick !== null ? 96 : 88,
+        systolicMmHg: 62, diastolicMmHg: 38, meanArterialMmHg: 46,
+        coreTemperatureC: this.neonatologyMeconiumReassessmentAtTick !== null ? 36.7 : 36.8 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -19040,6 +19090,34 @@ export class AnesthesiaEngine {
               treatmentEffectProven: false as const, safetyDispositionDetermined: false as const,
               newbornOutcomePredicted: false as const, parentOutcomePredicted: false as const,
               outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'meconium-stained-transition'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'meconium-stained-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'meconium-stained-transition-boundary').length === 1 ? {
+            neonatologyMeconiumTransitionAssessment: {
+              supportAtTick: this.neonatologyMeconiumSupportAtTick,
+              contextAtTick: this.neonatologyMeconiumContextAtTick,
+              recognitionAtTick: this.neonatologyMeconiumRecognitionAtTick,
+              readinessAtTick: this.neonatologyMeconiumReadinessAtTick,
+              reassessmentAtTick: this.neonatologyMeconiumReassessmentAtTick,
+              handoffAtTick: this.neonatologyMeconiumHandoffAtTick,
+              authoredVigorousMeconiumTransition: true as const,
+              authoredQualifiedThirtyMinuteReport: this.neonatologyMeconiumReassessmentAtTick !== null,
+              newbornExaminedOrScoredByLearner: false as const,
+              monitoringOrTestsInterpretedByLearner: false as const, diagnosisMadeByLearner: false as const,
+              positioningDryingWarmingOrStimulationPerformedByLearner: false as const,
+              suctionPerformedByLearner: false as const, deviceHandledByLearner: false as const,
+              oxygenOrVentilationDeliveredByLearner: false as const,
+              airwayPlacedOrManagedByLearner: false as const,
+              compressionsAccessFluidGlucoseOrDrugDeliveredByLearner: false as const,
+              feedingPerformedByLearner: false as const, resuscitationPerformedByLearner: false as const,
+              transportOrProcedurePerformedByLearner: false as const,
+              meconiumAspirationExcluded: false as const, otherRespiratoryDiseaseExcluded: false as const,
+              durableSafetyProven: false as const, feedingSuccessProven: false as const,
+              safetyDispositionDetermined: false as const, newbornOutcomePredicted: false as const,
+              parentOutcomePredicted: false as const, outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

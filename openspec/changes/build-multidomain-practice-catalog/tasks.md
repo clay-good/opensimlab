@@ -565,6 +565,16 @@ credited toward the catalog until every item in the completion contract passes.
     ventilation delivery, airway placement or verification, compression, access, fluid, blood,
     glucose, drug, feeding, resuscitation, transport, counseling, procedure, disposition, or outcome
     controls.
+  - [x] Neonatology slice 5/11 adds one authored vigorous term transition through thin meconium-
+    stained fluid; prepared newborn-airway and parent-dyad ownership; fluid, breathing, cry, tone,
+    heart-rate, airway-visibility, thermal and whole-dyad reconciliation; recognition that meconium
+    alone is not a routine oral, nasal or tracheal suction indication; qualified protected-care,
+    observation, obstruction-triggered selective-airway-clearing and escalation-boundary review; a
+    fixed 30-minute respiratory report; and active-risk handoff without learner examination,
+    scoring, monitoring interpretation, positioning, drying, warming, suction, stimulation,
+    separation, device handling, oxygen, ventilation, airway care, compression, access, fluid,
+    glucose, drug, feeding, resuscitation, transport, counseling, procedure, diagnosis, disposition,
+    or outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and
