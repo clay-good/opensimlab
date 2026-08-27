@@ -4895,6 +4895,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified direct findings, current local neonatal-resuscitation and transfer protocols, immediate trained teams, explicit transfer of responsibility, respectful family communication, and hands-on multidisciplinary simulation.',
     briefIn: ['maternal-to-neonatal-resuscitation-handoff'],
   },
+  {
+    id: 'oxytocin-tachysystole-infusion-contraction-fetal-maternal-and-qualified-course-reports-are-authored',
+    headline: 'The oxytocin exposure, contraction and fetal-heart pattern, maternal state, qualified response, and 6-minute report are authored.',
+    simplification: 'Fixed reports stand in for infusion and line reconciliation, uterine and fetal monitoring, maternal assessment, position, signal verification, source stop, cause review, surveillance, escalation readiness, communication, and serial review.',
+    whereItMisleads: 'Treating 6 contractions, fetal-heart features, displayed maternal values, absent supplied alternatives, early recovery, or qualified source stop as learner findings, universal action thresholds, diagnosis, treatment effect, restart eligibility, birth safety, prognosis, or outcome.',
+    correctUnderstanding: 'Oxytocin-associated excessive contraction frequency must be assessed with the evolving fetal-heart pattern and whole maternal-fetal picture, with immediate qualified source reduction or stop and cause-specific response.',
+    briefIn: ['oxytocin-associated-uterine-tachysystole'],
+  },
+  {
+    id: 'oxytocin-tachysystole-controls-activate-reconcile-review-reassess-and-handoff-only',
+    headline: 'The controls activate qualified help, connect supplied facts, review pattern and readiness, read a fixed report, and hand off only.',
+    simplification: 'Six actions stand in for concurrent qualified obstetric, midwifery, anesthesia, newborn, pharmacy, theatre, leadership, timekeeping, documentation, communication, dignity, family, staff-support, surveillance, escalation, and handoff work.',
+    whereItMisleads: 'Equating button order with examination, palpation, fetal-monitor interpretation, infusion management, positioning, medication choice, birth planning, documentation quality, or competence.',
+    correctUnderstanding: 'Real response is concurrent, physical, time-critical, team-based, individualized, and locally rehearsed. Cognitive sequence practice cannot replace direct care or hands-on multidisciplinary simulation with qualified feedback.',
+    briefIn: ['oxytocin-associated-uterine-tachysystole'],
+  },
+  {
+    id: 'no-live-oxytocin-tachysystole-exam-monitor-infusion-position-oxygen-fluid-drug-birth-procedure-or-outcome',
+    headline: 'The lab does not examine, interpret monitoring, operate oxytocin, position, give oxygen, fluid, or a drug, perform birth, determine disposition, or report outcome.',
+    simplification: 'No live maternal or fetal examination, palpation, contraction or fetal-heart monitoring, signal verification, laboratory or placental assessment; infusion or line operation, position, oxygen, fluid, tocolytic or other drug, dose, fetal stimulation, amnioinfusion, anesthesia, surgery, delivery, newborn care, procedure, restart, birth-plan, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Using the rehearsal as CTG, oxytocin, position, oxygen, fluid, tocolysis, birth, newborn, or disposition instruction; delaying immediate trained response for a click; or reading completion as competence.',
+    correctUnderstanding: 'Use verified direct findings, current local protocols, immediate qualified obstetric review, cause-specific conservative measures, continuous communication and surveillance, and hands-on simulation.',
+    briefIn: ['oxytocin-associated-uterine-tachysystole'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

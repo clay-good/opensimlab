@@ -250,6 +250,15 @@ transition. No learner examination, monitoring interpretation, resuscitation, ox
 drug, dose, procedure, transport, counseling, disposition, or maternal/newborn outcome control is
 exposed.
 
+The fifteenth Obstetrics lab completes the wave with oxytocin-associated uterine tachysystole and a
+deteriorating fetal-heart pattern. It connects the infusion and contraction clock with the evolving
+fetal, maternal, labour, preference, and support picture; reviews qualified source stop, non-supine
+position, cause review, surveillance, and birth readiness; and refuses routine maternal oxygen in
+normoxia or reflex fluid without hypotension or sepsis. A fixed early improvement remains a snapshot,
+not proof of fetal safety or permission to restart. No learner examination, monitoring
+interpretation, infusion operation, position, oxygen, fluid, drug, dose, procedure, birth,
+disposition, or maternal/newborn outcome control is exposed.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

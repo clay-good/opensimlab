@@ -2179,6 +2179,23 @@
       "limitationManifestHash": "sha256:617c7908f3496ed5a18fc020ac27eca93812dccedc8e2704307882a1c7755434"
     },
     {
+      "scenarioId": "oxytocin-associated-uterine-tachysystole",
+      "contentVersion": "0.1.0",
+      "moduleId": "obstetrics",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:7d2c3ed1a03ba244e33f27f73085e2efbecdb210bd9e89a175673f08e02dd2e4",
+      "defaultsHash": "sha256:7832ee65d5ebef582a0085abd7b8d2bb41936cf09ff806bcc6addd112a581653",
+      "maturityHash": "sha256:d194ba89d8b4e09558c153ba193450ae8617bd47e19be090a4fc203ec6781628",
+      "sourceManifestHash": "sha256:2701a86baeface8187bda98df468f2d6606bd8ecb8ef4418fe4806069aedd9a9",
+      "limitationManifestHash": "sha256:01c03dc1933807024915894132a40570915bb6cc52d7ba17af75f7297e8a625c"
+    },
+    {
       "scenarioId": "postpartum-hemorrhage-uterine-atony",
       "contentVersion": "0.1.0",
       "moduleId": "obstetrics",

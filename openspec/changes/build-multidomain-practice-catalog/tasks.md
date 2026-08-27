@@ -519,6 +519,17 @@ credited toward the catalog until every item in the completion contract passes.
     monitoring or test interpretation, scoring, diagnosis, resuscitation, oxygen, ventilation,
     airway, compressions, access, fluid, blood, glucose, drug, dose, anesthesia, surgery, delivery,
     newborn care, transport, cooling, counseling, procedure, disposition or outcome controls.
+  - [x] Obstetrics slice 15/15 completes the wave with one authored oxytocin-associated uterine-
+    tachysystole pattern of 6 contractions per 10 minutes averaged over 30 minutes and a supplied
+    deteriorating fetal-heart trajectory; immediate qualified obstetric, fetal-surveillance,
+    newborn, communication, dignity and support ownership; infusion, contraction, fetal, maternal,
+    labour and whole-person reconciliation; whole-pattern recognition without trace or diagnosis
+    closure; qualified source-stop, non-supine position, cause, surveillance and birth-readiness
+    review that excludes routine oxygen in normoxia and reflex fluid without hypotension or sepsis;
+    a fixed early-recovery report; and active-risk handoff without learner examination, palpation,
+    monitoring interpretation, infusion operation, position, oxygen, fluid, drug, dose, stimulation,
+    amnioinfusion, anesthesia, surgery, delivery, newborn care, procedure, restart or birth decision,
+    disposition or outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

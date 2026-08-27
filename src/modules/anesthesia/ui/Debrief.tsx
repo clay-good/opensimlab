@@ -5325,6 +5325,31 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['activate-obstetrics-oxytocin-tachysystole-qualified-obstetric-fetal-and-support-response',
+      'reconcile-obstetrics-oxytocin-tachysystole-infusion-contraction-fetal-maternal-and-whole-person-context',
+      'recognize-obstetrics-oxytocin-tachysystole-with-fetal-heart-deterioration-without-single-trace-closure',
+      'review-obstetrics-oxytocin-tachysystole-qualified-source-stop-position-cause-and-birth-readiness',
+      'review-obstetrics-oxytocin-tachysystole-fixed-six-minute-qualified-recovery-report',
+      'handoff-obstetrics-oxytocin-tachysystole-recurrence-fetal-birth-medication-maternal-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'oxytocin-associated-uterine-tachysystole'
+        && scenario.timeline.every((event) => event.type === 'narrative')
+        && scenario.timeline.filter((event) => event.target === 'oxytocin-associated-uterine-tachysystole-transition').length === 1
+        && scenario.timeline.filter((event) => event.target === 'oxytocin-associated-uterine-tachysystole-transition-boundary').length === 1;
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Obstetrics oxytocin-tachysystole lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['support-activated', 'Senior obstetric, midwifery, anesthesia, newborn, theatre, communication, dignity, family, and support ownership was activated first.'],
+        ['context-reconciled', 'Oxytocin timing, contractions, fetal trajectory, maternal state, labour, preferences, distress, and whole-person context were connected.'],
+        ['pattern-recognized', 'Tachysystole was connected with fetal-heart deterioration without single-trace, cause, or outcome closure.'],
+        ['readiness-reviewed', 'Qualified source-stop, non-supine position, signal and cause review, surveillance, escalation, birth, newborn, communication, and support readiness were reviewed without routine oxygen or reflex fluid.'],
+        ['six-minute-report-reviewed', 'The fixed qualified early-recovery report was reviewed without learner-treatment, durable-fetal-safety, restart, birth, newborn-safety, disposition, or outcome claims.'],
+        ['active-risk-handoff-recorded', 'Recurrence, fetal, oxytocin, alternative-cause, birth, newborn, maternal, support, review, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^obstetrics-oxytocin-tachysystole-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^obstetrics-oxytocin-tachysystole-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-obstetrics-sepsis-postpartum-clock-infection-organ-dysfunction-and-whole-person',
       'recognize-obstetrics-maternal-sepsis-emergency-without-fever-score-source-or-single-value-closure',
       'activate-obstetrics-sepsis-obstetric-critical-care-anesthesia-nursing-pharmacy-microbiology-source-newborn-and-dignity-ownership',

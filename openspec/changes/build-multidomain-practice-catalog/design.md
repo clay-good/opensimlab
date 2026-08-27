@@ -2248,6 +2248,27 @@ interpretation, scoring, diagnosis, resuscitation, oxygen, ventilation, airway, 
 access, fluid, blood, glucose, drug, dose, maternal anesthesia, surgery, delivery, newborn care,
 transport, cooling, family counseling, procedure, disposition or outcome control.
 
+### Wave D obstetrics slice 15: oxytocin-associated uterine tachysystole
+
+The fifteenth lab opens during oxytocin augmentation at 40 weeks 1 day. Qualified staff supply 6
+contractions per 10 minutes averaged over 30 minutes after a recent infusion increase, plus a fetal-
+heart trajectory from a normal baseline with moderate variability to minimal variability and
+recurrent late decelerations. Maternal physiology is stable and normoxic; hypotension, fever,
+bleeding, atypical pain, meconium and signal loss are not supplied. Product, concentration, line,
+dose, rate and increment history remain outside learner control.
+
+The learner activates senior obstetric and fetal-surveillance ownership; connects infusion,
+contraction, fetal, maternal, labour and whole-person context; recognizes tachysystole with fetal-
+heart deterioration without single-trace or diagnostic closure; and reviews qualified oxytocin stop,
+non-supine position, signal and cause review, continuous surveillance, escalation and birth
+readiness. Routine maternal oxygen in normoxia and reflex fluid without hypotension or sepsis are
+explicitly excluded. A fixed 6-minute report supplies oxytocin stopped, 4 contractions in the latest
+10 minutes, moderate fetal variability without recurrent late deceleration for 4 minutes, and
+continued surveillance while durable safety, cause, restart, birth and outcomes stay open. Six
+controls expose no learner examination, palpation, monitoring interpretation, infusion operation,
+position, oxygen, fluid, drug, dose, fetal stimulation, amnioinfusion, anesthesia, surgery, delivery,
+newborn care, procedure, restart or birth decision, disposition or outcome control.
+
 #### Neonatology: 11
 
 Term newborn transition; neonatal apnea; ineffective ventilation correction; neonatal bradycardia;

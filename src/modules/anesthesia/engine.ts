@@ -553,6 +553,10 @@ const OBSTETRICS_MATERNAL_NEONATAL_HANDOFF_BLOCKED_ACTION_TYPES = new Set([
   ...OBSTETRICS_FAILED_INTUBATION_BLOCKED_ACTION_TYPES,
   'failed-obstetric-intubation-oxygenation-first-response',
 ]);
+const OBSTETRICS_OXYTOCIN_TACHYSYSTOLE_BLOCKED_ACTION_TYPES = new Set([
+  ...OBSTETRICS_MATERNAL_NEONATAL_HANDOFF_BLOCKED_ACTION_TYPES,
+  'maternal-to-neonatal-resuscitation-handoff-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1564,6 +1568,12 @@ export class AnesthesiaEngine {
   private obstetricsMaternalNeonatalHandoffTransferAtTick: number | null = null;
   private obstetricsMaternalNeonatalHandoffReassessmentAtTick: number | null = null;
   private obstetricsMaternalNeonatalHandoffHandoffAtTick: number | null = null;
+  private obstetricsOxytocinTachysystoleSupportAtTick: number | null = null;
+  private obstetricsOxytocinTachysystoleContextAtTick: number | null = null;
+  private obstetricsOxytocinTachysystoleRecognitionAtTick: number | null = null;
+  private obstetricsOxytocinTachysystoleReadinessAtTick: number | null = null;
+  private obstetricsOxytocinTachysystoleReassessmentAtTick: number | null = null;
+  private obstetricsOxytocinTachysystoleHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2567,6 +2577,14 @@ export class AnesthesiaEngine {
     if (obstetricsMaternalNeonatalHandoff && OBSTETRICS_MATERNAL_NEONATAL_HANDOFF_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `obstetrics-maternal-neonatal-handoff-generic-action-refused-${this.currentTick}`,
         'This Obstetrics lesson exposes no generic maternal or newborn examination, monitoring or test interpretation, diagnosis, resuscitation, oxygen, ventilation, airway, compressions, access, fluid, blood, glucose, drug, dose, anesthesia, surgery, birth, newborn care, transport, cooling, procedure, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const obstetricsOxytocinTachysystole = this.scenario.metadata.id === 'oxytocin-associated-uterine-tachysystole'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'oxytocin-associated-uterine-tachysystole-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'oxytocin-associated-uterine-tachysystole-transition-boundary').length === 1;
+    if (obstetricsOxytocinTachysystole && OBSTETRICS_OXYTOCIN_TACHYSYSTOLE_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `obstetrics-oxytocin-tachysystole-generic-action-refused-${this.currentTick}`,
+        'This Obstetrics lesson exposes no generic examination, palpation, fetal-monitor interpretation, diagnosis, infusion operation, position, oxygen, fluid, tocolytic or other drug, dose, fetal stimulation, amnioinfusion, anesthesia, surgery, delivery, newborn care, procedure, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -11331,6 +11349,33 @@ export class AnesthesiaEngine {
         if (this.obstetricsMaternalNeonatalHandoffHandoffAtTick !== null) break;
         this.obstetricsMaternalNeonatalHandoffHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-maternal-neonatal-handoff-active-risk-handoff-recorded-${this.currentTick}`, 'Newborn breathing, oxygenation, ventilation, temperature, glucose, neurologic state, recurrence, cord gases, placental findings, monitored-care needs, maternal recovery, anesthesia and surgery, separation, feeding, attachment, explanation, family and staff support, documentation, debriefing, follow-up, disposition, prognosis, and maternal or newborn outcome uncertainty were handed off.', { newbornStabilityProven: false, newbornNeurologicSafetyProven: false, maternalRecoveryProven: false, placentalCauseDetermined: false, familyCommunicationCompletedByLearner: false, dispositionDetermined: false, maternalOutcomePredicted: false, newbornOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'oxytocin-associated-uterine-tachysystole-response': {
+        const response = typeof action.payload?.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'oxytocin-associated-uterine-tachysystole'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'oxytocin-associated-uterine-tachysystole-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'oxytocin-associated-uterine-tachysystole-transition-boundary').length === 1;
+        const actions = ['activate-obstetrics-oxytocin-tachysystole-qualified-obstetric-fetal-and-support-response',
+          'reconcile-obstetrics-oxytocin-tachysystole-infusion-contraction-fetal-maternal-and-whole-person-context',
+          'recognize-obstetrics-oxytocin-tachysystole-with-fetal-heart-deterioration-without-single-trace-closure',
+          'review-obstetrics-oxytocin-tachysystole-qualified-source-stop-position-cause-and-birth-readiness',
+          'review-obstetrics-oxytocin-tachysystole-fixed-six-minute-qualified-recovery-report',
+          'handoff-obstetrics-oxytocin-tachysystole-recurrence-fetal-birth-medication-maternal-and-outcome-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `obstetrics-oxytocin-tachysystole-response-refused-${this.currentTick}`, supported ? 'The oxytocin-tachysystole action was not listed. No supplied or injected text was retained.' : 'These oxytocin-tachysystole choices are available only in the exact declared Obstetrics lesson.'); break; }
+        if (response === actions[0]) { if (this.obstetricsOxytocinTachysystoleSupportAtTick !== null) break; this.obstetricsOxytocinTachysystoleSupportAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-oxytocin-tachysystole-support-activated-${this.currentTick}`, 'Senior obstetric, midwifery or nursing, anesthesia, newborn, pharmacy, theatre, leadership, timekeeping, documentation, communication, dignity, family, and staff-support ownership was activated. No learner examination, infusion operation, position, oxygen, fluid, drug, birth, or procedure action occurred.'); break; }
+        if (this.obstetricsOxytocinTachysystoleSupportAtTick === null) { this.log('warning', 'assessment', `obstetrics-oxytocin-tachysystole-support-order-refused-${this.currentTick}`, 'Activate the prepared qualified obstetric and fetal-surveillance response before further review.'); break; }
+        if (response === actions[1]) { if (this.obstetricsOxytocinTachysystoleContextAtTick !== null) break; this.obstetricsOxytocinTachysystoleContextAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-oxytocin-tachysystole-context-reconciled-${this.currentTick}`, 'The supplied oxytocin and change clock, contraction frequency and duration, fetal baseline, variability and decelerations, maternal observations, labour progress, position, bleeding, pain, temperature, medications, preferences, distress, support, and whole person were connected without learner examination, palpation, monitoring interpretation, diagnosis, or care.'); break; }
+        if (this.obstetricsOxytocinTachysystoleContextAtTick === null) { this.log('warning', 'assessment', `obstetrics-oxytocin-tachysystole-context-order-refused-${this.currentTick}`, 'Connect the supplied infusion, contraction, fetal, maternal, labour, and whole-person trajectory before pattern recognition.'); break; }
+        if (response === actions[2]) { if (this.obstetricsOxytocinTachysystoleRecognitionAtTick !== null) break; this.obstetricsOxytocinTachysystoleRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-oxytocin-tachysystole-pattern-recognized-${this.currentTick}`, 'Six contractions in 10 minutes averaged over 30 minutes were recognized as tachysystole and connected with the supplied fetal-heart deterioration. The tracing remained one tool inside the maternal-fetal clinical picture; signal artifact, maternal, uterine, placental, cord, medication, fetal, and other causes stayed open without diagnostic closure or delay.'); break; }
+        if (this.obstetricsOxytocinTachysystoleRecognitionAtTick === null) { this.log('warning', 'assessment', `obstetrics-oxytocin-tachysystole-recognition-order-refused-${this.currentTick}`, 'Recognize the supplied contraction and fetal-heart trajectory without single-trace closure before readiness review.'); break; }
+        if (response === actions[3]) { if (this.obstetricsOxytocinTachysystoleReadinessAtTick !== null) break; this.obstetricsOxytocinTachysystoleReadinessAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-oxytocin-tachysystole-readiness-reviewed-${this.currentTick}`, 'Qualified oxytocin stop, non-supine position, signal verification, cause correction, continuous surveillance, tocolysis and expedited-birth readiness, newborn preparation, explanation, documentation, dignity, and support were reviewed. Routine maternal oxygen in normoxia, reflex fluid without hypotension or sepsis, amnioinfusion, learner infusion operation, position, drug, dose, or birth action were excluded.'); break; }
+        if (this.obstetricsOxytocinTachysystoleReadinessAtTick === null) { this.log('warning', 'assessment', `obstetrics-oxytocin-tachysystole-readiness-order-refused-${this.currentTick}`, 'Review qualified source-stop, position, cause, surveillance, escalation, birth, newborn, and support readiness before the fixed report.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.obstetricsOxytocinTachysystoleReadinessAtTick) { this.log('warning', 'assessment', `obstetrics-oxytocin-tachysystole-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed qualified-team recovery report.'); break; } if (this.obstetricsOxytocinTachysystoleReassessmentAtTick !== null) break; this.obstetricsOxytocinTachysystoleReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-oxytocin-tachysystole-six-minute-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report 6 minutes after activation: oxytocin is stopped, there are 4 contractions in the latest 10 minutes, and the fetal baseline is 145/min with moderate variability and no recurrent late deceleration for 4 minutes. Maternal physiology is unchanged and one-to-one surveillance continues. This early recovery does not determine durable fetal safety, cause, oxytocin restart, labour or birth plan, newborn state, disposition, or outcome.', { infusionOperatedByLearner: false, positionChangedByLearner: false, oxygenOrFluidDeliveredByLearner: false, drugOrDoseSelectedByLearner: false, fetalRecoveryProven: false, restartEligibilityDetermined: false, birthPlanDetermined: false, outcomePredicted: false }); break; }
+        if (this.obstetricsOxytocinTachysystoleReassessmentAtTick === null) { this.log('warning', 'assessment', `obstetrics-oxytocin-tachysystole-handoff-order-refused-${this.currentTick}`, 'Review the fixed 6-minute qualified-team report before active-risk handoff.'); break; }
+        if (this.currentTick <= this.obstetricsOxytocinTachysystoleReassessmentAtTick) { this.log('warning', 'assessment', `obstetrics-oxytocin-tachysystole-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.obstetricsOxytocinTachysystoleHandoffAtTick !== null) break;
+        this.obstetricsOxytocinTachysystoleHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-oxytocin-tachysystole-active-risk-handoff-recorded-${this.currentTick}`, 'Tachysystole recurrence, fetal hypoxia and surveillance, oxytocin and line reconciliation, alternative maternal, uterine, placental, cord, medication and fetal causes, tocolysis and urgent-birth readiness, maternal status, labour, newborn preparation, explanation, family and staff support, documentation, review, disposition, prognosis, and maternal or newborn outcome uncertainty were handed off.', { fetalRecoveryProven: false, restartEligibilityDetermined: false, birthPlanDetermined: false, newbornSafetyProven: false, safetyDispositionDetermined: false, maternalOutcomePredicted: false, newbornOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -14349,6 +14394,14 @@ export class AnesthesiaEngine {
       crisisState = { ...crisisState, heartRateBpm: 98, respiratoryRateBpm: 16,
         spo2Percent: 98, systolicMmHg: 112, diastolicMmHg: 62,
         meanArterialMmHg: 79, coreTemperatureC: 36.8 };
+    }
+    if (this.scenario.metadata.id === 'oxytocin-associated-uterine-tachysystole'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'oxytocin-associated-uterine-tachysystole-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'oxytocin-associated-uterine-tachysystole-transition-boundary').length === 1) {
+      crisisState = { ...crisisState, heartRateBpm: 92, respiratoryRateBpm: 18,
+        spo2Percent: 98, systolicMmHg: 122, diastolicMmHg: 68,
+        meanArterialMmHg: 86, coreTemperatureC: 36.9 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -18650,6 +18703,32 @@ export class AnesthesiaEngine {
               maternalRecoveryProven: false as const, placentalCauseDetermined: false as const,
               safetyDispositionDetermined: false as const, maternalOutcomePredicted: false as const,
               newbornOutcomePredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'oxytocin-associated-uterine-tachysystole'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'oxytocin-associated-uterine-tachysystole-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'oxytocin-associated-uterine-tachysystole-transition-boundary').length === 1 ? {
+            obstetricsOxytocinTachysystoleAssessment: {
+              supportAtTick: this.obstetricsOxytocinTachysystoleSupportAtTick,
+              contextAtTick: this.obstetricsOxytocinTachysystoleContextAtTick,
+              recognitionAtTick: this.obstetricsOxytocinTachysystoleRecognitionAtTick,
+              readinessAtTick: this.obstetricsOxytocinTachysystoleReadinessAtTick,
+              reassessmentAtTick: this.obstetricsOxytocinTachysystoleReassessmentAtTick,
+              handoffAtTick: this.obstetricsOxytocinTachysystoleHandoffAtTick,
+              authoredOxytocinTachysystolePattern: true as const,
+              authoredQualifiedEarlyRecovery: this.obstetricsOxytocinTachysystoleReassessmentAtTick !== null,
+              patientExaminedOrPalpatedByLearner: false as const,
+              monitoringOrTestsInterpretedByLearner: false as const, diagnosisMadeByLearner: false as const,
+              infusionOperatedByLearner: false as const, positionChangedByLearner: false as const,
+              oxygenOrFluidDeliveredByLearner: false as const, drugOrDoseSelectedByLearner: false as const,
+              fetalStimulationOrAmnioinfusionPerformedByLearner: false as const,
+              anesthesiaSurgeryOrDeliveryPerformedByLearner: false as const,
+              newbornCarePerformedByLearner: false as const, fetalRecoveryProven: false as const,
+              restartEligibilityDetermined: false as const, birthPlanDetermined: false as const,
+              newbornSafetyProven: false as const, safetyDispositionDetermined: false as const,
+              maternalOutcomePredicted: false as const, newbornOutcomePredicted: false as const,
+              outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

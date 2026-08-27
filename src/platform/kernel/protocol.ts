@@ -2913,6 +2913,24 @@ export interface EquipmentSnapshot {
       readonly safetyDispositionDetermined: false; readonly maternalOutcomePredicted: false;
       readonly newbornOutcomePredicted: false; readonly outcomePredicted: false;
     };
+    readonly obstetricsOxytocinTachysystoleAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly authoredOxytocinTachysystolePattern: true;
+      readonly authoredQualifiedEarlyRecovery: boolean;
+      readonly patientExaminedOrPalpatedByLearner: false;
+      readonly monitoringOrTestsInterpretedByLearner: false; readonly diagnosisMadeByLearner: false;
+      readonly infusionOperatedByLearner: false; readonly positionChangedByLearner: false;
+      readonly oxygenOrFluidDeliveredByLearner: false; readonly drugOrDoseSelectedByLearner: false;
+      readonly fetalStimulationOrAmnioinfusionPerformedByLearner: false;
+      readonly anesthesiaSurgeryOrDeliveryPerformedByLearner: false;
+      readonly newbornCarePerformedByLearner: false; readonly fetalRecoveryProven: false;
+      readonly restartEligibilityDetermined: false; readonly birthPlanDetermined: false;
+      readonly newbornSafetyProven: false; readonly safetyDispositionDetermined: false;
+      readonly maternalOutcomePredicted: false; readonly newbornOutcomePredicted: false;
+      readonly outcomePredicted: false;
+    };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {
       readonly cuesReviewedAtTick: number | null;

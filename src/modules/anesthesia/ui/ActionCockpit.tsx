@@ -1320,6 +1320,11 @@ export interface ActionCockpitProps {
       readonly safetyAtTick: number | null; readonly transferAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly obstetricsOxytocinTachysystoleAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2380,6 +2385,14 @@ export interface ActionCockpitProps {
       | 'review-obstetrics-maternal-neonatal-handoff-fixed-five-minute-qualified-course-report'
       | 'handoff-obstetrics-maternal-neonatal-postresuscitation-monitoring-maternal-family-and-outcome-risk',
   ) => void;
+  readonly onObstetricsOxytocinTachysystoleResponse?: (
+    action: 'activate-obstetrics-oxytocin-tachysystole-qualified-obstetric-fetal-and-support-response'
+      | 'reconcile-obstetrics-oxytocin-tachysystole-infusion-contraction-fetal-maternal-and-whole-person-context'
+      | 'recognize-obstetrics-oxytocin-tachysystole-with-fetal-heart-deterioration-without-single-trace-closure'
+      | 'review-obstetrics-oxytocin-tachysystole-qualified-source-stop-position-cause-and-birth-readiness'
+      | 'review-obstetrics-oxytocin-tachysystole-fixed-six-minute-qualified-recovery-report'
+      | 'handoff-obstetrics-oxytocin-tachysystole-recurrence-fetal-birth-medication-maternal-and-outcome-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2453,6 +2466,11 @@ export function crisisResponseAvailability(
     && scenario.timeline.every((event) => event.type === 'narrative')
     && scenario.timeline.filter((event) => event.target === 'maternal-to-neonatal-resuscitation-handoff-transition').length === 1
     && scenario.timeline.filter((event) => event.target === 'maternal-to-neonatal-resuscitation-handoff-transition-boundary').length === 1;
+  const hasObstetricsOxytocinTachysystoleResponse =
+    scenario.metadata.id === 'oxytocin-associated-uterine-tachysystole'
+    && scenario.timeline.every((event) => event.type === 'narrative')
+    && scenario.timeline.filter((event) => event.target === 'oxytocin-associated-uterine-tachysystole-transition').length === 1
+    && scenario.timeline.filter((event) => event.target === 'oxytocin-associated-uterine-tachysystole-transition-boundary').length === 1;
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -3009,6 +3027,7 @@ export function crisisResponseAvailability(
     hasObstetricsHighNeuraxialResponse,
     hasObstetricsFailedIntubationResponse,
     hasObstetricsMaternalNeonatalHandoffResponse,
+    hasObstetricsOxytocinTachysystoleResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3237,6 +3256,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'high-neuraxial-block-obstetric-coordination-transition')
       || (event.type === 'narrative' && event.target === 'failed-obstetric-intubation-oxygenation-first-transition')
       || (event.type === 'narrative' && event.target === 'maternal-to-neonatal-resuscitation-handoff-transition')
+      || (event.type === 'narrative' && event.target === 'oxytocin-associated-uterine-tachysystole-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3353,6 +3373,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasObstetricsHighNeuraxialResponse,
     hasObstetricsFailedIntubationResponse,
     hasObstetricsMaternalNeonatalHandoffResponse,
+    hasObstetricsOxytocinTachysystoleResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3496,8 +3517,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasObstetricsHighNeuraxialResponse
     || hasObstetricsFailedIntubationResponse
     || hasObstetricsMaternalNeonatalHandoffResponse
+    || hasObstetricsOxytocinTachysystoleResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasObstetricsMaternalNeonatalHandoffResponse
+  const responseTray = hasObstetricsOxytocinTachysystoleResponse
+    ? { id: 'crisis', label: 'Contractions + fetus' } as const
+    : hasObstetricsMaternalNeonatalHandoffResponse
     ? { id: 'crisis', label: 'Two-patient handoff' } as const
     : hasObstetricsFailedIntubationResponse
     ? { id: 'crisis', label: 'Oxygenation + decision' } as const
@@ -3907,6 +3931,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasObstetricsHighNeuraxialResponse
     || hasObstetricsFailedIntubationResponse
     || hasObstetricsMaternalNeonatalHandoffResponse
+    || hasObstetricsOxytocinTachysystoleResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -4828,6 +4853,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasObstetricsMaternalNeonatalHandoffResponse && (
               <ObstetricsMaternalNeonatalHandoffTray assessment={props.resuscitation.obstetricsMaternalNeonatalHandoffAssessment}
                 onAction={props.onObstetricsMaternalNeonatalHandoffResponse ?? (() => {})} />
+            )}
+            {hasObstetricsOxytocinTachysystoleResponse && (
+              <ObstetricsOxytocinTachysystoleTray assessment={props.resuscitation.obstetricsOxytocinTachysystoleAssessment}
+                onAction={props.onObstetricsOxytocinTachysystoleResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -12073,6 +12102,38 @@ function ObstetricsMaternalNeonatalHandoffTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {transfer && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-maternal-neonatal-handoff-fixed-five-minute-qualified-course-report')}>Review the fixed 5-minute report</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-obstetrics-maternal-neonatal-postresuscitation-monitoring-maternal-family-and-outcome-risk')}>Hand off active two-patient risk</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function ObstetricsOxytocinTachysystoleTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['obstetricsOxytocinTachysystoleAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onObstetricsOxytocinTachysystoleResponse']>;
+}) {
+  const support = assessment?.supportAtTick != null;
+  const context = assessment?.contextAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const readiness = assessment?.readinessAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="obstetrics-oxytocin-tachysystole-now-title">
+      <div id="obstetrics-oxytocin-tachysystole-now-title" className="syringe__name">Reduce the uterine load. Keep the whole pair visible.</div>
+      <p className="syringe__remaining">Connect oxytocin, contractions, fetal trajectory, maternal state, labour, and preferences. Every physical intervention stays with the qualified team.</p>
+      <div className="crisis-drug__actions">
+        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-obstetrics-oxytocin-tachysystole-qualified-obstetric-fetal-and-support-response')}>Activate qualified response</Button>}
+        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-obstetrics-oxytocin-tachysystole-infusion-contraction-fetal-maternal-and-whole-person-context')}>Connect contractions + whole person</Button>}
+        {context && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-obstetrics-oxytocin-tachysystole-with-fetal-heart-deterioration-without-single-trace-closure')}>Recognize the whole pattern</Button>}
+        {recognition && !readiness && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-oxytocin-tachysystole-qualified-source-stop-position-cause-and-birth-readiness')}>Review qualified response</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="obstetrics-oxytocin-tachysystole-later-title">
+      <div id="obstetrics-oxytocin-tachysystole-later-title" className="syringe__name">A calmer trace is a new snapshot, not permission to close.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Recurrence, fetal, birth, medication, maternal, support, and outcome risks handed off.' : reassessment ? 'Contraction frequency and the fetal report improve. Durable safety, restart, birth, and outcomes remain open.' : readiness ? 'Qualified correction and surveillance are active. Review the fixed report after time passes.' : support ? 'The response is active. Connect the whole trajectory before naming the pattern.' : 'Begin with calm shared ownership and stay with the patient. You can pause or leave this practice at any time.'}</p>
+      <div className="crisis-drug__actions">
+        {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-oxytocin-tachysystole-fixed-six-minute-qualified-recovery-report')}>Review the fixed 6-minute report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-obstetrics-oxytocin-tachysystole-recurrence-fetal-birth-medication-maternal-and-outcome-risk')}>Hand off active fetal risk</Button>}
       </div>
     </section>
   </>;

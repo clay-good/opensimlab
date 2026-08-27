@@ -13,6 +13,7 @@ import { MAGNESIUM_SULFATE_TOXICITY_RECOGNITION } from './magnesium-sulfate-toxi
 import { HIGH_NEURAXIAL_BLOCK_OBSTETRIC_COORDINATION } from './high-neuraxial-block-obstetric-coordination';
 import { FAILED_OBSTETRIC_INTUBATION_OXYGENATION_FIRST } from './failed-obstetric-intubation-oxygenation-first';
 import { MATERNAL_TO_NEONATAL_RESUSCITATION_HANDOFF } from './maternal-to-neonatal-resuscitation-handoff';
+import { OXYTOCIN_ASSOCIATED_UTERINE_TACHYSYSTOLE } from './oxytocin-associated-uterine-tachysystole';
 
 export const OBSTETRICS_SCENARIOS: readonly Scenario[] = [
   POSTPARTUM_HEMORRHAGE_UTERINE_ATONY,
@@ -29,6 +30,7 @@ export const OBSTETRICS_SCENARIOS: readonly Scenario[] = [
   HIGH_NEURAXIAL_BLOCK_OBSTETRIC_COORDINATION,
   FAILED_OBSTETRIC_INTUBATION_OXYGENATION_FIRST,
   MATERNAL_TO_NEONATAL_RESUSCITATION_HANDOFF,
+  OXYTOCIN_ASSOCIATED_UTERINE_TACHYSYSTOLE,
 ];
 export const DEFAULT_OBSTETRICS_SCENARIO_ID = POSTPARTUM_HEMORRHAGE_UTERINE_ATONY.metadata.id;
 

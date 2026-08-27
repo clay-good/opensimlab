@@ -1183,6 +1183,9 @@ export function Cockpit({
           onObstetricsMaternalNeonatalHandoffResponse={(action) => session.act({
             type: 'maternal-to-neonatal-resuscitation-handoff-response', payload: { action },
           })}
+          onObstetricsOxytocinTachysystoleResponse={(action) => session.act({
+            type: 'oxytocin-associated-uterine-tachysystole-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}
