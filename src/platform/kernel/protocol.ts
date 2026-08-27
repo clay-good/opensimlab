@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 170 adds the authored AVP-deficiency dehydration snapshot. */
-export const WORKER_PROTOCOL_VERSION = 170;
+/** Version 171 adds the authored refeeding electrolyte-shift snapshot. */
+export const WORKER_PROTOCOL_VERSION = 171;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -154,6 +154,26 @@ export interface ReadyMessage {
  * request rather than the result teaches the learner to trust a number that is
  * not true (cockpit/action-cockpit → the tray reflects the patient).
  */
+export interface RefeedingSnapshot {
+  readonly supportActive: boolean;
+  readonly contextReviewedAtTick: number | null; readonly monitoringAtTick: number | null;
+  readonly thiamineAtTick: number | null; readonly phosphateAtTick: number | null;
+  readonly completeElectrolytesAtTick: number | null; readonly nutritionPlanAtTick: number | null;
+  readonly electrolyteDueInSeconds: number | null; readonly responseDueInSeconds: number | null;
+  readonly electrolyteResponseObserved: boolean; readonly responseObserved: boolean;
+  readonly recurrentDeclineObserved: boolean;
+  readonly feedingAdvanceAttempted: boolean; readonly monitoringStopAttempted: boolean;
+  readonly observation: {
+    readonly atTick: number; readonly phosphateMmolL: number; readonly potassiumMmolL: number; readonly magnesiumMmolL: number;
+    readonly systolicMmHg: number; readonly diastolicMmHg: number; readonly meanArterialMmHg: number;
+    readonly heartRateBpm: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string; readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true; readonly doseModelAvailable: false; readonly durableRecoveryProven: false;
+}
+
 export interface AvpDeficiencySnapshot {
   readonly supportActive: boolean;
   readonly contextReviewedAtTick: number | null; readonly monitoringAtTick: number | null;
@@ -3322,6 +3342,7 @@ export interface EquipmentSnapshot {
     readonly myxedema?: MyxedemaSnapshot;
     readonly hypercalcemia?: HypercalcemiaSnapshot;
     readonly avpDeficiency?: AvpDeficiencySnapshot;
+    readonly refeeding?: RefeedingSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

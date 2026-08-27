@@ -407,6 +407,13 @@ response. The nine-decision example preserves reading pauses and continuing-care
 No dose, fluid-deficit calculator, automatic redosing, or discharge clearance is supplied.
 Clinical review, the complete inclusive-runtime matrix, and production reporting remain pending.
 
+The eleventh Endocrine lab follows weakness and falling electrolytes after nutrition restarts.
+Compare phosphate-only care with comprehensive replacement, coordinate thiamine and individualized
+nutrition review, and request fresh findings through partial improvement or recurrent decline.
+The nine-decision example pauses for reading; the same private report dialog is available throughout.
+No universal feeding rate, dose, predicted injury, or discharge clearance is taught. Clinical,
+quality-matrix, full inclusive-runtime, and production reporting evidence remain pending.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

@@ -7,6 +7,7 @@ import { hypercalcemiaCompletionEvidence } from '../../endocrine-metabolic/hyper
 import { hypocalcemiaCompletionEvidence } from '../../endocrine-metabolic/hypocalcemia-completion';
 import { hyponatremiaCorrectionCompletionEvidence } from '../../endocrine-metabolic/hyponatremia-correction-completion';
 import { avpDeficiencyCompletionEvidence } from '../../endocrine-metabolic/avp-deficiency-completion';
+import { refeedingCompletionEvidence } from '../../endocrine-metabolic/refeeding-completion';
 import {
   COMPLETION_SCHEMA_VERSION,
   type CompletionRequirementAudit,
@@ -95,6 +96,7 @@ export function auditClinicalScenario(
     ...hypocalcemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...hyponatremiaCorrectionCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...avpDeficiencyCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...refeedingCompletionEvidence(scenario, capabilityVersion, moduleId),
   ].map((entry) => [entry.id, entry]));
   const auditedRequirements = requirements.map((entry) => exactEvidence.get(entry.id) ?? entry);
   return {

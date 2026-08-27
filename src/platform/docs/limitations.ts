@@ -27,6 +27,30 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'refeeding-authored-contrasts',
+    headline: 'Electrolyte and vital-sign changes are authored contrasts, not replacement kinetics.',
+    simplification: 'Fixed partial, comprehensive, recurrent, and combined-care branches use 30- and 60-minute observation checkpoints. No dose, route, calorie calculation, or physiologic nutrition solver exists.',
+    whereItMisleads: 'A learner treats a response clock as a safe wait or expects the same numerical response in a patient.',
+    correctUnderstanding: 'Qualified care and reassessment are individualized. Teaching clocks and instructor stops are not clinical deadlines or predictions of arrhythmia, injury, or recovery.',
+    briefIn: ['refeeding-electrolyte-shift'],
+  },
+  {
+    id: 'refeeding-individualized-nutrition',
+    headline: 'Nutrition review does not prescribe a universal rate or stop all feeding.',
+    simplification: 'The selected adult already has severe feeding-associated electrolyte deterioration. A dose-free request covers individualized nutrition, dextrose, fluid, and advancement review.',
+    whereItMisleads: 'The lesson is generalized to every at-risk patient, or reducing or stopping all nutrition is treated as universally required or forbidden.',
+    correctUnderstanding: 'Guidance differs on prevention and feeding advancement. Qualified teams balance current severity, ongoing nutrition needs, supplementation, and local protocols; other causes remain open.',
+    briefIn: ['refeeding-electrolyte-shift'],
+  },
+  {
+    id: 'refeeding-observed-findings',
+    headline: 'A better phosphate result alone does not establish correction or durable safety.',
+    simplification: 'Only explicit reassessment reveals new phosphate, potassium, and magnesium values. Thiamine creates no invented immediate laboratory effect.',
+    whereItMisleads: 'Accepted care, elapsed time, or a single historical result is mistaken for normalization, thiamine sufficiency, or discharge readiness.',
+    correctUnderstanding: 'Continue qualified assessment of all deficiencies, symptoms, rhythm, fluid balance, nutrition, and cause. This interface cannot assess hands-on care or certify competence.',
+    briefIn: ['refeeding-electrolyte-shift'],
+  },
+  {
     id: 'avp-deficiency-authored-checkpoints',
     headline: 'Circulation, urine, and sodium changes are authored contrasts, not treatment kinetics.',
     simplification: 'The 15-minute circulation, 30-minute urine, and 120-minute combined-care checkpoints are fixed. Unrequested laboratory findings remain private; later requested values remain historical. Teaching stops bound untreated and unfinished branches.',

@@ -1,7 +1,29 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 304,
+  "sourceCount": 306,
   "sources": [
+    {
+      "id": "aspen-refeeding-2020",
+      "authors": "da Silva JSV, Seres DS, Sabino K, et al",
+      "title": "ASPEN Consensus Recommendations for Refeeding Syndrome",
+      "publication": "Nutrition in Clinical Practice",
+      "year": 2020,
+      "locator": "35:178–195; doi:10.1002/ncp.10474; adult Table 6 and treatment discussion; erratum doi:10.1002/ncp.10491",
+      "usedFor": "Coordinated electrolyte and vitamin care, calorie-source review, individualized nutrition adjustment, and continuing surveillance in established feeding-associated deterioration. No numerical dosing or predicted response is adopted.",
+      "verifiedAgainst": "Full publisher article and April 2020 erratum; erratum corrects risk tables rather than adult treatment Table 6.",
+      "verifiedOn": "2026-08-27"
+    },
+    {
+      "id": "auspen-refeeding-2025",
+      "authors": "Matthews-Rensch K, et al",
+      "title": "The Australasian Society of Parenteral and Enteral Nutrition: Consensus statements on refeeding syndrome",
+      "publication": "Nutrition & Dietetics",
+      "year": 2025,
+      "locator": "doi:10.1111/1747-0080.70003; §§3.3, 3.5–3.7",
+      "usedFor": "Distinguish nutrition risk from established deterioration, avoid unnecessary underfeeding, and individualize advancement with electrolyte and clinical monitoring. Not a universal cessation or feeding-rate rule.",
+      "verifiedAgainst": "Issuing-body May 2025 consensus PDF, especially pp. 11–17, and publisher DOI; authored clocks and patient values are not source-derived.",
+      "verifiedOn": "2026-08-27"
+    },
     {
       "id": "sfe-inpatient-avp-deficiency-2018",
       "authors": "Baldeweg SE, Ball S, Brooke A, et al",

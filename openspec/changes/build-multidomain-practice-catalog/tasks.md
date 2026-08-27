@@ -1091,6 +1091,40 @@ credited toward the catalog until every item in the completion contract passes.
     clocks and sodium/urine branches remain authored, with no dose, rate, deficit calculation,
     automatic redose, neurologic-injury prediction, or discharge claim. Deploy the reports catalog
     before new client content; 210 current and historical report identities remain available.
+  - [x] Endocrine/metabolic slice 11/12 registers feeding-associated electrolyte deterioration with
+    independent qualified electrolyte, thiamine, nutrition-review, and surveillance decisions.
+    Phosphate-only treatment is accepted partial care, not a complete response or automatic error.
+    Explicit assessments expose authored early improvement, incomplete-care recurrence, and later
+    combined-care partial response. Prior choices and observed recurrence survive recovery; new
+    laboratory values never arrive through elapsed clocks. ASPEN and AuSPEN feeding-policy
+    differences remain visible without a universal rate, calorie calculation, or stop-feeding rule.
+    The registry now contains 203 scenarios, including 11 endocrine previews, not 203 completed labs.
+  - [x] Add a nine-decision learner-paused refeeding example, observed-state private tutor, causal
+    debrief, nonvisual summaries, and the shared centered 160-character report on its route surfaces.
+    Twenty-seven model checks, ten full-engine path checks, and five real-session checks cover
+    partial/comprehensive care, alternative orders, timing boundaries, every-frame expert/error/
+    recovery/no-action replay, reading pauses, takeover, stale callbacks, reset, and reporting pauses.
+    Twenty-two report-mapping checks and ten real-form route checks restrict opt-in context to seven
+    live vitals, 24 observed equipment scalars, and uniquely matched action outcomes. No production
+    report was submitted. All 210 previous client and Worker report records remain immutable.
+  - [x] Repair the shared empty-episode debrief inference: not crossing two pressure/oxygen
+    thresholds no longer asserts a good outcome or rules out other deterioration. Four rendered
+    refeeding debrief regressions failed first, then passed for expert, recovery, partial-care, and
+    no-action runs; 24 shared debrief checks also pass. Scenario scoring and other patient models
+    were not changed by this wording correction.
+  - [x] Verify refeeding integration with full CI: 4,370 tests across 504 files, 30 strict specs,
+    type/lint, public readiness, 227 static routes, and 44 catalog artifacts pass. All 224 crawlable
+    routes pass indexability checks. Landing/cockpit/offline budgets are 148.2/1,526.1/3,404.4 KiB;
+    fonts are 86.2 KiB. Rechecked neighboring model, replay, UI, reporting, and quality tests before
+    repinning only changed shared dependencies: six hypocalcemia, ten hyponatremia, and twelve AVP
+    entries. Their authored quality records remain unchanged. The actual preview release refuses
+    218 publication blockers; local verification does not supply missing clinical or runtime gates.
+  - [ ] Complete refeeding independent clinical review, four exact-version quality records,
+    full inclusive-runtime verification, and production Turnstile/D1 evidence. Desktop browser
+    checks at 1,280 × 720 confirmed paused reading and a centered 560 × 619 report dialog, its
+    160-character limit, unchecked optional context, cancel focus return, and unchanged patient
+    clock. This does not establish phone, assistive-technology, or live-service validation. Deploy
+    the reports catalog before new client content; 211 current/historical report identities exist.
   - [x] Repair service-worker release consistency. Build-stamped SHA-256 integrity checks reject
     mixed or incomplete installations; active snapshots are immutable. Explicit acceptance waits
     for the intended controller before reloading only that tab. Durable per-client release pins

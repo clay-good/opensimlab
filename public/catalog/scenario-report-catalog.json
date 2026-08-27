@@ -1992,6 +1992,23 @@
       "limitationManifestHash": "sha256:11918f0365bdd85369a425c3ec76ed885963697d37b4e670ac8e753325e8707d"
     },
     {
+      "scenarioId": "refeeding-electrolyte-shift",
+      "contentVersion": "0.1.0",
+      "moduleId": "endocrine-metabolic",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:aaec3df580064583d9eb9ce87c04245dbdbeb81dc49b2877be807c3fddc2cfcb",
+      "defaultsHash": "sha256:cf3eb10173bb38932aa2158e7c56c5f47866ef097c67dff7113abe17a32bf4f7",
+      "maturityHash": "sha256:8f53c85f7ecc4b3b9c9362d97d7b65b4c0f5101e700c213b85136f710fd1e128",
+      "sourceManifestHash": "sha256:0ad0a88281f6e86e1a07ee72f45de39ca0931f3972c29466c7c5a26bc69194ba",
+      "limitationManifestHash": "sha256:0b65ec55fab6a4f807696a6904e4978bb5c4f3e730cd21056fa70e04c3ffb552"
+    },
+    {
       "scenarioId": "severe-hypoglycemia-recurrence",
       "contentVersion": "0.1.0",
       "moduleId": "endocrine-metabolic",

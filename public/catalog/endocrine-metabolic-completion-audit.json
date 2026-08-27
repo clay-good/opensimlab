@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "moduleId": "endocrine-metabolic",
   "capabilityVersion": "0.1.0-alpha.48",
-  "scenarioCount": 10,
+  "scenarioCount": 11,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -1261,6 +1261,132 @@
           "status": "missing",
           "evidence": [
             "The shared private report path still requires complete inclusive coverage and production Turnstile/D1 evidence for this exact version. Local context and modal tests are not production verification."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "refeeding-electrolyte-shift",
+      "title": "After nutrition restarts: weakness and falling electrolytes",
+      "moduleId": "endocrine-metabolic",
+      "environment": "ward",
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario refeeding-electrolyte-shift carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "5 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "Fixed authored electrolyte and vital-sign contrasts bind expert, common-error, recovery, and no-action paths to seed 4921. There is no stochastic nutritional physiology or dosing model."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "Partial phosphate care, comprehensive replacement, incomplete-care recurrence, and combined nutrition care produce distinct elapsed states. Only requested assessments disclose new laboratory findings."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "Eleven dose-free choices make comprehensive electrolyte care, vitamin support, nutrition review, surveillance, observations, and ownership independent. Phosphate-only care is a valid partial step. Automatic feeding advancement and monitoring closure are refused, not silently delivered."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "Continuing-care handoff or instructor takeover bounds practice without predicting injury or certifying clinical safety. Earlier mistakes do not prevent a later appropriate handoff."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "satisfied",
+          "evidence": [
+            "Observed-state Guided and Coached prompts respect Unassisted silence. Example 0.1.0 pauses for each decision, requests early and later findings, and uses ordinary actions without mutating private state."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "Five event-bound findings distinguish partial care, complete care, historical observations, nutrition/vitamin review, and ongoing handoff. Actual elapsed delay and observed recurrence remain visible without an arbitrary timing score."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "2 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "refeeding-fixtures.ts binds expert, commonError, recovery, and noAction to content 0.1.0. Replay checks compare full engine emissions, not only final electrolyte values."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Local model, UI, and replay checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "Shared reporting and local context tests do not establish full inclusive coverage or production Turnstile/D1 verification for this content version."
           ]
         }
       ]

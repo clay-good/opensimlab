@@ -31,6 +31,7 @@ import { supportsHypercalcemia, HYPERCALCEMIA_FLUID_RESPONSE_TICKS, HYPERCALCEMI
 import { supportsHypocalcemia, HYPOCALCEMIA_CALCIUM_RESPONSE_TICKS, HYPOCALCEMIA_RESPONSE_TICKS } from '../../endocrine-metabolic/hypocalcemia';
 import { supportsHyponatremiaCorrection } from '../../endocrine-metabolic/hyponatremia-correction';
 import { supportsAvpDeficiency } from '../../endocrine-metabolic/avp-deficiency';
+import { supportsRefeeding } from '../../endocrine-metabolic/refeeding';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -202,6 +203,8 @@ export function Debrief(props: DebriefProps) {
                 ? { activityContext: 'coordinating monitored hydration, calcium-lowering treatment, and continuing care for severe malignancy-associated hypercalcemia' }
               : supportsHypocalcemia(props.scenario)
                 ? { activityContext: 'coordinating monitored calcium rescue, postoperative risk assessment, and continuing calcium and magnesium care' }
+              : supportsRefeeding(props.scenario)
+                ? { activityContext: 'coordinating electrolyte and vitamin care, individualized nutrition review, fresh reassessment, and continuing support after nutrition restarts' }
               : supportsAvpDeficiency(props.scenario)
                 ? { activityContext: 'restoring circulation while coordinating water replacement, prescribed desmopressin, reassessment, and reliable access to ongoing care' }
               : supportsHyponatremiaCorrection(props.scenario)
@@ -253,7 +256,9 @@ export function Debrief(props: DebriefProps) {
           )}
 
           {episodes.length === 0 ? (
-            <p>Nothing crossed a threshold for long enough to count as an episode. That is a good outcome.</p>
+            <p>No sustained low-pressure or low-oxygen episode was detected by these two thresholds.
+              That does not establish a good outcome or exclude other deterioration. Review the
+              scenario-specific findings and continuing risks below.</p>
           ) : episodes.map((episode) => (
             <Panel key={episode.id} title={episode.label}>
               <p>
@@ -587,6 +592,43 @@ export function objectiveFindings(
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
 
+    if (objective.id.startsWith('refeeding-')) {
+      if (!supportsRefeeding(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The refeeding lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^refeeding-${id}-\\d+$`).test(entry.eventId));
+      const support = event('support'); const context = event('context-review');
+      const complete = event('electrolyte-replacement'); const response = event('response-reassessment');
+      const assessedAfterCare = complete && log.find((entry) => entry.tick >= complete.tick
+        && /^refeeding-(complete-electrolyte|recurrent|response)-reassessment-\d+$/.test(entry.eventId));
+      const nutrition = event('nutrition-review'); const thiamine = event('thiamine');
+      const partial = event('phosphate-only'); const recurrence = event('recurrent-reassessment');
+      const advance = event('feeding-advance-refused'); const stopped = event('monitoring-stop-refused');
+      const handoff = event('handoff'); const delay = event('clinical-deterioration');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'refeeding-context': { met: !!support && !!context, tick: context?.tick,
+          finding: support && context ? 'Qualified support and the feeding, dextrose, prior-intake, and electrolyte context were reviewed. Alternative causes still require assessment; a low phosphate alone is not a diagnosis.'
+            : 'Qualified support or exposure review is missing. Review the supplied trajectory and alternative causes while urgent care proceeds; a review button must not delay treatment.' },
+        'refeeding-electrolytes': { met: !!assessedAfterCare, tick: complete?.tick,
+          finding: (complete ? `Comprehensive electrolyte care began ${(complete.tick / TICKS_PER_SECOND).toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} simulated seconds into practice. ` : 'Comprehensive electrolyte care was not recorded. ')
+            + (assessedAfterCare ? 'A later requested assessment made the response available for review. ' : 'A fresh post-replacement assessment is missing. ')
+            + (partial ? 'Phosphate-focused care was a valid partial step, not complete potassium and magnesium care. ' : '')
+            + (delay ? 'The authored untreated deterioration remains in this run. ' : '')
+            + 'The clock is not a clinical deadline or a pass/fail cutoff. Authored counterfactual: phosphate alone does not resolve the other supplied deficiencies.' },
+        'refeeding-nutrition': { met: !!nutrition && !!thiamine, tick: nutrition?.tick,
+          finding: (nutrition && thiamine ? 'Vitamin care and individualized nutrition review were coordinated independently of electrolyte rescue. ' : 'Thiamine support or individualized nutrition review is missing. ')
+            + (advance ? 'Attempted automatic feeding advancement was refused and remains learning evidence. ' : '')
+            + (stopped ? 'Attempted monitoring closure was refused and remains learning evidence. ' : '')
+            + 'The selected plan does not prescribe a universal rate or stop all nutrition; thiamine is not an instant laboratory correction.' },
+        'refeeding-reassessment': { met: !!response, tick: response?.tick,
+          finding: (response ? 'A fresh combined-care assessment showed partial improvement, not normalized electrolytes or durable safety. ' : 'A fresh combined-care assessment is missing; accepted requests and elapsed time do not establish response. ')
+            + (recurrence ? 'An observed recurrent decline remains in the record despite later improvement. ' : '')
+            + 'Authored counterfactual: incomplete continuing nutrition care can produce a later decline in this branch. This is not a prediction that a particular feeding policy prevents recurrence.' },
+        'refeeding-handoff': { met: !!handoff, tick: handoff?.tick,
+          finding: handoff ? 'Continuing electrolyte, vitamin, nutrition, fluid, and monitored-care responsibilities were handed off after fresh assessment. This ends practice, not the illness or supplementation need.'
+            : 'Continuing-care ownership remains incomplete. Partial improvement is not discharge clearance or competence certification.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (objective.id.startsWith('avp-')) {
       if (!supportsAvpDeficiency(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The AVP-deficiency lesson was not active.' } satisfies ObjectiveFinding;
       const event = (id: string) => log.find((entry) => new RegExp(`^avp-deficiency-${id}-\\d+$`).test(entry.eventId));

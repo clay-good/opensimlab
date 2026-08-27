@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "endocrine-metabolic",
-  "recordCount": 10,
+  "recordCount": 11,
   "records": [
     {
       "recordId": "scenario:dka-resolution-transition@0.1.0",
@@ -111,6 +111,17 @@
       "evidence": [
         "/catalog/endocrine-metabolic-completion-audit.json#hypernatremic-dehydration-avp-deficiency@0.1.1",
         "/catalog/endocrine-metabolic-quality-audit.json#hypernatremic-dehydration-avp-deficiency@0.1.1"
+      ]
+    },
+    {
+      "recordId": "scenario:refeeding-electrolyte-shift@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "refeeding-electrolyte-shift",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/endocrine-metabolic-completion-audit.json#refeeding-electrolyte-shift@0.1.0",
+        "/catalog/endocrine-metabolic-quality-audit.json#refeeding-electrolyte-shift@0.1.0"
       ]
     }
   ]

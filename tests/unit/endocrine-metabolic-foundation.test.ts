@@ -9,9 +9,9 @@ import { DEFAULT_ENDOCRINE_METABOLIC_SCENARIO_ID, ENDOCRINE_METABOLIC_SCENARIOS,
 const json = (path: string) => JSON.parse(readFileSync(join(process.cwd(), path), 'utf8'));
 
 describe('Endocrine and Metabolic Medicine module foundation', () => {
-  it('registers ten bounded previews and exact discoverable routes', () => {
+  it('registers eleven bounded previews and exact discoverable routes', () => {
     expect(getModule('endocrine-metabolic')).toMatchObject({ route: 'endocrine-metabolic', status: 'available' });
-    expect(ENDOCRINE_METABOLIC_SCENARIOS).toHaveLength(10);
+    expect(ENDOCRINE_METABOLIC_SCENARIOS).toHaveLength(11);
     expect(DEFAULT_ENDOCRINE_METABOLIC_SCENARIO_ID).toBe('dka-resolution-transition');
     expect(getEndocrineMetabolicScenario('missing')).toBeUndefined();
     expect(routeFor('/endocrine-metabolic')).toMatchObject({ indexable: true, structuredData: ['SoftwareApplication'] });
@@ -31,6 +31,7 @@ describe('Endocrine and Metabolic Medicine module foundation', () => {
     ['hypocalcemic-tetany-rescue-and-recurrence', 'PT60M'],
     ['hyponatremia-aquaresis-and-overcorrection', 'PT90M'],
     ['hypernatremic-dehydration-avp-deficiency', 'PT135M'],
+    ['refeeding-electrolyte-shift', 'PT60M'],
   ])('publishes the full modeled observation duration for %s in search metadata', (id, timeRequired) => {
     expect(structuredDataFor(['LearningResource'], `/endocrine-metabolic/scenario/${id}`)[0])
       .toMatchObject({ timeRequired });
@@ -39,8 +40,8 @@ describe('Endocrine and Metabolic Medicine module foundation', () => {
     const completion = json('public/catalog/endocrine-metabolic-completion-audit.json');
     const maturity = json('public/catalog/endocrine-metabolic-maturity.json');
     const reports = json('workers/reports/src/report-catalog.generated.json');
-    expect(completion.scenarios).toHaveLength(10);
-    expect(maturity.recordCount).toBe(10);
+    expect(completion.scenarios).toHaveLength(11);
+    expect(maturity.recordCount).toBe(11);
     for (const { metadata } of ENDOCRINE_METABOLIC_SCENARIOS) {
       expect(reviewableItems()).toContainEqual(expect.objectContaining({ id: metadata.id, domains: ['endocrine-metabolic'] }));
       expect(completion.scenarios).toContainEqual(expect.objectContaining({ scenarioId: metadata.id, moduleId: 'endocrine-metabolic', maturity: 'preview' }));

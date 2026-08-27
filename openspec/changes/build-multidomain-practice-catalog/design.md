@@ -2973,6 +2973,25 @@ hazards; dependency receipts and executable comparisons protect their exact vers
 state-space record remains missing. Original 0.1.0 report evidence stays immutable and accepted;
 new practice and reports use 0.1.1. Neither the clinical model nor its clocks changed.
 
+### Wave E endocrine-metabolic slice 11: electrolyte deterioration after nutrition restarts
+
+The eleventh preview starts with supplied severe phosphate, potassium, and magnesium decline after
+30 hours of enteral nutrition in a fictional adult with prolonged poor intake. It separates valid
+phosphate-focused care from comprehensive electrolyte replacement, thiamine support, individualized
+nutrition review, and ongoing surveillance. Immediate care has no administrative or new-laboratory
+prerequisite. ASPEN and AuSPEN guidance is distinguished; no universal feeding rate or cessation rule
+is imposed. The authored 30-minute electrolyte and 60-minute combined-care contrasts require fresh
+requested observations. Incomplete nutrition care can produce an authored recurrent decline;
+earlier choices and observed recurrence remain available after later improvement.
+
+The nine-decision example uses the shared session and pauses for reading. Handoff transfers ongoing
+care, not discharge; 120-minute incomplete-electrolyte and 240-minute unfinished stops bound practice
+without predicting injury. The shared centered 160-character report uses opt-in observed-state
+context and uniquely matched action outcomes. No latent laboratory values, arbitrary prose, dosing,
+calorie calculator, or instant thiamine effect is exposed. Clinical review, all four quality records,
+full inclusive-runtime verification, and production reporting remain pending. See
+`docs/evidence-briefs/refeeding-electrolyte-shift.md` for the authored values and source boundary.
+
 #### Renal and electrolyte medicine: 12
 
 Hyperkalemia with ECG change; severe hypokalemia; symptomatic hyponatremia; hypernatremic

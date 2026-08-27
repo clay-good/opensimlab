@@ -33,6 +33,9 @@ import { hyponatremiaCorrectionReportActions } from '../modules/endocrine-metabo
 import { AVP_DEFICIENCY_ACTIONS, supportsAvpDeficiency } from '../modules/endocrine-metabolic/avp-deficiency';
 import { avpDeficiencyReportActions } from '../modules/endocrine-metabolic/avp-deficiency-reporting';
 import { supportsAvpDeficiencyDemonstration } from '../modules/endocrine-metabolic/demo/avp-deficiency-demonstration';
+import { REFEEDING_ACTIONS, supportsRefeeding } from '../modules/endocrine-metabolic/refeeding';
+import { refeedingReportActions } from '../modules/endocrine-metabolic/refeeding-reporting';
+import { supportsRefeedingDemonstration } from '../modules/endocrine-metabolic/demo/refeeding-demonstration';
 import { Cockpit } from '@anesthesia/ui/Cockpit';
 import { Debrief } from '@anesthesia/ui/Debrief';
 import { assertTranscriptIsAnonymous, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
@@ -249,6 +252,26 @@ function boundedScalars(value: unknown, limit: number): Record<string, ReportCon
 }
 
 export function collectReportEquipmentContext(equipment: SessionState['equipment']): Record<string, ReportContextScalar> {
+  const refeeding = equipment?.resuscitation.refeeding;
+  if (refeeding) {
+    return boundedScalars({ resuscitation: { refeeding: {
+      supportActive: refeeding.supportActive, contextReviewedAtTick: refeeding.contextReviewedAtTick,
+      monitoringAtTick: refeeding.monitoringAtTick, thiamineAtTick: refeeding.thiamineAtTick,
+      phosphateAtTick: refeeding.phosphateAtTick, completeElectrolytesAtTick: refeeding.completeElectrolytesAtTick,
+      nutritionPlanAtTick: refeeding.nutritionPlanAtTick, electrolyteResponseObserved: refeeding.electrolyteResponseObserved,
+      responseObserved: refeeding.responseObserved, recurrentDeclineObserved: refeeding.recurrentDeclineObserved,
+      feedingAdvanceAttempted: refeeding.feedingAdvanceAttempted, monitoringStopAttempted: refeeding.monitoringStopAttempted,
+      ended: refeeding.ended,
+      observation: refeeding.observation ? {
+        atTick: refeeding.observation.atTick, phosphateMmolL: refeeding.observation.phosphateMmolL,
+        potassiumMmolL: refeeding.observation.potassiumMmolL, magnesiumMmolL: refeeding.observation.magnesiumMmolL,
+        systolicMmHg: refeeding.observation.systolicMmHg, diastolicMmHg: refeeding.observation.diastolicMmHg,
+        meanArterialMmHg: refeeding.observation.meanArterialMmHg, heartRateBpm: refeeding.observation.heartRateBpm,
+        respiratoryRateBpm: refeeding.observation.respiratoryRateBpm, spo2Percent: refeeding.observation.spo2Percent,
+        coreTemperatureC: refeeding.observation.coreTemperatureC,
+      } : null,
+    } } }, REPORT_CONTEXT_SNAPSHOT_LIMIT);
+  }
   const avp = equipment?.resuscitation.avpDeficiency;
   if (avp) {
     return boundedScalars({ resuscitation: { avpDeficiency: {
@@ -402,14 +425,16 @@ export function collectReportEquipmentContext(equipment: SessionState['equipment
   return { ...priority, ...boundedScalars(remaining, REPORT_CONTEXT_SNAPSHOT_LIMIT - Object.keys(priority).length) };
 }
 
-function collectReportRecentContext(session: SessionState, seed: number, sodiumLesson: boolean, avpLesson: boolean): ScenarioReportRecentContext {
+function collectReportRecentContext(session: SessionState, seed: number, sodiumLesson: boolean, avpLesson: boolean, refeedingLesson: boolean): ScenarioReportRecentContext {
   const actions = sessionInternals().recorder?.build('pending').actions ?? [];
   return {
     seed: Math.trunc(seed),
-    actions: avpLesson ? avpDeficiencyReportActions(actions, session.log)
+    actions: refeedingLesson ? refeedingReportActions(actions, session.log)
+      : avpLesson ? avpDeficiencyReportActions(actions, session.log)
       : sodiumLesson ? hyponatremiaCorrectionReportActions(actions, session.log)
       : actions.slice(-REPORT_CONTEXT_ACTION_LIMIT).map((action) => {
-      const lessonActions = action.type === 'avp-deficiency-response' ? AVP_DEFICIENCY_ACTIONS
+      const lessonActions = action.type === 'refeeding-response' ? REFEEDING_ACTIONS
+        : action.type === 'avp-deficiency-response' ? AVP_DEFICIENCY_ACTIONS
         : action.type === 'hypocalcemia-response' ? HYPOCALCEMIA_ACTIONS
         : action.type === 'hyponatremia-correction-response' ? HYPONATREMIA_CORRECTION_ACTIONS : undefined;
       const lessonChoice = lessonActions && action.payload !== null
@@ -426,14 +451,14 @@ function collectReportRecentContext(session: SessionState, seed: number, sodiumL
         // Invalid lesson payloads remain refused attempts, without reproducing
         // an injected note or making their named action look accepted.
         payload: lessonActions ? lessonChoice !== undefined ? { action: lessonChoice } : {}
-          : (session.equipment?.resuscitation.hyponatremiaCorrection || session.equipment?.resuscitation.avpDeficiency) ? {}
+          : (session.equipment?.resuscitation.hyponatremiaCorrection || session.equipment?.resuscitation.avpDeficiency || session.equipment?.resuscitation.refeeding) ? {}
           : boundedScalars(action.payload, 12),
       };
     }),
     snapshot: {
       patient: Object.fromEntries(Object.entries(session.state ?? {})
         .filter((entry): entry is [string, number] => Number.isFinite(entry[1]))
-        .filter(([field]) => !(sodiumLesson || avpLesson)
+        .filter(([field]) => !(sodiumLesson || avpLesson || refeedingLesson)
           || ['systolicMmHg', 'diastolicMmHg', 'meanArterialMmHg', 'heartRateBpm',
             'respiratoryRateBpm', 'spo2Percent', 'coreTemperatureC'].includes(field))
         // These authored cases supply neither a continuous CO2 measurement nor oxygen settings.
@@ -443,6 +468,7 @@ function collectReportRecentContext(session: SessionState, seed: number, sodiumL
         .slice(0, REPORT_CONTEXT_SNAPSHOT_LIMIT)),
       equipment: (sodiumLesson && !session.equipment?.resuscitation.hyponatremiaCorrection)
         || (avpLesson && !session.equipment?.resuscitation.avpDeficiency)
+        || (refeedingLesson && !session.equipment?.resuscitation.refeeding)
         ? {} : collectReportEquipmentContext(session.equipment),
     },
   };
@@ -555,7 +581,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
           : session.phase === 'briefing' || session.phase === 'idle' ? 'prebrief' : 'live'),
         simulatedTick: session.tick,
         canonicalUrl: `${SITE_ORIGIN}${config.basePath}/scenario/${scenario.metadata.id}`,
-        collectRecentContext: () => collectReportRecentContext(session, assignment.seed, supportsHyponatremiaCorrection(scenario), supportsAvpDeficiency(scenario)),
+        collectRecentContext: () => collectReportRecentContext(session, assignment.seed, supportsHyponatremiaCorrection(scenario), supportsAvpDeficiency(scenario), supportsRefeeding(scenario)),
       }}
       {...(reportRequest ? { openRequest: reportRequest.id } : {})}
       onOpen={() => {
@@ -612,7 +638,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
     if (session.phase !== 'briefing' && session.phase !== 'idle') return;
     if (!session.ready) return;
     const endocrineDemo = config.id === 'endocrine-metabolic'
-      && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario));
+      && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario) || supportsRefeedingDemonstration(scenario));
     if (!endocrineDemo && (config.id !== 'anesthesia' || scenario.metadata.id !== DEMONSTRATION_SCENARIO_ID)) return;
     autoDemo.current = false;
     setDemonstrating(true);
@@ -715,7 +741,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
           }}
           {...(config.id === 'anesthesia' && scenario.metadata.id === DEMONSTRATION_SCENARIO_ID
             ? { onWatch: () => { setDemonstrating(true); session.setSpeed(5); session.play(); } }
-            : config.id === 'endocrine-metabolic' && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario))
+            : config.id === 'endocrine-metabolic' && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario) || supportsRefeedingDemonstration(scenario))
             ? { onWatch: () => { setDemonstrating(true); session.setSpeed(60); session.play(); } }
             : {})}
           {...(assignment.label ? { assignmentLabel: assignment.label } : {})}
