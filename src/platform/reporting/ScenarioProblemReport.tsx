@@ -27,10 +27,15 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose }:
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [service, setService] = useState<ReportServiceConfig | null>(null);
+  const reportHost = useRef<HTMLDivElement>(null);
   const turnstileHost = useRef<HTMLDivElement>(null);
   const widget = useRef<{ api: TurnstileApi; id: string } | null>(null);
   const onOpenRef = useRef(onOpen);
   onOpenRef.current = onOpen;
+
+  useEffect(() => {
+    if (sent) reportHost.current?.querySelector<HTMLButtonElement>('[role="dialog"] button')?.focus();
+  }, [sent]);
 
   useEffect(() => {
     if (openRequest === undefined) return;
@@ -84,6 +89,7 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose }:
     setStatus('Sending report…');
     try {
       await submitScenarioReport(buildScenarioReportRequest(context, category, note, token, recentContext));
+      setSending(false);
       setSent(true);
       setStatus('Thanks. Your report is in the weekly review queue.');
     } catch {
@@ -97,7 +103,7 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose }:
   };
 
   return (
-    <div className="problem-report">
+    <div className="problem-report" ref={reportHost}>
       <Button compact variant="ghost" aria-label="Report a problem"
         onClick={() => { setOpen(true); onOpen?.(); }}>
         <span className="problem-report__label-long">Report a problem</span>

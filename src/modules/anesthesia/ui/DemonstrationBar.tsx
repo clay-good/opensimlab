@@ -10,6 +10,7 @@
  * viewer who wants to stop watching should never have to hunt for the exit.
  */
 
+import { useEffect, useRef } from 'react';
 import { Button } from '@platform/ui';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 
@@ -38,6 +39,8 @@ const FOCUS_LABEL: Record<DemonstrationBeat['focus'], string> = {
 };
 
 export function DemonstrationBar({ beat, progress, onTakeControls, onAdvance, awaitingAdvance }: DemonstrationBarProps) {
+  const narration = useRef<HTMLDivElement>(null);
+  useEffect(() => { if (narration.current) narration.current.scrollTop = 0; }, [beat?.narration]);
   if (!beat) return null;
   const where = FOCUS_LABEL[beat.focus];
   return (
@@ -53,14 +56,16 @@ export function DemonstrationBar({ beat, progress, onTakeControls, onAdvance, aw
         <span style={{ width: `${progress * 100}%` }} />
       </div>
       <div className="demo-bar__body">
-        <p className="demo-bar__label">{awaitingAdvance ? 'Paused to read' : 'Demonstration'}</p>
-        {/* Polite, not assertive: a narration line that interrupted whatever a
-            screen-reader user was reading would make the demonstration worse
-            for them than no demonstration at all. */}
-        <p className="demo-bar__text" aria-live="polite">
-          {beat.narration}
-          {where ? <span className="visually-hidden"> Look at {where}.</span> : null}
-        </p>
+        <div className="demo-bar__narration" role="region" aria-label="Worked example narration" tabIndex={0} ref={narration}>
+          <p className="demo-bar__label">{awaitingAdvance ? 'Paused to read' : 'Demonstration'}</p>
+          {/* Polite, not assertive: a narration line that interrupted whatever a
+              screen-reader user was reading would make the demonstration worse
+              for them than no demonstration at all. */}
+          <p className="demo-bar__text" aria-live="polite">
+            {beat.narration}
+            {where ? <span className="visually-hidden"> Look at {where}.</span> : null}
+          </p>
+        </div>
         <div className="demo-bar__controls" onKeyDown={(event) => {
           // Space activates these buttons; it must not also toggle the cockpit clock.
           if (event.key === ' ') event.stopPropagation();

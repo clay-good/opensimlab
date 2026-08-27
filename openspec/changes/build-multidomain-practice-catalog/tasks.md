@@ -847,6 +847,11 @@ credited toward the catalog until every item in the completion contract passes.
     resumes observation, and takeover cancels pending automation without resetting the patient.
     A stable disabled Continue control preserves the reading layout during observation. Clinical
     and inclusive validation gates remain pending.
+  - [x] Repair shared worked-example and reporting accessibility defects: independently
+    scroll narration without hiding Continue/takeover, keep mobile sheets clear, use page flow
+    on short screens, isolate cockpit shortcuts from controls/dialogs/reading, and unlock/focus
+    the successful report confirmation. Browser geometry and DOM regressions are recorded in
+    `docs/accessibility-audit.md`; moderated and live-service review gates remain pending.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
   - [x] Toxicology slice 1/15 establishes the indexable `/toxicology` module with one authored
     methemoglobinemia lab after documented topical benzocaine exposure. The learner reconciles

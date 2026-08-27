@@ -28,8 +28,9 @@ describe('shared problem report dialog', () => {
     const cockpitCss = readFileSync(join(process.cwd(), 'src/modules/anesthesia/ui/cockpit.css'), 'utf8');
     // Both are fixed overlays. Share the responsive height through their common
     // root so the report launcher cannot intercept the takeover button.
-    expect(cockpitCss).toContain(':root:has(.cockpit[data-demo-focus]) { --demo-bar-height: 5rem; }');
-    expect(cockpitCss).toContain(':root:has(.cockpit[data-demo-focus]) { --demo-bar-height: 10rem; }');
+    expect(cockpitCss).toContain(':root:has(.cockpit[data-demo-focus]) { --demo-bar-height: 6rem; }');
+    expect(cockpitCss).toContain(':root:has(.cockpit[data-demo-focus]) { --demo-bar-height: 14rem; }');
+    expect(cockpitCss).toContain(':root:has(.cockpit[data-demo-focus]) { --demo-bar-height: 0px; }');
     const offsets = [...reportingCss.matchAll(/inset-block-end:\s*([^;]+);/g)].map((match) => match[1]);
     expect(offsets).toEqual(['calc(var(--demo-bar-height, 0px) + var(--space-4))']);
   });
@@ -296,6 +297,49 @@ describe('shared problem report dialog', () => {
     await act(async () => { finish(new Response(null, { status: 202 })); await pending; });
     expect(container.textContent).toContain('weekly review queue');
   });
+
+  for (const dismissal of ['Done', 'Escape'] as const) {
+    it(`closes a successful report with ${dismissal}, restores focus, and reopens a fresh form`, async () => {
+      const onClose = vi.fn();
+      fetchMock
+        .mockResolvedValueOnce(Response.json(serviceConfig))
+        .mockResolvedValueOnce(new Response(null, { status: 202 }));
+      await act(async () => { root.render(<ScenarioProblemReport context={context} onClose={onClose} />); });
+      const trigger = container.querySelector('[aria-label="Report a problem"]') as HTMLButtonElement;
+      trigger.focus();
+      await act(async () => { trigger.click(); await Promise.resolve(); });
+      const select = container.querySelector('select') as HTMLSelectElement;
+      await act(async () => {
+        select.value = 'controls';
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+      const send = [...container.querySelectorAll('button')]
+        .find((button) => button.textContent === 'Send report')!;
+      send.focus();
+      await act(async () => { send.click(); await Promise.resolve(); });
+      expect(container.textContent).toContain('weekly review queue');
+      const done = [...container.querySelectorAll('button')].find((button) => button.textContent === 'Done')!;
+      expect(document.activeElement).toBe(done);
+      await act(async () => {
+        if (dismissal === 'Done') {
+          done.click();
+        } else {
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+        }
+      });
+      expect(container.querySelector('[role="dialog"]')).toBeNull();
+      expect(onClose).toHaveBeenCalledOnce();
+      expect(document.activeElement).toBe(trigger);
+      await act(async () => { trigger.click(); await Promise.resolve(); });
+      expect(container.querySelector('[role="dialog"]')).not.toBeNull();
+      expect((container.querySelector('select') as HTMLSelectElement).value).toBe('');
+      expect((container.querySelector('textarea') as HTMLTextAreaElement).value).toBe('');
+      expect(container.textContent).not.toContain('weekly review queue');
+      expect([...container.querySelectorAll('button')]
+        .find((button) => button.textContent === 'Send report')?.disabled).toBe(true);
+      expect(fetchMock).toHaveBeenCalledTimes(3);
+    });
+  }
 
   it('bounds a stalled Turnstile script load and removes the abandoned script', async () => {
     vi.useFakeTimers();

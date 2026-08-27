@@ -34,6 +34,18 @@ Every function SHALL be operable by keyboard alone, with a visible focus indicat
 - **WHEN** a modal opens and closes, or a panel is swapped
 - **THEN** focus moves into the new context on open and returns to the invoking control on close
 
+#### Scenario: Focused controls own their keys
+
+- **WHEN** focus is on an interactive control, editable content, a dialog, or worked-example narration
+- **THEN** cockpit shortcuts do not intercept its keys or change the patient; already-handled events are also ignored
+- **AND** documented cockpit shortcuts remain available on neutral monitor and cockpit surfaces
+
+#### Scenario: A successful problem report can be dismissed
+
+- **WHEN** the report service accepts a submission
+- **THEN** the sending lock ends, focus moves to Done, and Done or Escape closes the confirmation and restores focus to the invoking report control
+- **AND** reopening starts with an empty form and a new security check
+
 ### Requirement: Screen Reader Access To Live Physiology
 
 Continuously changing vital signs SHALL be available to assistive technology without flooding it, through a polite live region that announces on clinically meaningful change and an on-demand full-state summary.

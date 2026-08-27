@@ -29,6 +29,17 @@ or an explicit real-patient description. Pattern screening cannot reliably ident
 clinical identifier; it supplements the warning, short retention, restricted access, and private
 weekly review rather than guaranteeing that a note contains no sensitive information.
 
+A pending submission cannot be dismissed. After acceptance, the confirmation moves focus to
+Done; Done or Escape closes it and restores the report trigger. Reopening clears the category,
+note, context choice, and prior security token. Cockpit shortcuts do not run while a reporting
+control or dialog owns keyboard focus. Regression tests cover success, failure, pending sends,
+focus restoration, and fresh reopening without contacting the live service.
+
+Remaining runtime checks include a real interactive Turnstile challenge at 320 px, nested
+source-drawer/report-dialog Escape ordering, and native keyboard-only traversal of the full
+submission flow. The local unavailable-service dialog does not prove those checks. Shared
+coverage must not be used to promote every scenario's exact-version reporting evidence.
+
 The Worker, not the browser, binds every accepted row to the generated catalog's capability
 version and content-addressed release, defaults, maturity, source-manifest, and
 limitation-manifest hashes. Weekly review can therefore detect drift without treating current

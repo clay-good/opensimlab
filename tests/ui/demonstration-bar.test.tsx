@@ -168,4 +168,52 @@ describe('the demonstration strip', () => {
     show(0);
     expect(container.querySelector('.visually-hidden')?.textContent).toContain('monitor');
   });
+
+  it('keeps long keyboard-readable narration separate from both worked-example controls', () => {
+    const narration = `${'Read the current observation before continuing. '.repeat(12)}The final sentence remains available.`;
+    const advance = vi.fn(); const take = vi.fn();
+    act(() => root.render(createElement(DemonstrationBar, {
+      beat: { atSecond: 0, narration, focus: 'actions' }, progress: 0.1,
+      awaitingAdvance: true, onAdvance: advance, onTakeControls: take,
+    })));
+    const reader = container.querySelector<HTMLElement>('.demo-bar__narration')!;
+    const controls = container.querySelector('.demo-bar__controls')!;
+    expect(reader.getAttribute('role')).toBe('region');
+    expect(reader.getAttribute('aria-label')).toBe('Worked example narration');
+    expect(reader.tabIndex).toBe(0);
+    expect(reader.querySelector('.demo-bar__label')?.textContent).toBe('Paused to read');
+    expect(reader.querySelector('.demo-bar__text')?.textContent).toContain(narration);
+    expect(reader.querySelector('.demo-bar__text')?.getAttribute('aria-live')).toBe('polite');
+    expect(reader.parentElement).toBe(controls.parentElement);
+    expect(reader.contains(controls)).toBe(false); expect(reader.querySelector('button')).toBeNull();
+    const buttons = [...controls.querySelectorAll('button')];
+    expect(buttons.map((button) => button.textContent)).toEqual(['Continue example', 'Take the controls']);
+    expect(buttons.every((button) => !button.disabled)).toBe(true);
+    act(() => { buttons[0]!.click(); buttons[1]!.click(); });
+    expect(advance).toHaveBeenCalledOnce(); expect(take).toHaveBeenCalledOnce();
+
+    show(0);
+    expect([...container.querySelectorAll('button')].map((button) => button.textContent)).toEqual(['Take the controls']);
+  });
+
+  it('resets only changed narration to its beginning without remounting or losing keyboard focus', () => {
+    const render = (narration: string, progress: number) => act(() => root.render(createElement(DemonstrationBar, {
+      beat: { atSecond: 0, narration, focus: 'actions' }, progress,
+      awaitingAdvance: true, onAdvance: () => {}, onTakeControls: () => {},
+    })));
+    render('Read this long first decision. '.repeat(20), 0.1);
+    const reader = container.querySelector<HTMLElement>('.demo-bar__narration')!;
+    const next = container.querySelector<HTMLButtonElement>('.demo-bar__controls button')!;
+    reader.focus(); reader.scrollTop = 160;
+    render('Read this long first decision. '.repeat(20), 0.2);
+    expect(reader.scrollTop).toBe(160); expect(document.activeElement).toBe(reader);
+
+    render('The next decision starts here. '.repeat(20), 0.3);
+    expect(container.querySelector('.demo-bar__narration')).toBe(reader);
+    expect(reader.scrollTop).toBe(0); expect(document.activeElement).toBe(reader);
+    next.focus(); reader.scrollTop = 90;
+    render('A third decision has different evidence.', 0.4);
+    expect(container.querySelector('.demo-bar__controls button')).toBe(next);
+    expect(reader.scrollTop).toBe(0); expect(document.activeElement).toBe(next);
+  });
 });

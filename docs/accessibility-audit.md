@@ -31,6 +31,38 @@ Chromium, built output, not the development server.
 | A full induction completes at 360 by 780 | Pass. Preoxygenation to an inspired fraction of 1.0, induction with propofol and remifentanil, videolaryngoscopy to a grade 1 view and intubation, then the debrief. |
 | Target sizes in the running cockpit | Pass after a fix: the vital value doubles as the "explain why" control, and a `--` reading was two characters wide. It now carries a 44 by 40 floor. |
 
+## Shared tutor and reporting checks, 2026-08-27
+
+Engineering browser checks used the development server and real 320 px iframe viewports,
+not a simulated JSDOM layout. Adrenal content 0.1.2 and hypoglycemia content 0.1.3 were checked;
+clinical content, capability 0.1.0-alpha.48, and maturity records did not change.
+
+- At 320 × 720, the old adrenal takeover button extended to y=756.8 and overlapped narration.
+  Both repaired controls are 140 × 48.5 px, end at y=708, and pass center-point hit checks.
+  Long narration scrolls independently; changing the explanation resets it without losing
+  Continue focus or moving either button.
+- At 320 × 568, both examples have the same 140 × 48.5 px controls ending at y=556.
+  The adrenal Actions sheet stops at y=344, above the tutor strip. The local report dialog
+  is centered at (160, 284), scrollable, and capped at 160 characters; no report was submitted.
+- At a 320 × 180 frame, page flow replaces the fixed tutor strip. After scrolling, both
+  buttons pass hit checks above the report/panel launchers. Removing unused resize handles
+  eliminates horizontal page overflow: client and scroll widths both measure 305 px with
+  the vertical scrollbar. This is a short-viewport check, not actual 400% browser zoom.
+- At 1,280 × 720, the hypoglycemia narration fits its 68 px region and both 44 px controls
+  remain fully visible. Narrow pages have no horizontal page overflow at 320 × 568 or 720.
+
+DOM regressions prove shortcut isolation, preservation of neutral-surface shortcuts, successful
+report dismissal, focus on Done, focus restoration, and a fresh security check on reopening.
+Native Tab/Space/Enter activation and a complete screen-reader session were not established by
+this browser run. Localhost reporting also does not verify a live interactive Turnstile widget.
+The temporary layout fixture was removed before the build; it is not a shipped route.
+
+Full CI passed 3,349 tests across 445 files, including 29 added regressions. All 30 specs,
+lint, TypeScript, static-host checks, asset budgets, and font checks passed. The updated
+specs and final short-screen assertion were also verified separately.
+The indexable build verified 217 routes. Its 211 preview-channel blockers remain disclosed;
+these engineering checks do not grant clinical review, deployment approval, or full conformance.
+
 ## Still owed, and only a person can do it
 
 - **Screen reader narration.** Nobody has listened to VoiceOver, NVDA or TalkBack read a

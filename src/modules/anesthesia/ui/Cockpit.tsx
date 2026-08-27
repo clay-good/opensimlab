@@ -485,8 +485,13 @@ export function Cockpit({
   // from the reference without leaving the cockpit.
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement | null;
-      if (target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) return;
+      if (event.defaultPrevented) return;
+      const target = event.target instanceof Element ? event.target : null;
+      // Native activation, text editing, dialogs, and narration own their keys.
+      // Closest also protects nested labels and icons within those controls.
+      if (target?.closest('.demo-bar, button, a[href], input, textarea, select, summary, dialog, '
+        + '[role="button"], [role="link"], [role="textbox"], [role="combobox"], [role="spinbutton"], '
+        + '[role="dialog"], [role="alertdialog"], [contenteditable]:not([contenteditable="false"])')) return;
       switch (event.key) {
         case ' ':
           event.preventDefault();

@@ -61,6 +61,13 @@ The simulator SHALL offer to demonstrate itself: a scripted run of a scenario, n
 - **AND** Continue sends that decision only once and resumes observation, while a repeated click or stale snapshot cannot resend the action or prevent its acceptance from appearing
 - **AND** the Continue control remains present but disabled during observation, ordinary pause remains respected, and taking control prevents even a retained Continue action from resuming the example
 
+#### Scenario: Narration never hides the way forward
+
+- **WHEN** long worked-example narration is viewed on a narrow screen
+- **THEN** a named keyboard-focusable narration region scrolls independently of Continue and Take the controls, and changing explanation resets its scroll position without replacing the controls
+- **AND** mobile analysis and action sheets leave the fixed narration strip uncovered
+- **AND** on very short screens the narration uses page flow so the report launcher and tutor controls remain reachable by scrolling
+
 ### Requirement: Stated Learning Objectives
 
 Every scenario SHALL declare its learning objectives in learner-facing language before the session and SHALL evaluate against those same objectives in the debrief.

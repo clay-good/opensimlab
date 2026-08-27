@@ -69,6 +69,9 @@ describe('Requirement: Four-Region Cockpit', () => {
     // content and open nothing. Everything else must be one of the four.
     areas.delete('vdivider');
     areas.delete('hdivider');
+    // On very short screens the narration strip joins page flow; it is not a
+    // fifth clinical region, just as its fixed counterpart is not one.
+    areas.delete('demo');
     expect(areas).toEqual(new Set(['status', 'analysis', 'monitor', 'actions']));
   });
 
@@ -580,6 +583,95 @@ describe('Requirement: A Phone Can Run A Full Scenario', () => {
     ]) {
       expect(ruleFor(selector), selector).toContain('padding-block-end: var(--mobile-actions-reserve)');
     }
+  });
+});
+
+describe('Requirement: Worked-Example Narration Never Hides Its Controls', () => {
+  // At 320 × 720 the old 157 px body had 205 px of content: the takeover button
+  // extended below the viewport and narration overlapped the controls. These
+  // source invariants guard the fix; real-browser checks establish geometry.
+  const ruleFor = (source: string, selector: string) => {
+    const at = source.indexOf(`${selector} {`);
+    expect(at, `Missing layout rule for ${selector}`).toBeGreaterThanOrEqual(0);
+    return source.slice(at, source.indexOf('}', at));
+  };
+  const narrow = cockpitCss.slice(cockpitCss.indexOf('@media (width <= 900px)'));
+
+  it('scrolls only the shrinkable narration rather than the body containing both controls', () => {
+    const body = ruleFor(cockpitCss, '.demo-bar__body');
+    const narration = ruleFor(cockpitCss, '.demo-bar__narration');
+    expect(body).toContain('grid-template-columns: minmax(0, 1fr) auto');
+    expect(body).toContain('min-block-size: 0');
+    expect(body).toMatch(/block-size:\s*calc\(100% - 3px\)/);
+    expect(body).not.toMatch(/overflow(?:-y)?:\s*(?:auto|scroll)/);
+    expect(narration).toContain('min-inline-size: 0');
+    expect(narration).toContain('min-block-size: 0');
+    expect(narration).toContain('overflow-y: auto');
+    expect(narration).toContain('overflow-wrap: anywhere');
+    expect(narration).toContain('overscroll-behavior: contain');
+    expect(ruleFor(cockpitCss, '.demo-bar__text')).not.toMatch(/min-block-size:\s*[1-9]/);
+  });
+
+  it('reserves a fixed mobile control row beneath the independently scrolling narration', () => {
+    expect(cockpitCss).toContain(':root:has(.cockpit[data-demo-focus]) { --demo-bar-height: 6rem; }');
+    expect(narrow).toContain(':root:has(.cockpit[data-demo-focus]) { --demo-bar-height: 14rem; }');
+    const body = ruleFor(narrow, '.demo-bar__body');
+    expect(body).toContain('grid-template-columns: minmax(0, 1fr)');
+    expect(body).toContain('grid-template-rows: minmax(0, 1fr) auto');
+    const controls = ruleFor(narrow, '.demo-bar__controls');
+    expect(controls).toContain('display: grid');
+    expect(controls).toContain('grid-auto-flow: column');
+    expect(controls).toContain('grid-auto-columns: minmax(0, 1fr)');
+    const buttons = ruleFor(narrow, '.demo-bar__controls .button');
+    expect(buttons).toContain('inline-size: 100%');
+    expect(buttons).toContain('min-inline-size: 0');
+    expect(buttons).toContain('white-space: normal');
+    expect(buttons).toContain('overflow-wrap: anywhere');
+    expect(ruleFor(componentsCss, '.button')).toContain('min-block-size: 44px');
+  });
+
+  it('keeps mobile analysis and action drawers above the strip and inside the remaining viewport', () => {
+    for (const selector of [
+      '.cockpit[data-demo-focus].cockpit--analysis-open .cockpit__analysis',
+      '.cockpit[data-demo-focus].cockpit--actions-open .cockpit__actions',
+    ]) {
+      const at = cockpitCss.indexOf(selector);
+      expect(at, selector).toBeGreaterThanOrEqual(0);
+      expect(cockpitCss.slice(at, cockpitCss.indexOf('}', at))).toContain('inset-block-end: var(--demo-bar-height)');
+    }
+    expect(cockpitCss).toMatch(/\.cockpit\[data-demo-focus\]\.cockpit--actions-open \.cockpit__actions \{[^}]*max-block-size:\s*calc\(100dvh - var\(--status-bar-height\) - var\(--demo-bar-height\)\)/s);
+  });
+
+  it('switches very short viewports to page flow instead of stacking fixed strips over the monitor', () => {
+    const at = cockpitCss.indexOf('@media (max-height: 400px)');
+    expect(at).toBeGreaterThanOrEqual(0);
+    const short = cockpitCss.slice(at);
+    expect(short).toContain(':root:has(.cockpit[data-demo-focus]) { --demo-bar-height: 0px; }');
+    const cockpit = ruleFor(short, '.cockpit[data-demo-focus]');
+    expect(cockpit).toContain("grid-template-areas: 'status' 'monitor' 'demo'");
+    // At 320 × 180 the compact 40 px row clipped its 44 px controls. Page flow
+    // can retain the full row rather than sacrificing the reachable controls.
+    expect(cockpit).toContain('grid-template-rows: var(--status-bar-height) 12rem auto');
+    expect(cockpit).not.toContain('--status-bar-height-compact');
+    expect(LAYOUT.statusBarHeightPx).toBeGreaterThanOrEqual(44);
+    expect(cockpit).toContain('block-size: auto');
+    expect(cockpit).toContain('min-block-size: 100dvh');
+    expect(cockpit).toContain('overflow: visible');
+    expect(cockpit).not.toContain('padding-block-end: 0');
+    const strip = ruleFor(short, '.cockpit[data-demo-focus] .demo-bar');
+    expect(strip).toContain('position: static');
+    expect(strip).toContain('grid-area: demo');
+    expect(strip).toContain('block-size: 14rem');
+    // The old separator grid areas create implicit columns in this three-row
+    // layout, widening a 320 px page by 6 px even when the content fits.
+    expect(ruleFor(short, '.cockpit[data-demo-focus] > .divider')).toContain('display: none');
+    expect(ruleFor(short, '.cockpit[data-demo-focus] .demo-bar__narration')).toContain('overscroll-behavior: auto');
+    const narrowShortAt = cockpitCss.indexOf('@media (max-width: 400px) and (max-height: 400px)');
+    expect(narrowShortAt).toBeGreaterThan(at);
+    expect(ruleFor(cockpitCss.slice(narrowShortAt), '.cockpit[data-demo-focus] .status-bar'))
+      .toContain('gap: 0');
+    // The page-flow fallback still leaves the ordinary mobile launchers room.
+    expect(ruleFor(cockpitCss, '.cockpit')).toContain('var(--mobile-actions-reserve, 0px)');
   });
 });
 

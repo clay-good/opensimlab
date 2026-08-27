@@ -464,6 +464,14 @@
   .cockpit[data-demo-focus] .mobile-actions {
     inset-block-end: calc(var(--demo-bar-height) + var(--space-4));
   }
+
+  .cockpit[data-demo-focus].cockpit--analysis-open .cockpit__analysis,
+  .cockpit[data-demo-focus].cockpit--actions-open .cockpit__actions {
+    inset-block-end: var(--demo-bar-height);
+  }
+  .cockpit[data-demo-focus].cockpit--actions-open .cockpit__actions {
+    max-block-size: calc(100dvh - var(--status-bar-height) - var(--demo-bar-height));
+  }
 }
 
 /* The last step in the sacrifice order. At the narrowest width, step also moves
@@ -587,7 +595,7 @@
 
 /* Share the height with the sibling report launcher only during a demonstration,
    so both overlays and the cockpit reservation stay clear of each other. */
-:root:has(.cockpit[data-demo-focus]) { --demo-bar-height: 5rem; }
+:root:has(.cockpit[data-demo-focus]) { --demo-bar-height: 6rem; }
 
 /* The strip's height comes out of the ACTION COCKPIT, not out of the monitor.
    Taking it from the fluid row shortened the monitor, which is the region most
@@ -628,15 +636,20 @@
 
 .demo-bar__body {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
-  /* A safety valve. The height is fixed so it always matches what the cockpit
-     gave up; if a future beat runs longer than fits, it scrolls rather than
-     being silently cut off. */
+  min-block-size: 0;
+  block-size: calc(100% - 3px);
+}
+
+.demo-bar__narration {
+  min-inline-size: 0;
+  min-block-size: 0;
   overflow-y: auto;
-  block-size: calc(var(--demo-bar-height) - 3px);
+  overflow-wrap: anywhere;
+  overscroll-behavior: contain;
 }
 
 .demo-bar__label {
@@ -651,6 +664,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
+  align-self: center;
 }
 
 .demo-bar__controls .button[aria-disabled='true'] {
@@ -662,10 +676,7 @@
 
 .demo-bar__text {
   margin: 0;
-  /* Two lines whatever this beat says, so a longer narration does not reflow the
-     cockpit and move the traces the narration is asking you to look at. A rare
-     third line grows the row rather than being clipped. */
-  min-block-size: 2lh;
+  margin-block-start: var(--space-1);
   font: var(--type-body);
   color: var(--text-primary);
   text-wrap: pretty;
@@ -689,10 +700,48 @@
 @media (width <= 900px) {
   /* Stacked, so the narration is not squeezed into a column narrower than a
      sentence — which costs height, and the cockpit gives up that much more. */
-  :root:has(.cockpit[data-demo-focus]) { --demo-bar-height: 10rem; }
+  :root:has(.cockpit[data-demo-focus]) { --demo-bar-height: 14rem; }
 
   .demo-bar__body {
     grid-template-columns: minmax(0, 1fr);
-    justify-items: start;
+    grid-template-rows: minmax(0, 1fr) auto;
   }
+
+  .demo-bar__controls {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+  }
+
+  .demo-bar__controls .button {
+    inline-size: 100%;
+    min-inline-size: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* A short/zoomed viewport cannot hold three fixed strips. Let the page scroll
+   instead, while the report and panel launchers keep their ordinary reserve. */
+@media (max-height: 400px) {
+  :root:has(.cockpit[data-demo-focus]) { --demo-bar-height: 0px; }
+  .cockpit[data-demo-focus] {
+    grid-template-areas: 'status' 'monitor' 'demo';
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: var(--status-bar-height) 12rem auto;
+    block-size: auto;
+    min-block-size: 100dvh;
+    overflow: visible;
+  }
+  .cockpit[data-demo-focus] .demo-bar {
+    position: static;
+    grid-area: demo;
+    block-size: 14rem;
+  }
+  .cockpit[data-demo-focus] > .divider { display: none; }
+  .cockpit[data-demo-focus] .demo-bar__narration { overscroll-behavior: auto; }
+}
+
+@media (max-width: 400px) and (max-height: 400px) {
+  .cockpit[data-demo-focus] .status-bar { gap: 0; }
 }
