@@ -153,7 +153,10 @@ credited toward the catalog until every item in the completion contract passes.
 - [x] Add daily scheduled retention for 30-day reports and 14-day counters plus manual recovery
   commands.
 - [ ] Add a zone WAF rate-limit launch requirement, secret-handling runbook, test keys, cost model,
-  live verification checklist, kill switch, and self-hosting behavior.
+  live verification checklist, kill switch, and self-hosting behavior. The repository now enforces
+  fail-closed self-host identity, same-origin privacy ownership, exact routes, bounded costs, test
+  guidance, and the kill switch; the production WAF rule and blocked-flood evidence remain live
+  launch gates.
 - [x] Test offline and report-service failures without disrupting the simulator.
   The shared dialog now bounds config, submission, and lazy Turnstile waits; UI tests prove that
   unavailable configuration and failed submission leave practice controls usable, while Worker

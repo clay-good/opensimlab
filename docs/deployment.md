@@ -100,6 +100,9 @@ npm run deploy:reports
 
 `REPORT_HASH_SECRET` must be at least 32 random characters. Turnstile must allow only
 `opensimlab.com`; the Worker independently requires the `scenario-report` action and hostname.
+`REPORT_MAINTAINER_NAME` and `REPORT_PRIVACY_URL` are public config values shown before submission;
+the privacy URL must be HTTPS and same-origin. Self-hosters must replace both values and the complete
+origin/route/Turnstile/catalog boundary together, never point an unrelated fork at Open Sim Lab.
 Before enabling `REPORTING_ENABLED`, add a Cloudflare WAF rate rule protecting both exact routes, run
 the test-key checklist against a non-production database, and inspect one bounded row. A generic
 `202` deliberately does not reveal whether a valid report was new, duplicated, or quota-dropped.

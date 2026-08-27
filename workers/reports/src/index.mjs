@@ -91,12 +91,16 @@ function validateRecentContext(value) {
 }
 
 function configured(env) {
+  let allowedOrigin;
+  try { allowedOrigin = new URL(env.REPORT_ALLOWED_ORIGIN); } catch { return false; }
   return env.REPORTING_ENABLED === 'true'
     && env.REPORTS_DB
     && typeof env.TURNSTILE_SITE_KEY === 'string' && env.TURNSTILE_SITE_KEY.length > 0
     && typeof env.TURNSTILE_SECRET_KEY === 'string' && env.TURNSTILE_SECRET_KEY.length > 0
     && typeof env.REPORT_HASH_SECRET === 'string' && env.REPORT_HASH_SECRET.length >= 32
-    && env.REPORT_ALLOWED_ORIGIN === 'https://opensimlab.com';
+    && allowedOrigin.protocol === 'https:' && allowedOrigin.origin === env.REPORT_ALLOWED_ORIGIN
+    && allowedOrigin.pathname === '/' && !allowedOrigin.search && !allowedOrigin.hash
+    && !allowedOrigin.username && !allowedOrigin.password;
 }
 
 async function readJson(request) {
@@ -178,7 +182,9 @@ export async function verifyTurnstile(report, remoteIp, env, fetcher = fetch) {
   if (!response.ok) return false;
   let result;
   try { result = await response.json(); } catch { return false; }
-  return result.success === true && result.action === TURNSTILE_ACTION && result.hostname === 'opensimlab.com';
+  let hostname;
+  try { hostname = new URL(env.REPORT_ALLOWED_ORIGIN).hostname; } catch { return false; }
+  return result.success === true && result.action === TURNSTILE_ACTION && result.hostname === hostname;
 }
 
 async function hexDigest(algorithm, value, key) {
@@ -264,7 +270,19 @@ export async function cleanupReports(db, now = new Date()) {
 async function handleConfig(request, env) {
   if (request.method !== 'GET') return json(405, { ok: false });
   if (!configured(env)) return json(503, { ok: false });
-  return json(200, { sitekey: env.TURNSTILE_SITE_KEY, action: TURNSTILE_ACTION });
+  const maintainer = typeof env.REPORT_MAINTAINER_NAME === 'string'
+    && safeText(env.REPORT_MAINTAINER_NAME, 80, false)
+    && !/[\t\n\r]/.test(env.REPORT_MAINTAINER_NAME)
+    ? env.REPORT_MAINTAINER_NAME : new URL(env.REPORT_ALLOWED_ORIGIN).host;
+  let privacyUrl;
+  try { privacyUrl = new URL(env.REPORT_PRIVACY_URL || '/privacy#problem-reports', env.REPORT_ALLOWED_ORIGIN); }
+  catch { return json(503, { ok: false }); }
+  if (privacyUrl.origin !== env.REPORT_ALLOWED_ORIGIN || privacyUrl.protocol !== 'https:'
+    || privacyUrl.username || privacyUrl.password) return json(503, { ok: false });
+  return json(200, {
+    sitekey: env.TURNSTILE_SITE_KEY, action: TURNSTILE_ACTION,
+    maintainer, privacy_url: privacyUrl.href,
+  });
 }
 
 async function handleReport(request, env) {

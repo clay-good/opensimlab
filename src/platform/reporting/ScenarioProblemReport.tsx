@@ -6,7 +6,8 @@ import {
   type ScenarioReportRecentContext,
 } from './contracts';
 import {
-  loadTurnstile, renderTurnstile, reportConfig, submitScenarioReport, type TurnstileApi,
+  loadTurnstile, renderTurnstile, reportConfig, submitScenarioReport,
+  type ReportServiceConfig, type TurnstileApi,
 } from './client';
 import './reporting.css';
 
@@ -25,6 +26,7 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose }:
   const [status, setStatus] = useState('');
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  const [service, setService] = useState<ReportServiceConfig | null>(null);
   const turnstileHost = useRef<HTMLDivElement>(null);
   const widget = useRef<{ api: TurnstileApi; id: string } | null>(null);
   const onOpenRef = useRef(onOpen);
@@ -42,6 +44,7 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose }:
     setStatus('Preparing secure submission…');
     void reportConfig().then(async (config) => [config, await loadTurnstile()] as const).then(([config, api]) => {
       if (!active || !turnstileHost.current) return;
+      setService(config);
       const id = renderTurnstile(api, turnstileHost.current, config.sitekey, {
         ready: (value) => { if (active) { setToken(value); setStatus('Ready to send.'); } },
         expired: () => { if (active) { setToken(''); setStatus('Security check expired. Please try it again.'); } },
@@ -50,7 +53,7 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose }:
       widget.current = { api, id };
       setStatus('Complete the security check to send.');
     }).catch(() => {
-      if (active) setStatus('Reporting is temporarily unavailable. Your practice session still works normally.');
+      if (active) setStatus('Reporting is unavailable on this host. Your practice session still works normally.');
     });
     return () => {
       active = false;
@@ -71,6 +74,7 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose }:
     setNote('');
     setCategory('');
     setRecentContext(null);
+    setService(null);
     onClose?.();
   };
 
@@ -120,8 +124,11 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose }:
           <div className="problem-report__form">
             <p>
               Tell us what seems wrong in this fictional scenario. Do not include a patient name
-              or any real clinical information. <a href="/privacy#problem-reports">How reports stay private</a>.
+              or any real clinical information. <a href={service?.privacyUrl ?? '/privacy#problem-reports'}>
+                How reports stay private
+              </a>.
             </p>
+            {service && <p className="field__hint">Reviewed by {service.maintainer}.</p>}
             <label className="field" htmlFor="problem-report-category">
               <span className="field__label">Kind of problem</span>
               <select
@@ -175,6 +182,7 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose }:
                 <div><dt>Where</dt><dd>{context.surface}</dd></div>
                 <div><dt>Simulated tick</dt><dd>{context.simulatedTick}</dd></div>
                 <div><dt>Category</dt><dd>{category || 'Not chosen'}</dd></div>
+                <div><dt>Reviewed by</dt><dd>{service?.maintainer ?? 'Unavailable until this host is verified'}</dd></div>
                 <div><dt>Recent context</dt><dd>{recentContext ? 'Included' : 'Not included'}</dd></div>
               </dl>
               {recentContext && (

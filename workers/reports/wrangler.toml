@@ -18,6 +18,8 @@ crons = ["17 8 * * *"]
 [vars]
 REPORTING_ENABLED = "false"
 REPORT_ALLOWED_ORIGIN = "https://opensimlab.com"
+REPORT_MAINTAINER_NAME = "Open Sim Lab maintainers"
+REPORT_PRIVACY_URL = "https://opensimlab.com/privacy#problem-reports"
 TURNSTILE_SITE_KEY = ""
 REPORT_DAILY_LIMIT = "200"
 REPORT_REPORTER_DAILY_LIMIT = "3"

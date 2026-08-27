@@ -43,6 +43,12 @@ It validates origin, content type, encoding, a 32 KB streamed body cap, fatal UT
 catalog versions, canonical URLs, bounded text and context size, control/bidirectional characters, and Turnstile's
 hostname and `scenario-report` action. It uses prepared D1 statements throughout.
 
+The same-origin config response names the maintainer responsible for the endpoint and its same-origin
+privacy notice. The dialog shows both before submission. A static-only self-host receives no config,
+states that reporting is unavailable on that host, and never falls back to `opensimlab.com`. A fork
+that operates a compatible same-origin service must replace the origin, route, Turnstile hostname,
+maintainer name, privacy notice, and generated catalog as one reviewed deployment.
+
 Daily ceilings are 400 Siteverify attempts globally, 5 per anonymous reporter, 200 accepted reports
 globally, and 3 per reporter. A schema-valid request atomically reserves its Siteverify attempt in
 D1 before Cloudflare is contacted, so failed, forged, expired, and reused tokens consume the same

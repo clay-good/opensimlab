@@ -1,4 +1,7 @@
-/** @vitest-environment jsdom */
+/**
+ * @vitest-environment jsdom
+ * @vitest-environment-options {"url":"https://opensimlab.com/"}
+ */
 import { act } from 'react';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -6,7 +9,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ScenarioProblemReport } from '@platform/reporting/ScenarioProblemReport';
 import type { ScenarioReportContext } from '@platform/reporting/contracts';
-import { loadTurnstile, REPORT_REQUEST_TIMEOUT_MS } from '@platform/reporting/client';
+import { loadTurnstile, reportConfig, REPORT_REQUEST_TIMEOUT_MS } from '@platform/reporting/client';
 
 const context: ScenarioReportContext = {
   scenarioId: 'routine-induction', contentVersion: '0.1.0', appVersion: '0.1.0-alpha.1',
@@ -15,12 +18,16 @@ const context: ScenarioReportContext = {
   canonicalUrl: 'https://opensimlab.com/anesthesia/scenario/routine-induction',
 };
 const reportingCss = readFileSync(join(process.cwd(), 'src/platform/reporting/reporting.css'), 'utf8');
+const serviceConfig = {
+  sitekey: 'test-key', action: 'scenario-report', maintainer: 'Open Sim Lab maintainers',
+  privacy_url: 'https://opensimlab.com/privacy#problem-reports',
+};
 
 describe('shared problem report dialog', () => {
   let container: HTMLDivElement;
   let root: Root;
   const fetchMock = vi.fn(async (_input?: RequestInfo | URL, _init?: RequestInit) =>
-    Response.json({ sitekey: 'test-key', action: 'scenario-report' }));
+    Response.json(serviceConfig));
 
   beforeEach(() => {
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -65,6 +72,8 @@ describe('shared problem report dialog', () => {
     expect([...container.querySelectorAll('button')].find((button) => button.textContent === 'Send report')?.disabled)
       .toBe(true);
     expect(container.textContent).toContain('0 / 160');
+    expect(container.textContent).toContain('Reviewed by Open Sim Lab maintainers');
+    expect(container.querySelector('a')?.href).toBe('https://opensimlab.com/privacy#problem-reports');
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledWith('/api/reports/config', expect.objectContaining({ credentials: 'omit' }));
     expect(fetchMock.mock.calls[0]?.[1]?.signal).toBeInstanceOf(AbortSignal);
@@ -89,6 +98,17 @@ describe('shared problem report dialog', () => {
     expect(container.textContent).toContain('Security check expired');
     await act(async () => { (options['unsupported-callback'] as () => void)(); });
     expect(container.textContent).toContain('Security check unavailable');
+  });
+
+  it('rejects a cross-origin privacy notice or unsafe maintainer identity', async () => {
+    fetchMock.mockResolvedValueOnce(Response.json({
+      ...serviceConfig, privacy_url: 'https://example.com/privacy',
+    }));
+    await expect(reportConfig()).rejects.toThrow('reporting unavailable');
+    fetchMock.mockResolvedValueOnce(Response.json({
+      ...serviceConfig, maintainer: 'Unsafe\nmaintainer',
+    }));
+    await expect(reportConfig()).rejects.toThrow('reporting unavailable');
   });
 
   it('collects bounded simulation context only after explicit consent and previews it', async () => {
@@ -142,7 +162,7 @@ describe('shared problem report dialog', () => {
   for (const surface of ['source', 'limitation'] as const) {
     it(`submits the exact ${surface} surface through the shared dialog`, async () => {
       fetchMock
-        .mockResolvedValueOnce(Response.json({ sitekey: 'test-key', action: 'scenario-report' }))
+        .mockResolvedValueOnce(Response.json(serviceConfig))
         .mockResolvedValueOnce(new Response(null, { status: 202 }));
       await act(async () => {
         root.render(<ScenarioProblemReport context={{ ...context, surface }} openRequest={1} />);
@@ -194,7 +214,7 @@ describe('shared problem report dialog', () => {
       await Promise.resolve();
     });
     expect(document.querySelector('script[src*="challenges.cloudflare.com"]')).toBeNull();
-    expect(container.textContent).toContain('temporarily unavailable');
+    expect(container.textContent).toContain('unavailable on this host');
   });
 
   it('keeps sibling practice controls usable when report configuration cannot be reached', async () => {
@@ -209,7 +229,7 @@ describe('shared problem report dialog', () => {
       (container.querySelector('[aria-label="Report a problem"]') as HTMLButtonElement).click();
       await Promise.resolve();
     });
-    expect(container.textContent).toContain('temporarily unavailable');
+    expect(container.textContent).toContain('unavailable on this host');
     await act(async () => {
       ([...container.querySelectorAll('button')]
         .find((button) => button.textContent === 'Continue practice') as HTMLButtonElement).click();
@@ -219,7 +239,7 @@ describe('shared problem report dialog', () => {
 
   it('recovers from a failed submission without disturbing the dialog', async () => {
     fetchMock
-      .mockResolvedValueOnce(Response.json({ sitekey: 'test-key', action: 'scenario-report' }))
+      .mockResolvedValueOnce(Response.json(serviceConfig))
       .mockRejectedValueOnce(new Error('network unavailable'));
     await act(async () => { root.render(<ScenarioProblemReport context={context} />); });
     await act(async () => {
@@ -245,7 +265,7 @@ describe('shared problem report dialog', () => {
     let finish!: (response: Response) => void;
     const pending = new Promise<Response>((resolve) => { finish = resolve; });
     fetchMock
-      .mockResolvedValueOnce(Response.json({ sitekey: 'test-key', action: 'scenario-report' }))
+      .mockResolvedValueOnce(Response.json(serviceConfig))
       .mockReturnValueOnce(pending);
     await act(async () => { root.render(<ScenarioProblemReport context={context} />); });
     await act(async () => {

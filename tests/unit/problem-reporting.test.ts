@@ -783,6 +783,37 @@ describe('scenario report contract', () => {
     expect(response.headers.get('Cache-Control')).toBe('no-store');
   });
 
+  it('names the responsible maintainer and same-origin privacy notice from server config', async () => {
+    const response = await handleRequest(new Request('https://opensimlab.com/api/reports/config'), {
+      REPORTING_ENABLED: 'true', REPORTS_DB: {}, TURNSTILE_SITE_KEY: 'site-key',
+      TURNSTILE_SECRET_KEY: 'secret', REPORT_HASH_SECRET: 'h'.repeat(32),
+      REPORT_ALLOWED_ORIGIN: 'https://opensimlab.com',
+      REPORT_MAINTAINER_NAME: 'Open Sim Lab maintainers',
+      REPORT_PRIVACY_URL: 'https://opensimlab.com/privacy#problem-reports',
+    });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({
+      sitekey: 'site-key', action: 'scenario-report', maintainer: 'Open Sim Lab maintainers',
+      privacy_url: 'https://opensimlab.com/privacy#problem-reports',
+    });
+    const crossOrigin = await handleRequest(new Request('https://opensimlab.com/api/reports/config'), {
+      REPORTING_ENABLED: 'true', REPORTS_DB: {}, TURNSTILE_SITE_KEY: 'site-key',
+      TURNSTILE_SECRET_KEY: 'secret', REPORT_HASH_SECRET: 'h'.repeat(32),
+      REPORT_ALLOWED_ORIGIN: 'https://opensimlab.com', REPORT_PRIVACY_URL: 'https://example.com/privacy',
+    });
+    expect(crossOrigin.status).toBe(503);
+    const selfHosted = await handleRequest(new Request('https://training.example/api/reports/config'), {
+      REPORTING_ENABLED: 'true', REPORTS_DB: {}, TURNSTILE_SITE_KEY: 'fork-key',
+      TURNSTILE_SECRET_KEY: 'secret', REPORT_HASH_SECRET: 'h'.repeat(32),
+      REPORT_ALLOWED_ORIGIN: 'https://training.example',
+      REPORT_MAINTAINER_NAME: 'Example simulation team', REPORT_PRIVACY_URL: '/privacy#reports',
+    });
+    expect(await selfHosted.json()).toMatchObject({
+      maintainer: 'Example simulation team',
+      privacy_url: 'https://training.example/privacy#reports',
+    });
+  });
+
   it('keeps the report Worker isolated from assets and public preview routes', () => {
     const wrangler = readFileSync(join(process.cwd(), 'workers/reports/wrangler.toml'), 'utf8');
     expect(wrangler).toContain('workers_dev = false');
@@ -828,7 +859,9 @@ describe('scenario report contract', () => {
       success: true, action: 'scenario-report', hostname: 'opensimlab.com',
     }));
     await expect(verifyTurnstile(
-      { turnstileToken: 'token' }, '192.0.2.1', { TURNSTILE_SECRET_KEY: 'secret' }, fetcher,
+      { turnstileToken: 'token' }, '192.0.2.1', {
+        TURNSTILE_SECRET_KEY: 'secret', REPORT_ALLOWED_ORIGIN: 'https://opensimlab.com',
+      }, fetcher,
     )).resolves.toBe(true);
     expect(fetcher).toHaveBeenCalledWith(
       'https://challenges.cloudflare.com/turnstile/v0/siteverify',
@@ -838,7 +871,9 @@ describe('scenario report contract', () => {
       success: true, action: 'other', hostname: 'opensimlab.com',
     }));
     await expect(verifyTurnstile(
-      { turnstileToken: 'token' }, '192.0.2.1', { TURNSTILE_SECRET_KEY: 'secret' }, wrongAction,
+      { turnstileToken: 'token' }, '192.0.2.1', {
+        TURNSTILE_SECRET_KEY: 'secret', REPORT_ALLOWED_ORIGIN: 'https://opensimlab.com',
+      }, wrongAction,
     )).resolves.toBe(false);
 
     for (const unavailable of [
@@ -851,7 +886,9 @@ describe('scenario report contract', () => {
       })),
     ]) {
       await expect(verifyTurnstile(
-        { turnstileToken: 'token' }, '192.0.2.1', { TURNSTILE_SECRET_KEY: 'secret' }, unavailable,
+        { turnstileToken: 'token' }, '192.0.2.1', {
+          TURNSTILE_SECRET_KEY: 'secret', REPORT_ALLOWED_ORIGIN: 'https://opensimlab.com',
+        }, unavailable,
       )).resolves.toBe(false);
     }
   });
