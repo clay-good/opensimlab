@@ -1,0 +1,68 @@
+name: Private report maintenance
+
+on:
+  schedule:
+    - cron: '17 9 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: private-report-maintenance
+  cancel-in-progress: false
+
+jobs:
+  project-private-batch:
+    if: vars.REPORT_MAINTENANCE_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: report-maintenance-read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install with the committed lockfile
+        run: npm ci
+
+      - name: Export the fixed read-only D1 projection
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_D1_READ_TOKEN }}
+        run: |
+          set -euo pipefail
+          umask 077
+          npx --no-install wrangler d1 execute REPORTS_DB --remote --json --yes \
+            --config workers/reports/wrangler.toml \
+            --file scripts/report-maintenance/open-reports.sql \
+            > "$RUNNER_TEMP/report-query.json"
+          npm run triage:envelope -- \
+            "$RUNNER_TEMP/report-query.json" "$RUNNER_TEMP/report-export.json"
+          npm run triage:project -- \
+            "$RUNNER_TEMP/report-export.json" "$RUNNER_TEMP/report-projection.json"
+
+      - name: Encrypt the private review artifact
+        env:
+          REPORT_MAINTENANCE_ARTIFACT_KEY: ${{ secrets.REPORT_MAINTENANCE_ARTIFACT_KEY }}
+        run: |
+          set -euo pipefail
+          npm run triage:artifact -- encrypt \
+            "$RUNNER_TEMP/report-projection.json" "$RUNNER_TEMP/report-projection.enc.json"
+          rm "$RUNNER_TEMP/report-query.json"
+          rm "$RUNNER_TEMP/report-export.json"
+          rm "$RUNNER_TEMP/report-projection.json"
+
+      - name: Retain ciphertext for weekly human review
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: private-report-maintenance-${{ github.run_id }}
+          path: ${{ runner.temp }}/report-projection.enc.json
+          if-no-files-found: error
+          retention-days: 8
+          compression-level: 0

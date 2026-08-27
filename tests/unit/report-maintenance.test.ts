@@ -1,8 +1,14 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import {
   ALLOWED_MAINTENANCE_ACTIONS, PROHIBITED_MAINTENANCE_ACTIONS,
   projectMaintenanceBatch, validateMaintenanceProjection,
 } from '../../scripts/report-maintenance/projection';
+import { buildExportEnvelope } from '../../scripts/report-maintenance/build-export-envelope';
+import {
+  decryptPrivateArtifact, encryptPrivateArtifact,
+} from '../../scripts/report-maintenance/private-artifact';
 
 const hash = (character: string) => `sha256:${character.repeat(64)}`;
 const row = (overrides: Record<string, unknown> = {}) => ({
@@ -54,6 +60,16 @@ describe('safe report maintenance projection', () => {
     expect(JSON.stringify(batch)).not.toContain('prose');
   });
 
+  it('rejects rows outside the declared private review window', () => {
+    const batch = projectMaintenanceBatch([
+      row({ created_at: options.windowStart }),
+      row({ created_at: options.windowEnd, scenario_id: 'outside',
+        canonical_url: 'https://opensimlab.com/anesthesia/scenario/outside' }),
+    ], options);
+    expect(batch.itemCount).toBe(1);
+    expect(batch.rejectedMalformedCount).toBe(1);
+  });
+
   it('groups an exact duplicate flood into one bounded item without changing authority', () => {
     const batch = projectMaintenanceBatch(Array.from({ length: 1_000 }, () => row({ note: 'Check this.' })), options);
     expect(batch.itemCount).toBe(1_000);
@@ -97,5 +113,50 @@ describe('safe report maintenance projection', () => {
       '/groups/0/evidence: expected exact immutable evidence',
     );
     expect(validateMaintenanceProjection(changed)).toContain('/groups/0/workflow: fixed policy changed');
+  });
+});
+
+describe('private report maintenance transport', () => {
+  it('accepts only one successful Wrangler D1 result', () => {
+    const now = new Date('2026-08-26T13:00:00.000Z');
+    expect(buildExportEnvelope([{ success: true, results: [row()] }], now)).toMatchObject({
+      batchId: '2026-08-26.daily', generatedAt: now.toISOString(), rows: [row()],
+    });
+    expect(() => buildExportEnvelope([])).toThrow();
+    expect(() => buildExportEnvelope([{ success: false, results: [] }])).toThrow();
+  });
+
+  it('encrypts private batches with authenticated encryption and rejects tampering', () => {
+    const key = Buffer.alloc(32, 7).toString('base64');
+    const plaintext = Buffer.from(JSON.stringify({ note: 'private report text' }));
+    const artifact = encryptPrivateArtifact(plaintext, key);
+    expect(JSON.stringify(artifact)).not.toContain('private report text');
+    expect(encryptPrivateArtifact(plaintext, key).nonce).not.toBe(artifact.nonce);
+    expect(decryptPrivateArtifact(artifact, key)).toEqual(plaintext);
+    const changed = { ...artifact, ciphertext: `${artifact.ciphertext.slice(0, -4)}AAAA` };
+    expect(() => decryptPrivateArtifact(changed, key)).toThrow();
+    expect(() => decryptPrivateArtifact(artifact, Buffer.alloc(32, 8).toString('base64'))).toThrow();
+  });
+
+  it('keeps the scheduled export read-only, fixed-shape, encrypted, and agent-free', () => {
+    const workflow = readFileSync(join(process.cwd(), '.github/workflows/report-maintenance.yml'), 'utf8');
+    const query = readFileSync(join(
+      process.cwd(), 'scripts/report-maintenance/open-reports.sql',
+    ), 'utf8');
+    expect(workflow).toContain('permissions:\n  contents: read');
+    expect(workflow).toContain("vars.REPORT_MAINTENANCE_ENABLED == 'true'");
+    expect(workflow).toContain('CLOUDFLARE_D1_READ_TOKEN');
+    expect(workflow).toContain('REPORT_MAINTENANCE_ARTIFACT_KEY');
+    expect(workflow).toContain('retention-days: 8');
+    expect(workflow).not.toMatch(/codex-action|OPENAI_API_KEY|contents: write/);
+    expect(workflow).not.toMatch(/uses: actions\/(?:checkout|setup-node|upload-artifact)@v\d/);
+    expect(query).not.toMatch(/SELECT\s+\*/i);
+    expect(query.trimStart()).toMatch(/^SELECT\b/);
+    expect(query).not.toMatch(/\b(?:INSERT|UPDATE|DELETE|ALTER|DROP|PRAGMA|ATTACH)\b/i);
+    expect(query).toContain("status IN ('open', 'investigating', 'withdrawn_content')");
+    for (const field of ['capability_version', 'release_ref', 'defaults_hash', 'maturity_hash',
+      'source_manifest_hash', 'limitation_manifest_hash']) {
+      expect(query).toContain(`${field} IS NOT NULL`);
+    }
   });
 });

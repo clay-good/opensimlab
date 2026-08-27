@@ -169,7 +169,9 @@ credited toward the catalog until every item in the completion contract passes.
   tests cover hostile instructions, malformed context, duplicate floods, stale releases,
   withdrawn maturity, privacy exclusions, deterministic ordering, and overflow.
 - [ ] Implement a daily batch triage job with read-only production access and a separate branch-only
-  repository credential; do not trigger one agent per report.
+  repository credential; do not trigger one agent per report. The daily read-only export,
+  fail-closed projection, authenticated encryption, and 8-day private review artifact are
+  implemented; agent and branch credentials remain disabled pending the stated validation gates.
 - [ ] Permit agents to reproduce, source-check, add a failing regression, and draft a PR only.
 - [ ] Prevent report text from selecting tools, changing instructions, accessing secrets, writing
   D1, merging, deploying, or changing review/endorsement records.

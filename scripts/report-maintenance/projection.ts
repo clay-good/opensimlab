@@ -185,6 +185,10 @@ export function projectMaintenanceBatch(rows: readonly unknown[], options: Proje
     const valid = validateRow(value);
     if (!valid) { rejectedMalformedCount += 1; continue; }
     const { row, context } = valid;
+    if (row.created_at < options.windowStart || row.created_at >= options.windowEnd) {
+      rejectedMalformedCount += 1;
+      continue;
+    }
     const evidence = {
       moduleId: row.module_id, scenarioId: row.scenario_id, contentVersion: row.content_version,
       capabilityVersion: row.capability_version, releaseRef: row.release_ref,

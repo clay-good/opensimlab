@@ -39,7 +39,9 @@
     "preview:worker": "wrangler dev --local",
     "preview:reports": "wrangler dev --local --config workers/reports/wrangler.toml",
     "migrate:reports": "wrangler d1 migrations apply REPORTS_DB --remote --config workers/reports/wrangler.toml",
+    "triage:envelope": "tsx scripts/report-maintenance/build-export-envelope.ts",
     "triage:project": "tsx scripts/report-maintenance/project-batch.ts",
+    "triage:artifact": "tsx scripts/report-maintenance/private-artifact.ts",
     "deploy:reports": "wrangler deploy --config workers/reports/wrangler.toml",
     "deploy": "npm run build:indexable && npm run release:preview && wrangler deploy",
     "deploy:reviewed": "npm run build:indexable && npm run release:reviewed && wrangler deploy"

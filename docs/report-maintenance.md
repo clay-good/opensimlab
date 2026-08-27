@@ -6,8 +6,9 @@ A report insert never launches an agent, changes a scenario, or creates a public
 
 ## Fixed private projection
 
-The trusted exporter selects only the columns below, never `SELECT *`. It must use a Cloudflare API
-token limited to D1 read access and must not print query results or persist shell history:
+The daily `Private report maintenance` workflow selects only the columns below, never `SELECT *`.
+Its `report-maintenance-read` environment must provide a Cloudflare token limited to D1 read access;
+the query result is redirected to a mode-`0600` runner-temporary file and is never printed:
 
 ```sql
 SELECT created_at, module_id, scenario_id, content_version, capability_version,
@@ -17,7 +18,13 @@ SELECT created_at, module_id, scenario_id, content_version, capability_version,
        note, recent_context_json
 FROM scenario_reports
 WHERE status IN ('open', 'investigating', 'withdrawn_content')
-  AND created_at >= ? AND created_at < ?
+  AND created_at >= strftime('%Y-%m-%dT%H:%M:%fZ', 'now', '-30 days')
+  AND capability_version IS NOT NULL
+  AND release_ref IS NOT NULL
+  AND defaults_hash IS NOT NULL
+  AND maturity_hash IS NOT NULL
+  AND source_manifest_hash IS NOT NULL
+  AND limitation_manifest_hash IS NOT NULL
 ORDER BY created_at, scenario_id
 LIMIT 1000
 ```
@@ -33,6 +40,7 @@ into the only object a maintenance agent may receive. The input envelope contain
 `batchId`, `generatedAt`, `windowStart`, `windowEnd`, and `rows`. The command writes no report data
 to standard output, creates the projection with mode `0600`, rejects malformed rows without echoing
 their content, groups exact duplicates, caps the batch at 50 groups, and records overflow counts.
+Rows outside the declared 30-day window are rejected even if a future query regresses.
 
 The projection excludes report IDs, reporter HMACs, raw addresses, Turnstile tokens, dedupe keys,
 triage decisions, resolution notes, arbitrary SQL, headers, and environment data. A note remains
@@ -50,10 +58,30 @@ Maintenance automation may only:
 
 It may not select tools from report text, access secrets or production credentials, write D1,
 merge, deploy, publish, withdraw content, update a correction, or change review or endorsement
-records. The agent receives no Cloudflare or GitHub write credential. A later trusted job may mint a
-short-lived repository credential only after output validation; repository rules must confine that
-credential to a new `automation/report-triage-*` branch and a draft pull request, with no `main`
-bypass. The workflow remains unimplemented until those rules and credentials can be verified.
+records. The scheduled job has no repository write permission and does not invoke an agent. It
+encrypts the validated projection with AES-256-GCM before upload; only ciphertext is retained, for
+8 days. `REPORT_MAINTENANCE_ARTIFACT_KEY` must be a random 32-byte value in canonical base64, kept
+in the protected environment and the reviewers' password manager. Generate it once with
+`openssl rand -base64 32`; never print it in CI. Reviewers decrypt a downloaded artifact locally:
+
+```sh
+read -rs REPORT_MAINTENANCE_ARTIFACT_KEY
+export REPORT_MAINTENANCE_ARTIFACT_KEY
+npm run triage:artifact -- decrypt report-projection.enc.json report-projection.json
+unset REPORT_MAINTENANCE_ARTIFACT_KEY
+```
+
+The plaintext output is mode `0600` and must be deleted after review. Agent processing and draft-PR
+creation remain disabled until the data-processing arrangement, output validation, and repository
+rules are approved. A future trusted job may mint a short-lived repository credential only after
+validation; rules must confine it to a new `automation/report-triage-*` branch and a draft pull
+request, with no `main` bypass.
+
+The job remains skipped until a maintainer creates the `report-maintenance-read` environment, adds
+`CLOUDFLARE_ACCOUNT_ID`, a database-scoped `CLOUDFLARE_D1_READ_TOKEN`, and
+`REPORT_MAINTENANCE_ARTIFACT_KEY`, performs a no-report test run, and sets the repository variable
+`REPORT_MAINTENANCE_ENABLED=true`. Keep environment deployment branches limited to `main`; rotate
+either secret after suspected exposure and disable the variable before investigation.
 
 ## Weekly human review
 
