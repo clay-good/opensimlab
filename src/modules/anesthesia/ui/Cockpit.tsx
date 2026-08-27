@@ -1216,6 +1216,9 @@ export function Cockpit({
           onNeonatologyNicuHandoffResponse={(action) => session.act({
             type: 'delivery-room-to-nicu-handoff-response', payload: { action },
           })}
+          onNeonatologyTensionPneumothoraxResponse={(action) => session.act({
+            type: 'neonatal-tension-pneumothorax-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

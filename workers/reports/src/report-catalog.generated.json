@@ -1907,6 +1907,23 @@
       "limitationManifestHash": "sha256:ad4d59cdeffa2a71368c9afcfed3e747b93d3d119bd5875040143cf557ec8d28"
     },
     {
+      "scenarioId": "neonatal-tension-pneumothorax",
+      "contentVersion": "0.1.0",
+      "moduleId": "neonatology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:e7917ff14c61fac8efcc39d27a8a129e575ec63f973d59a8d06c73b08cf33bd5",
+      "defaultsHash": "sha256:485f29fa51fd71e939af2c14cd9acfcc9aab2555ab5f4240549d751fd5541f62",
+      "maturityHash": "sha256:e9cf281164f3e562140b713f7489546ba73bd9298a54b690ef072bedfa161d2d",
+      "sourceManifestHash": "sha256:7bcde58f31ac1a3bc16ec666457cce67e933ad8e14b587f9ccd8f4218d1764d9",
+      "limitationManifestHash": "sha256:a3958c528ee654121f078232574badaea2e9b22d0fef8a34a755ca7b97a28111"
+    },
+    {
       "scenarioId": "preterm-respiratory-distress",
       "contentVersion": "0.1.1",
       "moduleId": "neonatology",

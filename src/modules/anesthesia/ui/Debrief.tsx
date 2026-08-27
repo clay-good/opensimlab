@@ -5425,6 +5425,31 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['activate-neonatal-tension-pneumothorax-respiratory-decompression-monitoring-and-family-support',
+      'reconcile-neonatal-tension-pneumothorax-support-clock-sudden-change-asymmetry-perfusion-and-whole-dyad',
+      'recognize-suspected-neonatal-tension-pneumothorax-with-cardiopulmonary-compromise-without-imaging-delay',
+      'review-qualified-neonatal-tension-pneumothorax-oxygenation-ventilation-decompression-drain-and-reassessment-boundaries',
+      'review-neonatal-tension-pneumothorax-fixed-two-minute-qualified-report',
+      'handoff-neonatal-tension-pneumothorax-air-leak-lung-support-circulatory-family-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'neonatal-tension-pneumothorax'
+        && scenario.timeline.every((event) => event.type === 'narrative')
+        && scenario.timeline.filter((event) => event.target === 'neonatal-tension-pneumothorax').length === 1
+        && scenario.timeline.filter((event) => event.target === 'neonatal-tension-pneumothorax-boundary').length === 1;
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neonatology tension-pneumothorax lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['support-activated', 'Qualified neonatal emergency, airway, ventilation, decompression, drain, monitoring, analgesia, imaging, family, dignity, and escalation ownership was confirmed first.'],
+        ['context-reconciled', 'Respiratory support, device report, sudden oxygenation and circulatory change, unilateral findings, perfusion, parent, and whole dyad were connected.'],
+        ['pattern-recognized', 'The suspected tension-pneumothorax pattern and no-radiography-delay emergency boundary were recognized without diagnostic closure.'],
+        ['readiness-reviewed', 'Qualified oxygenation, ventilation, decompression, drain, analgesia, imaging, local-protocol, and serial-reassessment boundaries were reviewed.'],
+        ['two-minute-report-reviewed', 'The fixed postdecompression report was reviewed without learner care, confirmed diagnosis, excluded alternatives, resolved air leak, durable response, disposition, or outcome claims.'],
+        ['active-risk-handoff-recorded', 'Air-leak, underlying-lung, respiratory, circulatory, analgesia, drain, imaging, infection, thermal, neurologic, family, transfer, disposition, and outcome risks were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^neonatology-tension-pneumothorax-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^neonatology-tension-pneumothorax-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['activate-obstetrics-cord-prolapse-response-diagnosis-clock-theatre-anesthesia-newborn-and-support-roles',
       'reconcile-obstetrics-cord-prolapse-membrane-rupture-fetal-heart-exam-birth-imminence-and-whole-person',
       'review-obstetrics-cord-prolapse-pressure-relief-minimal-handling-position-and-no-delay-boundaries',

@@ -1375,6 +1375,11 @@ export interface ActionCockpitProps {
       readonly contentAtTick: number | null; readonly readinessAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly neonatologyTensionPneumothoraxAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2523,6 +2528,14 @@ export interface ActionCockpitProps {
       | 'review-delivery-room-nicu-fixed-receiver-check-back-and-ten-minute-arrival-report'
       | 'handoff-delivery-room-nicu-respiratory-thermal-glucose-neurologic-infection-feeding-family-and-outcome-risk',
   ) => void;
+  readonly onNeonatologyTensionPneumothoraxResponse?: (
+    action: 'activate-neonatal-tension-pneumothorax-respiratory-decompression-monitoring-and-family-support'
+      | 'reconcile-neonatal-tension-pneumothorax-support-clock-sudden-change-asymmetry-perfusion-and-whole-dyad'
+      | 'recognize-suspected-neonatal-tension-pneumothorax-with-cardiopulmonary-compromise-without-imaging-delay'
+      | 'review-qualified-neonatal-tension-pneumothorax-oxygenation-ventilation-decompression-drain-and-reassessment-boundaries'
+      | 'review-neonatal-tension-pneumothorax-fixed-two-minute-qualified-report'
+      | 'handoff-neonatal-tension-pneumothorax-air-leak-lung-support-circulatory-family-and-outcome-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2651,6 +2664,11 @@ export function crisisResponseAvailability(
     && scenario.timeline.every((event) => event.type === 'narrative')
     && scenario.timeline.filter((event) => event.target === 'delivery-room-to-nicu-handoff').length === 1
     && scenario.timeline.filter((event) => event.target === 'delivery-room-to-nicu-handoff-boundary').length === 1;
+  const hasNeonatologyTensionPneumothoraxResponse =
+    scenario.metadata.id === 'neonatal-tension-pneumothorax'
+    && scenario.timeline.every((event) => event.type === 'narrative')
+    && scenario.timeline.filter((event) => event.target === 'neonatal-tension-pneumothorax').length === 1
+    && scenario.timeline.filter((event) => event.target === 'neonatal-tension-pneumothorax-boundary').length === 1;
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -3218,6 +3236,7 @@ export function crisisResponseAvailability(
     hasNeonatologySepsisResponse,
     hasNeonatologyThermoregulationResponse,
     hasNeonatologyNicuHandoffResponse,
+    hasNeonatologyTensionPneumothoraxResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3457,6 +3476,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'neonatal-sepsis')
       || (event.type === 'narrative' && event.target === 'thermoregulation-failure')
       || (event.type === 'narrative' && event.target === 'delivery-room-to-nicu-handoff')
+      || (event.type === 'narrative' && event.target === 'neonatal-tension-pneumothorax')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3584,6 +3604,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeonatologySepsisResponse,
     hasNeonatologyThermoregulationResponse,
     hasNeonatologyNicuHandoffResponse,
+    hasNeonatologyTensionPneumothoraxResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3738,8 +3759,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeonatologySepsisResponse
     || hasNeonatologyThermoregulationResponse
     || hasNeonatologyNicuHandoffResponse
+    || hasNeonatologyTensionPneumothoraxResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasNeonatologyNicuHandoffResponse
+  const responseTray = hasNeonatologyTensionPneumothoraxResponse
+    ? { id: 'crisis', label: 'Asymmetry + collapse' } as const
+    : hasNeonatologyNicuHandoffResponse
     ? { id: 'crisis', label: 'Story + ownership' } as const
     : hasNeonatologyThermoregulationResponse
     ? { id: 'crisis', label: 'Warmth + trajectory' } as const
@@ -4182,6 +4206,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeonatologySepsisResponse
     || hasNeonatologyThermoregulationResponse
     || hasNeonatologyNicuHandoffResponse
+    || hasNeonatologyTensionPneumothoraxResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -5147,6 +5172,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNeonatologyNicuHandoffResponse && (
               <NeonatologyNicuHandoffTray assessment={props.resuscitation.neonatologyNicuHandoffAssessment}
                 onAction={props.onNeonatologyNicuHandoffResponse ?? (() => {})} />
+            )}
+            {hasNeonatologyTensionPneumothoraxResponse && (
+              <NeonatologyTensionPneumothoraxTray assessment={props.resuscitation.neonatologyTensionPneumothoraxAssessment}
+                onAction={props.onNeonatologyTensionPneumothoraxResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -12744,6 +12773,38 @@ function NeonatologyNicuHandoffTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-delivery-room-nicu-fixed-receiver-check-back-and-ten-minute-arrival-report')}>Review receiver confirmation</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-delivery-room-nicu-respiratory-thermal-glucose-neurologic-infection-feeding-family-and-outcome-risk')}>Hand off active newborn risk</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function NeonatologyTensionPneumothoraxTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['neonatologyTensionPneumothoraxAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onNeonatologyTensionPneumothoraxResponse']>;
+}) {
+  const support = assessment?.supportAtTick != null;
+  const context = assessment?.contextAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const readiness = assessment?.readinessAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="neonatology-tension-pneumothorax-now-title">
+      <div id="neonatology-tension-pneumothorax-now-title" className="syringe__name">Sudden asymmetry changes the emergency.</div>
+      <p className="syringe__remaining">Connect the support, clock, oxygen need, unilateral findings, perfusion, alternatives, parent, and whole dyad. Keep imaging and procedural choices with the qualified team.</p>
+      <div className="crisis-drug__actions">
+        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-neonatal-tension-pneumothorax-respiratory-decompression-monitoring-and-family-support')}>Confirm prepared support</Button>}
+        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neonatal-tension-pneumothorax-support-clock-sudden-change-asymmetry-perfusion-and-whole-dyad')}>Connect newborn + whole dyad</Button>}
+        {context && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-suspected-neonatal-tension-pneumothorax-with-cardiopulmonary-compromise-without-imaging-delay')}>Recognize the urgent pattern</Button>}
+        {recognition && !readiness && <Button className="crisis-drug__action" onClick={() => onAction('review-qualified-neonatal-tension-pneumothorax-oxygenation-ventilation-decompression-drain-and-reassessment-boundaries')}>Review qualified boundaries</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="neonatology-tension-pneumothorax-later-title">
+      <div id="neonatology-tension-pneumothorax-later-title" className="syringe__name">A pressure release is a beginning, not closure.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Air-leak, lung-support, circulatory, analgesia, imaging, family, disposition, and outcome risks handed off.' : reassessment ? 'The supplied physiology improves, but asymmetry persists. Diagnosis, alternatives, recurrence, durable response, and outcomes remain open.' : readiness ? 'Qualified emergency care and serial reassessment continue. Review the fixed report after time passes.' : support ? 'Prepared support is present. Connect the whole newborn and dyad before naming the pattern.' : 'Begin with calm shared ownership. You can pause or leave this practice at any time.'}</p>
+      <div className="crisis-drug__actions">
+        {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-neonatal-tension-pneumothorax-fixed-two-minute-qualified-report')}>Review the fixed 2-minute report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neonatal-tension-pneumothorax-air-leak-lung-support-circulatory-family-and-outcome-risk')}>Hand off active newborn risk</Button>}
       </div>
     </section>
   </>;

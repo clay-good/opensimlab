@@ -597,6 +597,10 @@ const NEONATOLOGY_NICU_HANDOFF_BLOCKED_ACTION_TYPES = new Set([
   ...NEONATOLOGY_THERMOREGULATION_BLOCKED_ACTION_TYPES,
   'neonatal-thermoregulation-response',
 ]);
+const NEONATOLOGY_TENSION_PNEUMOTHORAX_BLOCKED_ACTION_TYPES = new Set([
+  ...NEONATOLOGY_NICU_HANDOFF_BLOCKED_ACTION_TYPES,
+  'delivery-room-to-nicu-handoff-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1674,6 +1678,12 @@ export class AnesthesiaEngine {
   private neonatologyNicuHandoffReadinessAtTick: number | null = null;
   private neonatologyNicuHandoffReassessmentAtTick: number | null = null;
   private neonatologyNicuHandoffFinalAtTick: number | null = null;
+  private neonatologyTensionPneumothoraxSupportAtTick: number | null = null;
+  private neonatologyTensionPneumothoraxContextAtTick: number | null = null;
+  private neonatologyTensionPneumothoraxRecognitionAtTick: number | null = null;
+  private neonatologyTensionPneumothoraxReadinessAtTick: number | null = null;
+  private neonatologyTensionPneumothoraxReassessmentAtTick: number | null = null;
+  private neonatologyTensionPneumothoraxHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2765,6 +2775,14 @@ export class AnesthesiaEngine {
     if (neonatologyNicuHandoff && NEONATOLOGY_NICU_HANDOFF_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `neonatology-nicu-handoff-generic-action-refused-${this.currentTick}`,
         'This Neonatology lesson exposes no generic history, examination, scoring, monitoring or record interpretation, warming, CPAP, oxygen, device, respiratory support, ventilation, airway, access, glucose, fluid, blood, drug, feeding, resuscitation, positioning, transport, communication, documentation, counseling, procedure, diagnosis, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const neonatologyTensionPneumothorax = this.scenario.metadata.id === 'neonatal-tension-pneumothorax'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'neonatal-tension-pneumothorax').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'neonatal-tension-pneumothorax-boundary').length === 1;
+    if (neonatologyTensionPneumothorax && NEONATOLOGY_TENSION_PNEUMOTHORAX_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `neonatology-tension-pneumothorax-generic-action-refused-${this.currentTick}`,
+        'This Neonatology lesson exposes no generic history, examination, auscultation, imaging, monitoring or test interpretation, circuit or airway check, ventilator, oxygen or device operation, setting, equipment or site selection, positioning, oxygenation, ventilation, airway care, decompression, drain, access, analgesia, fluid, blood, drug, resuscitation, transport, communication, documentation, counseling, procedure, diagnosis, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -11786,6 +11804,29 @@ export class AnesthesiaEngine {
         if (this.neonatologyNicuHandoffFinalAtTick !== null) break;
         this.neonatologyNicuHandoffFinalAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-nicu-handoff-active-risk-handoff-recorded-${this.currentTick}`, 'Gestation, birth and resuscitation clocks; breathing effort, apnea and support; temperature and glucose; neurologic and infection risk; pending data; feeding and nutrition; parent state, preferences, updates, dignity, support and reunification; escalation; documentation; review; disposition; and outcome uncertainty were handed off.', { sharedUnderstandingProven: false, durableStabilityProven: false, feedingSafetyProven: false, safetyDispositionDetermined: false, newbornOutcomePredicted: false, parentOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'neonatal-tension-pneumothorax-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'neonatal-tension-pneumothorax'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'neonatal-tension-pneumothorax').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'neonatal-tension-pneumothorax-boundary').length === 1;
+        const actions = this.scenario.metadata.objectives.map((objective) => objective.id);
+        const valid = typeof response === 'string' && actions.includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `neonatology-tension-pneumothorax-response-refused-${this.currentTick}`, supported ? 'That tension-pneumothorax response is not available. Nothing changed.' : 'These tension-pneumothorax choices are available only in the exact declared Neonatology lesson.'); break; }
+        if (response === actions[0]) { if (this.neonatologyTensionPneumothoraxSupportAtTick !== null) break; this.neonatologyTensionPneumothoraxSupportAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-tension-pneumothorax-support-activated-${this.currentTick}`, 'A trained neonatal emergency team with qualified airway, ventilation, decompression, drain, monitoring, analgesia, imaging, parent-communication, dignity, and escalation ownership was confirmed. No learner call, support, treatment, communication, or procedure occurred.'); break; }
+        if (this.neonatologyTensionPneumothoraxSupportAtTick === null) { this.log('warning', 'assessment', `neonatology-tension-pneumothorax-support-order-refused-${this.currentTick}`, 'Confirm qualified neonatal emergency, respiratory, decompression, monitoring, family, and escalation support before further review.'); break; }
+        if (response === actions[1]) { if (this.neonatologyTensionPneumothoraxContextAtTick !== null) break; this.neonatologyTensionPneumothoraxContextAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-tension-pneumothorax-context-reconciled-${this.currentTick}`, 'The supplied gestation, respiratory disease and support, circuit and airway report, sudden oxygenation and circulatory deterioration, unilateral chest movement and air-entry reduction, perfusion, temperature, parent state, preferences, support, and whole dyad were connected without learner history, examination, monitoring, device operation, or diagnosis.'); break; }
+        if (this.neonatologyTensionPneumothoraxContextAtTick === null) { this.log('warning', 'assessment', `neonatology-tension-pneumothorax-context-order-refused-${this.currentTick}`, 'Connect support, clock, sudden change, asymmetry, perfusion, parent, and whole-dyad context before recognizing the urgent pattern.'); break; }
+        if (response === actions[2]) { if (this.neonatologyTensionPneumothoraxRecognitionAtTick !== null) break; this.neonatologyTensionPneumothoraxRecognitionAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-tension-pneumothorax-pattern-recognized-${this.currentTick}`, 'Rapid deterioration during positive-pressure support with rising oxygen need, unilateral chest-movement and air-entry reduction, and circulatory compromise was recognized as suspected tension pneumothorax requiring immediate qualified action without waiting for radiography. Imaging confirmation was not claimed and airway, equipment, lung, infection, congenital, and other alternatives remain open.'); break; }
+        if (this.neonatologyTensionPneumothoraxRecognitionAtTick === null) { this.log('warning', 'assessment', `neonatology-tension-pneumothorax-recognition-order-refused-${this.currentTick}`, 'Recognize the suspected tension-pneumothorax pattern without imaging or diagnostic closure before boundary review.'); break; }
+        if (response === actions[3]) { if (this.neonatologyTensionPneumothoraxReadinessAtTick !== null) break; this.neonatologyTensionPneumothoraxReadinessAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-tension-pneumothorax-readiness-reviewed-${this.currentTick}`, 'Qualified oxygenation and ventilation support, immediate decompression without radiography delay in an unstable newborn, locally protocolized device and site selection, analgesia, ongoing drain and imaging planning, and serial reassessment were reviewed without learner care, setting selection, equipment selection, or procedure.'); break; }
+        if (this.neonatologyTensionPneumothoraxReadinessAtTick === null) { this.log('warning', 'assessment', `neonatology-tension-pneumothorax-readiness-order-refused-${this.currentTick}`, 'Review qualified support, decompression, drain, analgesia, imaging, and reassessment boundaries before the fixed report.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.neonatologyTensionPneumothoraxReadinessAtTick) { this.log('warning', 'assessment', `neonatology-tension-pneumothorax-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed qualified-team report.'); break; } if (this.neonatologyTensionPneumothoraxReassessmentAtTick !== null) break; this.neonatologyTensionPneumothoraxReassessmentAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-tension-pneumothorax-two-minute-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report 2 minutes after reported emergency decompression: heart rate 138/min, preductal SpO2 91% with oxygen 60%, mean arterial pressure 40 mm Hg, capillary refill 3 seconds, improving but still asymmetric chest movement, and ongoing qualified ventilation, drain preparation, analgesia, imaging, and serial reassessment. This partial response does not prove learner care, confirm diagnosis, exclude another cause, establish durable oxygenation or circulation, prove a resolved air leak, determine disposition, or predict outcome.', { decompressionOrDrainPerformedByLearner: false, diagnosisConfirmed: false, alternativeCauseExcluded: false, airLeakResolved: false, durableOxygenationOrCirculationProven: false, outcomePredicted: false }); break; }
+        if (this.neonatologyTensionPneumothoraxReassessmentAtTick === null) { this.log('warning', 'assessment', `neonatology-tension-pneumothorax-handoff-order-refused-${this.currentTick}`, 'Review the fixed 2-minute qualified-team report before active-risk handoff.'); break; }
+        if (this.currentTick <= this.neonatologyTensionPneumothoraxReassessmentAtTick) { this.log('warning', 'assessment', `neonatology-tension-pneumothorax-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.neonatologyTensionPneumothoraxHandoffAtTick !== null) break;
+        this.neonatologyTensionPneumothoraxHandoffAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-tension-pneumothorax-active-risk-handoff-recorded-${this.currentTick}`, 'Recurrence, persistent air leak, underlying lung disease, oxygenation, ventilation, airway, circulatory support, analgesia, drain, imaging, infection, thermal, neurologic, parent, family, transfer, disposition, and outcome uncertainty were handed off.', { diagnosisConfirmed: false, alternativeCauseExcluded: false, airLeakResolved: false, durableOxygenationOrCirculationProven: false, safetyDispositionDetermined: false, newbornOutcomePredicted: false, parentOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -14904,6 +14945,17 @@ export class AnesthesiaEngine {
         spo2Percent: this.neonatologyNicuHandoffReassessmentAtTick !== null ? 94 : 93,
         systolicMmHg: 56, diastolicMmHg: 32, meanArterialMmHg: 40,
         coreTemperatureC: this.neonatologyNicuHandoffReassessmentAtTick !== null ? 36.4 : 36.5 };
+    }
+    if (this.scenario.metadata.id === 'neonatal-tension-pneumothorax'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'neonatal-tension-pneumothorax').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'neonatal-tension-pneumothorax-boundary').length === 1) {
+      crisisState = { ...crisisState, heartRateBpm: this.neonatologyTensionPneumothoraxReassessmentAtTick !== null ? 138 : 92,
+        respiratoryRateBpm: 40, spo2Percent: this.neonatologyTensionPneumothoraxReassessmentAtTick !== null ? 91 : 71,
+        systolicMmHg: this.neonatologyTensionPneumothoraxReassessmentAtTick !== null ? 54 : 42,
+        diastolicMmHg: this.neonatologyTensionPneumothoraxReassessmentAtTick !== null ? 32 : 24,
+        meanArterialMmHg: this.neonatologyTensionPneumothoraxReassessmentAtTick !== null ? 40 : 31,
+        coreTemperatureC: 36.6 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -19504,6 +19556,32 @@ export class AnesthesiaEngine {
               durableStabilityProven: false as const, feedingSafetyProven: false as const,
               safetyDispositionDetermined: false as const, newbornOutcomePredicted: false as const,
               parentOutcomePredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'neonatal-tension-pneumothorax'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'neonatal-tension-pneumothorax').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'neonatal-tension-pneumothorax-boundary').length === 1 ? {
+            neonatologyTensionPneumothoraxAssessment: {
+              supportAtTick: this.neonatologyTensionPneumothoraxSupportAtTick, contextAtTick: this.neonatologyTensionPneumothoraxContextAtTick,
+              recognitionAtTick: this.neonatologyTensionPneumothoraxRecognitionAtTick, readinessAtTick: this.neonatologyTensionPneumothoraxReadinessAtTick,
+              reassessmentAtTick: this.neonatologyTensionPneumothoraxReassessmentAtTick, handoffAtTick: this.neonatologyTensionPneumothoraxHandoffAtTick,
+              authoredSuddenAsymmetricCardiopulmonaryDeterioration: true as const,
+              authoredQualifiedTwoMinutePostdecompressionReport: this.neonatologyTensionPneumothoraxReassessmentAtTick !== null,
+              historyTakenByLearner: false as const, newbornExaminedByLearner: false as const,
+              monitoringImagingOrTestsObtainedOrInterpretedByLearner: false as const,
+              circuitAirwayVentilatorOxygenOrDeviceCheckedOrOperatedByLearner: false as const,
+              pressureVolumeRateOxygenPeepEquipmentOrSiteSelectedByLearner: false as const,
+              oxygenationVentilationOrAirwayManagedByLearner: false as const,
+              decompressionOrDrainPerformedByLearner: false as const,
+              accessAnalgesiaFluidBloodOrDrugDeliveredByLearner: false as const,
+              resuscitationPerformedByLearner: false as const,
+              transportCommunicationDocumentationOrCounselingPerformedByLearner: false as const,
+              procedurePerformedByLearner: false as const, diagnosisConfirmed: false as const,
+              alternativeCauseExcluded: false as const, airLeakResolved: false as const,
+              durableOxygenationOrCirculationProven: false as const, safetyDispositionDetermined: false as const,
+              newbornOutcomePredicted: false as const, parentOutcomePredicted: false as const,
+              outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

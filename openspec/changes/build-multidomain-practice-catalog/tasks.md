@@ -629,6 +629,20 @@ credited toward the catalog until every item in the completion contract passes.
     ventilation, airway care, access, glucose, fluid, blood, drug, feeding, resuscitation,
     positioning, transport, communication, check-back, documentation, counseling, procedure,
     disposition, or outcome controls.
+  - [x] Neonatology slice 11/11 adds one authored sudden asymmetric ventilation and rapid
+    cardiopulmonary deterioration pattern during qualified neonatal positive-pressure support;
+    neonatal emergency, respiratory, decompression, drain, monitoring, analgesia, imaging,
+    escalation and family ownership; support, device-report, clock, oxygenation, circulation,
+    unilateral-finding, perfusion and whole-dyad reconciliation; urgent suspected tension-
+    pneumothorax recognition without radiography delay in an unstable newborn; qualified
+    oxygenation, ventilation, decompression, locally protocolized equipment and site, analgesia,
+    drain, imaging and serial-reassessment boundary review; a fixed 2-minute partial
+    postdecompression report; and active-risk handoff without learner history, examination,
+    auscultation, transillumination, imaging, monitoring or test work, circuit or airway checking,
+    device operation, setting, equipment or site selection, positioning, oxygenation, ventilation,
+    airway care, decompression, drain, access, analgesia, fluid, blood, drug, resuscitation,
+    transport, communication, documentation, counseling, procedure, diagnosis, disposition, or
+    outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

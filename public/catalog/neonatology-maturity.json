@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "neonatology",
-  "recordCount": 10,
+  "recordCount": 11,
   "records": [
     {
       "recordId": "scenario:term-newborn-transition@0.1.0",
@@ -111,6 +111,17 @@
       "evidence": [
         "/catalog/neonatology-completion-audit.json#delivery-room-to-nicu-handoff@0.1.0",
         "/catalog/neonatology-quality-audit.json#delivery-room-to-nicu-handoff@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:neonatal-tension-pneumothorax@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "neonatal-tension-pneumothorax",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/neonatology-completion-audit.json#neonatal-tension-pneumothorax@0.1.0",
+        "/catalog/neonatology-quality-audit.json#neonatal-tension-pneumothorax@0.1.0"
       ]
     }
   ]

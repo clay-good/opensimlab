@@ -342,6 +342,16 @@ receiver confirmation and arrival report. No learner examination, support, trans
 communication, documentation, procedure, disposition, or newborn/parent outcome control is
 exposed.
 
+The eleventh Neonatology lab completes the module with sudden asymmetric ventilation and rapid
+cardiopulmonary deterioration during positive-pressure support. It connects the support and device
+report, rising oxygen need, unilateral chest findings, falling heart rate and perfusion, parent,
+and whole dyad; recognizes suspected tension pneumothorax without waiting for radiography in an
+unstable newborn; and reviews qualified oxygenation, ventilation, decompression, drain, analgesia,
+imaging, and serial-reassessment boundaries. A fixed 2-minute postdecompression report is partial,
+not diagnostic or outcome closure. No learner examination, device operation, setting or equipment
+selection, oxygenation, ventilation, airway care, decompression, drain, drug, procedure,
+disposition, or newborn/parent outcome control is exposed.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

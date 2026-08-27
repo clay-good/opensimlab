@@ -5159,6 +5159,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified direct findings, the current local neonatal-resuscitation, transport and NICU pathways, trained sending and receiving teams, reliable equipment, closed-loop communication, explicit ownership, respectful parent support, and hands-on team simulation.',
     briefIn: ['delivery-room-to-nicu-handoff'],
   },
+  {
+    id: 'neonatal-tension-pneumothorax-support-change-asymmetry-compromise-and-response-are-authored',
+    headline: 'The respiratory support, sudden deterioration, asymmetric findings, compromise, and response are authored.',
+    simplification: 'Fixed qualified-team reports stand in for history, direct examination, auscultation, circuit and airway checks, monitoring, imaging, gas and test interpretation, oxygenation, ventilation, decompression, drain preparation, analgesia, and serial reassessment. Hidden adult-oriented engine-schema minimums are scaffolding, not validated neonatal respiratory mechanics or pleural-pressure physiology.',
+    whereItMisleads: 'Treating the unilateral findings, presumed mechanism, vital-sign trajectory, device report, or partial postdecompression improvement as learner findings, diagnostic confirmation, excluded alternatives, proven treatment effect, resolved air leak, durable stability, prognosis, or outcome.',
+    correctUnderstanding: 'A suddenly deteriorating newborn during positive-pressure support needs immediate direct qualified assessment of airway, breathing, circulation, equipment, asymmetric findings, and reversible threats; significant cardiopulmonary compromise with suspected tension pneumothorax demands urgent locally protocolized action.',
+    briefIn: ['neonatal-tension-pneumothorax'],
+  },
+  {
+    id: 'neonatal-tension-pneumothorax-controls-activate-reconcile-recognize-review-reassess-and-handoff-only',
+    headline: 'The controls activate support, connect supplied facts, recognize, review, reassess, and hand off only.',
+    simplification: 'Six cognitive actions stand in for concurrent qualified neonatal emergency leadership, airway and ventilator assessment, oxygenation and ventilation, decompression, drain, monitoring, analgesia, imaging, nursing, documentation, family, dignity, escalation, transfer, and follow-up work.',
+    whereItMisleads: 'Equating button order with examination, diagnosis, crisis leadership, equipment use, procedural skill, clinical judgment, communication, documentation, or competence.',
+    correctUnderstanding: 'Real neonatal tension pneumothorax care requires trained teams, direct findings, hands-on equipment and procedural competence, local pathways, human factors, serial reassessment, and family-centered communication.',
+    briefIn: ['neonatal-tension-pneumothorax'],
+  },
+  {
+    id: 'no-live-neonatal-tension-pneumothorax-exam-device-support-decompression-drain-procedure-disposition-or-outcome',
+    headline: 'The lab does not examine, operate support, decompress, drain, determine disposition, or report outcome.',
+    simplification: 'No live history; examination, auscultation, transillumination, imaging, measurement, monitoring, gas or test acquisition or interpretation; circuit, airway, ventilator, oxygen or device check or operation; pressure, volume, rate, oxygen, PEEP, equipment, needle, catheter, drain or site selection; positioning; oxygenation; ventilation; airway care; decompression; drainage; analgesia; access; fluid, blood, drug or dose; resuscitation; transport; communication; documentation; counseling; parent update; diagnosis; procedure; disposition; prognosis; or outcome is modeled.',
+    whereItMisleads: 'Using the rehearsal as needle, catheter, drain, landmark, ventilator, oxygen, analgesia, imaging, transport, or disposition instruction; delaying real emergency care for a click or radiograph; or reading completion as competence.',
+    correctUnderstanding: 'Use verified direct findings, the current local neonatal emergency and pneumothorax pathway, appropriate monitoring and equipment, qualified procedural teams, immediate escalation, serial reassessment, respectful parent support, and hands-on simulation.',
+    briefIn: ['neonatal-tension-pneumothorax'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

@@ -2446,6 +2446,25 @@ record work, diagnosis, thermal or respiratory care, device or setting operation
 airway care, access, glucose, fluid, blood, drug, feeding, resuscitation, positioning, transport,
 communication, check-back, documentation, counseling, procedure, disposition, or outcome control.
 
+### Wave D neonatology slice 11: tension pneumothorax during respiratory support
+
+A 2.4 kg newborn at 35 weeks 1 day is 3 hours old during qualified pressure-limited ventilation for
+respiratory distress. Over 90 seconds, supplied preductal SpO2 falls from 95% to 71% despite oxygen
+rising from 35% to 70%, heart rate falls from 168/min to 92/min, mean arterial pressure falls from
+42 to 31 mm Hg, and perfusion worsens. A qualified circuit and airway check reports intact support
+and unchanged tube depth, while direct qualified examination supplies markedly reduced right chest
+movement and air entry. The learner activates neonatal emergency, respiratory, decompression,
+monitoring and family support; connects the support, clock, sudden change, asymmetry, perfusion and
+whole dyad; recognizes suspected tension pneumothorax with compromise without waiting for
+radiography; and reviews qualified oxygenation, ventilation, immediate decompression, locally
+protocolized equipment and site, analgesia, drain, imaging and reassessment boundaries. A fixed
+2-minute postdecompression report supplies partial improvement with persistent asymmetry. Six
+controls expose no learner history, examination, auscultation, imaging, monitoring or test work,
+circuit or airway check, device operation, setting, equipment or site selection, positioning,
+oxygenation, ventilation, airway care, decompression, drain, access, analgesia, fluid, blood, drug,
+resuscitation, transport, communication, documentation, counseling, procedure, diagnosis,
+disposition, or outcome control.
+
 ### Wave E neurology slice 1: minor nondisabling acute ischemic stroke
 
 The first Neurology lab is a function-based minor-stroke decision boundary, not another disabling
