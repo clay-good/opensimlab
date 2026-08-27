@@ -25,7 +25,7 @@ describe('Adrenal crisis experience', () => {
   it('offers non-announcing inline tutor text in guided and coached modes but not unassisted', () => {
     const patient = new AdrenalCrisis().snapshot(0);
     for (const guidance of ['guided', 'coached', 'unassisted'] as const) {
-      const html = renderToStaticMarkup(<AdrenalCrisisTray assessment={patient} guidance={guidance} onAction={() => {}} />);
+      const html = renderToStaticMarkup(<AdrenalCrisisTray assessment={patient} scenarioVersion={SCENARIO.metadata.version} guidance={guidance} onAction={() => {}} />);
       expect(html.includes('aria-label="Private tutor"')).toBe(guidance !== 'unassisted');
       expect(html).not.toContain('aria-live');
       if (guidance !== 'unassisted') expect(html).toContain('Read the source (opens in a new tab)');
@@ -45,7 +45,7 @@ describe('Adrenal crisis experience', () => {
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
     const container = document.createElement('div'); document.body.append(container); const root = createRoot(container);
     const model = new AdrenalCrisis(); const pause = vi.fn();
-    const render = () => act(() => root.render(<AdrenalCrisisTray assessment={model.snapshot(0)} guidance="guided" onOpenSource={pause} onAction={(action) => { model.apply(action, 0); render(); }} />));
+    const render = () => act(() => root.render(<AdrenalCrisisTray assessment={model.snapshot(0)} scenarioVersion={SCENARIO.metadata.version} guidance="guided" onOpenSource={pause} onAction={(action) => { model.apply(action, 0); render(); }} />));
     const button = (text: string) => [...container.querySelectorAll('button')].find((entry) => entry.textContent === text)!;
     try {
       render(); expect(container.textContent).not.toContain('126 mmol/L');
@@ -63,7 +63,7 @@ describe('Adrenal crisis experience', () => {
   it('keeps past observations distinct from new alertness and removes decisions after handoff', () => {
     const model = new AdrenalCrisis(); model.apply('reassess', 0);
     for (const [tick, action] of ADRENAL_FIXTURES.expert) model.apply(action, tick);
-    const html = renderToStaticMarkup(<AdrenalCrisisTray assessment={model.snapshot(6003)} onAction={() => {}} />);
+    const html = renderToStaticMarkup(<AdrenalCrisisTray assessment={model.snapshot(6003)} scenarioVersion={SCENARIO.metadata.version} onAction={() => {}} />);
     expect(html).toContain('102/60 mmHg'); expect(html).toContain('This observation can become stale');
     expect(html).toContain('not discharge clearance'); expect(html).not.toContain('<button');
     expect(html.match(/role="status"/g)).toHaveLength(1);

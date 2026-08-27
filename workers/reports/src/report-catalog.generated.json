@@ -1805,6 +1805,23 @@
       "limitationManifestHash": "sha256:6b1ae40ff1e83e7c22c3bcac6c7c6d658acba129cb8a11bb85d95db9dd9edd88"
     },
     {
+      "scenarioId": "adrenal-crisis-treatment-before-tests",
+      "contentVersion": "0.1.1",
+      "moduleId": "endocrine-metabolic",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:a2604fb353416c3aec19ed7fd1815e11f4e3e8c671708ca85ab9be0c4f23b53a",
+      "defaultsHash": "sha256:5280e3335fcf1b3af48cd595f9450878c1516ecbe68325ccbd83513f24a7996f",
+      "maturityHash": "sha256:8791c834501c349b3166c0c159f571f1f47aae77bea505eeb695a41dde610300",
+      "sourceManifestHash": "sha256:808ac80351c02de9335573f6ead8a6d9969022b81ac9819ea4a9485a1f37c684",
+      "limitationManifestHash": "sha256:6b1ae40ff1e83e7c22c3bcac6c7c6d658acba129cb8a11bb85d95db9dd9edd88"
+    },
+    {
       "scenarioId": "dka-resolution-transition",
       "contentVersion": "0.1.0",
       "moduleId": "endocrine-metabolic",

@@ -88,6 +88,12 @@ The application SHALL offer three guidance levels — Guided, Coached, and Unass
 - **THEN** its observed-state guidance remains readable within the action tray without a floating overlay or live announcement, while the alarm display remains unobstructed
 - **AND** Unassisted mode removes this guidance, and opening a tutor source pauses the patient before navigation
 
+#### Scenario: The adrenal worked example follows accepted patient state
+
+- **WHEN** a learner watches the adrenal-crisis worked example
+- **THEN** it begins qualified rescue before record review, waits for the actual response, and requests a fresh reassessment before prevention and handoff
+- **AND** pause stops the clock and scripted decisions, while taking control stops automation without resetting the patient, observations, or event log
+
 ### Requirement: Debrief Follows The PEARLS Framework
 
 Every session SHALL end with a debrief structured on PEARLS (Promoting Excellence and Reflective Learning in Simulation; Eppich and Cheng, *Simul Healthc* 2015;10:106–15, PMID 25710312), the established blended debriefing framework, proceeding through its phases: **reactions**, **description**, **analysis**, and **summary and application**. Within each phase the debrief SHALL contain a timeline of key events, the objectives with an outcome for each, the physiological attribution for major state changes, the decision points with what happened and what the alternatives would have produced, and links to the underlying models and citations.

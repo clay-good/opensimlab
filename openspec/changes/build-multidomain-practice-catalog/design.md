@@ -2818,7 +2818,11 @@ close the handoff, not the clinical illness. Delay and oral-only mistakes remain
 correction; stale versions of those actions are refused after steroids begin. Five observed-state
 rules provide quiet in-tray guidance during alarms without interrupting the monitor. Unassisted
 removes the tutor text. Exact-version fixtures and source, limitation, and report records bind
-the preview; the worked example, clinical review, and complete inclusive verification remain pending.
+the preview. Content 0.1.1 adds a seven-decision worked example that begins rescue before record
+review, waits for the actual response snapshot, and requires fresh reassessment before prevention
+and handoff. Pausing stops both the clock and example decisions; takeover restores the selected
+guidance and 1× speed without resetting the patient. Clinical review and complete inclusive and
+four-surface reporting verification remain pending.
 See `docs/evidence-briefs/adrenal-crisis-treatment-before-tests.md` for the fictional parameters.
 
 #### Renal and electrolyte medicine: 12

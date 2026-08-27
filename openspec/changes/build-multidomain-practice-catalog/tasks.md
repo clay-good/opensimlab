@@ -838,8 +838,10 @@ credited toward the catalog until every item in the completion contract passes.
     handoff. Five source-linked in-tray tutor rules remain readable during alarms and respect
     Unassisted mode. Exact-version expert, common-error, and recovery traces retain early mistakes
     without allowing stale post-treatment actions to invent a prior delay. Numeric states and
-    clocks are authored, not kinetics or safe waiting intervals. The worked example, clinical
-    review, full inclusive-runtime evidence, and four-surface report verification remain pending.
+    clocks are authored, not kinetics or safe waiting intervals. Content 0.1.1 adds an optional
+    seven-decision worked example driven by accepted state, with pause, single-dispatch actions,
+    and non-resetting takeover. Clinical review, full inclusive-runtime evidence, and four-surface
+    report verification remain pending.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
   - [x] Toxicology slice 1/15 establishes the indexable `/toxicology` module with one authored
     methemoglobinemia lab after documented topical benzocaine exposure. The learner reconciles

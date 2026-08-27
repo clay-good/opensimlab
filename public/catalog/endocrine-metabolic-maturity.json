@@ -37,14 +37,14 @@
       ]
     },
     {
-      "recordId": "scenario:adrenal-crisis-treatment-before-tests@0.1.0",
+      "recordId": "scenario:adrenal-crisis-treatment-before-tests@0.1.1",
       "subjectKind": "scenario",
       "subjectId": "adrenal-crisis-treatment-before-tests",
-      "contentVersion": "0.1.0",
+      "contentVersion": "0.1.1",
       "status": "preview",
       "evidence": [
-        "/catalog/endocrine-metabolic-completion-audit.json#adrenal-crisis-treatment-before-tests@0.1.0",
-        "/catalog/endocrine-metabolic-quality-audit.json#adrenal-crisis-treatment-before-tests@0.1.0"
+        "/catalog/endocrine-metabolic-completion-audit.json#adrenal-crisis-treatment-before-tests@0.1.1",
+        "/catalog/endocrine-metabolic-quality-audit.json#adrenal-crisis-treatment-before-tests@0.1.1"
       ]
     }
   ]

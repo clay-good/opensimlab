@@ -396,7 +396,7 @@
         "GB"
       ],
       "fidelityClass": "state_transition",
-      "contentVersion": "0.1.0",
+      "contentVersion": "0.1.1",
       "capabilityVersion": "0.1.0-alpha.48",
       "maturity": "preview",
       "complete": false,
@@ -405,7 +405,7 @@
           "id": "identity-and-versions",
           "status": "satisfied",
           "evidence": [
-            "Scenario adrenal-crisis-treatment-before-tests carries stable content version 0.1.0.",
+            "Scenario adrenal-crisis-treatment-before-tests carries stable content version 0.1.1.",
             "Capability version 0.1.0-alpha.48 is bound by this audit."
           ]
         },
@@ -460,9 +460,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Five observed-state tutor rules at version 0.1.0 support guidance levels. An in-product worked example is not yet bound to this lesson."
+            "Five observed-state tutor rules at version 0.1.0 support guidance levels. Worked example 0.1.0 follows accepted rescue, record, reassessment, prevention, and handoff actions through the real engine. tests/unit/endocrine-adrenal-demonstration.test.ts, tests/ui/endocrine-adrenal-demonstration.test.tsx, and tests/integration/demonstration-runs.test.tsx verify observed response, pause, single dispatch, takeover, and replay."
           ]
         },
         {
@@ -490,7 +490,7 @@
           "id": "reference-transcripts",
           "status": "satisfied",
           "evidence": [
-            "src/modules/endocrine-metabolic/adrenal-crisis-fixtures.ts binds expert, commonError, and recovery decisions to content 0.1.0 and seed 4902. Real-engine tests assert distinct end states and debriefs with identical replay hashes."
+            "src/modules/endocrine-metabolic/adrenal-crisis-fixtures.ts binds expert, commonError, and recovery decisions to content 0.1.1 and seed 4902. Real-engine tests assert distinct end states and debriefs with identical replay hashes."
           ]
         },
         {

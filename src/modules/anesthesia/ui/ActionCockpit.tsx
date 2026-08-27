@@ -2575,6 +2575,7 @@ export interface ActionCockpitProps {
   readonly onSevereHypoglycemiaResponse?: (action: HypoglycemiaAction) => void;
   readonly onAdrenalCrisisResponse?: (action: AdrenalCrisisAction) => void;
   readonly adrenalGuidance?: GuidanceLevel;
+  readonly adrenalDemonstrating?: boolean;
   readonly onAdrenalTutorSource?: () => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
@@ -5267,6 +5268,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasAdrenalCrisisResponse && (
               <AdrenalCrisisTray assessment={props.resuscitation.adrenalCrisis} guidance={props.adrenalGuidance}
+                scenarioVersion={props.scenario.metadata.version}
+                demonstrating={props.adrenalDemonstrating}
                 onOpenSource={props.onAdrenalTutorSource}
                 onAction={props.onAdrenalCrisisResponse ?? (() => {})} />
             )}

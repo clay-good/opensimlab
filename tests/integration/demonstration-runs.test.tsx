@@ -28,6 +28,8 @@ import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { useSession, sessionInternals } from '@platform/session/session-store';
 import { useHypoglycemiaDemonstration } from '../../src/modules/endocrine-metabolic/demo/useHypoglycemiaDemonstration';
 import { SEVERE_HYPOGLYCEMIA_RECURRENCE } from '../../src/modules/endocrine-metabolic/scenarios/severe-hypoglycemia-recurrence';
+import { useAdrenalDemonstration } from '../../src/modules/endocrine-metabolic/demo/useAdrenalDemonstration';
+import { ADRENAL_CRISIS_TREATMENT_BEFORE_TESTS } from '../../src/modules/endocrine-metabolic/scenarios/adrenal-crisis-treatment-before-tests';
 import type { PatientState } from '@anesthesia/physiology';
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import { useDemonstration } from '@anesthesia/demo/useDemonstration';
@@ -320,5 +322,108 @@ describe('the demonstration, run for its full length', () => {
       expect(last?.state).toEqual(useSession.getState().state);
       expect(replay.equipment().resuscitation.severeHypoglycemia).toEqual(useSession.getState().equipment?.resuscitation.severeHypoglycemia);
     } finally { act(() => exampleRoot.unmount()); container.remove(); }
+  }, 30_000);
+
+  it('runs the adrenal example through combined rescue, the timed reassessment, and a replayable handoff', () => {
+    const exampleContainer = document.createElement('div'); document.body.appendChild(exampleContainer);
+    const exampleRoot = createRoot(exampleContainer); const scenario = ADRENAL_CRISIS_TREATMENT_BEFORE_TESTS;
+    const worker = new InProcessWorker(); let finishes = 0;
+    function AdrenalHarness() {
+      const session = useSession();
+      useAdrenalDemonstration({ active: true, running: session.transport === 'running',
+        patient: session.equipment?.resuscitation.adrenalCrisis, act: session.act,
+        onFinished: () => { finishes += 1; session.pause(); },
+      });
+      return null;
+    }
+    try {
+      act(() => {
+        useSession.getState().begin({ scenarioId: scenario.metadata.id, scenarioVersion: scenario.metadata.version,
+          contentVersion: scenario.metadata.version, modelSetRevision: MODEL_SET_REVISION, engineVersion: ENGINE_VERSION,
+          practiceRegion: 'US', seed: 4902, scenario,
+        }, () => worker as unknown as Worker, { engine: ENGINE_VERSION, content: scenario.metadata.version,
+          modelSet: MODEL_SET_REVISION, scenario: scenario.metadata.version }, 'endocrine-metabolic');
+        exampleRoot.render(createElement(AdrenalHarness));
+        useSession.getState().setSpeed(60); useSession.getState().play();
+      });
+      for (let batch = 0; batch < 150 && !useSession.getState().equipment?.resuscitation.adrenalCrisis?.ended; batch += 1) {
+        if (batch === 25) {
+          act(() => useSession.getState().pause());
+          const pausedTick = useSession.getState().tick; const count = worker.applied.length;
+          const pausedPatient = useSession.getState().equipment?.resuscitation.adrenalCrisis;
+          act(() => { for (let frame = 0; frame < 60; frame += 1) useSession.getState().frame(1000 / 60); });
+          expect(useSession.getState().tick).toBe(pausedTick); expect(worker.applied).toHaveLength(count);
+          expect(useSession.getState().equipment?.resuscitation.adrenalCrisis).toEqual(pausedPatient);
+          act(() => useSession.getState().play());
+        }
+        act(() => { for (let frame = 0; frame < 6; frame += 1) useSession.getState().frame(1000 / 60); });
+      }
+      expect(finishes, JSON.stringify({ tick: useSession.getState().tick,
+        patient: useSession.getState().equipment?.resuscitation.adrenalCrisis, applied: worker.applied })).toBe(1);
+      expect(useSession.getState().transport).toBe('paused');
+      expect(worker.applied).toEqual([
+        'hydrocortisone', 'saline', 'call-support', 'review-record', 'reassess', 'prevention', 'handoff',
+      ].map((action) => ({ type: 'adrenal-crisis-response', payload: { action } })));
+      expect(useSession.getState().equipment?.resuscitation.adrenalCrisis).toMatchObject({
+        supportActive: true, recordReviewed: true, responseObserved: true, preventionPlanned: true, ended: 'handoff',
+      });
+      const transcript = sessionInternals().recorder!.build('pending');
+      const steroid = transcript.actions.find((action) => action.type === 'adrenal-crisis-response' && action.payload.action === 'hydrocortisone')!;
+      const saline = transcript.actions.find((action) => action.type === 'adrenal-crisis-response' && action.payload.action === 'saline')!;
+      const reassessment = transcript.actions.find((action) => action.type === 'adrenal-crisis-response' && action.payload.action === 'reassess')!;
+      expect(reassessment.tick - Math.max(steroid.tick, saline.tick)).toBeGreaterThanOrEqual(10 * 60 * TICKS_PER_SECOND);
+      const replay = new AnesthesiaEngine({ scenario, seed: 4902, practiceRegion: 'US' });
+      let last;
+      for (let tick = 0; tick < useSession.getState().tick; tick += 1) {
+        for (const action of transcript.actions) if (action.tick === tick) replay.apply(action);
+        last = replay.step();
+      }
+      expect(last?.state).toEqual(useSession.getState().state);
+      expect(replay.equipment().resuscitation.adrenalCrisis).toEqual(useSession.getState().equipment?.resuscitation.adrenalCrisis);
+      act(() => { exampleRoot.render(createElement(AdrenalHarness)); useSession.getState().frame(100); });
+      expect(finishes).toBe(1); expect(worker.applied).toHaveLength(7);
+    } finally { act(() => exampleRoot.unmount()); exampleContainer.remove(); }
+  }, 30_000);
+
+  it('stops future adrenal example actions when the learner takes over the running session', () => {
+    const exampleContainer = document.createElement('div'); document.body.appendChild(exampleContainer);
+    const exampleRoot = createRoot(exampleContainer); const scenario = ADRENAL_CRISIS_TREATMENT_BEFORE_TESTS;
+    const worker = new InProcessWorker(); let finishes = 0;
+    function AdrenalHarness({ active }: { active: boolean }) {
+      const session = useSession();
+      useAdrenalDemonstration({ active, running: session.transport === 'running',
+        patient: session.equipment?.resuscitation.adrenalCrisis, act: session.act,
+        onFinished: () => { finishes += 1; session.pause(); },
+      });
+      return null;
+    }
+    try {
+      act(() => {
+        useSession.getState().begin({ scenarioId: scenario.metadata.id, scenarioVersion: scenario.metadata.version,
+          contentVersion: scenario.metadata.version, modelSetRevision: MODEL_SET_REVISION, engineVersion: ENGINE_VERSION,
+          practiceRegion: 'US', seed: 4902, scenario,
+        }, () => worker as unknown as Worker, { engine: ENGINE_VERSION, content: scenario.metadata.version,
+          modelSet: MODEL_SET_REVISION, scenario: scenario.metadata.version }, 'endocrine-metabolic');
+        exampleRoot.render(createElement(AdrenalHarness, { active: true }));
+        useSession.getState().setSpeed(60); useSession.getState().play();
+      });
+      for (let batch = 0; batch < 20 && worker.applied.length < 2; batch += 1) {
+        act(() => { for (let frame = 0; frame < 6; frame += 1) useSession.getState().frame(1000 / 60); });
+      }
+      expect(worker.applied.map((action) => action.payload.action)).toEqual(['hydrocortisone', 'saline']);
+      const takeoverTick = useSession.getState().tick; const takeoverPatient = useSession.getState().equipment?.resuscitation.adrenalCrisis;
+      act(() => exampleRoot.render(createElement(AdrenalHarness, { active: false })));
+      expect(useSession.getState().tick).toBe(takeoverTick);
+      expect(useSession.getState().equipment?.resuscitation.adrenalCrisis).toEqual(takeoverPatient);
+      for (let batch = 0; batch < 110; batch += 1) {
+        act(() => { for (let frame = 0; frame < 6; frame += 1) useSession.getState().frame(1000 / 60); });
+      }
+      expect(useSession.getState().tick - takeoverTick).toBeGreaterThan(10 * 60 * TICKS_PER_SECOND);
+      expect(useSession.getState().transport).toBe('running');
+      expect(worker.applied).toHaveLength(2); expect(finishes).toBe(0);
+      expect(useSession.getState().equipment?.resuscitation.adrenalCrisis).toMatchObject({
+        responseDueInSeconds: null, responseObserved: false, preventionPlanned: false, ended: null,
+      });
+    } finally { act(() => exampleRoot.unmount()); exampleContainer.remove(); }
   }, 30_000);
 });

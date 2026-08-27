@@ -2,6 +2,7 @@ import type { GuidanceInput, GuidanceLevel, TutorRule } from '@anesthesia/tutor/
 import type { AdrenalCrisisSnapshot } from '@platform/kernel/protocol';
 
 export const ADRENAL_TUTOR_VERSION = '0.1.0';
+export const ADRENAL_SOURCE_HREF = 'https://www.endocrine.org/clinical-practice-guidelines/primary-adrenal-insufficiency';
 const rules: readonly {
   id: string; objectiveId: string; urgent: boolean; suggestion: string; because: string;
   observed: (patient: AdrenalCrisisSnapshot) => boolean;
@@ -38,8 +39,8 @@ export const ADRENAL_TUTOR_RULES: readonly TutorRule[] = rules.map((rule) => ({
   suppressionConditions: ['unassisted mode', 'active alarm for floating cards only', 'ended branch', 'wrong version', '90-second same-objective cooldown for floating interventions'],
   urgent: rule.urgent, cooldownSeconds: 90, afterSeconds: 0,
   prompt: { id: rule.id, suggestion: rule.suggestion, because: rule.because,
-    sourceHref: 'https://www.endocrine.org/clinical-practice-guidelines/primary-adrenal-insufficiency' },
-  applies: (input) => input.scenarioId === 'adrenal-crisis-treatment-before-tests' && input.scenarioVersion === '0.1.0'
+    sourceHref: ADRENAL_SOURCE_HREF },
+  applies: (input) => input.scenarioId === 'adrenal-crisis-treatment-before-tests' && input.scenarioVersion === '0.1.1'
     && !!input.adrenalCrisis && !input.adrenalCrisis.ended && rule.observed(input.adrenalCrisis),
 }));
 

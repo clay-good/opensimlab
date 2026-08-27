@@ -41,8 +41,8 @@ describe('Adrenal crisis: time, decisions, and observed response', () => {
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'endocrine-metabolic', 'ward', 'state_transition');
     expect(audit.complete).toBe(false);
     expect(audit.requirements.filter((entry) => entry.status === 'missing').map((entry) => entry.id))
-      .toEqual(['guidance-and-demonstration', 'inclusive-runtime-verification', 'report-control-coverage']);
-    expect(adrenalCompletionEvidence({ ...SCENARIO, metadata: { ...SCENARIO.metadata, version: '0.1.1' } }, ENGINE_VERSION, 'endocrine-metabolic')).toEqual([]);
+      .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
+    expect(adrenalCompletionEvidence({ ...SCENARIO, metadata: { ...SCENARIO.metadata, version: '0.1.0' } }, ENGINE_VERSION, 'endocrine-metabolic')).toEqual([]);
     expect(adrenalCompletionEvidence({ ...SCENARIO, patient: { ...SCENARIO.patient, weightKg: 67 } }, ENGINE_VERSION, 'endocrine-metabolic')).toEqual([]);
     expect(adrenalCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toEqual([]);
   });
@@ -136,7 +136,7 @@ describe('Adrenal crisis: time, decisions, and observed response', () => {
     expect(promptFor('coached', input(), new Map())?.id).toBe('adrenal-treat-now');
     expect(promptFor('unassisted', input(), new Map())).toBeNull();
     expect(promptFor('guided', { ...input(), alarmCount: 1 }, new Map())).toBeNull();
-    expect(promptFor('guided', { ...input(), scenarioVersion: '0.1.1' }, new Map())).toBeNull();
+    expect(promptFor('guided', { ...input(), scenarioVersion: '0.1.0' }, new Map())).toBeNull();
     expect(promptStillEligible('guided', input(), 'preoxygenate')).toBe(false);
     expect(unpromptedOmissions(input())).toEqual(['adrenal-urgent-steroid']);
     model.apply('hydrocortisone', 0); expect(promptFor('coached', input(), new Map())?.id).toBe('adrenal-parallel-rescue');
@@ -154,7 +154,7 @@ describe('Adrenal crisis: time, decisions, and observed response', () => {
     expect(adrenalInlinePrompt('coached', input)?.id).toBe('adrenal-treat-now');
     expect(adrenalInlinePrompt('unassisted', input)).toBeNull();
     expect(adrenalInlinePrompt('guided', { ...input, scenarioId: 'routine-induction' })).toBeNull();
-    expect(adrenalInlinePrompt('guided', { ...input, scenarioVersion: '0.1.1' })).toBeNull();
+    expect(adrenalInlinePrompt('guided', { ...input, scenarioVersion: '0.1.0' })).toBeNull();
     expect(adrenalInlinePrompt('guided', { ...input, adrenalCrisis: { ...input.adrenalCrisis!, ended: 'handoff' } })).toBeNull();
     for (const rule of ADRENAL_TUTOR_RULES) expect(requireSource(rule.sourceId).year).toBe(2016);
   });

@@ -71,9 +71,14 @@ describe('scenario report contract', () => {
     }[] };
     expect(catalog.schemaVersion).toBe(2);
     expect(catalog.evidenceAlgorithm).toBe('scenario-evidence-v1');
-    expect(catalog.scenarios).toHaveLength(198);
+    expect(catalog.scenarios).toHaveLength(199);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(198);
+      .toBe(199);
+    for (const contentVersion of ['0.1.0', '0.1.1']) {
+      expect(catalog.scenarios).toContainEqual(expect.objectContaining({
+        moduleId: 'endocrine-metabolic', scenarioId: 'adrenal-crisis-treatment-before-tests', contentVersion,
+      }));
+    }
     for (const entry of catalog.scenarios) {
       expect(entry.capabilityVersion).toMatch(/^0\.1\.0-alpha\./);
       for (const hash of [entry.releaseRef, entry.defaultsHash, entry.maturityHash,

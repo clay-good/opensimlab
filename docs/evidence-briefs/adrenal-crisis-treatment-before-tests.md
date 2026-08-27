@@ -1,6 +1,6 @@
 # Adrenal crisis: treatment before tests
 
-Content 0.1.0 rehearses urgent combined rescue, reassessment, and continuity in a fictional
+Content 0.1.1 rehearses urgent combined rescue, reassessment, and continuity in a fictional
 46-year-old with known primary adrenal insufficiency and persistent vomiting. It is a preview,
 not clinically reviewed, and does not establish dosing or procedural competence.
 
@@ -52,10 +52,20 @@ the bounded opt-in context; sending stayed disabled on localhost and no report w
 The debrief names emergency care rather than anesthesia, and the menu omits the unused floating
 tutor introduction for this inline-guidance lesson.
 
-Final verification: `npm run ci` passed 30 specs and 3,300 tests across 442 files, including
-21 adrenal-specific tests; lint, type checks, static-host, asset, font, and bundle checks passed.
-`npm run build:indexable` verified 217 crawlable routes. Development builds still report the
-outstanding publication gates; these checks are not clinical approval or a reviewed release.
+The optional worked example (controller 0.1.0) performs seven ordinary decisions: steroid,
+saline, support, record review, fresh reassessment, prevention, and handoff. Accepted state chooses
+the next step; a countdown reaching zero alone does not prove the response. Pause stops decisions
+and the patient clock. Takeover restores manual controls and selected guidance without resetting
+the patient. Narration replaces the inline tutor while watching, but the pausing source link stays
+available in every guidance mode. Inline prompts use the actual scenario version. Earlier report evidence remains
+bound to content 0.1.0; the new catalog entry records 0.1.1 separately.
 
-Clinical review, an in-product worked example, complete inclusive-runtime evidence, and
+Content 0.1.1 browser checks confirmed both briefing and direct-demo entry, automatic handoff,
+paused takeover at unchanged simulated time, restored 1× speed, and source-opening pause during
+playback. The report dialog remained centered with a 160-character limit; no report was sent.
+`npm run ci` passed 30 specs and 3,316 tests across 444 files, including 16 new demo and regression
+cases. The indexable build verified 217 routes. Publication, clinical, and inclusive review gaps
+remain visible; a passing development build is not a reviewed release.
+
+Clinical review, complete inclusive-runtime evidence, and
 four-surface reporting verification remain pending. Catalog registration is not full completion.

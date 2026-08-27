@@ -28,6 +28,8 @@ import { DemonstrationBar } from './DemonstrationBar';
 import { useDemonstration } from '@anesthesia/demo/useDemonstration';
 import { useHypoglycemiaDemonstration } from '../../endocrine-metabolic/demo/useHypoglycemiaDemonstration';
 import { supportsHypoglycemiaDemonstration } from '../../endocrine-metabolic/demo/hypoglycemia-demonstration';
+import { useAdrenalDemonstration } from '../../endocrine-metabolic/demo/useAdrenalDemonstration';
+import { supportsAdrenalDemonstration } from '../../endocrine-metabolic/demo/adrenal-demonstration';
 import { WhyPanel } from './WhyPanel';
 import {
   announcementsFor, arterialLineSummary, breathingCircuitSummary, mechanicalPulseFromState, stateSummary,
@@ -152,8 +154,9 @@ export function Cockpit({
   // The demonstration performs the same actions through the same path a learner
   // does, so what it shows is the engine and not a recording of it.
   const hypoglycemiaDemoSupported = supportsHypoglycemiaDemonstration(scenario);
+  const adrenalDemoSupported = supportsAdrenalDemonstration(scenario);
   const inductionDemonstration = useDemonstration({
-    active: demonstrating && !hypoglycemiaDemoSupported,
+    active: demonstrating && !hypoglycemiaDemoSupported && !adrenalDemoSupported,
     tick: session.tick,
     act: session.act,
     onFinished: () => onTakeControls?.(),
@@ -163,7 +166,13 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.severeHypoglycemia,
     act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = hypoglycemiaDemoSupported ? hypoglycemiaDemonstration : inductionDemonstration;
+  const adrenalDemonstration = useAdrenalDemonstration({
+    active: demonstrating && adrenalDemoSupported,
+    running: session.transport === 'running', patient: session.equipment?.resuscitation.adrenalCrisis,
+    act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const demonstration = adrenalDemoSupported ? adrenalDemonstration
+    : hypoglycemiaDemoSupported ? hypoglycemiaDemonstration : inductionDemonstration;
   const [colorblindSafe] = useLocalPreference('colorblind-safe', false);
   const [whyField, setWhyField] = useState<StateField | null>(null);
   const [explainerId, setExplainerId] = useState<string | null>(null);
@@ -682,6 +691,7 @@ export function Cockpit({
       <div className="cockpit__actions">
         <ActionCockpit
           adrenalGuidance={session.guidance}
+          adrenalDemonstrating={demonstrating && adrenalDemoSupported}
           onAdrenalTutorSource={session.pause}
           hypoglycemiaDemonstrating={demonstrating && hypoglycemiaDemoSupported}
           scenario={scenario}

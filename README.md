@@ -382,7 +382,10 @@ pathways. Treatment does not wait for cortisol, the medication record, or a supp
 Delay and partial treatment produce distinct authored shock states; a fresh reassessment and
 continuity plan are needed before handoff. Quiet in-tray guidance remains readable alongside
 alarms and disappears in Unassisted mode. Exact-version expert, error, and recovery fixtures
-preserve early mistakes after correction. Clinical review and the full completion contract remain pending.
+preserve early mistakes after correction. Content 0.1.1 adds an optional worked example that waits
+for accepted actions and a fresh post-response reassessment. Pause stops its decisions; takeover
+returns control without resetting the patient. Clinical review and complete inclusive-runtime
+and four-surface reporting evidence remain pending.
 
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
