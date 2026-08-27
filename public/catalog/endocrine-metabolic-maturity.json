@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "endocrine-metabolic",
-  "recordCount": 6,
+  "recordCount": 7,
   "records": [
     {
       "recordId": "scenario:dka-resolution-transition@0.1.0",
@@ -67,6 +67,17 @@
       "evidence": [
         "/catalog/endocrine-metabolic-completion-audit.json#myxedema-coma-ventilation-and-steroid-sequence@0.1.0",
         "/catalog/endocrine-metabolic-quality-audit.json#myxedema-coma-ventilation-and-steroid-sequence@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:hypercalcemic-crisis-volume-and-bridge@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "hypercalcemic-crisis-volume-and-bridge",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/endocrine-metabolic-completion-audit.json#hypercalcemic-crisis-volume-and-bridge@0.1.0",
+        "/catalog/endocrine-metabolic-quality-audit.json#hypercalcemic-crisis-volume-and-bridge@0.1.0"
       ]
     }
   ]

@@ -154,6 +154,24 @@ export interface ReadyMessage {
  * request rather than the result teaches the learner to trust a number that is
  * not true (cockpit/action-cockpit → the tray reflects the patient).
  */
+export interface HypercalcemiaSnapshot {
+  readonly supportActive: boolean;
+  readonly cardiorenalAssessedAtTick: number | null; readonly fluidsAtTick: number | null;
+  readonly calcitoninAtTick: number | null; readonly antiresorptiveAtTick: number | null;
+  readonly fluidDueInSeconds: number | null; readonly bridgeDueInSeconds: number | null;
+  readonly fluidResponseObserved: boolean; readonly bridgeResponseObserved: boolean;
+  readonly urgentTreatmentDelayed: boolean; readonly unrestrictedFluidsAttempted: boolean;
+  readonly routineDiureticAttempted: boolean; readonly waitForCauseChosen: boolean;
+  readonly observation: {
+    readonly atTick: number; readonly systolicMmHg: number; readonly diastolicMmHg: number; readonly meanArterialMmHg: number;
+    readonly heartRateBpm: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly coreTemperatureC: number; readonly adjustedCalciumMgDl: number; readonly alertness: string; readonly fluidTolerance: string;
+  } | null;
+  readonly alertness: string; readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true; readonly doseModelAvailable: false; readonly durableRecoveryProven: false;
+}
+
 export interface MyxedemaSnapshot {
   readonly supportActive: boolean;
   readonly ventilationAtTick: number | null; readonly oxygenOnlyAtTick: number | null;
@@ -3243,6 +3261,7 @@ export interface EquipmentSnapshot {
     readonly adrenalCrisis?: AdrenalCrisisSnapshot;
     readonly thyroidStorm?: ThyroidStormSnapshot;
     readonly myxedema?: MyxedemaSnapshot;
+    readonly hypercalcemia?: HypercalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {
       readonly supportAtTick: number | null; readonly contextAtTick: number | null;
       readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;

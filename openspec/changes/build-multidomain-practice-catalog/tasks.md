@@ -898,6 +898,32 @@ credited toward the catalog until every item in the completion contract passes.
   - [ ] Complete myxedema inclusive-runtime verification, independent clinical review, and
     production Turnstile/D1 evidence. Local automated and browser checks do not substitute for
     these separate gates.
+  - [x] Endocrine/metabolic slice 7/12 registers severe malignancy-associated hypercalcemia with
+    tailored hydration, an independent short calcitonin bridge, supplied cardiorenal review,
+    qualified antiresorptive care, fresh response observations, and continuing-care handoff.
+    Circulation improvement does not normalize calcium; antiresorptive effect is not simulated.
+    Earlier unrestricted-fluid, routine-diuresis, renal-review, and cause-delay choices remain
+    visible after correction. The eight-decision worked example preserves the full four-hour
+    simulated observation, reading pauses, and explicit historical calcium results. Metadata
+    honestly declares 240 simulated minutes; the bounded longitudinal schema allows up to six
+    hours while keeping the original anesthesia-library duration requirement unchanged.
+  - [x] Hypercalcemia local verification passes full CI with 3,599 tests across 464 files,
+    including whole-tick engine replays, the complete eight-decision worked example, and
+    report-surface privacy and pause checks. Desktop and 320 px browser inspection covers the
+    action drawer and report dialog. The optional update notice now hides during modal reading
+    and returns afterward; a DOM/CSS regression checks both states. The registry has 199 scenarios,
+    seven endocrine/metabolic previews, and 220 indexable routes, not 199 completed scenarios.
+  - [ ] Complete hypercalcemia inclusive-runtime verification, independent clinical review,
+    and production Turnstile/D1 evidence. Local model, replay, report, and browser checks do not
+    substitute for those separate gates.
+  - [ ] Correct the earlier thyroid-storm and myxedema duration metadata through new content
+    versions: their current 15- and 12-minute labels understate their full modeled observation
+    paths. Preserve previously published report-evidence records when updating those versions.
+  - [ ] Repair service-worker update consistency before the next scenario slice. A read-only
+    execution of the current worker reproduced background refresh replacing active-version HTML
+    with a newer build whose script was not cached; update acceptance also reloads before the
+    waiting worker takes control. Add multi-build regression tests and explicit activation-order
+    checks. The local rebuild symptom is consistent with these defects, not definitive attribution.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
   - [x] Toxicology slice 1/15 establishes the indexable `/toxicology` module with one authored
     methemoglobinemia lab after documented topical benzocaine exposure. The learner reconciles

@@ -34,6 +34,8 @@ import { useThyroidDemonstration } from '../../endocrine-metabolic/demo/useThyro
 import { supportsThyroidDemonstration } from '../../endocrine-metabolic/demo/thyroid-demonstration';
 import { useMyxedemaDemonstration } from '../../endocrine-metabolic/demo/useMyxedemaDemonstration';
 import { supportsMyxedemaDemonstration } from '../../endocrine-metabolic/demo/myxedema-demonstration';
+import { useHypercalcemiaDemonstration } from '../../endocrine-metabolic/demo/useHypercalcemiaDemonstration';
+import { supportsHypercalcemiaDemonstration } from '../../endocrine-metabolic/demo/hypercalcemia-demonstration';
 import { WhyPanel } from './WhyPanel';
 import {
   announcementsFor, arterialLineSummary, breathingCircuitSummary, mechanicalPulseFromState, stateSummary,
@@ -161,8 +163,9 @@ export function Cockpit({
   const adrenalDemoSupported = supportsAdrenalDemonstration(scenario);
   const thyroidDemoSupported = supportsThyroidDemonstration(scenario);
   const myxedemaDemoSupported = supportsMyxedemaDemonstration(scenario);
+  const hypercalcemiaDemoSupported = supportsHypercalcemiaDemonstration(scenario);
   const inductionDemonstration = useDemonstration({
-    active: demonstrating && !hypoglycemiaDemoSupported && !adrenalDemoSupported && !thyroidDemoSupported && !myxedemaDemoSupported,
+    active: demonstrating && !hypoglycemiaDemoSupported && !adrenalDemoSupported && !thyroidDemoSupported && !myxedemaDemoSupported && !hypercalcemiaDemoSupported,
     tick: session.tick,
     act: session.act,
     onFinished: () => onTakeControls?.(),
@@ -191,7 +194,14 @@ export function Cockpit({
     pause: session.pause, play: session.play,
     act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = myxedemaDemoSupported ? myxedemaDemonstration
+  const hypercalcemiaDemonstration = useHypercalcemiaDemonstration({
+    active: demonstrating && hypercalcemiaDemoSupported,
+    running: session.transport === 'running', patient: session.equipment?.resuscitation.hypercalcemia,
+    pause: session.pause, play: session.play,
+    act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const demonstration = hypercalcemiaDemoSupported ? hypercalcemiaDemonstration
+    : myxedemaDemoSupported ? myxedemaDemonstration
     : thyroidDemoSupported ? thyroidDemonstration : adrenalDemoSupported ? adrenalDemonstration
     : hypoglycemiaDemoSupported ? hypoglycemiaDemonstration : inductionDemonstration;
   const [colorblindSafe] = useLocalPreference('colorblind-safe', false);
@@ -370,13 +380,13 @@ export function Cockpit({
   useEffect(() => {
     if (!session.state) return;
     const announcements = announcementsFor(previousState.current, session.state, session.alarms,
-      equipment?.resuscitation.myxedema ? invalidParameters : undefined);
+      equipment?.resuscitation.myxedema || equipment?.resuscitation.hypercalcemia ? invalidParameters : undefined);
     previousState.current = session.state;
     if (announcements.length === 0) return;
     const critical = announcements.filter((entry) => entry.severity === 'critical');
     if (critical.length > 0) setCriticalAnnouncement(critical.map((entry) => entry.text).join('. '));
     else setAnnouncement(announcements.map((entry) => entry.text).join('. '));
-  }, [session.state, session.alarms, equipment?.resuscitation.myxedema, invalidParameters]);
+  }, [session.state, session.alarms, equipment?.resuscitation.myxedema, equipment?.resuscitation.hypercalcemia, invalidParameters]);
 
   // The pulse tone sounds once per beat, at the pitch saturation implies.
   useEffect(() => {
@@ -397,7 +407,8 @@ export function Cockpit({
   useEffect(() => {
     if (tutorIntroductionOpen || demonstrating || scenario.metadata.id === 'adrenal-crisis-treatment-before-tests'
       || scenario.metadata.id === 'thyroid-storm-hemodynamic-risk'
-      || scenario.metadata.id === 'myxedema-coma-ventilation-and-steroid-sequence') return;
+      || scenario.metadata.id === 'myxedema-coma-ventilation-and-steroid-sequence'
+      || scenario.metadata.id === 'hypercalcemic-crisis-volume-and-bridge') return;
     const input = {
       scenarioId: scenario.metadata.id,
       scenarioVersion: scenario.metadata.version,
@@ -437,6 +448,7 @@ export function Cockpit({
       ventilator,
       invalid: invalidParameters,
       myxedema: equipment?.resuscitation.myxedema,
+      hypercalcemia: equipment?.resuscitation.hypercalcemia,
       showTrainOfFour: scenario.equipment.monitoring.includes('train-of-four'),
       jawThrustCpapSecondsRemaining: airway.jawThrustCpapSecondsRemaining,
       capnographyLine,
@@ -459,7 +471,7 @@ export function Cockpit({
     scenario.equipment.monitoring, scenario.patient.weightKg, airway.jawThrustCpapSecondsRemaining,
     resuscitation, region, lastExposure, hasAnaphylaxisResponse, hasHypermetabolicResponse,
     hasCardiacArrestResponse, hasHighSpinalResponse, hasVenousAirEmbolismResponse,
-    hasBronchospasmResponse, capnographyLine, hasArterialLine, equipment?.resuscitation.myxedema,
+    hasBronchospasmResponse, capnographyLine, hasArterialLine, equipment?.resuscitation.myxedema, equipment?.resuscitation.hypercalcemia,
     arterialLine.cuff.meanArterialMmHg, hasCircuitScenario, breathingCircuit,
   ]);
 
@@ -470,7 +482,7 @@ export function Cockpit({
       airwayPatencyFraction: airway.patencyFraction,
       perfusionIndex: session.state?.perfusionIndex ?? 0.8,
       artifacts: waveformArtifacts,
-      capnographyUnavailable: !!equipment?.resuscitation.myxedema,
+      capnographyUnavailable: !!equipment?.resuscitation.myxedema || !!equipment?.resuscitation.hypercalcemia,
       capnographySampleObstructed: capnographyLine.obstructed,
       tracheostomyPatencyFraction: equipment?.tracheostomy?.patencyFraction,
       arterialDamped: arterialLine.dynamicResponse === 'overdamped',
@@ -480,7 +492,7 @@ export function Cockpit({
     }).map((entry) => `${entry.label}: ${entry.description}`).join(' '));
   }, [session.state, speak, rhythm, waveformArtifacts, airway, capnographyLine.obstructed,
     arterialLine.dynamicResponse, breathingCircuit.inspiredCo2MmHg, ventilator.delivering,
-    equipment?.tracheostomy?.patencyFraction, equipment?.resuscitation.myxedema]);
+    equipment?.tracheostomy?.patencyFraction, equipment?.resuscitation.myxedema, equipment?.resuscitation.hypercalcemia]);
 
   useEffect(() => {
     if (arterialLine.mislevelingCm > 0 || arterialLine.dynamicResponse === 'overdamped') {
@@ -660,6 +672,9 @@ export function Cockpit({
                 spo2Percent: 'Pulse-derived saturation unavailable',
                 etco2MmHg: 'Exhaled carbon dioxide not supplied',
               }
+            : hypercalcemiaDemoSupported
+              ? { etco2MmHg: 'Exhaled carbon dioxide is not supplied in this lesson',
+                  fio2: 'Oxygen setting is not modeled' }
             : myxedemaDemoSupported
               ? { etco2MmHg: 'Exhaled carbon dioxide not supplied; request a bedside PaCO₂ assessment',
                   fio2: 'Oxygen setting is not modeled' }
@@ -728,6 +743,9 @@ export function Cockpit({
         <ActionCockpit
           thyroidGuidance={session.guidance}
           myxedemaGuidance={session.guidance}
+          hypercalcemiaGuidance={session.guidance}
+          hypercalcemiaDemonstrating={demonstrating && hypercalcemiaDemoSupported}
+          onHypercalcemiaTutorSource={session.pause}
           myxedemaDemonstrating={demonstrating && myxedemaDemoSupported}
           onMyxedemaTutorSource={session.pause}
           thyroidDemonstrating={demonstrating && thyroidDemoSupported}
@@ -1305,6 +1323,9 @@ export function Cockpit({
           onMyxedemaResponse={(action) => session.act({
             type: 'myxedema-response', payload: { action },
           })}
+          onHypercalcemiaResponse={(action) => session.act({
+            type: 'hypercalcemia-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}
@@ -1353,12 +1374,12 @@ export function Cockpit({
       </div>
 
       {/* Guidance. Non-blocking, dismissible, and never shown during an alarm. */}
-      {!demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && tutorIntroductionOpen && session.alarms.length === 0 ? (
+      {!demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !hypercalcemiaDemoSupported && tutorIntroductionOpen && session.alarms.length === 0 ? (
         <TutorIntroduction onDismissPermanently={() => {
           setTutorIntroductionDismissed(true);
           setTutorIntroductionOpen(false);
         }} />
-      ) : !demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !tutorIntroductionOpen && prompt ? (
+      ) : !demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !hypercalcemiaDemoSupported && !tutorIntroductionOpen && prompt ? (
         <TutorPromptCard
           prompt={prompt}
           collapsed={tutorCollapsed}
@@ -1385,9 +1406,11 @@ export function Cockpit({
       <WhyPanel
         open={whyField !== null}
         field={whyField}
-        value={whyField && session.state && !(equipment?.resuscitation.myxedema && invalidParameters.has(whyField))
+        value={whyField && session.state && !((equipment?.resuscitation.myxedema || equipment?.resuscitation.hypercalcemia) && invalidParameters.has(whyField))
           ? session.state[whyField] ?? null : null}
-        authoredExplanation={equipment?.resuscitation.myxedema
+        authoredExplanation={equipment?.resuscitation.hypercalcemia
+          ? 'These are authored teaching states, not predicted physiology or treatment kinetics. Exhaled carbon dioxide and oxygen settings are not supplied. Calcium is shown only as an explicitly requested historical observation; improved circulation does not prove calcium control.'
+          : equipment?.resuscitation.myxedema
           ? 'These are authored teaching states, not predicted physiology or treatment kinetics. Exhaled carbon dioxide and oxygen settings are not supplied; arterial carbon dioxide appears only in a requested bedside assessment.'
           : undefined}
         attribution={session.attribution}
@@ -1473,7 +1496,7 @@ export function Cockpit({
             and cue is also shown.
           </p>
         </div>
-        {scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && <Button onClick={() => {
+        {scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !hypercalcemiaDemoSupported && <Button onClick={() => {
           setShortcutsOpen(false);
           setTutorIntroductionOpen(true);
         }}>

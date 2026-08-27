@@ -1,7 +1,29 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 293,
+  "sourceCount": 295,
   "sources": [
+    {
+      "id": "sfe-emergency-hypercalcemia-2016",
+      "authors": "Walsh J, Gittoes N, Selby P, and the Society for Endocrinology Clinical Committee",
+      "title": "Society for Endocrinology Endocrine Emergency Guidance: Emergency management of acute hypercalcaemia in adult patients",
+      "publication": "Endocrine Connections",
+      "year": 2016,
+      "locator": "5(5):G9–G11; doi:10.1530/EC-16-0055; investigation and management sections",
+      "usedFor": "Urgent assessment and rehydration, fluid-overload caution in renal impairment, nonroutine loop diuretics, renal-aware bisphosphonate treatment, calcium nadir over days, and specialist consideration of dialysis in severe renal failure. The newer malignancy-specific guideline supplies the initial calcitonin-plus-antiresorptive pathway.",
+      "verifiedAgainst": "Full primary article XML at https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id=5314807, with authors, journal, year, pages, DOI, and complete management text checked; public article https://pmc.ncbi.nlm.nih.gov/articles/PMC5314807/.",
+      "verifiedOn": "2026-08-27"
+    },
+    {
+      "id": "endocrine-society-hcm-2023",
+      "authors": "El-Hajj Fuleihan G, Clines GA, Hu MI, et al",
+      "title": "Treatment of Hypercalcemia of Malignancy in Adults: An Endocrine Society Clinical Practice Guideline",
+      "publication": "The Journal of Clinical Endocrinology & Metabolism",
+      "year": 2023,
+      "locator": "doi:10.1210/clinem/dgac621; recommendations 1–3 and Tables 1–2; online December 2022, issue March 2023",
+      "usedFor": "Severe malignancy-associated hypercalcemia: conditional calcitonin plus IV bisphosphonate or denosumab, with very low-certainty evidence; 48–72-hour calcitonin limit, treatment-onset differences, cardiac-tailored hydration, renal review before IV bisphosphonates, and ongoing mineral, vitamin D, oral-health, and oncology care. No universal denosumab mandate or authored-state validation is inferred.",
+      "verifiedAgainst": "Issuing-body recommendation text https://www.endocrine.org/clinical-practice-guidelines/hypercalcemia and full publisher tables https://academic.oup.com/view-large/400290212 and https://academic.oup.com/view-large/400290223. The publisher main-article endpoint was unavailable; no independent clinical review is claimed.",
+      "verifiedOn": "2026-08-27"
+    },
     {
       "id": "eta-bta-sfe-myxedema-coma-2026",
       "authors": "Taylor P, et al",

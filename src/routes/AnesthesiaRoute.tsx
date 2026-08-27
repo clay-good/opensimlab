@@ -24,6 +24,7 @@ import { supportsHypoglycemiaDemonstration } from '../modules/endocrine-metaboli
 import { supportsAdrenalDemonstration } from '../modules/endocrine-metabolic/demo/adrenal-demonstration';
 import { supportsThyroidDemonstration } from '../modules/endocrine-metabolic/demo/thyroid-demonstration';
 import { supportsMyxedemaDemonstration } from '../modules/endocrine-metabolic/demo/myxedema-demonstration';
+import { supportsHypercalcemiaDemonstration } from '../modules/endocrine-metabolic/demo/hypercalcemia-demonstration';
 import { Cockpit } from '@anesthesia/ui/Cockpit';
 import { Debrief } from '@anesthesia/ui/Debrief';
 import { assertTranscriptIsAnonymous, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
@@ -240,6 +241,29 @@ function boundedScalars(value: unknown, limit: number): Record<string, ReportCon
 }
 
 export function collectReportEquipmentContext(equipment: SessionState['equipment']): Record<string, ReportContextScalar> {
+  const hypercalcemia = equipment?.resuscitation.hypercalcemia;
+  if (hypercalcemia && equipment) {
+    const priority = boundedScalars({ resuscitation: { hypercalcemia: {
+      supportActive: hypercalcemia.supportActive, cardiorenalAssessedAtTick: hypercalcemia.cardiorenalAssessedAtTick,
+      fluidsAtTick: hypercalcemia.fluidsAtTick, calcitoninAtTick: hypercalcemia.calcitoninAtTick,
+      antiresorptiveAtTick: hypercalcemia.antiresorptiveAtTick,
+      fluidDueInSeconds: hypercalcemia.fluidDueInSeconds, bridgeDueInSeconds: hypercalcemia.bridgeDueInSeconds,
+      fluidResponseObserved: hypercalcemia.fluidResponseObserved, bridgeResponseObserved: hypercalcemia.bridgeResponseObserved,
+      urgentTreatmentDelayed: hypercalcemia.urgentTreatmentDelayed,
+      unrestrictedFluidsAttempted: hypercalcemia.unrestrictedFluidsAttempted,
+      routineDiureticAttempted: hypercalcemia.routineDiureticAttempted, waitForCauseChosen: hypercalcemia.waitForCauseChosen,
+      ended: hypercalcemia.ended,
+      observation: hypercalcemia.observation ? {
+        atTick: hypercalcemia.observation.atTick, systolicMmHg: hypercalcemia.observation.systolicMmHg,
+        diastolicMmHg: hypercalcemia.observation.diastolicMmHg, meanArterialMmHg: hypercalcemia.observation.meanArterialMmHg,
+        heartRateBpm: hypercalcemia.observation.heartRateBpm, respiratoryRateBpm: hypercalcemia.observation.respiratoryRateBpm,
+        spo2Percent: hypercalcemia.observation.spo2Percent, coreTemperatureC: hypercalcemia.observation.coreTemperatureC,
+        adjustedCalciumMgDl: hypercalcemia.observation.adjustedCalciumMgDl,
+      } : null,
+    } } }, REPORT_CONTEXT_SNAPSHOT_LIMIT);
+    const remaining = { ...equipment, resuscitation: { ...equipment.resuscitation, hypercalcemia: undefined } };
+    return { ...priority, ...boundedScalars(remaining, REPORT_CONTEXT_SNAPSHOT_LIMIT - Object.keys(priority).length) };
+  }
   const myxedema = equipment?.resuscitation.myxedema;
   if (myxedema && equipment) {
     const priority = boundedScalars({ resuscitation: { myxedema: {
@@ -317,8 +341,8 @@ function collectReportRecentContext(session: SessionState, seed: number): Scenar
     snapshot: {
       patient: Object.fromEntries(Object.entries(session.state ?? {})
         .filter((entry): entry is [string, number] => Number.isFinite(entry[1]))
-        // Myxedema supplies CO2 only through bedside observations, and no oxygen setting.
-        .filter(([field]) => !session.equipment?.resuscitation.myxedema
+        // These authored cases supply neither a continuous CO2 measurement nor oxygen settings.
+        .filter(([field]) => !(session.equipment?.resuscitation.myxedema || session.equipment?.resuscitation.hypercalcemia)
           || (field !== 'paco2MmHg' && field !== 'etco2MmHg' && field !== 'fio2'))
         .sort(([left], [right]) => left.localeCompare(right))
         .slice(0, REPORT_CONTEXT_SNAPSHOT_LIMIT)),
@@ -491,7 +515,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
     if (session.phase !== 'briefing' && session.phase !== 'idle') return;
     if (!session.ready) return;
     const endocrineDemo = config.id === 'endocrine-metabolic'
-      && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario));
+      && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario));
     if (!endocrineDemo && (config.id !== 'anesthesia' || scenario.metadata.id !== DEMONSTRATION_SCENARIO_ID)) return;
     autoDemo.current = false;
     setDemonstrating(true);
@@ -594,7 +618,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
           }}
           {...(config.id === 'anesthesia' && scenario.metadata.id === DEMONSTRATION_SCENARIO_ID
             ? { onWatch: () => { setDemonstrating(true); session.setSpeed(5); session.play(); } }
-            : config.id === 'endocrine-metabolic' && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario))
+            : config.id === 'endocrine-metabolic' && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario))
             ? { onWatch: () => { setDemonstrating(true); session.setSpeed(60); session.play(); } }
             : {})}
           {...(assignment.label ? { assignmentLabel: assignment.label } : {})}

@@ -27,6 +27,7 @@ import { supportsSevereHypoglycemia } from '../../endocrine-metabolic/severe-hyp
 import { supportsAdrenalCrisis } from '../../endocrine-metabolic/adrenal-crisis';
 import { supportsThyroidStorm } from '../../endocrine-metabolic/thyroid-storm';
 import { supportsMyxedema } from '../../endocrine-metabolic/myxedema';
+import { supportsHypercalcemia, HYPERCALCEMIA_FLUID_RESPONSE_TICKS, HYPERCALCEMIA_BRIDGE_RESPONSE_TICKS } from '../../endocrine-metabolic/hypercalcemia';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -194,6 +195,8 @@ export function Debrief(props: DebriefProps) {
                 ? { activityContext: 'coordinating thyroid-emergency treatment, circulation assessment, and ongoing critical care' }
               : supportsMyxedema(props.scenario)
                 ? { activityContext: 'coordinating ventilatory support, steroid-first endocrine treatment, and ongoing critical care' }
+              : supportsHypercalcemia(props.scenario)
+                ? { activityContext: 'coordinating monitored hydration, calcium-lowering treatment, and continuing care for severe malignancy-associated hypercalcemia' }
               : {}),
           })}</p>
           <label className="field__label" htmlFor="reactions-account">Your account</label>
@@ -574,6 +577,44 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.startsWith('hypercalcemia-')) {
+      if (!supportsHypercalcemia(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The hypercalcemia lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^hypercalcemia-${id}-\\d+$`).test(entry.eventId));
+      const fluids = event('tailored-fluids'); const bridge = event('calcitonin');
+      const renal = event('cardiorenal-assessment'); const antiresorptive = event('antiresorptive');
+      const unrestricted = event('unrestricted-fluids-refused'); const diuretic = event('routine-diuretic-refused');
+      const renalOmitted = event('antiresorptive-review-refused');
+      const delay = event('urgent-treatment-delay'); const wait = event('cause-delay-choice');
+      const observations = log.filter((entry) => /^hypercalcemia-(early|fluid|bridge)-reassessment-\d+$/.test(entry.eventId));
+      const fluidObserved = fluids && observations.find((entry) => entry.tick >= fluids.tick + HYPERCALCEMIA_FLUID_RESPONSE_TICKS);
+      const bridgeObserved = bridge && observations.find((entry) => entry.tick >= bridge.tick + HYPERCALCEMIA_BRIDGE_RESPONSE_TICKS);
+      const handoff = event('handoff');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'hypercalcemia-volume': { met: !!fluids && !!fluidObserved && !unrestricted && !diuretic && !delay,
+          finding: unrestricted || diuretic || delay
+            ? 'An unrestricted-fluid or routine-diuresis shortcut, or missing urgent treatment, was recorded. Later monitored hydration does not erase the earlier choice. Qualified diuretics for fluid overload are a separate clinical decision.'
+            : fluids && fluidObserved ? 'Monitored hydration and fresh fluid-tolerance assessment improved the authored circulation state without proving calcium correction or renal recovery.'
+              : 'Monitored hydration or fresh fluid-tolerance assessment is missing. Authored counterfactual: hydration can improve circulation while severe hypercalcemia persists.', tick: fluidObserved?.tick },
+        'hypercalcemia-bridge': { met: !!bridge && !!antiresorptive && !wait && !delay,
+          finding: wait || delay ? 'Urgent treatment was deferred or incomplete at an authored checkpoint. Later correction is credited without erasing the delay; cause investigation and treatment can proceed together.'
+            : bridge && antiresorptive ? 'A short-term calcitonin bridge accompanied renal-informed antiresorptive care. The latter was not credited with an immediate effect; the bridge is time-limited, not definitive treatment.'
+              : 'The bridge and longer-acting treatment pathway is incomplete. Authored counterfactual: ordering antiresorptive care alone does not instantly change calcium.', tick: antiresorptive?.tick },
+        'hypercalcemia-renal': { met: !!renal && !!antiresorptive && !renalOmitted,
+          finding: renalOmitted ? 'Antiresorptive treatment was attempted before reviewing supplied cardiorenal risk. The refused attempt remains visible after correction.'
+            : renal && antiresorptive ? 'The supplied cardiac and renal risks informed qualified antiresorptive care without waiting for hydration to finish. Specific drug, dose, and renal-clearance calculations were not simulated.'
+              : 'Cardiorenal review or renal-informed antiresorptive treatment is missing.', tick: antiresorptive?.tick },
+        'hypercalcemia-reassessment': { met: !!fluidObserved && !!bridgeObserved,
+          finding: fluidObserved && bridgeObserved ? 'Fresh observations separated supported circulation from the later, still-severe calcium result. The authored four-hour response proves neither antiresorptive effect nor resolution.'
+            : 'Fresh observation of one or both responses is missing. An older result, a timer, or a better pulse is not a new calcium and fluid-tolerance assessment.', tick: bridgeObserved?.tick },
+        'hypercalcemia-handoff': { met: !!handoff,
+          finding: handoff ? 'The receiving team owns fluid and renal monitoring, serial calcium and electrolytes, the time-limited bridge, pending antiresorptive effects, and malignancy care. Persistent disease or fluid intolerance requires qualified escalation, not automatic discharge.'
+            : 'The continuing-care handoff remains incomplete.', tick: handoff?.tick },
+      };
+      const result = results[objective.id];
+      return result ? { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding
+        : { ...base, outcome: 'not-exercised', finding: 'No evidence mapping exists for this objective.' } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.startsWith('myxedema-')) {
       if (!supportsMyxedema(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The myxedema lesson was not active.' } satisfies ObjectiveFinding;

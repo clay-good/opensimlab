@@ -27,7 +27,8 @@ describe('Adult severe hypoglycemia decisions and clock', () => {
   });
   it('binds five objectives, three exact-version transcripts, and a hidden initial result', () => {
     expect(validateScenario(SCENARIO)).toEqual([]); expect(SCENARIO.metadata.objectives).toHaveLength(5);
-    expect(validateScenario({ ...SCENARIO, metadata: { ...SCENARIO.metadata, estimatedMinutes: 61 } })).toContainEqual(expect.objectContaining({ pointer: '/metadata/estimatedMinutes', rule: 'maximum' }));
+    expect(validateScenario({ ...SCENARIO, metadata: { ...SCENARIO.metadata, estimatedMinutes: 360 } })).toEqual([]);
+    expect(validateScenario({ ...SCENARIO, metadata: { ...SCENARIO.metadata, estimatedMinutes: 361 } })).toContainEqual(expect.objectContaining({ pointer: '/metadata/estimatedMinutes', rule: 'maximum' }));
     expect(FIXTURES.scenarioId).toBe(SCENARIO.metadata.id); expect(FIXTURES.contentVersion).toBe(SCENARIO.metadata.version);
     expect(new SevereHypoglycemia().snapshot(0)).toMatchObject({ glucoseMgPerDl: null, medicationReviewed: false, consciousness: 'drowsy', firstRescueAtTick: null });
   });

@@ -27,6 +27,30 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'hypercalcemia-authored-bridge-states',
+    headline: 'Volume and calcium changes are authored contrasts, not fluid or drug kinetics.',
+    simplification: 'Separate 15-minute hydration and 4-hour calcitonin checkpoints change fixed observations. Missing urgent care flags at 15 minutes, stops at 30 minutes, and any unfinished branch stops at six hours. No antiresorptive effect is modeled.',
+    whereItMisleads: 'A learner treats a clock as permission to wait, assumes hydration cannot lower calcium clinically, or attributes the four-hour calcium change to an antiresorptive.',
+    correctUnderstanding: 'Treat and reassess promptly. Hydration can lower calcium clinically; this lesson isolates circulatory response for teaching. Antiresorptive responses take longer and vary. Calcium remains severely elevated at the authored bridge endpoint; no response magnitude or recovery is guaranteed.',
+    briefIn: ['hypercalcemic-crisis-volume-and-bridge'],
+  },
+  {
+    id: 'hypercalcemia-cardiorenal-and-treatment-limits',
+    headline: 'Qualified pathways do not prescribe fluid volumes, diuretic timing, or a specific antiresorptive.',
+    simplification: 'Tailored hydration includes immediate bedside volume assessment. A separate supplied cardiorenal review is required before the generic antiresorptive choice; it does not require new tests or completed rehydration.',
+    whereItMisleads: 'A learner delays hydration for a button, gives unlimited fluid in HFpEF or CKD, uses routine diuresis before rehydration, or treats denosumab as mandatory and risk-free.',
+    correctUnderstanding: 'Individualize fluids and monitor for overload. Review renal function before IV bisphosphonates and individualize antiresorptive selection and safety checks. Diuretics may be appropriate for overload, not routine calcium treatment. Oliguria or congestion requires qualified renal and critical-care reassessment, not automatic dialysis.',
+    briefIn: ['hypercalcemic-crisis-volume-and-bridge'],
+  },
+  {
+    id: 'hypercalcemia-hcm-and-handoff-boundaries',
+    headline: 'This malignancy-specific bridge ends in continuing care, not normalized calcium or cancer control.',
+    simplification: 'A fictional patient with known metastatic breast cancer receives a selected severe-HCM pathway. A fresh fluid and bridge observation plus accepted care permits handoff while calcium remains 14.8 mg/dL.',
+    whereItMisleads: 'The same treatment is generalized to every hypercalcemia cause, calcitonin is continued indefinitely, or early improvement is taken as discharge readiness.',
+    correctUnderstanding: 'Cause-specific care differs. Calcitonin is limited to 48–72 hours because its effect wanes. Continue calcium, volume, kidney, magnesium, phosphate, vitamin D, and treatment-safety review with oncology ownership and escalation when clinically required.',
+    briefIn: ['hypercalcemic-crisis-volume-and-bridge'],
+  },
+  {
     id: 'myxedema-authored-support-states',
     headline: 'Oxygenation, ventilation, and systemic response are authored contrasts, not treatment kinetics.',
     simplification: 'Oxygen alone changes saturation but not carbon-dioxide retention. Qualified ventilation changes the respiratory state after five authored minutes; complete care permits a later partial-support state.',

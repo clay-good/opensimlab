@@ -36,6 +36,9 @@ import { THYROID_IODINE_WAIT_TICKS, THYROID_RESPONSE_TICKS } from '../../src/mod
 import { useMyxedemaDemonstration } from '../../src/modules/endocrine-metabolic/demo/useMyxedemaDemonstration';
 import { MYXEDEMA_COMA_VENTILATION_AND_STEROID_SEQUENCE } from '../../src/modules/endocrine-metabolic/scenarios/myxedema-coma-ventilation-and-steroid-sequence';
 import { MYXEDEMA_VENTILATION_TICKS, MYXEDEMA_RESPONSE_TICKS } from '../../src/modules/endocrine-metabolic/myxedema';
+import { useHypercalcemiaDemonstration } from '../../src/modules/endocrine-metabolic/demo/useHypercalcemiaDemonstration';
+import { HYPERCALCEMIC_CRISIS_VOLUME_AND_BRIDGE } from '../../src/modules/endocrine-metabolic/scenarios/hypercalcemic-crisis-volume-and-bridge';
+import { HYPERCALCEMIA_FLUID_RESPONSE_TICKS, HYPERCALCEMIA_BRIDGE_RESPONSE_TICKS } from '../../src/modules/endocrine-metabolic/hypercalcemia';
 import type { PatientState } from '@anesthesia/physiology';
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import { useDemonstration } from '@anesthesia/demo/useDemonstration';
@@ -598,6 +601,96 @@ describe('the demonstration, run for its full length', () => {
     } finally { act(() => exampleRoot.unmount()); exampleContainer.remove(); }
   // The authored hour is run once through the real session and once as replay.
   }, 60_000);
+
+  it('runs the hypercalcemia example through distinct volume and calcium waits and replays its real transcript', () => {
+    // This test must also run alone without the induction fixture owning the store.
+    act(() => root.unmount());
+    const exampleContainer = document.createElement('div'); document.body.appendChild(exampleContainer);
+    const exampleRoot = createRoot(exampleContainer); const scenario = HYPERCALCEMIC_CRISIS_VOLUME_AND_BRIDGE;
+    const worker = new InProcessWorker(); let finishes = 0; let decisions = 0;
+    const advance = { current: undefined as (() => void) | undefined };
+    const pausedWaits = new Set<string>();
+    function HypercalcemiaHarness() {
+      const session = useSession();
+      const demonstration = useHypercalcemiaDemonstration({ active: true, running: session.transport === 'running',
+        patient: session.equipment?.resuscitation.hypercalcemia, act: session.act,
+        pause: session.pause, play: session.play, onFinished: () => { finishes += 1; },
+      });
+      advance.current = demonstration.onAdvance;
+      return null;
+    }
+    try {
+      act(() => {
+        useSession.getState().begin({ scenarioId: scenario.metadata.id, scenarioVersion: scenario.metadata.version,
+          contentVersion: scenario.metadata.version, modelSetRevision: MODEL_SET_REVISION, engineVersion: ENGINE_VERSION,
+          practiceRegion: 'US', seed: 4905, scenario,
+        }, () => worker as unknown as Worker, { engine: ENGINE_VERSION, content: scenario.metadata.version,
+          modelSet: MODEL_SET_REVISION, scenario: scenario.metadata.version }, 'endocrine-metabolic');
+        exampleRoot.render(createElement(HypercalcemiaHarness));
+        useSession.getState().setSpeed(60); useSession.getState().play();
+      });
+      for (let batch = 0; batch < 3000 && !useSession.getState().equipment?.resuscitation.hypercalcemia?.ended; batch += 1) {
+        if (advance.current) { advancePausedDecision(advance.current, worker); decisions += 1; }
+        const patient = useSession.getState().equipment?.resuscitation.hypercalcemia;
+        const wait = patient && patient.supportActive && patient.fluidDueInSeconds !== null
+          && patient.fluidDueInSeconds > 0 ? 'fluid-support'
+          : patient && patient.fluidResponseObserved && patient.bridgeDueInSeconds !== null
+            && patient.bridgeDueInSeconds > 0 ? 'calcium-bridge' : null;
+        if (wait && !pausedWaits.has(wait)) {
+          pausedWaits.add(wait);
+          expect(advance.current).toBeUndefined();
+          expect(useSession.getState().transport).toBe('running');
+          if (wait === 'calcium-bridge') expect(patient).toMatchObject({ bridgeResponseObserved: false,
+            observation: { heartRateBpm: 96, adjustedCalciumMgDl: 16.4, coreTemperatureC: 36.8 } });
+          act(() => useSession.getState().pause());
+          const tick = useSession.getState().tick; const count = worker.applied.length;
+          act(() => { for (let frame = 0; frame < 60; frame += 1) useSession.getState().frame(frame % 2 ? 1000 / 60 : 1000); });
+          expect(useSession.getState().tick).toBe(tick);
+          expect(useSession.getState().equipment?.resuscitation.hypercalcemia).toEqual(patient);
+          expect(worker.applied).toHaveLength(count);
+          expect(advance.current).toBeUndefined();
+          act(() => useSession.getState().play());
+        }
+        act(() => { for (let frame = 0; frame < 6; frame += 1) useSession.getState().frame(1000 / 60); });
+      }
+      expect(finishes).toBe(1); expect(decisions).toBe(8);
+      expect(pausedWaits).toEqual(new Set(['fluid-support', 'calcium-bridge']));
+      expect(useSession.getState().transport).toBe('paused');
+      expect(worker.applied).toEqual([
+        'tailored-fluids', 'calcitonin', 'assess-cardiorenal', 'antiresorptive', 'call-support', 'reassess', 'reassess', 'handoff',
+      ].map((action) => ({ type: 'hypercalcemia-response', payload: { action } })));
+      expect(useSession.getState().equipment?.resuscitation.hypercalcemia).toMatchObject({
+        ended: 'handoff', fluidResponseObserved: true, bridgeResponseObserved: true, urgentTreatmentDelayed: false,
+        unrestrictedFluidsAttempted: false, routineDiureticAttempted: false, waitForCauseChosen: false,
+        durableRecoveryProven: false, observation: { heartRateBpm: 96, coreTemperatureC: 36.8, adjustedCalciumMgDl: 14.8 },
+      });
+      const transcript = sessionInternals().recorder!.build('pending');
+      const actions = transcript.actions.filter((action) => action.type === 'hypercalcemia-response');
+      const fluids = actions.find((action) => action.payload.action === 'tailored-fluids')!;
+      const bridge = actions.find((action) => action.payload.action === 'calcitonin')!;
+      const renal = actions.find((action) => action.payload.action === 'assess-cardiorenal')!;
+      const antiresorptive = actions.find((action) => action.payload.action === 'antiresorptive')!;
+      const reassessments = actions.filter((action) => action.payload.action === 'reassess');
+      expect(renal.tick).toBeLessThanOrEqual(antiresorptive.tick);
+      expect(reassessments).toHaveLength(2);
+      expect(reassessments[0]!.tick - fluids.tick).toBeGreaterThanOrEqual(HYPERCALCEMIA_FLUID_RESPONSE_TICKS);
+      expect(reassessments[0]!.tick).toBeLessThan(bridge.tick + HYPERCALCEMIA_BRIDGE_RESPONSE_TICKS);
+      expect(reassessments[1]!.tick - bridge.tick).toBeGreaterThanOrEqual(HYPERCALCEMIA_BRIDGE_RESPONSE_TICKS);
+      const replay = new AnesthesiaEngine({ scenario, seed: 4905, practiceRegion: 'US' });
+      let last;
+      for (let tick = 0; tick < useSession.getState().tick; tick += 1) {
+        for (const action of transcript.actions) if (action.tick === tick) replay.apply(action);
+        last = replay.step();
+      }
+      expect(last?.state).toEqual(useSession.getState().state);
+      expect(replay.equipment().resuscitation.hypercalcemia).toEqual(useSession.getState().equipment?.resuscitation.hypercalcemia);
+      const endedTick = useSession.getState().tick;
+      act(() => { exampleRoot.render(createElement(HypercalcemiaHarness)); useSession.getState().frame(1000); });
+      expect(finishes).toBe(1); expect(worker.applied).toHaveLength(8);
+      expect(advance.current).toBeUndefined(); expect(useSession.getState().tick).toBe(endedTick);
+    } finally { act(() => exampleRoot.unmount()); exampleContainer.remove(); }
+  // The authored four hours is run once through the real session and once as replay.
+  }, 120_000);
 
   it('invalidates a pending adrenal decision when the learner takes over the session', () => {
     const exampleContainer = document.createElement('div'); document.body.appendChild(exampleContainer);

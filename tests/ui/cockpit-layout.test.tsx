@@ -31,12 +31,12 @@ describe('Report-safe briefing and endocrine reading layout', () => {
     expect(cockpitCss).toContain('.prebrief { padding-block-end: calc(64px + var(--space-6)); }');
   });
   it.each([
-    ['thyroid-storm', 'ThyroidStormTray.tsx'], ['myxedema', 'MyxedemaTray.tsx'],
+    ['thyroid-storm', 'ThyroidStormTray.tsx'], ['myxedema', 'MyxedemaTray.tsx'], ['hypercalcemia', 'HypercalcemiaTray.tsx'],
   ])('wraps the full %s section headings instead of truncating the instruction', (id, file) => {
     const tray = readFileSync(join(root, 'src/modules/endocrine-metabolic', file!), 'utf8');
     expect(tray.match(new RegExp(`className="syringe ${id}__section"`, 'g'))).toHaveLength(3);
-    expect(cockpitCss).toContain('.thyroid-storm__section .syringe__name, .myxedema__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }');
-    expect(cockpitCss).toContain('.thyroid-storm__section .crisis-drug__actions, .myxedema__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }');
+    expect(cockpitCss).toContain('.thyroid-storm__section .syringe__name, .myxedema__section .syringe__name, .hypercalcemia__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }');
+    expect(cockpitCss).toContain('.thyroid-storm__section .crisis-drug__actions, .myxedema__section .crisis-drug__actions, .hypercalcemia__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }');
     expect(cockpitCss).toContain(`.${id}__section .button[aria-disabled='true']`);
   });
 });

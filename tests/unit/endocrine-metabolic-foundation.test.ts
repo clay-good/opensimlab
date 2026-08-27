@@ -9,9 +9,9 @@ import { DEFAULT_ENDOCRINE_METABOLIC_SCENARIO_ID, ENDOCRINE_METABOLIC_SCENARIOS,
 const json = (path: string) => JSON.parse(readFileSync(join(process.cwd(), path), 'utf8'));
 
 describe('Endocrine and Metabolic Medicine module foundation', () => {
-  it('registers six bounded previews and exact discoverable routes', () => {
+  it('registers seven bounded previews and exact discoverable routes', () => {
     expect(getModule('endocrine-metabolic')).toMatchObject({ route: 'endocrine-metabolic', status: 'available' });
-    expect(ENDOCRINE_METABOLIC_SCENARIOS).toHaveLength(6);
+    expect(ENDOCRINE_METABOLIC_SCENARIOS).toHaveLength(7);
     expect(DEFAULT_ENDOCRINE_METABOLIC_SCENARIO_ID).toBe('dka-resolution-transition');
     expect(getEndocrineMetabolicScenario('missing')).toBeUndefined();
     expect(routeFor('/endocrine-metabolic')).toMatchObject({ indexable: true, structuredData: ['SoftwareApplication'] });
@@ -19,15 +19,18 @@ describe('Endocrine and Metabolic Medicine module foundation', () => {
       expect(getEndocrineMetabolicScenario(scenario.metadata.id)).toBe(scenario);
       const path = `/endocrine-metabolic/scenario/${scenario.metadata.id}`;
       expect(routeFor(path)).toMatchObject({ indexable: true, structuredData: ['LearningResource'] });
-      expect(structuredDataFor(['LearningResource'], path)[0]).toMatchObject({ url: `https://opensimlab.com${path}`, name: scenario.metadata.title });
+      expect(structuredDataFor(['LearningResource'], path)[0]).toMatchObject({ url: `https://opensimlab.com${path}`, name: scenario.metadata.title,
+        timeRequired: `PT${scenario.metadata.estimatedMinutes}M` });
     }
+    expect(structuredDataFor(['LearningResource'], '/endocrine-metabolic/scenario/hypercalcemic-crisis-volume-and-bridge')[0])
+      .toMatchObject({ timeRequired: 'PT240M' });
   });
   it('publishes exact review, completion, maturity, and secure-report records', () => {
     const completion = json('public/catalog/endocrine-metabolic-completion-audit.json');
     const maturity = json('public/catalog/endocrine-metabolic-maturity.json');
     const reports = json('workers/reports/src/report-catalog.generated.json');
-    expect(completion.scenarios).toHaveLength(6);
-    expect(maturity.recordCount).toBe(6);
+    expect(completion.scenarios).toHaveLength(7);
+    expect(maturity.recordCount).toBe(7);
     for (const { metadata } of ENDOCRINE_METABOLIC_SCENARIOS) {
       expect(reviewableItems()).toContainEqual(expect.objectContaining({ id: metadata.id, domains: ['endocrine-metabolic'] }));
       expect(completion.scenarios).toContainEqual(expect.objectContaining({ scenarioId: metadata.id, moduleId: 'endocrine-metabolic', maturity: 'preview' }));

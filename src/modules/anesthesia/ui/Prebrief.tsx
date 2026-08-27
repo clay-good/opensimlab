@@ -23,6 +23,7 @@ import { supportsSevereHypoglycemia } from '../../endocrine-metabolic/severe-hyp
 import { supportsAdrenalCrisis } from '../../endocrine-metabolic/adrenal-crisis';
 import { supportsThyroidDemonstration } from '../../endocrine-metabolic/demo/thyroid-demonstration';
 import { supportsMyxedemaDemonstration } from '../../endocrine-metabolic/demo/myxedema-demonstration';
+import { supportsHypercalcemiaDemonstration } from '../../endocrine-metabolic/demo/hypercalcemia-demonstration';
 
 export const FICTION_CONTRACT =
   'This is a simulation. The patient is not real, nothing you do here reaches anyone, and an '
@@ -191,6 +192,16 @@ export function Prebrief({
               coordinated ownership, reassessment, and handoff, not examination, dosing, procedures, or delivery.
             </p>
           </>
+        ) : scenario.metadata.id === 'hypercalcemic-crisis-volume-and-bridge' ? (
+          <>
+            <p>Restore circulation with qualified, monitored hydration while arranging short-term
+              calcitonin and renal-informed antiresorptive care for this known malignancy-associated
+              emergency. A better pulse or pressure does not establish calcium control.</p>
+            <p>The fifteen-minute circulation and four-hour calcium changes are authored teaching
+              checkpoints, not predictions or safe waiting intervals. Continue clinical monitoring,
+              request fresh assessments, and hand off unresolved disease. Pause freely; 60× advances
+              one simulated minute each second.</p>
+          </>
         ) : scenario.metadata.id === 'myxedema-coma-ventilation-and-steroid-sequence' ? (
           <>
             <p>Support breathing while qualified endocrine and precipitant care begin. Oxygen saturation
@@ -347,12 +358,12 @@ export function Prebrief({
       <div className="prebrief__start">
         <Button variant="primary" onClick={onStart}>Start the scenario</Button>
         {onWatch && (
-          <Button onClick={onWatch}>{hypoglycemia || supportsAdrenalCrisis(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) ? 'Watch a worked example' : 'Watch a 90-second demonstration'}</Button>
+          <Button onClick={onWatch}>{hypoglycemia || supportsAdrenalCrisis(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) ? 'Watch a worked example' : 'Watch a 90-second demonstration'}</Button>
         )}
       </div>
       {onWatch && (
         <p className="field__hint">
-          {hypoglycemia || supportsAdrenalCrisis(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) ? 'The worked example pauses before each decision so you can read. Choose “Continue example” when ready; observation periods run at 60× speed. Reading time does not advance the patient. ' : 'The demonstration runs this scenario at five times speed and explains what to look at. '}
+          {hypoglycemia || supportsAdrenalCrisis(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) ? 'The worked example pauses before each decision so you can read. Choose “Continue example” when ready; observation periods run at 60× speed. Reading time does not advance the patient. ' : 'The demonstration runs this scenario at five times speed and explains what to look at. '}
           You can take the controls at any point and carry on from where it got to.
         </p>
       )}

@@ -2804,6 +2804,32 @@ remain pending for this slice.
 The registry contains 198 scenarios, including six endocrine/metabolic previews, and 219
 indexable routes. These are registration and route counts, not complete-contract approval counts.
 
+### Wave E endocrine-metabolic slice 7: hypercalcemic crisis, volume and bridge
+
+The seventh endocrine preview uses a known malignancy-associated emergency with dehydration,
+HFpEF, and CKD. Qualified tailored hydration includes immediate volume and cardiac assessment;
+it is not gated by clicking through a record. Calcitonin starts alongside care, while supplied
+cardiorenal review precedes the qualified antiresorptive pathway. Unrestricted fluid and routine
+calcium-lowering diuresis are refused, without declaring clinically indicated overload treatment
+wrong. Delayed treatment and earlier refused choices remain visible after correction.
+
+The SfE 2016 emergency guidance and Endocrine Society 2023 HCM guideline anchor the boundaries.
+The latter's severe-HCM combination recommendation has very low-certainty evidence and is not
+generalized to every cause of hypercalcemia. Authored circulation changes occur 15 minutes after
+hydration; a separate four-hour calcitonin checkpoint permits a fresh, still-severe calcium result.
+Antiresorptive effect is not simulated. No automatic event exposes the later calcium value before
+reassessment. Earlier observations remain historical, and unsupported capnography and oxygen
+settings stay unavailable in visual, spoken, explanation, and optional report-context surfaces.
+
+The eight-decision worked example uses the real session clock and accepted state, with reading
+pauses and independent observation periods. Metadata states 240 simulated minutes; 60× reduces
+observation time to about four real minutes without compressing the modeled clock. The longitudinal
+schema ceiling is six hours, matching the unfinished-lesson bound; the initial anesthesia duration
+requirement is unchanged. Fresh fluid and bridge observations plus complete care are needed for
+handoff. The lesson ends without claiming renal recovery, cancer control, or discharge readiness.
+Independent clinical review, complete inclusive-runtime evidence, and production Turnstile/D1
+verification remain separate pending gates.
+
 ### Wave E endocrine-metabolic slice 1: DKA resolution and transition
 
 The new module opens with a late-treatment boundary rather than duplicating Emergency Medicine's

@@ -1873,6 +1873,23 @@
       "limitationManifestHash": "sha256:f6d99838445f4baf74b712bb8f3343b8bb0104940ea87ae57b0017526c733e13"
     },
     {
+      "scenarioId": "hypercalcemic-crisis-volume-and-bridge",
+      "contentVersion": "0.1.0",
+      "moduleId": "endocrine-metabolic",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:8002a0a1ba97e50f93a322d57158522ad0b05651b874451032cf7da38363988b",
+      "defaultsHash": "sha256:863d0974c29efcedd3e55210dcb5201888d903be48cc86e180270a93c5b4ffa4",
+      "maturityHash": "sha256:03efd88fbabe19c1f6c42bd8672ce224b6efb4adbf2298351fb8759b1a6c2f75",
+      "sourceManifestHash": "sha256:0f0226161b543b94e9e11f92b3e9222752d68eb20fceb1fb859e433c642d671f",
+      "limitationManifestHash": "sha256:80d0c23a467df839bfabe433357262271f0e3cbebfa4e70421491afe19333e2f"
+    },
+    {
       "scenarioId": "myxedema-coma-ventilation-and-steroid-sequence",
       "contentVersion": "0.1.0",
       "moduleId": "endocrine-metabolic",

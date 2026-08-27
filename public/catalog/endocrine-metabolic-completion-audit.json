@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "moduleId": "endocrine-metabolic",
   "capabilityVersion": "0.1.0-alpha.48",
-  "scenarioCount": 6,
+  "scenarioCount": 7,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -757,6 +757,132 @@
           "status": "missing",
           "evidence": [
             "The shared report control, exact-version Worker catalog, and bounded opt-in myxedema context are integrated. myxedema-report-surfaces.test.tsx verifies real route/form projection on briefing, live, example, debrief, replay, and source entry with local transport/network stubs. Complete inclusive four-surface reporting and production Turnstile/D1 verification remain pending."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "hypercalcemic-crisis-volume-and-bridge",
+      "title": "Hypercalcemic crisis: restore volume, bridge the delay",
+      "moduleId": "endocrine-metabolic",
+      "environment": "ward",
+      "estimatedMinutes": 240,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario hypercalcemic-crisis-volume-and-bridge carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "5 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "Fixed authored hypercalcemia transitions and reference seed 4905; model and real-engine replay checks are bound to the exact fixture content version."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "Independent hydration and calcitonin-bridge checkpoints separate circulation from persistent severe hypercalcemia. Missing urgent treatment is retained and unfinished paths have bounded instructor takeover. No antiresorptive effect is modeled."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "Ten dose-free choices include immediate tailored hydration, calcitonin, supplied cardiorenal review, renal-informed antiresorptive care, support, fresh reassessment, and handoff, with refused fluid/diuretic shortcuts and retained cause-delay decisions."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "Continuing-care handoff or instructor takeover ends the branch. Thirty-minute missing-urgent-care and six-hour unfinished-lesson stops are authored bounds, not safe delays or outcome predictions."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "satisfied",
+          "evidence": [
+            "Exact-version observed-state tutoring supports Guided, Coached, and Unassisted. Worked example 0.1.0 pauses before eight accepted decisions, separates fluid and bridge observation periods, and hands off persistent severe hypercalcemia without claiming recovery."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "Five objective bindings cover tailored volume support, short bridge, renal review, distinct fresh observations, and ongoing-care handoff; earlier shortcuts remain evidence after correction. Counterfactuals are authored, not clinical predictions."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "2 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "hypercalcemia-fixtures.ts binds expert, commonError, recovery, and noAction paths to content 0.1.0 and seed 4905. Reference checks: endocrine-hypercalcemia.test.ts and hypercalcemia-runs.test.ts."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Local model, guidance, and tray checks do not establish complete inclusive runtime evidence. Exact-version screen-reader, keyboard, reduced-motion, color-vision, 320 px, 400% zoom, offline, replay, and performance verification remains pending."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "The shared report pattern requires exact-version coverage and bounded opt-in context on briefing, live, debrief, replay, and source entry. Complete inclusive four-surface reporting and production Turnstile/D1 verification remain pending."
           ]
         }
       ]

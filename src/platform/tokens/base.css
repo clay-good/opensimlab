@@ -201,6 +201,9 @@ a:hover { text-decoration-color: var(--text-secondary); }
   color: var(--text-secondary);
 }
 
+/* Keep the optional update offer out of modal reading and focus surfaces. */
+body:has([aria-modal='true']) .update-notice { visibility: hidden; }
+
 /* --- Trust documents ------------------------------------------------------
  * The validation report, governance, limitations and privacy. A reader arriving
  * from a footer link needs somewhere to go, at the top, not one link buried

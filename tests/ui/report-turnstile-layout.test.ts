@@ -5,6 +5,23 @@ import { describe, expect, it, vi } from 'vitest';
 import { renderTurnstile } from '@platform/reporting/client';
 
 describe('report security check in a narrow dialog', () => {
+  it('hides the optional update notice while a modal owns the reading surface', () => {
+    const css = readFileSync(join(process.cwd(), 'src/platform/tokens/base.css'), 'utf8');
+    const rule = css.match(/body:has\(\[aria-modal='true'\]\)\s+\.update-notice\s*\{[^}]+\}/)?.[0];
+    expect(rule).toContain('visibility: hidden');
+    const style = document.createElement('style'); style.textContent = rule!;
+    const notice = document.createElement('div'); notice.className = 'update-notice';
+    const dialog = document.createElement('div'); dialog.setAttribute('aria-modal', 'true');
+    document.head.append(style); document.body.append(notice);
+    try {
+      expect(getComputedStyle(notice).visibility).toBe('visible');
+      document.body.append(dialog);
+      expect(getComputedStyle(notice).visibility).toBe('hidden');
+      dialog.remove();
+      expect(getComputedStyle(notice).visibility).toBe('visible');
+    } finally { style.remove(); notice.remove(); dialog.remove(); }
+  });
+
   it('uses the 150 px compact widget without changing its security or privacy options', () => {
     const render = vi.fn(() => 'widget');
     const host = document.createElement('div');
