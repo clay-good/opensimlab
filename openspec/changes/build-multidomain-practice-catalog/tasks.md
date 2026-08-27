@@ -87,6 +87,17 @@ credited toward the catalog until every item in the completion contract passes.
   face loads on demand. The engine-generated still ECG uses two-pixel min/max columns while the live
   sweep retains one-pixel density. Verified compressed totals are 148.1 KB landing, 1,153.9 KB to an
   interactive cockpit, and 2,502.3 KB for the complete offline artifact.
+- [x] Keep cockpit-only waveform generators out of the landing route's shared ECG chunk. At the
+  198-scenario checkpoint, the compressed landing total falls from 149.6 to 147.3 KiB under the
+  unchanged 150 KiB ceiling; the interactive cockpit is 1,462.6 KiB and complete offline artifact
+  3,245.3 KiB. The actual build-graph regression fails under the old whole-directory rule and passes
+  with only the hero's ECG dependencies shared, with no duplicated main-thread waveform modules.
+  Full CI and the 219-route indexable build pass. Production-browser checks retain the live ECG,
+  four cockpit traces, and centered 160-character report form with focus return and manual pause.
+  After stopping the local server, an unvisited endocrine catalog and myxedema briefing still open,
+  and a fresh session advances and accepts a qualified-care choice from the cached build. This is
+  local offline smoke evidence, not a physical-phone frame measurement, clinical signoff, or live
+  Turnstile/D1 submission verification; those checks remain pending.
 - [ ] Ensure planned titles are distinct from playable scenarios and excluded from complete counts.
 
 ## 4. Private tutor

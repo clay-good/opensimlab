@@ -28,10 +28,10 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          // The waveform generator is shared: the landing hero uses it and so does
-          // the cockpit. It must NOT sit in the anesthesia chunk, or the landing
-          // route would pull the whole simulator in with it.
-          if (id.includes('src/modules/anesthesia/waveforms')) return 'waveforms';
+          // Share only the live hero's ECG dependencies with the cockpit. Grouping
+          // the entire directory also loads arterial, capnogram, and pleth generators
+          // on the landing route. Those remain in the lazy, fully precached cockpit.
+          if (/src\/modules\/anesthesia\/waveforms\/(ecg|rhythms|types)\.ts$/.test(id)) return 'waveforms';
           return undefined;
         },
       },

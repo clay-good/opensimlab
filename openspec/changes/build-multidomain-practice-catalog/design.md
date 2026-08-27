@@ -3501,7 +3501,14 @@ file, so route splitting cannot hide total storage growth.
 
 Automatic route chunking is the authoritative production boundary. Broad manual anesthesia and React
 chunks are prohibited because they can create circular static imports that preload the simulator on
-the landing page. Only the waveform generator remains a named shared chunk. The interface font is
+the landing page. Only the hero's ECG, rhythm, and waveform-type dependencies remain in the named
+shared waveform chunk. Arterial, capnogram, plethysmogram, and generator dispatch code stay in the
+lazy cockpit graph; grouping the whole waveform directory would download them on the front door.
+A build-graph regression follows actual static imports, retains the hero dependencies, excludes
+cockpit-only generators and scenario content from the landing entry, and verifies that each waveform
+module appears once in the main-thread output. The complete offline precache still includes every
+emitted asset, independent of chunk placement. This changes transfer boundaries, not waveform
+behavior, route content, clinical models, or review status. The interface font is
 preloaded on every document; the mono face is requested when the cockpit event log uses it. The static
 hero remains an engine-generated trace at two-pixel min/max density, while the live sweep retains its
 one-pixel canvas density and identical layout.
