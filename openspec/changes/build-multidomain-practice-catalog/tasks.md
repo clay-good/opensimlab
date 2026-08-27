@@ -617,6 +617,18 @@ credited toward the catalog until every item in the completion contract passes.
     diagnosis, warming, cooling, skin-to-skin care, device operation, set-point or rate selection,
     feeding, glucose, fluid, drug, access, oxygen, respiratory support, ventilation, airway care,
     resuscitation, transport, counseling, procedure, disposition, or outcome controls.
+  - [x] Neonatology slice 10/11 adds one authored late-preterm postresuscitation transfer from the
+    delivery room to NICU; named sending, receiving, transport, respiratory, monitoring,
+    documentation, escalation and parent-dyad ownership; perinatal, birth, intervention-response,
+    current-state, absent-action, pending-data and whole-dyad reconciliation; patient, assessment,
+    situation, safety, background, actions, timing, ownership and next-step content review;
+    qualified support continuity, route, destination, receiver-question, check-back, documentation,
+    escalation, dignity and reunification boundaries; a fixed receiver confirmation and 10-minute
+    arrival report; and active-risk handoff without learner history, examination, scoring,
+    monitoring or record work, diagnosis, thermal or respiratory care, device or setting operation,
+    ventilation, airway care, access, glucose, fluid, blood, drug, feeding, resuscitation,
+    positioning, transport, communication, check-back, documentation, counseling, procedure,
+    disposition, or outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

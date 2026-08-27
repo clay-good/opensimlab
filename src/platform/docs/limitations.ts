@@ -5135,6 +5135,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified direct findings, calibrated temperature measurement, the current local thermal-care and illness pathways, immediate trained teams, protocolized rewarming with frequent or continuous monitoring, glucose and feeding protection, respectful parent communication, and hands-on training.',
     briefIn: ['thermoregulation-failure'],
   },
+  {
+    id: 'delivery-room-nicu-perinatal-resuscitation-current-parent-receiver-and-arrival-reports-are-authored',
+    headline: 'The perinatal context, resuscitation, current state, parent, receiver check-back, and arrival report are authored.',
+    simplification: 'Fixed records stand in for maternal and newborn history, newborn examination, resuscitation chronology, monitor and record review, respiratory and thermal support, pending data, parent assessment, sender-receiver interaction, transport, arrival assessment, and serial review. Hidden adult-oriented engine-schema minimums are scaffolding, not neonatal transport physiology validation.',
+    whereItMisleads: 'Treating the resuscitation record, receiver check-back, arrival physiology, glucose, pending cord gas, or parent update as learner findings, performed communication, shared understanding, transport, proven treatment effect, durable stability, prognosis, or outcome.',
+    correctUnderstanding: 'Safe transition preserves accurate chronology, current support and response, absent actions, pending data, safety concerns, equipment continuity, questions, check-back, explicit responsibility, next steps, escalation triggers, and family continuity.',
+    briefIn: ['delivery-room-to-nicu-handoff'],
+  },
+  {
+    id: 'delivery-room-nicu-controls-activate-reconcile-review-check-back-and-handoff-only',
+    headline: 'The controls confirm ownership, connect supplied facts, review content and boundaries, read fixed reports, and hand off only.',
+    simplification: 'Six actions stand in for concurrent qualified sending, receiving, transport, respiratory, monitoring, nursing, medical, documentation, leadership, timekeeping, escalation, communication, dignity, parent, family, and reunification work.',
+    whereItMisleads: 'Equating button order with history, examination, record interpretation, handoff accuracy, listening, check-back, shared understanding, transport, parent communication, documentation, or competence.',
+    correctUnderstanding: 'Real handoff is an interactive transfer of information, authority, and responsibility with questions, clarification, confirmation, continuity, and adaptation to the receiving team and family.',
+    briefIn: ['delivery-room-to-nicu-handoff'],
+  },
+  {
+    id: 'no-live-delivery-room-nicu-exam-monitor-support-transport-communication-procedure-disposition-or-outcome',
+    headline: 'The lab does not examine, monitor, support, transport, communicate, determine disposition, or report outcome.',
+    simplification: 'No live history; newborn examination or scoring; monitor, record, glucose, gas or other test acquisition or interpretation; diagnosis; warming or cooling; CPAP, oxygen, monitor or device operation; setting selection; respiratory support; ventilation; airway care; access; glucose, fluid, blood, drug or dose; feeding; resuscitation; movement, positioning or transport; calling, speaking, listening, check-back, documentation, counseling, parent update; procedure; disposition; prognosis; or outcome is modeled.',
+    whereItMisleads: 'Using the rehearsal as CPAP, oxygen, transport-equipment, route, handoff-script, documentation, parent-communication, transfer, or disposition instruction; delaying a real transition for a click; or reading completion as competence.',
+    correctUnderstanding: 'Use verified direct findings, the current local neonatal-resuscitation, transport and NICU pathways, trained sending and receiving teams, reliable equipment, closed-loop communication, explicit ownership, respectful parent support, and hands-on team simulation.',
+    briefIn: ['delivery-room-to-nicu-handoff'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

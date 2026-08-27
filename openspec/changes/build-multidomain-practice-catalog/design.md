@@ -2428,6 +2428,24 @@ monitoring or test work, diagnosis, warming, cooling, skin-to-skin care, device 
 or rate selection, feeding, glucose, fluid, drug, access, oxygen, respiratory support, ventilation,
 airway care, resuscitation, transport, counseling, procedure, disposition, or outcome control.
 
+### Wave D neonatology slice 10: delivery-room-to-NICU handoff
+
+A 2.1 kg newborn at 34 weeks 2 days is 12 minutes old after emergency cesarean birth for a supplied
+prolonged fetal-heart-rate deceleration. Qualified records supply initial apnea and heart rate
+76/min, effective face-mask ventilation from 50 seconds with heart-rate response, spontaneous
+breathing by 4 minutes, no compression, epinephrine, access, fluid, blood or alternative airway,
+and current mild respiratory distress during CPAP 5 cm H2O and oxygen 30%. The learner confirms
+sending, receiving, transport, respiratory, monitoring, documentation, escalation and family
+ownership; connects the complete perinatal, resuscitation, current-state, pending-data and whole-dyad
+story; reviews patient, assessment, situation, safety, background, actions, timing, ownership and
+next-step content; and reviews qualified support continuity, route and destination readiness,
+receiver questions and check-back, documentation, escalation, parent explanation, dignity and
+reunification boundaries. A fixed receiver confirmation and 10-minute NICU-arrival report preserve
+active uncertainty. Six controls expose no learner history, examination, scoring, monitoring or
+record work, diagnosis, thermal or respiratory care, device or setting operation, ventilation,
+airway care, access, glucose, fluid, blood, drug, feeding, resuscitation, positioning, transport,
+communication, check-back, documentation, counseling, procedure, disposition, or outcome control.
+
 ### Wave E neurology slice 1: minor nondisabling acute ischemic stroke
 
 The first Neurology lab is a function-based minor-stroke decision boundary, not another disabling

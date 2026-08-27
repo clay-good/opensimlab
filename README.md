@@ -333,6 +333,15 @@ fixed 45-minute partial report and hands off unresolved risk. No learner measure
 device operation, rate selection, feeding, glucose delivery, diagnosis, procedure, disposition, or
 newborn/parent outcome control is exposed.
 
+The tenth Neonatology lab transfers a late-preterm newborn from delivery room to NICU without
+reducing handoff to a script. It connects perinatal context, birth and resuscitation chronology,
+response, current support and physiology, absent interventions, pending data, parent, destination,
+and whole dyad; reviews safety concerns, timing, explicit ownership, next steps, continuity,
+receiver questions, check-back, documentation, dignity, and reunification; then reads a fixed
+receiver confirmation and arrival report. No learner examination, support, transport,
+communication, documentation, procedure, disposition, or newborn/parent outcome control is
+exposed.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

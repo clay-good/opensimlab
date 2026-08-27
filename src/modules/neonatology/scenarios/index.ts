@@ -8,6 +8,7 @@ import { PRETERM_RESPIRATORY_DISTRESS } from './preterm-respiratory-distress';
 import { NEONATAL_HYPOGLYCEMIA } from './neonatal-hypoglycemia';
 import { NEONATAL_SEPSIS } from './neonatal-sepsis';
 import { THERMOREGULATION_FAILURE } from './thermoregulation-failure';
+import { DELIVERY_ROOM_TO_NICU_HANDOFF } from './delivery-room-to-nicu-handoff';
 
 export const NEONATOLOGY_SCENARIOS: readonly Scenario[] = [
   TERM_NEWBORN_TRANSITION,
@@ -19,6 +20,7 @@ export const NEONATOLOGY_SCENARIOS: readonly Scenario[] = [
   NEONATAL_HYPOGLYCEMIA,
   NEONATAL_SEPSIS,
   THERMOREGULATION_FAILURE,
+  DELIVERY_ROOM_TO_NICU_HANDOFF,
 ];
 export const DEFAULT_NEONATOLOGY_SCENARIO_ID = TERM_NEWBORN_TRANSITION.metadata.id;
 

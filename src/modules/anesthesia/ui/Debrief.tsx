@@ -5400,6 +5400,31 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['activate-delivery-room-nicu-sending-receiving-transport-and-family-handoff-support',
+      'reconcile-delivery-room-nicu-gestation-perinatal-birth-resuscitation-current-state-parent-and-whole-dyad',
+      'review-delivery-room-nicu-patient-assessment-situation-safety-background-actions-timing-ownership-and-next-step-content',
+      'review-qualified-delivery-room-nicu-transport-continuity-receiving-readiness-check-back-and-family-boundaries',
+      'review-delivery-room-nicu-fixed-receiver-check-back-and-ten-minute-arrival-report',
+      'handoff-delivery-room-nicu-respiratory-thermal-glucose-neurologic-infection-feeding-family-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'delivery-room-to-nicu-handoff'
+        && scenario.timeline.every((event) => event.type === 'narrative')
+        && scenario.timeline.filter((event) => event.target === 'delivery-room-to-nicu-handoff').length === 1
+        && scenario.timeline.filter((event) => event.target === 'delivery-room-to-nicu-handoff-boundary').length === 1;
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neonatology NICU handoff lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['support-activated', 'Sending, receiving, transport, respiratory, monitoring, documentation, escalation, family, dignity, and reunification ownership was confirmed first.'],
+        ['context-reconciled', 'Gestation, perinatal context, birth, resuscitation chronology and response, current state and support, pending data, parent, destination, and whole dyad were connected.'],
+        ['content-reviewed', 'Patient, assessment, situation, safety, background, actions, timing, ownership, and next-step content was preserved without a learner communication claim.'],
+        ['readiness-reviewed', 'Qualified continuity, equipment and route readiness, receiver questions, check-back, documentation, escalation, parent, dignity, and reunification boundaries were reviewed.'],
+        ['receiver-check-back-and-arrival-reviewed', 'The fixed receiver confirmation and arrival report was reviewed without learner handoff, shared-understanding, transport, treatment-effect, stability, disposition, or outcome claims.'],
+        ['active-risk-handoff-recorded', 'Respiratory, thermal, glucose, neurologic, infection, pending-data, feeding, family, escalation, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^neonatology-nicu-handoff-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^neonatology-nicu-handoff-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['activate-obstetrics-cord-prolapse-response-diagnosis-clock-theatre-anesthesia-newborn-and-support-roles',
       'reconcile-obstetrics-cord-prolapse-membrane-rupture-fetal-heart-exam-birth-imminence-and-whole-person',
       'review-obstetrics-cord-prolapse-pressure-relief-minimal-handling-position-and-no-delay-boundaries',

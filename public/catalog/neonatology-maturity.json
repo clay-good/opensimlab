@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "neonatology",
-  "recordCount": 9,
+  "recordCount": 10,
   "records": [
     {
       "recordId": "scenario:term-newborn-transition@0.1.0",
@@ -100,6 +100,17 @@
       "evidence": [
         "/catalog/neonatology-completion-audit.json#thermoregulation-failure@0.1.0",
         "/catalog/neonatology-quality-audit.json#thermoregulation-failure@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:delivery-room-to-nicu-handoff@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "delivery-room-to-nicu-handoff",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/neonatology-completion-audit.json#delivery-room-to-nicu-handoff@0.1.0",
+        "/catalog/neonatology-quality-audit.json#delivery-room-to-nicu-handoff@0.1.0"
       ]
     }
   ]

@@ -1370,6 +1370,11 @@ export interface ActionCockpitProps {
       readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly neonatologyNicuHandoffAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly contentAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2510,6 +2515,14 @@ export interface ActionCockpitProps {
       | 'review-neonatal-thermoregulation-fixed-forty-five-minute-qualified-report'
       | 'handoff-neonatal-thermoregulation-temperature-glucose-feeding-infection-neurologic-family-and-outcome-risk',
   ) => void;
+  readonly onNeonatologyNicuHandoffResponse?: (
+    action: 'activate-delivery-room-nicu-sending-receiving-transport-and-family-handoff-support'
+      | 'reconcile-delivery-room-nicu-gestation-perinatal-birth-resuscitation-current-state-parent-and-whole-dyad'
+      | 'review-delivery-room-nicu-patient-assessment-situation-safety-background-actions-timing-ownership-and-next-step-content'
+      | 'review-qualified-delivery-room-nicu-transport-continuity-receiving-readiness-check-back-and-family-boundaries'
+      | 'review-delivery-room-nicu-fixed-receiver-check-back-and-ten-minute-arrival-report'
+      | 'handoff-delivery-room-nicu-respiratory-thermal-glucose-neurologic-infection-feeding-family-and-outcome-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2633,6 +2646,11 @@ export function crisisResponseAvailability(
     && scenario.timeline.every((event) => event.type === 'narrative')
     && scenario.timeline.filter((event) => event.target === 'thermoregulation-failure').length === 1
     && scenario.timeline.filter((event) => event.target === 'thermoregulation-failure-boundary').length === 1;
+  const hasNeonatologyNicuHandoffResponse =
+    scenario.metadata.id === 'delivery-room-to-nicu-handoff'
+    && scenario.timeline.every((event) => event.type === 'narrative')
+    && scenario.timeline.filter((event) => event.target === 'delivery-room-to-nicu-handoff').length === 1
+    && scenario.timeline.filter((event) => event.target === 'delivery-room-to-nicu-handoff-boundary').length === 1;
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -3199,6 +3217,7 @@ export function crisisResponseAvailability(
     hasNeonatologyHypoglycemiaResponse,
     hasNeonatologySepsisResponse,
     hasNeonatologyThermoregulationResponse,
+    hasNeonatologyNicuHandoffResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3437,6 +3456,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'neonatal-hypoglycemia')
       || (event.type === 'narrative' && event.target === 'neonatal-sepsis')
       || (event.type === 'narrative' && event.target === 'thermoregulation-failure')
+      || (event.type === 'narrative' && event.target === 'delivery-room-to-nicu-handoff')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3563,6 +3583,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeonatologyHypoglycemiaResponse,
     hasNeonatologySepsisResponse,
     hasNeonatologyThermoregulationResponse,
+    hasNeonatologyNicuHandoffResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3716,8 +3737,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeonatologyHypoglycemiaResponse
     || hasNeonatologySepsisResponse
     || hasNeonatologyThermoregulationResponse
+    || hasNeonatologyNicuHandoffResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasNeonatologyThermoregulationResponse
+  const responseTray = hasNeonatologyNicuHandoffResponse
+    ? { id: 'crisis', label: 'Story + ownership' } as const
+    : hasNeonatologyThermoregulationResponse
     ? { id: 'crisis', label: 'Warmth + trajectory' } as const
     : hasNeonatologySepsisResponse
     ? { id: 'crisis', label: 'Infection + trajectory' } as const
@@ -4157,6 +4181,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeonatologyHypoglycemiaResponse
     || hasNeonatologySepsisResponse
     || hasNeonatologyThermoregulationResponse
+    || hasNeonatologyNicuHandoffResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -5118,6 +5143,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNeonatologyThermoregulationResponse && (
               <NeonatologyThermoregulationTray assessment={props.resuscitation.neonatologyThermoregulationAssessment}
                 onAction={props.onNeonatologyThermoregulationResponse ?? (() => {})} />
+            )}
+            {hasNeonatologyNicuHandoffResponse && (
+              <NeonatologyNicuHandoffTray assessment={props.resuscitation.neonatologyNicuHandoffAssessment}
+                onAction={props.onNeonatologyNicuHandoffResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -12683,6 +12712,38 @@ function NeonatologyThermoregulationTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-neonatal-thermoregulation-fixed-forty-five-minute-qualified-report')}>Review the fixed 45-minute report</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neonatal-thermoregulation-temperature-glucose-feeding-infection-neurologic-family-and-outcome-risk')}>Hand off active newborn risk</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function NeonatologyNicuHandoffTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['neonatologyNicuHandoffAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onNeonatologyNicuHandoffResponse']>;
+}) {
+  const support = assessment?.supportAtTick != null;
+  const context = assessment?.contextAtTick != null;
+  const content = assessment?.contentAtTick != null;
+  const readiness = assessment?.readinessAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="neonatology-nicu-handoff-now-title">
+      <div id="neonatology-nicu-handoff-now-title" className="syringe__name">Transfer the story and the ownership.</div>
+      <p className="syringe__remaining">Preserve chronology, response, current state, absent actions, pending data, safety concerns, parent context, named owners, and next steps.</p>
+      <div className="crisis-drug__actions">
+        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-delivery-room-nicu-sending-receiving-transport-and-family-handoff-support')}>Confirm shared ownership</Button>}
+        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-delivery-room-nicu-gestation-perinatal-birth-resuscitation-current-state-parent-and-whole-dyad')}>Connect newborn + whole dyad</Button>}
+        {context && !content && <Button className="crisis-drug__action" onClick={() => onAction('review-delivery-room-nicu-patient-assessment-situation-safety-background-actions-timing-ownership-and-next-step-content')}>Review the whole story</Button>}
+        {content && !readiness && <Button className="crisis-drug__action" onClick={() => onAction('review-qualified-delivery-room-nicu-transport-continuity-receiving-readiness-check-back-and-family-boundaries')}>Review qualified boundaries</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="neonatology-nicu-handoff-later-title">
+      <div id="neonatology-nicu-handoff-later-title" className="syringe__name">A check-back closes a loop, not the clinical risk.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Respiratory, thermal, glucose, neurologic, infection, feeding, family, disposition, and outcome risks handed off.' : reassessment ? 'The supplied receiver confirmation and arrival report preserve active risk. Shared understanding, stability, diagnosis, and outcomes remain open.' : readiness ? 'Qualified continuity, receiver questions, check-back, and family support continue. Review the fixed report after time passes.' : support ? 'Named support is present. Connect the whole newborn and dyad before shaping the story.' : 'Begin with calm shared ownership. You can pause or leave this practice at any time.'}</p>
+      <div className="crisis-drug__actions">
+        {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-delivery-room-nicu-fixed-receiver-check-back-and-ten-minute-arrival-report')}>Review receiver confirmation</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-delivery-room-nicu-respiratory-thermal-glucose-neurologic-infection-feeding-family-and-outcome-risk')}>Hand off active newborn risk</Button>}
       </div>
     </section>
   </>;

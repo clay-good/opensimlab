@@ -1788,6 +1788,23 @@
       "limitationManifestHash": "sha256:d8d5c11c34520fdaa59a4969e3c22f30681f10f186a6d5c2337e6a9449273ca2"
     },
     {
+      "scenarioId": "delivery-room-to-nicu-handoff",
+      "contentVersion": "0.1.0",
+      "moduleId": "neonatology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:1b8f68940273d49c0f41c4444f9282a02e84f23b9d0680256ef27cdc804cefea",
+      "defaultsHash": "sha256:12bc7bcb1a08f8c1540d1a67f8859fdc8c319d7eaa1749004adec8fef93ac950",
+      "maturityHash": "sha256:ec3c41cdbb457b21efcafc61c184c4992281ecd4f1ee1015fd8dc0fe9b46935b",
+      "sourceManifestHash": "sha256:6df78c6c8f9f4ad6acce2cca2dd2b9e305081ad20dc09ea526c1ab29388b576d",
+      "limitationManifestHash": "sha256:2a9579857d5d4f2667819ddc2da23fb8659693f9600a0b5519fb9158262c248e"
+    },
+    {
       "scenarioId": "ineffective-ventilation-correction",
       "contentVersion": "0.1.0",
       "moduleId": "neonatology",

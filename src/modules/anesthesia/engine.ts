@@ -593,6 +593,10 @@ const NEONATOLOGY_THERMOREGULATION_BLOCKED_ACTION_TYPES = new Set([
   ...NEONATOLOGY_SEPSIS_BLOCKED_ACTION_TYPES,
   'neonatal-sepsis-response',
 ]);
+const NEONATOLOGY_NICU_HANDOFF_BLOCKED_ACTION_TYPES = new Set([
+  ...NEONATOLOGY_THERMOREGULATION_BLOCKED_ACTION_TYPES,
+  'neonatal-thermoregulation-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1664,6 +1668,12 @@ export class AnesthesiaEngine {
   private neonatologyThermoregulationReadinessAtTick: number | null = null;
   private neonatologyThermoregulationReassessmentAtTick: number | null = null;
   private neonatologyThermoregulationHandoffAtTick: number | null = null;
+  private neonatologyNicuHandoffSupportAtTick: number | null = null;
+  private neonatologyNicuHandoffContextAtTick: number | null = null;
+  private neonatologyNicuHandoffContentAtTick: number | null = null;
+  private neonatologyNicuHandoffReadinessAtTick: number | null = null;
+  private neonatologyNicuHandoffReassessmentAtTick: number | null = null;
+  private neonatologyNicuHandoffFinalAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2747,6 +2757,14 @@ export class AnesthesiaEngine {
     if (neonatologyThermoregulation && NEONATOLOGY_THERMOREGULATION_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `neonatology-thermoregulation-generic-action-refused-${this.currentTick}`,
         'This Neonatology lesson exposes no generic history, examination, scoring, temperature, monitoring or test interpretation, warming, cooling, skin-to-skin care, incubator or warmer operation, set-point or rate selection, feeding, glucose, fluid, drug, access, oxygen, respiratory support, ventilation, airway, resuscitation, transport, procedure, diagnosis, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const neonatologyNicuHandoff = this.scenario.metadata.id === 'delivery-room-to-nicu-handoff'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'delivery-room-to-nicu-handoff').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'delivery-room-to-nicu-handoff-boundary').length === 1;
+    if (neonatologyNicuHandoff && NEONATOLOGY_NICU_HANDOFF_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `neonatology-nicu-handoff-generic-action-refused-${this.currentTick}`,
+        'This Neonatology lesson exposes no generic history, examination, scoring, monitoring or record interpretation, warming, CPAP, oxygen, device, respiratory support, ventilation, airway, access, glucose, fluid, blood, drug, feeding, resuscitation, positioning, transport, communication, documentation, counseling, procedure, diagnosis, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -11745,6 +11763,29 @@ export class AnesthesiaEngine {
         if (this.neonatologyThermoregulationHandoffAtTick !== null) break;
         this.neonatologyThermoregulationHandoffAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-thermoregulation-active-risk-handoff-recorded-${this.currentTick}`, 'Birth, admission, transfer, temperature and rewarming clocks; recurrent hypothermia and overheating risk; measurement method and environment; breathing and perfusion; glucose, feeding and nutrition; infection, neurologic and other causes; parent state, preferences and support; escalation; transfer; documentation; review; disposition; and outcome uncertainty were handed off.', { causeDetermined: false, infectionOrOtherIllnessExcluded: false, durableThermalStabilityProven: false, durableGlucoseStabilityProven: false, feedingSuccessProven: false, safetyDispositionDetermined: false, newbornOutcomePredicted: false, parentOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'delivery-room-to-nicu-handoff-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'delivery-room-to-nicu-handoff'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'delivery-room-to-nicu-handoff').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'delivery-room-to-nicu-handoff-boundary').length === 1;
+        const actions = this.scenario.metadata.objectives.map((objective) => objective.id);
+        const valid = typeof response === 'string' && actions.includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `neonatology-nicu-handoff-response-refused-${this.currentTick}`, supported ? 'That NICU handoff response is not available. Nothing changed.' : 'These NICU handoff choices are available only in the exact declared Neonatology lesson.'); break; }
+        if (response === actions[0]) { if (this.neonatologyNicuHandoffSupportAtTick !== null) break; this.neonatologyNicuHandoffSupportAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-nicu-handoff-support-activated-${this.currentTick}`, 'Named sending, receiving, transport, respiratory, monitoring, documentation, escalation, parent-communication, dignity, and reunification ownership were confirmed. No learner call, communication, transport, monitoring, support, documentation, or other care occurred.'); break; }
+        if (this.neonatologyNicuHandoffSupportAtTick === null) { this.log('warning', 'assessment', `neonatology-nicu-handoff-support-order-refused-${this.currentTick}`, 'Confirm named sending, receiving, transport, respiratory, monitoring, documentation, escalation, family, and dignity ownership before further review.'); break; }
+        if (response === actions[1]) { if (this.neonatologyNicuHandoffContextAtTick !== null) break; this.neonatologyNicuHandoffContextAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-nicu-handoff-context-reconciled-${this.currentTick}`, 'The supplied gestation, perinatal context, birth indication and clock, initial condition, initial-step and ventilation timeline, response, current respiratory and thermal support, current physiology, pending data, absent interventions, parent state, preferences, support, destination, and whole dyad were connected without learner history, examination, monitoring, record interpretation, or diagnosis.'); break; }
+        if (this.neonatologyNicuHandoffContextAtTick === null) { this.log('warning', 'assessment', `neonatology-nicu-handoff-context-order-refused-${this.currentTick}`, 'Connect gestation, perinatal, birth, resuscitation, response, current-state, pending-data, parent, destination, and whole-dyad context before reviewing handoff content.'); break; }
+        if (response === actions[2]) { if (this.neonatologyNicuHandoffContentAtTick !== null) break; this.neonatologyNicuHandoffContentAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-nicu-handoff-content-reviewed-${this.currentTick}`, 'Patient, assessment, situation, safety concerns, background, actions, timing, ownership, and next-step content was reviewed. Positive and negative facts, intervention-response chronology, current support, pending data, unresolved risk, explicit ownership, questions, and next actions were preserved without claiming that the learner spoke, listened, documented, or completed a handoff.'); break; }
+        if (this.neonatologyNicuHandoffContentAtTick === null) { this.log('warning', 'assessment', `neonatology-nicu-handoff-content-order-refused-${this.currentTick}`, 'Review the complete patient, assessment, situation, safety, background, actions, timing, ownership, and next-step content before transfer-readiness boundaries.'); break; }
+        if (response === actions[3]) { if (this.neonatologyNicuHandoffReadinessAtTick !== null) break; this.neonatologyNicuHandoffReadinessAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-nicu-handoff-readiness-reviewed-${this.currentTick}`, 'Qualified respiratory, thermal and monitoring continuity, equipment and route readiness, destination confirmation, deterioration triggers, receiver questions and check-back, documentation, escalation, parent explanation, dignity, and reunification planning were reviewed. No learner transport, device operation, communication, documentation, counseling, or care occurred.'); break; }
+        if (this.neonatologyNicuHandoffReadinessAtTick === null) { this.log('warning', 'assessment', `neonatology-nicu-handoff-readiness-order-refused-${this.currentTick}`, 'Review qualified continuity, readiness, receiver check-back, documentation, escalation, and family boundaries before the fixed report.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.neonatologyNicuHandoffReadinessAtTick) { this.log('warning', 'assessment', `neonatology-nicu-handoff-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed receiver check-back and arrival report.'); break; } if (this.neonatologyNicuHandoffReassessmentAtTick !== null) break; this.neonatologyNicuHandoffReassessmentAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-nicu-handoff-receiver-check-back-and-arrival-reviewed-${this.currentTick}`, 'Fixed receiver check-back preserved gestation, initial apnea and bradycardia, effective-ventilation timing and response, absent advanced interventions, current support, temperature, pending data, unresolved risks, and explicit ownership. Fixed qualified-team report 10 minutes after NICU arrival: heart rate 140/min, respiratory rate 54/min with persistent mild retractions, preductal SpO2 94% during the same reported support, axillary temperature 36.4°C, capillary refill 2 seconds, glucose 52 mg/dL, cord gas pending, and parent update and reunification planning underway. This does not prove learner handoff, shared understanding, transport, monitoring, support delivery, treatment effect, durable stability, diagnosis, feeding safety, disposition, or outcome.', { recordOrMonitoringObtainedOrInterpretedByLearner: false, transportPositioningOrSupportPerformedByLearner: false, communicationDocumentationCounselingOrCheckBackPerformedByLearner: false, sharedUnderstandingProven: false, treatmentEffectProven: false, outcomePredicted: false }); break; }
+        if (this.neonatologyNicuHandoffReassessmentAtTick === null) { this.log('warning', 'assessment', `neonatology-nicu-handoff-final-order-refused-${this.currentTick}`, 'Review the fixed receiver check-back and 10-minute arrival report before active-risk handoff.'); break; }
+        if (this.currentTick <= this.neonatologyNicuHandoffReassessmentAtTick) { this.log('warning', 'assessment', `neonatology-nicu-handoff-final-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.neonatologyNicuHandoffFinalAtTick !== null) break;
+        this.neonatologyNicuHandoffFinalAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-nicu-handoff-active-risk-handoff-recorded-${this.currentTick}`, 'Gestation, birth and resuscitation clocks; breathing effort, apnea and support; temperature and glucose; neurologic and infection risk; pending data; feeding and nutrition; parent state, preferences, updates, dignity, support and reunification; escalation; documentation; review; disposition; and outcome uncertainty were handed off.', { sharedUnderstandingProven: false, durableStabilityProven: false, feedingSafetyProven: false, safetyDispositionDetermined: false, newbornOutcomePredicted: false, parentOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -14853,6 +14894,16 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: this.neonatologyThermoregulationReassessmentAtTick !== null ? 44 : 48,
         spo2Percent: 97, systolicMmHg: 58, diastolicMmHg: 34, meanArterialMmHg: 42,
         coreTemperatureC: this.neonatologyThermoregulationReassessmentAtTick !== null ? 36.3 : 35.5 };
+    }
+    if (this.scenario.metadata.id === 'delivery-room-to-nicu-handoff'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'delivery-room-to-nicu-handoff').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'delivery-room-to-nicu-handoff-boundary').length === 1) {
+      crisisState = { ...crisisState, heartRateBpm: this.neonatologyNicuHandoffReassessmentAtTick !== null ? 140 : 142,
+        respiratoryRateBpm: this.neonatologyNicuHandoffReassessmentAtTick !== null ? 54 : 58,
+        spo2Percent: this.neonatologyNicuHandoffReassessmentAtTick !== null ? 94 : 93,
+        systolicMmHg: 56, diastolicMmHg: 32, meanArterialMmHg: 40,
+        coreTemperatureC: this.neonatologyNicuHandoffReassessmentAtTick !== null ? 36.4 : 36.5 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -19427,6 +19478,30 @@ export class AnesthesiaEngine {
               treatmentEffectProven: false as const, causeDetermined: false as const,
               infectionOrOtherIllnessExcluded: false as const, durableThermalStabilityProven: false as const,
               durableGlucoseStabilityProven: false as const, feedingSuccessProven: false as const,
+              safetyDispositionDetermined: false as const, newbornOutcomePredicted: false as const,
+              parentOutcomePredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'delivery-room-to-nicu-handoff'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'delivery-room-to-nicu-handoff').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'delivery-room-to-nicu-handoff-boundary').length === 1 ? {
+            neonatologyNicuHandoffAssessment: {
+              supportAtTick: this.neonatologyNicuHandoffSupportAtTick, contextAtTick: this.neonatologyNicuHandoffContextAtTick,
+              contentAtTick: this.neonatologyNicuHandoffContentAtTick, readinessAtTick: this.neonatologyNicuHandoffReadinessAtTick,
+              reassessmentAtTick: this.neonatologyNicuHandoffReassessmentAtTick, handoffAtTick: this.neonatologyNicuHandoffFinalAtTick,
+              authoredPostresuscitationTransfer: true as const,
+              authoredReceiverCheckBackAndTenMinuteArrivalReport: this.neonatologyNicuHandoffReassessmentAtTick !== null,
+              historyTakenByLearner: false as const, newbornExaminedOrScoredByLearner: false as const,
+              recordOrMonitoringObtainedOrInterpretedByLearner: false as const, diagnosisMadeByLearner: false as const,
+              warmingCoolingCpapOxygenOrDeviceOperatedByLearner: false as const,
+              respiratorySupportVentilationOrAirwayManagedByLearner: false as const,
+              accessGlucoseFluidBloodOrDrugDeliveredByLearner: false as const, feedingPerformedByLearner: false as const,
+              resuscitationPerformedByLearner: false as const, transportPositioningOrSupportPerformedByLearner: false as const,
+              communicationDocumentationCounselingOrCheckBackPerformedByLearner: false as const,
+              procedurePerformedByLearner: false as const, sharedUnderstandingProven: false as const,
+              treatmentEffectProven: false as const, diagnosisOrCauseDetermined: false as const,
+              durableStabilityProven: false as const, feedingSafetyProven: false as const,
               safetyDispositionDetermined: false as const, newbornOutcomePredicted: false as const,
               parentOutcomePredicted: false as const, outcomePredicted: false as const,
             },
