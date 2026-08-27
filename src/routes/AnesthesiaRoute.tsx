@@ -28,7 +28,8 @@ import { supportsHypercalcemiaDemonstration } from '../modules/endocrine-metabol
 import { supportsHypocalcemiaDemonstration } from '../modules/endocrine-metabolic/demo/hypocalcemia-demonstration';
 import { HYPOCALCEMIA_ACTIONS } from '../modules/endocrine-metabolic/hypocalcemia';
 import { supportsHyponatremiaCorrectionDemonstration } from '../modules/endocrine-metabolic/demo/hyponatremia-correction-demonstration';
-import { HYPONATREMIA_CORRECTION_ACTIONS } from '../modules/endocrine-metabolic/hyponatremia-correction';
+import { HYPONATREMIA_CORRECTION_ACTIONS, supportsHyponatremiaCorrection } from '../modules/endocrine-metabolic/hyponatremia-correction';
+import { hyponatremiaCorrectionReportActions } from '../modules/endocrine-metabolic/hyponatremia-correction-reporting';
 import { Cockpit } from '@anesthesia/ui/Cockpit';
 import { Debrief } from '@anesthesia/ui/Debrief';
 import { assertTranscriptIsAnonymous, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
@@ -377,11 +378,12 @@ export function collectReportEquipmentContext(equipment: SessionState['equipment
   return { ...priority, ...boundedScalars(remaining, REPORT_CONTEXT_SNAPSHOT_LIMIT - Object.keys(priority).length) };
 }
 
-function collectReportRecentContext(session: SessionState, seed: number): ScenarioReportRecentContext {
+function collectReportRecentContext(session: SessionState, seed: number, sodiumLesson: boolean): ScenarioReportRecentContext {
   const actions = sessionInternals().recorder?.build('pending').actions ?? [];
   return {
     seed: Math.trunc(seed),
-    actions: actions.slice(-REPORT_CONTEXT_ACTION_LIMIT).map((action) => {
+    actions: sodiumLesson ? hyponatremiaCorrectionReportActions(actions, session.log)
+      : actions.slice(-REPORT_CONTEXT_ACTION_LIMIT).map((action) => {
       const lessonActions = action.type === 'hypocalcemia-response' ? HYPOCALCEMIA_ACTIONS
         : action.type === 'hyponatremia-correction-response' ? HYPONATREMIA_CORRECTION_ACTIONS : undefined;
       const lessonChoice = lessonActions && action.payload !== null
@@ -405,7 +407,7 @@ function collectReportRecentContext(session: SessionState, seed: number): Scenar
     snapshot: {
       patient: Object.fromEntries(Object.entries(session.state ?? {})
         .filter((entry): entry is [string, number] => Number.isFinite(entry[1]))
-        .filter(([field]) => !session.equipment?.resuscitation.hyponatremiaCorrection
+        .filter(([field]) => !sodiumLesson
           || ['systolicMmHg', 'diastolicMmHg', 'meanArterialMmHg', 'heartRateBpm',
             'respiratoryRateBpm', 'spo2Percent', 'coreTemperatureC'].includes(field))
         // These authored cases supply neither a continuous CO2 measurement nor oxygen settings.
@@ -413,7 +415,8 @@ function collectReportRecentContext(session: SessionState, seed: number): Scenar
           || (field !== 'paco2MmHg' && field !== 'etco2MmHg' && field !== 'fio2'))
         .sort(([left], [right]) => left.localeCompare(right))
         .slice(0, REPORT_CONTEXT_SNAPSHOT_LIMIT)),
-      equipment: collectReportEquipmentContext(session.equipment),
+      equipment: sodiumLesson && !session.equipment?.resuscitation.hyponatremiaCorrection
+        ? {} : collectReportEquipmentContext(session.equipment),
     },
   };
 }
@@ -525,7 +528,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
           : session.phase === 'briefing' || session.phase === 'idle' ? 'prebrief' : 'live'),
         simulatedTick: session.tick,
         canonicalUrl: `${SITE_ORIGIN}${config.basePath}/scenario/${scenario.metadata.id}`,
-        collectRecentContext: () => collectReportRecentContext(session, assignment.seed),
+        collectRecentContext: () => collectReportRecentContext(session, assignment.seed, supportsHyponatremiaCorrection(scenario)),
       }}
       {...(reportRequest ? { openRequest: reportRequest.id } : {})}
       onOpen={() => {

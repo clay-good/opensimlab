@@ -104,7 +104,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "0aeaed8dd0dc80d94d5defffab4ebdde9c844ef22e4110dcc4b6f78fe0f51d1e"
+        "sha256": "42b1bd7a8a25b10bf27d20535d1c6acba2c013a715d9ac15b3e14759248fde2b"
       },
       {
         "path": "tests/integration/demonstration-runs.test.tsx",
@@ -129,6 +129,203 @@
       {
         "path": "tests/unit/endocrine-hypocalcemia.test.ts",
         "sha256": "5b5254bb74ceefb789d417618e080feca8697f4c999ecc9a3e62c5779a8f12df"
+      }
+    ]
+  },
+  {
+    "moduleId": "endocrine-metabolic",
+    "scenarioId": "hyponatremia-aquaresis-and-overcorrection",
+    "contentVersion": "0.1.0",
+    "algorithm": "sha256-files-v1",
+    "recordsSha256": "9a6bee18b7404cbc4860b2bb861425b201351a6f1d58cb3b87470ff954f6655e",
+    "files": [
+      {
+        "path": "docs/evidence-briefs/hyponatremia-aquaresis-and-overcorrection.md",
+        "sha256": "acfd1187c383fdfaefe39c6ad516fb007332c3ed5edce6c532acaedfff1a9906"
+      },
+      {
+        "path": "docs/problem-reporting.md",
+        "sha256": "b84d877b7da32f602e6d31fe3b777fd43d485f42799ff553ac47bcba4a6a3f9e"
+      },
+      {
+        "path": "package-lock.json",
+        "sha256": "87ac3b4895c682cc68b41ad327dd66ba822c62254e2b5ee83aa9286a69ced167"
+      },
+      {
+        "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
+        "sha256": "cf9489644984d8b280338ae17e1ab1fe29196dce300b46d5d59311baf99154ae"
+      },
+      {
+        "path": "src/modules/anesthesia/demo/useObservedDemonstration.ts",
+        "sha256": "d3ac456d0cd55cb9b26d2bf18a8ed163060982fcf49ceb80652ff11f640f24e4"
+      },
+      {
+        "path": "src/modules/anesthesia/engine.ts",
+        "sha256": "a0eec1692921b771f1ed73dd1325a7331d186367bf108bfdd0fccf752bccb0f7"
+      },
+      {
+        "path": "src/modules/anesthesia/region/profiles.ts",
+        "sha256": "6f2476883c6ab3f9dbb7e34f8775bceb97914a6d75e3e6aa4ecdb1d161bc36a8"
+      },
+      {
+        "path": "src/modules/anesthesia/solver.worker.ts",
+        "sha256": "3ca2e777b114c40b787f1feb3bc8881ccb724c9f78a74d3fcd85101f4298b37b"
+      },
+      {
+        "path": "src/modules/anesthesia/ui/ActionCockpit.tsx",
+        "sha256": "cda7c414819fe820c560bd7758208f7af7639968eba4ee2f1fe97f4518196032"
+      },
+      {
+        "path": "src/modules/anesthesia/ui/Cockpit.tsx",
+        "sha256": "a2ae2be8cdf1238f40058ff12ee013ec88e5865871baeea8e6dce5e9e06bf8be"
+      },
+      {
+        "path": "src/modules/anesthesia/ui/Debrief.tsx",
+        "sha256": "487354b2d22b439b5ba305548809362eae67d4f20873c2426a0944c0aa72cf2c"
+      },
+      {
+        "path": "src/modules/anesthesia/ui/Prebrief.tsx",
+        "sha256": "f5051e9d1f5503f9e49f5da33c57357bd24f790ca02db7b15476256473a35641"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/HyponatremiaCorrectionTray.tsx",
+        "sha256": "83a4e67cdb4957fdcbad2f33dfa260c9cdf9cd0e7166b41b9e86364cf1b9027d"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/demo/hyponatremia-correction-demonstration.ts",
+        "sha256": "91755deb1a559d65460c8e58bd696840ad13c62a48424999ddd8b39843cd0195"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/demo/useHyponatremiaCorrectionDemonstration.ts",
+        "sha256": "09c025205d7d2441d25f1d369ca735e23f5d5f14cc9bbe35b48c173b4bab242f"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/hyponatremia-correction-completion.ts",
+        "sha256": "0445519eeec0fdc0b6e2353fd5ab9e91cd02d9cfffd3008d2589858b67c73d3f"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/hyponatremia-correction-fixtures.ts",
+        "sha256": "9f61ae4c7b3ca5c625329c98bfd8e5aa90da821390c83b4c734dc8a577ed3465"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/hyponatremia-correction-quality.ts",
+        "sha256": "6fc82992e0525a1805c49feea6a397b1a18cca2caf81c8fc9c294424a5453ac6"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/hyponatremia-correction-reporting.ts",
+        "sha256": "6ef89585e15935e0b639780dfd23f3ed6222b120d73458b4c3cba40c912e69e1"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/hyponatremia-correction-tutor.ts",
+        "sha256": "9d5ff381eac802b3c7134592e85a379ac1ef00ae7e9fb9f35d3cef0697d69160"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/hyponatremia-correction.ts",
+        "sha256": "214a19c45146a047b6e58b11f280192daf958227bedfaa07424449433ca9f464"
+      },
+      {
+        "path": "src/modules/endocrine-metabolic/scenarios/hyponatremia-aquaresis-and-overcorrection.ts",
+        "sha256": "b95421782a0e044295e011791c600afb7c1c68322a28c43594bf18c770d582e7"
+      },
+      {
+        "path": "src/platform/catalog/maturity.ts",
+        "sha256": "69970d4d7fae816e935846572b4943ec38ae86ac6da0410fb78ccf17b757e913"
+      },
+      {
+        "path": "src/platform/catalog/scenario-quality.ts",
+        "sha256": "e0f40ab3ac2d787ffba19b5e65a8b76b9a019d4cbba2e996ed5e05b5964190f2"
+      },
+      {
+        "path": "src/platform/clock/simulation-clock.ts",
+        "sha256": "1e757dd6474e3a5046382b3031008094fd2b20ba9e1a13b4a19689db50acadeb"
+      },
+      {
+        "path": "src/platform/docs/limitations.ts",
+        "sha256": "18e3efa74a7d03cd6cd61f7d10a7c65a6024c5bf5c69e9b6f38aa2a8d6aa30d3"
+      },
+      {
+        "path": "src/platform/docs/sources.ts",
+        "sha256": "0dd0a154951f88c159dfa080c306eb17bd1d2ec8ca237642f56bbc5c2ca04383"
+      },
+      {
+        "path": "src/platform/governance/publication.ts",
+        "sha256": "b1ab5cb0cbc8d1894b079f842ad40bfad309c9cb1aa212bc1b803f9473fc5a9e"
+      },
+      {
+        "path": "src/platform/governance/records.ts",
+        "sha256": "3558c073643a4a1b0af47b722f56e0355c21f16657a9479e4c059f825722e76f"
+      },
+      {
+        "path": "src/platform/governance/review-gate.ts",
+        "sha256": "ad779f6e639a0ec3933622b405ce56cbc7e11b5eff0975b835497b0efa80f157"
+      },
+      {
+        "path": "src/platform/governance/review-notes.ts",
+        "sha256": "8c2f789a4fecbaac8b75e3dfd3cec1f7758ef4927db17460bd801154e47a29c0"
+      },
+      {
+        "path": "src/platform/kernel/protocol.ts",
+        "sha256": "3ccab1525e52df60e5a90ade24b0cd819cd75b56bd35b76f2991fb1bc48465f3"
+      },
+      {
+        "path": "src/platform/log/event-log.ts",
+        "sha256": "ce22d4838b46dc7ddaf9340080dcd39bdda078c6441068f042e0420d28eb7cb4"
+      },
+      {
+        "path": "src/platform/reporting/contracts.ts",
+        "sha256": "78cdf0e0f7ff3c7ee79c2419283f32005e7f33b7dac4a677af83284dcba400c0"
+      },
+      {
+        "path": "src/platform/session/session-store.ts",
+        "sha256": "761d2694863617d9ea5ecbf102fdfa24c790cbdfba391b1c743b0d859d1ce4a6"
+      },
+      {
+        "path": "src/platform/session/solver-client.ts",
+        "sha256": "37266b1cfdc35d4df33906dcc0dc69a6876d8689ac4ca3e048214b28e39b1e1d"
+      },
+      {
+        "path": "src/platform/tokens/base.css",
+        "sha256": "d316dcc5504d59ab9d68651a47cf2835ab161288d9f663fcf831c5455700e385"
+      },
+      {
+        "path": "src/platform/transcript/transcript.ts",
+        "sha256": "b64a41a34381fc5a78aedcd8a00a68b39a37befa471549ae3f454049185367a9"
+      },
+      {
+        "path": "src/routes/AnesthesiaRoute.tsx",
+        "sha256": "42b1bd7a8a25b10bf27d20535d1c6acba2c013a715d9ac15b3e14759248fde2b"
+      },
+      {
+        "path": "tests/integration/hyponatremia-correction-runs.test.ts",
+        "sha256": "caed14b8388f6a8ec84a5f0706da4fff11d64b52eaae0595f3df017ef1b1c8a9"
+      },
+      {
+        "path": "tests/integration/hyponatremia-demonstration-session.test.tsx",
+        "sha256": "72b15cfe8a967493a44edd8533d326ef10ad83c1f21a753c88bc3346a5553083"
+      },
+      {
+        "path": "tests/ui/endocrine-hyponatremia-correction.test.tsx",
+        "sha256": "a3f95d86ba847e3f688679ff0f352921a6498f1e863502fdb0b046131c67760c"
+      },
+      {
+        "path": "tests/ui/hyponatremia-correction-accessibility.test.tsx",
+        "sha256": "1a8fe9942387322b650a276122f9f0307b02b46b72ab943eb199249fc277a01a"
+      },
+      {
+        "path": "tests/ui/hyponatremia-correction-report-surfaces.test.tsx",
+        "sha256": "b72bca7b97fa5bf9cc6ac34606c276d64de4896705c2e69aaf6b6871654dde95"
+      },
+      {
+        "path": "tests/unit/endocrine-hyponatremia-correction.test.ts",
+        "sha256": "8c6db1bb87a1d9403ecc5be4109cc443cbe19ce2cf2036928b0190e29835eebf"
+      },
+      {
+        "path": "tests/unit/hyponatremia-correction-quality.test.ts",
+        "sha256": "083cb80d382f409b86dd5448acddfc85c7eee8387f0192c73f183d0844d70021"
+      },
+      {
+        "path": "tests/unit/hyponatremia-correction-reporting.test.ts",
+        "sha256": "702c0878215c2245d00299dfed8bbc9c7427c406724d9a8e22187c0bdb55c522"
       }
     ]
   }

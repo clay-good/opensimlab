@@ -1014,11 +1014,31 @@ credited toward the catalog until every item in the completion contract passes.
     unchanged; one new record is added. Existing hypocalcemia checks revalidate its six changed
     shared dependency hashes without changing its three quality records. The actual preview
     release command still refuses 216 unmet publication items; no production report was sent.
-  - [ ] Complete hyponatremia independent clinical review, version-bound quality records,
+  - [x] Add exact-version hyponatremia training-value, authored-defaults, and ten-category hazard
+    records without supplying an unverified state-space pass. Bind their literal values to the
+    actual model, fixtures, tutor, objectives, and named implementation dependencies. Exercise the
+    worked example through the real session store, clock, recorder, protocol, and in-process
+    engine transport, including full-frame replay, both observation waits, stale-result recovery,
+    takeover, reset, and disposed callbacks. These checks do not certify native assistive technology.
+  - [x] Fix sodium report attribution: a refusal no longer labels unrelated same-tick requests
+    refused. Only unique action-specific outcome evidence is included; pending, duplicate,
+    malformed, shared-refusal, and replay-discarded evidence is omitted, not guessed. Preserve
+    the last-20-request bound, optional context, scalar allowlists, and legacy lesson behavior.
+    Verification passes 4,104 tests in 488 files, including 14 literal-quality checks, 22 outcome
+    attribution checks, 16 sodium report-surface checks, and three real-session tests. Full
+    indexable CI, 30 specs, the catalog-change spec, 225 static routes, 44 catalog artifacts,
+    and 222 crawlable routes pass. Compressed budgets are 148.2 KiB landing, 1,501.5 KiB cockpit,
+    and 3,352.1 KiB offline; fonts are 86.2 KiB. The three new records cover 42 defaults and
+    ten hazards, with 47 explicit dependency pins. Hypocalcemia's unchanged records are
+    revalidated against the shared route change. All 208 client and Worker report records
+    remain byte-identical; only the endocrine quality audit changes among generated catalogs.
+    The actual preview release still refuses 216 publication blockers. No production report
+    was sent, and no clinical, state-space, or inclusive-runtime gate was waived.
+  - [ ] Complete hyponatremia independent clinical review, version-bound state-space verification,
     full inclusive-runtime coverage, and production Turnstile/D1 evidence. The selected high-risk
     ceiling is not a universal regional rule, and authored checkpoints predict neither drug
     kinetics nor ODS prevention. Deploy the updated reports catalog before new client content;
-    all 207 older report identities must remain intact. Local engineering checks do not waive
+    all 208 registered report identities must remain intact. Local engineering checks do not waive
     these publication gates.
   - [x] Repair service-worker release consistency. Build-stamped SHA-256 integrity checks reject
     mixed or incomplete installations; active snapshots are immutable. Explicit acceptance waits

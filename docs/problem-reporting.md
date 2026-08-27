@@ -18,6 +18,13 @@ accepted/refused actions, at most 32 numeric patient-state fields, and at most 3
 equipment fields. It contains no event prose, reflection, debrief writing, practice history, or
 browser storage. Unchecking the box removes the snapshot before submission.
 
+For post-rescue hyponatremia, action outcomes require a matching action-specific engine event
+at the recorded tick. A refusal does not label other choices made at the same paused instant.
+Duplicate same-choice requests, pending or missing events, shared refusals, invalid payloads, and
+prior actions whose replay events were discarded are omitted rather than guessed. The selection
+still starts with the last 20 recorded requests; it never backfills older actions. This is a
+bounded diagnostic excerpt, not a complete transcript or proof that an omitted request succeeded.
+
 The client does not automatically attach a timestamp, network address, user agent, locale, account,
 email, cookie, name, reflection, history, imported file, or device identifier. The optional note is
 learner-entered text, so it can contain information the learner was asked not to share. Notes are

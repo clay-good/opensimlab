@@ -61,8 +61,10 @@ describe('exact-version hyponatremia correction reporting through shared route s
     localStorage.clear(); localStorage.setItem(ACKNOWLEDGEMENT_KEY, 'true');
     history.replaceState({}, '', `${path}?seed=4907&assignment=private-assignment-label`);
     const engine = new AnesthesiaEngine({ scenario: SCENARIO, seed: 4907, practiceRegion: 'US' });
-    engine.apply({ tick: 0, type: 'hyponatremia-correction-response', payload: { action: 'reassess' } });
-    const frame = engine.step();
+    harness.actions = Array.from({ length: 24 }, (_, tick) => ({ tick,
+      type: 'hyponatremia-correction-response', payload: { action: 'reassess' } }));
+    const frames = harness.actions.map((action) => { engine.apply(action); return engine.step(); });
+    const frame = frames.at(-1)!;
     const hyponatremiaCorrection = frame.equipment.resuscitation.hyponatremiaCorrection!;
     // Unexpected fields must not turn a report into a view of unrequested data.
     const privateState = { ...frame.state, sodiumMmolL: 116, urineOutputMlPerHour: 350, latentBranch: 9 };
@@ -71,15 +73,13 @@ describe('exact-version hyponatremia correction reporting through shared route s
       actualSodiumMmolL: 116, branch: 'private-branch',
       observation: { ...hyponatremiaCorrection.observation!, alertness: 'private-value', hiddenSodiumMmolL: 116 },
     };
-    harness.actions = Array.from({ length: 24 }, (_, index) => ({ tick: index + 1,
-      type: 'hyponatremia-correction-response', payload: { action: 'reassess', notes: 'private action prose' } }));
     harness.build.mockReset().mockImplementation(() => ({ actions: harness.actions }));
     const update = (values: Partial<SessionState>) => { harness.session = { ...harness.session, ...values }; };
     harness.session = {
       phase: 'briefing', ready: true, error: null, tick: 24, elapsed: '00:00:02', transport: 'paused', speed: 1,
       catchUpNotice: false, rehearsalBranch: null, state: privateState, concentrations: [], attribution: [],
       alarms: [], waveformBlocks: [], warnings: [], history: [{ tick: 24, state: frame.state, concentrations: [] }],
-      log: [{ tick: 24, eventId: 'hyponatremia-correction-action-refused-24', severity: 'warning', category: 'assessment', message: 'private log prose' }],
+      log: frames.flatMap(({ events }) => events.map((event) => ({ ...event, message: `${event.eventId} private log prose` }))),
       unreadLog: false, guidance: 'guided',
       equipment: { ...frame.equipment, resuscitation: { ...frame.equipment.resuscitation,
         hyponatremiaCorrection: privateSnapshot } },
@@ -169,9 +169,8 @@ describe('exact-version hyponatremia correction reporting through shared route s
     const payload = lastPayload(); expectIdentity(payload, 'live');
     expect(payload.recent_context?.seed).toBe(4907);
     expect(payload.recent_context?.actions).toHaveLength(20);
-    expect(payload.recent_context?.actions[0]?.tick).toBe(5);
-    expect(payload.recent_context?.actions.every((action) => action.outcome === 'refused' && Object.keys(action.payload).length === 0)).toBe(true);
-    expect(payload.recent_context?.actions.at(-1)?.outcome).toBe('refused');
+    expect(payload.recent_context?.actions[0]?.tick).toBe(4);
+    expect(payload.recent_context?.actions.every((action) => action.outcome === 'accepted' && action.payload.action === 'reassess')).toBe(true);
     expect(Object.keys(payload.recent_context!.snapshot.patient)).toHaveLength(7);
     expect(payload.recent_context!.snapshot.patient).not.toHaveProperty('paco2MmHg');
     expect(payload.recent_context!.snapshot.patient).not.toHaveProperty('etco2MmHg');
@@ -181,7 +180,7 @@ describe('exact-version hyponatremia correction reporting through shared route s
     expect(payload.recent_context!.snapshot.patient).not.toHaveProperty('latentBranch');
     expect(Object.keys(payload.recent_context!.snapshot.equipment)).toHaveLength(24);
     expect(payload.recent_context!.snapshot.equipment).toMatchObject({
-      'resuscitation.hyponatremiaCorrection.observation.atTick': 0,
+      'resuscitation.hyponatremiaCorrection.observation.atTick': 23,
       'resuscitation.hyponatremiaCorrection.observation.sodiumMmolL': 111,
       'resuscitation.hyponatremiaCorrection.observation.urineOutputMlPerHour': 75,
       'resuscitation.hyponatremiaCorrection.observation.spo2Percent': 98,
@@ -199,8 +198,9 @@ describe('exact-version hyponatremia correction reporting through shared route s
     expect(play).not.toHaveBeenCalled();
   });
 
-  it('keeps malformed report action attempts refused without serializing private scalar-like tokens', async () => {
+  it('omits malformed and generic attempts without serializing private scalar-like tokens', async () => {
     harness.session = { ...harness.session, phase: 'running', transport: 'paused', log: [
+      { tick: 4, eventId: 'sodium-correction-initial-reassessment-4', severity: 'warning', category: 'assessment', message: 'private log prose' },
       { tick: 6, eventId: 'hyponatremia-correction-action-refused-6', severity: 'warning', category: 'assessment', message: 'private log prose' },
     ] };
     const inherited = Object.assign(Object.create({ action: 'monitor' }) as Record<string, string>, { notes: 'private-value' });
@@ -217,12 +217,7 @@ describe('exact-version hyponatremia correction reporting through shared route s
     await click(button('Send report'));
     const payload = lastPayload(); expectIdentity(payload, 'live');
     expect(payload.recent_context?.actions).toEqual([
-      { tick: 1, type: 'hyponatremia-correction-response', outcome: 'refused', payload: {} },
-      { tick: 2, type: 'hyponatremia-correction-response', outcome: 'refused', payload: {} },
-      { tick: 3, type: 'hyponatremia-correction-response', outcome: 'refused', payload: {} },
       { tick: 4, type: 'hyponatremia-correction-response', outcome: 'accepted', payload: { action: 'reassess' } },
-      { tick: 5, type: 'hyponatremia-correction-response', outcome: 'refused', payload: {} },
-      { tick: 6, type: 'give-drug', outcome: 'refused', payload: {} },
     ]);
     expect(JSON.stringify(payload)).not.toMatch(/private-value|private_value|patient_id|notes/);
     expect(harness.session.act).not.toHaveBeenCalled();
@@ -239,6 +234,65 @@ describe('exact-version hyponatremia correction reporting through shared route s
     expect(result).not.toHaveProperty('resuscitation.hyponatremiaCorrection.observation.urineOutputMlPerHour');
     expect(Object.keys(result).length).toBeLessThanOrEqual(32);
     expect(JSON.stringify(result)).not.toMatch(/actualSodium|hiddenSodium|branch|alertness|choiceFeedback|fio2|etco2|paco2/);
+  });
+
+  it.each([false, true])('does not attribute another paused action’s refusal to accepted same-tick requests (reversed: %s)', async (reversed) => {
+    const engine = new AnesthesiaEngine({ scenario: SCENARIO, seed: 4907, practiceRegion: 'US' });
+    const decisions = reversed ? ['reassess', 'monitor', 'normalize-now'] : ['normalize-now', 'monitor', 'reassess'];
+    harness.actions = decisions.map((action) => ({ tick: 0, type: 'hyponatremia-correction-response', payload: { action } }));
+    for (const action of harness.actions) engine.apply(action);
+    const frame = engine.step();
+    expect(frame.equipment.resuscitation.hyponatremiaCorrection?.monitoringAtTick).toBe(0);
+    expect(frame.equipment.resuscitation.hyponatremiaCorrection?.observation?.atTick).toBe(0);
+    expect(frame.events.some(({ eventId }) => eventId === 'sodium-correction-normalization-refused-0')).toBe(true);
+    harness.session = { ...harness.session, phase: 'running', transport: 'paused', tick: 1,
+      state: frame.state, equipment: frame.equipment, log: frame.events };
+    await render(); await openReport(); await selectCategory();
+    await click(container.querySelector<HTMLInputElement>('input[type="checkbox"]')!);
+    await click(button('Send report'));
+    const payload = lastPayload(); expectIdentity(payload, 'live');
+    expect(payload.recent_context?.actions).toEqual(decisions.map((action) => ({
+      tick: 0, type: 'hyponatremia-correction-response', payload: { action },
+      outcome: action === 'normalize-now' ? 'refused' : 'accepted',
+    })));
+  });
+
+  it('omits replayed outcomes when prior event frames are no longer in the session log', async () => {
+    const engine = new AnesthesiaEngine({ scenario: SCENARIO, seed: 4907, practiceRegion: 'US' });
+    harness.actions = [
+      { tick: 0, type: 'hyponatremia-correction-response', payload: { action: 'normalize-now' } },
+      { tick: 1, type: 'hyponatremia-correction-response', payload: { action: 'monitor' } },
+    ];
+    // Match solver replay: rebuild prior actions and discard their state/event
+    // frames, then emit only the current frame to the newly cleared session log.
+    for (const action of harness.actions) { engine.apply(action); engine.step(); }
+    const frame = engine.step();
+    expect(frame.equipment.resuscitation.hyponatremiaCorrection?.normalizationAttempted).toBe(true);
+    expect(frame.events.some(({ eventId }) => eventId.includes('normalization-refused'))).toBe(false);
+    harness.session = { ...harness.session, phase: 'running', transport: 'paused', tick: frame.tick,
+      rehearsalBranch: { pointId: 'sodium-correction-first-review', decisionTick: 2, parentTicks: 24 },
+      state: frame.state, equipment: frame.equipment, log: frame.events };
+    await render(); await openReport(); await selectCategory();
+    await click(container.querySelector<HTMLInputElement>('input[type="checkbox"]')!);
+    await click(button('Send report'));
+    const payload = lastPayload(); expectIdentity(payload, 'live');
+    expect(payload.recent_context?.actions).toEqual([]);
+    expect(harness.session.play).not.toHaveBeenCalled();
+  });
+
+  it('omits pending outcomes and does not fall back to generic context while a replay snapshot is unavailable', async () => {
+    harness.actions = [{ tick: 24, type: 'hyponatremia-correction-response', payload: { action: 'monitor' } },
+      { tick: 24, type: 'give-drug', payload: { notes: 'private-value' } }];
+    harness.session = { ...harness.session, phase: 'running', transport: 'paused', log: [], equipment: null };
+    await render(); await openReport(); await selectCategory();
+    await click(container.querySelector<HTMLInputElement>('input[type="checkbox"]')!);
+    await click(button('Send report'));
+    const payload = lastPayload(); expectIdentity(payload, 'live');
+    expect(payload.recent_context?.actions).toEqual([]);
+    expect(payload.recent_context?.snapshot.equipment).toEqual({});
+    expect(Object.keys(payload.recent_context!.snapshot.patient)).toHaveLength(7);
+    expect(JSON.stringify(payload)).not.toMatch(/private-value|sodiumMmolL|urineOutputMlPerHour|latentBranch|etco2|paco2|fio2/);
+    expect(harness.session.play).not.toHaveBeenCalled(); expect(harness.session.act).not.toHaveBeenCalled();
   });
 
   it('retains the observed peak separately from a historical partial-response result', () => {

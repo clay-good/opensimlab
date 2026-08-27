@@ -30,6 +30,11 @@ const dependencies = [
   'src/platform/docs/sources.ts',
   'src/platform/governance/records.ts',
   'src/modules/endocrine-metabolic/hypocalcemia-fixtures.ts',
+  'src/modules/endocrine-metabolic/hyponatremia-correction.ts',
+  'src/modules/endocrine-metabolic/hyponatremia-correction-tutor.ts',
+  'src/modules/endocrine-metabolic/hyponatremia-correction-reporting.ts',
+  'src/modules/endocrine-metabolic/demo/useHyponatremiaCorrectionDemonstration.ts',
+  'tests/integration/hyponatremia-demonstration-session.test.tsx',
 ];
 const consumers = ['build', 'development gate', 'preview release', 'reviewed release'] as const;
 type Consumer = typeof consumers[number];
@@ -58,7 +63,7 @@ describe('Committed quality dependency receipts guard the actual catalog and rel
   it('uses literal production receipts without refreshing them during a successful build or development check', async () => {
     const registry = await import('../../scripts/quality-records');
     const before = JSON.stringify(registry.QUALITY_DEPENDENCY_RECEIPTS);
-    expect(registry.QUALITY_DEPENDENCY_RECEIPTS).toHaveLength(1);
+    expect(registry.QUALITY_DEPENDENCY_RECEIPTS).toHaveLength(2);
     const covered = registry.QUALITY_DEPENDENCY_RECEIPTS.flatMap((receipt) => receipt.files.map(({ path }) => path));
     for (const path of dependencies) expect(covered).toContain(path);
     await consume('build');

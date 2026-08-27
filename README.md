@@ -902,9 +902,10 @@ The same catalog directory publishes training-value, authored-defaults, scenario
 state-space-verification schemas plus `/catalog/anesthesia-quality-audit.json`. A scenario is
 playable only when its completion contract and all four version-bound quality records pass. The
 current audit honestly reports 0 playable scenarios. Catalog generation and release checking share
-one strict, version-bound record registry. Hypocalcemia supplies training-value, authored-defaults,
-and hazard records; its state-space matrix remains missing. Valid record structure does not prove
-that cited checks occurred or establish clinical review. See the [author guide](docs/scenario-author-guide.md).
+one strict, version-bound record registry. Hypocalcemia and post-rescue hyponatremia each supply
+training-value, authored-defaults, and hazard records; their state-space matrices remain missing.
+Valid record structure does not prove that cited checks occurred or establish clinical review.
+See the [author guide](docs/scenario-author-guide.md).
 
 `/catalog/asset-licenses.json` classifies every shipped media asset by source, author, license,
 modification, and redistribution terms; `/catalog/evidence-sources.json` publishes the complete

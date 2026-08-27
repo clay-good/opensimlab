@@ -94,11 +94,11 @@ describe('Build and release consume the same fail-closed quality registry', () =
     expect(cardiacSetting(gate.completions)).toBe('clinic');
   });
 
-  it('publishes only three authored hypocalcemia records identically in build and release without claiming playable status', async () => {
+  it('publishes both three-record endocrine evidence sets identically without claiming playable status', async () => {
     const production = await vi.importActual<typeof QualityRecords>('../../scripts/quality-records');
-    expect(production.QUALITY_RECORDS).toHaveLength(3);
+    expect(production.QUALITY_RECORDS).toHaveLength(6);
     expect(production.QUALITY_RECORDS.map(({ kind }) => kind).sort())
-      .toEqual(['authored-defaults', 'scenario-hazard', 'training-value']);
+      .toEqual(['authored-defaults', 'authored-defaults', 'scenario-hazard', 'scenario-hazard', 'training-value', 'training-value']);
     expect(production.QUALITY_RECORDS.every(({ moduleId }) => moduleId === 'endocrine-metabolic')).toBe(true);
     harness.records = production.QUALITY_RECORDS;
     await consume('build'); await consume('gate');
@@ -108,18 +108,22 @@ describe('Build and release consume the same fail-closed quality registry', () =
       expect(call.inputs).toBe(production.QUALITY_RECORDS);
       expect(call.completions.map(({ moduleId }) => moduleId)).toEqual(MODULES);
       const scenarios = [...call.result!.values()].flatMap(({ scenarios }) => scenarios);
-      const target = scenarios.find(({ scenarioId }) => scenarioId === 'hypocalcemic-tetany-rescue-and-recurrence')!;
-      expect(target.contentVersion).toBe('0.1.0');
-      expect(target.qualityRecords.filter(({ status }) => status === 'present')).toHaveLength(3);
-      expect(target.qualityRecords.filter(({ status }) => status === 'missing').map(({ kind }) => kind))
-        .toEqual(['state-space-verification']);
-      expect(target.completionComplete).toBe(false);
-      expect(scenarios.every(({ playable }) => !playable)).toBe(true);
-      expect(scenarios.filter(({ scenarioId }) => scenarioId !== target.scenarioId)
-        .every(({ qualityRecords }) => qualityRecords.every(({ status }) => status === 'missing'))).toBe(true);
-      for (const input of production.QUALITY_RECORDS) {
-        expect(target.qualityRecords.find(({ kind }) => kind === input.kind)?.record).toEqual(input.record);
+      const targets = ['hypocalcemic-tetany-rescue-and-recurrence', 'hyponatremia-aquaresis-and-overcorrection'];
+      for (const scenarioId of targets) {
+        const target = scenarios.find((scenario) => scenario.scenarioId === scenarioId)!;
+        expect(target.contentVersion).toBe('0.1.0');
+        expect(target.qualityRecords.filter(({ status }) => status === 'present')).toHaveLength(3);
+        expect(target.qualityRecords.filter(({ status }) => status === 'missing').map(({ kind }) => kind))
+          .toEqual(['state-space-verification']);
+        expect(target.completionComplete).toBe(false);
+        const records = production.QUALITY_RECORDS.filter(({ record }) => (record as { scenarioId: string }).scenarioId === scenarioId);
+        for (const input of records) {
+          expect(target.qualityRecords.find(({ kind }) => kind === input.kind)?.record).toEqual(input.record);
+        }
       }
+      expect(scenarios.every(({ playable }) => !playable)).toBe(true);
+      expect(scenarios.filter(({ scenarioId }) => !targets.includes(scenarioId))
+        .every(({ qualityRecords }) => qualityRecords.every(({ status }) => status === 'missing'))).toBe(true);
     }
     const written = [...harness.writes].filter(([path]) => path.endsWith('-quality-audit.json'));
     expect(written).toHaveLength(11);

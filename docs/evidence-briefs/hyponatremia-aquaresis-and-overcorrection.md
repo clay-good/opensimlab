@@ -46,7 +46,7 @@ difficulty 0.1 with difficult-mask flag false, and a healthy respiratory profile
 ventilator defaults are FiO2 0.21, tidal volume 450 mL, rate 16/min, and fresh-gas flow 10 L/min,
 with delivery false. They do not drive the authored vital signs or create administered oxygen,
 ventilation, fluid, or airway treatment. No known allergies is supplied fiction, not an inferred
-negative history. The nine accepted action names and reference seed 4907 are fixed; no patient
+negative history. The nine declared action names and reference seed 4907 are fixed; no patient
 variation, physiological randomness, or learner-entered clinical values are used.
 
 | Branch point | Authored observation or consequence |
@@ -82,3 +82,17 @@ urine, potassium, neurologic, and cause surveillance remains with the receiving 
 Expert, common-error, recovery, no-action, refused/boundary, region, guidance, replay, private-report,
 keyboard, screen-reader, phone, reduced-motion, zoom, and offline evidence must be verified before
 completion. Implementation and engineering checks do not supply independent clinical review.
+
+The exact-version training-value, authored-defaults, and ten-category hazard records live in
+`src/modules/endocrine-metabolic/hyponatremia-correction-quality.ts`. Literal defaults are checked
+against implementation behavior; a separate dependency receipt binds the evidence and named local
+files. The state-space-verification record remains missing, so these records do not establish
+completion or playable quality status.
+
+`tests/integration/hyponatremia-demonstration-session.test.tsx` exercises the actual session store,
+simulation clock, recorder, worker protocol, and engine through an in-process Worker transport.
+It checks the seven-decision early-control course, a stale-112/late-control recovery course,
+learner-paced waits, pause/takeover/reset behavior, and identical complete-frame replay hashes.
+It does not establish native browser Worker, assistive-technology, production reporting, or the
+full state-space matrix. The public reassessment countdown is a scheduled checkpoint driven by
+accepted requests and observed findings, not a promise that the private response is ready.

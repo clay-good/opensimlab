@@ -15,6 +15,9 @@ Each `sha256-files-v1` receipt pins:
   reference in those bodies and the checker's required shared boundaries.
 - For the initial hypocalcemia snapshot, 31 files covering its model, scenario, tutor, defaults,
   tests, evidence brief, engine, source registry, limitations, governance, and shared policies.
+- For post-rescue hyponatremia, its three supplied records and 47 named implementation, fixture,
+  real-session replay, reporting, and accessibility dependencies. The absent state-space matrix
+  remains absent; a receipt cannot promote either lesson to complete or clinically reviewed.
 
 Both consumers validate identities and schemas first, then check receipts before writing catalogs
 or evaluating publication. Missing, changed, duplicate, malformed, or uncovered dependencies fail
