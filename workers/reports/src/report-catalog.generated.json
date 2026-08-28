@@ -2145,6 +2145,23 @@
       "limitationManifestHash": "sha256:0234ac02fa8a001b042b3f5544670f62796467a2ff0a9dedf8fc0d6f14f2be7d"
     },
     {
+      "scenarioId": "obstructed-infected-kidney-decompression",
+      "contentVersion": "0.1.0",
+      "moduleId": "infectious-disease",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:0ed43746ed793fc540bcfc226131003ef8fa20b7a3f7441163f9cfe9d3a9da80",
+      "defaultsHash": "sha256:2e6848e7f0fed8426064343ba9f8874adfc371bf4695ad428cba7a8a00e82ef1",
+      "maturityHash": "sha256:06d5b25ca63ff85fee4468c34a21a7fd9b1ede5a855abd6ce4f52dcd46bc3f42",
+      "sourceManifestHash": "sha256:6a277fd8ef8f532fae3de828aae7d425d6f345c3201ae93efff7a3236823982e",
+      "limitationManifestHash": "sha256:d0b5d9128dfa7d9bd8014f1268c755b20967fbf2c2f95123c6edd11d7175d48c"
+    },
+    {
       "scenarioId": "delivery-room-to-nicu-handoff",
       "contentVersion": "0.1.0",
       "moduleId": "neonatology",

@@ -21,23 +21,26 @@ import {
 const id = 'meningococcal-sepsis-recognition-and-escalation';
 const path = `/infectious-disease/scenario/${id}`;
 const scenario = INFECTIOUS_DISEASE_SCENARIOS[0]!;
+const obstructionId = 'obstructed-infected-kidney-decompression';
+const obstructionPath = `/infectious-disease/scenario/${obstructionId}`;
 const read = (file: string) => readFileSync(join(process.cwd(), file), 'utf8');
 const json = (file: string) => JSON.parse(read(file));
 
 describe('Infectious disease module foundation', () => {
-  it('registers one preview toward ten planned lessons', () => {
+  it('registers two previews toward ten planned lessons', () => {
     expect(getModule('infectious-disease')).toMatchObject({
       route: 'infectious-disease', displayName: 'Infectious disease', status: 'available',
       timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
     });
     expect(getModule('infectious-disease').plannedScope).toContain('Ten bounded');
-    expect(INFECTIOUS_DISEASE_SCENARIOS).toHaveLength(1);
+    expect(INFECTIOUS_DISEASE_SCENARIOS).toHaveLength(2);
     expect(DEFAULT_INFECTIOUS_DISEASE_SCENARIO_ID).toBe(id);
     expect(getInfectiousDiseaseScenario(id)).toBe(scenario);
+    expect(getInfectiousDiseaseScenario(obstructionId)).toBe(INFECTIOUS_DISEASE_SCENARIOS[1]);
     expect(getInfectiousDiseaseScenario('not-a-scenario')).toBeUndefined();
     expect(availableModules().map((entry) => entry.id)).toContain('infectious-disease');
     expect(READY_MODULE_COUNT).toBe(13);
-    expect(READY_SCENARIO_COUNT).toBe(211);
+    expect(READY_SCENARIO_COUNT).toBe(212);
   });
 
   it('validates the authored scenario and declares honest preview evidence', () => {
@@ -69,11 +72,15 @@ describe('Infectious disease module foundation', () => {
     expect(indexableRoutes().map((route) => route.path)).toContain(path);
     expect(SITE_BAR_LINKS).toContainEqual({ href: '/infectious-disease', label: 'Infectious disease' });
 
+    expect(routeFor(obstructionPath)?.indexable).toBe(true);
+    expect(indexableRoutes().map((route) => route.path)).toContain(obstructionPath);
     const index = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/infectious-disease' }));
     expect(index).toContain('<h1>Infectious disease simulator</h1>');
     expect(index).toContain('href="/infectious-disease" aria-current="page"');
     expect(index).toContain(`href="/infectious-disease/scenario/${id}"`);
     expect(index).toContain('Meningococcal sepsis with a non-blanching rash');
+    expect(index).toContain(`href="/infectious-disease/scenario/${obstructionId}"`);
+    expect(index).toContain('Infected obstructed kidney: drainage is the treatment');
 
     const detail = renderToStaticMarkup(createElement(PrerenderedBody, { path }));
     expect(detail).toContain('Meningococcal sepsis with a non-blanching rash');
@@ -106,10 +113,27 @@ describe('Infectious disease module foundation', () => {
     }));
   });
 
-  it('carries the scenario into the report catalog so the shared report door works', () => {
+  it('registers the obstructed kidney limitations and its three graded sources', () => {
+    const limitations = limitationsFor(obstructionId);
+    expect(limitations).toHaveLength(3);
+    expect(limitations.map((entry) => entry.id).sort())
+      .toEqual([...(INFECTIOUS_DISEASE_SCENARIOS[1]!.metadata.limitations ?? [])].sort());
+    for (const source of ['aua-surgical-stones-2026', 'eau-urolithiasis-2026', 'nice-ng253-sepsis-16-and-over-2025']) {
+      expect(requireSource(source).verifiedOn).toBe('2026-08-28');
+    }
+    // The evidence grades are the lesson, so they must survive into the register.
+    expect(requireSource('aua-surgical-stones-2026').locator).toContain('Grade C');
+    expect(requireSource('aua-surgical-stones-2026').locator).toContain('Grade A');
+  });
+
+  it('carries both scenarios into the report catalog so the shared report door works', () => {
     const catalog = json('workers/reports/src/report-catalog.generated.json');
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'infectious-disease', scenarioId: id, contentVersion: '0.1.0',
+      maturity: 'preview', fidelityClass: 'state_transition',
+    }));
+    expect(catalog.scenarios).toContainEqual(expect.objectContaining({
+      moduleId: 'infectious-disease', scenarioId: obstructionId, contentVersion: '0.1.0',
       maturity: 'preview', fidelityClass: 'state_transition',
     }));
     expect(read('public/catalog/scenario-report-catalog.json')).toBe(read('workers/reports/src/report-catalog.generated.json'));

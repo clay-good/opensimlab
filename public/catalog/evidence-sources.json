@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 331,
+  "sourceCount": 334,
   "sources": [
     {
       "id": "renal-hypermagnesemia-series-2018",
@@ -4225,6 +4225,51 @@
       "usedFor": "Stable-transition criteria, continued observation despite expected early oxygenation transition, immediate skin-to-skin thermal support, and avoidance of premature well-newborn closure.",
       "verifiedAgainst": "https://publications.aap.org/pediatrics/article/157/1/e2025074766/205238/Neonatal-Life-Support-2025-International-Liaison",
       "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "aua-surgical-stones-2026",
+      "currency": {
+        "lastAmended": "2025-11-01",
+        "checkedAt": "2026-08-28"
+      },
+      "authors": "American Urological Association; Pearle MS, Matlaga BR, et al",
+      "title": "Surgical Management of Kidney and Ureteral Stones: AUA Guideline (2026)",
+      "publication": "American Urological Association",
+      "year": 2026,
+      "locator": "Statement 38 (urgent renal drainage; Strong Recommendation, Evidence Level Grade C) and its nephrostomy-or-stent sub-statement (Conditional Recommendation, Evidence Level Grade A); Statement 37 (initial laboratory evaluation)",
+      "usedFor": "The strong recommendation for urgent renal drainage in obstructing stones with suspected infection, the deliberate refusal to mark either drainage modality correct, the collecting-system culture at decompression, and the caution that inflammatory markers are not established decision tools here.",
+      "verifiedAgainst": "https://www.auanet.org/guidelines-and-quality/guidelines/surgical-management-of-kidney-and-ureteral-stones",
+      "verifiedOn": "2026-08-28"
+    },
+    {
+      "id": "eau-urolithiasis-2026",
+      "currency": {
+        "lastAmended": "2026-03-01",
+        "checkedAt": "2026-08-28"
+      },
+      "authors": "European Association of Urology; Skolarikos A, et al",
+      "title": "EAU Guidelines on Urolithiasis",
+      "publication": "European Association of Urology",
+      "year": 2026,
+      "locator": "Limited text update March 2026; Management of sepsis and anuria in the obstructed kidney: urgent decompression by percutaneous drainage or ureteral stenting, and deferral of definitive stone treatment until sepsis resolves, both Strong",
+      "usedFor": "Framing the infected obstructed kidney as a urological emergency, the equal listing of nephrostomy and stenting within one recommendation, and the second bounded decision to defer definitive stone treatment until the infection is treated.",
+      "verifiedAgainst": "https://uroweb.org/guidelines/urolithiasis",
+      "verifiedOn": "2026-08-28"
+    },
+    {
+      "id": "nice-ng253-sepsis-16-and-over-2025",
+      "currency": {
+        "lastAmended": "2025-11-19",
+        "checkedAt": "2026-08-28"
+      },
+      "authors": "National Institute for Health and Care Excellence",
+      "title": "Suspected sepsis in people aged 16 or over: recognition, assessment and early management",
+      "publication": "NICE guideline NG253",
+      "year": 2025,
+      "locator": "Published 2025-11-19, replacing NG51. Recommendations 1.6.2 and 1.6.5 (track-and-trigger thresholds and recalculation), 1.6.4 (lack of improvement raises concern), 1.11.1 to 1.11.4 (finding and controlling the source; involve the surgical team early; the surgical team or interventional radiologist seeks senior advice about timing and acts as soon as possible)",
+      "usedFor": "The authored track-and-trigger scores, the principle that failure to improve after an intervention raises concern independently of a single score, and the placement of intervention timing with the receiving team after senior advice rather than with the referrer.",
+      "verifiedAgainst": "https://www.nice.org.uk/guidance/ng253/chapter/Finding-and-controlling-the-source-of-infection",
+      "verifiedOn": "2026-08-28"
     },
     {
       "id": "nice-ng240-meningococcal-2024",

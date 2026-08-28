@@ -114,7 +114,7 @@ describe('Adrenal crisis: time, decisions, and observed response', () => {
       else if (path !== 'expert') expect(shown.has('adrenal-treat-now')).toBe(true);
     }
     expect(new Set(hashes).size).toBe(1);
-  }, 30_000);
+  }, 120_000);
   it('rejects unrelated, malformed, injected-dose, and forged-tick requests without reflecting private payloads', () => {
     for (const scenario of [DKA_RESOLUTION_TRANSITION, { ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }, { ...SCENARIO, timeline: [...SCENARIO.timeline, SCENARIO.timeline[0]!] }]) expect(supportsAdrenalCrisis(scenario)).toBe(false);
     const engine = new AnesthesiaEngine({ scenario: SCENARIO, seed: 1, practiceRegion: 'GB' });

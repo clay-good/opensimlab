@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 179 adds the authored meningococcal sepsis snapshot. */
-export const WORKER_PROTOCOL_VERSION = 179;
+/** Version 180 adds the authored obstructed infected kidney snapshot. */
+export const WORKER_PROTOCOL_VERSION = 180;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -219,6 +219,46 @@ export interface MeningococcalSepsisSnapshot {
     readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
     readonly meanArterialMmHg: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
     readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true;
+  readonly doseModelAvailable: false;
+  readonly durableRecoveryProven: false;
+}
+
+export interface ObstructedKidneySnapshot {
+  readonly recognitionAtTick: number | null;
+  readonly urologyAtTick: number | null;
+  readonly culturesAtTick: number | null;
+  readonly decompressionIntentAtTick: number | null;
+  readonly stoneDeferralAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly decompressionDueInSeconds: number | null;
+  readonly untreatedResponseObserved: boolean;
+  readonly decompressedResponseObserved: boolean;
+  readonly antibioticsOnlyAttempted: boolean;
+  readonly markerDelayAttempted: boolean;
+  readonly modalityChoiceAttempted: boolean;
+  readonly earlyStoneTreatmentAttempted: boolean;
+  readonly trackAndTriggerScore: number;
+  readonly labObservation: {
+    readonly atTick: number; readonly lactateMmolL: number; readonly creatinineUmolL: number;
+    readonly whiteCellsX109L: number; readonly plateletsX109L: number; readonly crpMgL: number;
+  } | null;
+  readonly observationsOnly: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly coreTemperatureC: number; readonly trackAndTriggerScore: number;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly lactateMmolL: number; readonly creatinineUmolL: number;
+    readonly whiteCellsX109L: number; readonly plateletsX109L: number; readonly crpMgL: number;
+    readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
+    readonly meanArterialMmHg: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly coreTemperatureC: number; readonly trackAndTriggerScore: number; readonly alertness: string;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -3565,6 +3605,7 @@ export interface EquipmentSnapshot {
     readonly renalHypocalcemia?: RenalHypocalcemiaSnapshot;
     readonly renalHypermagnesemia?: RenalHypermagnesemiaSnapshot;
     readonly meningococcalSepsis?: MeningococcalSepsisSnapshot;
+    readonly obstructedKidney?: ObstructedKidneySnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

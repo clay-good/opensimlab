@@ -3135,9 +3135,35 @@ the value table, and the disputed timing and fluid boundaries. Independent clini
 quality records, complete inclusive-runtime checks, and production reporting evidence remain
 pending.
 
-Sepsis without shock; septic shock; meningitis; neutropenic fever; severe community-acquired
-pneumonia; pyelonephritis with deterioration; cellulitis progressing to necrotizing infection;
-endocarditis complication; toxic-shock pattern; source-control reassessment.
+The second infectious-disease preview, `obstructed-infected-kidney-decompression@0.1.0`, teaches
+that antimicrobial therapy and source control are separate decisions. Appropriate intravenous
+antimicrobials are a supplied premise, not a learner choice, so the only thing that changes the
+patient is drainage of an obstructed kidney. Fifteen choices expose no modality, access, anaesthetic,
+operator, timing, antimicrobial, dose, fluid, or oxygen setting, and no procedure is performed.
+
+Four refusals hold the boundary: continuing antimicrobials alone, waiting for an inflammatory-marker
+trend before escalating, declaring one drainage route correct, and treating the stone during active
+infection. The third is deliberate. Randomised evidence has not separated percutaneous nephrostomy
+from retrograde stenting on clinical outcomes, so the lesson marks neither as the right answer and
+places the choice with the qualified team.
+
+Two authored six-hour contrasts carry the teaching. Still obstructed, the patient deteriorates on
+correct antimicrobials. After recorded decompression intent, observations and lactate improve while
+the C-reactive protein rises above its presenting value, because that marker lags by many hours and
+is not the success signal. Instructor takeover sits after the untreated contrast rather than before
+it, so a learner who does nothing still sees the deterioration the lesson exists to show. Timing of
+intervention belongs to the receiving team after senior advice, and the run ends with the infection
+unresolved and the stone still in place.
+
+See `docs/evidence-briefs/obstructed-infected-kidney-decompression.md` for source locators, the
+value table, and the disputed timing and modality boundaries. Independent clinical review, four
+quality records, complete inclusive-runtime checks, and production reporting evidence remain
+pending.
+
+Remaining eight: sepsis without shock; septic shock; meningitis; neutropenic fever; severe
+community-acquired pneumonia; cellulitis progressing to necrotizing infection; endocarditis
+complication; toxic-shock pattern. The planned `source-control reassessment` entry is retired,
+because this scenario is that lesson; a future intra-abdominal source would need its own entry.
 
 #### Toxicology: 15
 

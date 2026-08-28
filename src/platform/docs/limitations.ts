@@ -5639,6 +5639,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'The strongest evidence for immediate antimicrobials is in septic shock and in named high-probability syndromes like this one; blanket one-hour mandates for undifferentiated presentations remain disputed. Fluid volumes are individualised and region-dependent. Follow local guidance with qualified teams.',
     briefIn: ['meningococcal-sepsis-recognition-and-escalation'],
   },
+  {
+    id: 'obstructed-kidney-presentation-and-response-are-authored',
+    headline: 'The presentation, laboratory values, and both six-hour contrasts are authored.',
+    simplification: 'The case supplies one fixed presentation, a six-hour untreated deterioration on appropriate antimicrobials, and a fixed six-hour post-decompression assessment. No infection, drainage, kidney-recovery, or antimicrobial model runs underneath, and the imaging finding is given rather than acquired.',
+    whereItMisleads: 'These clocks become validated decompression deadlines, a safe observation window, or proof that drainage caused the improvement.',
+    correctUnderstanding: 'Real infected obstruction varies widely in speed and trajectory. The observational evidence linking earlier drainage to survival is confounded by indication, because sicker patients are drained faster. No individual patient course, and no causal effect, follows from this authored model.',
+    briefIn: ['obstructed-infected-kidney-decompression'],
+  },
+  {
+    id: 'obstructed-kidney-controls-are-recognition-activation-and-intent-only',
+    headline: 'Recorded decompression intent is not a placed drain, and the antimicrobials are a premise.',
+    simplification: 'The learner records bounded qualified-team intent for urgent decompression and defers definitive stone treatment. No modality, access, anaesthetic, operator, timing, antimicrobial, dose, fluid, or oxygen setting exists, and no procedure is performed.',
+    whereItMisleads: 'Recording intent is read as having drained the kidney, or the lesson is taken to confirm that the running antimicrobial therapy was the right choice.',
+    correctUnderstanding: 'Appropriate antimicrobial therapy is asserted as a premise of this fiction, not demonstrated; the scenario cannot teach whether an agent was correct. Drainage modality, access, timing, operator, anaesthetic care, kidney-function management, and definitive stone treatment all remain qualified-team work.',
+    briefIn: ['obstructed-infected-kidney-decompression'],
+  },
+  {
+    id: 'obstructed-kidney-timing-and-modality-are-not-established-by-evidence',
+    headline: 'No guideline sets an hour threshold, and no trial separates the two drainage routes.',
+    simplification: 'The case states that urological bodies recommend urgent drainage strongly on low-grade evidence, while the sepsis guidance supplying a six-hour figure grades it conditional on very-low-certainty evidence. It marks neither nephrostomy nor stenting as correct.',
+    whereItMisleads: 'A learner infers a defensible deadline in hours, treats one drainage route as the right answer, or uses an inflammatory marker to decide or time decompression.',
+    correctUnderstanding: 'Timing is urgent but unnumbered, and the choice of route belongs to the qualified team based on local resources and patient factors. Inflammatory markers are not established decision tools here. One major urological urosepsis section is currently withdrawn pending review, and the complicated-urinary-infection antibiotic trials rarely enrolled patients with obstruction, stones, or drains at all.',
+    briefIn: ['obstructed-infected-kidney-decompression'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

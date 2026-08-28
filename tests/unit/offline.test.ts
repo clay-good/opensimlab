@@ -3,6 +3,7 @@
  * no-outbound-traffic guarantee.
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { gzipSync } from 'node:zlib';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
@@ -273,11 +274,24 @@ describe('Requirement: Everything The Offline Claim Names Is Actually Precached'
   });
 
   it('Scenario: the precache stays inside the offline bundle budget', () => {
-    // Precaching everything is only reasonable while everything is small.
-    const bytes = precache
+    // Precaching everything is only reasonable while everything is small. What
+    // decides whether a first offline install is bearable on a slow connection
+    // is the number of bytes that cross the wire, so the binding budget is the
+    // compressed one; every host this deploys to serves these assets encoded.
+    const files = precache
+      .filter((url) => url.startsWith('/assets/') || url.startsWith('/fonts/'))
+      .map((url) => readFileSync(join(process.cwd(), 'dist', url)));
+    const transferred = files.reduce((sum, body) => sum + gzipSync(body, { level: 9 }).length, 0);
+    expect(transferred, `${(transferred / 1024 / 1024).toFixed(2)} MiB compressed`)
+      .toBeLessThan(2 * 1024 * 1024);
+    // A second, deliberately loose ceiling on the stored bytes. Compression
+    // ratios hide a blob that inflates on disk, and Cache Storage holds the
+    // decoded response, so an accidental data dump must still trip something.
+    const stored = precache
       .filter((url) => url.startsWith('/assets/') || url.startsWith('/fonts/'))
       .reduce((sum, url) => sum + statSync(join(process.cwd(), 'dist', url)).size, 0);
-    expect(bytes).toBeLessThan(8 * 1024 * 1024);
+    expect(stored, `${(stored / 1024 / 1024).toFixed(2)} MiB stored`)
+      .toBeLessThan(16 * 1024 * 1024);
   });
 });
 

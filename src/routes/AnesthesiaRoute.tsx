@@ -53,6 +53,8 @@ import { RENAL_HYPERMAGNESEMIA_ACTIONS, supportsRenalHypermagnesemia } from '../
 import { renalHypermagnesemiaReportActions } from '../modules/renal-electrolyte/hypermagnesemia-reporting';
 import { MENINGOCOCCAL_SEPSIS_ACTIONS, supportsMeningococcalSepsis } from '../modules/infectious-disease/meningococcal-sepsis';
 import { meningococcalSepsisReportActions } from '../modules/infectious-disease/meningococcal-sepsis-reporting';
+import { OBSTRUCTED_KIDNEY_ACTIONS, supportsObstructedKidney } from '../modules/infectious-disease/obstructed-kidney';
+import { obstructedKidneyReportActions } from '../modules/infectious-disease/obstructed-kidney-reporting';
 import { supportsRenalHypermagnesemiaDemonstration } from '../modules/renal-electrolyte/demo/renal-hypermagnesemia-demonstration';
 import { renalHyponatremiaReportActions } from '../modules/renal-electrolyte/hyponatremia-reporting';
 import { supportsRenalHyponatremiaDemonstration } from '../modules/renal-electrolyte/demo/renal-hyponatremia-demonstration';
@@ -656,11 +658,12 @@ export function collectReportEquipmentContext(equipment: SessionState['equipment
   return { ...priority, ...boundedScalars(remaining, REPORT_CONTEXT_SNAPSHOT_LIMIT - Object.keys(priority).length) };
 }
 
-function collectReportRecentContext(session: SessionState, seed: number, sodiumLesson: boolean, avpLesson: boolean, refeedingLesson: boolean, diabetesLesson: boolean, renalLesson: boolean, hypokalemiaLesson: boolean, renalSodiumLesson: boolean, renalWaterLesson: boolean, renalCalciumLesson: boolean, renalMagnesiumLesson: boolean, meningococcalLesson: boolean): ScenarioReportRecentContext {
+function collectReportRecentContext(session: SessionState, seed: number, sodiumLesson: boolean, avpLesson: boolean, refeedingLesson: boolean, diabetesLesson: boolean, renalLesson: boolean, hypokalemiaLesson: boolean, renalSodiumLesson: boolean, renalWaterLesson: boolean, renalCalciumLesson: boolean, renalMagnesiumLesson: boolean, meningococcalLesson: boolean, obstructionLesson: boolean): ScenarioReportRecentContext {
   const actions = sessionInternals().recorder?.build('pending').actions ?? [];
   return {
     seed: Math.trunc(seed),
-    actions: meningococcalLesson ? meningococcalSepsisReportActions(actions, session.log)
+    actions: obstructionLesson ? obstructedKidneyReportActions(actions, session.log)
+      : meningococcalLesson ? meningococcalSepsisReportActions(actions, session.log)
       : renalMagnesiumLesson ? renalHypermagnesemiaReportActions(actions, session.log)
       : renalCalciumLesson ? renalHypocalcemiaReportActions(actions, session.log)
       : renalWaterLesson ? renalHypernatremiaReportActions(actions, session.log)
@@ -672,7 +675,8 @@ function collectReportRecentContext(session: SessionState, seed: number, sodiumL
       : avpLesson ? avpDeficiencyReportActions(actions, session.log)
       : sodiumLesson ? hyponatremiaCorrectionReportActions(actions, session.log)
       : actions.slice(-REPORT_CONTEXT_ACTION_LIMIT).map((action) => {
-      const lessonActions = action.type === 'meningococcal-sepsis-response' ? MENINGOCOCCAL_SEPSIS_ACTIONS
+      const lessonActions = action.type === 'obstructed-kidney-response' ? OBSTRUCTED_KIDNEY_ACTIONS
+        : action.type === 'meningococcal-sepsis-response' ? MENINGOCOCCAL_SEPSIS_ACTIONS
         : action.type === 'renal-hypermagnesemia-response' ? RENAL_HYPERMAGNESEMIA_ACTIONS
         : action.type === 'renal-hypocalcemia-response' ? RENAL_HYPOCALCEMIA_ACTIONS
         : action.type === 'renal-hypernatremia-response' ? RENAL_HYPERNATREMIA_ACTIONS
@@ -698,14 +702,14 @@ function collectReportRecentContext(session: SessionState, seed: number, sodiumL
         // Invalid lesson payloads remain refused attempts, without reproducing
         // an injected note or making their named action look accepted.
         payload: lessonActions ? lessonChoice !== undefined ? { action: lessonChoice } : {}
-          : (session.equipment?.resuscitation.hyponatremiaCorrection || session.equipment?.resuscitation.avpDeficiency || session.equipment?.resuscitation.refeeding || session.equipment?.resuscitation.perioperativeDiabetes || session.equipment?.resuscitation.renalHyperkalemia || session.equipment?.resuscitation.renalHypokalemia || session.equipment?.resuscitation.renalHyponatremia || session.equipment?.resuscitation.renalHypernatremia || session.equipment?.resuscitation.renalHypocalcemia || session.equipment?.resuscitation.renalHypermagnesemia || session.equipment?.resuscitation.meningococcalSepsis) ? {}
+          : (session.equipment?.resuscitation.hyponatremiaCorrection || session.equipment?.resuscitation.avpDeficiency || session.equipment?.resuscitation.refeeding || session.equipment?.resuscitation.perioperativeDiabetes || session.equipment?.resuscitation.renalHyperkalemia || session.equipment?.resuscitation.renalHypokalemia || session.equipment?.resuscitation.renalHyponatremia || session.equipment?.resuscitation.renalHypernatremia || session.equipment?.resuscitation.renalHypocalcemia || session.equipment?.resuscitation.renalHypermagnesemia || session.equipment?.resuscitation.meningococcalSepsis || session.equipment?.resuscitation.obstructedKidney) ? {}
           : boundedScalars(action.payload, 12),
       };
     }),
     snapshot: {
       patient: Object.fromEntries(Object.entries(session.state ?? {})
         .filter((entry): entry is [string, number] => Number.isFinite(entry[1]))
-        .filter(([field]) => !(sodiumLesson || avpLesson || refeedingLesson || diabetesLesson || renalLesson || hypokalemiaLesson || renalSodiumLesson || renalWaterLesson || renalCalciumLesson || renalMagnesiumLesson || meningococcalLesson)
+        .filter(([field]) => !(sodiumLesson || avpLesson || refeedingLesson || diabetesLesson || renalLesson || hypokalemiaLesson || renalSodiumLesson || renalWaterLesson || renalCalciumLesson || renalMagnesiumLesson || meningococcalLesson || obstructionLesson)
           || ['systolicMmHg', 'diastolicMmHg', 'meanArterialMmHg', 'heartRateBpm',
             'respiratoryRateBpm', 'spo2Percent', 'coreTemperatureC'].includes(field))
         // These authored cases supply neither a continuous CO2 measurement nor oxygen settings.
@@ -724,6 +728,7 @@ function collectReportRecentContext(session: SessionState, seed: number, sodiumL
         || (renalCalciumLesson && !session.equipment?.resuscitation.renalHypocalcemia)
         || (renalMagnesiumLesson && !session.equipment?.resuscitation.renalHypermagnesemia)
         || (meningococcalLesson && !session.equipment?.resuscitation.meningococcalSepsis)
+        || (obstructionLesson && !session.equipment?.resuscitation.obstructedKidney)
         ? {} : collectReportEquipmentContext(session.equipment),
     },
   };
@@ -836,7 +841,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
           : session.phase === 'briefing' || session.phase === 'idle' ? 'prebrief' : 'live'),
         simulatedTick: session.tick,
         canonicalUrl: `${SITE_ORIGIN}${config.basePath}/scenario/${scenario.metadata.id}`,
-        collectRecentContext: () => collectReportRecentContext(session, assignment.seed, supportsHyponatremiaCorrection(scenario), supportsAvpDeficiency(scenario), supportsRefeeding(scenario), supportsPerioperativeDiabetes(scenario), supportsRenalHyperkalemia(scenario), supportsRenalHypokalemia(scenario), supportsRenalHyponatremia(scenario), supportsRenalHypernatremia(scenario), supportsRenalHypocalcemia(scenario), supportsRenalHypermagnesemia(scenario), supportsMeningococcalSepsis(scenario)),
+        collectRecentContext: () => collectReportRecentContext(session, assignment.seed, supportsHyponatremiaCorrection(scenario), supportsAvpDeficiency(scenario), supportsRefeeding(scenario), supportsPerioperativeDiabetes(scenario), supportsRenalHyperkalemia(scenario), supportsRenalHypokalemia(scenario), supportsRenalHyponatremia(scenario), supportsRenalHypernatremia(scenario), supportsRenalHypocalcemia(scenario), supportsRenalHypermagnesemia(scenario), supportsMeningococcalSepsis(scenario), supportsObstructedKidney(scenario)),
       }}
       {...(reportRequest ? { openRequest: reportRequest.id } : {})}
       onOpen={() => {

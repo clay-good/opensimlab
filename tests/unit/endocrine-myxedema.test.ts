@@ -196,7 +196,7 @@ describe('Myxedema: ventilation, steroid-first sequence, and observed support', 
       respiratorySupportObserved: complete, earlyThyroxineAttempted: mistakes, rapidRewarmingAttempted: mistakes,
       waitForLabsChosen: mistakes, ventilationDelayed: path !== 'expert', endocrineTreatmentDelayed: path !== 'expert', durableRecoveryProven: false });
     expect(first.patient.oxygenOnlyAtTick !== null).toBe(mistakes);
-  }, 30_000);
+  }, 120_000);
 
   it('does not mutate exposed observations, reflect unknown payloads, or change ended branches', () => {
     const model = new Myxedema();

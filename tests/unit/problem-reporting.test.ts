@@ -132,9 +132,9 @@ describe('scenario report contract', () => {
     }[] };
     expect(catalog.schemaVersion).toBe(2);
     expect(catalog.evidenceAlgorithm).toBe('scenario-evidence-v1');
-    expect(catalog.scenarios).toHaveLength(219);
+    expect(catalog.scenarios).toHaveLength(220);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(219);
+      .toBe(220);
     for (const contentVersion of ['0.1.0', '0.1.1', '0.1.2']) {
       expect(catalog.scenarios).toContainEqual(expect.objectContaining({
         moduleId: 'endocrine-metabolic', scenarioId: 'adrenal-crisis-treatment-before-tests', contentVersion,
@@ -851,6 +851,19 @@ describe('scenario report contract', () => {
     expect(validateReportPayload({ ...report, scenario_id: 'meningococcal-sepsis' })).toEqual({ ok: false, status: 400 });
     expect(validateReportPayload({ ...report, module_id: 'toxicology' })).toEqual({ ok: false, status: 400 });
     expect(validateReportPayload({ ...report, canonical_url: `${infection.canonicalUrl}?seed=5101` }))
+      .toEqual({ ok: false, status: 403 });
+  });
+
+  it('accepts the exact infectious-disease obstructed-kidney context and rejects drift', () => {
+    const obstruction: ScenarioReportContext = {
+      ...context, moduleId: 'infectious-disease', scenarioId: 'obstructed-infected-kidney-decompression',
+      canonicalUrl: 'https://opensimlab.com/infectious-disease/scenario/obstructed-infected-kidney-decompression',
+      fidelityClass: 'state_transition', simulatedTick: 216005, practiceRegion: 'GB',
+    };
+    const report = buildScenarioReportRequest(obstruction, 'outdated-source', 'The AUA grade may need rechecking.', 'token');
+    expect(validateReportPayload(report)).toMatchObject({ ok: true });
+    expect(validateReportPayload({ ...report, scenario_id: 'obstructed-infected-kidney' })).toEqual({ ok: false, status: 400 });
+    expect(validateReportPayload({ ...report, canonical_url: `${obstruction.canonicalUrl}#tick-216005` }))
       .toEqual({ ok: false, status: 403 });
   });
 

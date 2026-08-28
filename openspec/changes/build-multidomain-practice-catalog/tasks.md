@@ -1387,6 +1387,39 @@ credited toward the catalog until every item in the completion contract passes.
     directory, so a module launch can no longer silently relax the one-screen guarantee. This
     infrastructure evidence does not replace independent clinical, inclusive-runtime, or production
     Turnstile/D1 verification, and four quality records remain outstanding for this scenario.
+  - [x] Infectious-disease slice 2/10 adds the infected obstructed kidney, where antimicrobials are
+    not source control. A 58-year-old woman has three days of flank pain and rigors with appropriate
+    intravenous antimicrobials already running as a supplied premise; authored state is temperature
+    38.9 C, heart rate 118/min, BP 104/58 mmHg, respiratory rate 26/min, track-and-trigger score 8,
+    lactate 2.6 mmol/L, creatinine 148 µmol/L against a baseline near 70, platelets 148, and a
+    supplied 8 mm obstructing distal ureteric stone with moderate hydronephrosis. The learner
+    reconciles the infection with the obstruction; recognizes an undrained source rather than a more
+    severe infection; involves urology and interventional radiology early with blood, urine, and
+    collecting-system cultures; reviews a timing and modality boundary in which no guideline states
+    an hour threshold, a strong urological recommendation rests on Grade C evidence, a six-hour
+    sepsis figure is conditional on very-low-certainty evidence, and neither nephrostomy nor stenting
+    is separated by outcome evidence; records bounded decompression intent; and defers definitive
+    stone treatment until the infection is treated. Still obstructed, a strict six-hour contrast
+    supplies heart rate 132/min, BP 86/44 mmHg, new confusion, score 15, lactate 4.2 mmol/L, and
+    creatinine 212 µmol/L. After recorded intent, a strict six-hour assessment supplies heart rate
+    104/min, score 5, lactate 2.1 mmol/L, and a C-reactive protein of 268 mg/L that is higher than
+    the presenting 210, because the marker lags and is not the success signal. Timing of intervention
+    belongs to the receiving team after senior advice. No learner history, examination, observation
+    or test acquisition, imaging interpretation, scoring, diagnosis, antimicrobial, dose, route,
+    fluid, oxygen setting, drainage modality, access, operator, procedure, disposition, prognosis, or
+    outcome control exists.
+  - [x] Verify slice 2 with a green suite and repair one real modelling defect found by its own
+    tests: instructor takeover was originally set before the untreated six-hour contrast, so a
+    learner who did nothing was stopped before the deterioration the lesson exists to show; takeover
+    now sits after it. Eleven contract checks cover both six-hour states, the refusal to mark either
+    drainage route correct, the handoff gate including the deferred stone decision, takeover, and
+    refused generic and malformed actions. Twenty-three reporting checks confirm only uniquely
+    attributable outcomes enter optional context. Eight tray checks and five screen-reader checks
+    confirm the antimicrobial premise is stated rather than implied, that neither modality is
+    presented as correct, and that the rising-marker caveat survives into the accessible summary.
+    The published report catalog grows to 220 records and every earlier module's immutable evidence
+    is unchanged. This infrastructure evidence does not replace independent clinical, inclusive-
+    runtime, or production Turnstile/D1 verification, and four quality records remain outstanding.
   - [x] Toxicology slice 1/15 establishes the indexable `/toxicology` module with one authored
     methemoglobinemia lab after documented topical benzocaine exposure. The learner reconciles
     cyanosis, symptoms, pulse-coherent SpO2 85%, PaO2 238 mmHg, chocolate-brown blood, and supplied

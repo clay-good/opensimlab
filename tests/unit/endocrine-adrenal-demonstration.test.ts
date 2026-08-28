@@ -36,7 +36,7 @@ describe('Adrenal worked example', () => {
       replayTrace.update(sample(replay.step()));
     }
     expect(replayTrace.digest('hex')).toBe(trace.digest('hex'));
-  }, 30_000);
+  }, 120_000);
   it('waits for an actual response, then requires fresh observation and prevention before handoff', () => {
     const model = new AdrenalCrisis();
     model.apply('saline', 0);

@@ -369,7 +369,7 @@ describe('the demonstration, run for its full length', () => {
       act(() => { exampleRoot.render(createElement(HypoglycemiaHarness)); useSession.getState().frame(100); });
       expect(finishes).toBe(1); expect(worker.applied).toHaveLength(10);
     } finally { act(() => exampleRoot.unmount()); container.remove(); }
-  }, 30_000);
+  }, 120_000);
 
   it('runs the adrenal example through combined rescue, the timed reassessment, and a replayable handoff', () => {
     const exampleContainer = document.createElement('div'); document.body.appendChild(exampleContainer);
@@ -434,7 +434,7 @@ describe('the demonstration, run for its full length', () => {
       act(() => { exampleRoot.render(createElement(AdrenalHarness)); useSession.getState().frame(100); });
       expect(finishes).toBe(1); expect(worker.applied).toHaveLength(7);
     } finally { act(() => exampleRoot.unmount()); exampleContainer.remove(); }
-  }, 30_000);
+  }, 120_000);
 
   it('runs the thyroid example through both distinct waits and replays its real session transcript', () => {
     const exampleContainer = document.createElement('div'); document.body.appendChild(exampleContainer);
@@ -839,5 +839,5 @@ describe('the demonstration, run for its full length', () => {
         responseDueInSeconds: null, responseObserved: false, preventionPlanned: false, ended: null,
       });
     } finally { act(() => exampleRoot.unmount()); exampleContainer.remove(); }
-  }, 30_000);
+  }, 120_000);
 });

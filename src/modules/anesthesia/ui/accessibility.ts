@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -111,6 +111,7 @@ export function stateSummary(
     readonly renalHypocalcemia?: RenalHypocalcemiaSnapshot;
     readonly renalHypermagnesemia?: RenalHypermagnesemiaSnapshot;
     readonly meningococcalSepsis?: MeningococcalSepsisSnapshot;
+    readonly obstructedKidney?: ObstructedKidneySnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -164,7 +165,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -188,6 +189,34 @@ export function stateSummary(
           + ' intravenous.');
       }
     }
+  }
+  if (options.obstructedKidney) {
+    const patient = options.obstructedKidney;
+    for (const field of ['systolicMmHg', 'diastolicMmHg'] as const) {
+      const value = state[field];
+      if (!options.invalid.has(field) && Number.isFinite(value)) {
+        lines.push(`${FIELDS[field].label}: ${value.toFixed(FIELDS[field].precision)} ${FIELDS[field].unit}.`);
+      }
+    }
+    lines.push('Supplied starting findings were temperature 38.9 degrees Celsius, heart rate 118 per minute, respiratory rate 26 per minute, lactate 2.6 millimoles per liter, creatinine 148 micromoles per liter against a baseline near 70, and an 8 millimeter obstructing distal ureteric stone with moderate hydronephrosis. Appropriate intravenous antimicrobial therapy is a supplied premise, not a learner decision. These remain historical starting findings.');
+    lines.push(`Current alertness: ${patient.alertness}. Current authored track-and-trigger score: ${patient.trackAndTriggerScore}.`);
+    lines.push(`Obstruction reconciled: ${patient.recognitionAtTick === null ? 'not yet' : 'yes'}. Urology and interventional radiology: ${patient.urologyAtTick === null ? 'not yet involved' : 'involved'}. Cultures: ${patient.culturesAtTick === null ? 'not yet requested' : 'requested'}.`);
+    lines.push(`Decompression intent: ${patient.decompressionIntentAtTick === null ? 'not yet recorded' : 'recorded'}. Definitive stone treatment: ${patient.stoneDeferralAtTick === null ? 'not yet deferred' : 'deferred until the infection is treated'}. Surveillance: ${patient.monitoringAtTick === null ? 'not arranged' : 'arranged'}.`);
+    lines.push('Recorded intent is not a placed drain. No drainage modality, access, operator, or time is selected, and neither percutaneous nephrostomy nor retrograde stenting is marked correct. Oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.labObservation
+      ? `Last requested laboratory evidence at simulated ${formatElapsed(patient.labObservation.atTick)}: lactate ${patient.labObservation.lactateMmolL.toFixed(1)} millimoles per liter; creatinine ${patient.labObservation.creatinineUmolL} micromoles per liter; C-reactive protein ${patient.labObservation.crpMgL} milligrams per liter. A laboratory-only check does not refresh the observations.`
+      : 'No new laboratory-only measurement has been requested.');
+    lines.push(patient.observationsOnly
+      ? `Last requested observations at simulated ${formatElapsed(patient.observationsOnly.atTick)}: heart rate ${patient.observationsOnly.heartRateBpm} per minute; track-and-trigger score ${patient.observationsOnly.trackAndTriggerScore}. An observations-only round does not refresh laboratory evidence.`
+      : 'No new observations-only round has been requested.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: heart rate ${patient.observation.heartRateBpm} per minute; mean arterial pressure ${patient.observation.meanArterialMmHg}; track-and-trigger score ${patient.observation.trackAndTriggerScore}; lactate ${patient.observation.lactateMmolL.toFixed(1)} millimoles per liter; ${patient.observation.alertness}. These are historical observations, not live measurements.`
+      : 'No new full assessment has been requested.');
+    if (patient.untreatedResponseObserved && patient.decompressionIntentAtTick === null) lines.push('A full assessment recorded deterioration after six authored hours of antimicrobial care with the kidney still obstructed.');
+    lines.push('C-reactive protein lags by many hours and can keep rising while the patient improves, so it is not the success signal. Drainage is not cure: deterioration after decompression is well described, and no cleared infection, recovered kidney function, or discharge readiness is established.');
+    lines.push(options.alarms.length === 0 ? 'No active alarms.'
+      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    return lines.join(' ');
   }
   if (options.meningococcalSepsis) {
     const patient = options.meningococcalSepsis;

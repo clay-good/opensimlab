@@ -40,6 +40,7 @@ import { supportsRenalHypernatremia } from '../../renal-electrolyte/hypernatremi
 import { supportsRenalHypocalcemia } from '../../renal-electrolyte/hypocalcemia';
 import { supportsRenalHypermagnesemia } from '../../renal-electrolyte/hypermagnesemia';
 import { supportsMeningococcalSepsis } from '../../infectious-disease/meningococcal-sepsis';
+import { supportsObstructedKidney } from '../../infectious-disease/obstructed-kidney';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -613,6 +614,43 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-infectious-disease-obstruction-')) {
+      if (!supportsObstructedKidney(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The infectious-disease obstructed kidney lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^obstructed-kidney-${id}-\\d+$`).test(entry.eventId));
+      const recognition = event('obstruction-recognized'); const urology = event('urology-activated');
+      const cultures = event('cultures-requested'); const decompression = event('decompression-intent');
+      const deferral = event('stone-treatment-deferred'); const boundaries = event('boundary-review');
+      const monitoring = event('monitoring'); const handoff = event('handoff');
+      const full = (entry: EngineEvent) => /^obstructed-kidney-(initial|undrained|decompressed)-reassessment-\d+$/.test(entry.eventId);
+      const later = log.find(full);
+      const refusedShortcut = event('antibiotics-only-refused') ?? event('marker-delay-refused')
+        ?? event('modality-choice-refused') ?? event('early-stone-treatment-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'reconcile-infectious-disease-obstruction-fever-perfusion-kidney-function-and-supplied-imaging': { met: !!recognition, tick: recognition?.tick,
+          finding: (recognition ? 'The fever, perfusion, rising creatinine, and supplied obstructing stone were reconciled. ' : 'The infection and the obstruction were not reconciled. ')
+            + 'The imaging was supplied, not acquired or interpreted here, and appropriate antimicrobial therapy was a premise of the lesson rather than a learner decision.' },
+        'recognize-infectious-disease-obstruction-undrained-source-rather-than-severe-infection': { met: !!recognition && !!decompression, tick: decompression?.tick,
+          finding: (recognition && decompression ? 'The obstruction was treated as an undrained source, and decompression intent followed. ' : 'Recognition of an undrained source, or the decompression intent that follows from it, remains incomplete. ')
+            + (refusedShortcut ? 'A shortcut was attempted and refused; it remains in this run. ' : '')
+            + 'Antimicrobial therapy alone may be insufficient while the collecting system stays obstructed.' },
+        'activate-infectious-disease-obstruction-urology-interventional-radiology-and-culture-ownership': { met: !!urology && !!cultures, tick: urology?.tick,
+          finding: (urology && cultures ? 'Urology and interventional radiology were involved early, with blood, urine, and collecting-system cultures requested. ' : 'Early urology and interventional-radiology involvement, or culture sampling, remains incomplete. ')
+            + (monitoring ? '' : 'Track-and-trigger surveillance was not arranged. ')
+            + 'The timing of intervention belongs to the receiving team after senior advice, not to the referrer.' },
+        'review-infectious-disease-obstruction-timing-modality-and-evidence-boundary': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The timing and modality evidence boundary was reviewed. ' : 'The timing and modality boundary review is missing. ')
+            + 'No guideline states an hour threshold here; the strong urological recommendation rests on low-grade evidence, and the six-hour sepsis figure is conditional on very-low-certainty observational evidence. Nephrostomy and stenting are not separated by outcome evidence, so neither was marked correct.' },
+        'record-infectious-disease-obstruction-bounded-decompression-intent-and-deferred-stone-treatment': { met: !!decompression && !!deferral && !!later, tick: decompression?.tick,
+          finding: (decompression && deferral && later ? 'Bounded decompression intent and deferral of definitive stone treatment were recorded, and a full assessment made the authored response available for review. ' : 'Bounded decompression intent, the deferred stone decision, or a requested full assessment remains incomplete. ')
+            + 'Recorded intent is not a placed drain. A C-reactive protein that keeps rising alongside improving observations reflects its lag, not failed drainage.' },
+        'handoff-infectious-disease-obstruction-unresolved-infection-kidney-function-and-active-risk': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'Serial findings, the requested decompression and its pending timing, culture and antimicrobial review, kidney recovery, and the later stone decision were handed off. ' : 'Current full findings or continuing-care ownership remains incomplete. ')
+            + 'A chosen modality, a confirmed drain time, a settled organism, and a normal marker are not handoff gates. Deterioration after drainage remains possible, and no cure or discharge readiness is certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.endsWith('-infectious-disease-meningococcal-rash-perfusion-conscious-level-and-whole-patient')
       || objective.id.startsWith('recognize-infectious-disease-meningococcal-')

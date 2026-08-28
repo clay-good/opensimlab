@@ -46,11 +46,13 @@ import { supportsRenalHypernatremia, type RenalHypernatremiaAction, type RenalHy
 import { supportsRenalHypocalcemia, type RenalHypocalcemiaAction, type RenalHypocalcemiaSnapshot } from '../../renal-electrolyte/hypocalcemia';
 import { supportsRenalHypermagnesemia, type RenalHypermagnesemiaAction, type RenalHypermagnesemiaSnapshot } from '../../renal-electrolyte/hypermagnesemia';
 import { supportsMeningococcalSepsis, type MeningococcalSepsisAction, type MeningococcalSepsisSnapshot } from '../../infectious-disease/meningococcal-sepsis';
+import { supportsObstructedKidney, type ObstructedKidneyAction, type ObstructedKidneySnapshot } from '../../infectious-disease/obstructed-kidney';
 import { RenalHyponatremiaTray } from '../../renal-electrolyte/RenalHyponatremiaTray';
 import { RenalHypernatremiaTray } from '../../renal-electrolyte/RenalHypernatremiaTray';
 import { RenalHypocalcemiaTray } from '../../renal-electrolyte/RenalHypocalcemiaTray';
 import { RenalHypermagnesemiaTray } from '../../renal-electrolyte/RenalHypermagnesemiaTray';
 import { MeningococcalSepsisTray } from '../../infectious-disease/MeningococcalSepsisTray';
+import { ObstructedKidneyTray } from '../../infectious-disease/ObstructedKidneyTray';
 import { HypercalcemiaTray } from '../../endocrine-metabolic/HypercalcemiaTray';
 import type { AdrenalCrisisSnapshot } from '@platform/kernel/protocol';
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
@@ -103,6 +105,7 @@ export interface ActionCockpitProps {
   readonly renalHypocalcemia?: RenalHypocalcemiaSnapshot;
   readonly renalHypermagnesemia?: RenalHypermagnesemiaSnapshot;
   readonly meningococcalSepsis?: MeningococcalSepsisSnapshot;
+  readonly obstructedKidney?: ObstructedKidneySnapshot;
   readonly hypoglycemiaDemonstrating?: boolean;
   readonly scenario: Scenario;
   readonly region: RegionProfile;
@@ -2644,6 +2647,7 @@ export interface ActionCockpitProps {
   readonly onRenalHypocalcemiaResponse?: (action: RenalHypocalcemiaAction) => void;
   readonly onRenalHypermagnesemiaResponse?: (action: RenalHypermagnesemiaAction) => void;
   readonly onMeningococcalSepsisResponse?: (action: MeningococcalSepsisAction) => void;
+  readonly onObstructedKidneyResponse?: (action: ObstructedKidneyAction) => void;
   readonly renalHyponatremiaGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
@@ -2653,6 +2657,7 @@ export interface ActionCockpitProps {
   readonly renalHypocalcemiaDemonstrating?: boolean;
   readonly renalHypermagnesemiaDemonstrating?: boolean;
   readonly meningococcalSepsisDemonstrating?: boolean;
+  readonly obstructedKidneyDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -2840,6 +2845,7 @@ export function crisisResponseAvailability(
   const hasRenalHypocalcemiaResponse = supportsRenalHypocalcemia(scenario);
   const hasRenalHypermagnesemiaResponse = supportsRenalHypermagnesemia(scenario);
   const hasMeningococcalSepsisResponse = supportsMeningococcalSepsis(scenario);
+  const hasObstructedKidneyResponse = supportsObstructedKidney(scenario);
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -3412,7 +3418,7 @@ export function crisisResponseAvailability(
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
-    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse,
+    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3803,7 +3809,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
-    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse,
+    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3978,8 +3984,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasRenalHypocalcemiaResponse
     || hasRenalHypermagnesemiaResponse
     || hasMeningococcalSepsisResponse
+    || hasObstructedKidneyResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasMeningococcalSepsisResponse
+  const responseTray = hasObstructedKidneyResponse
+    ? { id: 'crisis', label: 'Recognize + drain + reassess' } as const
+    : hasMeningococcalSepsisResponse
     ? { id: 'crisis', label: 'Recognize + activate + reassess' } as const
     : hasRenalHypermagnesemiaResponse
     ? { id: 'crisis', label: 'Support + counter + remove' } as const
@@ -4482,6 +4491,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasRenalHypocalcemiaResponse
     || hasRenalHypermagnesemiaResponse
     || hasMeningococcalSepsisResponse
+    || hasObstructedKidneyResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -5484,6 +5494,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 demonstrating={props.renalHypokalemiaDemonstrating}
                 scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onRenalHypokalemiaTutorSource}
                 onAction={props.onRenalHypokalemiaResponse ?? (() => {})} />
+            )}
+            {hasObstructedKidneyResponse && (
+              <ObstructedKidneyTray assessment={props.obstructedKidney}
+                demonstrating={props.obstructedKidneyDemonstrating}
+                onAction={props.onObstructedKidneyResponse ?? (() => {})} />
             )}
             {hasMeningococcalSepsisResponse && (
               <MeningococcalSepsisTray assessment={props.meningococcalSepsis}

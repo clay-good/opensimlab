@@ -56,6 +56,7 @@ import { RenalHypernatremia, supportsRenalHypernatremia } from '../renal-electro
 import { RenalHypocalcemia, supportsRenalHypocalcemia } from '../renal-electrolyte/hypocalcemia';
 import { RenalHypermagnesemia, supportsRenalHypermagnesemia } from '../renal-electrolyte/hypermagnesemia';
 import { MeningococcalSepsis, supportsMeningococcalSepsis } from '../infectious-disease/meningococcal-sepsis';
+import { ObstructedKidney, supportsObstructedKidney } from '../infectious-disease/obstructed-kidney';
 
 /** The engine's own version, recorded in every transcript. */
 export const ENGINE_VERSION = '0.1.0-alpha.48';
@@ -1738,6 +1739,7 @@ export class AnesthesiaEngine {
   private readonly renalHypocalcemia: RenalHypocalcemia | null;
   private readonly renalHypermagnesemia: RenalHypermagnesemia | null;
   private readonly meningococcalSepsis: MeningococcalSepsis | null;
+  private readonly obstructedKidney: ObstructedKidney | null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1867,6 +1869,8 @@ export class AnesthesiaEngine {
     if (this.renalHypermagnesemia) this.rhythm = 'sinus';
     this.meningococcalSepsis = supportsMeningococcalSepsis(options.scenario) ? new MeningococcalSepsis() : null;
     if (this.meningococcalSepsis) this.rhythm = 'sinus';
+    this.obstructedKidney = supportsObstructedKidney(options.scenario) ? new ObstructedKidney() : null;
+    if (this.obstructedKidney) this.rhythm = 'sinus';
     this.practiceRegion = options.practiceRegion;
     this.seed = options.seed;
     if (options.scenario.timeline.some((event) => event.type === 'narrative'
@@ -2000,6 +2004,11 @@ export class AnesthesiaEngine {
       || typeof action.payload !== 'object' || Array.isArray(action.payload)) {
       this.log('warning', 'assessment', `malformed-action-refused-${this.currentTick}`,
         'That action was malformed and was safely ignored. Nothing changed.');
+      return;
+    }
+    if (this.obstructedKidney && action.type !== 'obstructed-kidney-response' && action.type !== 'silence-alarm') {
+      this.log('warning', 'assessment', `obstructed-kidney-generic-action-refused-${this.currentTick}`,
+        'Only this lesson\u2019s recognition, urology and interventional-radiology activation, culture, bounded decompression-intent, stone-deferral, boundary-review, observation, and handoff choices are available.');
       return;
     }
     if (this.meningococcalSepsis && action.type !== 'meningococcal-sepsis-response' && action.type !== 'silence-alarm') {
@@ -2964,6 +2973,19 @@ export class AnesthesiaEngine {
         'This HHS lesson exposes no generic history, examination, testing, calculation, interpretation, diagnosis, fluid, insulin, dextrose, electrolyte, drug, dose, rate, route, access, infusion, nutrition, precipitant treatment, thrombosis or pressure-injury prevention, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
+      case 'obstructed-kidney-response': {
+        if (!this.obstructedKidney || Reflect.ownKeys(action.payload).length !== 1
+          || !Object.hasOwn(action.payload, 'action')
+          || !Object.getOwnPropertyDescriptor(action.payload, 'action')!.enumerable
+          || !Object.hasOwn(Object.getOwnPropertyDescriptor(action.payload, 'action')!, 'value')) {
+          this.log('warning', 'assessment', `obstructed-kidney-action-refused-${this.currentTick}`, 'Only the declared dose-free obstructed infected kidney choices are available in this lesson.');
+          break;
+        }
+        for (const event of this.obstructedKidney.apply(action.payload.action, this.currentTick)) {
+          this.log('warning', 'assessment', `obstructed-kidney-${event.id}-${this.currentTick}`, event.message);
+        }
+        break;
+      }
       case 'meningococcal-sepsis-response': {
         if (!this.meningococcalSepsis || Reflect.ownKeys(action.payload).length !== 1
           || !Object.hasOwn(action.payload, 'action')
@@ -14576,6 +14598,9 @@ export class AnesthesiaEngine {
 
   /** Advance exactly one tick. */
   step(): EngineTick {
+    for (const event of this.obstructedKidney?.advance(this.currentTick) ?? []) {
+      this.log('warning', 'assessment', `obstructed-kidney-${event.id}-${this.currentTick}`, event.message);
+    }
     for (const event of this.meningococcalSepsis?.advance(this.currentTick) ?? []) {
       this.log('warning', 'assessment', `meningococcal-sepsis-${event.id}-${this.currentTick}`, event.message);
     }
@@ -15435,6 +15460,13 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: this.endocrineDkaResolutionReassessmentAtTick !== null ? 16 : 18,
         spo2Percent: 98, systolicMmHg: 118, diastolicMmHg: 70, meanArterialMmHg: 86,
         coreTemperatureC: 36.9 };
+    }
+    if (this.obstructedKidney) {
+      const patient = this.obstructedKidney.vitals();
+      crisisState = { ...crisisState, heartRateBpm: patient.heartRateBpm,
+        respiratoryRateBpm: patient.respiratoryRateBpm, spo2Percent: patient.spo2Percent,
+        systolicMmHg: patient.systolicMmHg, diastolicMmHg: patient.diastolicMmHg,
+        meanArterialMmHg: patient.meanArterialMmHg, coreTemperatureC: patient.coreTemperatureC };
     }
     if (this.meningococcalSepsis) {
       const patient = this.meningococcalSepsis.vitals();
@@ -20256,6 +20288,7 @@ export class AnesthesiaEngine {
         ...(this.renalHypocalcemia ? { renalHypocalcemia: this.renalHypocalcemia.snapshot(this.currentTick) } : {}),
         ...(this.renalHypermagnesemia ? { renalHypermagnesemia: this.renalHypermagnesemia.snapshot(this.currentTick) } : {}),
         ...(this.meningococcalSepsis ? { meningococcalSepsis: this.meningococcalSepsis.snapshot(this.currentTick) } : {}),
+        ...(this.obstructedKidney ? { obstructedKidney: this.obstructedKidney.snapshot(this.currentTick) } : {}),
         ...(this.avpDeficiency ? { avpDeficiency: this.avpDeficiency.snapshot(this.currentTick) } : {}),
         ...(this.hyponatremiaCorrection ? { hyponatremiaCorrection: this.hyponatremiaCorrection.snapshot(this.currentTick) } : {}),
         aspirationRiskAssessment: {
@@ -20452,7 +20485,7 @@ export class AnesthesiaEngine {
   invalidParameters(): Set<string> {
     const invalid = new Set<string>();
     // These lessons do not supply a capnogram or a modeled oxygen setting.
-    if (this.myxedema || this.hypercalcemia || this.hypocalcemia || this.hyponatremiaCorrection || this.avpDeficiency || this.refeeding || this.perioperativeDiabetes || this.renalHyperkalemia || this.renalHypokalemia || this.renalHyponatremia || this.renalHypernatremia || this.renalHypocalcemia || this.renalHypermagnesemia || this.meningococcalSepsis) {
+    if (this.myxedema || this.hypercalcemia || this.hypocalcemia || this.hyponatremiaCorrection || this.avpDeficiency || this.refeeding || this.perioperativeDiabetes || this.renalHyperkalemia || this.renalHypokalemia || this.renalHyponatremia || this.renalHypernatremia || this.renalHypocalcemia || this.renalHypermagnesemia || this.meningococcalSepsis || this.obstructedKidney) {
       invalid.add('etco2MmHg');
       invalid.add('fio2');
     }

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "infectious-disease",
-  "recordCount": 1,
+  "recordCount": 2,
   "records": [
     {
       "recordId": "scenario:meningococcal-sepsis-recognition-and-escalation@0.1.0",
@@ -12,6 +12,17 @@
       "evidence": [
         "/catalog/infectious-disease-completion-audit.json#meningococcal-sepsis-recognition-and-escalation@0.1.0",
         "/catalog/infectious-disease-quality-audit.json#meningococcal-sepsis-recognition-and-escalation@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:obstructed-infected-kidney-decompression@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "obstructed-infected-kidney-decompression",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/infectious-disease-completion-audit.json#obstructed-infected-kidney-decompression@0.1.0",
+        "/catalog/infectious-disease-quality-audit.json#obstructed-infected-kidney-decompression@0.1.0"
       ]
     }
   ]
