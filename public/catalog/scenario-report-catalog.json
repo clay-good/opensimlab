@@ -2213,6 +2213,23 @@
       "limitationManifestHash": "sha256:d0b5d9128dfa7d9bd8014f1268c755b20967fbf2c2f95123c6edd11d7175d48c"
     },
     {
+      "scenarioId": "severe-pneumonia-the-score-answered-another-question",
+      "contentVersion": "0.1.0",
+      "moduleId": "infectious-disease",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:7ea6b6ae37fb811fbc242521a281e5a109f0b2e2585b1ad67bacc00c600d8c8f",
+      "defaultsHash": "sha256:a87e6e28ea81bb30bc2ee142cf6ef7605524279e33a3483fb360417a07de8803",
+      "maturityHash": "sha256:14d0888ee0d6fce4ba239fb86a4b43d919c79bf1239374eb089b2133f635af26",
+      "sourceManifestHash": "sha256:0b9e35708ef6891bc846212cc6a4d89f37bc277254dd9d37dfb46b88839a1092",
+      "limitationManifestHash": "sha256:c0ab1c5fbb626f9c08e2d178c7cb40b0fb67843d4ef33a24b9471e8ed094737e"
+    },
+    {
       "scenarioId": "delivery-room-to-nicu-handoff",
       "contentVersion": "0.1.0",
       "moduleId": "neonatology",

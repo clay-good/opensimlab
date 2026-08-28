@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -115,6 +115,7 @@ export function stateSummary(
     readonly febrileNeutropenia?: FebrileNeutropeniaSnapshot;
     readonly necrotizingInfection?: NecrotizingInfectionSnapshot;
     readonly endocarditisHeartFailure?: EndocarditisHeartFailureSnapshot;
+    readonly severePneumonia?: SeverePneumoniaSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -168,7 +169,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -192,6 +193,34 @@ export function stateSummary(
           + ' intravenous.');
       }
     }
+  }
+  if (options.severePneumonia) {
+    const patient = options.severePneumonia;
+    for (const field of ['systolicMmHg', 'diastolicMmHg'] as const) {
+      const value = state[field];
+      if (!options.invalid.has(field) && Number.isFinite(value)) {
+        lines.push(`${FIELDS[field].label}: ${value.toFixed(FIELDS[field].precision)} ${FIELDS[field].unit}.`);
+      }
+    }
+    lines.push('Supplied starting findings were multilobar consolidation, respiratory rate 30 per minute, oxygen saturation 92 percent on an inspired fraction of 0.35 giving an oxygenation ratio of 171, heart rate 116 per minute, and temperature 38.7 degrees Celsius. These remain historical starting findings.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push('Two supplied instruments disagree and both are correctly calculated. The mortality score reads 2, placing the patient in a ward band. The severity criteria count 3, which defines severe pneumonia. The mortality score answers thirty-day death rather than level of care, and its pooled discrimination for predicting critical-care admission is about 0.69.');
+    lines.push(`Instruments reconciled: ${patient.reconciliationAtTick === null ? 'not yet' : 'yes'}. Mismatch recognized: ${patient.mismatchAtTick === null ? 'not yet' : 'yes'}. Critical-care review: ${patient.criticalCareAtTick === null ? 'not yet requested' : 'requested'}. Escalation intent: ${patient.escalationIntentAtTick === null ? 'not yet recorded' : 'recorded'}. Surveillance: ${patient.monitoringAtTick === null ? 'not arranged' : 'arranged'}.`);
+    lines.push('A saturation without its inspired fraction says very little, and it is the ratio that enters the severity criteria. No oxygen device, ventilation mode, fluid volume, vasoactive agent, antimicrobial, or steroid is selected, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.labObservation
+      ? `Last requested laboratory evidence at simulated ${formatElapsed(patient.labObservation.atTick)}: urea ${patient.labObservation.ureaMmolL.toFixed(1)} millimoles per liter; C-reactive protein ${patient.labObservation.crpMgL} milligrams per liter; sodium ${patient.labObservation.sodiumMmolL} millimoles per liter; lactate ${patient.labObservation.lactateMmolL.toFixed(1)} millimoles per liter. The C-reactive protein and the sodium appear in neither instrument. A laboratory-only check does not refresh the respiratory assessment.`
+      : 'No new laboratory-only measurement has been requested.');
+    lines.push(patient.respiratoryObservation
+      ? `Last requested respiratory assessment at simulated ${formatElapsed(patient.respiratoryObservation.atTick)}: respiratory rate ${patient.respiratoryObservation.respiratoryRateBpm} per minute; oxygen saturation ${patient.respiratoryObservation.spo2Percent} percent on an inspired fraction of ${patient.respiratoryObservation.fio2.toFixed(2)}; oxygenation ratio ${patient.respiratoryObservation.pfRatio}. A respiratory-only look does not refresh laboratory evidence.`
+      : 'No new respiratory-only assessment has been requested.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: heart rate ${patient.observation.heartRateBpm} per minute; oxygenation ratio ${patient.observation.pfRatio}; lactate ${patient.observation.lactateMmolL.toFixed(1)} millimoles per liter; mortality score ${patient.observation.mortalityScore}; severity criteria met ${patient.observation.severityCriteria}. These are historical observations, not live measurements.`
+      : 'No new full assessment has been requested.');
+    if (patient.deteriorationObserved) lines.push('The mortality score has caught up. It was always going to, and it was never the instrument for the question of where this patient should be.');
+    lines.push('Whether a critical-care bed exists is a real-world constraint this rehearsal does not model, and neither escalation nor survival is established.');
+    lines.push(options.alarms.length === 0 ? 'No active alarms.'
+      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    return lines.join(' ');
   }
   if (options.endocarditisHeartFailure) {
     const patient = options.endocarditisHeartFailure;

@@ -5735,6 +5735,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'The collapsing pulse and wide pulse pressure belong to chronic regurgitation, where the ventricle has had time to dilate; acute severe regurgitation gives a normal or narrow pulse pressure, a soft or absent first heart sound, and a short murmur that is easily missed. The size threshold operates together with an embolic episode or another indication. The one major trial in this area enrolled a narrow, stable population that does not generalise to a decompensating patient, and the United States statement predates the European guidance this case follows.',
     briefIn: ['endocarditis-mechanical-failure-on-a-surgical-clock'],
   },
+  {
+    id: 'severe-pneumonia-presentation-and-deterioration-are-authored',
+    headline: 'Both instruments and both states are authored, and nothing is hidden.',
+    simplification: 'The case supplies one fixed presentation and one fixed deterioration two simulated hours later, with both scores stated rather than calculated by the learner. No respiratory, gas-exchange, antimicrobial, or fluid model runs underneath, and the chest radiograph is described rather than shown.',
+    whereItMisleads: 'The clock becomes a validated escalation deadline, or the score catching up is read as the learner having been vindicated by a number.',
+    correctUnderstanding: 'The mortality score was always going to rise once the patient deteriorated. That it did is not evidence the score was useful for deciding where the patient should be. Real presentations vary widely, and no individual course follows from this authored model.',
+    briefIn: ['severe-pneumonia-the-score-answered-another-question'],
+  },
+  {
+    id: 'severe-pneumonia-controls-are-recognition-activation-and-intent-only',
+    headline: 'A review is requested; a bed is never allocated.',
+    simplification: 'The learner reconciles the two instruments, recognizes the mismatch, requests critical-care review, records bounded escalation intent, reviews the boundary, and arranges surveillance. No oxygen device, flow, ventilation mode or pressure, fluid volume, vasoactive agent, antimicrobial, steroid, or procedure exists.',
+    whereItMisleads: 'Requesting review is read as the patient having been accepted or moved, or the recorded intent is read as a treatment plan.',
+    correctUnderstanding: 'The level-of-care decision belongs to the receiving team. Whether a critical-care bed exists is the real-world constraint that most often determines what actually happens, and this rehearsal deliberately does not model capacity or rationing.',
+    briefIn: ['severe-pneumonia-the-score-answered-another-question'],
+  },
+  {
+    id: 'severe-pneumonia-triage-tools-have-no-randomised-outcome-evidence',
+    headline: 'No severity tool has been shown to improve outcomes when used for triage.',
+    simplification: 'The case states that the mortality score is validated for thirty-day death and to support admission rather than level of care, that its pooled discrimination for predicting critical-care admission is about 0.69, and that the severity criteria are the instrument built for the level-of-care question.',
+    whereItMisleads: 'A learner treats either instrument as an order, or reads the association between delayed escalation and worse outcomes as a proven causal threshold.',
+    correctUnderstanding: 'The severity criteria have never been formally re-derived and their items carry unequal weight; even they are an aid to judgement rather than an automatic admission. The delay-harm evidence is observational and confounded by indication. One national guideline uses the mortality score alongside clinical judgement rather than in isolation, and the two bodies publishing on this condition are, as of 2025, publicly split, so there is no single voice to appeal to. Regional pathways differ: one runs a mortality score then severity criteria, the other runs a disposition ladder that may never compute the criteria at all.',
+    briefIn: ['severe-pneumonia-the-score-answered-another-question'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

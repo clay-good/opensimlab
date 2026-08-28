@@ -44,6 +44,7 @@ import { supportsObstructedKidney } from '../../infectious-disease/obstructed-ki
 import { supportsFebrileNeutropenia } from '../../infectious-disease/febrile-neutropenia';
 import { supportsNecrotizingInfection } from '../../infectious-disease/necrotizing-infection';
 import { supportsEndocarditisHeartFailure } from '../../infectious-disease/endocarditis-heart-failure';
+import { supportsSeverePneumonia } from '../../infectious-disease/severe-pneumonia';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -617,6 +618,44 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-infectious-disease-pneumonia-')) {
+      if (!supportsSeverePneumonia(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The infectious-disease severe pneumonia lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^severe-pneumonia-${id}-\\d+$`).test(entry.eventId));
+      const reconciliation = event('scores-reconciled'); const mismatch = event('instrument-mismatch-recognized');
+      const criticalCare = event('critical-care-requested'); const escalation = event('escalation-intent');
+      const boundaries = event('boundary-review'); const monitoring = event('monitoring');
+      const handoff = event('handoff'); const deterioration = event('clinical-deterioration');
+      const full = (entry: EngineEvent) => /^severe-pneumonia-(initial|deteriorated)-reassessment-\d+$/.test(entry.eventId);
+      const later = log.find(full);
+      const refusedShortcut = event('mortality-score-refused') ?? event('wait-refused')
+        ?? event('marker-severity-refused') ?? event('saturation-refused');
+      const beatDeterioration = !!criticalCare && (!deterioration || criticalCare.tick < deterioration.tick);
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'reconcile-infectious-disease-pneumonia-two-correct-instruments-that-disagree': { met: !!reconciliation, tick: reconciliation?.tick,
+          finding: (reconciliation ? 'Both supplied instruments were held together: a mortality score of 2 in a ward band, and 3 severity criteria met. ' : 'The two supplied instruments were not reconciled. ')
+            + 'Nothing was hidden or mismeasured; the disagreement is real.' },
+        'recognize-infectious-disease-pneumonia-instrument-question-mismatch': { met: !!mismatch, tick: mismatch?.tick,
+          finding: (mismatch ? 'The mortality score was identified as answering thirty-day death rather than level of care. ' : 'The instrument-question mismatch was not recognized. ')
+            + (refusedShortcut ? 'A shortcut was attempted and refused; it remains in this run. ' : '')
+            + 'Its pooled discrimination for predicting critical-care admission is about 0.69, and it weights age and comorbidity heavily.' },
+        'activate-infectious-disease-pneumonia-critical-care-review-ownership': { met: !!criticalCare, tick: criticalCare?.tick,
+          finding: (criticalCare ? 'Critical-care review was requested citing the severity criteria rather than the mortality band. ' : 'Critical-care review was not requested. ')
+            + (beatDeterioration ? 'The request preceded the authored deterioration. ' : 'The request did not precede the authored deterioration. ')
+            + (monitoring ? '' : 'Surveillance was not arranged. ') },
+        'review-infectious-disease-pneumonia-triage-evidence-boundary': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The triage evidence boundary was reviewed. ' : 'The triage evidence boundary review is missing. ')
+            + 'No severity tool has been shown in a randomised trial to improve outcomes when used for triage, the delay-harm evidence is observational and confounded, and the C-reactive protein and sodium appear in neither instrument.' },
+        'record-infectious-disease-pneumonia-bounded-escalation-intent-and-strict-reassessment': { met: !!escalation && !!later, tick: escalation?.tick,
+          finding: (escalation && later ? 'Bounded escalation intent was recorded and a full assessment made the authored deterioration available for review. ' : 'Bounded escalation intent or a requested full assessment remains incomplete. ')
+            + 'Recorded intent is not an accepted bed, and the risen mortality score is not a success signal; it was always going to catch up.' },
+        'handoff-infectious-disease-pneumonia-pending-level-of-care-and-active-risk': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'Serial respiratory and laboratory findings and the pending level-of-care decision were handed off. ' : 'Current full findings or continuing-care ownership remains incomplete. ')
+            + 'Whether a critical-care bed exists is a real-world constraint this rehearsal does not model, and neither escalation nor survival is certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-infectious-disease-endocarditis-')) {
       if (!supportsEndocarditisHeartFailure(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The infectious-disease endocarditis lesson was not active.' } satisfies ObjectiveFinding;

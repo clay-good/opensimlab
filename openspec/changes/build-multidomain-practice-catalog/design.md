@@ -3227,8 +3227,26 @@ See `docs/evidence-briefs/endocarditis-mechanical-failure-on-a-surgical-clock.md
 value table, and the note that exact recommendation class and level codes were not independently
 retrieved, so the tiers are cited without asserting class letters.
 
-Remaining five: sepsis without shock; septic shock; meningitis; severe community-acquired pneumonia;
-toxic-shock pattern. Research is banked for three of them. Severe community-acquired pneumonia should
+The sixth infectious-disease preview, `severe-pneumonia-the-score-answered-another-question@0.1.0`,
+teaches instrument-question mismatch. Nothing is hidden and every number is correct; the failure is
+interpretive. A mortality score validated for thirty-day death is being asked a level-of-care
+question, with pooled discrimination for predicting critical-care admission of about 0.69, while the
+severity criteria built for that question say severe pneumonia. Both instruments read correctly from
+the same patient and disagree.
+
+The saturation is deliberately reassuring and the ratio is not: across the authored deterioration
+the saturation falls two points while the inspired fraction nearly doubles, so the ratio collapses
+from 171 to 92. The C-reactive protein and sodium are deliberate bait, alarming and absent from both
+instruments. The mortality score catching up to 4 afterwards is the point rather than a reward.
+
+Remaining four: sepsis without shock; septic shock; meningitis; toxic-shock pattern. Research is
+banked for two. Toxic shock should teach confirmation deferral: the staphylococcal definition needs
+desquamation at one to two weeks and the streptococcal one needs sterile-site isolation, so a single
+pending culture is two mutually exclusive unknowns and neither definition can close at the bedside.
+Sepsis without shock should teach the 2026 tiered structure and must be written so it teaches
+judgement rather than delay, with a visible three-hour ceiling running from first suspicion, no
+selectable waiting action, and any drift toward hypotension collapsing the branch to the one-hour
+path without learner discretion. Research is banked for three of them. Severe community-acquired pneumonia should
 teach instrument-question mismatch, since the mortality scores are prognostic instruments borrowed
 for a level-of-care question that a different validated instrument answers. Toxic shock should teach
 confirmation deferral, since the staphylococcal definition needs desquamation at one to two weeks and

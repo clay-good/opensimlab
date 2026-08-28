@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 183 adds the authored endocarditis heart-failure snapshot. */
-export const WORKER_PROTOCOL_VERSION = 183;
+/** Version 184 adds the authored severe pneumonia snapshot. */
+export const WORKER_PROTOCOL_VERSION = 184;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -377,6 +377,46 @@ export interface EndocarditisHeartFailureSnapshot {
     readonly respiratoryRateBpm: number; readonly spo2Percent: number; readonly oxygenSupport: string;
     readonly cracklesToApices: boolean; readonly heartRateBpm: number;
     readonly meanArterialMmHg: number; readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true;
+  readonly doseModelAvailable: false;
+  readonly durableRecoveryProven: false;
+}
+
+export interface SeverePneumoniaSnapshot {
+  readonly reconciliationAtTick: number | null;
+  readonly mismatchAtTick: number | null;
+  readonly criticalCareAtTick: number | null;
+  readonly escalationIntentAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly deteriorationDueInSeconds: number | null;
+  readonly deteriorationObserved: boolean;
+  readonly criticalCareBeforeDeterioration: boolean;
+  readonly mortalityScoreAttempted: boolean;
+  readonly waitAttempted: boolean;
+  readonly markerSeverityAttempted: boolean;
+  readonly saturationAttempted: boolean;
+  readonly labObservation: {
+    readonly atTick: number; readonly ureaMmolL: number; readonly whiteCellsX109L: number;
+    readonly plateletsX109L: number; readonly crpMgL: number; readonly sodiumMmolL: number;
+    readonly lactateMmolL: number;
+  } | null;
+  readonly respiratoryObservation: {
+    readonly atTick: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly fio2: number; readonly pfRatio: number; readonly confused: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly ureaMmolL: number; readonly whiteCellsX109L: number;
+    readonly plateletsX109L: number; readonly crpMgL: number; readonly sodiumMmolL: number;
+    readonly lactateMmolL: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly fio2: number; readonly pfRatio: number; readonly confused: boolean;
+    readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
+    readonly meanArterialMmHg: number; readonly coreTemperatureC: number; readonly alertness: string;
+    readonly mortalityScore: number; readonly severityCriteria: number;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -3727,6 +3767,7 @@ export interface EquipmentSnapshot {
     readonly febrileNeutropenia?: FebrileNeutropeniaSnapshot;
     readonly necrotizingInfection?: NecrotizingInfectionSnapshot;
     readonly endocarditisHeartFailure?: EndocarditisHeartFailureSnapshot;
+    readonly severePneumonia?: SeverePneumoniaSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

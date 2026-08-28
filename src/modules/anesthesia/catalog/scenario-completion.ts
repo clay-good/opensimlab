@@ -20,6 +20,7 @@ import { obstructedKidneyCompletionEvidence } from '../../infectious-disease/obs
 import { febrileNeutropeniaCompletionEvidence } from '../../infectious-disease/febrile-neutropenia-completion';
 import { necrotizingInfectionCompletionEvidence } from '../../infectious-disease/necrotizing-infection-completion';
 import { endocarditisHeartFailureCompletionEvidence } from '../../infectious-disease/endocarditis-heart-failure-completion';
+import { severePneumoniaCompletionEvidence } from '../../infectious-disease/severe-pneumonia-completion';
 import {
   COMPLETION_SCHEMA_VERSION,
   type CompletionRequirementAudit,
@@ -121,6 +122,7 @@ export function auditClinicalScenario(
     ...febrileNeutropeniaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...necrotizingInfectionCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...endocarditisHeartFailureCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...severePneumoniaCompletionEvidence(scenario, capabilityVersion, moduleId),
   ].map((entry) => [entry.id, entry]));
   const auditedRequirements = requirements.map((entry) => exactEvidence.get(entry.id) ?? entry);
   return {

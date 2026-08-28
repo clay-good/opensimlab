@@ -50,6 +50,7 @@ import { supportsObstructedKidney, type ObstructedKidneyAction, type ObstructedK
 import { supportsFebrileNeutropenia, type FebrileNeutropeniaAction, type FebrileNeutropeniaSnapshot } from '../../infectious-disease/febrile-neutropenia';
 import { supportsNecrotizingInfection, type NecrotizingInfectionAction, type NecrotizingInfectionSnapshot } from '../../infectious-disease/necrotizing-infection';
 import { supportsEndocarditisHeartFailure, type EndocarditisHeartFailureAction, type EndocarditisHeartFailureSnapshot } from '../../infectious-disease/endocarditis-heart-failure';
+import { supportsSeverePneumonia, type SeverePneumoniaAction, type SeverePneumoniaSnapshot } from '../../infectious-disease/severe-pneumonia';
 import { RenalHyponatremiaTray } from '../../renal-electrolyte/RenalHyponatremiaTray';
 import { RenalHypernatremiaTray } from '../../renal-electrolyte/RenalHypernatremiaTray';
 import { RenalHypocalcemiaTray } from '../../renal-electrolyte/RenalHypocalcemiaTray';
@@ -59,6 +60,7 @@ import { ObstructedKidneyTray } from '../../infectious-disease/ObstructedKidneyT
 import { FebrileNeutropeniaTray } from '../../infectious-disease/FebrileNeutropeniaTray';
 import { NecrotizingInfectionTray } from '../../infectious-disease/NecrotizingInfectionTray';
 import { EndocarditisHeartFailureTray } from '../../infectious-disease/EndocarditisHeartFailureTray';
+import { SeverePneumoniaTray } from '../../infectious-disease/SeverePneumoniaTray';
 import { HypercalcemiaTray } from '../../endocrine-metabolic/HypercalcemiaTray';
 import type { AdrenalCrisisSnapshot } from '@platform/kernel/protocol';
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
@@ -115,6 +117,7 @@ export interface ActionCockpitProps {
   readonly febrileNeutropenia?: FebrileNeutropeniaSnapshot;
   readonly necrotizingInfection?: NecrotizingInfectionSnapshot;
   readonly endocarditisHeartFailure?: EndocarditisHeartFailureSnapshot;
+  readonly severePneumonia?: SeverePneumoniaSnapshot;
   readonly hypoglycemiaDemonstrating?: boolean;
   readonly scenario: Scenario;
   readonly region: RegionProfile;
@@ -2660,6 +2663,7 @@ export interface ActionCockpitProps {
   readonly onFebrileNeutropeniaResponse?: (action: FebrileNeutropeniaAction) => void;
   readonly onNecrotizingInfectionResponse?: (action: NecrotizingInfectionAction) => void;
   readonly onEndocarditisHeartFailureResponse?: (action: EndocarditisHeartFailureAction) => void;
+  readonly onSeverePneumoniaResponse?: (action: SeverePneumoniaAction) => void;
   readonly renalHyponatremiaGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
@@ -2673,6 +2677,7 @@ export interface ActionCockpitProps {
   readonly febrileNeutropeniaDemonstrating?: boolean;
   readonly necrotizingInfectionDemonstrating?: boolean;
   readonly endocarditisHeartFailureDemonstrating?: boolean;
+  readonly severePneumoniaDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -2864,6 +2869,7 @@ export function crisisResponseAvailability(
   const hasFebrileNeutropeniaResponse = supportsFebrileNeutropenia(scenario);
   const hasNecrotizingInfectionResponse = supportsNecrotizingInfection(scenario);
   const hasEndocarditisHeartFailureResponse = supportsEndocarditisHeartFailure(scenario);
+  const hasSeverePneumoniaResponse = supportsSeverePneumonia(scenario);
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -3436,7 +3442,7 @@ export function crisisResponseAvailability(
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
-    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse,
+    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3827,7 +3833,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
-    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse,
+    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -4006,8 +4012,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasFebrileNeutropeniaResponse
     || hasNecrotizingInfectionResponse
     || hasEndocarditisHeartFailureResponse
+    || hasSeverePneumoniaResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasEndocarditisHeartFailureResponse
+  const responseTray = hasSeverePneumoniaResponse
+    ? { id: 'crisis', label: 'Reconcile + escalate + reassess' } as const
+    : hasEndocarditisHeartFailureResponse
     ? { id: 'crisis', label: 'Recognize + refer + reassess' } as const
     : hasNecrotizingInfectionResponse
     ? { id: 'crisis', label: 'Recognize + mark + escalate' } as const
@@ -4522,6 +4531,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasFebrileNeutropeniaResponse
     || hasNecrotizingInfectionResponse
     || hasEndocarditisHeartFailureResponse
+    || hasSeverePneumoniaResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -5524,6 +5534,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 demonstrating={props.renalHypokalemiaDemonstrating}
                 scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onRenalHypokalemiaTutorSource}
                 onAction={props.onRenalHypokalemiaResponse ?? (() => {})} />
+            )}
+            {hasSeverePneumoniaResponse && (
+              <SeverePneumoniaTray assessment={props.severePneumonia}
+                demonstrating={props.severePneumoniaDemonstrating}
+                onAction={props.onSeverePneumoniaResponse ?? (() => {})} />
             )}
             {hasEndocarditisHeartFailureResponse && (
               <EndocarditisHeartFailureTray assessment={props.endocarditisHeartFailure}

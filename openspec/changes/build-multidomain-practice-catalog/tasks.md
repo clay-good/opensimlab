@@ -1522,6 +1522,30 @@ credited toward the catalog until every item in the completion contract passes.
     echocardiography acquisition or interpretation, diagnosis, antimicrobial, dose, route, fluid,
     diuretic, vasoactive agent, oxygen setting, operation, prosthesis, theatre time, anaesthetic
     plan, disposition, prognosis, or outcome control exists.
+  - [x] Infectious-disease slice 6/10 adds severe community-acquired pneumonia, where the score
+    answered a different question. A 62-year-old with multilobar consolidation presents with
+    respiratory rate 30/min, SpO2 92% on an inspired fraction of 0.35 giving an oxygenation ratio of
+    171, BP 106/64 mmHg, urea 8.4 mmol/L, C-reactive protein 284 mg/L, and sodium 129 mmol/L. Two
+    supplied instruments are both correctly calculated and disagree: the mortality score reads 2,
+    placing him in a ward band, while three severity criteria are met, which defines severe
+    pneumonia. Nothing is hidden and nothing is mismeasured, so the failure is interpretive rather
+    than perceptual. The learner holds both together; recognizes that the mortality score answers
+    thirty-day death rather than level of care, with pooled discrimination for predicting
+    critical-care admission of about 0.69; requests critical-care review while the patient is still
+    on a ward trajectory, citing the criteria rather than the band; reviews a boundary in which no
+    severity tool has randomised outcome evidence for triage, the delay-harm evidence is confounded
+    by indication, the criteria have never been re-derived, and the C-reactive protein and sodium
+    appear in neither instrument; and records bounded escalation intent. After two authored hours the
+    ratio falls to 92 while the saturation falls only two points, confusion appears, and the mortality
+    score catches up to 4, which was always going to happen. No learner history, examination,
+    observation or test acquisition, blood gas, imaging, scoring, diagnosis, antimicrobial, dose,
+    route, fluid, oxygen device or setting, ventilation mode, vasoactive agent, steroid, procedure,
+    bed allocation, disposition, prognosis, or outcome control exists.
+  - [x] Verify slice 6 with twelve contract checks, twenty-one reporting checks, eight tray checks,
+    and five screen-reader checks, including that the saturation falls exactly two points while the
+    ratio collapses, that an idle and an actively managed run reach identical vitals, and that only
+    `criticalCareBeforeDeterioration` distinguishes them. The published report catalog grows to 224
+    records.
 - [x] Repair four defects a consistency audit found in already-published infectious-disease
   scenarios, and cover each with a regression test.
   - [x] The necrotizing-infection tray rendered a live derived risk score inside its static

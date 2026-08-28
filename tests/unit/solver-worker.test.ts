@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: Endocarditis heart-failure state has protocol version 183', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(183);
+  it('Scenario: Severe pneumonia state has protocol version 184', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(184);
   });
 
   it('Scenario: init reports ready before any step runs', () => {
