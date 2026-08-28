@@ -3160,10 +3160,38 @@ value table, and the disputed timing and modality boundaries. Independent clinic
 quality records, complete inclusive-runtime checks, and production reporting evidence remain
 pending.
 
-Remaining eight: sepsis without shock; septic shock; meningitis; neutropenic fever; severe
-community-acquired pneumonia; cellulitis progressing to necrotizing infection; endocarditis
-complication; toxic-shock pattern. The planned `source-control reassessment` entry is retired,
-because this scenario is that lesson; a future intra-abdominal source would need its own entry.
+The third infectious-disease preview, `febrile-neutropenia-blind-examination@0.1.0`, teaches that
+the examination is blind, so the pathway carries the safety. Neutropenia removes local,
+neutrophil-dependent signs; it does not remove the infection and does not blunt the systemic
+response, which merely lags. An early framing that the patient cannot mount an inflammatory
+response was factually wrong and was corrected before authoring.
+
+Fourteen choices expose no agent, dose, route, combination, duration, de-escalation, antifungal,
+growth-factor, or prophylaxis decision, which is faithful rather than evasive: the guidance itself
+delegates agent selection to local microbiology policy. Four refusals hold the boundary, each a
+real error: treating the modest marker as reassurance, deferring therapy on a low-risk score,
+waiting for a localizing sign, and reading the flat white cell count as evidence against infection.
+
+Three authored values carry the teaching. The untreated contrast drops the temperature to 36.1 C,
+because the naive reading of a falling fever is improvement. The white cell count never rises in
+any branch, because a patient without neutrophils cannot mount one. And the treated C-reactive
+protein rises above its presenting value, because the marker lags by many hours and its climb is
+catching up rather than failing. The scenario also states plainly that the one-hour target is a
+system-design safety margin rather than a validated threshold, that the United Kingdom guideline
+names no number at all, and that the risk scores address disposition rather than whether
+antimicrobials are given.
+
+See `docs/evidence-briefs/febrile-neutropenia-blind-examination.md` for source locators, the value
+table, and the disputed timing and scoring boundaries. Independent clinical review, four quality
+records, complete inclusive-runtime checks, and production reporting evidence remain pending.
+
+Remaining seven: sepsis without shock; septic shock; meningitis; severe community-acquired
+pneumonia; cellulitis progressing to necrotizing infection; endocarditis complication; toxic-shock
+pattern. The planned `source-control reassessment` entry is retired, because the obstructed-kidney
+scenario is that lesson; a future intra-abdominal source would need its own entry. Research is
+banked for the necrotizing-infection and endocarditis slices, and indicates the toxic-shock entry
+should be authored as a diagnostic-boundary lesson about a surveillance case definition that
+cannot be met at the bedside, rather than as another escalation lesson.
 
 #### Toxicology: 15
 

@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -112,6 +112,7 @@ export function stateSummary(
     readonly renalHypermagnesemia?: RenalHypermagnesemiaSnapshot;
     readonly meningococcalSepsis?: MeningococcalSepsisSnapshot;
     readonly obstructedKidney?: ObstructedKidneySnapshot;
+    readonly febrileNeutropenia?: FebrileNeutropeniaSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -165,7 +166,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -189,6 +190,34 @@ export function stateSummary(
           + ' intravenous.');
       }
     }
+  }
+  if (options.febrileNeutropenia) {
+    const patient = options.febrileNeutropenia;
+    for (const field of ['systolicMmHg', 'diastolicMmHg'] as const) {
+      const value = state[field];
+      if (!options.invalid.has(field) && Number.isFinite(value)) {
+        lines.push(`${FIELDS[field].label}: ${value.toFixed(FIELDS[field].precision)} ${FIELDS[field].unit}.`);
+      }
+    }
+    lines.push('Supplied starting findings were temperature 38.4 degrees Celsius, heart rate 104 per minute, neutrophils 0.2, white cells 0.8, C-reactive protein 42 milligrams per liter, and lactate 1.8 millimoles per liter, on day 10 after chemotherapy. The patient looks well and has no localizing findings. These remain historical starting findings.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push('Without neutrophils there is no pus, redness and swelling are muted, and imaging can stay clear. Absent local signs are a consequence of neutropenia, not evidence against infection.');
+    lines.push(`Recognition: ${patient.recognitionAtTick === null ? 'not yet recorded' : 'recorded'}. Neutropenic sepsis pathway: ${patient.pathwayAtTick === null ? 'not yet activated' : 'activated'}. Cultures: ${patient.culturesAtTick === null ? 'not yet requested' : 'requested'}. Empiric antimicrobial intent: ${patient.antimicrobialIntentAtTick === null ? 'not yet recorded' : 'recorded'}. Surveillance: ${patient.monitoringAtTick === null ? 'not arranged' : 'arranged'}.`);
+    lines.push('Guidance delegates the agent to local microbiology policy, so no drug, dose, route, or combination is selected. Oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.labObservation
+      ? `Last requested laboratory evidence at simulated ${formatElapsed(patient.labObservation.atTick)}: neutrophils ${patient.labObservation.absoluteNeutrophilsX109L.toFixed(1)}; white cells ${patient.labObservation.whiteCellsX109L.toFixed(1)}; C-reactive protein ${patient.labObservation.crpMgL} milligrams per liter; lactate ${patient.labObservation.lactateMmolL.toFixed(1)} millimoles per liter. A laboratory-only check does not refresh the observations.`
+      : 'No new laboratory-only measurement has been requested.');
+    lines.push(patient.observationsOnly
+      ? `Last requested observations at simulated ${formatElapsed(patient.observationsOnly.atTick)}: temperature ${patient.observationsOnly.coreTemperatureC.toFixed(1)} degrees Celsius; heart rate ${patient.observationsOnly.heartRateBpm} per minute; capillary refill ${patient.observationsOnly.capillaryRefillSeconds} seconds. An observations-only round does not refresh laboratory evidence.`
+      : 'No new observations-only round has been requested.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: temperature ${patient.observation.coreTemperatureC.toFixed(1)} degrees Celsius; heart rate ${patient.observation.heartRateBpm} per minute; mean arterial pressure ${patient.observation.meanArterialMmHg}; neutrophils ${patient.observation.absoluteNeutrophilsX109L.toFixed(1)}; lactate ${patient.observation.lactateMmolL.toFixed(1)} millimoles per liter; ${patient.observation.alertness}. These are historical observations, not live measurements.`
+      : 'No new full assessment has been requested.');
+    if (patient.untreatedResponseObserved && patient.antimicrobialIntentAtTick === null) lines.push('A full assessment recorded a falling temperature with failing perfusion and no rise in the white cell count. In a patient who cannot mount a count, that combination is worsening infection.');
+    lines.push('C-reactive protein takes many hours to rise, so it is uninformative at the door and its later climb is lag catching up. The patient remains profoundly neutropenic, no source or organism is established, and no discharge readiness is certified.');
+    lines.push(options.alarms.length === 0 ? 'No active alarms.'
+      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    return lines.join(' ');
   }
   if (options.obstructedKidney) {
     const patient = options.obstructedKidney;

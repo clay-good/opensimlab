@@ -1420,6 +1420,44 @@ credited toward the catalog until every item in the completion contract passes.
     The published report catalog grows to 220 records and every earlier module's immutable evidence
     is unchanged. This infrastructure evidence does not replace independent clinical, inclusive-
     runtime, or production Turnstile/D1 verification, and four quality records remain outstanding.
+  - [x] Infectious-disease slice 3/10 adds febrile neutropenia, where the examination is blind. A
+    61-year-old on day 10 after chemotherapy walks in looking well with one fever reading and no
+    localizing findings; authored state is temperature 38.4 C, heart rate 104/min, BP 118/72 mmHg,
+    capillary refill 2 s, neutrophils 0.2 x10^9/L, white cells 0.8, platelets 96, C-reactive protein
+    42 mg/L, and lactate 1.8 mmol/L. The learner reconciles the fever, count, chemotherapy day, and
+    absent local signs; recognizes an emergency despite a blind examination; activates the
+    neutropenic sepsis pathway and acute oncology team with the arrival clock recorded and requests
+    peripheral and line cultures without delaying therapy; reviews a boundary in which the one-hour
+    figure is a system-design safety margin rather than a validated threshold, the United Kingdom
+    guideline says only immediately, and risk scores address disposition rather than whether
+    antimicrobials are given; then records bounded intent for immediate empiric intravenous therapy
+    per local protocol. Without intent, a strict contrast supplies temperature 36.1 C, heart rate
+    128/min, BP 86/48 mmHg, capillary refill 4 s, neutrophils 0.1, and lactate 3.9 mmol/L, with no
+    rise in the white cell count. With intent, a strict later assessment supplies temperature 37.6 C,
+    heart rate 96/min, and lactate 1.9 mmol/L alongside a C-reactive protein of 126 mg/L that exceeds
+    the presenting 42 because the marker lags. Neutropenia persists in every branch. No learner
+    history, examination, observation or test acquisition, imaging, risk scoring, diagnosis,
+    antimicrobial, dose, route, combination, duration, de-escalation, antifungal, growth-factor,
+    prophylaxis, fluid, oxygen, procedure, disposition, prognosis, or outcome control exists.
+  - [x] Correct a clinical framing error before authoring. The initial premise held that a
+    neutropenic patient mounts no inflammatory response; that is false. Neutropenia blunts local,
+    neutrophil-dependent signs, while fever, tachycardia, and C-reactive protein are preserved and
+    merely lag. The scenario, its limitations, and its brief now say so, and the authored values are
+    built on it: a falling temperature and a flat white cell count are deterioration rather than
+    reassurance, and a marker rising after treatment is lag rather than failure.
+  - [x] Verify slice 3 with a green suite: ten contract checks, twenty-two reporting checks, and
+    eight tray checks, covering both contrasts, all four refusals, the handoff gate, takeover
+    ordering after the untreated contrast, and the absence of any named agent in either the snapshot
+    or the rendered tray. The published report catalog grows to 221 records.
+  - [x] Close the report-coverage gap the earlier audit identified. The module list feeding the
+    report catalog is hand-maintained in scripts/build-completion-catalog.ts and nothing tied it to
+    the module registry, so a module could be routed and playable while the Worker rejected every
+    report from it as an unknown scenario. Two guards now assert that the table matches
+    availableModules() in both directions and that every authored scenario has a current-version
+    record the Worker will accept. Both were mutation-tested by removing records and confirming they
+    fail with a named message. Measured coverage is 13 of 13 modules and 213 of 213 scenarios; an
+    apparent 212-versus-211 discrepancy resolved to `status-epilepticus` being authored in two
+    modules, not a missing record.
   - [x] Toxicology slice 1/15 establishes the indexable `/toxicology` module with one authored
     methemoglobinemia lab after documented topical benzocaine exposure. The learner reconciles
     cyanosis, symptoms, pulse-coherent SpO2 85%, PaO2 238 mmHg, chocolate-brown blood, and supplied

@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 180 adds the authored obstructed infected kidney snapshot. */
-export const WORKER_PROTOCOL_VERSION = 180;
+/** Version 181 adds the authored febrile neutropenia snapshot. */
+export const WORKER_PROTOCOL_VERSION = 181;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -259,6 +259,46 @@ export interface ObstructedKidneySnapshot {
     readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
     readonly meanArterialMmHg: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
     readonly coreTemperatureC: number; readonly trackAndTriggerScore: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true;
+  readonly doseModelAvailable: false;
+  readonly durableRecoveryProven: false;
+}
+
+export interface FebrileNeutropeniaSnapshot {
+  readonly recognitionAtTick: number | null;
+  readonly pathwayAtTick: number | null;
+  readonly culturesAtTick: number | null;
+  readonly antimicrobialIntentAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly responseDueInSeconds: number | null;
+  readonly untreatedResponseObserved: boolean;
+  readonly treatedResponseObserved: boolean;
+  readonly crpReassuranceAttempted: boolean;
+  readonly scoreDeferralAttempted: boolean;
+  readonly sourceWaitAttempted: boolean;
+  readonly leukocytosisExpected: boolean;
+  readonly labObservation: {
+    readonly atTick: number; readonly absoluteNeutrophilsX109L: number;
+    readonly whiteCellsX109L: number; readonly plateletsX109L: number;
+    readonly crpMgL: number; readonly lactateMmolL: number;
+  } | null;
+  readonly observationsOnly: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly coreTemperatureC: number; readonly capillaryRefillSeconds: number;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly absoluteNeutrophilsX109L: number;
+    readonly whiteCellsX109L: number; readonly plateletsX109L: number;
+    readonly crpMgL: number; readonly lactateMmolL: number;
+    readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
+    readonly meanArterialMmHg: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly coreTemperatureC: number; readonly capillaryRefillSeconds: number; readonly alertness: string;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -3606,6 +3646,7 @@ export interface EquipmentSnapshot {
     readonly renalHypermagnesemia?: RenalHypermagnesemiaSnapshot;
     readonly meningococcalSepsis?: MeningococcalSepsisSnapshot;
     readonly obstructedKidney?: ObstructedKidneySnapshot;
+    readonly febrileNeutropenia?: FebrileNeutropeniaSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

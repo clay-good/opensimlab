@@ -9,6 +9,37 @@ import {
 import {
   handleRequest, reserveVerificationAttempt, validateReportPayload, verifyTurnstile,
 } from '../../workers/reports/src/index.mjs';
+import { availableModules } from '@platform/modules/registry';
+import { SCENARIOS } from '@anesthesia/scenarios';
+import { EMERGENCY_MEDICINE_SCENARIOS } from '../../src/modules/emergency-medicine/scenarios';
+import { CRITICAL_CARE_SCENARIOS } from '../../src/modules/critical-care/scenarios';
+import { CARDIOLOGY_SCENARIOS } from '../../src/modules/cardiology/scenarios';
+import { RESPIRATORY_MEDICINE_SCENARIOS } from '../../src/modules/respiratory-medicine/scenarios';
+import { PEDIATRICS_SCENARIOS } from '../../src/modules/pediatrics/scenarios';
+import { NEUROLOGY_SCENARIOS } from '../../src/modules/neurology/scenarios';
+import { TOXICOLOGY_SCENARIOS } from '../../src/modules/toxicology/scenarios';
+import { OBSTETRICS_SCENARIOS } from '../../src/modules/obstetrics/scenarios';
+import { NEONATOLOGY_SCENARIOS } from '../../src/modules/neonatology/scenarios';
+import { ENDOCRINE_METABOLIC_SCENARIOS } from '../../src/modules/endocrine-metabolic/scenarios';
+import { RENAL_ELECTROLYTE_SCENARIOS } from '../../src/modules/renal-electrolyte/scenarios';
+import { INFECTIOUS_DISEASE_SCENARIOS } from '../../src/modules/infectious-disease/scenarios';
+
+/**
+ * The module list the report catalog is built from is hand-maintained in
+ * scripts/build-completion-catalog.ts. Nothing previously tied it to the module
+ * registry, so a module could be routed and playable while every report from it
+ * was rejected by the Worker as an unknown scenario. This table closes that.
+ */
+const PLAYABLE_MODULES = [
+  ['anesthesia', SCENARIOS], ['emergency-medicine', EMERGENCY_MEDICINE_SCENARIOS],
+  ['critical-care', CRITICAL_CARE_SCENARIOS], ['cardiology', CARDIOLOGY_SCENARIOS],
+  ['respiratory-medicine', RESPIRATORY_MEDICINE_SCENARIOS], ['pediatrics', PEDIATRICS_SCENARIOS],
+  ['neurology', NEUROLOGY_SCENARIOS], ['toxicology', TOXICOLOGY_SCENARIOS],
+  ['obstetrics', OBSTETRICS_SCENARIOS], ['neonatology', NEONATOLOGY_SCENARIOS],
+  ['endocrine-metabolic', ENDOCRINE_METABOLIC_SCENARIOS],
+  ['renal-electrolyte', RENAL_ELECTROLYTE_SCENARIOS],
+  ['infectious-disease', INFECTIOUS_DISEASE_SCENARIOS],
+] as const;
 
 const context: ScenarioReportContext = {
   scenarioId: 'routine-induction', contentVersion: '0.1.0', appVersion: '0.1.0-alpha.1',
@@ -132,9 +163,9 @@ describe('scenario report contract', () => {
     }[] };
     expect(catalog.schemaVersion).toBe(2);
     expect(catalog.evidenceAlgorithm).toBe('scenario-evidence-v1');
-    expect(catalog.scenarios).toHaveLength(220);
+    expect(catalog.scenarios).toHaveLength(221);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(220);
+      .toBe(221);
     for (const contentVersion of ['0.1.0', '0.1.1', '0.1.2']) {
       expect(catalog.scenarios).toContainEqual(expect.objectContaining({
         moduleId: 'endocrine-metabolic', scenarioId: 'adrenal-crisis-treatment-before-tests', contentVersion,
@@ -941,6 +972,34 @@ describe('scenario report contract', () => {
     const interception = serviceWorker.indexOf('event.respondWith');
     expect(bypass).toBeGreaterThan(0);
     expect(bypass).toBeLessThan(interception);
+  });
+
+  it('leaves no playable module out of the report catalog', () => {
+    const catalog = JSON.parse(readFileSync(
+      join(process.cwd(), 'workers/reports/src/report-catalog.generated.json'), 'utf8',
+    )) as { scenarios: { moduleId: string; scenarioId: string; contentVersion: string }[] };
+    // The table itself must not drift from the registry in either direction.
+    expect([...PLAYABLE_MODULES.map(([id]) => id)].sort())
+      .toEqual(availableModules().map((entry) => entry.id).sort());
+    const covered = new Set(catalog.scenarios.map((entry) => entry.moduleId));
+    for (const [moduleId] of PLAYABLE_MODULES) {
+      expect(covered, `${moduleId} has no report catalog record`).toContain(moduleId);
+    }
+  });
+
+  it('gives every playable scenario a current-version record the Worker will accept', () => {
+    const catalog = JSON.parse(readFileSync(
+      join(process.cwd(), 'workers/reports/src/report-catalog.generated.json'), 'utf8',
+    )) as { scenarios: { moduleId: string; scenarioId: string; contentVersion: string }[] };
+    const published = new Set(catalog.scenarios
+      .map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`));
+    const unreportable = PLAYABLE_MODULES.flatMap(([moduleId, scenarios]) => scenarios
+      .filter((scenario) => !published.has(`${moduleId}:${scenario.metadata.id}@${scenario.metadata.version}`))
+      .map((scenario) => `${moduleId}:${scenario.metadata.id}@${scenario.metadata.version}`));
+    // A scenario absent here is one whose reports the Worker rejects with a 400.
+    expect(unreportable).toEqual([]);
+    expect(PLAYABLE_MODULES.reduce((total, [, scenarios]) => total + scenarios.length, 0))
+      .toBeGreaterThanOrEqual(new Set(catalog.scenarios.map((entry) => entry.scenarioId)).size);
   });
 
   it('inherits one shared correction door across every scenario surface', () => {

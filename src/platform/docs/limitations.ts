@@ -5663,6 +5663,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Timing is urgent but unnumbered, and the choice of route belongs to the qualified team based on local resources and patient factors. Inflammatory markers are not established decision tools here. One major urological urosepsis section is currently withdrawn pending review, and the complicated-urinary-infection antibiotic trials rarely enrolled patients with obstruction, stones, or drains at all.',
     briefIn: ['obstructed-infected-kidney-decompression'],
   },
+  {
+    id: 'febrile-neutropenia-presentation-and-response-are-authored',
+    headline: 'Both elapsed contrasts are authored, and neither is a validated deadline.',
+    simplification: 'The case supplies one fixed presentation, an untreated contrast in which temperature falls and perfusion fails, and a treated contrast in which observations settle while the marker keeps climbing. No marrow, host-response, organism, or antimicrobial model runs underneath.',
+    whereItMisleads: 'The clocks become a validated biological cliff, a safe observation window, or proof that the recorded intent caused the improvement.',
+    correctUnderstanding: 'Real febrile neutropenia varies widely, and the timing evidence specific to this population is sparse and conflicting. Falling temperature and an absent leucocytosis are consistent with worsening infection in someone who cannot mount a count; a rising marker after treatment is its lag catching up. No causal effect follows from this authored model.',
+    briefIn: ['febrile-neutropenia-blind-examination'],
+  },
+  {
+    id: 'febrile-neutropenia-controls-are-recognition-activation-and-intent-only',
+    headline: 'Recorded intent is not a delivered dose, and the agent is never chosen here.',
+    simplification: 'The learner records bounded qualified-team intent for immediate empiric intravenous therapy according to local protocol. No agent, dose, route, combination, duration, de-escalation, antifungal, growth-factor, or prophylaxis decision exists.',
+    whereItMisleads: 'Recording intent is read as the first dose having reached the patient, or the lesson is taken to endorse a particular regimen.',
+    correctUnderstanding: 'Guidance deliberately delegates the agent to local microbiology policy, so no regimen is implied. Antimicrobial selection, delivery, review once cultures return, duration, and every de-escalation decision remain qualified-team work, as does the antimicrobial-stewardship counterweight this lesson cannot teach.',
+    briefIn: ['febrile-neutropenia-blind-examination'],
+  },
+  {
+    id: 'febrile-neutropenia-timing-and-risk-scores-rest-on-thin-dated-evidence',
+    headline: 'The one-hour target is a safety margin, and the risk scores do not decide treatment.',
+    simplification: 'The case states that the widely quoted one-hour figure is a system-design margin rather than a validated threshold, that one major guideline says only immediately, and that risk scores stratify disposition after the emergency response has begun.',
+    whereItMisleads: 'A learner treats one hour as a biological cliff, or uses a low-risk score to defer or withhold empiric therapy, which is an off-label use of the instrument.',
+    correctUnderstanding: 'Population-specific timing studies are few and conflicting, with any signal appearing later than one hour rather than at it. Risk scores are calculated at fever onset, do not update, are not validated in children, and the newer one is not validated in blood cancers or unstable patients. Low-risk strata still carry real complication rates. This field is also still running on guidance published between 2010 and 2018.',
+    briefIn: ['febrile-neutropenia-blind-examination'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

@@ -41,6 +41,7 @@ import { supportsRenalHypocalcemia } from '../../renal-electrolyte/hypocalcemia'
 import { supportsRenalHypermagnesemia } from '../../renal-electrolyte/hypermagnesemia';
 import { supportsMeningococcalSepsis } from '../../infectious-disease/meningococcal-sepsis';
 import { supportsObstructedKidney } from '../../infectious-disease/obstructed-kidney';
+import { supportsFebrileNeutropenia } from '../../infectious-disease/febrile-neutropenia';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -614,6 +615,43 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-infectious-disease-neutropenia-')) {
+      if (!supportsFebrileNeutropenia(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The infectious-disease febrile neutropenia lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^febrile-neutropenia-${id}-\\d+$`).test(entry.eventId));
+      const recognition = event('neutropenic-fever-recognized'); const pathway = event('pathway-activated');
+      const cultures = event('cultures-requested'); const antimicrobial = event('antimicrobial-intent');
+      const boundaries = event('boundary-review'); const monitoring = event('monitoring');
+      const handoff = event('handoff');
+      const full = (entry: EngineEvent) => /^febrile-neutropenia-(initial|untreated|treated)-reassessment-\d+$/.test(entry.eventId);
+      const later = log.find(full);
+      const refusedShortcut = event('crp-reassurance-refused') ?? event('score-deferral-refused')
+        ?? event('source-wait-refused') ?? event('leukocytosis-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'reconcile-infectious-disease-neutropenia-fever-count-chemotherapy-day-and-absent-local-signs': { met: !!recognition, tick: recognition?.tick,
+          finding: (recognition ? 'The fever, the neutrophil count, the chemotherapy day, and the absent local findings were reconciled. ' : 'The fever and the neutrophil count were not reconciled with the absent local findings. ')
+            + 'Around three in five episodes never localize, and most of those still turn out to be infection.' },
+        'recognize-infectious-disease-neutropenia-emergency-despite-a-blind-examination': { met: !!recognition && !!boundaries, tick: boundaries?.tick,
+          finding: (recognition && boundaries ? 'The emergency was recognized despite a blind examination. ' : 'Recognition despite a blind examination, or its boundary review, remains incomplete. ')
+            + (refusedShortcut ? 'A reassurance shortcut was attempted and refused; it remains in this run. ' : '')
+            + 'Neutropenia removes the local signs, not the infection, and the marker had not had time to rise.' },
+        'activate-infectious-disease-neutropenia-pathway-and-culture-ownership': { met: !!pathway && !!cultures, tick: pathway?.tick,
+          finding: (pathway && cultures ? 'The pathway and acute oncology team were activated with the arrival clock recorded, and peripheral and line cultures were arranged without delaying therapy. ' : 'Pathway activation or culture sampling remains incomplete. ')
+            + (monitoring ? '' : 'Continuous surveillance was not arranged. ')
+            + 'Activation is the emergency response itself, not a step that waits for a source, an image, or a score.' },
+        'review-infectious-disease-neutropenia-timing-and-risk-score-boundary': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The timing target and the risk scores were reviewed for what they actually establish. ' : 'The timing and risk-score boundary review is missing. ')
+            + 'The one-hour figure is a system-design safety margin rather than a validated biological threshold, and risk scores stratify disposition after the emergency response has begun rather than deciding whether antimicrobials are given.' },
+        'record-infectious-disease-neutropenia-bounded-empiric-intent-and-strict-reassessment': { met: !!antimicrobial && !!later, tick: antimicrobial?.tick,
+          finding: (antimicrobial && later ? 'Bounded empiric intent per local protocol was recorded and a full assessment made the authored response available for review. ' : 'Bounded empiric intent or its requested full assessment remains incomplete. ')
+            + 'Recorded intent is not a delivered first dose. A rising marker after treatment is lag catching up, and a falling temperature without treatment is deterioration.' },
+        'handoff-infectious-disease-neutropenia-continuing-neutropenia-absent-source-and-active-risk': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'Serial findings, delivered therapy pending cultures, the continuing neutropenia, and daily reassessment were handed off. ' : 'Current full findings or continuing-care ownership remains incomplete. ')
+            + 'A source, an organism, a risk score, and a falling marker are not handoff gates. The source may never be identified, and no marrow recovery or discharge readiness is certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-infectious-disease-obstruction-')) {
       if (!supportsObstructedKidney(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The infectious-disease obstructed kidney lesson was not active.' } satisfies ObjectiveFinding;

@@ -2128,6 +2128,23 @@
       "limitationManifestHash": "sha256:e80acd3fc429c1a683378d6b57471ad0b344e9437e99c71ccd5d575595087945"
     },
     {
+      "scenarioId": "febrile-neutropenia-blind-examination",
+      "contentVersion": "0.1.0",
+      "moduleId": "infectious-disease",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:6238076c0bbb2332d38ccc58566a280dc221874a176a1aa6f4687d6e3da76541",
+      "defaultsHash": "sha256:f62197f7914d8922711f06f1aff008ab260eb44453dbd3d7e26df43f3c3481ba",
+      "maturityHash": "sha256:3b84553fde161b9f4f63ab8dccfcb3779d6b31c322cf5c6f4f039e09c51004d7",
+      "sourceManifestHash": "sha256:c39c19cb00b3a9c244f9ba7cec157470e6e9d8da40291363fd1aae30b836d85d",
+      "limitationManifestHash": "sha256:3138368ff9b288a8a0f003b9f2b751109f3fa56f13881a3b97bd5519d22b5351"
+    },
+    {
       "scenarioId": "meningococcal-sepsis-recognition-and-escalation",
       "contentVersion": "0.1.0",
       "moduleId": "infectious-disease",
