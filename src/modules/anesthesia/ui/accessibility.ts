@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -114,6 +114,7 @@ export function stateSummary(
     readonly obstructedKidney?: ObstructedKidneySnapshot;
     readonly febrileNeutropenia?: FebrileNeutropeniaSnapshot;
     readonly necrotizingInfection?: NecrotizingInfectionSnapshot;
+    readonly endocarditisHeartFailure?: EndocarditisHeartFailureSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -167,7 +168,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -192,6 +193,34 @@ export function stateSummary(
       }
     }
   }
+  if (options.endocarditisHeartFailure) {
+    const patient = options.endocarditisHeartFailure;
+    for (const field of ['systolicMmHg', 'diastolicMmHg'] as const) {
+      const value = state[field];
+      if (!options.invalid.has(field) && Number.isFinite(value)) {
+        lines.push(`${FIELDS[field].label}: ${value.toFixed(FIELDS[field].precision)} ${FIELDS[field].unit}.`);
+      }
+    }
+    lines.push('Supplied starting findings were day 3 of appropriate antimicrobial therapy for confirmed aortic-valve endocarditis, new breathlessness on minimal exertion, heart rate 118 per minute, blood pressure 104 over 62 with a pulse pressure of 42, oxygen saturation 92 percent in air, a 12 millimetre aortic vegetation, and new severe aortic regurgitation. These remain historical starting findings.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push('The C-reactive protein is falling and the cultures are clearing, which describes the infection rather than the valve. No inflammatory marker measures valve destruction, so falling numbers cannot reassure here.');
+    lines.push(`Mechanical failure recognized: ${patient.recognitionAtTick === null ? 'not yet' : 'yes'}. Endocarditis team: ${patient.teamAtTick === null ? 'not yet convened' : 'convened with a surgical centre engaged'}. Surgical referral intent: ${patient.surgicalReferralAtTick === null ? 'not yet recorded' : 'recorded'}. Surveillance: ${patient.monitoringAtTick === null ? 'not arranged' : 'arranged'}.`);
+    lines.push('Acute severe regurgitation gives a normal or narrow pulse pressure, because the ventricle has had no time to dilate; the wide pulse pressure of the textbook belongs to chronic disease. No operation, prosthesis, theatre time, or anaesthetic plan is selected, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.labObservation
+      ? `Last requested laboratory evidence at simulated ${formatElapsed(patient.labObservation.atTick)}: white cells ${patient.labObservation.whiteCellsX109L.toFixed(1)}; C-reactive protein ${patient.labObservation.crpMgL} milligrams per liter; lactate ${patient.labObservation.lactateMmolL.toFixed(1)} millimoles per liter; cultures ${patient.labObservation.culturesClearing ? 'no growth on the latest set' : 'growth on the admission set'}. A laboratory-only check does not refresh the perfusion assessment.`
+      : 'No new laboratory-only measurement has been requested.');
+    lines.push(patient.perfusionObservation
+      ? `Last requested examination at simulated ${formatElapsed(patient.perfusionObservation.atTick)}: blood pressure ${patient.perfusionObservation.systolicMmHg} over ${patient.perfusionObservation.diastolicMmHg}, pulse pressure ${patient.perfusionObservation.pulsePressureMmHg}; respiratory rate ${patient.perfusionObservation.respiratoryRateBpm} per minute; oxygen saturation ${patient.perfusionObservation.spo2Percent} percent on ${patient.perfusionObservation.oxygenSupport}. A perfusion-only look does not refresh laboratory evidence.`
+      : 'No new perfusion-only examination has been requested.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: heart rate ${patient.observation.heartRateBpm} per minute; pulse pressure ${patient.observation.pulsePressureMmHg}; oxygen saturation ${patient.observation.spo2Percent} percent on ${patient.observation.oxygenSupport}; C-reactive protein ${patient.observation.crpMgL} milligrams per liter; ${patient.observation.alertness}. These are historical observations, not live measurements.`
+      : 'No new full assessment has been requested.');
+    if (patient.decompensationObserved) lines.push('The C-reactive protein has fallen further while the patient has become very much worse. That divergence is the whole point.');
+    lines.push('The decompensation occurs whatever is recorded, because the treatment is an operation that is not in this rehearsal. Neither operability, transfer acceptance, nor survival is established.');
+    lines.push(options.alarms.length === 0 ? 'No active alarms.'
+      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    return lines.join(' ');
+  }
   if (options.necrotizingInfection) {
     const patient = options.necrotizingInfection;
     for (const field of ['systolicMmHg', 'diastolicMmHg'] as const) {
@@ -201,7 +230,7 @@ export function stateSummary(
       }
     }
     lines.push('Supplied starting findings were 36 hours of oral antibiotics without settling, severe pain extending past the edge of the redness, temperature 37.4 degrees Celsius, heart rate 104 per minute, and lactate 2.4 millimoles per liter. Crepitus and bullae are absent. These remain historical starting findings.');
-    lines.push(`Current alertness: ${patient.alertness}. Current derived risk score: ${patient.riskScore}.`);
+    lines.push(`Current alertness: ${patient.alertness}.`);
     lines.push('A score below its cutoff excludes nothing here: pooled sensitivity at that cutoff is near two-thirds, and the score counts late physiology that early disease has not produced. Absent crepitus and absent bullae are late-sign absences, not reassurance.');
     lines.push(`Disproportionate pain reconciled: ${patient.recognitionAtTick === null ? 'not yet' : 'yes'}. Erythema border: ${patient.marginMarkedAtTick === null ? 'not yet marked' : 'marked and timed'}. Urgent surgical review: ${patient.surgeryAtTick === null ? 'not yet requested' : 'requested'}. Antimicrobial intent: ${patient.antimicrobialIntentAtTick === null ? 'not yet recorded' : 'recorded'}. Surveillance: ${patient.monitoringAtTick === null ? 'not arranged' : 'arranged'}.`);
     lines.push('Exploration is the only test that can exclude this, and it is a qualified-team act. No agent, dose, incision, extent, or theatre time is selected. Oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
@@ -257,7 +286,7 @@ export function stateSummary(
       }
     }
     lines.push('Supplied starting findings were temperature 38.9 degrees Celsius, heart rate 118 per minute, respiratory rate 26 per minute, lactate 2.6 millimoles per liter, creatinine 148 micromoles per liter against a baseline near 70, and an 8 millimeter obstructing distal ureteric stone with moderate hydronephrosis. Appropriate intravenous antimicrobial therapy is a supplied premise, not a learner decision. These remain historical starting findings.');
-    lines.push(`Current alertness: ${patient.alertness}. Current authored track-and-trigger score: ${patient.trackAndTriggerScore}.`);
+    lines.push(`Current alertness: ${patient.alertness}.`);
     lines.push(`Obstruction reconciled: ${patient.recognitionAtTick === null ? 'not yet' : 'yes'}. Urology and interventional radiology: ${patient.urologyAtTick === null ? 'not yet involved' : 'involved'}. Cultures: ${patient.culturesAtTick === null ? 'not yet requested' : 'requested'}.`);
     lines.push(`Decompression intent: ${patient.decompressionIntentAtTick === null ? 'not yet recorded' : 'recorded'}. Definitive stone treatment: ${patient.stoneDeferralAtTick === null ? 'not yet deferred' : 'deferred until the infection is treated'}. Surveillance: ${patient.monitoringAtTick === null ? 'not arranged' : 'arranged'}.`);
     lines.push('Recorded intent is not a placed drain. No drainage modality, access, operator, or time is selected, and neither percutaneous nephrostomy nor retrograde stenting is marked correct. Oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');

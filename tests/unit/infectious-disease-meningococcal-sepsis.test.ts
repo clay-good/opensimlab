@@ -95,6 +95,21 @@ describe('Infectious disease meningococcal sepsis contract', () => {
     expect(withAttendance.snapshot.ended).toBe('handoff');
   });
 
+  it('refuses consultant attendance before the authored one-hour review', () => {
+    // Ungated, this action put the patient straight into the best authored state, hid the
+    // untreated deterioration, and pre-satisfied the handoff gate it exists to enforce.
+    const early = drive([[0, 'escalate-consultant']], 20);
+    expect(early.ids).toContain('consultant-attendance-premature');
+    expect(early.snapshot.consultantAtTick).toBeNull();
+    const vitals = early.model.vitals();
+    expect(vitals.heartRateBpm).toBe(138);
+
+    // The untreated contrast must still be reachable after that attempt.
+    const later = drive([[0, 'escalate-consultant']], DELAY + 20);
+    expect(later.ids).toContain('clinical-deterioration');
+    expect(later.model.vitals().heartRateBpm).toBe(152);
+  });
+
   it('permits handoff before the one-hour review without demanding attendance', () => {
     const early: Choices = [[0, 'recognize-rash'], [1, 'call-senior'], [2, 'request-bloods'],
       [3, 'record-antimicrobial-intent'], [4, 'record-fluid-intent'], [5, 'review-boundaries'],

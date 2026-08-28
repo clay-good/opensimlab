@@ -118,6 +118,12 @@ export class MeningococcalSepsis {
         return emit('fluid-and-critical-care-intent', 'Bounded qualified-team fluid intent is recorded together with a critical-care referral to review the need for central access and vasoactive support. The referral asks a qualified team to review that need; it does not start, choose, or titrate a vasoactive agent, and no bolus volume is prescribed here.');
       case 'escalate-consultant':
         if (this.consultantAt !== null) return events;
+        // Attendance answers the authored one-hour review. Before that review has
+        // fired there is no inadequate response to escalate, and accepting it early
+        // would mask the untreated contrast this lesson exists to show.
+        if (!this.responseChecked) {
+          return emit('consultant-attendance-premature', 'Alerting a consultant to attend in person was not recorded yet. That escalation answers a specific finding, an inadequate response an hour after the recorded interventions, and that review has not happened. Senior ownership by telephone is already available and does not wait.');
+        }
         this.change(() => { this.consultantAt = tick; });
         return emit('consultant-attendance', 'A consultant is alerted to attend in person because there was no adequate response within an hour of the recorded interventions. Attendance in person is a distinct escalation from earlier telephone ownership, and it neither replaces critical-care review nor certifies improvement.');
       case 'review-boundaries':

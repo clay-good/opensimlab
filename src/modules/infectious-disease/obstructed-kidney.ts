@@ -210,7 +210,6 @@ export class ObstructedKidney {
       markerDelayAttempted: this.markerDelayAttempted,
       modalityChoiceAttempted: this.modalityChoiceAttempted,
       earlyStoneTreatmentAttempted: this.earlyStoneTreatmentAttempted,
-      trackAndTriggerScore: this.observationFinding(tick).trackAndTriggerScore,
       labObservation: this.labObservation ? { ...this.labObservation } : null,
       observationsOnly: this.observationsOnly ? { ...this.observationsOnly } : null,
       observation: this.observation ? { ...this.observation } : null, alertness: this.vitals().alertness,

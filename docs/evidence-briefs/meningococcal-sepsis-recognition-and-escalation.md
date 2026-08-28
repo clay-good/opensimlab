@@ -57,11 +57,20 @@ refuses vaccination as an exclusion.
 
 ## What is disputed, and stays disputed
 
-The one-hour antimicrobial target is contested outside septic shock. IDSA declined to endorse the
-Surviving Sepsis Campaign guidance, arguing that a universal one-hour mandate drives antimicrobial
-use in patients who turn out not to be infected. This scenario deliberately anchors the clock to a
-named, high-pretest-probability syndrome, where that objection does not apply, and says so in the
-boundary review rather than generalising the rule to undifferentiated fever.
+The one-hour antimicrobial target is contested outside septic shock, though the shape of that
+dispute changed in 2026 and this brief was corrected on August 28, 2026 to say so. IDSA declined to
+endorse the 2016 and 2021 Surviving Sepsis Campaign editions, arguing that a universal one-hour
+mandate drives antimicrobial use in patients who turn out not to be infected. The 2026 edition
+answers that objection with a tiered structure that reserves the one-hour target for septic shock
+and for probable or definite sepsis, while permitting a time-limited course of rapid investigation
+with a three-hour ceiling where sepsis is only possible. IDSA now lists the 2026 adult and paediatric
+guidelines as endorsed. The disagreement was therefore about applying one clock to every
+undifferentiated presentation, and it has largely been resolved in favour of not doing that.
+
+None of this weakens the clock in this scenario, and that is the point worth teaching. This case is a
+named, high-pretest-probability syndrome with its own one-hour rule from a separate guideline, which
+is exactly the population both sides always agreed should be treated immediately. The boundary review
+says so rather than generalising the rule to undifferentiated fever.
 
 Fluid ceilings genuinely disagree: the United Kingdom caps a single paediatric bolus well below the
 international first-hour ceiling, which for this weight is a large difference. The case presents

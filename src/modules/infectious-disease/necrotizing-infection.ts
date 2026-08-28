@@ -187,7 +187,6 @@ export class NecrotizingInfection {
       imagingDelayAttempted: this.imagingDelayAttempted,
       crepitusExclusionAttempted: this.crepitusExclusionAttempted,
       oralContinuationAttempted: this.oralContinuationAttempted,
-      riskScore: this.labFinding(tick).riskScore,
       labObservation: this.labObservation ? { ...this.labObservation } : null,
       limbObservation: this.limbObservation ? { ...this.limbObservation } : null,
       observation: this.observation ? { ...this.observation } : null, alertness: this.vitals().alertness,

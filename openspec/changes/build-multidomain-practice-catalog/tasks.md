@@ -1505,6 +1505,50 @@ credited toward the catalog until every item in the completion contract passes.
     that only `surgeryRequestedBeforeProgression` distinguishes them, that all four exclusion
     shortcuts are refused, and that no antimicrobial is ever named. The published report catalog
     grows to 222 records.
+  - [x] Infectious-disease slice 5/10 adds endocarditis with new heart failure, where the
+    antimicrobial course is working and the patient is dying. A 44-year-old on day 3 of appropriate
+    therapy for confirmed aortic-valve endocarditis becomes breathless; authored state is heart rate
+    118/min, BP 104/62 mmHg with a pulse pressure of 42, RR 26/min, SpO2 92% in air, a supplied 12 mm
+    vegetation with new severe regurgitation, C-reactive protein 180 mg/L and falling, and cultures
+    with no growth. The learner recognizes mechanical failure rather than antimicrobial failure;
+    convenes the multidisciplinary endocarditis team with a valve-surgery centre; reviews a boundary
+    in which acute severe regurgitation narrows rather than widens the pulse pressure, vegetation
+    size is not a standalone trigger, and the surgical timing tiers are consensus rather than
+    randomised-trial thresholds; and records bounded intent for urgent surgical assessment and
+    transfer. After 45 authored minutes the pulse pressure narrows to 18 mmHg, oxygen requirement
+    rises to 15 L, lactate reaches 4.3 mmol/L, and the C-reactive protein falls further to 128 mg/L.
+    That divergence is the lesson. The decompensation occurs whatever the learner records, because
+    the treatment is an operation outside this rehearsal. No learner history, examination,
+    echocardiography acquisition or interpretation, diagnosis, antimicrobial, dose, route, fluid,
+    diuretic, vasoactive agent, oxygen setting, operation, prosthesis, theatre time, anaesthetic
+    plan, disposition, prognosis, or outcome control exists.
+- [x] Repair four defects a consistency audit found in already-published infectious-disease
+  scenarios, and cover each with a regression test.
+  - [x] The necrotizing-infection tray rendered a live derived risk score inside its static
+    supplied-findings paragraph, so after the progression it read "score 11, below its usual cutoff
+    of 6" and revealed the progression before the learner reassessed, in the one lesson whose point
+    is that the score informs only after it stops mattering. It now shows the authored presenting
+    value.
+  - [x] `escalate-consultant` in the meningococcal lesson was ungated. Pressed at tick 0 it placed
+    the patient in the best authored state, masked the ten-minute untreated deterioration entirely,
+    pre-satisfied the handoff gate it exists to enforce, and emitted a message asserting an hour had
+    passed. It is now gated on the authored one-hour review, with a refusal that enters report
+    context and a regression test covering both the refusal and the still-reachable contrast.
+  - [x] The obstructed-kidney completion evidence asserted a two-hour instructor takeover; the
+    constant is eight hours, deliberately after the six-hour untreated contrast.
+  - [x] The screen-reader summary narrated live derived scores, a risk score and a track-and-trigger
+    score computed from laboratory values the learner must request, that no tray rendered and that
+    both surfaces promise are historical. Screen-reader users were receiving state sighted users had
+    to ask for. Both narrations are removed and both fields deleted from the protocol so nothing can
+    leak them again. Live alertness is deliberately retained, being the house convention across all
+    sixteen lessons and consistent with the live vitals on the monitor.
+- [x] Correct the meningococcal evidence brief, which presented the antimicrobial-timing dispute as
+  ongoing. IDSA declined to endorse the 2016 and 2021 Surviving Sepsis Campaign editions, but the
+  2026 edition answers that objection with a tiered structure reserving the one-hour target for
+  septic shock and probable or definite sepsis, and IDSA now lists the 2026 adult and paediatric
+  guidelines as endorsed. The brief says so, dates the correction, and explains why the resolution
+  does not weaken this scenario's clock: a named high-probability syndrome is exactly the population
+  both sides always agreed should be treated immediately.
   - [x] Toxicology slice 1/15 establishes the indexable `/toxicology` module with one authored
     methemoglobinemia lab after documented topical benzocaine exposure. The learner reconciles
     cyanosis, symptoms, pulse-coherent SpO2 85%, PaO2 238 mmHg, chocolate-brown blood, and supplied

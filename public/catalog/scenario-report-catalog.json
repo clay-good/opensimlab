@@ -2128,6 +2128,23 @@
       "limitationManifestHash": "sha256:e80acd3fc429c1a683378d6b57471ad0b344e9437e99c71ccd5d575595087945"
     },
     {
+      "scenarioId": "endocarditis-mechanical-failure-on-a-surgical-clock",
+      "contentVersion": "0.1.0",
+      "moduleId": "infectious-disease",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:51974ca7ddb2de682eadf08f3d7c18404b6dd80cff4de86418e0bc9e5f1c4d73",
+      "defaultsHash": "sha256:dec6827f7a3021d48fb19c6eb8d2d6e576e5ef7803f5f6280b8fdf95bcbfbce9",
+      "maturityHash": "sha256:b2dc3feca1e11096101401302715f94b3fa484e91247c1c09baa31ed2751fcf9",
+      "sourceManifestHash": "sha256:55d83ce031a3b818ae34764219c705f97fb19b69bfdcd1fbfd282ee9d883ee82",
+      "limitationManifestHash": "sha256:add7f0fc5c3222d6b6715506a5fd8809c81612da26612c4a23ae1c2138027c55"
+    },
+    {
       "scenarioId": "febrile-neutropenia-blind-examination",
       "contentVersion": "0.1.0",
       "moduleId": "infectious-disease",

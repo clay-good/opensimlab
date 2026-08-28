@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 182 adds the authored necrotizing infection snapshot. */
-export const WORKER_PROTOCOL_VERSION = 182;
+/** Version 183 adds the authored endocarditis heart-failure snapshot. */
+export const WORKER_PROTOCOL_VERSION = 183;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -243,7 +243,6 @@ export interface ObstructedKidneySnapshot {
   readonly markerDelayAttempted: boolean;
   readonly modalityChoiceAttempted: boolean;
   readonly earlyStoneTreatmentAttempted: boolean;
-  readonly trackAndTriggerScore: number;
   readonly labObservation: {
     readonly atTick: number; readonly lactateMmolL: number; readonly creatinineUmolL: number;
     readonly whiteCellsX109L: number; readonly plateletsX109L: number; readonly crpMgL: number;
@@ -322,7 +321,6 @@ export interface NecrotizingInfectionSnapshot {
   readonly imagingDelayAttempted: boolean;
   readonly crepitusExclusionAttempted: boolean;
   readonly oralContinuationAttempted: boolean;
-  readonly riskScore: number;
   readonly labObservation: {
     readonly atTick: number; readonly whiteCellsX109L: number; readonly crpMgL: number;
     readonly sodiumMmolL: number; readonly creatinineUmolL: number; readonly glucoseMmolL: number;
@@ -340,6 +338,45 @@ export interface NecrotizingInfectionSnapshot {
     readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
     readonly meanArterialMmHg: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
     readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true;
+  readonly doseModelAvailable: false;
+  readonly durableRecoveryProven: false;
+}
+
+export interface EndocarditisHeartFailureSnapshot {
+  readonly recognitionAtTick: number | null;
+  readonly teamAtTick: number | null;
+  readonly surgicalReferralAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly decompensationDueInSeconds: number | null;
+  readonly decompensationObserved: boolean;
+  readonly referralBeforeDecompensation: boolean;
+  readonly markerReassuranceAttempted: boolean;
+  readonly pulsePressureErrorAttempted: boolean;
+  readonly vegetationOnlyAttempted: boolean;
+  readonly deferralAttempted: boolean;
+  readonly pulsePressureMmHg: number;
+  readonly labObservation: {
+    readonly atTick: number; readonly whiteCellsX109L: number; readonly crpMgL: number;
+    readonly creatinineUmolL: number; readonly lactateMmolL: number; readonly culturesClearing: boolean;
+  } | null;
+  readonly perfusionObservation: {
+    readonly atTick: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
+    readonly pulsePressureMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly oxygenSupport: string; readonly cracklesToApices: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly whiteCellsX109L: number; readonly crpMgL: number;
+    readonly creatinineUmolL: number; readonly lactateMmolL: number; readonly culturesClearing: boolean;
+    readonly systolicMmHg: number; readonly diastolicMmHg: number; readonly pulsePressureMmHg: number;
+    readonly respiratoryRateBpm: number; readonly spo2Percent: number; readonly oxygenSupport: string;
+    readonly cracklesToApices: boolean; readonly heartRateBpm: number;
+    readonly meanArterialMmHg: number; readonly coreTemperatureC: number; readonly alertness: string;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -3689,6 +3726,7 @@ export interface EquipmentSnapshot {
     readonly obstructedKidney?: ObstructedKidneySnapshot;
     readonly febrileNeutropenia?: FebrileNeutropeniaSnapshot;
     readonly necrotizingInfection?: NecrotizingInfectionSnapshot;
+    readonly endocarditisHeartFailure?: EndocarditisHeartFailureSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

@@ -5711,6 +5711,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Roughly one confirmed case in three scores below the cutoff, so a low score changes nothing about what to do. Earlier surgery is consistently associated with survival across observational studies, but that evidence is confounded by indication in both directions, since the obviously fulminant reach theatre fastest and also die most, while the too-unstable are delayed. There is no randomised trial and no validated hour threshold. One published review disagrees about the score, having pooled mean scores in confirmed cases rather than sensitivity in suspected ones.',
     briefIn: ['necrotizing-infection-score-cannot-exclude'],
   },
+  {
+    id: 'endocarditis-presentation-and-decompensation-are-authored',
+    headline: 'The decompensation is authored and happens whatever the learner records.',
+    simplification: 'The case supplies one fixed presentation and one fixed decompensation 45 simulated minutes later. No valve, haemodynamic, antimicrobial, or embolic model runs underneath, and the echocardiographic findings are given rather than acquired.',
+    whereItMisleads: 'The clock becomes a validated operative deadline, or the unchanged decompensation is read as the learner having made no difference.',
+    correctUnderstanding: 'The valve fails because the treatment is an operation that happens after this rehearsal ends. What the learner changes is whether the surgical team is already engaged when it arrives. Real presentations vary widely, and no individual course follows from this authored model.',
+    briefIn: ['endocarditis-mechanical-failure-on-a-surgical-clock'],
+  },
+  {
+    id: 'endocarditis-controls-are-recognition-activation-and-referral-intent-only',
+    headline: 'Recorded referral intent is not an accepted transfer or a completed operation.',
+    simplification: 'The learner recognizes mechanical failure, convenes the endocarditis team with a surgical centre, records bounded intent for urgent assessment and transfer, reviews the boundary, and arranges surveillance. No operation, prosthesis, theatre time, anaesthetic plan, antimicrobial, dose, fluid, diuretic, vasoactive agent, or oxygen setting exists.',
+    whereItMisleads: 'Recording intent is read as the patient having been accepted, transferred, or operated on, or the running antimicrobial course is read as inadequate.',
+    correctUnderstanding: 'The antimicrobial course is appropriate and is working; that is the premise, not the problem. The surgical decision and its timing, the transfer, antimicrobial duration, critical-care support, and every operative judgement remain qualified-team work.',
+    briefIn: ['endocarditis-mechanical-failure-on-a-surgical-clock'],
+  },
+  {
+    id: 'endocarditis-surgical-timing-tiers-are-consensus-not-trial-validated',
+    headline: 'The urgency tiers are consensus, and the classic examination sign is absent by design.',
+    simplification: 'The case states that the surgical timing tiers are consensus operationalizations of urgency rather than randomised-trial thresholds, that vegetation size is not a standalone trigger, and that acute severe regurgitation narrows rather than widens the pulse pressure.',
+    whereItMisleads: 'A learner treats a tier as a validated deadline, uses vegetation size alone to decide surgery, or excludes severe regurgitation because the pulse pressure is not wide and the murmur is quiet.',
+    correctUnderstanding: 'The collapsing pulse and wide pulse pressure belong to chronic regurgitation, where the ventricle has had time to dilate; acute severe regurgitation gives a normal or narrow pulse pressure, a soft or absent first heart sound, and a short murmur that is easily missed. The size threshold operates together with an embolic episode or another indication. The one major trial in this area enrolled a narrow, stable population that does not generalise to a decompensating patient, and the United States statement predates the European guidance this case follows.',
+    briefIn: ['endocarditis-mechanical-failure-on-a-surgical-clock'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

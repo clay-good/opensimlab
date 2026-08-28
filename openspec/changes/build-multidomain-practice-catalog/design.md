@@ -3207,8 +3207,36 @@ See `docs/evidence-briefs/necrotizing-infection-score-cannot-exclude.md` for sou
 score-component table, and the confounding that makes the timing evidence directional rather than
 threshold-bearing.
 
-Remaining six: sepsis without shock; septic shock; meningitis; severe community-acquired pneumonia;
-endocarditis complication; toxic-shock pattern. Research is banked for endocarditis with new heart
+The fifth infectious-disease preview, `endocarditis-mechanical-failure-on-a-surgical-clock@0.1.0`,
+teaches that the antimicrobial course can be working while the patient dies. The infection responds,
+the valve is destroyed, and the clock that matters is surgical rather than antimicrobial. This is a
+third distinct axis: meningococcal sepsis taught the speed of a decision the learner makes, the
+obstructed kidney taught source control alongside antimicrobials, and this teaches a patient already
+on correct therapy failing mechanically.
+
+Two authored values carry it. The pulse pressure narrows from 42 to 18 mmHg rather than widening,
+because acute severe regurgitation gives the ventricle no time to dilate; the collapsing pulse of the
+textbook belongs to chronic disease. And the C-reactive protein falls from 180 to 128 mg/L with
+cultures still clear while oxygen requirement, respiratory rate, and lactate all worsen. Four
+refusals hold the boundary: reading falling markers as an improving patient, excluding regurgitation
+on a narrow pulse pressure, treating vegetation size as a standalone trigger, and deferring to
+tomorrow. The decompensation occurs whatever the learner records, because the treatment is an
+operation outside this rehearsal.
+
+See `docs/evidence-briefs/endocarditis-mechanical-failure-on-a-surgical-clock.md` for locators, the
+value table, and the note that exact recommendation class and level codes were not independently
+retrieved, so the tiers are cited without asserting class letters.
+
+Remaining five: sepsis without shock; septic shock; meningitis; severe community-acquired pneumonia;
+toxic-shock pattern. Research is banked for three of them. Severe community-acquired pneumonia should
+teach instrument-question mismatch, since the mortality scores are prognostic instruments borrowed
+for a level-of-care question that a different validated instrument answers. Toxic shock should teach
+confirmation deferral, since the staphylococcal definition needs desquamation at one to two weeks and
+the streptococcal one needs sterile-site isolation, so a pending culture is two mutually exclusive
+unknowns and neither definition can close at the bedside. Sepsis without shock should teach the 2026
+tiered structure, and must be written so it teaches judgement rather than delay: the three-hour
+ceiling runs from first suspicion, waiting is never a selectable action, and any drift toward
+hypotension collapses the branch to the one-hour path without learner discretion. Research is banked for endocarditis with new heart
 failure, whose lesson is a patient already on correct antimicrobials deteriorating from mechanical
 valve failure on a surgical rather than antimicrobial clock, and indicates the toxic-shock entry
 should be authored as a diagnostic-boundary lesson about a surveillance case definition that cannot

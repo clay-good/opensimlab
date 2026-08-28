@@ -14,11 +14,20 @@ const summarize = (model: NecrotizingInfection, tick: number) => stateSummary(
 );
 
 describe('Necrotizing infection screen-reader summary', () => {
-  it('attaches the score’s limit to the score itself', () => {
+  it('states the score’s limit without narrating a score the learner has not requested', () => {
     const summary = summarize(new NecrotizingInfection(), 0);
-    expect(summary).toContain('Current derived risk score: 3');
     expect(summary).toContain('excludes nothing here');
     expect(summary).toContain('Absent crepitus and absent bullae are late-sign absences, not reassurance');
+    // The derived score comes from laboratory values that must be requested. Narrating it live
+    // gave screen-reader users state that sighted users had to ask for, and leaked the progression.
+    expect(summary).not.toContain('Current derived risk score');
+    expect(summary).toContain('No new laboratory-only measurement has been requested.');
+  });
+
+  it('reveals the derived score only once the laboratory evidence is requested', () => {
+    const model = new NecrotizingInfection();
+    model.apply('check-labs', 0);
+    expect(summarize(model, 1)).toContain('derived score 3');
   });
 
   it('states that exploration is the only excluding test and is not the learner’s', () => {

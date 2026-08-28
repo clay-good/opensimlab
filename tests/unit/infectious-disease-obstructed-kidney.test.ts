@@ -38,7 +38,9 @@ describe('Infectious disease obstructed kidney contract', () => {
   it('deteriorates on appropriate antimicrobials while the kidney stays obstructed', () => {
     const untreated = drive([], DELAY + 10);
     expect(untreated.ids).toContain('clinical-deterioration');
-    expect(untreated.snapshot.trackAndTriggerScore).toBe(15);
+    // The score is only available once the learner requests it, never live on the snapshot.
+    const observed = drive([[DELAY + 5, 'check-observations']], DELAY + 10);
+    expect(observed.snapshot.observationsOnly!.trackAndTriggerScore).toBe(15);
     const vitals = untreated.model.vitals();
     expect(vitals.heartRateBpm).toBe(132);
     expect(vitals.meanArterialMmHg).toBe(58);

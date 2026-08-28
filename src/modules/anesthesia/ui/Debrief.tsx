@@ -43,6 +43,7 @@ import { supportsMeningococcalSepsis } from '../../infectious-disease/meningococ
 import { supportsObstructedKidney } from '../../infectious-disease/obstructed-kidney';
 import { supportsFebrileNeutropenia } from '../../infectious-disease/febrile-neutropenia';
 import { supportsNecrotizingInfection } from '../../infectious-disease/necrotizing-infection';
+import { supportsEndocarditisHeartFailure } from '../../infectious-disease/endocarditis-heart-failure';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -616,6 +617,44 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-infectious-disease-endocarditis-')) {
+      if (!supportsEndocarditisHeartFailure(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The infectious-disease endocarditis lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^endocarditis-heart-failure-${id}-\\d+$`).test(entry.eventId));
+      const recognition = event('mechanical-failure-recognized'); const team = event('endocarditis-team-activated');
+      const referral = event('surgical-referral-intent'); const boundaries = event('boundary-review');
+      const monitoring = event('monitoring'); const handoff = event('handoff');
+      const decompensation = event('acute-decompensation');
+      const full = (entry: EngineEvent) => /^endocarditis-heart-failure-(initial|decompensated)-reassessment-\d+$/.test(entry.eventId);
+      const later = log.find(full);
+      const refusedShortcut = event('marker-reassurance-refused') ?? event('pulse-pressure-error-refused')
+        ?? event('vegetation-only-refused') ?? event('deferral-refused');
+      const beatDecompensation = !!referral && (!decompensation || referral.tick < decompensation.tick);
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'reconcile-infectious-disease-endocarditis-breathlessness-with-a-responding-infection': { met: !!recognition, tick: recognition?.tick,
+          finding: (recognition ? 'New breathlessness on day three was reconciled with a falling marker, clearing cultures, and a supplied new severe regurgitation. ' : 'The breathlessness was not reconciled with an infection that was responding. ')
+            + 'The infection and the valve are separate problems on separate clocks.' },
+        'recognize-infectious-disease-endocarditis-mechanical-failure-not-antimicrobial-failure': { met: !!recognition && !!referral, tick: referral?.tick,
+          finding: (recognition && referral ? 'The deterioration was attributed to valve destruction rather than a failing antimicrobial course, and referral followed. ' : 'Recognition of mechanical failure, or the referral that follows from it, remains incomplete. ')
+            + (refusedShortcut ? 'A reassurance shortcut was attempted and refused; it remains in this run. ' : '')
+            + 'No inflammatory marker measures valve destruction.' },
+        'activate-infectious-disease-endocarditis-team-and-surgical-centre-ownership': { met: !!team, tick: team?.tick,
+          finding: (team ? 'The multidisciplinary endocarditis team was convened and a valve-surgery centre engaged. ' : 'The endocarditis team and surgical centre were not engaged. ')
+            + (beatDecompensation ? 'The referral preceded the authored decompensation. ' : 'The referral did not precede the authored decompensation. ')
+            + (monitoring ? '' : 'Surveillance was not arranged. ') },
+        'review-infectious-disease-endocarditis-acute-regurgitation-and-timing-evidence-boundary': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The pulse pressure, the vegetation threshold, and the surgical timing tiers were reviewed. ' : 'The acute-regurgitation and timing boundary review is missing. ')
+            + 'Acute severe regurgitation narrows rather than widens the pulse pressure, vegetation size is not a standalone trigger, and the timing tiers are consensus rather than randomised-trial thresholds.' },
+        'record-infectious-disease-endocarditis-bounded-surgical-referral-and-strict-reassessment': { met: !!referral && !!later, tick: referral?.tick,
+          finding: (referral && later ? 'Bounded surgical-referral intent was recorded and a full assessment made the authored decompensation available for review. ' : 'Bounded referral intent or a requested full assessment remains incomplete. ')
+            + 'Recorded intent is not an accepted transfer or a completed operation, and the marker falling further while the patient worsened is the divergence to notice.' },
+        'handoff-infectious-disease-endocarditis-pending-surgical-decision-and-active-risk': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'Serial perfusion and respiratory findings, the pending surgical decision and transfer, and continuing antimicrobial therapy were handed off. ' : 'Current full findings or continuing-care ownership remains incomplete. ')
+            + 'Embolic and neurologic risk remain, and neither operability, transfer acceptance, nor survival is certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-infectious-disease-necrotizing-')) {
       if (!supportsNecrotizingInfection(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The infectious-disease necrotizing infection lesson was not active.' } satisfies ObjectiveFinding;
