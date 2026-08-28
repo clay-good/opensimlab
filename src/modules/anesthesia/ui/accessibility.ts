@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -116,6 +116,7 @@ export function stateSummary(
     readonly necrotizingInfection?: NecrotizingInfectionSnapshot;
     readonly endocarditisHeartFailure?: EndocarditisHeartFailureSnapshot;
     readonly severePneumonia?: SeverePneumoniaSnapshot;
+    readonly toxicShock?: ToxicShockSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -169,7 +170,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -193,6 +194,34 @@ export function stateSummary(
           + ' intravenous.');
       }
     }
+  }
+  if (options.toxicShock) {
+    const patient = options.toxicShock;
+    for (const field of ['systolicMmHg', 'diastolicMmHg'] as const) {
+      const value = state[field];
+      if (!options.invalid.has(field) && Number.isFinite(value)) {
+        lines.push(`${FIELDS[field].label}: ${value.toFixed(FIELDS[field].precision)} ${FIELDS[field].unit}.`);
+      }
+    }
+    lines.push('Supplied starting findings were temperature 39.4 degrees Celsius, heart rate 128 per minute, blood pressure 88 over 44, diffuse macular erythroderma, mucosal hyperaemia, vomiting and diarrhoea from onset, platelets 118, creatinine 1.9 milligrams per deciliter, and creatine kinase 640 units per liter. Source control was completed by the qualified team before this rehearsal. These remain historical starting findings.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push('Neither surveillance case definition is met, and not for the same reason. One requires desquamation one to two weeks after the rash, which cannot have happened. The other requires isolation of the organism, which has not grown. The same pending culture answers one definition and violates the other, because one requires negative cultures and the other requires an isolate.');
+    lines.push(`Pattern recognized: ${patient.recognitionAtTick === null ? 'not yet' : 'yes'}. Critical care: ${patient.criticalCareAtTick === null ? 'not yet activated' : 'activated'}. Cultures: ${patient.culturesAtTick === null ? 'not yet requested' : 'requested'}. Treatment intent: ${patient.treatmentIntentAtTick === null ? 'not yet recorded' : 'recorded'}. Definition status: ${patient.definitionStatusAtTick === null ? 'not yet recorded' : 'recorded as unmet with its reason and a re-check horizon'}. Surveillance: ${patient.monitoringAtTick === null ? 'not arranged' : 'arranged'}.`);
+    lines.push('These definitions count cases consistently across populations rather than deciding treatment at a bedside. A criteria count is not a probability, and the negative-culture requirement is a clause excluding other diagnoses rather than evidence against infection. No agent, dose, adjunct, fluid volume, or vasoactive choice is selected, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.labObservation
+      ? `Last requested laboratory evidence at simulated ${formatElapsed(patient.labObservation.atTick)}: platelets ${patient.labObservation.plateletsX109L}; creatinine ${patient.labObservation.creatinineMgDl.toFixed(1)} milligrams per deciliter; creatine kinase ${patient.labObservation.ckUL} units per liter; lactate ${patient.labObservation.lactateMmolL.toFixed(1)} millimoles per liter; cultures showing no growth so far, which is uninformative rather than negative. A laboratory-only check does not refresh the perfusion assessment.`
+      : 'No new laboratory-only measurement has been requested.');
+    lines.push(patient.perfusionObservation
+      ? `Last requested examination at simulated ${formatElapsed(patient.perfusionObservation.atTick)}: blood pressure ${patient.perfusionObservation.systolicMmHg} over ${patient.perfusionObservation.diastolicMmHg}; heart rate ${patient.perfusionObservation.heartRateBpm} per minute; erythroderma present; desquamation absent and not yet possible. A perfusion-only look does not refresh laboratory evidence.`
+      : 'No new perfusion-only examination has been requested.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: heart rate ${patient.observation.heartRateBpm} per minute; blood pressure ${patient.observation.systolicMmHg} over ${patient.observation.diastolicMmHg}; platelets ${patient.observation.plateletsX109L}; lactate ${patient.observation.lactateMmolL.toFixed(1)} millimoles per liter; ${patient.observation.alertness}. These are historical observations, not live measurements.`
+      : 'No new full assessment has been requested.');
+    if (patient.deteriorationObserved) lines.push('More criteria are now satisfied on both definitions. Neither has closed, and the reasons are unchanged.');
+    lines.push('Accumulating criteria move both definitions closer and close neither. The diagnosis is handed over open, and no classification, organism, or outcome is established.');
+    lines.push(options.alarms.length === 0 ? 'No active alarms.'
+      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    return lines.join(' ');
   }
   if (options.severePneumonia) {
     const patient = options.severePneumonia;

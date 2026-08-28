@@ -3239,7 +3239,24 @@ the saturation falls two points while the inspired fraction nearly doubles, so t
 from 171 to 92. The C-reactive protein and sodium are deliberate bait, alarming and absent from both
 instruments. The mortality score catching up to 4 afterwards is the point rather than a reward.
 
-Remaining four: sepsis without shock; septic shock; meningitis; toxic-shock pattern. Research is
+The seventh infectious-disease preview, `toxic-shock-a-definition-that-cannot-close@0.1.0`, teaches
+confirmation deferral. Neither applicable surveillance case definition can close at the bedside, and
+they fail for different reasons: one needs desquamation one to two weeks from now, the other needs an
+organism that has not grown. A single pending blood culture is therefore two mutually exclusive
+unknowns, because one definition requires negative cultures and the other requires an isolate.
+
+This is distinct from the necrotizing-infection lesson, which is a rule-out failure whose resolving
+action is available now. The creatinine is deliberately split at 1.9 mg/dL, above twice normal for
+one definition's renal criterion and below the other's 2.0 threshold, so one number gives two
+different answers. Across the authored deterioration more criteria are satisfied on both definitions
+and neither closes. The signature action is recording the definition status openly, with its reason
+and a named re-check horizon, and the handoff gate requires it. Source control is completed off-stage
+so the scenario carries only the definitional lesson.
+
+Remaining three: sepsis without shock; septic shock; meningitis. Research is banked for sepsis
+without shock and must be written so it teaches judgement rather than delay, with a visible
+three-hour ceiling running from first suspicion, no selectable waiting action, and any drift toward
+hypotension collapsing the branch to the one-hour path without learner discretion. Research is
 banked for two. Toxic shock should teach confirmation deferral: the staphylococcal definition needs
 desquamation at one to two weeks and the streptococcal one needs sterile-site isolation, so a single
 pending culture is two mutually exclusive unknowns and neither definition can close at the bedside.

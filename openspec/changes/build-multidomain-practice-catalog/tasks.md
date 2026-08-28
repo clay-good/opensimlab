@@ -1546,6 +1546,28 @@ credited toward the catalog until every item in the completion contract passes.
     ratio collapses, that an idle and an actively managed run reach identical vitals, and that only
     `criticalCareBeforeDeterioration` distinguishes them. The published report catalog grows to 224
     records.
+  - [x] Infectious-disease slice 7/10 adds toxic shock as a confirmation-deferral lesson. A
+    previously well 22-year-old presents with diffuse macular erythroderma, mucosal hyperaemia,
+    vomiting and diarrhoea from onset, temperature 39.4 C, heart rate 128/min, BP 88/44 mmHg,
+    platelets 118 x10^9/L, creatinine 1.9 mg/dL, alanine aminotransferase 78 U/L, creatine kinase
+    640 U/L, and lactate 3.4 mmol/L, with cultures pending. Neither surveillance case definition is
+    met and they fail for different reasons: one requires desquamation one to two weeks after the
+    rash, which cannot have happened, and the other requires isolation of the organism, which has not
+    grown. The same pending culture answers one definition and violates the other, because one
+    requires negative cultures and the other requires an isolate. The creatinine is deliberately
+    split at 1.9 mg/dL, above twice normal for one definition's renal criterion and below the other's
+    2.0 threshold. After four authored hours the creatinine reaches 2.4 and the platelets 84, so more
+    criteria are satisfied on both definitions and neither closes. The learner recognizes the
+    pattern, activates critical care on it, requests cultures, records bounded treatment intent,
+    records the definition status openly with its reason and a one-to-two-week re-check horizon, and
+    hands over an explicitly open diagnosis. Source control was completed off-stage so this scenario
+    carries only the definitional lesson. No learner history, examination, observation or test
+    acquisition, case classification, diagnosis, antimicrobial, dose, route, adjunct, immunoglobulin,
+    fluid, vasoactive agent, procedure, disposition, prognosis, or outcome control exists.
+  - [x] Verify slice 7 with twelve contract checks, twenty-two reporting checks, eight tray checks,
+    and five screen-reader checks, including that both definitions read unmet in every state, that
+    desquamation stays absent and cultures stay pending throughout, and that all four closure and
+    exclusion shortcuts are refused. The published report catalog grows to 225 records.
 - [x] Repair four defects a consistency audit found in already-published infectious-disease
   scenarios, and cover each with a regression test.
   - [x] The necrotizing-infection tray rendered a live derived risk score inside its static

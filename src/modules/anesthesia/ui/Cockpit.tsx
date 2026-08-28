@@ -486,13 +486,13 @@ export function Cockpit({
   useEffect(() => {
     if (!session.state) return;
     const announcements = announcementsFor(previousState.current, session.state, session.alarms,
-      equipment?.resuscitation.myxedema || equipment?.resuscitation.hypercalcemia || equipment?.resuscitation.hypocalcemia || equipment?.resuscitation.hyponatremiaCorrection || equipment?.resuscitation.avpDeficiency || equipment?.resuscitation.refeeding || equipment?.resuscitation.perioperativeDiabetes || equipment?.resuscitation.renalHyperkalemia || equipment?.resuscitation.renalHypokalemia || equipment?.resuscitation.renalHyponatremia || equipment?.resuscitation.renalHypernatremia || equipment?.resuscitation.renalHypocalcemia || equipment?.resuscitation.renalHypermagnesemia || equipment?.resuscitation.meningococcalSepsis || equipment?.resuscitation.obstructedKidney || equipment?.resuscitation.febrileNeutropenia || equipment?.resuscitation.necrotizingInfection || equipment?.resuscitation.endocarditisHeartFailure || equipment?.resuscitation.severePneumonia ? invalidParameters : undefined);
+      equipment?.resuscitation.myxedema || equipment?.resuscitation.hypercalcemia || equipment?.resuscitation.hypocalcemia || equipment?.resuscitation.hyponatremiaCorrection || equipment?.resuscitation.avpDeficiency || equipment?.resuscitation.refeeding || equipment?.resuscitation.perioperativeDiabetes || equipment?.resuscitation.renalHyperkalemia || equipment?.resuscitation.renalHypokalemia || equipment?.resuscitation.renalHyponatremia || equipment?.resuscitation.renalHypernatremia || equipment?.resuscitation.renalHypocalcemia || equipment?.resuscitation.renalHypermagnesemia || equipment?.resuscitation.meningococcalSepsis || equipment?.resuscitation.obstructedKidney || equipment?.resuscitation.febrileNeutropenia || equipment?.resuscitation.necrotizingInfection || equipment?.resuscitation.endocarditisHeartFailure || equipment?.resuscitation.severePneumonia || equipment?.resuscitation.toxicShock ? invalidParameters : undefined);
     previousState.current = session.state;
     if (announcements.length === 0) return;
     const critical = announcements.filter((entry) => entry.severity === 'critical');
     if (critical.length > 0) setCriticalAnnouncement(critical.map((entry) => entry.text).join('. '));
     else setAnnouncement(announcements.map((entry) => entry.text).join('. '));
-  }, [session.state, session.alarms, equipment?.resuscitation.myxedema, equipment?.resuscitation.hypercalcemia, equipment?.resuscitation.hypocalcemia, equipment?.resuscitation.hyponatremiaCorrection, equipment?.resuscitation.avpDeficiency, equipment?.resuscitation.refeeding, equipment?.resuscitation.perioperativeDiabetes, equipment?.resuscitation.renalHyperkalemia, equipment?.resuscitation.renalHypokalemia, equipment?.resuscitation.renalHyponatremia, equipment?.resuscitation.renalHypernatremia, equipment?.resuscitation.renalHypocalcemia, equipment?.resuscitation.renalHypermagnesemia, equipment?.resuscitation.meningococcalSepsis, equipment?.resuscitation.obstructedKidney, equipment?.resuscitation.febrileNeutropenia, equipment?.resuscitation.necrotizingInfection, equipment?.resuscitation.endocarditisHeartFailure, equipment?.resuscitation.severePneumonia, invalidParameters]);
+  }, [session.state, session.alarms, equipment?.resuscitation.myxedema, equipment?.resuscitation.hypercalcemia, equipment?.resuscitation.hypocalcemia, equipment?.resuscitation.hyponatremiaCorrection, equipment?.resuscitation.avpDeficiency, equipment?.resuscitation.refeeding, equipment?.resuscitation.perioperativeDiabetes, equipment?.resuscitation.renalHyperkalemia, equipment?.resuscitation.renalHypokalemia, equipment?.resuscitation.renalHyponatremia, equipment?.resuscitation.renalHypernatremia, equipment?.resuscitation.renalHypocalcemia, equipment?.resuscitation.renalHypermagnesemia, equipment?.resuscitation.meningococcalSepsis, equipment?.resuscitation.obstructedKidney, equipment?.resuscitation.febrileNeutropenia, equipment?.resuscitation.necrotizingInfection, equipment?.resuscitation.endocarditisHeartFailure, equipment?.resuscitation.severePneumonia, equipment?.resuscitation.toxicShock, invalidParameters]);
 
   // The pulse tone sounds once per beat, at the pitch saturation implies.
   useEffect(() => {
@@ -581,6 +581,7 @@ export function Cockpit({
       necrotizingInfection: equipment?.resuscitation.necrotizingInfection,
       endocarditisHeartFailure: equipment?.resuscitation.endocarditisHeartFailure,
       severePneumonia: equipment?.resuscitation.severePneumonia,
+      toxicShock: equipment?.resuscitation.toxicShock,
       showTrainOfFour: scenario.equipment.monitoring.includes('train-of-four'),
       jawThrustCpapSecondsRemaining: airway.jawThrustCpapSecondsRemaining,
       capnographyLine,
@@ -603,7 +604,7 @@ export function Cockpit({
     scenario.equipment.monitoring, scenario.patient.weightKg, airway.jawThrustCpapSecondsRemaining,
     resuscitation, region, lastExposure, hasAnaphylaxisResponse, hasHypermetabolicResponse,
     hasCardiacArrestResponse, hasHighSpinalResponse, hasVenousAirEmbolismResponse,
-    hasBronchospasmResponse, capnographyLine, hasArterialLine, equipment?.resuscitation.myxedema, equipment?.resuscitation.hypercalcemia, equipment?.resuscitation.hypocalcemia, equipment?.resuscitation.hyponatremiaCorrection, equipment?.resuscitation.avpDeficiency, equipment?.resuscitation.refeeding, equipment?.resuscitation.perioperativeDiabetes, equipment?.resuscitation.renalHyperkalemia, equipment?.resuscitation.renalHypokalemia, equipment?.resuscitation.renalHyponatremia, equipment?.resuscitation.renalHypernatremia, equipment?.resuscitation.renalHypocalcemia, equipment?.resuscitation.renalHypermagnesemia, equipment?.resuscitation.meningococcalSepsis, equipment?.resuscitation.obstructedKidney, equipment?.resuscitation.febrileNeutropenia, equipment?.resuscitation.necrotizingInfection, equipment?.resuscitation.endocarditisHeartFailure, equipment?.resuscitation.severePneumonia,
+    hasBronchospasmResponse, capnographyLine, hasArterialLine, equipment?.resuscitation.myxedema, equipment?.resuscitation.hypercalcemia, equipment?.resuscitation.hypocalcemia, equipment?.resuscitation.hyponatremiaCorrection, equipment?.resuscitation.avpDeficiency, equipment?.resuscitation.refeeding, equipment?.resuscitation.perioperativeDiabetes, equipment?.resuscitation.renalHyperkalemia, equipment?.resuscitation.renalHypokalemia, equipment?.resuscitation.renalHyponatremia, equipment?.resuscitation.renalHypernatremia, equipment?.resuscitation.renalHypocalcemia, equipment?.resuscitation.renalHypermagnesemia, equipment?.resuscitation.meningococcalSepsis, equipment?.resuscitation.obstructedKidney, equipment?.resuscitation.febrileNeutropenia, equipment?.resuscitation.necrotizingInfection, equipment?.resuscitation.endocarditisHeartFailure, equipment?.resuscitation.severePneumonia, equipment?.resuscitation.toxicShock,
     arterialLine.cuff.meanArterialMmHg, hasCircuitScenario, breathingCircuit,
   ]);
 
@@ -614,7 +615,7 @@ export function Cockpit({
       airwayPatencyFraction: airway.patencyFraction,
       perfusionIndex: session.state?.perfusionIndex ?? 0.8,
       artifacts: waveformArtifacts,
-      capnographyUnavailable: !!equipment?.resuscitation.myxedema || !!equipment?.resuscitation.hypercalcemia || !!equipment?.resuscitation.hypocalcemia || !!equipment?.resuscitation.hyponatremiaCorrection || !!equipment?.resuscitation.avpDeficiency || !!equipment?.resuscitation.refeeding || !!equipment?.resuscitation.perioperativeDiabetes || !!equipment?.resuscitation.renalHyperkalemia || !!equipment?.resuscitation.renalHypokalemia || !!equipment?.resuscitation.renalHyponatremia || !!equipment?.resuscitation.renalHypernatremia || !!equipment?.resuscitation.renalHypocalcemia || !!equipment?.resuscitation.renalHypermagnesemia || !!equipment?.resuscitation.meningococcalSepsis || !!equipment?.resuscitation.obstructedKidney || !!equipment?.resuscitation.febrileNeutropenia || !!equipment?.resuscitation.necrotizingInfection || !!equipment?.resuscitation.endocarditisHeartFailure || !!equipment?.resuscitation.severePneumonia,
+      capnographyUnavailable: !!equipment?.resuscitation.myxedema || !!equipment?.resuscitation.hypercalcemia || !!equipment?.resuscitation.hypocalcemia || !!equipment?.resuscitation.hyponatremiaCorrection || !!equipment?.resuscitation.avpDeficiency || !!equipment?.resuscitation.refeeding || !!equipment?.resuscitation.perioperativeDiabetes || !!equipment?.resuscitation.renalHyperkalemia || !!equipment?.resuscitation.renalHypokalemia || !!equipment?.resuscitation.renalHyponatremia || !!equipment?.resuscitation.renalHypernatremia || !!equipment?.resuscitation.renalHypocalcemia || !!equipment?.resuscitation.renalHypermagnesemia || !!equipment?.resuscitation.meningococcalSepsis || !!equipment?.resuscitation.obstructedKidney || !!equipment?.resuscitation.febrileNeutropenia || !!equipment?.resuscitation.necrotizingInfection || !!equipment?.resuscitation.endocarditisHeartFailure || !!equipment?.resuscitation.severePneumonia || !!equipment?.resuscitation.toxicShock,
       capnographySampleObstructed: capnographyLine.obstructed,
       tracheostomyPatencyFraction: equipment?.tracheostomy?.patencyFraction,
       arterialDamped: arterialLine.dynamicResponse === 'overdamped',
@@ -624,7 +625,7 @@ export function Cockpit({
     }).map((entry) => `${entry.label}: ${entry.description}`).join(' '));
   }, [session.state, speak, rhythm, waveformArtifacts, airway, capnographyLine.obstructed,
     arterialLine.dynamicResponse, breathingCircuit.inspiredCo2MmHg, ventilator.delivering,
-    equipment?.tracheostomy?.patencyFraction, equipment?.resuscitation.myxedema, equipment?.resuscitation.hypercalcemia, equipment?.resuscitation.hypocalcemia, equipment?.resuscitation.hyponatremiaCorrection, equipment?.resuscitation.avpDeficiency, equipment?.resuscitation.refeeding, equipment?.resuscitation.perioperativeDiabetes, equipment?.resuscitation.renalHyperkalemia, equipment?.resuscitation.renalHypokalemia, equipment?.resuscitation.renalHyponatremia, equipment?.resuscitation.renalHypernatremia, equipment?.resuscitation.renalHypocalcemia, equipment?.resuscitation.renalHypermagnesemia, equipment?.resuscitation.meningococcalSepsis, equipment?.resuscitation.obstructedKidney, equipment?.resuscitation.febrileNeutropenia, equipment?.resuscitation.necrotizingInfection, equipment?.resuscitation.endocarditisHeartFailure, equipment?.resuscitation.severePneumonia]);
+    equipment?.tracheostomy?.patencyFraction, equipment?.resuscitation.myxedema, equipment?.resuscitation.hypercalcemia, equipment?.resuscitation.hypocalcemia, equipment?.resuscitation.hyponatremiaCorrection, equipment?.resuscitation.avpDeficiency, equipment?.resuscitation.refeeding, equipment?.resuscitation.perioperativeDiabetes, equipment?.resuscitation.renalHyperkalemia, equipment?.resuscitation.renalHypokalemia, equipment?.resuscitation.renalHyponatremia, equipment?.resuscitation.renalHypernatremia, equipment?.resuscitation.renalHypocalcemia, equipment?.resuscitation.renalHypermagnesemia, equipment?.resuscitation.meningococcalSepsis, equipment?.resuscitation.obstructedKidney, equipment?.resuscitation.febrileNeutropenia, equipment?.resuscitation.necrotizingInfection, equipment?.resuscitation.endocarditisHeartFailure, equipment?.resuscitation.severePneumonia, equipment?.resuscitation.toxicShock]);
 
   useEffect(() => {
     if (arterialLine.mislevelingCm > 0 || arterialLine.dynamicResponse === 'overdamped') {
@@ -901,6 +902,7 @@ export function Cockpit({
           necrotizingInfection={equipment?.resuscitation.necrotizingInfection}
           endocarditisHeartFailure={equipment?.resuscitation.endocarditisHeartFailure}
           severePneumonia={equipment?.resuscitation.severePneumonia}
+          toxicShock={equipment?.resuscitation.toxicShock}
           renalHyponatremiaGuidance={session.guidance}
           renalHypernatremiaGuidance={session.guidance}
           renalHypocalcemiaGuidance={session.guidance}
@@ -1541,6 +1543,9 @@ export function Cockpit({
           })}
           onSeverePneumoniaResponse={(action) => session.act({
             type: 'severe-pneumonia-response', payload: { action },
+          })}
+          onToxicShockResponse={(action) => session.act({
+            type: 'toxic-shock-response', payload: { action },
           })}
           onRenalHypokalemiaResponse={(action) => session.act({
             type: 'renal-hypokalemia-response', payload: { action },

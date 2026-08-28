@@ -2230,6 +2230,23 @@
       "limitationManifestHash": "sha256:c0ab1c5fbb626f9c08e2d178c7cb40b0fb67843d4ef33a24b9471e8ed094737e"
     },
     {
+      "scenarioId": "toxic-shock-a-definition-that-cannot-close",
+      "contentVersion": "0.1.0",
+      "moduleId": "infectious-disease",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:947bf5cc627e8650947409206a0abcc065c51112d2a2534be7ab496a6aaa4e6e",
+      "defaultsHash": "sha256:1bb2bef76dd8e9124977dbb8d5050bafe9f7282a49be29a2b3671aed1291c91e",
+      "maturityHash": "sha256:08236507129f834c4dd4b0a86127389b8c83dbc694aa1247f1f2970bdfe5d730",
+      "sourceManifestHash": "sha256:99e9fc25cca75e9347c3ea92ab45ddd3cb425ada35637bd73873f4b9ca0b9c8b",
+      "limitationManifestHash": "sha256:dd60b358c4e8bbd94b6f2e55f0433aacf74e54851f67bdcdcc282ce27a12fc06"
+    },
+    {
       "scenarioId": "delivery-room-to-nicu-handoff",
       "contentVersion": "0.1.0",
       "moduleId": "neonatology",

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "infectious-disease",
-  "recordCount": 6,
+  "recordCount": 7,
   "records": [
     {
       "recordId": "scenario:meningococcal-sepsis-recognition-and-escalation@0.1.0",
@@ -67,6 +67,17 @@
       "evidence": [
         "/catalog/infectious-disease-completion-audit.json#severe-pneumonia-the-score-answered-another-question@0.1.0",
         "/catalog/infectious-disease-quality-audit.json#severe-pneumonia-the-score-answered-another-question@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:toxic-shock-a-definition-that-cannot-close@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "toxic-shock-a-definition-that-cannot-close",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/infectious-disease-completion-audit.json#toxic-shock-a-definition-that-cannot-close@0.1.0",
+        "/catalog/infectious-disease-quality-audit.json#toxic-shock-a-definition-that-cannot-close@0.1.0"
       ]
     }
   ]

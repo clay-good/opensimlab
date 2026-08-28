@@ -1,0 +1,22 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
+import { TOXIC_SHOCK_A_DEFINITION_THAT_CANNOT_CLOSE } from './scenarios/toxic-shock-a-definition-that-cannot-close';
+import { TOXIC_SHOCK_FIXTURES } from './toxic-shock-fixtures';
+
+export function toxicShockCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
+  if (moduleId !== 'infectious-disease' || capabilityVersion !== '0.1.0-alpha.48'
+    || scenario.metadata.id !== TOXIC_SHOCK_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
+    || TOXIC_SHOCK_FIXTURES.contentVersion !== '0.1.0' || TOXIC_SHOCK_FIXTURES.seed !== 5731
+    || JSON.stringify(scenario) !== JSON.stringify(TOXIC_SHOCK_A_DEFINITION_THAT_CANNOT_CLOSE)) return [];
+  return [
+    { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['toxic-shock-fixtures.ts binds seed 5731 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No toxin, host-response, or antimicrobial model is claimed.'] },
+    { id: 'meaningful-progression', status: 'satisfied', evidence: ['toxic-shock.ts crosses further criteria on both surveillance definitions across the authored deterioration, moving the creatinine past one threshold and the platelets past the other, while neither definition closes. Desquamation remains structurally impossible and the cultures remain pending. Unrequested laboratory and perfusion findings remain private.'] },
+    { id: 'meaningful-actions-and-choices', status: 'satisfied', evidence: ['Dose-free choices independently record the toxin-mediated pattern, critical-care activation on that pattern, culture sampling, bounded treatment intent, the explicit open definition status with its reason and re-check horizon, the boundary review, and surveillance. Declaring a confirmed case, excluding on a criteria count, treating four-hour no-growth as negative, and reading the negative-culture requirement as evidence against infection are each refused.'] },
+    { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['Recognition, activation, cultures, bounded treatment intent, the recorded definition status, the boundary review, surveillance, and a current full assessment permit handoff with the diagnosis explicitly open. Instructor takeover bounds a run with no activation or treatment intent at six hours, or an unfinished session at twelve.'] },
+    { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Six event-bound objectives distinguish reconciliation, recognition without a closable definition, activation on the pattern, what a surveillance definition is for, recording the status openly with a named re-check, and accountable handoff. Refused shortcuts remain visible, and no classification, organism, or outcome is certified.'] },
+    { id: 'reference-transcripts', status: 'satisfied', evidence: ['toxic-shock-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine.'] },
+    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
+    { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
+  ];
+}

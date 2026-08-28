@@ -45,6 +45,7 @@ import { supportsFebrileNeutropenia } from '../../infectious-disease/febrile-neu
 import { supportsNecrotizingInfection } from '../../infectious-disease/necrotizing-infection';
 import { supportsEndocarditisHeartFailure } from '../../infectious-disease/endocarditis-heart-failure';
 import { supportsSeverePneumonia } from '../../infectious-disease/severe-pneumonia';
+import { supportsToxicShock } from '../../infectious-disease/toxic-shock';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -618,6 +619,44 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-infectious-disease-toxic-shock-')) {
+      if (!supportsToxicShock(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The infectious-disease toxic shock lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^toxic-shock-${id}-\\d+$`).test(entry.eventId));
+      const recognition = event('toxin-pattern-recognized'); const criticalCare = event('critical-care-activated');
+      const cultures = event('cultures-requested'); const treatment = event('treatment-intent');
+      const definition = event('definition-status-recorded'); const boundaries = event('boundary-review');
+      const monitoring = event('monitoring'); const handoff = event('handoff');
+      const full = (entry: EngineEvent) => /^toxic-shock-(initial|deteriorated)-reassessment-\d+$/.test(entry.eventId);
+      const later = log.find(full);
+      const refusedShortcut = event('confirmation-refused') ?? event('criteria-exclusion-refused')
+        ?? event('pending-culture-refused') ?? event('negative-culture-misread-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'reconcile-infectious-disease-toxic-shock-erythroderma-hypotension-and-organ-involvement': { met: !!recognition, tick: recognition?.tick,
+          finding: (recognition ? 'The erythroderma, mucosal hyperaemia, early hypotension out of proportion, and multi-organ derangement were reconciled. ' : 'The toxin-mediated pattern was not reconciled. ')
+            + 'Recognition here is of a pattern rather than a diagnosis, and it is enough to act on.' },
+        'recognize-infectious-disease-toxic-shock-pattern-without-a-closable-definition': { met: !!recognition && !!definition, tick: definition?.tick,
+          finding: (recognition && definition ? 'The pattern was acted on while both definitions were held open. ' : 'Recognition without a closable definition, or the record of that status, remains incomplete. ')
+            + (refusedShortcut ? 'A closure or exclusion shortcut was attempted and refused; it remains in this run. ' : '')
+            + 'One definition is unmet for a temporal reason and the other for a microbiological one; they are not the same reason.' },
+        'activate-infectious-disease-toxic-shock-critical-care-and-culture-ownership': { met: !!criticalCare && !!cultures, tick: criticalCare?.tick,
+          finding: (criticalCare && cultures ? 'Critical care was activated on the pattern rather than on a classification, and blood and sterile-site cultures were requested. ' : 'Critical-care activation or culture sampling remains incomplete. ')
+            + (monitoring ? '' : 'Surveillance was not arranged. ')
+            + (treatment ? 'Bounded treatment intent was recorded alongside. ' : 'Bounded treatment intent was not recorded. ')
+            + 'That single request answers one definition and violates the other, because one requires negative cultures and the other requires an isolate.' },
+        'review-infectious-disease-toxic-shock-surveillance-definition-boundary': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'What a surveillance definition is for was reviewed. ' : 'The surveillance-definition boundary review is missing. ')
+            + 'These instruments count cases consistently across populations rather than deciding treatment at a bedside; a criteria count is not a probability, and four-hour no-growth is uninformative rather than negative.' },
+        'record-infectious-disease-toxic-shock-open-definition-status-and-recheck-horizon': { met: !!definition && !!later, tick: definition?.tick,
+          finding: (definition && later ? 'The definition status was recorded openly with its reason and a named re-check horizon, and a full assessment made the authored change available for review. ' : 'The open definition status or a requested full assessment remains incomplete. ')
+            + 'Accumulating criteria moved both definitions closer and closed neither, and the definition may remain unmet permanently.' },
+        'handoff-infectious-disease-toxic-shock-an-explicitly-open-diagnosis': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'Serial findings, delivered treatment, pending cultures, and the named re-check for desquamation were handed off with the diagnosis explicitly open. ' : 'Current full findings or continuing-care ownership remains incomplete. ')
+            + 'A closed definition, a grown organism, and a criteria count are not handoff gates, and no classification or outcome is certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-infectious-disease-pneumonia-')) {
       if (!supportsSeverePneumonia(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The infectious-disease severe pneumonia lesson was not active.' } satisfies ObjectiveFinding;

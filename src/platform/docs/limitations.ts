@@ -5759,6 +5759,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'The severity criteria have never been formally re-derived and their items carry unequal weight; even they are an aid to judgement rather than an automatic admission. The delay-harm evidence is observational and confounded by indication. One national guideline uses the mortality score alongside clinical judgement rather than in isolation, and the two bodies publishing on this condition are, as of 2025, publicly split, so there is no single voice to appeal to. Regional pathways differ: one runs a mortality score then severity criteria, the other runs a disposition ladder that may never compute the criteria at all.',
     briefIn: ['severe-pneumonia-the-score-answered-another-question'],
   },
+  {
+    id: 'toxic-shock-presentation-and-deterioration-are-authored',
+    headline: 'Both states are authored, and neither definition can close in either.',
+    simplification: 'The case supplies one fixed presentation and one fixed deterioration four simulated hours later. No toxin, host-response, microbiological, or antimicrobial model runs underneath, and the culture result never returns.',
+    whereItMisleads: 'The clock becomes a validated deadline, or the accumulating criteria are read as a rising probability of a confirmed diagnosis.',
+    correctUnderstanding: 'More criteria satisfied is not closer to confirmation in any measurable sense. Desquamation belongs to a week or two from now and an organism either grows or does not; neither is a matter of degree. Real presentations vary widely, and no individual course follows from this authored model.',
+    briefIn: ['toxic-shock-a-definition-that-cannot-close'],
+  },
+  {
+    id: 'toxic-shock-controls-are-recognition-activation-and-intent-only',
+    headline: 'Source control is already done, and no adjunct is ever chosen.',
+    simplification: 'The learner recognizes the pattern, activates critical care, requests cultures, records bounded treatment intent, records the definition status openly, reviews the boundary, and arranges surveillance. Source control for the documented focus was completed by the qualified team before the rehearsal begins.',
+    whereItMisleads: 'A learner infers that removing a focus is part of this lesson, or that the recorded intent selects an anti-toxin agent or immunoglobulin.',
+    correctUnderstanding: 'Source control is deliberately off-stage so this scenario carries only the definitional lesson; a separate shipped scenario teaches source control as its own axis. Antimicrobial selection, the anti-toxin question, immunoglobulin, fluid volume, and vasoactive choice are all qualified-team decisions this lesson does not expose, and the immunoglobulin evidence in particular is contested.',
+    briefIn: ['toxic-shock-a-definition-that-cannot-close'],
+  },
+  {
+    id: 'toxic-shock-definitions-are-surveillance-instruments-not-bedside-rules',
+    headline: 'These definitions count cases; they do not decide treatment.',
+    simplification: 'The case states that one definition requires desquamation one to two weeks after the rash and the other requires isolation of the organism, so neither can close at the bedside, and that the same pending culture answers one and violates the other.',
+    whereItMisleads: 'A learner declares a confirmed case, excludes the diagnosis because thresholds are not crossed, treats a four-hour no-growth result as negative, or reads the negative-culture requirement as evidence against infection.',
+    correctUnderstanding: 'These are surveillance instruments built to count cases consistently across populations. The negative-culture clause excludes other diagnoses rather than denying infection, and it is the toxin rather than a bloodstream organism that makes the patient shocked. Reported case fatality spans a wide range across published series, so no single figure is asserted. The definitions have not been revised in over a decade despite a documented international rise in invasive infection, which changed alerting and contact management rather than the definitions. One national surveillance system has no equivalent definition for the staphylococcal form at all, and units differ between regions.',
+    briefIn: ['toxic-shock-a-definition-that-cannot-close'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 184 adds the authored severe pneumonia snapshot. */
-export const WORKER_PROTOCOL_VERSION = 184;
+/** Version 185 adds the authored toxic shock snapshot. */
+export const WORKER_PROTOCOL_VERSION = 185;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -417,6 +417,50 @@ export interface SeverePneumoniaSnapshot {
     readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
     readonly meanArterialMmHg: number; readonly coreTemperatureC: number; readonly alertness: string;
     readonly mortalityScore: number; readonly severityCriteria: number;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true;
+  readonly doseModelAvailable: false;
+  readonly durableRecoveryProven: false;
+}
+
+export interface ToxicShockSnapshot {
+  readonly recognitionAtTick: number | null;
+  readonly criticalCareAtTick: number | null;
+  readonly culturesAtTick: number | null;
+  readonly treatmentIntentAtTick: number | null;
+  readonly definitionStatusAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly deteriorationDueInSeconds: number | null;
+  readonly deteriorationObserved: boolean;
+  /** Neither surveillance definition can close during this rehearsal, by construction. */
+  readonly staphylococcalDefinitionMet: false;
+  readonly streptococcalDefinitionMet: false;
+  readonly confirmationAttempted: boolean;
+  readonly criteriaExclusionAttempted: boolean;
+  readonly pendingCultureExclusionAttempted: boolean;
+  readonly negativeCultureMisreadAttempted: boolean;
+  readonly labObservation: {
+    readonly atTick: number; readonly whiteCellsX109L: number; readonly plateletsX109L: number;
+    readonly creatinineMgDl: number; readonly altUL: number; readonly ckUL: number;
+    readonly crpMgL: number; readonly lactateMmolL: number; readonly culturesPending: boolean;
+  } | null;
+  readonly perfusionObservation: {
+    readonly atTick: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
+    readonly heartRateBpm: number; readonly coreTemperatureC: number;
+    readonly erythroderma: boolean; readonly desquamation: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly whiteCellsX109L: number; readonly plateletsX109L: number;
+    readonly creatinineMgDl: number; readonly altUL: number; readonly ckUL: number;
+    readonly crpMgL: number; readonly lactateMmolL: number; readonly culturesPending: boolean;
+    readonly systolicMmHg: number; readonly diastolicMmHg: number; readonly heartRateBpm: number;
+    readonly meanArterialMmHg: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly coreTemperatureC: number; readonly erythroderma: boolean; readonly desquamation: boolean;
+    readonly alertness: string;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -3768,6 +3812,7 @@ export interface EquipmentSnapshot {
     readonly necrotizingInfection?: NecrotizingInfectionSnapshot;
     readonly endocarditisHeartFailure?: EndocarditisHeartFailureSnapshot;
     readonly severePneumonia?: SeverePneumoniaSnapshot;
+    readonly toxicShock?: ToxicShockSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

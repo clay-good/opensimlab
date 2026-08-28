@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 346,
+  "sourceCount": 349,
   "sources": [
     {
       "id": "renal-hypermagnesemia-series-2018",
@@ -4225,6 +4225,51 @@
       "usedFor": "Stable-transition criteria, continued observation despite expected early oxygenation transition, immediate skin-to-skin thermal support, and avoidance of premature well-newborn closure.",
       "verifiedAgainst": "https://publications.aap.org/pediatrics/article/157/1/e2025074766/205238/Neonatal-Life-Support-2025-International-Liaison",
       "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "cdc-toxic-shock-syndrome-2011",
+      "currency": {
+        "lastAmended": "2011-01-01",
+        "checkedAt": "2026-08-28"
+      },
+      "authors": "Centers for Disease Control and Prevention; Council of State and Territorial Epidemiologists",
+      "title": "Toxic Shock Syndrome (Other Than Streptococcal), 2011 Case Definition",
+      "publication": "CDC National Notifiable Diseases Surveillance System",
+      "year": 2011,
+      "locator": "Fever at or above 38.9 C; diffuse macular erythroderma; desquamation 1 to 2 weeks after onset of rash; systolic blood pressure at or below 90 mmHg; multisystem involvement in at least 3 of 7 organ systems. Laboratory criteria include negative blood and cerebrospinal fluid cultures, with blood permitted to be positive for Staphylococcus aureus. Confirmed requires all 5 clinical findings including desquamation, unless the patient dies before desquamation occurs.",
+      "usedFor": "The temporal reason this definition cannot close at the bedside, the multisystem criteria the authored values satisfy, and the boundary that the negative-culture requirement excludes other diagnoses rather than denying infection.",
+      "verifiedAgainst": "https://ndc.services.cdc.gov/case-definitions/toxic-shock-syndrome-2011/",
+      "verifiedOn": "2026-08-28"
+    },
+    {
+      "id": "cdc-streptococcal-toxic-shock-2010",
+      "currency": {
+        "lastAmended": "2010-01-01",
+        "checkedAt": "2026-08-28"
+      },
+      "authors": "Centers for Disease Control and Prevention; Council of State and Territorial Epidemiologists",
+      "title": "Streptococcal Toxic Shock Syndrome, 2010 Case Definition",
+      "publication": "CDC National Notifiable Diseases Surveillance System",
+      "year": 2010,
+      "locator": "Hypotension plus at least 2 of renal impairment, coagulopathy, hepatic involvement, acute respiratory distress syndrome, generalized erythematous macular rash, or soft-tissue necrosis. Confirmed requires isolation of group A Streptococcus from a normally sterile site; probable from a non-sterile site.",
+      "usedFor": "The microbiological reason this definition cannot close at the bedside, and the observation that the same pending culture answers this definition while violating the staphylococcal one.",
+      "verifiedAgainst": "https://ndc.services.cdc.gov/case-definitions/streptococcal-toxic-shock-syndrome-2010/",
+      "verifiedOn": "2026-08-28"
+    },
+    {
+      "id": "who-igas-outbreak-news-2022",
+      "currency": {
+        "lastAmended": "2022-12-15",
+        "checkedAt": "2026-08-28"
+      },
+      "authors": "World Health Organization",
+      "title": "Increased incidence of scarlet fever and invasive Group A Streptococcus infection, multi-country",
+      "publication": "WHO Disease Outbreak News",
+      "year": 2022,
+      "locator": "Published 2022-12-15, covering multiple European countries. The documented rise changed alerting and contact management rather than the case definitions, which remain at their 2010 and 2011 versions.",
+      "usedFor": "The statement that the definitions have not been revised in over a decade despite a documented international rise in invasive infection.",
+      "verifiedAgainst": "https://www.who.int/emergencies/disease-outbreak-news/item/2022-DON429",
+      "verifiedOn": "2026-08-28"
     },
     {
       "id": "ats-idsa-cap-2019",
