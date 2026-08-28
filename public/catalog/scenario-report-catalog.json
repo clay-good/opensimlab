@@ -2230,6 +2230,23 @@
       "limitationManifestHash": "sha256:3ec52a70e1bf64ffb68c6656ef3c6433a3531279dec3b5e142a1dbb8aacca62b"
     },
     {
+      "scenarioId": "septic-shock-a-label-the-treatment-creates",
+      "contentVersion": "0.1.0",
+      "moduleId": "infectious-disease",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:a9e7052d7932f0f7a5fe416cd8192fbebc3d859bb8556dac60a96b368a8fe961",
+      "defaultsHash": "sha256:9066620d439a9948aa03c0d841a77a93887b244dad63232f536f2a1328498f4f",
+      "maturityHash": "sha256:2f2e0646c0cc0d8f2825592417855fa64d9e7a2761231bf3da2d265733c2cad0",
+      "sourceManifestHash": "sha256:aa10208ba3d848c6f2a422ae5306999d8ff99bdf19790a1f197b512057f4dd4c",
+      "limitationManifestHash": "sha256:39b558c5d09116b15d2423b254febe41b2814ec79ff4d81a4bbf42aeba95ab28"
+    },
+    {
       "scenarioId": "severe-pneumonia-the-score-answered-another-question",
       "contentVersion": "0.1.0",
       "moduleId": "infectious-disease",

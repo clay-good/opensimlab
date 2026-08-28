@@ -47,6 +47,7 @@ import { supportsEndocarditisHeartFailure } from '../../infectious-disease/endoc
 import { supportsSeverePneumonia } from '../../infectious-disease/severe-pneumonia';
 import { supportsToxicShock } from '../../infectious-disease/toxic-shock';
 import { supportsPossibleSepsis } from '../../infectious-disease/possible-sepsis';
+import { supportsSepticShockLabel } from '../../infectious-disease/septic-shock-label';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -620,6 +621,43 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-infectious-disease-septic-shock-')) {
+      if (!supportsSepticShockLabel(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The infectious-disease septic shock label lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^septic-shock-label-${id}-\\d+$`).test(entry.eventId));
+      const hypoperfusion = event('hypoperfusion-recorded'); const criticalCare = event('critical-care-activated');
+      const classification = event('classification-open'); const resuscitation = event('resuscitation-intent');
+      const boundaries = event('boundary-review'); const monitoring = event('monitoring');
+      const handoff = event('handoff'); const ceiling = event('ceiling-passed');
+      // Only a reassessment after the trial can have shown what the trial made readable.
+      const resuscitated = log.find((entry) => /^septic-shock-label-resuscitated-reassessment-\d+$/.test(entry.eventId));
+      const refusedShortcut = event('early-label-refused') ?? event('hypoxia-refused')
+        ?? event('normalization-refused') ?? event('map-target-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'reconcile-infectious-disease-septic-shock-hypoperfusion-before-any-label': { met: !!hypoperfusion, tick: hypoperfusion?.tick,
+          finding: (hypoperfusion ? 'The measurable state was recorded before any treatment had run: mean pressure 60 mmHg, lactate 3.6 mmol/L, capillary refill 4.1 s, and no vasopressor. ' : 'The measurable state before treatment was never recorded, so there is nothing to compare the later state against. ')
+            + 'That record is what makes the later comparison possible.' },
+        'recognize-infectious-disease-septic-shock-two-criteria-have-no-truth-value-yet': { met: !!classification, tick: classification?.tick,
+          finding: (classification ? 'The classification was recorded as open, with the reason. ' : 'The classification was never recorded as open with its reason. ')
+            + 'Septic shock requires vasopressors holding a mean pressure at or above 65 and a lactate above 2 after adequate fluid resuscitation. Before the resuscitation, two of those three have no truth value: the label is not withheld out of caution, it is genuinely not yet decidable.' },
+        'activate-infectious-disease-septic-shock-critical-care-on-the-pattern-not-the-name': { met: !!criticalCare && !!monitoring, tick: criticalCare?.tick,
+          finding: (criticalCare && monitoring ? 'Critical care was activated on the perfusion pattern with monitoring arranged. ' : 'Critical care activation or the monitoring the trial depends on remains incomplete. ')
+            + (refusedShortcut ? 'An early label, a hypoxia reading of the lactate, a resuscitation to normal lactate, or a raised pressure target was attempted and refused; it remains in this run. ' : '')
+            + 'Nothing about the activation waits for the name.' },
+        'review-infectious-disease-septic-shock-targets-and-their-grades': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The targets were reviewed with their grades attached. ' : 'The target and certainty review is missing. ')
+            + 'A mean pressure of 65 is recommended over higher targets on moderate certainty, with 60 to 65 suggested for adults 65 or older on low certainty, so it is a floor with a tolerance band rather than a proven optimum. Fluids before vasopressors rests on very low certainty, the weakest statement here.' },
+        'record-infectious-disease-septic-shock-bounded-intent-that-is-also-the-measurement': { met: !!resuscitation && !!resuscitated, tick: resuscitation?.tick,
+          finding: (resuscitation && resuscitated ? 'Bounded resuscitation intent was recorded and a later full assessment showed what the completed trial made readable. ' : 'Bounded resuscitation intent or a full assessment after the completed trial remains incomplete. ')
+            + (ceiling ? 'The one-hour ceiling passed before intent was recorded, which is reported rather than hidden. ' : '')
+            + 'The same act both treated the patient and decided what the patient would be called.' },
+        'handoff-infectious-disease-septic-shock-a-label-that-reflects-a-treatment': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The measured state before treatment, the recorded reason the classification was open, and whether intent fell inside the hour travelled with the patient. ' : 'Current full findings or continuing-care ownership remains incomplete. ')
+            + 'A settled label, an identified organism, and a normalized lactate are not handoff gates, and no outcome is certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-infectious-disease-possible-sepsis-')) {
       if (!supportsPossibleSepsis(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The infectious-disease possible sepsis lesson was not active.' } satisfies ObjectiveFinding;

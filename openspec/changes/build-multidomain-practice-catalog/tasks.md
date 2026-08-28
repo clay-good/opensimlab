@@ -1595,6 +1595,33 @@ credited toward the catalog until every item in the completion contract passes.
     ceiling, so the passed-ceiling feedback branch was unreachable. The ceiling now precedes the
     deterioration, and a regression check pins that order. The published report catalog grows to
     226 records.
+  - [x] Infectious-disease slice 9/10 adds septic shock as a lesson about a label that the
+    treatment creates. A 71-year-old presents with a mean arterial pressure of 60 mmHg, heart rate
+    118/min, lactate 3.6 mmol/L, capillary refill 4.1 s, no vasopressor running, and no completed
+    fluid resuscitation. Septic shock requires vasopressors holding a mean pressure at or above 65
+    and a lactate above 2 despite adequate fluid resuscitation, so two of the three criteria
+    describe a treatment that has not happened and have no truth value yet. The consensus task
+    force that wrote the definition stated it could not specify what makes resuscitation adequate,
+    because that is user dependent, so the label is constituted by a therapeutic trial and a team
+    resuscitating differently could produce a different label for the same person. The learner
+    records the measured hypoperfusion, activates critical care on the perfusion pattern rather
+    than on a name, records the classification as open with its reason, records bounded
+    qualified-team resuscitation intent inside the one-hour ceiling, reviews the targets with their
+    grades attached, and arranges monitoring, because the trial is also the measurement. Declaring
+    the label before the trial, reading the lactate as tissue hypoxia, resuscitating until the
+    lactate normalizes, and raising the pressure target above 65 are all refused. The tray and the
+    screen-reader summary report each criterion separately rather than a single verdict, so the
+    learner can see which parts the treatment made answerable. No fluid volume, rate, vasoactive
+    agent, dose, endpoint, antimicrobial, steroid, or procedure control exists.
+  - [x] Verify slice 9 with thirteen contract checks, twenty-one reporting checks, ten tray checks,
+    and seven screen-reader checks, including that no trial completes without recorded intent, that
+    the trial runs from the intent rather than from the case start, and that the lesson does not
+    answer to the adjacent critical-care lesson's action type. The lesson had to be renamed
+    throughout: `septic-shock-response`, `hasSepticShockResponse`, and `septicShockAssessment`
+    already belong to the critical-care septic shock resuscitation lesson, and the first draft
+    would have added a duplicate switch case shadowing it. Everything in this slice is namespaced
+    `septic-shock-label` instead, and a reporting test proves the two do not cross. The published
+    report catalog grows to 227 records.
 - [x] Repair four defects an adversarial audit found in possible sepsis within an hour of shipping
   it, and pin each with a regression test.
   - [x] The 90-minute assessment return was gated on elapsed time alone rather than on the request,

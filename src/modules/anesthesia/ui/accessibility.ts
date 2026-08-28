@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -118,6 +118,7 @@ export function stateSummary(
     readonly severePneumonia?: SeverePneumoniaSnapshot;
     readonly toxicShock?: ToxicShockSnapshot;
     readonly possibleSepsis?: PossibleSepsisSnapshot;
+    readonly septicShockLabel?: SepticShockLabelSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -171,7 +172,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -196,6 +197,49 @@ export function stateSummary(
       }
     }
   }
+  if (options.septicShockLabel) {
+    const patient = options.septicShockLabel;
+    lines.push(patient.ceilingPassed
+      ? 'One hour has elapsed with no bounded resuscitation intent recorded. The ceiling has passed, and that is reported rather than hidden.'
+      : patient.ceilingDueInSeconds !== null
+        ? `Ceiling: ${Math.ceil(patient.ceilingDueInSeconds / 60)} simulated minutes remain of the hour this tier carries.`
+        : patient.resuscitationIntentAtTick !== null
+          ? `Resuscitation intent recorded ${patient.resuscitationIntentInsideCeiling ? 'inside the hour' : 'after the hour had passed'}.`
+          : 'The ceiling is not counting down.');
+    for (const field of ['systolicMmHg', 'diastolicMmHg'] as const) {
+      const value = state[field];
+      if (!options.invalid.has(field) && Number.isFinite(value)) {
+        lines.push(`${FIELDS[field].label}: ${value.toFixed(FIELDS[field].precision)} ${FIELDS[field].unit}.`);
+      }
+    }
+    lines.push('Supplied starting findings were temperature 38.9 degrees Celsius, heart rate 118 per minute, blood pressure 84 over 48 with a mean of 60, respiratory rate 26 per minute, lactate 3.6 millimoles per liter, and capillary refill 4.1 seconds, with no vasopressor running and no fluid resuscitation completed. These remain historical starting findings.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    // Each part is announced separately, because a single verdict would hide which parts the
+    // treatment made answerable and which were answerable already.
+    lines.push(`Septic shock requires three things together. Vasopressors needed to maintain a mean arterial pressure at or above 65: ${patient.trialComplete ? (patient.vasopressorDependent ? 'met' : 'not met') : 'not yet decidable'}. That mean pressure held at target on support: ${patient.trialComplete ? (patient.meanPressureAtTarget ? 'met' : 'not met') : 'not yet decidable'}. A serum lactate above 2 millimoles per liter after adequate fluid resuscitation: ${patient.lactateAboveThreshold ? 'met' : 'not met'}.`);
+    lines.push(patient.definitionReadable
+      ? 'All three can now be read together, and this meets septic shock. It did so only once the treatment had run, so the label reflects a treatment as much as a patient.'
+      : 'The lactate is already above the threshold, but that threshold applies after resuscitation, and the other two describe a vasopressor that is not running. Two of the three have no truth value yet.');
+    lines.push('The consensus task force stated that criteria for adequate fluid resuscitation and for need for vasopressor therapy could not be explicitly specified, because they are highly user dependent. No fluid volume, rate, vasoactive agent, dose, or endpoint is selected here, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(`Hypoperfusion: ${patient.hypoperfusionAtTick === null ? 'not yet recorded' : `recorded at simulated ${formatElapsed(patient.hypoperfusionAtTick)}`}. Critical care: ${patient.criticalCareAtTick === null ? 'not yet activated' : 'activated on the perfusion pattern'}. Classification: ${patient.classificationOpenAtTick === null ? 'not yet recorded' : 'recorded as open, with the reason'}. Boundaries: ${patient.boundariesReviewedAtTick === null ? 'not reviewed' : 'reviewed'}. Monitoring: ${patient.monitoringAtTick === null ? 'not arranged' : 'arranged'}.`);
+    lines.push(patient.labObservation
+      ? `Last requested laboratory evidence at simulated ${formatElapsed(patient.labObservation.atTick)}: lactate ${patient.labObservation.lactateMmolL.toFixed(1)} millimoles per liter; creatinine ${patient.labObservation.creatinineUmolL} micromoles per liter.`
+      : 'No new laboratory-only measurement has been requested.');
+    lines.push(patient.perfusionObservation
+      ? `Last requested examination at simulated ${formatElapsed(patient.perfusionObservation.atTick)}: mean pressure ${patient.perfusionObservation.meanArterialMmHg}; capillary refill ${patient.perfusionObservation.capillaryRefillSeconds.toFixed(1)} seconds; ${patient.perfusionObservation.vasopressorRunning ? 'vasopressor support running' : 'no vasopressor running'}.`
+      : 'No new perfusion-only examination has been requested.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: heart rate ${patient.observation.heartRateBpm} per minute; mean pressure ${patient.observation.meanArterialMmHg}; lactate ${patient.observation.lactateMmolL.toFixed(1)} millimoles per liter.`
+      : 'No new full assessment has been requested.');
+    if (patient.choiceFeedback) lines.push(patient.choiceFeedback);
+    if (patient.ended) {
+      lines.push(patient.ended === 'handoff'
+        ? 'Practice complete. The measured state before treatment, the recorded reason the classification was open, and whether intent fell inside the hour all travel with the patient.'
+        : 'Instructor takeover ended this branch. The teaching stop predicts no patient outcome.');
+    }
+    return lines.join('\n');
+  }
+
   if (options.possibleSepsis) {
     const patient = options.possibleSepsis;
     // The ceiling is announced first, because a clock nobody can hear is a clock nobody respects.

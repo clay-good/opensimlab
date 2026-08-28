@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 186 adds the authored possible sepsis snapshot. */
-export const WORKER_PROTOCOL_VERSION = 186;
+/** Version 187 adds the authored septic shock label snapshot. */
+export const WORKER_PROTOCOL_VERSION = 187;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -510,6 +510,50 @@ export interface PossibleSepsisSnapshot {
   readonly authoredStateTransitions: true;
   readonly doseModelAvailable: false;
   readonly durableRecoveryProven: false;
+}
+
+export interface SepticShockLabelSnapshot {
+  readonly hypoperfusionAtTick: number | null;
+  readonly criticalCareAtTick: number | null;
+  readonly classificationOpenAtTick: number | null;
+  readonly resuscitationIntentAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly ceilingDueInSeconds: number | null;
+  readonly ceilingPassed: boolean;
+  readonly resuscitationIntentInsideCeiling: boolean;
+  readonly trialComplete: boolean;
+  readonly trialObserved: boolean;
+  readonly vasopressorDependent: boolean;
+  readonly meanPressureAtTarget: boolean;
+  readonly lactateAboveThreshold: boolean;
+  readonly definitionReadable: boolean;
+  readonly earlyLabelAttempted: boolean;
+  readonly hypoxiaAttempted: boolean;
+  readonly normalizationAttempted: boolean;
+  readonly mapTargetAttempted: boolean;
+  readonly labObservation: {
+    readonly atTick: number; readonly lactateMmolL: number; readonly whiteCellsX109L: number;
+    readonly creatinineUmolL: number; readonly baseExcessMmolL: number;
+  } | null;
+  readonly perfusionObservation: {
+    readonly atTick: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
+    readonly meanArterialMmHg: number; readonly heartRateBpm: number;
+    readonly capillaryRefillSeconds: number; readonly vasopressorRunning: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly lactateMmolL: number; readonly whiteCellsX109L: number;
+    readonly creatinineUmolL: number; readonly baseExcessMmolL: number;
+    readonly systolicMmHg: number; readonly diastolicMmHg: number; readonly meanArterialMmHg: number;
+    readonly heartRateBpm: number; readonly capillaryRefillSeconds: number;
+    readonly vasopressorRunning: boolean; readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
 }
 
 export interface RenalHypocalcemiaSnapshot {
@@ -3856,6 +3900,7 @@ export interface EquipmentSnapshot {
     readonly severePneumonia?: SeverePneumoniaSnapshot;
     readonly toxicShock?: ToxicShockSnapshot;
     readonly possibleSepsis?: PossibleSepsisSnapshot;
+    readonly septicShockLabel?: SepticShockLabelSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

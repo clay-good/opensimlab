@@ -5807,6 +5807,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Every tier rests on very low certainty of evidence, including the strong recommendations, so the grades separate confidence in the direction rather than the importance of acting. The national quality measure is still built around the one-hour clock and has moved into value-based purchasing, so a three-hour path can be guideline-endorsed and still be measured against a faster clock; that tension is a system fact for the debrief rather than a clinical instruction. Statement numbers for the current guidance were not retrievable at authoring time, so wording is taken from the issuing society page rather than the article.',
     briefIn: ['possible-sepsis-a-clock-that-runs-either-way'],
   },
+  {
+    id: 'septic-shock-presentation-and-trial-response-are-authored',
+    headline: 'One authored trial response stands in for a genuinely variable one.',
+    simplification: 'The case supplies one fixed presentation and one authored resuscitation response in which the mean pressure is held at 68 mmHg on vasopressor support with a lactate of 3.1 mmol/L. No fluid, vasoactive, host-response, or antimicrobial model runs underneath.',
+    whereItMisleads: 'A learner concludes that resuscitation reliably produces this response, or that the label was inevitable.',
+    correctUnderstanding: 'The response to a fluid trial varies, and so therefore does the label. Roughly one in five patients meeting older septic shock criteria fail the current ones, almost all by missing the lactate threshold while on vasopressors. This scenario authors one response so the definitional point can be made cleanly; it is not evidence about how often that response occurs.',
+    briefIn: ['septic-shock-a-label-the-treatment-creates'],
+  },
+  {
+    id: 'septic-shock-controls-are-recording-and-bounded-intent-only',
+    headline: 'The learner never selects a fluid, an agent, or a target.',
+    simplification: 'The learner records measured hypoperfusion, activates critical care, records the classification as open, records bounded resuscitation intent, reviews the targets, arranges monitoring, and reassesses. No fluid volume, rate, vasoactive agent, dose, endpoint, antimicrobial, steroid, or procedure exists.',
+    whereItMisleads: 'The bounded intent is read as a fluid prescription, or the refusal to apply the label early is read as diagnostic hesitancy.',
+    correctUnderstanding: 'The resuscitation is qualified-team work throughout. Declining to apply the label before the trial is not hesitancy: two of the three criteria describe a treatment that has not happened, so they have no truth value yet. The consensus task force declined to define what makes resuscitation adequate, precisely because it is user dependent.',
+    briefIn: ['septic-shock-a-label-the-treatment-creates'],
+  },
+  {
+    id: 'septic-shock-targets-are-comparative-and-low-certainty',
+    headline: 'The pressure target is comparative, and the lactate is not an oxygen meter.',
+    simplification: 'The case states a mean arterial pressure target of 65 mmHg, an age-specific range of 60 to 65 mmHg, at least 30 mL/kg of crystalloid in the first three hours, and serial lactate to guide resuscitation.',
+    whereItMisleads: 'A learner reads 65 as a proven optimum, 30 mL/kg as a mandate, or a falling lactate as a measure of restored tissue oxygenation.',
+    correctUnderstanding: 'The recommendation is 65 over higher targets on moderate certainty; it does not establish 65 as superior to lower, and 60 to 65 is now suggested for adults 65 or older. The fluid volume is a conditional suggestion on low certainty, hedged with an explicit warning about over-resuscitation, and restrictive and liberal strategies have not separated on mortality. An elevated lactate in sepsis reflects adrenergically stimulated aerobic glycolysis and reduced hepatic clearance as well as perfusion, so guidance directs individualizing after the initial bolus by watching the decrement rather than continuing fluids until normalization.',
+    briefIn: ['septic-shock-a-label-the-treatment-creates'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

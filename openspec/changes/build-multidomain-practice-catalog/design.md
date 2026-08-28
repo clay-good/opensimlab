@@ -3280,9 +3280,45 @@ The debrief records the system tension rather than resolving it: the national qu
 still built around the one-hour clock and has moved into value-based purchasing, so a three-hour
 path can be guideline-endorsed and still be measured against a faster clock.
 
-Remaining two: septic shock; meningitis. No research is banked for either. The meningitis lesson
-must be distinct from the existing `neurology-acute-bacterial-meningitis` scenario rather than a
-second copy of it.
+The ninth infectious-disease preview, `septic-shock-a-label-the-treatment-creates@0.1.0`, is about
+a definition that a bedside cannot read off a patient. Septic shock requires vasopressors holding a
+mean arterial pressure at or above 65 mmHg and a lactate above 2 mmol/L despite adequate fluid
+resuscitation. Two of those three describe a completed therapeutic trial, so before the
+resuscitation they have no truth value, and the consensus task force stated plainly that criteria
+for adequate fluid resuscitation and for need for vasopressor therapy could not be specified
+because they are highly user dependent. The label is therefore constituted by the treatment, and a
+team resuscitating differently could produce a different label for the same person. That is a
+property of the definition rather than a failure of care, and it is the lesson.
+
+This is distinct from the two neighbouring definitional lessons. Toxic shock teaches criteria that
+cannot be evaluated yet for temporal and microbiological reasons outside anyone's control. Possible
+sepsis teaches a clock that runs whether or not anyone looks at it. Septic shock teaches criteria
+whose truth value the clinician's own action creates. The tray and the screen-reader summary report
+each criterion separately, with its own verdict, because a single verdict would hide exactly the
+thing the lesson is about.
+
+Four refusals carry the trap list from the research: the label cannot be applied on arrival; an
+elevated lactate is not a reading of tissue oxygen debt, since adrenergically stimulated aerobic
+glycolysis and reduced hepatic clearance both contribute; fluids are not continued until the
+lactate normalizes, which current guidance contradicts in plain terms; and the pressure target is
+not raised above 65, which is recommended over higher targets rather than established as an
+optimum, with 60 to 65 now suggested for adults 65 or older. The scenario's patient is 71, so that
+last point is not hypothetical.
+
+A naming collision shaped the implementation. The critical-care module already owns
+`septic-shock-response`, `hasSepticShockResponse`, and `septicShockAssessment`, and the first draft
+added a duplicate switch case that would have shadowed the existing lesson. Everything here is
+namespaced `septic-shock-label`, and a reporting test pins that the two lessons do not answer to
+each other's action types or event prefixes.
+
+Remaining one: meningitis. Research is banked. The lesson must be distinct from the existing
+`acute-bacterial-meningitis-first-hour` scenario in the neurology module, which teaches protecting
+the first hour for one authored patient who supports prompt lumbar puncture without pre-imaging,
+and from this module's own meningococcal sepsis lesson. The candidate is the contested imaging
+boundary: the same patient meets the criteria for imaging before lumbar puncture under roughly 7,
+32, and 65 percent of the Swedish, ESCMID, and IDSA rule sets respectively, with an observed
+mortality difference between prompt and imaging-preceded puncture, so the criteria set a unit uses
+is a choice rather than a fact.
 Sepsis without shock should teach the 2026 tiered structure and must be written so it teaches
 judgement rather than delay, with a visible three-hour ceiling running from first suspicion, no
 selectable waiting action, and any drift toward hypotension collapsing the branch to the one-hour
