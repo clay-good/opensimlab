@@ -9,3 +9,4 @@ coverage/
 /report-export*.json
 /report-projection*.json
 /report-query*.json
+.bench/
