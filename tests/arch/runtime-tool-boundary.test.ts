@@ -45,11 +45,27 @@ function publicComputeViolations(file: SourceFile): string[] {
 describe('Requirement: Educational rehearsal never becomes a runtime work tool', () => {
   it('rejects standalone utility routes and utility-oriented search metadata', () => {
     const forbiddenRoute = /(?:calculator|score|classification|converter|lookup|checklist|dose-tool|decision-support|documentation-generator)/i;
+    // A scenario slug is prose about a lesson, not a route to a tool: "a score cannot exclude" is
+    // the opposite of shipping a calculator. Only the routing part of a path is checked here, so a
+    // standalone utility page stays rejected wherever it is mounted.
+    const routingPart = (path: string) => path.replace(/(\/scenario\/)[^/]+$/, '$1');
     for (const route of ROUTES) {
-      expect(route.path, `forbidden utility route ${route.path}`).not.toMatch(forbiddenRoute);
+      expect(routingPart(route.path), `forbidden utility route ${route.path}`).not.toMatch(forbiddenRoute);
       expect(`${route.title} ${route.description}`, `utility-oriented metadata on ${route.path}`)
         .not.toMatch(/calculate for your patient|determine the dose|clinical decision support|use at the bedside/i);
     }
+  });
+
+  it('still rejects a utility page mounted anywhere, including under a module', () => {
+    const forbiddenRoute = /(?:calculator|score|classification|converter|lookup|checklist|dose-tool|decision-support|documentation-generator)/i;
+    const routingPart = (path: string) => path.replace(/(\/scenario\/)[^/]+$/, '$1');
+    for (const utility of ['/score-calculator', '/infectious-disease/score-calculator',
+      '/infectious-disease/scenario/lesson/dose-tool', '/tools/classification-lookup']) {
+      expect(routingPart(utility)).toMatch(forbiddenRoute);
+    }
+    // The exemption is exactly one segment wide: it never reaches past a scenario slug.
+    expect(routingPart('/infectious-disease/scenario/necrotizing-infection-score-cannot-exclude'))
+      .toBe('/infectious-disease/scenario/');
   });
 
   it('rejects exported utilities, real-patient fields, and public compute endpoints', () => {

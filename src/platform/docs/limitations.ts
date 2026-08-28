@@ -5783,6 +5783,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'These are surveillance instruments built to count cases consistently across populations. The negative-culture clause excludes other diagnoses rather than denying infection, and it is the toxin rather than a bloodstream organism that makes the patient shocked. Reported case fatality spans a wide range across published series, so no single figure is asserted. The definitions have not been revised in over a decade despite a documented international rise in invasive infection, which changed alerting and contact management rather than the definitions. One national surveillance system has no equivalent definition for the staphylococcal form at all, and units differ between regions.',
     briefIn: ['toxic-shock-a-definition-that-cannot-close'],
   },
+  {
+    id: 'possible-sepsis-presentation-and-resolution-are-authored',
+    headline: 'One authored resolution stands in for a genuinely two-sided question.',
+    simplification: 'The case supplies one fixed presentation and one authored resolution in which concern persists and a source is found. No infection, host-response, or antimicrobial model runs underneath.',
+    whereItMisleads: 'A learner concludes that investigation always confirms infection, and therefore that the tier was academic.',
+    correctUnderstanding: 'In comparable populations roughly a third of patients treated empirically for suspected sepsis turn out to have no bacterial infection, with viral illness, volume overload, drug effect, and hypovolaemia among the commonest alternatives. The other resolution is real and common; this scenario authors the one where concern persists, so that the ceiling still binds and the lesson cannot be read as permission to stand down.',
+    briefIn: ['possible-sepsis-a-clock-that-runs-either-way'],
+  },
+  {
+    id: 'possible-sepsis-controls-are-recording-and-bounded-intent-only',
+    headline: 'There is no waiting action, and the learner never assigns the tier.',
+    simplification: 'The learner records the time of first suspicion, records the uncertainty, requests a time-limited assessment against the displayed ceiling, records bounded antimicrobial intent, reviews the tiers, and arranges close monitoring. No agent, dose, route, combination, fluid volume, vasoactive agent, or procedure exists.',
+    whereItMisleads: 'A bounded assessment is read as permission to observe, or the learner believes classifying the likelihood tier is part of the job.',
+    correctUnderstanding: 'Observation and a time-limited assessment against a recorded ceiling are different decisions, and only the second is what the guidance permits. The likelihood classification belongs to the qualified team, and the operational definitions separating possible from probable were not retrievable at authoring time, so this lesson deliberately does not supply them.',
+    briefIn: ['possible-sepsis-a-clock-that-runs-either-way'],
+  },
+  {
+    id: 'possible-sepsis-tiers-rest-on-very-low-certainty-and-a-contested-measure',
+    headline: 'Conditional does not mean optional, and the measure has not softened.',
+    simplification: 'The case states the tiered structure, the one-hour target for shock and for probable or definite sepsis, and the three-hour ceiling for possible sepsis without shock.',
+    whereItMisleads: 'A learner reads conditional as optional, or reads the three-hour path as a general licence to be slower.',
+    correctUnderstanding: 'Every tier rests on very low certainty of evidence, including the strong recommendations, so the grades separate confidence in the direction rather than the importance of acting. The national quality measure is still built around the one-hour clock and has moved into value-based purchasing, so a three-hour path can be guideline-endorsed and still be measured against a faster clock; that tension is a system fact for the debrief rather than a clinical instruction. Statement numbers for the current guidance were not retrievable at authoring time, so wording is taken from the issuing society page rather than the article.',
+    briefIn: ['possible-sepsis-a-clock-that-runs-either-way'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

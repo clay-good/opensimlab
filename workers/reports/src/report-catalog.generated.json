@@ -2213,6 +2213,23 @@
       "limitationManifestHash": "sha256:d0b5d9128dfa7d9bd8014f1268c755b20967fbf2c2f95123c6edd11d7175d48c"
     },
     {
+      "scenarioId": "possible-sepsis-a-clock-that-runs-either-way",
+      "contentVersion": "0.1.0",
+      "moduleId": "infectious-disease",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:46a3f88e0ae809f829dcf1e530c48bb781f85c91fbe5667aa8554c9402dcce56",
+      "defaultsHash": "sha256:165f0f9d819be7488f12cd9abb652156f5a35a19274ad8fc4279da15c86aa44e",
+      "maturityHash": "sha256:687add41a539ca4fde254b16fef584eb615b7c77d6c367e6a2f4d9eb1c928c01",
+      "sourceManifestHash": "sha256:71a06fb6ae4285c0d803881d361605a5e707d38cc163cbd6d1d4856cea68f192",
+      "limitationManifestHash": "sha256:3ec52a70e1bf64ffb68c6656ef3c6433a3531279dec3b5e142a1dbb8aacca62b"
+    },
+    {
       "scenarioId": "severe-pneumonia-the-score-answered-another-question",
       "contentVersion": "0.1.0",
       "moduleId": "infectious-disease",

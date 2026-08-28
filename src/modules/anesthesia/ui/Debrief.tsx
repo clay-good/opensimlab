@@ -46,6 +46,7 @@ import { supportsNecrotizingInfection } from '../../infectious-disease/necrotizi
 import { supportsEndocarditisHeartFailure } from '../../infectious-disease/endocarditis-heart-failure';
 import { supportsSeverePneumonia } from '../../infectious-disease/severe-pneumonia';
 import { supportsToxicShock } from '../../infectious-disease/toxic-shock';
+import { supportsPossibleSepsis } from '../../infectious-disease/possible-sepsis';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -619,6 +620,44 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-infectious-disease-possible-sepsis-')) {
+      if (!supportsPossibleSepsis(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The infectious-disease possible sepsis lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^possible-sepsis-${id}-\\d+$`).test(entry.eventId));
+      const timeZero = event('time-zero-recorded'); const uncertainty = event('uncertainty-recorded');
+      const assessment = event('assessment-requested'); const antimicrobial = event('antimicrobial-intent');
+      const boundaries = event('boundary-review'); const monitoring = event('monitoring');
+      const handoff = event('handoff'); const ceiling = event('ceiling-passed'); const shock = event('shock-gate');
+      const full = (entry: EngineEvent) => /^possible-sepsis-(initial|investigated|shocked)-reassessment-\d+$/.test(entry.eventId);
+      const later = log.find(full);
+      const refusedShortcut = event('wait-refused') ?? event('tier-refused')
+        ?? event('single-test-refused') ?? event('deferral-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'reconcile-infectious-disease-possible-sepsis-fever-without-a-source-or-shock': { met: !!uncertainty, tick: uncertainty?.tick,
+          finding: (uncertainty ? 'The fever without a source, and the absence of hypotension, were recorded as they stood. ' : 'The uncertainty was not recorded as it stood. ')
+            + 'Infection could not be excluded and neither could a non-infective cause.' },
+        'recognize-infectious-disease-possible-sepsis-that-the-ceiling-runs-from-suspicion': { met: !!timeZero, tick: timeZero?.tick,
+          finding: (timeZero ? 'The time of first suspicion was recorded and the ceiling displayed. ' : 'The time of first suspicion was never recorded, so the ceiling was never displayed. ')
+            + 'It runs whether or not anyone looks at it; recording it is what makes a later delay visible rather than invisible.' },
+        'activate-infectious-disease-possible-sepsis-time-limited-assessment-not-observation': { met: !!assessment && !!monitoring, tick: assessment?.tick,
+          finding: (assessment && monitoring ? 'A time-limited assessment was requested with close monitoring arranged. ' : 'The time-limited assessment or the close monitoring it is conditional on remains incomplete. ')
+            + (refusedShortcut ? 'A waiting, tier-assigning, single-test, or unbounded-deferral shortcut was attempted and refused; it remains in this run. ' : '')
+            + 'A bounded assessment against a running clock is a different decision from observation.' },
+        'review-infectious-disease-possible-sepsis-tiered-guidance-and-certainty-boundary': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The tiers and their certainty were reviewed. ' : 'The tiered-guidance boundary review is missing. ')
+            + 'Every tier rests on very low certainty of evidence, including the strong recommendations, so conditional does not mean optional, and no single biomarker rules sepsis in or out.' },
+        'record-infectious-disease-possible-sepsis-bounded-intent-inside-the-ceiling': { met: !!antimicrobial && !!later, tick: antimicrobial?.tick,
+          finding: (antimicrobial && later ? 'Bounded antimicrobial intent was recorded and a full assessment made the authored change available for review. ' : 'Bounded antimicrobial intent or a requested full assessment remains incomplete. ')
+            + (ceiling ? 'The three-hour ceiling passed before intent was recorded, which is reported rather than hidden. ' : '')
+            + (shock ? 'The branch collapsed to the immediate path, which was not the learner\u2019s to weigh. ' : '')
+            + 'The ceiling never moved, because it runs from first suspicion rather than from the result.' },
+        'handoff-infectious-disease-possible-sepsis-a-travelling-clock-and-open-classification': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The recorded time of first suspicion travelled with the patient, alongside whether intent fell inside the ceiling and an open classification. ' : 'Current full findings or continuing-care ownership remains incomplete. ')
+            + 'A settled tier, an identified organism, and a normal biomarker are not handoff gates, and no outcome is certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-infectious-disease-toxic-shock-')) {
       if (!supportsToxicShock(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The infectious-disease toxic shock lesson was not active.' } satisfies ObjectiveFinding;

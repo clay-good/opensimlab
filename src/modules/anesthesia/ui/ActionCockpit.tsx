@@ -52,6 +52,7 @@ import { supportsNecrotizingInfection, type NecrotizingInfectionAction, type Nec
 import { supportsEndocarditisHeartFailure, type EndocarditisHeartFailureAction, type EndocarditisHeartFailureSnapshot } from '../../infectious-disease/endocarditis-heart-failure';
 import { supportsSeverePneumonia, type SeverePneumoniaAction, type SeverePneumoniaSnapshot } from '../../infectious-disease/severe-pneumonia';
 import { supportsToxicShock, type ToxicShockAction, type ToxicShockSnapshot } from '../../infectious-disease/toxic-shock';
+import { supportsPossibleSepsis, type PossibleSepsisAction, type PossibleSepsisSnapshot } from '../../infectious-disease/possible-sepsis';
 import { RenalHyponatremiaTray } from '../../renal-electrolyte/RenalHyponatremiaTray';
 import { RenalHypernatremiaTray } from '../../renal-electrolyte/RenalHypernatremiaTray';
 import { RenalHypocalcemiaTray } from '../../renal-electrolyte/RenalHypocalcemiaTray';
@@ -63,6 +64,7 @@ import { NecrotizingInfectionTray } from '../../infectious-disease/NecrotizingIn
 import { EndocarditisHeartFailureTray } from '../../infectious-disease/EndocarditisHeartFailureTray';
 import { SeverePneumoniaTray } from '../../infectious-disease/SeverePneumoniaTray';
 import { ToxicShockTray } from '../../infectious-disease/ToxicShockTray';
+import { PossibleSepsisTray } from '../../infectious-disease/PossibleSepsisTray';
 import { HypercalcemiaTray } from '../../endocrine-metabolic/HypercalcemiaTray';
 import type { AdrenalCrisisSnapshot } from '@platform/kernel/protocol';
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
@@ -121,6 +123,7 @@ export interface ActionCockpitProps {
   readonly endocarditisHeartFailure?: EndocarditisHeartFailureSnapshot;
   readonly severePneumonia?: SeverePneumoniaSnapshot;
   readonly toxicShock?: ToxicShockSnapshot;
+  readonly possibleSepsis?: PossibleSepsisSnapshot;
   readonly hypoglycemiaDemonstrating?: boolean;
   readonly scenario: Scenario;
   readonly region: RegionProfile;
@@ -2668,6 +2671,7 @@ export interface ActionCockpitProps {
   readonly onEndocarditisHeartFailureResponse?: (action: EndocarditisHeartFailureAction) => void;
   readonly onSeverePneumoniaResponse?: (action: SeverePneumoniaAction) => void;
   readonly onToxicShockResponse?: (action: ToxicShockAction) => void;
+  readonly onPossibleSepsisResponse?: (action: PossibleSepsisAction) => void;
   readonly renalHyponatremiaGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
@@ -2683,6 +2687,7 @@ export interface ActionCockpitProps {
   readonly endocarditisHeartFailureDemonstrating?: boolean;
   readonly severePneumoniaDemonstrating?: boolean;
   readonly toxicShockDemonstrating?: boolean;
+  readonly possibleSepsisDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -2876,6 +2881,7 @@ export function crisisResponseAvailability(
   const hasEndocarditisHeartFailureResponse = supportsEndocarditisHeartFailure(scenario);
   const hasSeverePneumoniaResponse = supportsSeverePneumonia(scenario);
   const hasToxicShockResponse = supportsToxicShock(scenario);
+  const hasPossibleSepsisResponse = supportsPossibleSepsis(scenario);
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -3448,7 +3454,7 @@ export function crisisResponseAvailability(
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
-    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse, hasToxicShockResponse,
+    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse, hasToxicShockResponse, hasPossibleSepsisResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3839,7 +3845,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
-    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse, hasToxicShockResponse,
+    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse, hasToxicShockResponse, hasPossibleSepsisResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -4020,8 +4026,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasEndocarditisHeartFailureResponse
     || hasSeverePneumoniaResponse
     || hasToxicShockResponse
+    || hasPossibleSepsisResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasToxicShockResponse
+  const responseTray = hasPossibleSepsisResponse
+    ? { id: 'crisis', label: 'Start the clock + assess + decide' } as const
+    : hasToxicShockResponse
     ? { id: 'crisis', label: 'Recognize + activate + record' } as const
     : hasSeverePneumoniaResponse
     ? { id: 'crisis', label: 'Reconcile + escalate + reassess' } as const
@@ -4542,6 +4551,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasEndocarditisHeartFailureResponse
     || hasSeverePneumoniaResponse
     || hasToxicShockResponse
+    || hasPossibleSepsisResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -5544,6 +5554,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 demonstrating={props.renalHypokalemiaDemonstrating}
                 scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onRenalHypokalemiaTutorSource}
                 onAction={props.onRenalHypokalemiaResponse ?? (() => {})} />
+            )}
+            {hasPossibleSepsisResponse && (
+              <PossibleSepsisTray assessment={props.possibleSepsis}
+                demonstrating={props.possibleSepsisDemonstrating}
+                onAction={props.onPossibleSepsisResponse ?? (() => {})} />
             )}
             {hasToxicShockResponse && (
               <ToxicShockTray assessment={props.toxicShock}

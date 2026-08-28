@@ -1,0 +1,22 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
+import { POSSIBLE_SEPSIS_A_CLOCK_THAT_RUNS_EITHER_WAY } from './scenarios/possible-sepsis-a-clock-that-runs-either-way';
+import { POSSIBLE_SEPSIS_FIXTURES } from './possible-sepsis-fixtures';
+
+export function possibleSepsisCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
+  if (moduleId !== 'infectious-disease' || capabilityVersion !== '0.1.0-alpha.48'
+    || scenario.metadata.id !== POSSIBLE_SEPSIS_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
+    || POSSIBLE_SEPSIS_FIXTURES.contentVersion !== '0.1.0' || POSSIBLE_SEPSIS_FIXTURES.seed !== 5843
+    || JSON.stringify(scenario) !== JSON.stringify(POSSIBLE_SEPSIS_A_CLOCK_THAT_RUNS_EITHER_WAY)) return [];
+  return [
+    { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['possible-sepsis-fixtures.ts binds seed 5843 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No infection, host-response, or antimicrobial model is claimed.'] },
+    { id: 'meaningful-progression', status: 'satisfied', evidence: ['possible-sepsis.ts runs three authored transitions from one recorded time of first suspicion: the assessment returns at 90 minutes with concern persisting and a source identified, the three-hour ceiling is reported as passed rather than hidden at 180 minutes if no antimicrobial intent has been recorded, and the branch then collapses to the immediate path at 195 minutes. The ceiling never moves, because it runs from suspicion rather than from any result.'] },
+    { id: 'meaningful-actions-and-choices', status: 'satisfied', evidence: ['This lesson deliberately exposes no waiting action. The learner records the time of first suspicion, records the uncertainty without assigning a tier, requests a time-limited assessment against the running clock, records bounded antimicrobial intent, reviews the tiered guidance, and arranges close monitoring. Observing and reviewing later, assigning the tier, ruling infection out on one biomarker, and deferring with no time limit are each refused.'] },
+    { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The recorded time zero, recorded uncertainty, time-limited assessment, bounded antimicrobial intent, boundary review, close monitoring, and a current full assessment permit handoff with the classification open and the clock travelling with the patient. Instructor takeover bounds a run with no assessment or intent at 225 minutes, or an unfinished session at eight hours.'] },
+    { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Six event-bound objectives distinguish placing the patient outside the immediate path, starting and displaying the clock, requesting a bounded assessment rather than observing, the tiered guidance and its certainty, bounded intent inside the ceiling, and accountable handoff. Refused shortcuts remain visible, and no tier, organism, or outcome is certified.'] },
+    { id: 'reference-transcripts', status: 'satisfied', evidence: ['possible-sepsis-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine.'] },
+    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
+    { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
+  ];
+}

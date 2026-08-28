@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "infectious-disease",
-  "recordCount": 7,
+  "recordCount": 8,
   "records": [
     {
       "recordId": "scenario:meningococcal-sepsis-recognition-and-escalation@0.1.0",
@@ -78,6 +78,17 @@
       "evidence": [
         "/catalog/infectious-disease-completion-audit.json#toxic-shock-a-definition-that-cannot-close@0.1.0",
         "/catalog/infectious-disease-quality-audit.json#toxic-shock-a-definition-that-cannot-close@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:possible-sepsis-a-clock-that-runs-either-way@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "possible-sepsis-a-clock-that-runs-either-way",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/infectious-disease-completion-audit.json#possible-sepsis-a-clock-that-runs-either-way@0.1.0",
+        "/catalog/infectious-disease-quality-audit.json#possible-sepsis-a-clock-that-runs-either-way@0.1.0"
       ]
     }
   ]

@@ -3253,13 +3253,36 @@ and neither closes. The signature action is recording the definition status open
 and a named re-check horizon, and the handoff gate requires it. Source control is completed off-stage
 so the scenario carries only the definitional lesson.
 
-Remaining three: sepsis without shock; septic shock; meningitis. Research is banked for sepsis
-without shock and must be written so it teaches judgement rather than delay, with a visible
-three-hour ceiling running from first suspicion, no selectable waiting action, and any drift toward
-hypotension collapsing the branch to the one-hour path without learner discretion. Research is
-banked for two. Toxic shock should teach confirmation deferral: the staphylococcal definition needs
-desquamation at one to two weeks and the streptococcal one needs sterile-site isolation, so a single
-pending culture is two mutually exclusive unknowns and neither definition can close at the bedside.
+The eighth infectious-disease preview, `possible-sepsis-a-clock-that-runs-either-way@0.1.0`, is the
+one the research warned could teach delay if written carelessly. Current guidance is tiered: shock,
+and probable or definite sepsis without shock, carry a strong recommendation for antimicrobials
+within the hour; possible sepsis without shock carries a conditional suggestion for a time-limited
+course of rapid investigation and, if concern persists, antimicrobials within three hours of first
+suspicion. Every tier rests on very low certainty of evidence, including the strong ones, so the
+grades separate confidence in the direction rather than the importance of acting.
+
+Four design constraints follow from that, and each is pinned by a test. The lesson exposes no
+waiting action; the choice that looks like one is a refusal, because a bounded assessment against a
+recorded clock and an interval of observation are different decisions. The ceiling runs from first
+suspicion rather than from any result, so recording it late buys no time, and it is displayed in the
+tray and announced first in the screen-reader summary. The learner never assigns the likelihood
+tier: that belongs to the qualified team, and the operational definitions separating possible from
+probable were not retrievable at authoring time, so the lesson deliberately does not supply them.
+Any drift to hypotension collapses the branch to the immediate path with no learner discretion.
+
+Ordering matters here and the contract checks caught it. Shock was first authored at 150 minutes,
+ahead of the 180-minute ceiling, which made the passed-ceiling path unreachable: a learner who
+drifted always shocked before the ceiling could be reported. Drift now passes the ceiling openly at
+180 minutes and deteriorates at 195, so both authored consequences are reachable and the shock event
+says plainly that one authored deterioration is not evidence that delay causes shock.
+
+The debrief records the system tension rather than resolving it: the national quality measure is
+still built around the one-hour clock and has moved into value-based purchasing, so a three-hour
+path can be guideline-endorsed and still be measured against a faster clock.
+
+Remaining two: septic shock; meningitis. No research is banked for either. The meningitis lesson
+must be distinct from the existing `neurology-acute-bacterial-meningitis` scenario rather than a
+second copy of it.
 Sepsis without shock should teach the 2026 tiered structure and must be written so it teaches
 judgement rather than delay, with a visible three-hour ceiling running from first suspicion, no
 selectable waiting action, and any drift toward hypotension collapsing the branch to the one-hour

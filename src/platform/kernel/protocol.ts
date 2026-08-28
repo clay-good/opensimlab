@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 185 adds the authored toxic shock snapshot. */
-export const WORKER_PROTOCOL_VERSION = 185;
+/** Version 186 adds the authored possible sepsis snapshot. */
+export const WORKER_PROTOCOL_VERSION = 186;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -461,6 +461,48 @@ export interface ToxicShockSnapshot {
     readonly meanArterialMmHg: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
     readonly coreTemperatureC: number; readonly erythroderma: boolean; readonly desquamation: boolean;
     readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true;
+  readonly doseModelAvailable: false;
+  readonly durableRecoveryProven: false;
+}
+
+export interface PossibleSepsisSnapshot {
+  readonly timeZeroAtTick: number | null;
+  readonly uncertaintyAtTick: number | null;
+  readonly assessmentAtTick: number | null;
+  readonly antimicrobialIntentAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  /** Visible from the moment first suspicion is recorded; a clock nobody sees is not respected. */
+  readonly ceilingDueInSeconds: number | null;
+  readonly ceilingPassed: boolean;
+  readonly investigationReturned: boolean;
+  readonly investigationObserved: boolean;
+  readonly immediatePathApplies: boolean;
+  readonly antimicrobialInsideCeiling: boolean;
+  readonly waitAttempted: boolean;
+  readonly tierAttempted: boolean;
+  readonly singleTestAttempted: boolean;
+  readonly deferralAttempted: boolean;
+  readonly labObservation: {
+    readonly atTick: number; readonly lactateMmolL: number; readonly whiteCellsX109L: number;
+    readonly crpMgL: number; readonly creatinineUmolL: number; readonly sourceIdentified: boolean;
+  } | null;
+  readonly perfusionObservation: {
+    readonly atTick: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
+    readonly heartRateBpm: number; readonly respiratoryRateBpm: number;
+    readonly coreTemperatureC: number; readonly hypotensive: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly lactateMmolL: number; readonly whiteCellsX109L: number;
+    readonly crpMgL: number; readonly creatinineUmolL: number; readonly sourceIdentified: boolean;
+    readonly systolicMmHg: number; readonly diastolicMmHg: number; readonly heartRateBpm: number;
+    readonly meanArterialMmHg: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly coreTemperatureC: number; readonly hypotensive: boolean; readonly alertness: string;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -3813,6 +3855,7 @@ export interface EquipmentSnapshot {
     readonly endocarditisHeartFailure?: EndocarditisHeartFailureSnapshot;
     readonly severePneumonia?: SeverePneumoniaSnapshot;
     readonly toxicShock?: ToxicShockSnapshot;
+    readonly possibleSepsis?: PossibleSepsisSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

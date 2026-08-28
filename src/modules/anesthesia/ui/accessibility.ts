@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -117,6 +117,7 @@ export function stateSummary(
     readonly endocarditisHeartFailure?: EndocarditisHeartFailureSnapshot;
     readonly severePneumonia?: SeverePneumoniaSnapshot;
     readonly toxicShock?: ToxicShockSnapshot;
+    readonly possibleSepsis?: PossibleSepsisSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -170,7 +171,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -194,6 +195,42 @@ export function stateSummary(
           + ' intravenous.');
       }
     }
+  }
+  if (options.possibleSepsis) {
+    const patient = options.possibleSepsis;
+    // The ceiling is announced first, because a clock nobody can hear is a clock nobody respects.
+    lines.push(patient.immediatePathApplies
+      ? 'The immediate path now applies: the pressure has fallen and antimicrobial therapy is indicated within the hour. No time-limited investigation remains available.'
+      : patient.ceilingPassed
+        ? 'Three hours have elapsed since first suspicion with no antimicrobial intent recorded. The ceiling has passed, and that is recorded rather than hidden.'
+        : patient.ceilingDueInSeconds !== null
+          ? `Ceiling: ${Math.ceil(patient.ceilingDueInSeconds / 60)} simulated minutes remain of the three hours from first suspicion.`
+          : 'The time of first suspicion has not been recorded, so no ceiling is announced. It is running regardless.');
+    for (const field of ['systolicMmHg', 'diastolicMmHg'] as const) {
+      const value = state[field];
+      if (!options.invalid.has(field) && Number.isFinite(value)) {
+        lines.push(`${FIELDS[field].label}: ${value.toFixed(FIELDS[field].precision)} ${FIELDS[field].unit}.`);
+      }
+    }
+    lines.push('Supplied starting findings were temperature 38.4 degrees Celsius, heart rate 108 per minute, blood pressure 118 over 72 with no hypotension, respiratory rate 22 per minute, lactate 2.4 millimoles per liter, and no identified source. These remain historical starting findings.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push('Infection cannot be excluded and neither can a non-infective cause. There is deliberately no waiting action in this lesson: what the guidance permits is a time-limited course of rapid investigation against a recorded ceiling, and the clock does not pause while results are awaited.');
+    lines.push(`Time of first suspicion: ${patient.timeZeroAtTick === null ? 'not yet recorded' : `recorded at simulated ${formatElapsed(patient.timeZeroAtTick)}`}. Uncertainty: ${patient.uncertaintyAtTick === null ? 'not yet recorded' : 'recorded without assigning a tier'}. Time-limited assessment: ${patient.assessmentAtTick === null ? 'not yet requested' : 'requested'}. Antimicrobial intent: ${patient.antimicrobialIntentAtTick === null ? 'not yet recorded' : patient.antimicrobialInsideCeiling ? 'recorded inside the ceiling' : 'recorded after the ceiling had passed'}. Close monitoring: ${patient.monitoringAtTick === null ? 'not arranged' : 'arranged'}.`);
+    lines.push('The likelihood tier is classified by the qualified team rather than the learner. No agent, dose, route, or combination is selected, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.labObservation
+      ? `Last requested laboratory evidence at simulated ${formatElapsed(patient.labObservation.atTick)}: lactate ${patient.labObservation.lactateMmolL.toFixed(1)} millimoles per liter; C-reactive protein ${patient.labObservation.crpMgL} milligrams per liter; source ${patient.labObservation.sourceIdentified ? 'identified' : 'not identified'}. No single value rules infection in or out.`
+      : 'No new laboratory-only measurement has been requested.');
+    lines.push(patient.perfusionObservation
+      ? `Last requested examination at simulated ${formatElapsed(patient.perfusionObservation.atTick)}: blood pressure ${patient.perfusionObservation.systolicMmHg} over ${patient.perfusionObservation.diastolicMmHg}; heart rate ${patient.perfusionObservation.heartRateBpm} per minute; ${patient.perfusionObservation.hypotensive ? 'hypotensive' : 'not hypotensive'}. A perfusion-only look does not refresh laboratory evidence.`
+      : 'No new perfusion-only examination has been requested.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: heart rate ${patient.observation.heartRateBpm} per minute; lactate ${patient.observation.lactateMmolL.toFixed(1)} millimoles per liter; source ${patient.observation.sourceIdentified ? 'identified' : 'not identified'}; ${patient.observation.alertness}. These are historical observations, not live measurements.`
+      : 'No new full assessment has been requested.');
+    if (patient.investigationObserved) lines.push('Concern for infection persists and a source is identified. The ceiling has not moved, because it runs from first suspicion rather than from the result.');
+    lines.push('Every tier in the current guidance rests on very low certainty of evidence, including the strong recommendations, so conditional does not mean optional. No tier, organism, or outcome is established.');
+    lines.push(options.alarms.length === 0 ? 'No active alarms.'
+      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    return lines.join(' ');
   }
   if (options.toxicShock) {
     const patient = options.toxicShock;

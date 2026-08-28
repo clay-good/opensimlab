@@ -1568,6 +1568,33 @@ credited toward the catalog until every item in the completion contract passes.
     and five screen-reader checks, including that both definitions read unmet in every state, that
     desquamation stays absent and cultures stay pending throughout, and that all four closure and
     exclusion shortcuts are refused. The published report catalog grows to 225 records.
+  - [x] Infectious-disease slice 8/10 adds possible sepsis without shock as a bounded-clock lesson,
+    written against the risk that a three-hour tier reads as permission to wait. A 71-year-old
+    presents with temperature 38.4 C, heart rate 108/min, BP 118/72 mmHg with no hypotension,
+    respiratory rate 22/min, alert, lactate 2.4 mmol/L, C-reactive protein 96 mg/L, and no
+    identified source. Infection cannot be excluded and neither can a non-infective cause. The
+    lesson exposes no waiting action at all: the learner records the time infection was first
+    suspected, records the uncertainty as it stands without assigning a tier, requests a
+    time-limited course of rapid investigation against a displayed ceiling, reviews the tiers and
+    their certainty, arranges the close monitoring the deferral tier is conditional on, records
+    bounded qualified-team antimicrobial intent, and hands over the running clock with the
+    classification open. The ceiling counts down in the tray and is announced first in the
+    screen-reader summary. Observing and reviewing later, assigning the likelihood tier, ruling
+    infection out on one biomarker, and deferring with no time limit are all refused choices. The
+    assessment returns at 90 authored minutes with concern persisting and a source found; the
+    ceiling is reported as passed at 180 minutes rather than hidden; the branch then collapses to
+    the immediate path at 195 minutes with no learner discretion; instructor takeover bounds an
+    abandoned run at 225 minutes. No learner history, examination, tier assignment, diagnosis,
+    antimicrobial, dose, route, combination, fluid, vasoactive agent, procedure, disposition,
+    prognosis, or outcome control exists.
+  - [x] Verify slice 8 with fourteen contract checks, twenty-two reporting checks, eleven tray
+    checks, and seven screen-reader checks, including that no action name reads as waiting, that
+    recording the time zero late buys no extra time, that the ceiling and the shock collapse are
+    both reachable in order, and that the snapshot carries no tier field. Writing the contract
+    checks found a real authoring dead-end: shock at 150 minutes always preceded the 180-minute
+    ceiling, so the passed-ceiling feedback branch was unreachable. The ceiling now precedes the
+    deterioration, and a regression check pins that order. The published report catalog grows to
+    226 records.
 - [x] Repair four defects a consistency audit found in already-published infectious-disease
   scenarios, and cover each with a regression test.
   - [x] The necrotizing-infection tray rendered a live derived risk score inside its static

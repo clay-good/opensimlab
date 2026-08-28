@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 349,
+  "sourceCount": 351,
   "sources": [
     {
       "id": "renal-hypermagnesemia-series-2018",
@@ -4225,6 +4225,34 @@
       "usedFor": "Stable-transition criteria, continued observation despite expected early oxygenation transition, immediate skin-to-skin thermal support, and avoidance of premature well-newborn closure.",
       "verifiedAgainst": "https://publications.aap.org/pediatrics/article/157/1/e2025074766/205238/Neonatal-Life-Support-2025-International-Liaison",
       "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "surviving-sepsis-campaign-2026",
+      "currency": {
+        "lastAmended": "2026-03-23",
+        "checkedAt": "2026-08-28"
+      },
+      "authors": "Prescott HC, Antonelli M, Alhazzani W, et al",
+      "title": "Surviving Sepsis Campaign: International Guidelines for Management of Sepsis and Septic Shock 2026",
+      "publication": "Critical Care Medicine",
+      "year": 2026,
+      "locator": "Published 2026-03-23; doi:10.1097/CCM.0000000000007075, co-published in Intensive Care Medicine. Tiered antimicrobial timing: septic shock, and probable or definite sepsis without shock, immediately and ideally within 1 hour, strong recommendation on very low certainty; possible sepsis without shock, a time-limited course of rapid investigation and, if concern persists, antimicrobials within 3 hours of first suspicion, conditional on very low certainty; low likelihood without shock, defer while continuing close monitoring, conditional. Sepsis is a clinical diagnosis and should not be ruled in or out using a single biomarker or diagnostic test. Statement numbers and the operational tier definitions were not retrievable; wording is taken from the issuing society guideline page rather than the article, which is paywalled.",
+      "usedFor": "The tiered structure this scenario is built on, the three-hour ceiling running from first suspicion, the refusal to rule infection in or out on one biomarker, and the statement that every tier rests on very low certainty so conditional does not mean optional.",
+      "verifiedAgainst": "https://www.sccm.org/clinical-resources/guidelines/guidelines/surviving-sepsis-campaign-international-guidelines-for-management-of-sepsis-and-septic-shock-2026",
+      "verifiedOn": "2026-08-28"
+    },
+    {
+      "id": "idsa-sep1-position-2021",
+      "pmid": "32374861",
+      "authors": "Rhee C, Chiotos K, Cosgrove SE, et al",
+      "title": "Infectious Diseases Society of America Position Paper: Recommended Revisions to the National Severe Sepsis and Septic Shock Early Management Bundle (SEP-1) Sepsis Quality Measure",
+      "publication": "Clinical Infectious Diseases",
+      "year": 2021,
+      "locator": "72(4):541-552; doi:10.1093/cid/ciaa059. Argues the measure should be restricted to septic shock, that the time-zero definition is not evidence based and is prone to inter-observer variation, and that the measure risks driving antimicrobial overuse because it ignores sepsis overdiagnosis.",
+      "usedFor": "The recorded system tension that a three-hour path can be guideline-endorsed while the quality measure is still built around the one-hour clock, and the historical context that IDSA declined to endorse earlier editions and endorses the 2026 one, whose tiered structure addresses that objection.",
+      "verifiedAgainst": "https://academic.oup.com/cid/article/72/4/541/5831166",
+      "verifiedOn": "2026-08-28",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/32374861/"
     },
     {
       "id": "cdc-toxic-shock-syndrome-2011",
