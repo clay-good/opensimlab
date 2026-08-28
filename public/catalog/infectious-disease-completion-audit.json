@@ -938,7 +938,7 @@
           "id": "meaningful-progression",
           "status": "satisfied",
           "evidence": [
-            "possible-sepsis.ts runs three authored transitions from one recorded time of first suspicion: the assessment returns at 90 minutes with concern persisting and a source identified, the three-hour ceiling is reported as passed rather than hidden at 180 minutes if no antimicrobial intent has been recorded, and the branch then collapses to the immediate path at 195 minutes. The ceiling never moves, because it runs from suspicion rather than from any result."
+            "possible-sepsis.ts runs three authored transitions from one recorded time of first suspicion: the requested assessment returns 90 minutes after it is asked for, with concern persisting and a source identified, the three-hour ceiling is reported as passed rather than hidden at 180 minutes if no antimicrobial intent has been recorded, and the branch then collapses to the immediate path at 195 minutes. The ceiling never moves, because it runs from suspicion rather than from any result."
           ]
         },
         {

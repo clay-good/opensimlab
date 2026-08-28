@@ -72,7 +72,10 @@ export function noteMayContainRealPatientInformation(note: string): boolean {
   return /\b(?:(?:my|our)\s+patient|(?:this|a)\s+real\s+patient|real-life\s+patient)\b/i.test(note)
     || /\b(?:m(?:rn)|medical\s+record|patient\s+id)\s*[:#-]?\s*[a-z0-9-]{4,}\b/i.test(note)
     || /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i.test(note)
-    || /(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}/.test(note);
+    || /(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}/.test(note)
+    // A separator-free number and a date of birth are the two cheapest ways real identifiers arrive.
+    || /\b\d{7,}\b/.test(note)
+    || /\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b/.test(note);
 }
 
 export function buildScenarioReportRequest(

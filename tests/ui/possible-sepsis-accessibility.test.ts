@@ -41,6 +41,18 @@ describe('Possible sepsis screen-reader summary', () => {
       .toContain('antimicrobial therapy is indicated within the hour');
   });
 
+  it('does not announce that an ended run never recorded its clock', () => {
+    const model = new PossibleSepsis();
+    for (const [tick, action] of [[0, 'record-time-zero'], [1, 'record-uncertainty'],
+      [2, 'request-time-limited-assessment'], [3, 'record-antimicrobial-intent'],
+      [4, 'review-boundaries'], [5, 'monitor'], [6, 'reassess'], [7, 'handoff']] as const) {
+      model.apply(action, tick);
+    }
+    const [first] = summarize(model, 8).split('\n');
+    expect(first).not.toContain('has not been recorded');
+    expect(first).toContain('The recorded time of first suspicion stands');
+  });
+
   it('states that there is no waiting action and why', () => {
     const summary = summarize(new PossibleSepsis(), 0);
     expect(summary).toContain('There is deliberately no waiting action in this lesson');

@@ -1595,6 +1595,37 @@ credited toward the catalog until every item in the completion contract passes.
     ceiling, so the passed-ceiling feedback branch was unreachable. The ceiling now precedes the
     deterioration, and a regression check pins that order. The published report catalog grows to
     226 records.
+- [x] Repair four defects an adversarial audit found in possible sepsis within an hour of shipping
+  it, and pin each with a regression test.
+  - [x] The 90-minute assessment return was gated on elapsed time alone rather than on the request,
+    so a result arrived for an assessment nobody ordered. Requesting it at 100 minutes produced the
+    return at 90, inverting cause and effect in the one lesson whose point is that waiting is not a
+    plan. The return now runs from the request.
+  - [x] The ceiling countdown goes null when a run ends, and both the tray and the screen-reader
+    summary read null as "the time of first suspicion has not been recorded" - directly above a line
+    reporting the time it was recorded at. Both surfaces now branch on the recorded fact.
+  - [x] The debrief accepted a reassessment taken before the authored change as evidence that the
+    learner had reviewed it, so an eight-tick run certified all six objectives with finding text
+    describing events it never saw. Only the returned or collapsed assessment now qualifies.
+  - [x] An authored event named an infected upper urinary tract on imaging, confirming a source the
+    scenario's own boundary forbids and interpreting imaging the controls exclude, in a mangled
+    phrase. It now uses the wording every other artifact already carried.
+- [x] Harden the problem-reporting service against an audit of its privacy, abuse-prevention, and
+  accessibility boundaries.
+  - [x] Per-reporter throttles hashed the full client address, so one ordinary IPv6 /64 allocation
+    supplied 2^64 identities and both daily limits were unbounded in practice. Throttling now counts
+    the /64 network, and rotation across it collapses to one reporter.
+  - [x] Acceptance was capped globally and per reporter but never per scenario, so one subject could
+    spend the whole day's budget and silence every other scenario's reports behind an indistinguishable
+    202. A per-scenario daily cap now bounds that.
+  - [x] The patient-information check missed separator-free numbers and dates, so a bare ten-digit
+    number or a date of birth reached the note column. Both copies of the check now reject them, and
+    a parity test runs the corpus through the worker's validator as well as the client's.
+  - [x] Success was announced into a live region mounted with its text already present, which screen
+    readers do not reliably read, while focus moved to a button - so a report succeeded silently. One
+    always-mounted region now carries both outcomes.
+  - [x] The character counter was an aria-live region and spoke after every keystroke. It is now
+    referenced by the textarea instead, so it is read on focus.
 - [x] Repair four defects a consistency audit found in already-published infectious-disease
   scenarios, and cover each with a regression test.
   - [x] The necrotizing-infection tray rendered a live derived risk score inside its static

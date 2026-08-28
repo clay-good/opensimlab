@@ -18,6 +18,7 @@ const VERIFIED_GLOBAL_LIMIT = 400;
 const VERIFIED_REPORTER_LIMIT = 5;
 const ACCEPTED_GLOBAL_LIMIT = 200;
 const ACCEPTED_REPORTER_LIMIT = 3;
+const ACCEPTED_SCENARIO_LIMIT = 25;
 const CATEGORIES = new Set(['clinical-content', 'patient-behavior', 'tutor-debrief', 'controls', 'accessibility', 'outdated-source', 'other']);
 const SURFACES = new Set(['prebrief', 'live', 'debrief', 'source', 'limitation']);
 const CATALOG = new Map(catalog.scenarios.map((entry) => [
@@ -57,11 +58,32 @@ function safeText(value, max, allowEmpty = true) {
     });
 }
 
+/**
+ * Throttles must count networks, not addresses: a single IPv6 allocation hands one host 2^64
+ * addresses, so hashing the full address makes every per-reporter limit unbounded in practice.
+ */
+export function reporterNetwork(remoteIp) {
+  if (typeof remoteIp !== 'string' || !remoteIp.includes(':')) return remoteIp;
+  const [address] = remoteIp.split('%');
+  const expanded = address.includes('::')
+    ? (() => {
+      const [head, tail] = address.split('::');
+      const left = head ? head.split(':') : [];
+      const right = tail ? tail.split(':') : [];
+      return [...left, ...Array(Math.max(0, 8 - left.length - right.length)).fill('0'), ...right];
+    })()
+    : address.split(':');
+  return expanded.slice(0, 4).map((part) => part.toLowerCase().padStart(4, '0')).join(':');
+}
+
 function noteMayContainRealPatientInformation(note) {
   return /\b(?:(?:my|our)\s+patient|(?:this|a)\s+real\s+patient|real-life\s+patient)\b/i.test(note)
     || /\b(?:mrn|medical\s+record|patient\s+id)\s*[:#-]?\s*[a-z0-9-]{4,}\b/i.test(note)
     || /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i.test(note)
-    || /(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}/.test(note);
+    || /(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}/.test(note)
+    // A separator-free number and a date of birth are the two cheapest ways real identifiers arrive.
+    || /\b\d{7,}\b/.test(note)
+    || /\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b/.test(note);
 }
 
 function safeContextRecord(value, limit, strings) {
@@ -207,6 +229,10 @@ async function storeReport(db, report, reporter, env, now = new Date()) {
   const dedupe = await hexDigest('SHA-256', `${day}\0${JSON.stringify({ ...report, turnstileToken: undefined })}`);
   const acceptedGlobal = configuredLimit(env.REPORT_DAILY_LIMIT, ACCEPTED_GLOBAL_LIMIT, ACCEPTED_GLOBAL_LIMIT);
   const acceptedReporter = configuredLimit(env.REPORT_REPORTER_DAILY_LIMIT, ACCEPTED_REPORTER_LIMIT, ACCEPTED_REPORTER_LIMIT);
+  // One noisy subject must not be able to spend the whole day's global budget and silence every
+  // other scenario's reports, so acceptance is also capped per scenario.
+  const acceptedScenario = configuredLimit(env.REPORT_SCENARIO_DAILY_LIMIT, ACCEPTED_SCENARIO_LIMIT, ACCEPTED_GLOBAL_LIMIT);
+  const scenarioSubject = `${report.moduleId}:${report.scenarioId}`;
   const insert = db.prepare(`
     INSERT OR IGNORE INTO scenario_reports (
       id, created_at, scenario_id, content_version, module_id, maturity, practice_region,
@@ -216,6 +242,7 @@ async function storeReport(db, report, reporter, env, now = new Date()) {
     ) SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
     WHERE COALESCE((SELECT count FROM report_counters WHERE day=? AND kind='accepted' AND scope='global' AND subject='all'), 0) < ?
       AND COALESCE((SELECT count FROM report_counters WHERE day=? AND kind='accepted' AND scope='reporter' AND subject=?), 0) < ?
+      AND COALESCE((SELECT count FROM report_counters WHERE day=? AND kind='accepted' AND scope='scenario' AND subject=?), 0) < ?
   `).bind(
     id, createdAt, report.scenarioId, report.contentVersion, report.moduleId, report.maturity,
     report.practiceRegion, report.fidelityClass, report.surface, report.simulatedTick, report.category,
@@ -223,7 +250,7 @@ async function storeReport(db, report, reporter, env, now = new Date()) {
     report.recentContext ? JSON.stringify(report.recentContext) : null, `${day}:${dedupe}`,
     report.capabilityVersion, report.releaseRef, report.defaultsHash, report.maturityHash,
     report.sourceManifestHash, report.limitationManifestHash,
-    day, acceptedGlobal, day, reporter, acceptedReporter,
+    day, acceptedGlobal, day, reporter, acceptedReporter, day, scenarioSubject, acceptedScenario,
   );
   const incrementAccepted = (scope, subject) => db.prepare(`
     INSERT INTO report_counters (day, kind, scope, subject, count)
@@ -232,6 +259,7 @@ async function storeReport(db, report, reporter, env, now = new Date()) {
   `).bind(day, scope, subject, id);
   await db.batch([
     insert, incrementAccepted('global', 'all'), incrementAccepted('reporter', reporter),
+    incrementAccepted('scenario', scenarioSubject),
   ]);
 }
 
@@ -301,7 +329,7 @@ async function handleReport(request, env) {
   const day = new Date().toISOString().slice(0, 10);
   let reporter;
   try {
-    reporter = await hexDigest('SHA-256', `${day}\0${remoteIp}`, env.REPORT_HASH_SECRET);
+    reporter = await hexDigest('SHA-256', `${day}\0${reporterNetwork(remoteIp)}`, env.REPORT_HASH_SECRET);
     if (!await reserveVerificationAttempt(env.REPORTS_DB, day, reporter)) {
       return json(202, { ok: true });
     }

@@ -205,7 +205,9 @@ export function stateSummary(
         ? 'Three hours have elapsed since first suspicion with no antimicrobial intent recorded. The ceiling has passed, and that is recorded rather than hidden.'
         : patient.ceilingDueInSeconds !== null
           ? `Ceiling: ${Math.ceil(patient.ceilingDueInSeconds / 60)} simulated minutes remain of the three hours from first suspicion.`
-          : 'The time of first suspicion has not been recorded, so no ceiling is announced. It is running regardless.');
+          : patient.timeZeroAtTick === null
+            ? 'The time of first suspicion has not been recorded, so no ceiling is announced. It is running regardless.'
+            : 'The ceiling is no longer counting down. The recorded time of first suspicion stands.');
     for (const field of ['systolicMmHg', 'diastolicMmHg'] as const) {
       const value = state[field];
       if (!options.invalid.has(field) && Number.isFinite(value)) {

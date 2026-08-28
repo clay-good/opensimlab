@@ -439,6 +439,41 @@ describe('shared problem report dialog', () => {
     });
   }
 
+  it('announces success through a live region that existed before the message did', async () => {
+    await act(async () => { root.render(<ScenarioProblemReport context={context} />); });
+    await act(async () => { (container.querySelector('button') as HTMLButtonElement).click(); await Promise.resolve(); });
+    const live = () => container.querySelector('[role="status"][aria-live="polite"]');
+    // The region must already be mounted while the form is showing. A live region inserted into
+    // the DOM already holding its text is not reliably announced, so success would reach nobody.
+    expect(live()).not.toBeNull();
+    expect(live()!.textContent).not.toContain('weekly review queue');
+    const select = container.querySelector('select') as HTMLSelectElement;
+    await act(async () => {
+      select.value = 'clinical-content';
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    fetchMock.mockResolvedValueOnce(new Response(null, { status: 202 }));
+    const send = [...container.querySelectorAll('button')].find((button) => button.textContent === 'Send report')!;
+    await act(async () => { send.click(); await Promise.resolve(); });
+    await act(async () => { await Promise.resolve(); });
+    expect(live()).not.toBeNull();
+    expect(live()!.textContent).toContain('weekly review queue');
+    // One region carries both outcomes, so there is exactly one place to listen.
+    expect(container.querySelectorAll('[role="status"][aria-live="polite"]')).toHaveLength(1);
+  });
+
+  it('does not narrate the character counter on every keystroke', async () => {
+    await act(async () => { root.render(<ScenarioProblemReport context={context} />); });
+    await act(async () => { (container.querySelector('button') as HTMLButtonElement).click(); await Promise.resolve(); });
+    const counter = container.querySelector('.problem-report__count')!;
+    // An aria-live counter speaks after every character and drowns out the typed text.
+    expect(counter.getAttribute('aria-live')).toBeNull();
+    expect(counter.id).toBe('problem-report-count');
+    // It stays reachable: the textarea points at it, so it is read on focus instead.
+    expect(container.querySelector('textarea')!.getAttribute('aria-describedby'))
+      .toBe('problem-report-count');
+  });
+
   it('bounds a stalled Turnstile script load and removes the abandoned script', async () => {
     vi.useFakeTimers();
     delete window.turnstile;

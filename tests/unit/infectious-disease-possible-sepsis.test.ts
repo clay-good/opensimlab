@@ -146,6 +146,30 @@ describe('Infectious disease possible sepsis contract', () => {
     expect(run.snapshot.choiceFeedback).toBeNull();
   });
 
+  it('never returns an assessment that was not requested', () => {
+    // A result that arrives without a request teaches that waiting produces answers, which is the
+    // exact belief this lesson exists to refuse.
+    const idle = drive([], RETURNS + 6000);
+    expect(idle.ids).not.toContain('investigation-returns');
+    expect(idle.snapshot.investigationReturned).toBe(false);
+    expect(drive([[0, 'check-labs']], RETURNS + 6000).snapshot.labObservation!.sourceIdentified).toBe(false);
+    // And it can never precede the request that produced it.
+    const late = drive([[RETURNS + 6000, 'request-time-limited-assessment']], RETURNS + 6001);
+    expect(late.snapshot.investigationReturned).toBe(false);
+    const after = drive([[0, 'request-time-limited-assessment']], RETURNS + 10);
+    expect(after.ids).toContain('investigation-returns');
+    expect(after.snapshot.investigationReturned).toBe(true);
+  });
+
+  it('does not claim the clock was never recorded once the run has ended', () => {
+    const done = drive(FIXTURES.expert, 54020);
+    expect(done.snapshot.ended).toBe('handoff');
+    expect(done.snapshot.timeZeroAtTick).not.toBeNull();
+    // The countdown stops, but the recorded time of first suspicion still stands, and the surfaces
+    // must not read that stopped countdown as "never recorded".
+    expect(done.snapshot.ceilingDueInSeconds).toBeNull();
+  });
+
   it('refuses generic actions, malformed payloads, and adjacent-lesson shortcuts', () => {
     const engine = new AnesthesiaEngine({ scenario: SCENARIO, seed: FIXTURES.seed, practiceRegion: 'GB' });
     engine.step();
@@ -172,6 +196,22 @@ describe('Infectious disease possible sepsis contract', () => {
       expect(serialized).not.toContain(forbidden);
     }
     expect(snapshot.choiceFeedback).toContain('No agent, dose, route, or combination is selected here');
+  });
+
+  it('does not certify bounded intent from a reassessment taken before the change', () => {
+    const event = (id: string, tick: number) => ({ tick, eventId: `possible-sepsis-${id}-${tick}`,
+      category: 'assessment' as const, severity: 'info' as const, message: '' });
+    const base = [event('time-zero-recorded', 0), event('uncertainty-recorded', 1),
+      event('assessment-requested', 2), event('antimicrobial-intent', 3),
+      event('boundary-review', 4), event('monitoring', 5)];
+    const objective = 'record-infectious-disease-possible-sepsis-bounded-intent-inside-the-ceiling';
+    const findingFor = (log: ReturnType<typeof event>[]) => objectiveFindings(SCENARIO, [], 0, 0, [], log)
+      .find((entry) => entry.objectiveId === objective)!;
+    // An eight-tick speedrun never saw the returned assessment, so nothing can certify that it did.
+    expect(findingFor([...base, event('initial-reassessment', 6)]).outcome).toBe('not-met');
+    // Only a reassessment after the authored change qualifies, in either of its two forms.
+    expect(findingFor([...base, event('investigated-reassessment', 54005)]).outcome).toBe('met');
+    expect(findingFor([...base, event('shocked-reassessment', 118000)]).outcome).toBe('met');
   });
 
   it('reports objectives only for this lesson', () => {

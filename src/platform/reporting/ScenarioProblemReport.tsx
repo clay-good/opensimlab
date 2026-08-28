@@ -124,9 +124,10 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose }:
               </Button>
             </>}
       >
-        {sent ? (
-          <p role="status">{status}</p>
-        ) : (
+        {/* One live region, mounted before any status text exists: a region inserted into the DOM
+            already containing its message is not reliably announced, so success would go unheard. */}
+        <p role="status" aria-live="polite" className="field__hint">{status}</p>
+        {sent ? null : (
           <div className="problem-report__form">
             <p>
               Tell us what seems wrong in this fictional scenario. Do not include a patient name
@@ -156,11 +157,12 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose }:
                 maxLength={REPORT_NOTE_LIMIT}
                 autoComplete="off"
                 spellCheck={false}
+                aria-describedby="problem-report-count"
                 value={note}
                 onChange={(event) => setNote(event.target.value.slice(0, REPORT_NOTE_LIMIT))}
                 placeholder="What did you expect instead?"
               />
-              <span className="field__hint problem-report__count" aria-live="polite">
+              <span id="problem-report-count" className="field__hint problem-report__count">
                 {note.length} / {REPORT_NOTE_LIMIT}
               </span>
               {noteMayContainRealPatientInformation(note) && (
@@ -197,7 +199,6 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose }:
               <p className="field__hint">No debrief writing, practice history, identity, browser details, or real-world time is included.</p>
             </details>
             <div ref={turnstileHost} className="problem-report__turnstile" />
-            <p role="status" aria-live="polite" className="field__hint">{status}</p>
           </div>
         )}
       </Modal>

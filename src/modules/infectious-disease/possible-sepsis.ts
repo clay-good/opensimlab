@@ -64,9 +64,12 @@ export class PossibleSepsis {
       ? POSSIBLE_SEPSIS_TAKEOVER_TICKS : POSSIBLE_SEPSIS_SESSION_TICKS;
     const until = Math.min(tick, terminal);
     const events: PossibleSepsisEvent[] = [];
-    if (!this.investigated && until >= POSSIBLE_SEPSIS_INVESTIGATION_TICKS) {
+    // The assessment is time-limited, not automatic: nothing returns unless it was requested,
+    // or the result would arrive before the request and teach that waiting produces answers.
+    if (!this.investigated && this.assessmentAt !== null
+      && until >= this.assessmentAt + POSSIBLE_SEPSIS_INVESTIGATION_TICKS) {
       this.change(() => { this.investigated = true; });
-      events.push({ id: 'investigation-returns', message: 'The time-limited assessment returns and concern for infection persists: imaging reports an infected, obstructed-free upper urinary tract and the lactate has risen. The likelihood is now higher than possible, which the qualified team classifies rather than the learner. The ceiling has not moved, because it runs from first suspicion rather than from this result.' });
+      events.push({ id: 'investigation-returns', message: 'The time-limited assessment returns and concern for infection persists: a source is identified on the returned assessment and the lactate has risen. The likelihood is now higher than possible, which the qualified team classifies rather than the learner. The ceiling has not moved, because it runs from first suspicion rather than from this result.' });
     }
     if (!this.ceilingPassed && this.antimicrobialAt === null && until >= POSSIBLE_SEPSIS_CEILING_TICKS) {
       this.ceilingPassed = true;

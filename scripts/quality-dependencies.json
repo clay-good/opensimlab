@@ -28,7 +28,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "710fb1b3630de1357971a57c5140e5675c56472b12813ec16aee524722b4fdb8"
+        "sha256": "3b9f8562f2feb6d180534b4e0e5db2bcec58938785bcaa53a443baf141fd68ed"
       },
       {
         "path": "src/modules/endocrine-metabolic/HypocalcemiaTray.tsx",
@@ -181,7 +181,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "710fb1b3630de1357971a57c5140e5675c56472b12813ec16aee524722b4fdb8"
+        "sha256": "3b9f8562f2feb6d180534b4e0e5db2bcec58938785bcaa53a443baf141fd68ed"
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
@@ -273,7 +273,7 @@
       },
       {
         "path": "src/platform/reporting/contracts.ts",
-        "sha256": "78cdf0e0f7ff3c7ee79c2419283f32005e7f33b7dac4a677af83284dcba400c0"
+        "sha256": "96af71db027e021d08f738abf8ca5fdbded028d0178406174f11e45e9c0ece50"
       },
       {
         "path": "src/platform/session/session-store.ts",
@@ -374,7 +374,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "710fb1b3630de1357971a57c5140e5675c56472b12813ec16aee524722b4fdb8"
+        "sha256": "3b9f8562f2feb6d180534b4e0e5db2bcec58938785bcaa53a443baf141fd68ed"
       },
       {
         "path": "src/modules/anesthesia/ui/DemonstrationBar.tsx",
@@ -386,7 +386,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/accessibility.ts",
-        "sha256": "6cbb7b1d21b6d9eac6a99762be66d6fd725e1f1c994b85f522ec71d740054b6f"
+        "sha256": "b65ed740fdffeefdb7ce3f23bd1e6570496740fdc2f522a8b934d09d35e66e23"
       },
       {
         "path": "src/modules/anesthesia/ui/cockpit.css",
@@ -474,11 +474,11 @@
       },
       {
         "path": "src/platform/reporting/ScenarioProblemReport.tsx",
-        "sha256": "c8f8d80cb01ea44782c827190a0cde1e9d06dab3ffe46010aae9db7267cfcfab"
+        "sha256": "071af75537d0789d2ee5bec4f896302c2fc68b7cda16f52396c22578d97c145f"
       },
       {
         "path": "src/platform/reporting/contracts.ts",
-        "sha256": "78cdf0e0f7ff3c7ee79c2419283f32005e7f33b7dac4a677af83284dcba400c0"
+        "sha256": "96af71db027e021d08f738abf8ca5fdbded028d0178406174f11e45e9c0ece50"
       },
       {
         "path": "src/platform/session/session-store.ts",

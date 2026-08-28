@@ -13,6 +13,8 @@ export function verifyTurnstile(
   env: Record<string, unknown>,
   fetcher?: typeof fetch,
 ): Promise<boolean>;
+export function reporterNetwork(remoteIp: string): string;
+
 export function reserveVerificationAttempt(
   db: unknown,
   day: string,

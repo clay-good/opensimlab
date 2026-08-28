@@ -7,7 +7,7 @@ import {
   type ScenarioReportContext,
 } from '@platform/reporting/contracts';
 import {
-  handleRequest, reserveVerificationAttempt, validateReportPayload, verifyTurnstile,
+  handleRequest, reporterNetwork, reserveVerificationAttempt, validateReportPayload, verifyTurnstile,
 } from '../../workers/reports/src/index.mjs';
 import { availableModules } from '@platform/modules/registry';
 import { SCENARIOS } from '@anesthesia/scenarios';
@@ -1142,5 +1142,72 @@ describe('scenario report contract', () => {
     expect(await response.json()).toEqual({ ok: false });
     expect(fetcher).toHaveBeenCalledOnce();
     vi.unstubAllGlobals();
+  });
+});
+
+describe('scenario report abuse and privacy hardening', () => {
+  it('throttles by IPv6 network rather than address, so rotation buys nothing', () => {
+    // A single ordinary /64 allocation hands one host 2^64 addresses. Hashing the full address
+    // would make every per-reporter limit unbounded in practice.
+    const first = reporterNetwork('2001:db8:1234:5678:9abc:def0:1:2');
+    for (const rotated of ['2001:db8:1234:5678::1', '2001:db8:1234:5678:ffff:ffff:ffff:ffff',
+      '2001:0DB8:1234:5678:0:0:0:99', '2001:db8:1234:5678:1:2:3:4%eth0']) {
+      expect(reporterNetwork(rotated)).toBe(first);
+    }
+    // A different /64, and any IPv4 address, still count separately.
+    expect(reporterNetwork('2001:db8:1234:5679::1')).not.toBe(first);
+    expect(reporterNetwork('203.0.113.9')).toBe('203.0.113.9');
+    expect(reporterNetwork('198.51.100.4')).not.toBe(reporterNetwork('203.0.113.9'));
+  });
+
+  it('caps acceptance per scenario so one subject cannot spend the global budget', async () => {
+    const sql: string[] = [];
+    const bound: unknown[][] = [];
+    const statement = {
+      bind: vi.fn((...args: unknown[]) => { bound.push(args); return statement; }),
+      first: vi.fn(async () => ({ count: 1 })),
+      run: vi.fn(async () => ({})),
+    };
+    const database = {
+      prepare: vi.fn((text: string) => { sql.push(text); return statement; }),
+      batch: vi.fn(async () => []),
+    };
+    const fetcher = vi.fn();
+    vi.stubGlobal('fetch', fetcher);
+    fetcher.mockResolvedValueOnce(Response.json({
+      success: true, action: 'scenario-report', hostname: 'opensimlab.com',
+    }));
+    const response = await handleRequest(new Request('https://opensimlab.com/api/reports', {
+      method: 'POST',
+      headers: {
+        Origin: 'https://opensimlab.com', 'Content-Type': 'application/json',
+        'CF-Connecting-IP': '2001:db8:1234:5678::9',
+      },
+      body: JSON.stringify(valid()),
+    }), {
+      REPORTING_ENABLED: 'true', REPORTS_DB: database, TURNSTILE_SITE_KEY: 'site-key',
+      TURNSTILE_SECRET_KEY: 'secret', REPORT_HASH_SECRET: 'h'.repeat(32),
+      REPORT_ALLOWED_ORIGIN: 'https://opensimlab.com',
+    });
+    expect(response.status).toBe(202);
+    const insert = sql.find((text) => text.includes('INSERT OR IGNORE INTO scenario_reports'))!;
+    expect(insert).toContain("scope='scenario'");
+    // The scenario counter must be incremented too, or the cap would never bind.
+    expect(bound.some((args) => args.includes('scenario'))).toBe(true);
+  });
+
+  it('rejects separator-free numbers and dates identically on both sides of the boundary', () => {
+    const risky = ['5551234567', 'call 555 123 4567', 'mrn 88213377',
+      'dob 04/11/1958', 'born 4-11-58', 'contact a@b.co'];
+    for (const note of risky) {
+      expect(noteMayContainRealPatientInformation(note), note).toBe(true);
+      // Parity: the worker re-validates independently, so both copies must agree.
+      expect(validateReportPayload({ ...valid(), note }), note).toEqual({ ok: false, status: 400 });
+    }
+    const safe = ['the lactate of 2.4 seems wrong', 'ceiling shows 179 min', 'BP 118/72 reads oddly'];
+    for (const note of safe) {
+      expect(noteMayContainRealPatientInformation(note), note).toBe(false);
+      expect(validateReportPayload({ ...valid(), note }).ok, note).toBe(true);
+    }
   });
 });

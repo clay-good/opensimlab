@@ -69,6 +69,21 @@ describe('Possible sepsis tray', () => {
     expect(host.textContent).not.toContain('remain of the three hours');
   });
 
+  it('says the recorded clock stands after the run ends', () => {
+    const model = new PossibleSepsis();
+    for (const [tick, action] of [[0, 'record-time-zero'], [1, 'record-uncertainty'],
+      [2, 'request-time-limited-assessment'], [3, 'record-antimicrobial-intent'],
+      [4, 'review-boundaries'], [5, 'monitor'], [6, 'reassess'], [7, 'handoff']] as const) {
+      model.apply(action, tick);
+    }
+    render(model, 8);
+    const status = host.querySelector('[role="status"]')!.textContent ?? '';
+    // The countdown is over, but saying it was never recorded would contradict the line below it.
+    expect(status).not.toContain('has not been recorded');
+    expect(status).toContain('The recorded time of first suspicion stands');
+    expect(host.textContent).toContain('recorded at simulated');
+  });
+
   it('offers every declared choice with an accessible label', () => {
     render(new PossibleSepsis(), 0);
     for (const label of Object.values(labels)) expect(button(label)).toBeTruthy();
@@ -93,6 +108,7 @@ describe('Possible sepsis tray', () => {
   it('keeps the returned assessment out of the tray until it is observed', () => {
     const model = new PossibleSepsis();
     model.apply('record-time-zero', 0);
+    model.apply('request-time-limited-assessment', 1);
     model.advance(RETURNS + 10);
     render(model, RETURNS + 10);
     expect(host.textContent).not.toContain('Concern for infection persists and a source is identified');

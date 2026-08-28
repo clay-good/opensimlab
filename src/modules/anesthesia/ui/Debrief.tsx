@@ -628,7 +628,8 @@ export function objectiveFindings(
       const assessment = event('assessment-requested'); const antimicrobial = event('antimicrobial-intent');
       const boundaries = event('boundary-review'); const monitoring = event('monitoring');
       const handoff = event('handoff'); const ceiling = event('ceiling-passed'); const shock = event('shock-gate');
-      const full = (entry: EngineEvent) => /^possible-sepsis-(initial|investigated|shocked)-reassessment-\d+$/.test(entry.eventId);
+      // Only a reassessment after the authored change can have shown it; an early one cannot.
+      const full = (entry: EngineEvent) => /^possible-sepsis-(investigated|shocked)-reassessment-\d+$/.test(entry.eventId);
       const later = log.find(full);
       const refusedShortcut = event('wait-refused') ?? event('tier-refused')
         ?? event('single-test-refused') ?? event('deferral-refused');

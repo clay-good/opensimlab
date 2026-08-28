@@ -24,7 +24,9 @@ export function PossibleSepsisTray({ assessment, onAction, demonstrating = false
         ? 'Three hours have elapsed since first suspicion with no antimicrobial intent recorded. The ceiling has passed, and that is recorded rather than hidden.'
         : assessment.ceilingDueInSeconds !== null
           ? `Ceiling: ${Math.ceil(assessment.ceilingDueInSeconds / 60)} simulated min remain of the three hours from first suspicion.`
-          : 'The time of first suspicion has not been recorded, so no ceiling is displayed. It is running regardless.'}</p>
+          : assessment.timeZeroAtTick === null
+            ? 'The time of first suspicion has not been recorded, so no ceiling is displayed. It is running regardless.'
+            : 'The ceiling is no longer counting down. The recorded time of first suspicion stands.'}</p>
     <p className="syringe__remaining">Selected sources: the 2026 international sepsis guidelines, which are tiered rather than uniform, and the 2021 position paper on the national quality measure. Open the source view for exact wording and grades.</p>
     <section className="syringe possible-sepsis__section" aria-labelledby="possible-sepsis-recognition-title">
       <div id="possible-sepsis-recognition-title" className="syringe__name">Not shock. Not nothing. Start the clock.</div>
