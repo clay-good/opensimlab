@@ -2162,6 +2162,23 @@
       "limitationManifestHash": "sha256:0234ac02fa8a001b042b3f5544670f62796467a2ff0a9dedf8fc0d6f14f2be7d"
     },
     {
+      "scenarioId": "necrotizing-infection-score-cannot-exclude",
+      "contentVersion": "0.1.0",
+      "moduleId": "infectious-disease",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:69468ff463d3d5d88cdd2c78bc8dfde6ebf1ddd574a03096ab9dc6a525b58ecd",
+      "defaultsHash": "sha256:43abd6f01649b6172c0baa7f56a7073e065c2ddebdfd57698a765d2a60367348",
+      "maturityHash": "sha256:5d0e174e6dc7b96b4aae8e0f14f38149ac55ef9f6fedc499edda469de4e74d6b",
+      "sourceManifestHash": "sha256:de83758e808475ab518c8ddab37ec53c2d51b1dd8127ac3acd4f8fa1651c00c3",
+      "limitationManifestHash": "sha256:694e5006f75281e5bfa8e2b252784ae708118f6a9b1fa001e854a2fedfdbdb9e"
+    },
+    {
       "scenarioId": "obstructed-infected-kidney-decompression",
       "contentVersion": "0.1.0",
       "moduleId": "infectious-disease",

@@ -42,6 +42,7 @@ import { supportsRenalHypermagnesemia } from '../../renal-electrolyte/hypermagne
 import { supportsMeningococcalSepsis } from '../../infectious-disease/meningococcal-sepsis';
 import { supportsObstructedKidney } from '../../infectious-disease/obstructed-kidney';
 import { supportsFebrileNeutropenia } from '../../infectious-disease/febrile-neutropenia';
+import { supportsNecrotizingInfection } from '../../infectious-disease/necrotizing-infection';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -615,6 +616,44 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-infectious-disease-necrotizing-')) {
+      if (!supportsNecrotizingInfection(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The infectious-disease necrotizing infection lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^necrotizing-infection-${id}-\\d+$`).test(entry.eventId));
+      const recognition = event('disproportionate-pain-recognized'); const margin = event('margin-marked');
+      const surgery = event('surgery-activated'); const antimicrobial = event('antimicrobial-intent');
+      const boundaries = event('boundary-review'); const monitoring = event('monitoring');
+      const handoff = event('handoff'); const progression = event('clinical-progression');
+      const full = (entry: EngineEvent) => /^necrotizing-infection-(initial|progressed)-reassessment-\d+$/.test(entry.eventId);
+      const later = log.find(full);
+      const refusedShortcut = event('score-exclusion-refused') ?? event('imaging-delay-refused')
+        ?? event('crepitus-exclusion-refused') ?? event('oral-continuation-refused');
+      const beatProgression = !!surgery && (!progression || surgery.tick < progression.tick);
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'reconcile-infectious-disease-necrotizing-pain-margin-and-failed-oral-treatment': { met: !!recognition, tick: recognition?.tick,
+          finding: (recognition ? 'Pain beyond the visible edge, in a limb that had already failed 36 hours of oral therapy, was reconciled with the whole patient. ' : 'The disproportionate pain and the failed oral course were not reconciled. ')
+            + 'It is a soft sign with poor specificity, and still the one worth acting on, because the alternative is waiting for signs that arrive late.' },
+        'recognize-infectious-disease-necrotizing-that-a-low-score-excludes-nothing': { met: !!recognition && !!boundaries, tick: boundaries?.tick,
+          finding: (recognition && boundaries ? 'The score below its cutoff was read as uninformative rather than reassuring. ' : 'Recognition that a low score excludes nothing, or its boundary review, remains incomplete. ')
+            + (refusedShortcut ? 'A reassurance shortcut was attempted and refused; it remains in this run. ' : '')
+            + 'Pooled sensitivity near two-thirds means roughly one confirmed case in three scores below that line.' },
+        'activate-infectious-disease-necrotizing-surgical-review-and-marked-border-ownership': { met: !!surgery && !!margin, tick: surgery?.tick,
+          finding: (surgery && margin ? 'Urgent surgical review was requested with the concern stated, and the border was marked and timed so progression could be measured. ' : 'Surgical review or the marked border remains incomplete. ')
+            + (beatProgression ? 'The team was mobilized before the authored progression arrived. ' : 'The request did not precede the authored progression. ')
+            + (monitoring ? '' : 'Surveillance was not arranged. ') },
+        'review-infectious-disease-necrotizing-score-sensitivity-and-timing-evidence-boundary': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The score derivation, its sensitivity, the late-sign absences, and the timing evidence were reviewed. ' : 'The score and timing boundary review is missing. ')
+            + 'Imaging must never delay exploration, and the association between earlier surgery and survival is observational and confounded by indication in both directions.' },
+        'record-infectious-disease-necrotizing-bounded-antimicrobial-intent-and-strict-reassessment': { met: !!antimicrobial && !!later, tick: antimicrobial?.tick,
+          finding: (antimicrobial && later ? 'Bounded antimicrobial intent was recorded alongside surgical review, and a full assessment made the authored progression available for review. ' : 'Bounded antimicrobial intent or a requested full assessment remains incomplete. ')
+            + 'Antimicrobials do not treat dead tissue. The risen score is not a success signal; it became positive only after the interval in which acting on it mattered.' },
+        'handoff-infectious-disease-necrotizing-unconfirmed-diagnosis-and-active-risk': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The marked border and its rate, serial findings, and the pending surgical decision were handed off with the diagnosis unconfirmed. ' : 'Current full findings or continuing-care ownership remains incomplete. ')
+            + 'Only exploration can confirm or exclude this, and it may find something else entirely. No operative finding, limb outcome, or survival is certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-infectious-disease-neutropenia-')) {
       if (!supportsFebrileNeutropenia(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The infectious-disease febrile neutropenia lesson was not active.' } satisfies ObjectiveFinding;

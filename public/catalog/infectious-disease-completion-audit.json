@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "moduleId": "infectious-disease",
   "capabilityVersion": "0.1.0-alpha.48",
-  "scenarioCount": 3,
+  "scenarioCount": 4,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -365,6 +365,132 @@
           "status": "satisfied",
           "evidence": [
             "febrile-neutropenia-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "necrotizing-infection-score-cannot-exclude",
+      "title": "Cellulitis that is not settling",
+      "moduleId": "infectious-disease",
+      "environment": "emergency-department",
+      "estimatedMinutes": 8,
+      "difficulty": "advanced",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario necrotizing-infection-score-cannot-exclude carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "missing",
+          "evidence": [
+            "The completion contract requires 2–5 objectives and a rubric mapping for every objective."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "necrotizing-infection-fixtures.ts binds seed 5411 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No infection, tissue, or operative model is claimed."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "necrotizing-infection.ts advances the disease on its own authored clock whatever the learner records, because only an operation treats it and the operation happens after the rehearsal. The derived risk score rises from 3 to 11 across that transition, so the score becomes positive only after the interval in which acting on it mattered. Unrequested laboratory and limb findings remain private."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "Dose-free choices independently record disproportionate pain, marking and timing the erythema border, urgent surgical review, bounded antimicrobial intent alongside rather than instead of surgery, the evidence boundary, and surveillance. Excluding on the score, delaying review for imaging, treating absent crepitus and bullae as reassurance, and continuing the failed oral course are each refused."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "Recognition, a marked border, surgical review, bounded antimicrobial intent, the boundary review, surveillance, and a current full assessment permit handoff with the diagnosis unconfirmed. Instructor takeover bounds a run with no surgical review at six hours, or an unfinished session at twelve."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "Six event-bound objectives distinguish reconciliation, the refusal to exclude on a score, surgical activation with a marked border, the sensitivity and timing evidence boundary, bounded intent with strict reassessment, and accountable handoff. Refused shortcuts remain visible, and no operative finding or outcome is certified."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "3 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "necrotizing-infection-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
           ]
         },
         {

@@ -1479,6 +1479,32 @@ credited toward the catalog until every item in the completion contract passes.
     it is dominated by the entry chunk and fonts rather than scenario data, so it does not grow per
     scenario. Anesthesia's own catalogue remains in the shared chunk because the goal-path and
     catalog features that use it are anesthesia-only and still live in the shared file.
+  - [x] Infectious-disease slice 4/10 adds necrotizing soft-tissue infection, where a ruled-out
+    result changes nothing. A 55-year-old with diabetes returns after 36 hours of oral antibiotics
+    for a limb infection that has not settled, with severe pain extending past the edge of the
+    redness. Authored state is temperature 37.4 C, heart rate 104/min, BP 118/72 mmHg, white cells
+    14.8 x10^9/L, C-reactive protein 132 mg/L, sodium 136 mmol/L, creatinine 118 µmol/L, glucose
+    11.4 mmol/L, haemoglobin 12.6 g/dL, lactate 2.4 mmol/L, no crepitus and no bullae, and a derived
+    laboratory risk score of 3 against a cutoff of 6. Every component is deliberately inside a band
+    that keeps the score low, and lactate is the only frankly abnormal value and not one the score
+    counts. The learner reconciles the pain and the failed oral course; recognizes that a score below
+    its cutoff excludes nothing, because pooled sensitivity at that cutoff is near two-thirds and the
+    score counts late physiology; marks and times the erythema border; requests urgent surgical
+    review for consideration of exploration; reviews the sensitivity, late-sign, imaging, and timing
+    boundaries; and records bounded antimicrobial intent alongside rather than instead of surgery.
+    After four authored hours the erythema is 4 cm beyond its mark, the skin is dusky, and the score
+    reads 11. That progression occurs whatever the learner records, because only an operation treats
+    this and the operation happens after the rehearsal; what the learner changes is whether the
+    surgical team is already mobilized when it arrives. No learner history, examination, observation
+    or test acquisition, imaging order or interpretation, scoring, diagnosis, antimicrobial, dose,
+    route, incision, extent, theatre time, procedure, disposition, prognosis, or outcome control
+    exists.
+  - [x] Verify slice 4 with eleven contract checks, twenty-one reporting checks, eight tray checks,
+    and five screen-reader checks. The contract checks assert that the presenting score is below the
+    cutoff, that both an idle and an actively managed run reach identical vitals at the progression,
+    that only `surgeryRequestedBeforeProgression` distinguishes them, that all four exclusion
+    shortcuts are refused, and that no antimicrobial is ever named. The published report catalog
+    grows to 222 records.
   - [x] Toxicology slice 1/15 establishes the indexable `/toxicology` module with one authored
     methemoglobinemia lab after documented topical benzocaine exposure. The learner reconciles
     cyanosis, symptoms, pulse-coherent SpO2 85%, PaO2 238 mmHg, chocolate-brown blood, and supplied

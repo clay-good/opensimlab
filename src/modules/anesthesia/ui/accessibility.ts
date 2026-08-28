@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -113,6 +113,7 @@ export function stateSummary(
     readonly meningococcalSepsis?: MeningococcalSepsisSnapshot;
     readonly obstructedKidney?: ObstructedKidneySnapshot;
     readonly febrileNeutropenia?: FebrileNeutropeniaSnapshot;
+    readonly necrotizingInfection?: NecrotizingInfectionSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -166,7 +167,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -190,6 +191,34 @@ export function stateSummary(
           + ' intravenous.');
       }
     }
+  }
+  if (options.necrotizingInfection) {
+    const patient = options.necrotizingInfection;
+    for (const field of ['systolicMmHg', 'diastolicMmHg'] as const) {
+      const value = state[field];
+      if (!options.invalid.has(field) && Number.isFinite(value)) {
+        lines.push(`${FIELDS[field].label}: ${value.toFixed(FIELDS[field].precision)} ${FIELDS[field].unit}.`);
+      }
+    }
+    lines.push('Supplied starting findings were 36 hours of oral antibiotics without settling, severe pain extending past the edge of the redness, temperature 37.4 degrees Celsius, heart rate 104 per minute, and lactate 2.4 millimoles per liter. Crepitus and bullae are absent. These remain historical starting findings.');
+    lines.push(`Current alertness: ${patient.alertness}. Current derived risk score: ${patient.riskScore}.`);
+    lines.push('A score below its cutoff excludes nothing here: pooled sensitivity at that cutoff is near two-thirds, and the score counts late physiology that early disease has not produced. Absent crepitus and absent bullae are late-sign absences, not reassurance.');
+    lines.push(`Disproportionate pain reconciled: ${patient.recognitionAtTick === null ? 'not yet' : 'yes'}. Erythema border: ${patient.marginMarkedAtTick === null ? 'not yet marked' : 'marked and timed'}. Urgent surgical review: ${patient.surgeryAtTick === null ? 'not yet requested' : 'requested'}. Antimicrobial intent: ${patient.antimicrobialIntentAtTick === null ? 'not yet recorded' : 'recorded'}. Surveillance: ${patient.monitoringAtTick === null ? 'not arranged' : 'arranged'}.`);
+    lines.push('Exploration is the only test that can exclude this, and it is a qualified-team act. No agent, dose, incision, extent, or theatre time is selected. Oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.labObservation
+      ? `Last requested laboratory evidence at simulated ${formatElapsed(patient.labObservation.atTick)}: white cells ${patient.labObservation.whiteCellsX109L.toFixed(1)}; C-reactive protein ${patient.labObservation.crpMgL} milligrams per liter; sodium ${patient.labObservation.sodiumMmolL} millimoles per liter; lactate ${patient.labObservation.lactateMmolL.toFixed(1)} millimoles per liter; derived score ${patient.labObservation.riskScore}. A laboratory-only check does not refresh the limb examination.`
+      : 'No new laboratory-only measurement has been requested.');
+    lines.push(patient.limbObservation
+      ? `Last requested limb examination at simulated ${formatElapsed(patient.limbObservation.atTick)}: erythema ${patient.limbObservation.beyondMarginCm === 0 ? 'at the marked border' : `${patient.limbObservation.beyondMarginCm} centimetres beyond the marked border`}; skin ${patient.limbObservation.dusky ? 'dusky' : 'erythematous without duskiness'}. A limb-only look does not refresh laboratory evidence.`
+      : 'No new limb-only examination has been requested.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: temperature ${patient.observation.coreTemperatureC.toFixed(1)} degrees Celsius; heart rate ${patient.observation.heartRateBpm} per minute; lactate ${patient.observation.lactateMmolL.toFixed(1)} millimoles per liter; derived score ${patient.observation.riskScore}; erythema ${patient.observation.beyondMarginCm === 0 ? 'at the marked border' : `${patient.observation.beyondMarginCm} centimetres beyond the marked border`}. These are historical observations, not live measurements.`
+      : 'No new full assessment has been requested.');
+    if (patient.progressionObserved) lines.push('The derived score is now firmly positive. It became useful only after the interval in which acting on it mattered, which is the lesson rather than a reward.');
+    lines.push('The authored progression occurs whatever is recorded, because only an operation treats this and the operation happens after this rehearsal. The diagnosis stays unconfirmed, and no operative finding, limb outcome, or survival is established.');
+    lines.push(options.alarms.length === 0 ? 'No active alarms.'
+      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    return lines.join(' ');
   }
   if (options.febrileNeutropenia) {
     const patient = options.febrileNeutropenia;

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 337,
+  "sourceCount": 340,
   "sources": [
     {
       "id": "renal-hypermagnesemia-series-2018",
@@ -4225,6 +4225,47 @@
       "usedFor": "Stable-transition criteria, continued observation despite expected early oxygenation transition, immediate skin-to-skin thermal support, and avoidance of premature well-newborn closure.",
       "verifiedAgainst": "https://publications.aap.org/pediatrics/article/157/1/e2025074766/205238/Neonatal-Life-Support-2025-International-Liaison",
       "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "fernando-nsti-diagnostic-accuracy-2019",
+      "pmid": "29672405",
+      "authors": "Fernando SM, Tran A, Cheng W, et al",
+      "title": "Necrotizing Soft Tissue Infection: Diagnostic Accuracy of Physical Examination, Imaging, and LRINEC Score: A Systematic Review and Meta-Analysis",
+      "publication": "Annals of Surgery",
+      "year": 2019,
+      "locator": "269(1):58-65; 23 studies, 5,982 patients. LRINEC at or above 6: sensitivity 68.2%, specificity 84.8%; at or above 8: sensitivity 40.8%. Crepitus 25.2%; hemorrhagic bullae 25.2%; hypotension 21.0%; CT 88.5%. Concludes the score should not be used to rule out the diagnosis.",
+      "usedFor": "The refusal to let a score below its cutoff exclude the diagnosis, the statement that roughly one confirmed case in three scores below it, and the low sensitivity of absent crepitus and absent bullae.",
+      "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/29672405/",
+      "verifiedOn": "2026-08-28",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/29672405/"
+    },
+    {
+      "id": "wses-soft-tissue-pathways-2022",
+      "currency": {
+        "lastAmended": "2022-01-15",
+        "checkedAt": "2026-08-28"
+      },
+      "authors": "Sartelli M, Coccolini F, Kluger Y, et al",
+      "title": "WSES/GAIS/WSIS/SIS-E/AAST global clinical pathways for patients with skin and soft tissue infections",
+      "publication": "World Journal of Emergency Surgery",
+      "year": 2022,
+      "locator": "17:3; doi:10.1186/s13017-022-00406-2. States the score lacks the sensitivity to be a useful adjunct and that a low score does not rule out the diagnosis; debridement at least within the first six hours after admission; re-exploration every 12 to 24 hours.",
+      "usedFor": "The statement that a low score does not rule out the diagnosis, and the framing of urgent surgical exploration as the definitive act rather than an escalation of medical therapy.",
+      "verifiedAgainst": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8761341/",
+      "verifiedOn": "2026-08-28"
+    },
+    {
+      "id": "nawijn-nsti-timing-2020",
+      "pmid": "31921330",
+      "authors": "Nawijn F, Smeeing DPJ, Houwert RM, et al",
+      "title": "Time is of the essence when treating necrotizing soft tissue infections: a systematic review and meta-analysis",
+      "publication": "World Journal of Emergency Surgery",
+      "year": 2020,
+      "locator": "15:4; 109 studies, 6,051 patients, 21.1% mortality; 33 studies meta-analysed. Surgery within six hours versus later: odds ratio 0.43 (95% CI 0.26-0.70). Patient delay before presentation showed no significant mortality effect; no time variable reduced amputation rate.",
+      "usedFor": "The statement that earlier surgery is consistently associated with survival while the evidence remains observational and confounded by indication, and the refusal to assert any validated hour threshold.",
+      "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/31921330/",
+      "verifiedOn": "2026-08-28",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/31921330/"
     },
     {
       "id": "nice-cg151-neutropenic-sepsis-2012",

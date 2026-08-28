@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 181 adds the authored febrile neutropenia snapshot. */
-export const WORKER_PROTOCOL_VERSION = 181;
+/** Version 182 adds the authored necrotizing infection snapshot. */
+export const WORKER_PROTOCOL_VERSION = 182;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -299,6 +299,47 @@ export interface FebrileNeutropeniaSnapshot {
     readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
     readonly meanArterialMmHg: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
     readonly coreTemperatureC: number; readonly capillaryRefillSeconds: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true;
+  readonly doseModelAvailable: false;
+  readonly durableRecoveryProven: false;
+}
+
+export interface NecrotizingInfectionSnapshot {
+  readonly recognitionAtTick: number | null;
+  readonly marginMarkedAtTick: number | null;
+  readonly surgeryAtTick: number | null;
+  readonly antimicrobialIntentAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly progressionDueInSeconds: number | null;
+  readonly progressionObserved: boolean;
+  readonly surgeryRequestedBeforeProgression: boolean;
+  readonly scoreExclusionAttempted: boolean;
+  readonly imagingDelayAttempted: boolean;
+  readonly crepitusExclusionAttempted: boolean;
+  readonly oralContinuationAttempted: boolean;
+  readonly riskScore: number;
+  readonly labObservation: {
+    readonly atTick: number; readonly whiteCellsX109L: number; readonly crpMgL: number;
+    readonly sodiumMmolL: number; readonly creatinineUmolL: number; readonly glucoseMmolL: number;
+    readonly haemoglobinGPerDl: number; readonly lactateMmolL: number; readonly riskScore: number;
+  } | null;
+  readonly limbObservation: {
+    readonly atTick: number; readonly beyondMarginCm: number;
+    readonly dusky: boolean; readonly painBeyondErythema: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly whiteCellsX109L: number; readonly crpMgL: number;
+    readonly sodiumMmolL: number; readonly creatinineUmolL: number; readonly glucoseMmolL: number;
+    readonly haemoglobinGPerDl: number; readonly lactateMmolL: number; readonly riskScore: number;
+    readonly beyondMarginCm: number; readonly dusky: boolean; readonly painBeyondErythema: boolean;
+    readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
+    readonly meanArterialMmHg: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly coreTemperatureC: number; readonly alertness: string;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -3647,6 +3688,7 @@ export interface EquipmentSnapshot {
     readonly meningococcalSepsis?: MeningococcalSepsisSnapshot;
     readonly obstructedKidney?: ObstructedKidneySnapshot;
     readonly febrileNeutropenia?: FebrileNeutropeniaSnapshot;
+    readonly necrotizingInfection?: NecrotizingInfectionSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

@@ -18,6 +18,7 @@ import { renalHypermagnesemiaCompletionEvidence } from '../../renal-electrolyte/
 import { meningococcalSepsisCompletionEvidence } from '../../infectious-disease/meningococcal-sepsis-completion';
 import { obstructedKidneyCompletionEvidence } from '../../infectious-disease/obstructed-kidney-completion';
 import { febrileNeutropeniaCompletionEvidence } from '../../infectious-disease/febrile-neutropenia-completion';
+import { necrotizingInfectionCompletionEvidence } from '../../infectious-disease/necrotizing-infection-completion';
 import {
   COMPLETION_SCHEMA_VERSION,
   type CompletionRequirementAudit,
@@ -117,6 +118,7 @@ export function auditClinicalScenario(
     ...meningococcalSepsisCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...obstructedKidneyCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...febrileNeutropeniaCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...necrotizingInfectionCompletionEvidence(scenario, capabilityVersion, moduleId),
   ].map((entry) => [entry.id, entry]));
   const auditedRequirements = requirements.map((entry) => exactEvidence.get(entry.id) ?? entry);
   return {

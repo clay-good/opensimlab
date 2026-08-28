@@ -3185,9 +3185,34 @@ See `docs/evidence-briefs/febrile-neutropenia-blind-examination.md` for source l
 table, and the disputed timing and scoring boundaries. Independent clinical review, four quality
 records, complete inclusive-runtime checks, and production reporting evidence remain pending.
 
-Remaining seven: sepsis without shock; septic shock; meningitis; severe community-acquired
-pneumonia; cellulitis progressing to necrotizing infection; endocarditis complication; toxic-shock
-pattern. The planned `source-control reassessment` entry is retired, because the obstructed-kidney
+The fourth infectious-disease preview, `necrotizing-infection-score-cannot-exclude@0.1.0`, teaches
+that a ruled-in result changes what you do while a ruled-out result here changes nothing, because
+the only test that excludes the diagnosis is surgical exploration. This is upstream of the
+obstructed-kidney lesson: there the diagnosis was made and the therapy incomplete, here the
+diagnosis is unmade and the available test structurally cannot exclude it.
+
+The reassuring number deliberately arrives before the escalation decision, so recorded intent is
+made against the grain of the score. Every presenting laboratory value sits inside a band that keeps
+the derived score at 3 against a cutoff of 6, and lactate is the only frankly abnormal value and not
+one the score counts. Four refusals hold the boundary: excluding on the score, delaying review for
+imaging, treating absent crepitus and bullae as reassurance, and continuing the failed oral course.
+
+The progression is authored and occurs whatever the learner records, because only an operation
+treats this and the operation happens after the rehearsal ends. What the learner changes is whether
+the surgical team is already mobilized when it arrives, which the snapshot records separately. The
+score reaching 11 at that point is the lesson rather than a reward: it became useful only after the
+interval in which acting on it mattered. The run ends with the diagnosis unconfirmed.
+
+See `docs/evidence-briefs/necrotizing-infection-score-cannot-exclude.md` for source locators, the
+score-component table, and the confounding that makes the timing evidence directional rather than
+threshold-bearing.
+
+Remaining six: sepsis without shock; septic shock; meningitis; severe community-acquired pneumonia;
+endocarditis complication; toxic-shock pattern. Research is banked for endocarditis with new heart
+failure, whose lesson is a patient already on correct antimicrobials deteriorating from mechanical
+valve failure on a surgical rather than antimicrobial clock, and indicates the toxic-shock entry
+should be authored as a diagnostic-boundary lesson about a surveillance case definition that cannot
+be met at the bedside. The planned `source-control reassessment` entry is retired, because the obstructed-kidney
 scenario is that lesson; a future intra-abdominal source would need its own entry. Research is
 banked for the necrotizing-infection and endocarditis slices, and indicates the toxic-shock entry
 should be authored as a diagnostic-boundary lesson about a surveillance case definition that

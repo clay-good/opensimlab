@@ -5687,6 +5687,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Population-specific timing studies are few and conflicting, with any signal appearing later than one hour rather than at it. Risk scores are calculated at fever onset, do not update, are not validated in children, and the newer one is not validated in blood cancers or unstable patients. Low-risk strata still carry real complication rates. This field is also still running on guidance published between 2010 and 2018.',
     briefIn: ['febrile-neutropenia-blind-examination'],
   },
+  {
+    id: 'necrotizing-infection-presentation-and-progression-are-authored',
+    headline: 'The progression is authored and happens whatever the learner records.',
+    simplification: 'The case supplies one fixed presentation and one fixed progression four simulated hours later. No infection, tissue, perfusion, or operative model runs underneath, and the derived risk score is a stated number rather than a live calculation.',
+    whereItMisleads: 'The clock becomes a validated operative deadline, or the unchanged progression is read as the learner having made no difference.',
+    correctUnderstanding: 'The disease advances because only an operation treats it, and the operation happens after this rehearsal ends. What the learner changes is whether the surgical team is already mobilized when it arrives. Real presentations vary widely in speed, and no individual course follows from this authored model.',
+    briefIn: ['necrotizing-infection-score-cannot-exclude'],
+  },
+  {
+    id: 'necrotizing-infection-controls-are-recognition-activation-and-intent-only',
+    headline: 'Exploration is the only test that excludes this, and it is not in the rehearsal.',
+    simplification: 'The learner reconciles pain, marks and times the border, requests urgent surgical review, and records bounded antimicrobial intent per local protocol. No agent, dose, route, imaging order, incision, extent, or theatre time exists, and no procedure is performed.',
+    whereItMisleads: 'Requesting review is read as the operation having happened, or antimicrobial intent is read as treatment of the infected tissue.',
+    correctUnderstanding: 'Antimicrobials do not treat dead tissue and are recorded alongside surgery, never instead of it. The decision to explore, its timing and extent, imaging, critical-care support, and every operative judgement remain qualified-team work. The scenario ends with the diagnosis unconfirmed because only exploration can confirm or exclude it.',
+    briefIn: ['necrotizing-infection-score-cannot-exclude'],
+  },
+  {
+    id: 'necrotizing-infection-score-and-timing-evidence-are-weak-and-confounded',
+    headline: 'The score cannot exclude, and the clock is observational.',
+    simplification: 'The case states the score was derived against selected severe-cellulitis controls, that its pooled sensitivity at the usual cutoff is near two-thirds, and that it counts late physiology. It also states the low sensitivity of crepitus and bullae, and that imaging must not delay exploration.',
+    whereItMisleads: 'A learner uses the score to rule out, treats absent late signs as reassurance, or reads the survival benefit of earlier surgery as a proven causal threshold.',
+    correctUnderstanding: 'Roughly one confirmed case in three scores below the cutoff, so a low score changes nothing about what to do. Earlier surgery is consistently associated with survival across observational studies, but that evidence is confounded by indication in both directions, since the obviously fulminant reach theatre fastest and also die most, while the too-unstable are delayed. There is no randomised trial and no validated hour threshold. One published review disagrees about the score, having pooled mean scores in confirmed cases rather than sensitivity in suspected ones.',
+    briefIn: ['necrotizing-infection-score-cannot-exclude'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {
