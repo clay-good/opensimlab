@@ -36,7 +36,8 @@ vi.mock('@platform/catalog/scenario-quality', async (importOriginal) => {
 });
 
 const MODULES = ['anesthesia', 'emergency-medicine', 'critical-care', 'cardiology', 'respiratory-medicine',
-  'pediatrics', 'neurology', 'toxicology', 'obstetrics', 'neonatology', 'endocrine-metabolic', 'renal-electrolyte'];
+  'pediatrics', 'neurology', 'toxicology', 'obstetrics', 'neonatology', 'endocrine-metabolic', 'renal-electrolyte',
+  'infectious-disease'];
 const suppliedRecord = () => ({ moduleId: 'endocrine-metabolic', kind: 'training-value', record: {
   schemaVersion: 1, scenarioId: 'hypocalcemic-tetany-rescue-and-recurrence', contentVersion: '0.1.0',
   fictionalTimeEvolvingState: true, incompleteInformation: true, learnerAction: true, consequence: true,
@@ -60,18 +61,18 @@ describe('Build and release consume the same fail-closed quality registry', () =
   });
   afterEach(() => { process.argv = argv; vi.restoreAllMocks(); });
 
-  it('keeps empty-input outputs equivalent across all twelve build and release catalogs', async () => {
+  it('keeps empty-input outputs equivalent across all thirteen build and release catalogs', async () => {
     const actualQuality = await vi.importActual<typeof Quality>('@platform/catalog/scenario-quality');
     await consume('build');
     expect(harness.calls).toHaveLength(1);
     const build = harness.calls[0]!;
     expect(build.inputs).toBe(harness.records);
     expect(build.completions.map(({ moduleId }) => moduleId)).toEqual(MODULES);
-    expect(build.result?.size).toBe(12);
+    expect(build.result?.size).toBe(13);
     const expected = actualQuality.buildScenarioQualityCatalogs(build.completions, []);
     expect(build.result).toEqual(expected);
     const written = [...harness.writes].filter(([path]) => path.endsWith('-quality-audit.json'));
-    expect(written).toHaveLength(12);
+    expect(written).toHaveLength(13);
     for (const [, text] of written) {
       const actual = JSON.parse(text) as ScenarioQualityCatalog;
       expect(actual).toEqual(expected.get(actual.moduleId));
@@ -128,7 +129,7 @@ describe('Build and release consume the same fail-closed quality registry', () =
         .every(({ qualityRecords }) => qualityRecords.every(({ status }) => status === 'missing'))).toBe(true);
     }
     const written = [...harness.writes].filter(([path]) => path.endsWith('-quality-audit.json'));
-    expect(written).toHaveLength(12);
+    expect(written).toHaveLength(13);
     for (const [path, text] of written) {
       const generated = JSON.parse(text) as ScenarioQualityCatalog;
       expect(generated).toEqual(harness.calls[0]!.result!.get(generated.moduleId));
@@ -146,7 +147,7 @@ describe('Build and release consume the same fail-closed quality registry', () =
     expect(JSON.parse(written[1])).toEqual(harness.calls[0]!.result!.get(input.moduleId));
     for (const call of harness.calls) {
       expect(call.inputs).toBe(harness.records);
-      expect(call.completions).toHaveLength(12);
+      expect(call.completions).toHaveLength(13);
       const catalog = call.result!.get(input.moduleId)!;
       const target = catalog.scenarios.find(({ scenarioId }) => scenarioId === input.record.scenarioId)!;
       expect(target.qualityRecords.find(({ kind }) => kind === input.kind)).toMatchObject({

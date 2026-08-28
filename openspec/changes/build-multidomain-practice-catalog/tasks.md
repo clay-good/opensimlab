@@ -1355,6 +1355,38 @@ credited toward the catalog until every item in the completion contract passes.
     and 44 catalog artifacts. Compressed budgets are 147.9 KiB landing, 1,474.6 KiB cockpit, and
     3,281.4 KiB offline. Scenario counts and pending independent gates are unchanged.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
+  - [x] Infectious-disease slice 1/10 establishes the indexable `/infectious-disease` module with one
+    authored meningococcal sepsis lab. A previously well MenACWY-vaccinated 15-year-old presents with
+    fever, heart rate 138/min, BP 88/44 mmHg, capillary refill 4 s, conscious level 14/15, lactate
+    4.1 mmol/L, platelets 96, leucopenia, C-reactive protein 48 mg/L, and non-blanching petechiae
+    including two lesions larger than 2 mm. The learner reconciles the rash with the whole patient;
+    recognizes a strongly suspected pattern without closing on one marker, on an absent rash, or on
+    vaccination; activates a senior clinical decision maker, blood culture and whole-blood PCR
+    sampling that does not delay care, and critical-care review of vasoactive and access needs;
+    reviews the one-hour antimicrobial target, the refusal to delay transfer, and the contested
+    United Kingdom versus international fluid ceiling; records bounded qualified-team antimicrobial
+    and fluid intent; then meets one of two strict authored contrasts. Without intent, a ten-minute
+    untreated state supplies heart rate 152/min, BP 76/36 mmHg, conscious level 10/15, lactate
+    6.8 mmol/L, and spreading purpura, moving Phoenix 2 to Phoenix 5. With intent, a one-hour review
+    supplies a deliberately inadequate response and a risen C-reactive protein of 96 mg/L, and only
+    that state gates handoff on alerting a consultant to attend in person, which is distinct from
+    earlier telephone ownership. Practice ends with shock unresolved and the diagnosis unconfirmed.
+    No learner history, examination, monitoring or test acquisition, sepsis scoring, diagnosis,
+    antimicrobial selection, dose, route, access, infusion, fluid volume, vasoactive choice, oxygen
+    setting, lumbar-puncture or imaging decision, source control, public-health notification, contact
+    prophylaxis, disposition, prognosis, or outcome control exists.
+  - [x] Verify the module launch with a green suite. Ten engine-contract checks cover the authored
+    deterioration and one-hour states, the attendance gate and its absence before the review,
+    instructor takeover, refused generic and malformed actions, and the absence of any named agent or
+    dose. Twenty-four reporting checks confirm only uniquely attributable outcomes enter optional
+    context and that event prose and injected payloads never do. Eight foundation checks and seven
+    tray checks cover registration, routing, prerendering, structured data, catalog artifacts, the
+    160-character shared report door, and screen-reader-visible state. The published report catalog
+    grows to 219 records, and the twelve earlier modules' immutable evidence is confirmed byte for
+    byte unchanged. The front-door word budget now measures prose separately from the module
+    directory, so a module launch can no longer silently relax the one-screen guarantee. This
+    infrastructure evidence does not replace independent clinical, inclusive-runtime, or production
+    Turnstile/D1 verification, and four quality records remain outstanding for this scenario.
   - [x] Toxicology slice 1/15 establishes the indexable `/toxicology` module with one authored
     methemoglobinemia lab after documented topical benzocaine exposure. The learner reconciles
     cyanosis, symptoms, pulse-coherent SpO2 85%, PaO2 238 mmHg, chocolate-brown blood, and supplied

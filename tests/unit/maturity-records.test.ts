@@ -17,6 +17,7 @@ import { OBSTETRICS_SCENARIOS } from '../../src/modules/obstetrics/scenarios';
 import { NEONATOLOGY_SCENARIOS } from '../../src/modules/neonatology/scenarios';
 import { ENDOCRINE_METABOLIC_SCENARIOS } from '../../src/modules/endocrine-metabolic/scenarios';
 import { RENAL_ELECTROLYTE_SCENARIOS } from '../../src/modules/renal-electrolyte/scenarios';
+import { INFECTIOUS_DISEASE_SCENARIOS } from '../../src/modules/infectious-disease/scenarios';
 import { buildScenarioQualityCatalog } from '@platform/catalog/scenario-quality';
 import {
   buildMaturityCatalog, MATURITY_RECORD_SCHEMA, MATURITY_STATUSES,
@@ -92,6 +93,12 @@ const endocrineMetabolicCatalog = buildMaturityCatalog(
 const renalElectrolyteCompletion = buildModuleCompletionCatalog(
   RENAL_ELECTROLYTE_SCENARIOS, ENGINE_VERSION, 'renal-electrolyte', 'ward', 'state_transition',
 );
+const infectiousDiseaseCompletion = buildModuleCompletionCatalog(
+  INFECTIOUS_DISEASE_SCENARIOS, ENGINE_VERSION, 'infectious-disease', 'emergency-department', 'state_transition',
+);
+const infectiousDiseaseCatalog = buildMaturityCatalog(
+  infectiousDiseaseCompletion, buildScenarioQualityCatalog(infectiousDiseaseCompletion),
+);
 const renalElectrolyteCatalog = buildMaturityCatalog(
   renalElectrolyteCompletion, buildScenarioQualityCatalog(renalElectrolyteCompletion),
 );
@@ -107,7 +114,7 @@ describe('exact-version maturity records', () => {
       + cardiologyCatalog.recordCount + respiratoryMedicineCatalog.recordCount
       + pediatricsCatalog.recordCount + neurologyCatalog.recordCount + toxicologyCatalog.recordCount
       + obstetricsCatalog.recordCount + neonatologyCatalog.recordCount + endocrineMetabolicCatalog.recordCount
-      + renalElectrolyteCatalog.recordCount)
+      + renalElectrolyteCatalog.recordCount + infectiousDiseaseCatalog.recordCount)
       .toBe(reviewableItems().length);
     expect(catalog.recordCount).toBe(54);
     expect(catalog.records.filter((record) => record.subjectKind === 'scenario')

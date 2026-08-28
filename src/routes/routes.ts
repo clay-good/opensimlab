@@ -20,6 +20,7 @@ import { OBSTETRICS_SCENARIOS } from '../modules/obstetrics/scenarios';
 import { NEONATOLOGY_SCENARIOS } from '../modules/neonatology/scenarios';
 import { ENDOCRINE_METABOLIC_SCENARIOS } from '../modules/endocrine-metabolic/scenarios';
 import { RENAL_ELECTROLYTE_SCENARIOS } from '../modules/renal-electrolyte/scenarios';
+import { INFECTIOUS_DISEASE_SCENARIOS } from '../modules/infectious-disease/scenarios';
 import type { Scenario } from '@anesthesia/scenarios/types';
 import { ROOT_ROUTE, formatTitle } from './site-metadata';
 import type { RouteMetadata } from './site-metadata';
@@ -270,6 +271,23 @@ export const ROUTES: readonly RouteMetadata[] = [
   },
   ...RENAL_ELECTROLYTE_SCENARIOS.map((scenario) => ({
     path: `/renal-electrolyte/scenario/${scenario.metadata.id}`,
+    title: formatTitle(scenario.metadata.title.length > 44
+      ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
+    description: scenarioDescription(scenario),
+    indexable: true,
+    structuredData: ['LearningResource'] as const,
+    heading: scenario.metadata.title,
+  })),
+  {
+    path: '/infectious-disease',
+    title: formatTitle('Infectious disease simulator'),
+    description: 'Practice calm recognition of dangerous infection, timely activation, antimicrobial and fluid boundaries, serial reassessment, and honest handoff.',
+    indexable: true,
+    structuredData: ['SoftwareApplication'],
+    heading: 'Infectious disease simulator',
+  },
+  ...INFECTIOUS_DISEASE_SCENARIOS.map((scenario) => ({
+    path: `/infectious-disease/scenario/${scenario.metadata.id}`,
     title: formatTitle(scenario.metadata.title.length > 44
       ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
     description: scenarioDescription(scenario),

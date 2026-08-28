@@ -3114,6 +3114,27 @@ production reporting evidence remain pending.
 
 #### Infectious disease: 10
 
+The first infectious-disease preview, `meningococcal-sepsis-recognition-and-escalation@0.1.0`,
+launches the module at `/infectious-disease`. It separates recognition, activation, bounded
+qualified-team intent, and consultant attendance in person. Fifteen choices expose no agent, dose,
+route, bolus volume, oxygen setting, lumbar-puncture decision, source control, or contact
+prophylaxis. Three refusals hold the boundary: a normal inflammatory marker does not exclude, prior
+MenACWY vaccination does not exclude serogroup B, and transfer is not delayed for pre-hospital
+antimicrobials.
+
+Two authored contrasts carry the teaching. Without recorded antimicrobial and fluid intent, a
+ten-minute untreated state moves the patient from Phoenix sepsis to Phoenix septic shock. With
+intent recorded, a one-hour review instead supplies a deliberately inadequate response and a risen
+C-reactive protein, which is expected with elapsed time and is not treatment failure. That state,
+and only that state, gates handoff on alerting a consultant to attend in person. Handoff before the
+review requires no attendance. The lesson ends with shock unresolved and the diagnosis unconfirmed,
+because a simulator that rewarded correct action with survival would teach a false causal model.
+
+See `docs/evidence-briefs/meningococcal-sepsis-recognition-and-escalation.md` for source locators,
+the value table, and the disputed timing and fluid boundaries. Independent clinical review, four
+quality records, complete inclusive-runtime checks, and production reporting evidence remain
+pending.
+
 Sepsis without shock; septic shock; meningitis; neutropenic fever; severe community-acquired
 pneumonia; pyelonephritis with deterioration; cellulitis progressing to necrotizing infection;
 endocarditis complication; toxic-shock pattern; source-control reassessment.

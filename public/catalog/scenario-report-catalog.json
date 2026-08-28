@@ -2128,6 +2128,23 @@
       "limitationManifestHash": "sha256:e80acd3fc429c1a683378d6b57471ad0b344e9437e99c71ccd5d575595087945"
     },
     {
+      "scenarioId": "meningococcal-sepsis-recognition-and-escalation",
+      "contentVersion": "0.1.0",
+      "moduleId": "infectious-disease",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:53c016fdbe2e6e02bae3c67b8f220bb7d8e29df4bbce7142150da9ebeab935f1",
+      "defaultsHash": "sha256:92d90b02d0d5bded5ba0d5005d2eb0f2ae3e215663bf580e342bfa04aeafaa19",
+      "maturityHash": "sha256:b2118b91b6198348b0796adaacde87016ac7cb67f2ed10e6bed09bfc691b3358",
+      "sourceManifestHash": "sha256:581e6148882ce392d5e096df7a993b4f67b51b4125f3236abf4adc2e3d8bf872",
+      "limitationManifestHash": "sha256:0234ac02fa8a001b042b3f5544670f62796467a2ff0a9dedf8fc0d6f14f2be7d"
+    },
+    {
       "scenarioId": "delivery-room-to-nicu-handoff",
       "contentVersion": "0.1.0",
       "moduleId": "neonatology",

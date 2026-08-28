@@ -188,6 +188,19 @@ export const MODULES: readonly ModuleDeclaration[] = [
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
+    id: 'infectious-disease',
+    route: 'infectious-disease',
+    displayName: 'Infectious disease',
+    description: 'Practice calm recognition of dangerous infection, timely activation, treatment boundaries, serial reassessment, and handoff.',
+    audience: 'Medical students, residents, nurses, pharmacists, and acute-care trainees assessing suspected serious infection.',
+    prerequisites: 'Basic emergency assessment, cardiovascular and respiratory physiology, and antimicrobial stewardship principles.',
+    status: 'available',
+    plannedScope:
+      'Ten bounded infectious-disease rehearsals spanning invasive bacterial sepsis, soft-tissue and '
+      + 'central-nervous-system infection, neutropenic and device-associated risk, and escalation timing.',
+    timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
+  },
+  {
     id: 'oncology',
     route: 'oncology',
     displayName: 'Oncology',

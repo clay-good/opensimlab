@@ -132,9 +132,9 @@ describe('scenario report contract', () => {
     }[] };
     expect(catalog.schemaVersion).toBe(2);
     expect(catalog.evidenceAlgorithm).toBe('scenario-evidence-v1');
-    expect(catalog.scenarios).toHaveLength(218);
+    expect(catalog.scenarios).toHaveLength(219);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(218);
+      .toBe(219);
     for (const contentVersion of ['0.1.0', '0.1.1', '0.1.2']) {
       expect(catalog.scenarios).toContainEqual(expect.objectContaining({
         moduleId: 'endocrine-metabolic', scenarioId: 'adrenal-crisis-treatment-before-tests', contentVersion,
@@ -834,6 +834,24 @@ describe('scenario report contract', () => {
     expect(validateReportPayload(report)).toMatchObject({ ok: true });
     expect(validateReportPayload({ ...report, scenario_id: 'autonomic-dysreflexia' })).toEqual({ ok: false, status: 400 });
     expect(validateReportPayload({ ...report, canonical_url: `${neurology.canonicalUrl}#tick-12` })).toEqual({ ok: false, status: 403 });
+  });
+
+  it('accepts the exact infectious-disease meningococcal context and rejects module or URL drift', () => {
+    const infection: ScenarioReportContext = {
+      ...context, moduleId: 'infectious-disease', scenarioId: 'meningococcal-sepsis-recognition-and-escalation',
+      canonicalUrl: 'https://opensimlab.com/infectious-disease/scenario/meningococcal-sepsis-recognition-and-escalation',
+      fidelityClass: 'state_transition', simulatedTick: 36005,
+    };
+    const report = buildScenarioReportRequest(infection, 'clinical-content', 'The one-hour review may need a source check.', 'token');
+    expect(validateReportPayload(report)).toMatchObject({ ok: true });
+    // A note longer than the limit is truncated on the client and refused by the worker.
+    const long = buildScenarioReportRequest(infection, 'clinical-content', 'x'.repeat(400), 'token');
+    expect(long.note).toHaveLength(160);
+    expect(validateReportPayload({ ...report, note: 'x'.repeat(161) })).toEqual({ ok: false, status: 400 });
+    expect(validateReportPayload({ ...report, scenario_id: 'meningococcal-sepsis' })).toEqual({ ok: false, status: 400 });
+    expect(validateReportPayload({ ...report, module_id: 'toxicology' })).toEqual({ ok: false, status: 400 });
+    expect(validateReportPayload({ ...report, canonical_url: `${infection.canonicalUrl}?seed=5101` }))
+      .toEqual({ ok: false, status: 403 });
   });
 
   it('rejects unknown fields, stale versions, learner-state URLs, unsafe text, and token overflow', () => {

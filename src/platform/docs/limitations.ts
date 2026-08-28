@@ -5615,6 +5615,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified direct findings, the current local DKA and inpatient-diabetes pathways, trained teams, reliable laboratory and medication systems, individualized bridging and nutrition plans, patient-centered access and education, and hands-on training.',
     briefIn: ['dka-resolution-transition'],
   },
+  {
+    id: 'meningococcal-sepsis-presentation-and-response-are-authored',
+    headline: 'The presentation, laboratory values, and one-hour response are authored contrasts.',
+    simplification: 'The case supplies one fixed presentation, a ten-minute untreated deterioration, and a fixed one-hour review after recorded intent. No host response, bacterial growth, antimicrobial pharmacology, or fluid-responsiveness model runs underneath.',
+    whereItMisleads: 'These clocks become expected disease kinetics, a safe observation window, a guaranteed response to correct action, or evidence that the rising C-reactive protein means treatment failure.',
+    correctUnderstanding: 'Real meningococcal sepsis varies widely in speed and trajectory, and correct early action does not guarantee recovery. Inflammatory markers rise for hours regardless of treatment. No individual patient course follows from this authored model.',
+    briefIn: ['meningococcal-sepsis-recognition-and-escalation'],
+  },
+  {
+    id: 'meningococcal-sepsis-controls-are-recognition-and-intent-only',
+    headline: 'Recorded intent is not a prescription and not delivered treatment.',
+    simplification: 'The learner records bounded qualified-team antimicrobial and fluid intent. No agent, dose, route, preparation, access, infusion, bolus volume, oxygen setting, or vasoactive choice exists, and the critical-care referral only asks a qualified team to review the need.',
+    whereItMisleads: 'Recording intent is read as having given the drug, chosen a regimen, started vasoactive support, or completed source control.',
+    correctUnderstanding: 'Antimicrobial selection and delivery, fluid volume, vasoactive and access decisions, lumbar puncture and imaging timing, source control, public-health notification, and contact prophylaxis all remain qualified-team work outside this rehearsal.',
+    briefIn: ['meningococcal-sepsis-recognition-and-escalation'],
+  },
+  {
+    id: 'meningococcal-sepsis-timing-and-fluid-ceiling-are-regionally-contested',
+    headline: 'The antimicrobial clock and the fluid ceiling are not settled internationally.',
+    simplification: 'The case anchors on a one-hour antimicrobial target for a strongly suspected, high-pretest-probability presentation, and states that the United Kingdom single-bolus cap and the international paediatric first-hour ceiling disagree for this weight.',
+    whereItMisleads: 'The one-hour target is generalised to every undifferentiated fever, or one region\u2019s fluid ceiling is treated as the only defensible number.',
+    correctUnderstanding: 'The strongest evidence for immediate antimicrobials is in septic shock and in named high-probability syndromes like this one; blanket one-hour mandates for undifferentiated presentations remain disputed. Fluid volumes are individualised and region-dependent. Follow local guidance with qualified teams.',
+    briefIn: ['meningococcal-sepsis-recognition-and-escalation'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

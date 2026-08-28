@@ -39,6 +39,7 @@ import { supportsRenalHyponatremia } from '../../renal-electrolyte/hyponatremia'
 import { supportsRenalHypernatremia } from '../../renal-electrolyte/hypernatremia';
 import { supportsRenalHypocalcemia } from '../../renal-electrolyte/hypocalcemia';
 import { supportsRenalHypermagnesemia } from '../../renal-electrolyte/hypermagnesemia';
+import { supportsMeningococcalSepsis } from '../../infectious-disease/meningococcal-sepsis';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -612,6 +613,49 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.endsWith('-infectious-disease-meningococcal-rash-perfusion-conscious-level-and-whole-patient')
+      || objective.id.startsWith('recognize-infectious-disease-meningococcal-')
+      || objective.id.startsWith('activate-infectious-disease-meningococcal-')
+      || objective.id.startsWith('review-infectious-disease-meningococcal-')
+      || objective.id.startsWith('record-infectious-disease-meningococcal-')
+      || objective.id.startsWith('handoff-infectious-disease-meningococcal-')) {
+      if (!supportsMeningococcalSepsis(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The infectious-disease meningococcal sepsis lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^meningococcal-sepsis-${id}-\\d+$`).test(entry.eventId));
+      const rash = event('rash-recognition'); const senior = event('senior-ownership'); const bloods = event('bloods-requested');
+      const antimicrobial = event('antimicrobial-intent'); const fluid = event('fluid-and-critical-care-intent');
+      const consultant = event('consultant-attendance'); const boundaries = event('boundary-review');
+      const monitoring = event('monitoring'); const handoff = event('handoff');
+      const full = (entry: EngineEvent) => /^meningococcal-sepsis-(initial|treated|incomplete-response|attendance)-reassessment-\d+$/.test(entry.eventId);
+      const later = log.find(full);
+      const incomplete = event('incomplete-response-reassessment');
+      const refusedShortcut = event('marker-exclusion-refused') ?? event('vaccination-exclusion-refused') ?? event('transfer-delay-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'reconcile-infectious-disease-meningococcal-rash-perfusion-conscious-level-and-whole-patient': { met: !!rash, tick: rash?.tick,
+          finding: (rash ? 'The non-blanching lesions larger than 2 mm were reconciled with fever, perfusion, conscious level, and the supplied laboratory evidence. ' : 'The rash was not reconciled with the whole patient. ')
+            + 'Recognition is not a diagnosis. An absent rash would not have excluded this pattern, and petechiae are harder to see on brown, black, and tanned skin.' },
+        'recognize-infectious-disease-meningococcal-pattern-without-single-marker-or-vaccination-closure': { met: !!rash && !!boundaries, tick: boundaries?.tick,
+          finding: (rash && boundaries ? 'The pattern was acted on while the marker and vaccination exclusions stayed open. ' : 'Pattern recognition or its boundary review remains incomplete. ')
+            + (refusedShortcut ? 'A marker, vaccination, or transfer-delay shortcut was attempted and refused; it remains in this run. ' : '')
+            + 'Leucopenia and an unimpressive C-reactive protein are adverse and lagging findings, and MenACWY does not cover serogroup B.' },
+        'activate-infectious-disease-meningococcal-senior-decision-maker-and-critical-care-ownership': { met: !!senior && !!bloods && !!fluid, tick: senior?.tick,
+          finding: (senior && bloods && fluid ? 'Senior decision-maker ownership, blood culture and PCR sampling, and critical-care review of vasoactive and access needs were recorded together. ' : 'Senior ownership, sampling, or critical-care review remains incomplete. ')
+            + 'Sampling must not delay antimicrobial care, and the critical-care referral reviews the need for support rather than starting it.' },
+        'review-infectious-disease-meningococcal-timing-and-fluid-ceiling-boundary': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The one-hour antimicrobial target, the refusal to delay transfer, and the contested fluid ceiling were reviewed. ' : 'The timing and fluid-ceiling boundary review is missing. ')
+            + 'The strongest case for immediate antimicrobials is in named high-probability syndromes like this one; a blanket one-hour rule for undifferentiated fever remains disputed. Bolus ceilings differ by region.' },
+        'record-infectious-disease-meningococcal-bounded-intent-and-consultant-attendance': { met: !!antimicrobial && !!fluid && !!later && (!incomplete || !!consultant), tick: antimicrobial?.tick,
+          finding: (antimicrobial && fluid && later ? 'Bounded antimicrobial and fluid intent were recorded and a full assessment made the authored response available for review. ' : 'Bounded intent or its requested full response assessment remains incomplete. ')
+            + (incomplete ? (consultant ? 'The inadequate one-hour response was escalated to a consultant attending in person. ' : 'The inadequate one-hour response was observed but no consultant was alerted to attend in person. ') : '')
+            + 'Recorded intent is neither a prescription nor proof that treatment reached the patient, and a rising C-reactive protein is not by itself treatment failure.' },
+        'handoff-infectious-disease-meningococcal-unresolved-shock-source-and-active-risk': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'Current bedside and laboratory findings, delivered care, critical-care review, and continuing responsibilities were handed off with shock unresolved. ' : 'Current full findings or continuing-care ownership remains incomplete. ')
+            + (monitoring ? '' : 'Continuing surveillance was not arranged. ')
+            + 'A settled diagnosis, a normal marker, and an error-free history are not handoff gates. Handoff ends rehearsal, not treatment, and no survival or discharge readiness is certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.startsWith('renal-hypermagnesemia-')) {
       if (!supportsRenalHypermagnesemia(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The renal hypermagnesemia lesson was not active.' } satisfies ObjectiveFinding;

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 328,
+  "sourceCount": 331,
   "sources": [
     {
       "id": "renal-hypermagnesemia-series-2018",
@@ -4225,6 +4225,49 @@
       "usedFor": "Stable-transition criteria, continued observation despite expected early oxygenation transition, immediate skin-to-skin thermal support, and avoidance of premature well-newborn closure.",
       "verifiedAgainst": "https://publications.aap.org/pediatrics/article/157/1/e2025074766/205238/Neonatal-Life-Support-2025-International-Liaison",
       "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "nice-ng240-meningococcal-2024",
+      "currency": {
+        "lastAmended": "2025-11-19",
+        "checkedAt": "2026-08-28"
+      },
+      "authors": "National Institute for Health and Care Excellence",
+      "title": "Meningitis (bacterial) and meningococcal disease: recognition, diagnosis and management",
+      "publication": "NICE guideline NG240",
+      "year": 2024,
+      "locator": "Recommendations 1.1.9, 1.1.10, 1.1.12, 1.2.2, 1.2.3, 1.5.1, 1.5.3, 1.5.4",
+      "usedFor": "Strongly suspected meningococcal pattern from non-blanching lesions larger than 2 mm, the refusal to exclude on an absent rash or a normal inflammatory marker, detection on brown and black skin, senior decision-maker ownership, blood sampling before antimicrobials, the one-hour antimicrobial target, and the instruction not to delay transfer for pre-hospital antimicrobials.",
+      "verifiedAgainst": "https://www.nice.org.uk/guidance/ng240/chapter/Recommendations",
+      "verifiedOn": "2026-08-28"
+    },
+    {
+      "id": "nice-ng254-sepsis-under-16s-2025",
+      "currency": {
+        "lastAmended": "2025-11-19",
+        "checkedAt": "2026-08-28"
+      },
+      "authors": "National Institute for Health and Care Excellence",
+      "title": "Suspected sepsis in under 16s: recognition, diagnosis and early management",
+      "publication": "NICE guideline NG254",
+      "year": 2025,
+      "locator": "Table 3 (young people aged 12 to 15) and recommendations 1.7.2, 1.7.6, 1.7.9, 1.7.10, 1.7.11, 1.9.2; partially replaces NG51",
+      "usedFor": "High-risk criteria for the authored vital signs, referral to critical care to review vasoactive and access needs, continuous or half-hourly observations with a recorded conscious level, the requirement to alert a consultant to attend in person when there is no response within an hour, and the United Kingdom paediatric bolus ceiling.",
+      "verifiedAgainst": "https://www.nice.org.uk/guidance/ng254",
+      "verifiedOn": "2026-08-28"
+    },
+    {
+      "id": "phoenix-pediatric-sepsis-criteria-2024",
+      "pmid": "38245897",
+      "authors": "Sanchez-Pinto LN, Bennett TD, DeWitt PE, et al",
+      "title": "Development and Validation of the Phoenix Criteria for Pediatric Sepsis and Septic Shock",
+      "publication": "JAMA",
+      "year": 2024,
+      "locator": "331(8):675-686; doi:10.1001/jama.2024.0196; cardiovascular, coagulation, and neurological scoring bands",
+      "usedFor": "Calibrating the authored presentation to a Phoenix score of 2 (sepsis) and the untreated ten-minute contrast to a score of 5 (septic shock), using the published mean arterial pressure, lactate, platelet, international normalised ratio, and conscious-level bands for the 12 to 17 year age group.",
+      "verifiedAgainst": "https://jamanetwork.com/journals/jama/fullarticle/2814296",
+      "verifiedOn": "2026-08-28",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/38245897/"
     }
   ]
 }

@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -110,6 +110,7 @@ export function stateSummary(
     readonly renalHypernatremia?: RenalHypernatremiaSnapshot;
     readonly renalHypocalcemia?: RenalHypocalcemiaSnapshot;
     readonly renalHypermagnesemia?: RenalHypermagnesemiaSnapshot;
+    readonly meningococcalSepsis?: MeningococcalSepsisSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -163,7 +164,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -187,6 +188,34 @@ export function stateSummary(
           + ' intravenous.');
       }
     }
+  }
+  if (options.meningococcalSepsis) {
+    const patient = options.meningococcalSepsis;
+    for (const field of ['systolicMmHg', 'diastolicMmHg'] as const) {
+      const value = state[field];
+      if (!options.invalid.has(field) && Number.isFinite(value)) {
+        lines.push(`${FIELDS[field].label}: ${value.toFixed(FIELDS[field].precision)} ${FIELDS[field].unit}.`);
+      }
+    }
+    lines.push('Supplied starting findings were fever 39.2 degrees Celsius, capillary refill 4 seconds, conscious level 14 of 15, lactate 4.1 millimoles per liter, platelets 96, and non-blanching petechiae including two lesions larger than 2 millimeters. These remain historical starting findings.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push(`Rash reconciled: ${patient.rashRecognizedAtTick === null ? 'not yet' : 'yes'}. Senior clinical decision maker: ${patient.seniorAtTick === null ? 'not yet called' : 'called by telephone'}. Consultant attending in person: ${patient.consultantAtTick === null ? 'not yet alerted' : 'alerted'}.`);
+    lines.push(`Antimicrobial intent: ${patient.antimicrobialIntentAtTick === null ? 'not yet recorded' : 'recorded'}. Fluid and critical-care intent: ${patient.fluidIntentAtTick === null ? 'not yet recorded' : 'recorded'}. Blood sampling: ${patient.bloodsAtTick === null ? 'not yet requested' : 'requested'}. Surveillance: ${patient.monitoringAtTick === null ? 'not arranged' : 'arranged'}.`);
+    lines.push('Recorded intent is neither a prescription nor proof that treatment reached the patient. No agent, dose, route, or bolus volume is selected. Oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.labObservation
+      ? `Last requested laboratory evidence at simulated ${formatElapsed(patient.labObservation.atTick)}: lactate ${patient.labObservation.lactateMmolL.toFixed(1)} millimoles per liter; platelets ${patient.labObservation.plateletsX109L}; C-reactive protein ${patient.labObservation.crpMgL} milligrams per liter. A laboratory-only check does not refresh the bedside assessment.`
+      : 'No new laboratory-only measurement has been requested.');
+    lines.push(patient.perfusionObservation
+      ? `Last requested examination at simulated ${formatElapsed(patient.perfusionObservation.atTick)}: capillary refill ${patient.perfusionObservation.capillaryRefillSeconds} seconds; conscious level ${patient.perfusionObservation.glasgowComaScore} of 15. A perfusion-only check does not refresh laboratory evidence.`
+      : 'No new perfusion-only examination has been requested.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: heart rate ${patient.observation.heartRateBpm} per minute; mean arterial pressure ${patient.observation.meanArterialMmHg}; capillary refill ${patient.observation.capillaryRefillSeconds} seconds; conscious level ${patient.observation.glasgowComaScore} of 15; lactate ${patient.observation.lactateMmolL.toFixed(1)} millimoles per liter; ${patient.observation.alertness}. These are historical observations, not live measurements.`
+      : 'No new full bedside and laboratory assessment has been requested.');
+    if (patient.incompleteResponseObserved && patient.consultantAtTick === null) lines.push('A full assessment recorded an inadequate response an hour after recorded intent. Attendance in person has not yet happened.');
+    lines.push('A rising C-reactive protein is expected with elapsed time and is not by itself treatment failure. Unresolved shock and an unconfirmed diagnosis remain ongoing responsibilities; no survival or discharge readiness is established.');
+    lines.push(options.alarms.length === 0 ? 'No active alarms.'
+      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    return lines.join(' ');
   }
   if (options.renalHypermagnesemia) {
     const patient = options.renalHypermagnesemia;

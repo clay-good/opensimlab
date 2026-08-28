@@ -58,6 +58,10 @@ import {
   RENAL_ELECTROLYTE_SCENARIOS, DEFAULT_RENAL_ELECTROLYTE_SCENARIO_ID,
   getRenalElectrolyteScenario,
 } from '../modules/renal-electrolyte/scenarios';
+import {
+  INFECTIOUS_DISEASE_SCENARIOS, DEFAULT_INFECTIOUS_DISEASE_SCENARIO_ID,
+  getInfectiousDiseaseScenario,
+} from '../modules/infectious-disease/scenarios';
 import type { Scenario } from '@anesthesia/scenarios/types';
 
 export function PrerenderedBody({ path }: { path: string }) {
@@ -156,6 +160,15 @@ export function PrerenderedBody({ path }: { path: string }) {
     <ScenarioMarkup path={path} basePath="/renal-electrolyte"
       defaultScenarioId={DEFAULT_RENAL_ELECTROLYTE_SCENARIO_ID}
       getScenario={getRenalElectrolyteScenario} />
+  );
+  if (path === '/infectious-disease') return (
+    <ModuleMarkup moduleId="infectious-disease" basePath="/infectious-disease"
+      heading="Infectious disease simulator" scenarios={INFECTIOUS_DISEASE_SCENARIOS} />
+  );
+  if (path.startsWith('/infectious-disease/scenario/')) return (
+    <ScenarioMarkup path={path} basePath="/infectious-disease"
+      defaultScenarioId={DEFAULT_INFECTIOUS_DISEASE_SCENARIO_ID}
+      getScenario={getInfectiousDiseaseScenario} />
   );
   if (path.startsWith('/neurology/scenario/')) return (
     <ScenarioMarkup path={path} basePath="/neurology"

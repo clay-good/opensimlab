@@ -8,8 +8,8 @@
  * report and the limitations register do not support.
  */
 
-export const READY_SCENARIO_COUNT = 210;
-export const READY_MODULE_COUNT = 12;
+export const READY_SCENARIO_COUNT = 211;
+export const READY_MODULE_COUNT = 13;
 
 export const ONE_LINE_DESCRIPTION =
   `Practice ${READY_SCENARIO_COUNT} clinical scenarios across ${READY_MODULE_COUNT} specialties—free online—`

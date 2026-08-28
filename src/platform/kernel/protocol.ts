@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 178 adds the authored renal hypermagnesemia snapshot. */
-export const WORKER_PROTOCOL_VERSION = 178;
+/** Version 179 adds the authored meningococcal sepsis snapshot. */
+export const WORKER_PROTOCOL_VERSION = 179;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -176,6 +176,46 @@ export interface RenalHypermagnesemiaSnapshot {
   readonly observation: {
     readonly atTick: number; readonly magnesiumMmolL: number;
     readonly reflexesPresent: boolean; readonly severeWeakness: boolean;
+    readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
+    readonly meanArterialMmHg: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true;
+  readonly doseModelAvailable: false;
+  readonly durableRecoveryProven: false;
+}
+
+export interface MeningococcalSepsisSnapshot {
+  readonly rashRecognizedAtTick: number | null;
+  readonly seniorAtTick: number | null;
+  readonly bloodsAtTick: number | null;
+  readonly antimicrobialIntentAtTick: number | null;
+  readonly fluidIntentAtTick: number | null;
+  readonly consultantAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly responseDueInSeconds: number | null;
+  readonly treatedResponseObserved: boolean;
+  readonly incompleteResponseObserved: boolean;
+  readonly attendanceResponseObserved: boolean;
+  readonly markerExclusionAttempted: boolean;
+  readonly vaccinationExclusionAttempted: boolean;
+  readonly transferDelayAttempted: boolean;
+  readonly labObservation: {
+    readonly atTick: number; readonly lactateMmolL: number; readonly plateletsX109L: number;
+    readonly crpMgL: number; readonly whiteCellsX109L: number;
+  } | null;
+  readonly perfusionObservation: {
+    readonly atTick: number; readonly capillaryRefillSeconds: number;
+    readonly glasgowComaScore: number; readonly spreadingPurpura: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly lactateMmolL: number; readonly plateletsX109L: number;
+    readonly crpMgL: number; readonly whiteCellsX109L: number;
+    readonly capillaryRefillSeconds: number; readonly glasgowComaScore: number; readonly spreadingPurpura: boolean;
     readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
     readonly meanArterialMmHg: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
     readonly coreTemperatureC: number; readonly alertness: string;
@@ -3524,6 +3564,7 @@ export interface EquipmentSnapshot {
     readonly renalHypernatremia?: RenalHypernatremiaSnapshot;
     readonly renalHypocalcemia?: RenalHypocalcemiaSnapshot;
     readonly renalHypermagnesemia?: RenalHypermagnesemiaSnapshot;
+    readonly meningococcalSepsis?: MeningococcalSepsisSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

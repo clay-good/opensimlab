@@ -46,7 +46,7 @@ export const FICTION_CONTRACT =
 export interface PrebriefProps {
   readonly scenario: Scenario;
   readonly region: RegionProfile;
-  readonly environment?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics' | 'neonatology' | 'endocrine-metabolic' | 'renal-electrolyte';
+  readonly environment?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics' | 'neonatology' | 'endocrine-metabolic' | 'renal-electrolyte' | 'infectious-disease';
   readonly onStart: () => void;
   /**
    * Offered only where the demonstration was authored. A "watch this" control on
@@ -75,7 +75,7 @@ export function Prebrief({
       )}
       <h1>{scenario.metadata.title}</h1>
       <p>{patient.ageYears === 0 ? 'Newborn' : `${patient.ageYears}-year-old ${patientPersonNoun(patient)}`}, {patient.weightKg} kg
-        {environment === 'cardiology' || environment === 'respiratory-medicine' || environment === 'pediatrics' || environment === 'neurology' || environment === 'toxicology' || environment === 'obstetrics' || environment === 'neonatology' || environment === 'endocrine-metabolic' || environment === 'renal-electrolyte'
+        {environment === 'cardiology' || environment === 'respiratory-medicine' || environment === 'pediatrics' || environment === 'neurology' || environment === 'toxicology' || environment === 'obstetrics' || environment === 'neonatology' || environment === 'endocrine-metabolic' || environment === 'renal-electrolyte' || environment === 'infectious-disease'
           ? `, for ${patient.procedure}.`
           : `, ASA ${patient.asaClass}, for ${patient.procedure}.`}</p>
 
@@ -98,7 +98,7 @@ export function Prebrief({
 
       <section>
         <h2>The patient</h2>
-        {environment === 'respiratory-medicine' || environment === 'pediatrics' || environment === 'neurology' || environment === 'toxicology' || environment === 'obstetrics' || environment === 'neonatology' || environment === 'endocrine-metabolic' || environment === 'renal-electrolyte' ? (
+        {environment === 'respiratory-medicine' || environment === 'pediatrics' || environment === 'neurology' || environment === 'toxicology' || environment === 'obstetrics' || environment === 'neonatology' || environment === 'endocrine-metabolic' || environment === 'renal-electrolyte' || environment === 'infectious-disease' ? (
           <ul>
             <li>{patient.diagnosis}.</li>
             {scenario.metadata.id === 'maternal-cardiac-arrest-coordinated-response' ? (

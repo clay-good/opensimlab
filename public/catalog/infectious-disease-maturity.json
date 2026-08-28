@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "moduleId": "infectious-disease",
+  "recordCount": 1,
+  "records": [
+    {
+      "recordId": "scenario:meningococcal-sepsis-recognition-and-escalation@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "meningococcal-sepsis-recognition-and-escalation",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/infectious-disease-completion-audit.json#meningococcal-sepsis-recognition-and-escalation@0.1.0",
+        "/catalog/infectious-disease-quality-audit.json#meningococcal-sepsis-recognition-and-escalation@0.1.0"
+      ]
+    }
+  ]
+}

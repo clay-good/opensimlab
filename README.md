@@ -16,7 +16,7 @@ any device, with or without a network.
 
 ## What it covers
 
-218 bounded labs across 12 specialties:
+219 bounded labs across 13 specialties:
 
 | Module | Labs | Where |
 | --- | --- | --- |
@@ -32,6 +32,7 @@ any device, with or without a network.
 | Toxicology | 15 | `/toxicology` |
 | Neonatology | 11 | `/neonatology` |
 | Renal & electrolyte | 6 | `/renal-electrolyte` |
+| Infectious disease | 1 | `/infectious-disease` |
 
 Each lab is a closed-loop scenario: the physiology keeps running while you decide, and
 what you do changes where the patient goes next.

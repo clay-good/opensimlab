@@ -22,6 +22,7 @@ import { OBSTETRICS_SCENARIOS } from '../../modules/obstetrics/scenarios';
 import { NEONATOLOGY_SCENARIOS } from '../../modules/neonatology/scenarios';
 import { ENDOCRINE_METABOLIC_SCENARIOS } from '../../modules/endocrine-metabolic/scenarios';
 import { RENAL_ELECTROLYTE_SCENARIOS } from '../../modules/renal-electrolyte/scenarios';
+import { INFECTIOUS_DISEASE_SCENARIOS } from '../../modules/infectious-disease/scenarios';
 import type { MaturitySubjectInput } from '@platform/catalog/maturity';
 
 /**
@@ -120,6 +121,12 @@ export function reviewableItems(): ReviewableItem[] {
     items.push({ id: scenario.metadata.id, kind: 'scenario',
       contentVersion: scenario.metadata.version, review: scenario.metadata.clinicalReview,
       domains: ['renal-electrolyte'] });
+  }
+
+  for (const scenario of INFECTIOUS_DISEASE_SCENARIOS) {
+    items.push({ id: scenario.metadata.id, kind: 'scenario',
+      contentVersion: scenario.metadata.version, review: scenario.metadata.clinicalReview,
+      domains: ['infectious-disease'] });
   }
 
   for (const explainer of EXPLAINERS) {
