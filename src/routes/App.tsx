@@ -23,19 +23,19 @@ import { ErrorBoundary } from '@platform/ui/ErrorBoundary';
  * route is budgeted separately and must never pull the simulator bundle in, so
  * these three are behind a dynamic import rather than a static one.
  */
-const AnesthesiaRoute = lazy(async () => ({ default: (await import('./AnesthesiaRoute')).AnesthesiaRoute }));
-const EmergencyMedicineRoute = lazy(async () => ({ default: (await import('./AnesthesiaRoute')).EmergencyMedicineRoute }));
-const CriticalCareRoute = lazy(async () => ({ default: (await import('./AnesthesiaRoute')).CriticalCareRoute }));
-const CardiologyRoute = lazy(async () => ({ default: (await import('./AnesthesiaRoute')).CardiologyRoute }));
-const RespiratoryMedicineRoute = lazy(async () => ({ default: (await import('./AnesthesiaRoute')).RespiratoryMedicineRoute }));
-const PediatricsRoute = lazy(async () => ({ default: (await import('./AnesthesiaRoute')).PediatricsRoute }));
-const NeurologyRoute = lazy(async () => ({ default: (await import('./AnesthesiaRoute')).NeurologyRoute }));
-const ToxicologyRoute = lazy(async () => ({ default: (await import('./AnesthesiaRoute')).ToxicologyRoute }));
-const ObstetricsRoute = lazy(async () => ({ default: (await import('./AnesthesiaRoute')).ObstetricsRoute }));
-const NeonatologyRoute = lazy(async () => ({ default: (await import('./AnesthesiaRoute')).NeonatologyRoute }));
-const EndocrineMetabolicRoute = lazy(async () => ({ default: (await import('./AnesthesiaRoute')).EndocrineMetabolicRoute }));
-const RenalElectrolyteRoute = lazy(async () => ({ default: (await import('./AnesthesiaRoute')).RenalElectrolyteRoute }));
-const InfectiousDiseaseRoute = lazy(async () => ({ default: (await import('./AnesthesiaRoute')).InfectiousDiseaseRoute }));
+const AnesthesiaRoute = lazy(async () => ({ default: (await import('./modules/anesthesia')).AnesthesiaRoute }));
+const EmergencyMedicineRoute = lazy(async () => ({ default: (await import('./modules/emergency-medicine')).EmergencyMedicineRoute }));
+const CriticalCareRoute = lazy(async () => ({ default: (await import('./modules/critical-care')).CriticalCareRoute }));
+const CardiologyRoute = lazy(async () => ({ default: (await import('./modules/cardiology')).CardiologyRoute }));
+const RespiratoryMedicineRoute = lazy(async () => ({ default: (await import('./modules/respiratory-medicine')).RespiratoryMedicineRoute }));
+const PediatricsRoute = lazy(async () => ({ default: (await import('./modules/pediatrics')).PediatricsRoute }));
+const NeurologyRoute = lazy(async () => ({ default: (await import('./modules/neurology')).NeurologyRoute }));
+const ToxicologyRoute = lazy(async () => ({ default: (await import('./modules/toxicology')).ToxicologyRoute }));
+const ObstetricsRoute = lazy(async () => ({ default: (await import('./modules/obstetrics')).ObstetricsRoute }));
+const NeonatologyRoute = lazy(async () => ({ default: (await import('./modules/neonatology')).NeonatologyRoute }));
+const EndocrineMetabolicRoute = lazy(async () => ({ default: (await import('./modules/endocrine-metabolic')).EndocrineMetabolicRoute }));
+const RenalElectrolyteRoute = lazy(async () => ({ default: (await import('./modules/renal-electrolyte')).RenalElectrolyteRoute }));
+const InfectiousDiseaseRoute = lazy(async () => ({ default: (await import('./modules/infectious-disease')).InfectiousDiseaseRoute }));
 const GalleryRoute = lazy(async () => ({ default: (await import('./GalleryRoute')).GalleryRoute }));
 const FrameBudgetRoute = lazy(async () => ({ default: (await import('./FrameBudgetRoute')).FrameBudgetRoute }));
 // The informational routes read the validation report and the governance records,

@@ -14,7 +14,8 @@ describe('landing waveform bundle boundary', () => {
       .flatMap((output) => 'output' in output ? output.output : [])
       .filter((output) => output.type === 'chunk');
     const entry = chunks.find((chunk) => chunk.isEntry)!;
-    const cockpit = chunks.find((chunk) => chunk.facadeModuleId?.endsWith('/src/routes/AnesthesiaRoute.tsx'))!;
+    // The cockpit is reached through a module route now, not one shared file.
+    const cockpit = chunks.find((chunk) => chunk.facadeModuleId?.endsWith('/src/routes/modules/anesthesia.tsx'))!;
     expect(entry).toBeDefined(); expect(cockpit).toBeDefined();
     const modulesFor = (fileName: string) => {
       const modules = new Set<string>(); const seen = new Set<string>();

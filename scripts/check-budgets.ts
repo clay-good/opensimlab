@@ -34,7 +34,11 @@ interface ManifestChunk {
 type BuildManifest = Readonly<Record<string, ManifestChunk>>;
 
 const ENTRY = 'index.html';
-const COCKPIT_ROUTE = 'src/routes/AnesthesiaRoute.tsx';
+// Each clinical module is its own lazily loaded chunk, so a learner downloads
+// one module's catalogue rather than all thirteen. Anesthesia is the heaviest
+// (39 scenarios) and the default landing module, so it is the honest worst case
+// for "what it costs to start practising".
+const COCKPIT_ROUTE = 'src/routes/modules/anesthesia.tsx';
 
 /** Resolve only static imports. Dynamic sibling routes are not part of this load. */
 export function manifestAssetPaths(

@@ -14,7 +14,6 @@ import {
 import { NotForClinicalUseGate, hasAcknowledged, recordAcknowledgement } from '@platform/safety/not-for-clinical-use';
 import { SonificationEngine } from '@platform/audio/sonification';
 import { guessRegion, getRegion, REGIONS } from '@anesthesia/region/profiles';
-import { DEFAULT_SCENARIO_ID, getScenario, scenariosByDifficulty } from '@anesthesia/scenarios';
 import type { Scenario } from '@anesthesia/engine';
 import { ENGINE_VERSION } from '@anesthesia/engine';
 import { MODEL_SET_REVISION } from '@anesthesia/pharmacology/registry';
@@ -83,48 +82,9 @@ import {
   recommendNextScenario,
 } from '@anesthesia/catalog/preparation-paths';
 import { completedScenarioIds, loadPracticeHistory } from '@anesthesia/catalog/practice-history';
-import {
-  DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID,
-  EMERGENCY_MEDICINE_SCENARIOS,
-  getEmergencyMedicineScenario,
-} from '../modules/emergency-medicine/scenarios';
-import {
-  CRITICAL_CARE_SCENARIOS, DEFAULT_CRITICAL_CARE_SCENARIO_ID, getCriticalCareScenario,
-} from '../modules/critical-care/scenarios';
-import {
-  CARDIOLOGY_SCENARIOS, DEFAULT_CARDIOLOGY_SCENARIO_ID, getCardiologyScenario,
-} from '../modules/cardiology/scenarios';
-import {
-  RESPIRATORY_MEDICINE_SCENARIOS, DEFAULT_RESPIRATORY_MEDICINE_SCENARIO_ID,
-  getRespiratoryMedicineScenario,
-} from '../modules/respiratory-medicine/scenarios';
-import {
-  PEDIATRICS_SCENARIOS, DEFAULT_PEDIATRICS_SCENARIO_ID, getPediatricsScenario,
-} from '../modules/pediatrics/scenarios';
-import {
-  NEUROLOGY_SCENARIOS, DEFAULT_NEUROLOGY_SCENARIO_ID, getNeurologyScenario,
-} from '../modules/neurology/scenarios';
-import {
-  TOXICOLOGY_SCENARIOS, DEFAULT_TOXICOLOGY_SCENARIO_ID, getToxicologyScenario,
-} from '../modules/toxicology/scenarios';
-import {
-  OBSTETRICS_SCENARIOS, DEFAULT_OBSTETRICS_SCENARIO_ID, getObstetricsScenario,
-} from '../modules/obstetrics/scenarios';
-import {
-  NEONATOLOGY_SCENARIOS, DEFAULT_NEONATOLOGY_SCENARIO_ID, getNeonatologyScenario,
-} from '../modules/neonatology/scenarios';
-import {
-  ENDOCRINE_METABOLIC_SCENARIOS, DEFAULT_ENDOCRINE_METABOLIC_SCENARIO_ID,
-  getEndocrineMetabolicScenario,
-} from '../modules/endocrine-metabolic/scenarios';
-import {
-  RENAL_ELECTROLYTE_SCENARIOS, DEFAULT_RENAL_ELECTROLYTE_SCENARIO_ID,
-  getRenalElectrolyteScenario,
-} from '../modules/renal-electrolyte/scenarios';
-import {
-  INFECTIOUS_DISEASE_SCENARIOS, DEFAULT_INFECTIOUS_DISEASE_SCENARIO_ID,
-  getInfectiousDiseaseScenario,
-} from '../modules/infectious-disease/scenarios';
+// The goal-path and catalog features below are anesthesia-only; the other twelve
+// modules no longer reach this file, so their catalogues stay in their own chunks.
+import { scenariosByDifficulty } from '@anesthesia/scenarios';
 import { APP_VERSION } from '@platform/governance/status';
 import { ScenarioProblemReport } from '@platform/reporting/ScenarioProblemReport';
 import {
@@ -133,7 +93,7 @@ import {
 } from '@platform/reporting/contracts';
 import { SITE_ORIGIN } from './site-metadata';
 
-interface ClinicalModuleConfig {
+export interface ClinicalModuleConfig {
   readonly id: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics' | 'neonatology' | 'endocrine-metabolic' | 'renal-electrolyte' | 'infectious-disease';
   readonly basePath: '/anesthesia' | '/emergency-medicine' | '/critical-care' | '/cardiology' | '/respiratory-medicine' | '/pediatrics' | '/neurology' | '/toxicology' | '/obstetrics' | '/neonatology' | '/endocrine-metabolic' | '/renal-electrolyte' | '/infectious-disease';
   readonly heading: string;
@@ -143,117 +103,6 @@ interface ClinicalModuleConfig {
   readonly defaultScenarioId: string;
   readonly getScenario: (id: string) => Scenario | undefined;
 }
-
-const ANESTHESIA_CONFIG: ClinicalModuleConfig = {
-  id: 'anesthesia', basePath: '/anesthesia', heading: 'Anesthesia simulator',
-  catalogIntroduction: '', catalogStatus: '',
-  scenarios: scenariosByDifficulty(), defaultScenarioId: DEFAULT_SCENARIO_ID, getScenario,
-};
-
-const EMERGENCY_MEDICINE_CONFIG: ClinicalModuleConfig = {
-  id: 'emergency-medicine', basePath: '/emergency-medicine',
-  heading: 'Emergency medicine simulator', scenarios: EMERGENCY_MEDICINE_SCENARIOS,
-  catalogIntroduction: 'Short, focused emergency-department rehearsals. Start with one uncertain patient, make the next useful decision, then see exactly what your sequence established.',
-  catalogStatus: 'Twenty-five bounded emergency medicine labs are playable.',
-  defaultScenarioId: DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID,
-  getScenario: getEmergencyMedicineScenario,
-};
-
-const CRITICAL_CARE_CONFIG: ClinicalModuleConfig = {
-  id: 'critical-care', basePath: '/critical-care', heading: 'Critical care simulator',
-  catalogIntroduction: 'Quiet ICU rehearsals for the decisions that change organ support. Read the trend, make one purposeful change, then reassess what actually moved.',
-  catalogStatus: 'Twenty-four bounded critical care labs are playable.',
-  scenarios: CRITICAL_CARE_SCENARIOS, defaultScenarioId: DEFAULT_CRITICAL_CARE_SCENARIO_ID,
-  getScenario: getCriticalCareScenario,
-};
-
-const CARDIOLOGY_CONFIG: ClinicalModuleConfig = {
-  id: 'cardiology', basePath: '/cardiology', heading: 'Cardiology simulator',
-  catalogIntroduction: 'Calm cardiovascular rehearsals from clinic to inpatient care. Read the trajectory, surface what remains, and make each next step earn its place.',
-  catalogStatus: 'All seventeen bounded cardiology labs are playable.',
-  scenarios: CARDIOLOGY_SCENARIOS, defaultScenarioId: DEFAULT_CARDIOLOGY_SCENARIO_ID,
-  getScenario: getCardiologyScenario,
-};
-
-const RESPIRATORY_MEDICINE_CONFIG: ClinicalModuleConfig = {
-  id: 'respiratory-medicine', basePath: '/respiratory-medicine',
-  heading: 'Respiratory medicine simulator',
-  catalogIntroduction: 'Calm respiratory reassessment labs for the moment a familiar pattern changes. Read the trajectory, act on danger early, and leave the next team a clear map.',
-  catalogStatus: `${RESPIRATORY_MEDICINE_SCENARIOS.length} bounded respiratory medicine labs are playable.`,
-  scenarios: RESPIRATORY_MEDICINE_SCENARIOS,
-  defaultScenarioId: DEFAULT_RESPIRATORY_MEDICINE_SCENARIO_ID,
-  getScenario: getRespiratoryMedicineScenario,
-};
-
-const PEDIATRICS_CONFIG: ClinicalModuleConfig = {
-  id: 'pediatrics', basePath: '/pediatrics', heading: 'Pediatrics simulator',
-  catalogIntroduction: 'Gentle, focused rehearsals for noticing when a child is changing. Read the whole child, support early, and make every reassessment count.',
-  catalogStatus: `${PEDIATRICS_SCENARIOS.length} of 16 bounded Pediatrics labs is playable.`,
-  scenarios: PEDIATRICS_SCENARIOS, defaultScenarioId: DEFAULT_PEDIATRICS_SCENARIO_ID,
-  getScenario: getPediatricsScenario,
-};
-
-const NEUROLOGY_CONFIG: ClinicalModuleConfig = {
-  id: 'neurology', basePath: '/neurology', heading: 'Neurology simulator',
-  catalogIntroduction: 'Calm neurological rehearsals for reading function, change, and uncertainty. Follow the trajectory, involve the right team, and leave unresolved risk visible.',
-  catalogStatus: `${NEUROLOGY_SCENARIOS.length} of 15 bounded Neurology labs is playable.`,
-  scenarios: NEUROLOGY_SCENARIOS, defaultScenarioId: DEFAULT_NEUROLOGY_SCENARIO_ID,
-  getScenario: getNeurologyScenario,
-};
-
-const TOXICOLOGY_CONFIG: ClinicalModuleConfig = {
-  id: 'toxicology', basePath: '/toxicology', heading: 'Toxicology simulator',
-  catalogIntroduction: 'Calm poisoning rehearsals for finding the dangerous pattern without losing the whole patient. Support first, keep antidote hazards visible, and make reassessment count.',
-  catalogStatus: `${TOXICOLOGY_SCENARIOS.length} of 15 bounded Toxicology labs is playable.`,
-  scenarios: TOXICOLOGY_SCENARIOS, defaultScenarioId: DEFAULT_TOXICOLOGY_SCENARIO_ID,
-  getScenario: getToxicologyScenario,
-};
-
-const OBSTETRICS_CONFIG: ClinicalModuleConfig = {
-  id: 'obstetrics', basePath: '/obstetrics', heading: 'Obstetrics simulator',
-  catalogIntroduction: 'Calm delivery-room rehearsals for recognizing change early, bringing the right team together, and protecting the whole family through reassessment and handoff.',
-  catalogStatus: `${OBSTETRICS_SCENARIOS.length} of 15 bounded Obstetrics labs is playable.`,
-  scenarios: OBSTETRICS_SCENARIOS, defaultScenarioId: DEFAULT_OBSTETRICS_SCENARIO_ID,
-  getScenario: getObstetricsScenario,
-};
-
-const NEONATOLOGY_CONFIG: ClinicalModuleConfig = {
-  id: 'neonatology', basePath: '/neonatology', heading: 'Neonatology simulator',
-  catalogIntroduction: 'Quiet newborn rehearsals for protecting transition, noticing change early, and keeping the parent-newborn dyad at the center of every handoff.',
-  catalogStatus: `${NEONATOLOGY_SCENARIOS.length} of 11 bounded Neonatology labs is playable.`,
-  scenarios: NEONATOLOGY_SCENARIOS, defaultScenarioId: DEFAULT_NEONATOLOGY_SCENARIO_ID,
-  getScenario: getNeonatologyScenario,
-};
-
-const ENDOCRINE_METABOLIC_CONFIG: ClinicalModuleConfig = {
-  id: 'endocrine-metabolic', basePath: '/endocrine-metabolic',
-  heading: 'Endocrine and metabolic medicine simulator',
-  catalogIntroduction: 'Calm metabolic rehearsals for reading the biochemical trajectory without losing the whole person. Keep treatment continuity, transition safety, and recurrence prevention visible.',
-  catalogStatus: `${ENDOCRINE_METABOLIC_SCENARIOS.length} of 12 planned Endocrine and Metabolic Medicine labs are available as previews. Registration does not establish completed review.`,
-  scenarios: ENDOCRINE_METABOLIC_SCENARIOS,
-  defaultScenarioId: DEFAULT_ENDOCRINE_METABOLIC_SCENARIO_ID,
-  getScenario: getEndocrineMetabolicScenario,
-};
-
-const RENAL_ELECTROLYTE_CONFIG: ClinicalModuleConfig = {
-  id: 'renal-electrolyte', basePath: '/renal-electrolyte',
-  heading: 'Renal and Electrolyte Medicine simulator',
-  catalogIntroduction: 'Calm kidney and electrolyte rehearsals for protecting the person while following the trajectory. Distinguish immediate protection from correction, reassess what changed, and keep recurrent risk visible.',
-  catalogStatus: `${RENAL_ELECTROLYTE_SCENARIOS.length} of 12 planned Renal and Electrolyte Medicine labs are available as previews. Registration does not establish completed review.`,
-  scenarios: RENAL_ELECTROLYTE_SCENARIOS,
-  defaultScenarioId: DEFAULT_RENAL_ELECTROLYTE_SCENARIO_ID,
-  getScenario: getRenalElectrolyteScenario,
-};
-
-const INFECTIOUS_DISEASE_CONFIG: ClinicalModuleConfig = {
-  id: 'infectious-disease', basePath: '/infectious-disease',
-  heading: 'Infectious disease simulator',
-  catalogIntroduction: 'Calm infection rehearsals for seeing the dangerous pattern early and acting on it in time. Recognize without closing the diagnosis, activate the right people, and keep the treatment boundary and the unresolved risk visible.',
-  catalogStatus: `${INFECTIOUS_DISEASE_SCENARIOS.length} of 10 planned Infectious disease labs are available as previews. Registration does not establish completed review.`,
-  scenarios: INFECTIOUS_DISEASE_SCENARIOS,
-  defaultScenarioId: DEFAULT_INFECTIOUS_DISEASE_SCENARIO_ID,
-  getScenario: getInfectiousDiseaseScenario,
-};
 
 /**
  * The scenario a path names.
@@ -774,7 +623,7 @@ export function readAssignment(search: string): Assignment {
   };
 }
 
-function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalModuleConfig }) {
+export function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalModuleConfig }) {
   const session = useSession();
   const { scenario, missingId } = useMemo(() => scenarioForPath(path, config), [path, config]);
   const assignment = useMemo(
@@ -1045,57 +894,6 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
   );
 }
 
-export function AnesthesiaRoute({ path }: { path: string }) {
-  return <ClinicalModuleRoute path={path} config={ANESTHESIA_CONFIG} />;
-}
-
-export function EmergencyMedicineRoute({ path }: { path: string }) {
-  return <ClinicalModuleRoute path={path} config={EMERGENCY_MEDICINE_CONFIG} />;
-}
-
-export function CriticalCareRoute({ path }: { path: string }) {
-  return <ClinicalModuleRoute path={path} config={CRITICAL_CARE_CONFIG} />;
-}
-
-export function CardiologyRoute({ path }: { path: string }) {
-  return <ClinicalModuleRoute path={path} config={CARDIOLOGY_CONFIG} />;
-}
-
-export function RespiratoryMedicineRoute({ path }: { path: string }) {
-  return <ClinicalModuleRoute path={path} config={RESPIRATORY_MEDICINE_CONFIG} />;
-}
-
-export function PediatricsRoute({ path }: { path: string }) {
-  return <ClinicalModuleRoute path={path} config={PEDIATRICS_CONFIG} />;
-}
-
-export function NeurologyRoute({ path }: { path: string }) {
-  return <ClinicalModuleRoute path={path} config={NEUROLOGY_CONFIG} />;
-}
-
-export function ToxicologyRoute({ path }: { path: string }) {
-  return <ClinicalModuleRoute path={path} config={TOXICOLOGY_CONFIG} />;
-}
-
-export function ObstetricsRoute({ path }: { path: string }) {
-  return <ClinicalModuleRoute path={path} config={OBSTETRICS_CONFIG} />;
-}
-
-export function NeonatologyRoute({ path }: { path: string }) {
-  return <ClinicalModuleRoute path={path} config={NEONATOLOGY_CONFIG} />;
-}
-
-export function EndocrineMetabolicRoute({ path }: { path: string }) {
-  return <ClinicalModuleRoute path={path} config={ENDOCRINE_METABOLIC_CONFIG} />;
-}
-
-export function InfectiousDiseaseRoute({ path }: { path: string }) {
-  return <ClinicalModuleRoute path={path} config={INFECTIOUS_DISEASE_CONFIG} />;
-}
-
-export function RenalElectrolyteRoute({ path }: { path: string }) {
-  return <ClinicalModuleRoute path={path} config={RENAL_ELECTROLYTE_CONFIG} />;
-}
 
 /**
  * The scenario directory at `/anesthesia`.

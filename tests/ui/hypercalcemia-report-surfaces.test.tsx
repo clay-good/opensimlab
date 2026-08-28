@@ -16,7 +16,7 @@ import type { ScenarioReportRequest } from '@platform/reporting/contracts';
 import { AnesthesiaEngine, ENGINE_VERSION } from '@anesthesia/engine';
 import { APP_VERSION } from '@platform/governance/status';
 import { ACKNOWLEDGEMENT_KEY } from '@platform/safety/not-for-clinical-use';
-import { EndocrineMetabolicRoute } from '@routes/AnesthesiaRoute';
+import { EndocrineMetabolicRoute } from '@routes/modules/endocrine-metabolic';
 import { HYPERCALCEMIC_CRISIS_VOLUME_AND_BRIDGE as SCENARIO } from '../../src/modules/endocrine-metabolic/scenarios/hypercalcemic-crisis-volume-and-bridge';
 import { validateReportPayload } from '../../workers/reports/src/index.mjs';
 

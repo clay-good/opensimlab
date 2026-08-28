@@ -13,7 +13,8 @@ import type { ScenarioReportRequest } from '@platform/reporting/contracts';
 import { AnesthesiaEngine, ENGINE_VERSION } from '@anesthesia/engine';
 import { APP_VERSION } from '@platform/governance/status';
 import { ACKNOWLEDGEMENT_KEY } from '@platform/safety/not-for-clinical-use';
-import { collectReportEquipmentContext, RenalElectrolyteRoute } from '@routes/AnesthesiaRoute';
+import { collectReportEquipmentContext } from '@routes/AnesthesiaRoute';
+import { RenalElectrolyteRoute } from '@routes/modules/renal-electrolyte';
 import { RENAL_HYPERNATREMIA_WATER_ACCESS_AND_LOSSES as SCENARIO } from '../../src/modules/renal-electrolyte/scenarios/hypernatremia-water-access-and-losses';
 import { RENAL_HYPERNATREMIA_VOLUME_TICKS, RENAL_HYPERNATREMIA_WATER_TICKS,
   RENAL_HYPERNATREMIA_RECURRENCE_TICKS, RENAL_HYPERNATREMIA_COMBINED_TICKS } from '../../src/modules/renal-electrolyte/hypernatremia';

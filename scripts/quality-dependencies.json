@@ -104,7 +104,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "73b48681693d6df2dc54ab8fa885caf994b32a8a44f89b48c12b9f1a4d6f6ea1"
+        "sha256": "6cefa6827d4d55ced7ec274eaf003149b479f406b17b06115bebfed9ad3f861e"
       },
       {
         "path": "tests/integration/demonstration-runs.test.tsx",
@@ -124,7 +124,7 @@
       },
       {
         "path": "tests/ui/hypocalcemia-report-surfaces.test.tsx",
-        "sha256": "3ec7cc2237bb1a03155cd6b43a2f94bb758676a1a6a2dd7eea4c54aeaa4af557"
+        "sha256": "92a2f553d4cc805bf423ede4f9f6024b9384f2e8386f0d547b496906b80bdea1"
       },
       {
         "path": "tests/unit/endocrine-hypocalcemia.test.ts",
@@ -293,7 +293,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "73b48681693d6df2dc54ab8fa885caf994b32a8a44f89b48c12b9f1a4d6f6ea1"
+        "sha256": "6cefa6827d4d55ced7ec274eaf003149b479f406b17b06115bebfed9ad3f861e"
       },
       {
         "path": "tests/integration/hyponatremia-correction-runs.test.ts",
@@ -313,7 +313,7 @@
       },
       {
         "path": "tests/ui/hyponatremia-correction-report-surfaces.test.tsx",
-        "sha256": "b72bca7b97fa5bf9cc6ac34606c276d64de4896705c2e69aaf6b6871654dde95"
+        "sha256": "2b681f0a18f07bee3f4bf551b5cd50588c54685d989beb5b84eefc051e1ced57"
       },
       {
         "path": "tests/unit/endocrine-hyponatremia-correction.test.ts",
@@ -490,7 +490,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "73b48681693d6df2dc54ab8fa885caf994b32a8a44f89b48c12b9f1a4d6f6ea1"
+        "sha256": "6cefa6827d4d55ced7ec274eaf003149b479f406b17b06115bebfed9ad3f861e"
       },
       {
         "path": "tests/integration/avp-deficiency-demonstration-session.test.tsx",
@@ -506,7 +506,7 @@
       },
       {
         "path": "tests/ui/avp-deficiency-report-surfaces.test.tsx",
-        "sha256": "e3dd70af08fbef2808477525ec44f22c81b8e17b7887964b53bcb9aeab4974ac"
+        "sha256": "ac47e957ca7971f662a6f9e74e111d960b69610b4700ca6db546bfe5927ea543"
       },
       {
         "path": "tests/ui/endocrine-avp-deficiency.test.tsx",

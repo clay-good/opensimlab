@@ -1458,6 +1458,27 @@ credited toward the catalog until every item in the completion contract passes.
     fail with a named message. Measured coverage is 13 of 13 modules and 213 of 213 scenarios; an
     apparent 212-versus-211 discrepancy resolved to `status-epilepticus` being authored in two
     modules, not a missing record.
+- [x] Split each clinical module into its own lazily loaded route chunk so a learner downloads one
+  module's catalogue rather than all thirteen. All thirteen module configurations previously lived in
+  `src/routes/AnesthesiaRoute.tsx`, so the bundler had no seam and opening any scenario pulled every
+  scenario in the project. Each module now owns `src/routes/modules/<id>.tsx`; the shared frame,
+  including the one report control, stays in an exported `ClinicalModuleRoute`.
+  - [x] Measured, not asserted: the interactive cockpit budget falls from 1,654.3 KB to 1,389.0 KB,
+    turning 9.7 KB of headroom into 275 KB. The built output now carries thirteen catalogue chunks of
+    8.6 to 39.9 KB in place of one 264 KB chunk, so opening infectious disease costs 8.6 KB of
+    scenario data instead of 264 KB. Growth is now per module rather than global.
+  - [x] Repoint the cockpit budget at `src/routes/modules/anesthesia.tsx`, because the old target
+    stopped being a chunk root. This makes the budget measure what its own comment always claimed,
+    the entry plus the selected clinical route, using the heaviest module as the honest worst case.
+  - [x] Add `tests/unit/module-chunking.test.ts` to hold the seam open: every available module has a
+    distinct route chunk, each pulls at least one asset no other module pulls, and no module's graph
+    contains another module's catalogue. Mutation-tested by re-importing a module catalogue into the
+    shared file, rebuilding, and confirming the guard fails with the offending module named.
+  - [x] Repair two real regressions the suite caught: a bundle-boundary test and a module-foundation
+    test both pinned the old single-file layout. Landing stays within budget at 149.5 KB of 150.0 KB;
+    it is dominated by the entry chunk and fonts rather than scenario data, so it does not grow per
+    scenario. Anesthesia's own catalogue remains in the shared chunk because the goal-path and
+    catalog features that use it are anesthesia-only and still live in the shared file.
   - [x] Toxicology slice 1/15 establishes the indexable `/toxicology` module with one authored
     methemoglobinemia lab after documented topical benzocaine exposure. The learner reconciles
     cyanosis, symptoms, pulse-coherent SpO2 85%, PaO2 238 mmHg, chocolate-brown blood, and supplied

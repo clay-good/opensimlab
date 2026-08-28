@@ -251,7 +251,7 @@ describe('Renal and Electrolyte Medicine module foundation', () => {
   });
 
   it('mounts the live module and preserves unknown-address feedback', async () => {
-    const { RenalElectrolyteRoute } = await import('@routes/AnesthesiaRoute');
+    const { RenalElectrolyteRoute } = await import('@routes/modules/renal-electrolyte');
     const directory = renderToStaticMarkup(createElement(RenalElectrolyteRoute, { path: '/renal-electrolyte' }));
     expect(directory).toContain('6 of 12 planned Renal and Electrolyte Medicine labs');
     expect(directory).toContain(`href="${path}"`);

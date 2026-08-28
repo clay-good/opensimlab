@@ -16,7 +16,8 @@ import type { ScenarioReportRequest } from '@platform/reporting/contracts';
 import { AnesthesiaEngine, ENGINE_VERSION } from '@anesthesia/engine';
 import { APP_VERSION } from '@platform/governance/status';
 import { ACKNOWLEDGEMENT_KEY } from '@platform/safety/not-for-clinical-use';
-import { collectReportEquipmentContext, EndocrineMetabolicRoute } from '@routes/AnesthesiaRoute';
+import { collectReportEquipmentContext } from '@routes/AnesthesiaRoute';
+import { EndocrineMetabolicRoute } from '@routes/modules/endocrine-metabolic';
 import { HYPONATREMIA_AQUARESIS_AND_OVERCORRECTION as SCENARIO } from '../../src/modules/endocrine-metabolic/scenarios/hyponatremia-aquaresis-and-overcorrection';
 import { validateReportPayload } from '../../workers/reports/src/index.mjs';
 

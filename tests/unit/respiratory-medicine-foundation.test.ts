@@ -96,7 +96,8 @@ describe('respiratory medicine module foundation', () => {
     expect(app).toContain('RespiratoryMedicineRoute');
     expect(app).toContain("path === '/respiratory-medicine'");
 
-    const clinicalRoute = source('src/routes/AnesthesiaRoute.tsx');
+    // Each module owns its route file so the bundler can split its catalogue out.
+    const clinicalRoute = source('src/routes/modules/respiratory-medicine.tsx');
     expect(clinicalRoute).toContain('RESPIRATORY_MEDICINE_CONFIG');
     expect(clinicalRoute).toContain('RESPIRATORY_MEDICINE_SCENARIOS');
     expect(clinicalRoute).toContain('export function RespiratoryMedicineRoute');
