@@ -2383,6 +2383,23 @@
       "limitationManifestHash": "sha256:2ec78d2754e1419130bd2fb3282377132fac24e1167dd715837529f836246f06"
     },
     {
+      "scenarioId": "quiet-patient-a-screen-that-was-never-done",
+      "contentVersion": "0.1.0",
+      "moduleId": "medical-surgical-nursing",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:105061d1514658416fe596f1fb1192ab7d60d70511097d6b95a8d57eed358afe",
+      "defaultsHash": "sha256:afcd18f1359b3265c26dc7efe8fe17b7c01a4fe1758955e9576f47c1b9a7e1bc",
+      "maturityHash": "sha256:a84e73e356c67f742338ffe8ab1869e80feb291829ed249f38e0f9aa2d4dba48",
+      "sourceManifestHash": "sha256:87811e755a53e9c6946fcf1880b22f0529b6f89f93cdf35e244b576a946ab8cb",
+      "limitationManifestHash": "sha256:a275c0a6d4f3a43200a38ab044c969d3fbb6b393a8551ce238fafa4cf44328c1"
+    },
+    {
       "scenarioId": "delivery-room-to-nicu-handoff",
       "contentVersion": "0.1.0",
       "moduleId": "neonatology",

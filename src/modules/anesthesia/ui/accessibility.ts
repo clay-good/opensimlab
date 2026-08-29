@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -124,6 +124,7 @@ export function stateSummary(
     readonly countedRate?: CountedRateSnapshot;
     readonly pairedReading?: PairedReadingSnapshot;
     readonly afferentLimb?: AfferentLimbSnapshot;
+    readonly quietPatient?: QuietPatientSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -177,7 +178,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -202,6 +203,44 @@ export function stateSummary(
       }
     }
   }
+  if (options.quietPatient) {
+    const patient = options.quietPatient;
+    // The count of screening results leads, because zero is the finding.
+    lines.push(`Screening results in the record: ${patient.recordedScreenResults}. ${patient.screenPositive
+      ? 'A screen has been performed in this rehearsal and is positive.'
+      : 'No screen has been performed. The record holds no negative screen; it holds no screen.'}`);
+    lines.push('Supplied starting observations were pulse 82 per minute, blood pressure 126 over 74, respiratory rate 16 per minute, oxygen saturation 96 percent in air, temperature 36.8 degrees Celsius, all unremarkable, two days after fixation of a fractured neck of femur. These remain historical starting observations.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push(`Charted impressions across the last three shifts: ${patient.chartedImpressions.map((entry) => `"${entry}"`).join(' ')}`);
+    lines.push(patient.impressionsReviewedAtTick === null
+      ? 'He has been sleeping through meals and is slow to answer, and his family say this is not how he was a week ago.'
+      : 'Every one of those entries is an impression and none is a screening result. Absence of a positive finding and a negative finding are different things, and only the first is present here.');
+    lines.push('The hypoactive subtype is about half of cases in reported series and the most frequently missed. Under routine multicentre use the 4AT reached 76 percent sensitivity and the CAM 40 percent, so a negative result is weak evidence of absence. Impaired arousal is itself scoreable, so a drowsy patient can be screened rather than left. No drug, dose, route, fluid, investigation, or procedure is selected here, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(`Impressions reviewed: ${patient.impressionsReviewedAtTick === null ? 'not yet' : `at simulated ${formatElapsed(patient.impressionsReviewedAtTick)}`}. Screen: ${patient.screenedAtTick === null ? 'not performed' : 'performed, and positive'}. Result recorded: ${patient.resultRecordedAtTick === null ? 'not yet' : 'recorded as a screening result'}. Escalation: ${patient.escalationAtTick === null ? 'not yet requested' : 'requested on the screening result'}. Boundaries: ${patient.boundariesReviewedAtTick === null ? 'not reviewed' : 'reviewed'}. Repeat screening: ${patient.monitoringAtTick === null ? 'not scheduled' : 'scheduled at defined intervals'}.`);
+    if (patient.handoverRepeated && patient.screenedAtTick === null) {
+      lines.push('The outgoing nurse has added it to the handover in the same words. A fourth entry is about to read exactly like the first three.');
+    }
+    lines.push(patient.chartRecord
+      ? `Last requested chart review at simulated ${formatElapsed(patient.chartRecord.atTick)}: ${patient.chartRecord.impressions.length} entries across ${patient.chartRecord.shifts} shifts, ${patient.chartRecord.screenResults} screening results.`
+      : 'No new chart review has been requested.');
+    lines.push(patient.patientRecord
+      ? `Last requested observation at simulated ${formatElapsed(patient.patientRecord.atTick)}: ${patient.patientRecord.rousable ? 'rousable' : 'not rousable'}; ${patient.patientRecord.attentive ? 'attentive' : 'inattentive within seconds'}; ${patient.patientRecord.agitated ? 'agitated' : 'not agitated'}.`
+      : 'No new observation of the patient has been requested.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: ${patient.observation.attentive ? 'attentive' : 'inattentive'}; ${patient.observation.screenResults} screening results across ${patient.observation.shifts} shifts.`
+      : 'No new full assessment has been requested.');
+    if (patient.reviewObserved) {
+      lines.push('The review has happened and reached the same conclusion, recording that the preceding three shifts contain no screening result of any kind.');
+    }
+    if (patient.choiceFeedback) lines.push(patient.choiceFeedback);
+    if (patient.ended) {
+      lines.push(patient.ended === 'handoff'
+        ? 'Practice complete. The impressions as written, the screen and its positive components, the repeat schedule, and the absence of any earlier result all travel with the patient.'
+        : 'Instructor takeover ended this branch. The teaching stop predicts no patient outcome.');
+    }
+    return lines.join('\n');
+  }
+
   if (options.afferentLimb) {
     const patient = options.afferentLimb;
     // The threshold state leads, because it was settled before the rehearsal began.

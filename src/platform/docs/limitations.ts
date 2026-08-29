@@ -5951,6 +5951,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'These are observational findings from case reviews, which select on the adverse event having happened; they establish that failed escalation is common in cases that went wrong, not that a given delay causes a given death. The instructor takeover in this lesson ends an unfinished rehearsal and is explicitly not evidence of harm.',
     briefIn: ['afferent-limb-a-threshold-met-and-a-call-not-made'],
   },
+  {
+    id: 'quiet-patient-presentation-and-screen-result-are-authored',
+    headline: 'One authored positive screen stands in for a distribution.',
+    simplification: 'The case supplies three fixed shift impressions, one fixed positive screen, and observations that stay unremarkable throughout. No delirium, cognitive, or physiological model runs underneath.',
+    whereItMisleads: 'A learner concludes that every quiet patient screens positive, or that the earlier shifts were negligent.',
+    correctUnderstanding: 'Most quiet patients are not delirious, which is exactly why the screen gets deferred and why the deferral usually costs nothing. What the evidence establishes is that the hypoactive subtype is the most prevalent and the most missed, so the deferral is systematically biased toward the cases it should catch. The earlier entries are ordinary ward documentation under time pressure, not neglect: observations, food charts, and pressure-area care are all complete.',
+    briefIn: ['quiet-patient-a-screen-that-was-never-done'],
+  },
+  {
+    id: 'quiet-patient-controls-are-screening-and-escalation-only',
+    headline: 'The only assessment the learner makes is the screening instrument.',
+    simplification: 'The learner reviews the impressions, performs the screen, records the result, escalates, reviews the boundaries, and schedules repeat screening. No drug, dose, route, fluid, investigation, examination beyond the instrument, or procedure exists.',
+    whereItMisleads: 'The scenario is read as saying the nurse should diagnose delirium, or should correct the earlier entries.',
+    correctUnderstanding: 'Diagnosis and cause belong to the review team, and delirium screens do not distinguish cause in any case. The earlier impressions are left exactly as written because they are another clinician\u2019s contemporaneous record and because their emptiness is the evidence of how the absence was produced.',
+    briefIn: ['quiet-patient-a-screen-that-was-never-done'],
+  },
+  {
+    id: 'quiet-patient-a-positive-screen-is-not-a-diagnosis',
+    headline: 'A positive screen names a finding, not a condition.',
+    simplification: 'The case reports a positive screen with its components and stops there.',
+    whereItMisleads: 'A learner treats the positive screen as a delirium diagnosis, or reads the sensitivity figures as applying to this patient.',
+    correctUnderstanding: 'Screening instruments are calibrated for detection, not for distinguishing delirium from dementia, depression, or an evolving neurological event; that separation is the review team\u2019s work. The sensitivity figures are properties of the tools measured across populations under particular conditions, and they describe what a negative result fails to exclude rather than any individual\u2019s probability.',
+    briefIn: ['quiet-patient-a-screen-that-was-never-done'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

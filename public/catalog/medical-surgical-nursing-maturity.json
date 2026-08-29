@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "medical-surgical-nursing",
-  "recordCount": 4,
+  "recordCount": 5,
   "records": [
     {
       "recordId": "scenario:low-score-what-the-threshold-does-not-exclude@0.1.0",
@@ -45,6 +45,17 @@
       "evidence": [
         "/catalog/medical-surgical-nursing-completion-audit.json#afferent-limb-a-threshold-met-and-a-call-not-made@0.1.0",
         "/catalog/medical-surgical-nursing-quality-audit.json#afferent-limb-a-threshold-met-and-a-call-not-made@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:quiet-patient-a-screen-that-was-never-done@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "quiet-patient-a-screen-that-was-never-done",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/medical-surgical-nursing-completion-audit.json#quiet-patient-a-screen-that-was-never-done@0.1.0",
+        "/catalog/medical-surgical-nursing-quality-audit.json#quiet-patient-a-screen-that-was-never-done@0.1.0"
       ]
     }
   ]

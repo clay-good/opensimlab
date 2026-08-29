@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 192 adds the authored escalation-threshold snapshot. */
-export const WORKER_PROTOCOL_VERSION = 192;
+/** Version 193 adds the authored delirium-screening snapshot. */
+export const WORKER_PROTOCOL_VERSION = 193;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -750,6 +750,45 @@ export interface AfferentLimbSnapshot {
     readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
     readonly respiratoryRateBpm: number; readonly spo2Percent: number;
     readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
+}
+
+export interface QuietPatientSnapshot {
+  readonly impressionsReviewedAtTick: number | null;
+  readonly screenedAtTick: number | null;
+  readonly resultRecordedAtTick: number | null;
+  readonly escalationAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly chartedImpressions: readonly string[];
+  readonly recordedScreenResults: number;
+  readonly screenPositive: boolean;
+  readonly handoverRepeated: boolean;
+  readonly reviewArrived: boolean;
+  readonly reviewObserved: boolean;
+  readonly deferralAttempted: boolean;
+  readonly quietReadAsSettled: boolean;
+  readonly earlierScreenTrusted: boolean;
+  readonly moodAttributed: boolean;
+  readonly chartRecord: {
+    readonly atTick: number; readonly impressions: readonly string[];
+    readonly screenResults: number; readonly shifts: number;
+  } | null;
+  readonly patientRecord: {
+    readonly atTick: number; readonly rousable: boolean; readonly attentive: boolean;
+    readonly agitated: boolean; readonly familyReportsChange: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly impressions: readonly string[];
+    readonly screenResults: number; readonly shifts: number;
+    readonly rousable: boolean; readonly attentive: boolean;
+    readonly agitated: boolean; readonly familyReportsChange: boolean;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -4109,6 +4148,7 @@ export interface EquipmentSnapshot {
     readonly countedRate?: CountedRateSnapshot;
     readonly pairedReading?: PairedReadingSnapshot;
     readonly afferentLimb?: AfferentLimbSnapshot;
+    readonly quietPatient?: QuietPatientSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

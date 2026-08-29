@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: Escalation threshold state has protocol version 192', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(192);
+  it('Scenario: Delirium screening state has protocol version 193', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(193);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

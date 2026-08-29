@@ -53,6 +53,7 @@ import { supportsLowScore } from '../../medical-surgical-nursing/low-score';
 import { supportsCountedRate } from '../../medical-surgical-nursing/counted-rate';
 import { supportsPairedReading } from '../../medical-surgical-nursing/paired-reading';
 import { supportsAfferentLimb } from '../../medical-surgical-nursing/afferent-limb';
+import { supportsQuietPatient } from '../../medical-surgical-nursing/quiet-patient';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -626,6 +627,43 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-medical-surgical-nursing-quiet-patient-')) {
+      if (!supportsQuietPatient(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The nursing delirium-screening lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^quiet-patient-${id}-\\d+$`).test(entry.eventId));
+      const impressions = event('impressions-reviewed'); const screened = event('screened');
+      const recorded = event('result-recorded'); const escalation = event('escalation-requested');
+      const boundaries = event('boundary-review'); const monitoring = event('monitoring');
+      const handoff = event('handoff'); const handover = event('handover-repeated');
+      const reviewed = log.find((entry) => /^quiet-patient-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedShortcut = event('deferral-refused') ?? event('quiet-refused')
+        ?? event('earlier-screen-refused') ?? event('mood-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'reconcile-medical-surgical-nursing-quiet-patient-impressions-are-not-results': { met: !!impressions, tick: impressions?.tick,
+          finding: (impressions ? 'The three shift entries were recognised as impressions containing no screening result of any kind. ' : 'The charted entries were never examined for what kind of evidence they are. ')
+            + (handover ? 'A fourth entry was about to be written in the same words. ' : '')
+            + 'The record holds no negative screen; it holds no screen, and those are different things.' },
+        'recognize-medical-surgical-nursing-quiet-patient-the-screen-is-what-changed': { met: !!screened, tick: screened?.tick,
+          finding: (screened ? 'The screen was performed rather than deferred and returned positive: rousable but slow, inattentive within seconds, with a family report of change. ' : 'No screen was performed, so there is still nothing to compare against. ')
+            + 'Nothing about the patient altered in that minute. What changed is that the tool was used.' },
+        'record-medical-surgical-nursing-quiet-patient-a-result-recorded-as-a-result': { met: !!recorded, tick: recorded?.tick,
+          finding: (recorded ? 'The tool, the time, and the positive components were recorded alongside the earlier impressions rather than replacing them. ' : 'The screening result was never recorded as a screening result. ')
+            + 'Those impressions are themselves the evidence of how the absence was produced.' },
+        'activate-medical-surgical-nursing-quiet-patient-escalation-on-a-positive-screen': { met: !!escalation, tick: escalation?.tick,
+          finding: (escalation ? 'Review was requested on a screening result with its components, and the prior impressions were supplied so the reviewer knew there was no earlier screen. ' : 'Escalation on the screening result remains incomplete. ')
+            + (refusedShortcut ? 'A deferred screen, a reading of quiet as settled, a reliance on a non-existent earlier negative, or an attribution to low mood was attempted and refused; it remains in this run. ' : '')
+            + 'Escalating on a result is a different act from escalating on a worry.' },
+        'review-medical-surgical-nursing-quiet-patient-boundaries-and-their-certainty': { met: !!boundaries && !!monitoring, tick: boundaries?.tick,
+          finding: (boundaries && monitoring ? 'The boundaries were reviewed and repeat screening was scheduled with its reason. ' : 'The boundary review or the repeat schedule remains incomplete. ')
+            + 'The hypoactive subtype is about half of cases and the most missed, routine-use sensitivity was 76 percent for the 4AT and 40 percent for the CAM, and impaired arousal is scoreable rather than a reason to defer.' },
+        'handoff-medical-surgical-nursing-quiet-patient-a-record-with-a-specific-gap': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The impressions as written, the screen and its components, the repeat schedule, and the absence of any earlier result all travelled with the patient. ' : 'Current full findings or continuing-care ownership remains incomplete. ')
+            + (reviewed ? 'The review found no earlier screening result to compare against. ' : '')
+            + 'A positive screen is a screening result rather than a diagnosis, and no cause is certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-medical-surgical-nursing-afferent-limb-')) {
       if (!supportsAfferentLimb(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The nursing escalation lesson was not active.' } satisfies ObjectiveFinding;
