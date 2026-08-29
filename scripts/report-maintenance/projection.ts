@@ -218,10 +218,17 @@ export function projectMaintenanceBatch(rows: readonly unknown[], options: Proje
       });
     }
   }
-  const ordered = [...groups.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+  // Rank before capping. Ordering by groupId sorts by a sha256 digest, so the groups a reviewer
+  // saw were a hash-random sample of the batch: a problem reported forty times could fall outside
+  // the cap while a single stray report was shown. Corroboration first, then recency, then the id
+  // as a deterministic tie-break so the same batch always projects identically.
+  const ordered = [...groups.entries()].sort((a, b) =>
+    b[1].reportCount - a[1].reportCount
+    || (a[1].lastReceivedAt < b[1].lastReceivedAt ? 1 : a[1].lastReceivedAt > b[1].lastReceivedAt ? -1 : 0)
+    || a[0].localeCompare(b[0]));
   const included = ordered.slice(0, maxGroups);
-  const overflowCount = ordered.slice(maxGroups)
-    .reduce((total, [, group]) => total + group.reportCount, 0);
+  const overflow = ordered.slice(maxGroups);
+  const overflowCount = overflow.reduce((total, [, group]) => total + group.reportCount, 0);
   return {
     schemaVersion: MAINTENANCE_PROJECTION_SCHEMA_VERSION,
     batchId: options.batchId,
@@ -230,6 +237,9 @@ export function projectMaintenanceBatch(rows: readonly unknown[], options: Proje
     policyVersion: MAINTENANCE_POLICY_VERSION,
     itemCount: ordered.reduce((total, [, group]) => total + group.reportCount, 0),
     overflowCount,
+    // How many distinct groups were dropped, not only how many reports they held. A bare report
+    // total cannot tell a reviewer whether they are missing one noisy group or forty quiet ones.
+    overflowGroupCount: overflow.length,
     rejectedMalformedCount,
     groups: included.map(([groupId, group]) => ({
       groupId,
@@ -256,7 +266,7 @@ export function validateMaintenanceProjection(value: unknown): string[] {
   const errors: string[] = [];
   const topKeys = [
     'schemaVersion', 'batchId', 'generatedAt', 'sourceWindow', 'policyVersion', 'itemCount',
-    'overflowCount', 'rejectedMalformedCount', 'groups',
+    'overflowCount', 'overflowGroupCount', 'rejectedMalformedCount', 'groups',
   ];
   if (!isObject(value) || !exactKeys(value, topKeys)) return ['/: expected exact projection object'];
   if (value.schemaVersion !== 1) errors.push('/schemaVersion: expected 1');
@@ -270,7 +280,7 @@ export function validateMaintenanceProjection(value: unknown): string[] {
     errors.push('/sourceWindow: expected exact bounded interval');
   }
   if (value.policyVersion !== MAINTENANCE_POLICY_VERSION) errors.push('/policyVersion: unsupported');
-  for (const key of ['itemCount', 'overflowCount', 'rejectedMalformedCount'] as const) {
+  for (const key of ['itemCount', 'overflowCount', 'overflowGroupCount', 'rejectedMalformedCount'] as const) {
     if (!Number.isSafeInteger(value[key]) || Number(value[key]) < 0) errors.push(`/${key}: expected nonnegative integer`);
   }
   if (!Array.isArray(value.groups)) return [...errors, '/groups: expected array'];

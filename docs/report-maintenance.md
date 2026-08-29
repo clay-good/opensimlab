@@ -29,6 +29,13 @@ ORDER BY created_at, scenario_id
 LIMIT 1000
 ```
 
+The file runs a `COUNT(*)` over the identical predicate first. The row query is capped and returns
+the oldest rows first, so a backlog past the cap drops the newest reports; without a total, a
+truncated batch is indistinguishable from a complete one. The envelope therefore carries
+`eligibleRows`, `returnedRows`, `truncated`, and `coveredThrough` — the newest `created_at` actually
+included, which is where the next batch resumes. A `truncated: true` batch means the cap is binding
+and the window needs shortening or the cap raising; it is not a normal steady state.
+
 Rows created before migration `0003_report_evidence.sql` have null immutable-evidence columns and
 the exporter must exclude them from automation for manual review. It must not substitute current
 `main`, invent hashes, or silently omit missing evidence. New rows bind a content-addressed release
@@ -36,10 +43,14 @@ reference plus exact defaults, capability, maturity, source, and limitation evid
 the Worker from its generated catalog, never from browser input.
 
 `npm run triage:project -- trusted-export.json private-projection.json` converts the fixed export
-into the only object a maintenance agent may receive. The input envelope contains exactly
-`batchId`, `generatedAt`, `windowStart`, `windowEnd`, and `rows`. The command writes no report data
-to standard output, creates the projection with mode `0600`, rejects malformed rows without echoing
-their content, groups exact duplicates, caps the batch at 50 groups, and records overflow counts.
+into the only object a maintenance agent may receive. The input envelope contains `batchId`,
+`generatedAt`, `windowStart`, `windowEnd`, the three truncation fields above, and `rows`. The
+command writes no report data to standard output, creates the projection with mode `0600`, rejects
+malformed rows without echoing their content, groups exact duplicates, and caps the batch at 50
+groups. Groups are ranked by report count, then by most recent report, then by group id as a
+deterministic tie-break, so the cap keeps the most corroborated problems rather than an arbitrary
+sample; `overflowCount` records how many reports fell outside it and `overflowGroupCount` how many
+distinct groups, because one noisy group and forty quiet ones need different responses.
 Rows outside the declared 30-day window are rejected even if a future query regresses.
 
 The projection excludes report IDs, reporter HMACs, raw addresses, Turnstile tokens, dedupe keys,
