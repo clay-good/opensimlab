@@ -37,6 +37,15 @@ export interface DrugCard {
    */
   readonly dosing: {
     readonly sourceId: string;
+    /**
+     * The source's title, carried here rather than looked up.
+     *
+     * The cockpit prints "Checked against <title>" beneath a card, and resolving that through the
+     * register meant every module downloaded all 381 entries — 272 KB raw, 83.5 KB compressed —
+     * for three strings. A test asserts each of these still equals `requireSource(sourceId).title`,
+     * so the copy cannot drift from the register it names.
+     */
+    readonly sourceTitle: string;
     readonly comparedWithLabel: string;
   };
   readonly review: ClinicalReview;
@@ -63,6 +72,7 @@ export const DRUG_CARDS: readonly DrugCard[] = [
     onset: 'Loss of consciousness within one arm–brain circulation time; peak effect-site concentration around 1.5–2 minutes after a bolus.',
     dosing: {
       sourceId: 'propofol-us-label',
+      sourceTitle: 'Propofol injectable emulsion — prescribing information',
       comparedWithLabel:
         'The United States label gives 2–2.5 mg/kg for induction in ASA I–II adults under 65; '
         + 'this card opens the range at 1.5, which is the teaching range and not the licensed '
@@ -111,6 +121,7 @@ export const DRUG_CARDS: readonly DrugCard[] = [
     onset: 'Peak effect within about 1.5 minutes.',
     dosing: {
       sourceId: 'remifentanil-us-label',
+      sourceTitle: 'Remifentanil hydrochloride for injection — prescribing information',
       comparedWithLabel:
         'The United States label gives 1 µg/kg over 30 to 60 seconds for induction, where this '
         + 'card opens the range at 0.5 — the teaching range, not the licensed one. For '
@@ -169,6 +180,7 @@ export const DRUG_CARDS: readonly DrugCard[] = [
       + 'does not fall when rocuronium is given because paralysis is not anesthesia.',
     dosing: {
       sourceId: 'rocuronium-us-label',
+      sourceTitle: 'Rocuronium bromide injection — prescribing information',
       comparedWithLabel: 'The United States label gives 0.6 mg/kg for routine intubation and '
         + '0.6–1.2 mg/kg for rapid sequence intubation. This card carries those ranges, while '
         + 'the simulator omits maintenance dosing and models reversal separately from this card.',

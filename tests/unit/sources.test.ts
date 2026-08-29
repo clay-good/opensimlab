@@ -15,6 +15,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { SOURCES, formatSource, registeredPmids, requireSource } from '@platform/docs/sources';
+import { DRUG_CARDS } from '@anesthesia/content/drug-cards';
 
 /** Every TypeScript file under src, so nothing can cite from a corner. */
 function sourceFiles(dir: string, found: string[] = []): string[] {
@@ -30,6 +31,16 @@ const files = sourceFiles(join(process.cwd(), 'src'));
 const registerPath = join(process.cwd(), 'src/platform/docs/sources.ts');
 
 describe('the register is complete', () => {
+  // The cockpit prints "Checked against <title>" from a copy carried on the drug card, so that a
+  // module chunk does not download all 381 entries for three strings. The copy is only safe while
+  // it still says what the register says.
+  it('keeps each drug card\u2019s carried source title equal to the register\u2019s', () => {
+    for (const card of DRUG_CARDS) {
+      const source = requireSource(card.dosing.sourceId);
+      expect(card.dosing.sourceTitle, `${card.drugId} carries a stale source title`).toBe(source.title);
+    }
+  });
+
   it('contains every PMID cited anywhere in the source tree', () => {
     const registered = registeredPmids();
     const missing: string[] = [];

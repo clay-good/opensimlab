@@ -77,9 +77,10 @@ describe('Requirement: One Module Downloads One Catalogue', () => {
     // whole register only for the limitations page and the reviewer index. The graph fell to
     // 1025.0 KB gz, so the guard comes back down to 1075 rather than staying loose.
     //
-    // The source register has not been split and is the remaining shared weight in this graph,
-    // at 83.5 KB gz for 272 KB raw, carried by every module so that one anesthesia drug card can
-    // call requireSource(id). That is the next one to do.
-    expect(gzipBytes(anesthesia) / 1024).toBeLessThan(1075);
+    // The source register is out of this graph too, by a different route: a cockpit only ever
+    // read three titles from it, so the drug card carries its own and a test in sources.test.ts
+    // stops that copy drifting. Splitting the register instead would have reordered the published
+    // evidence manifest for the sake of three strings. The graph is now 941.0 KB gz.
+    expect(gzipBytes(anesthesia) / 1024).toBeLessThan(985);
   });
 });

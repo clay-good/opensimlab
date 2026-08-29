@@ -70,7 +70,6 @@ import { findStacking } from '@anesthesia/debrief/analysis';
 import { EXPLAINERS, getExplainer } from '@anesthesia/content/explainers';
 import { getDrugCard } from '@anesthesia/content/drug-cards';
 import type { DrugConcentration } from '@platform/kernel/protocol';
-import { requireSource } from '@platform/docs/sources';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import type { SonificationEngine } from '@platform/audio/sonification';
 import { ManualCrisisInjector } from './ManualCrisisInjector';
@@ -1912,7 +1911,7 @@ function DrugCardBody({ drugId, reviewMode }: { drugId: string; reviewMode: bool
           A dose is the most consequential thing on this card and was the only
           clinical content in the application a reader could not check. */}
       <p className="field__hint">
-        Checked against {requireSource(card.dosing.sourceId).title}.{' '}
+        Checked against {card.dosing.sourceTitle}.{' '}
         {card.dosing.comparedWithLabel}
       </p>
       <h3>Onset and duration</h3>
