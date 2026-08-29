@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 367,
+  "sourceCount": 369,
   "sources": [
     {
       "id": "renal-hypermagnesemia-series-2018",
@@ -4341,6 +4341,30 @@
       "locator": "Hypoactive delirium 50.3% (95% CI 46.0-54.7), mixed 27.7%, hyperactive 22.7%. Scoping review; no recommendation grade assigned.",
       "usedFor": "The claim that the hypoactive subtype is the most prevalent rather than the least serious, which is what makes deferring a screen systematically biased toward missing it.",
       "verifiedAgainst": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8896322/",
+      "verifiedOn": "2026-08-28"
+    },
+    {
+      "id": "nonverbal-pain-tools-state-of-science-2006",
+      "pmid": "16488350",
+      "authors": "Herr K, Bjoro K, Decker S",
+      "title": "Tools for assessment of pain in nonverbal older adults with dementia: a state-of-the-science review",
+      "publication": "Journal of Pain and Symptom Management",
+      "year": 2006,
+      "locator": "31(2):170-192. Reviewed the available behavioural assessment tools and concluded that none could then be recommended for broad adoption, with the instruments in early stages of development and testing.",
+      "usedFor": "The claim that a behavioural total is not a validated intensity measure, stated as an absence of evidence for the intensity claim rather than as evidence the tools are inaccurate.",
+      "verifiedAgainst": "https://www.sciencedirect.com/science/article/pii/S0885392405006111",
+      "verifiedOn": "2026-08-28",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/16488350/"
+    },
+    {
+      "id": "aspmn-nonverbal-pain-position-2006",
+      "authors": "Herr K, Coyne PJ, Key T, et al",
+      "title": "Pain assessment in the nonverbal patient: position statement with clinical practice recommendations",
+      "publication": "Pain Management Nursing",
+      "year": 2006,
+      "locator": "7(2):44-52. American Society for Pain Management Nursing position statement. Sets out the hierarchy of pain assessment: attempt self-report, consider potential causes of pain, observe behaviours, obtain a proxy report from a person who knows the patient, and attempt an analgesic trial. States that behavioural scores are not intensity scores and places physiologic indicators at the bottom of the hierarchy as unreliable.",
+      "usedFor": "The assessment hierarchy this lesson is built on, the refusal to confirm pain from pulse and blood pressure, and the placement of a proxy report above behavioural scoring.",
+      "verifiedAgainst": "https://geriatricpain.org/sites/geriatricpain.org/files/2021-03/aspmn_position_statement_pain_assesement_nonverbal.pdf",
       "verifiedOn": "2026-08-28"
     },
     {

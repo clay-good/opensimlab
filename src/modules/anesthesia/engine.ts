@@ -70,6 +70,7 @@ import { CountedRate, supportsCountedRate } from '../medical-surgical-nursing/co
 import { PairedReading, supportsPairedReading } from '../medical-surgical-nursing/paired-reading';
 import { AfferentLimb, supportsAfferentLimb } from '../medical-surgical-nursing/afferent-limb';
 import { QuietPatient, supportsQuietPatient } from '../medical-surgical-nursing/quiet-patient';
+import { ProxyScale, supportsProxyScale } from '../medical-surgical-nursing/proxy-scale';
 
 /** The engine's own version, recorded in every transcript. */
 export const ENGINE_VERSION = '0.1.0-alpha.48';
@@ -1766,6 +1767,7 @@ export class AnesthesiaEngine {
   private readonly pairedReading: PairedReading | null;
   private readonly afferentLimb: AfferentLimb | null;
   private readonly quietPatient: QuietPatient | null;
+  private readonly proxyScale: ProxyScale | null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1923,6 +1925,8 @@ export class AnesthesiaEngine {
     if (this.afferentLimb) this.rhythm = 'sinus';
     this.quietPatient = supportsQuietPatient(options.scenario) ? new QuietPatient() : null;
     if (this.quietPatient) this.rhythm = 'sinus';
+    this.proxyScale = supportsProxyScale(options.scenario) ? new ProxyScale() : null;
+    if (this.proxyScale) this.rhythm = 'sinus';
     this.practiceRegion = options.practiceRegion;
     this.seed = options.seed;
     if (options.scenario.timeline.some((event) => event.type === 'narrative'
@@ -2056,6 +2060,11 @@ export class AnesthesiaEngine {
       || typeof action.payload !== 'object' || Array.isArray(action.payload)) {
       this.log('warning', 'assessment', `malformed-action-refused-${this.currentTick}`,
         'That action was malformed and was safely ignored. Nothing changed.');
+      return;
+    }
+    if (this.proxyScale && action.type !== 'proxy-scale-response' && action.type !== 'silence-alarm') {
+      this.log('warning', 'assessment', `proxy-scale-generic-action-refused-${this.currentTick}`,
+        'Only this lesson\u2019s self-report attempt, behaviour-recording, limit-recording, proxy-history, bounded-intent, boundary-review, observation, and handoff choices are available.');
       return;
     }
     if (this.quietPatient && action.type !== 'quiet-patient-response' && action.type !== 'silence-alarm') {
@@ -3100,6 +3109,19 @@ export class AnesthesiaEngine {
         }
         for (const event of this.possibleSepsis.apply(action.payload.action, this.currentTick)) {
           this.log('warning', 'assessment', `possible-sepsis-${event.id}-${this.currentTick}`, event.message);
+        }
+        break;
+      }
+      case 'proxy-scale-response': {
+        if (!this.proxyScale || Reflect.ownKeys(action.payload).length !== 1
+          || !Object.hasOwn(action.payload, 'action')
+          || !Object.getOwnPropertyDescriptor(action.payload, 'action')!.enumerable
+          || !Object.hasOwn(Object.getOwnPropertyDescriptor(action.payload, 'action')!, 'value')) {
+          this.log('warning', 'assessment', `proxy-scale-action-refused-${this.currentTick}`, 'Only the declared dose-free pain assessment choices are available in this lesson.');
+          break;
+        }
+        for (const event of this.proxyScale.apply(action.payload.action, this.currentTick)) {
+          this.log('warning', 'assessment', `proxy-scale-${event.id}-${this.currentTick}`, event.message);
         }
         break;
       }
@@ -14884,6 +14906,9 @@ export class AnesthesiaEngine {
 
   /** Advance exactly one tick. */
   step(): EngineTick {
+    for (const event of this.proxyScale?.advance(this.currentTick) ?? []) {
+      this.log('warning', 'assessment', `proxy-scale-${event.id}-${this.currentTick}`, event.message);
+    }
     for (const event of this.quietPatient?.advance(this.currentTick) ?? []) {
       this.log('warning', 'assessment', `quiet-patient-${event.id}-${this.currentTick}`, event.message);
     }
@@ -15785,6 +15810,13 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: this.endocrineDkaResolutionReassessmentAtTick !== null ? 16 : 18,
         spo2Percent: 98, systolicMmHg: 118, diastolicMmHg: 70, meanArterialMmHg: 86,
         coreTemperatureC: 36.9 };
+    }
+    if (this.proxyScale) {
+      const patient = this.proxyScale.vitals();
+      crisisState = { ...crisisState, heartRateBpm: patient.heartRateBpm,
+        respiratoryRateBpm: patient.respiratoryRateBpm, spo2Percent: patient.spo2Percent,
+        systolicMmHg: patient.systolicMmHg, diastolicMmHg: patient.diastolicMmHg,
+        meanArterialMmHg: patient.meanArterialMmHg, coreTemperatureC: patient.coreTemperatureC };
     }
     if (this.quietPatient) {
       const patient = this.quietPatient.vitals();
@@ -20718,6 +20750,7 @@ export class AnesthesiaEngine {
         ...(this.pairedReading ? { pairedReading: this.pairedReading.snapshot(this.currentTick) } : {}),
         ...(this.afferentLimb ? { afferentLimb: this.afferentLimb.snapshot(this.currentTick) } : {}),
         ...(this.quietPatient ? { quietPatient: this.quietPatient.snapshot(this.currentTick) } : {}),
+        ...(this.proxyScale ? { proxyScale: this.proxyScale.snapshot(this.currentTick) } : {}),
         ...(this.avpDeficiency ? { avpDeficiency: this.avpDeficiency.snapshot(this.currentTick) } : {}),
         ...(this.hyponatremiaCorrection ? { hyponatremiaCorrection: this.hyponatremiaCorrection.snapshot(this.currentTick) } : {}),
         aspirationRiskAssessment: {
@@ -20914,7 +20947,7 @@ export class AnesthesiaEngine {
   invalidParameters(): Set<string> {
     const invalid = new Set<string>();
     // These lessons do not supply a capnogram or a modeled oxygen setting.
-    if (this.myxedema || this.hypercalcemia || this.hypocalcemia || this.hyponatremiaCorrection || this.avpDeficiency || this.refeeding || this.perioperativeDiabetes || this.renalHyperkalemia || this.renalHypokalemia || this.renalHyponatremia || this.renalHypernatremia || this.renalHypocalcemia || this.renalHypermagnesemia || this.meningococcalSepsis || this.obstructedKidney || this.febrileNeutropenia || this.necrotizingInfection || this.endocarditisHeartFailure || this.severePneumonia || this.toxicShock || this.possibleSepsis || this.septicShockLabel || this.meningitisImaging || this.lowScore || this.countedRate || this.pairedReading || this.afferentLimb || this.quietPatient) {
+    if (this.myxedema || this.hypercalcemia || this.hypocalcemia || this.hyponatremiaCorrection || this.avpDeficiency || this.refeeding || this.perioperativeDiabetes || this.renalHyperkalemia || this.renalHypokalemia || this.renalHyponatremia || this.renalHypernatremia || this.renalHypocalcemia || this.renalHypermagnesemia || this.meningococcalSepsis || this.obstructedKidney || this.febrileNeutropenia || this.necrotizingInfection || this.endocarditisHeartFailure || this.severePneumonia || this.toxicShock || this.possibleSepsis || this.septicShockLabel || this.meningitisImaging || this.lowScore || this.countedRate || this.pairedReading || this.afferentLimb || this.quietPatient || this.proxyScale) {
       invalid.add('etco2MmHg');
       invalid.add('fio2');
     }

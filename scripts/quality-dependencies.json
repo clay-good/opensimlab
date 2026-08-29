@@ -16,11 +16,11 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "5e3ccf7eb7493b5f8166b82762c08c50647baf12e8cc3abc711b30da66c433fd"
+        "sha256": "bf55b8da2d62d49300bc5b4a2841787d4a32d27b99dda659120bfd3276d9e132"
       },
       {
         "path": "src/modules/anesthesia/engine.ts",
-        "sha256": "d975bc124ab3283a1b4791ff2dd93dbb2d51a609736c626c78b87e41a0ecd078"
+        "sha256": "789f436d2d779ae63f13025d2ecda1a30ccda763fff63b31e7222df3b53013c9"
       },
       {
         "path": "src/modules/anesthesia/region/profiles.ts",
@@ -28,7 +28,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "6bb05e11c292731166f6fe8d375fcd5609bbc81d07cb7da500050573be8b58dc"
+        "sha256": "b647074a5182601c1bc467bd1e6038a10946b4736116737a8872302b0fb7af7e"
       },
       {
         "path": "src/modules/endocrine-metabolic/HypocalcemiaTray.tsx",
@@ -72,11 +72,11 @@
       },
       {
         "path": "src/platform/docs/limitations.ts",
-        "sha256": "710cff9d398c4b20999e0e765c705e96c5080bcd5c86556ba6e21e8a23e8d797"
+        "sha256": "1042579918f922ee4cb877cab4c7d9562b29033ed6aec0502d60f4f0eba26642"
       },
       {
         "path": "src/platform/docs/sources.ts",
-        "sha256": "a07ca2e37d4ad0a69bc6e19c1349db2a7d6ef424868eb22ac7d695812ae5f328"
+        "sha256": "c594761376a22595d444f33821bde3e3325d6dcd8a08595f59f96159c021db27"
       },
       {
         "path": "src/platform/governance/publication.ts",
@@ -104,7 +104,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "f13671c934e5feab5621b17f6f55d4b5c81167c1e4fcd3134e913c4eae77bd5f"
+        "sha256": "58d085aa735ce88da9289eb62d32992d36c292251e8bbcb4acd200ec35d18a90"
       },
       {
         "path": "tests/integration/demonstration-runs.test.tsx",
@@ -153,7 +153,7 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "5e3ccf7eb7493b5f8166b82762c08c50647baf12e8cc3abc711b30da66c433fd"
+        "sha256": "bf55b8da2d62d49300bc5b4a2841787d4a32d27b99dda659120bfd3276d9e132"
       },
       {
         "path": "src/modules/anesthesia/demo/useObservedDemonstration.ts",
@@ -161,7 +161,7 @@
       },
       {
         "path": "src/modules/anesthesia/engine.ts",
-        "sha256": "d975bc124ab3283a1b4791ff2dd93dbb2d51a609736c626c78b87e41a0ecd078"
+        "sha256": "789f436d2d779ae63f13025d2ecda1a30ccda763fff63b31e7222df3b53013c9"
       },
       {
         "path": "src/modules/anesthesia/region/profiles.ts",
@@ -173,15 +173,15 @@
       },
       {
         "path": "src/modules/anesthesia/ui/ActionCockpit.tsx",
-        "sha256": "0f100a25b8b2e3361037822d7a8b6b1bcba10a4f3cb74a87414fb84c5796a98f"
+        "sha256": "95332bf6f34a196fe102fb5c4fd56e4bcb51834822944f3944fe0b5a6748f8eb"
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "bb3d936b6f714f851f3175277d825f3baefbb8d87b1068ea724ea1aa03eadc72"
+        "sha256": "68c8872c83c07f4d23dc09854b7069e4ce9eca0fa9449cd8d4ae9042ad76f990"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "6bb05e11c292731166f6fe8d375fcd5609bbc81d07cb7da500050573be8b58dc"
+        "sha256": "b647074a5182601c1bc467bd1e6038a10946b4736116737a8872302b0fb7af7e"
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
@@ -241,11 +241,11 @@
       },
       {
         "path": "src/platform/docs/limitations.ts",
-        "sha256": "710cff9d398c4b20999e0e765c705e96c5080bcd5c86556ba6e21e8a23e8d797"
+        "sha256": "1042579918f922ee4cb877cab4c7d9562b29033ed6aec0502d60f4f0eba26642"
       },
       {
         "path": "src/platform/docs/sources.ts",
-        "sha256": "a07ca2e37d4ad0a69bc6e19c1349db2a7d6ef424868eb22ac7d695812ae5f328"
+        "sha256": "c594761376a22595d444f33821bde3e3325d6dcd8a08595f59f96159c021db27"
       },
       {
         "path": "src/platform/governance/publication.ts",
@@ -265,7 +265,7 @@
       },
       {
         "path": "src/platform/kernel/protocol.ts",
-        "sha256": "aa9f353498dc59c2f0423f3087e3971b47faa8ed828b377d9632bda2ff9950e5"
+        "sha256": "f9f741a2f8f5c6f0bbda0f048dba4ace717186c50262828fa9fce50334001fd3"
       },
       {
         "path": "src/platform/log/event-log.ts",
@@ -293,7 +293,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "f13671c934e5feab5621b17f6f55d4b5c81167c1e4fcd3134e913c4eae77bd5f"
+        "sha256": "58d085aa735ce88da9289eb62d32992d36c292251e8bbcb4acd200ec35d18a90"
       },
       {
         "path": "tests/integration/hyponatremia-correction-runs.test.ts",
@@ -346,7 +346,7 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "5e3ccf7eb7493b5f8166b82762c08c50647baf12e8cc3abc711b30da66c433fd"
+        "sha256": "bf55b8da2d62d49300bc5b4a2841787d4a32d27b99dda659120bfd3276d9e132"
       },
       {
         "path": "src/modules/anesthesia/demo/useDemonstration.ts",
@@ -358,7 +358,7 @@
       },
       {
         "path": "src/modules/anesthesia/engine.ts",
-        "sha256": "d975bc124ab3283a1b4791ff2dd93dbb2d51a609736c626c78b87e41a0ecd078"
+        "sha256": "789f436d2d779ae63f13025d2ecda1a30ccda763fff63b31e7222df3b53013c9"
       },
       {
         "path": "src/modules/anesthesia/region/profiles.ts",
@@ -366,15 +366,15 @@
       },
       {
         "path": "src/modules/anesthesia/ui/ActionCockpit.tsx",
-        "sha256": "0f100a25b8b2e3361037822d7a8b6b1bcba10a4f3cb74a87414fb84c5796a98f"
+        "sha256": "95332bf6f34a196fe102fb5c4fd56e4bcb51834822944f3944fe0b5a6748f8eb"
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "bb3d936b6f714f851f3175277d825f3baefbb8d87b1068ea724ea1aa03eadc72"
+        "sha256": "68c8872c83c07f4d23dc09854b7069e4ce9eca0fa9449cd8d4ae9042ad76f990"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "6bb05e11c292731166f6fe8d375fcd5609bbc81d07cb7da500050573be8b58dc"
+        "sha256": "b647074a5182601c1bc467bd1e6038a10946b4736116737a8872302b0fb7af7e"
       },
       {
         "path": "src/modules/anesthesia/ui/DemonstrationBar.tsx",
@@ -386,7 +386,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/accessibility.ts",
-        "sha256": "42392df9a53335f9685db3ea9e3d493752c06a4524bfc9cb7ed9e37be925e85f"
+        "sha256": "9c1ad7e9d57be15924a73c6b6cd05b5f613f67f7c3df7a08e73548e3d35524c7"
       },
       {
         "path": "src/modules/anesthesia/ui/cockpit.css",
@@ -446,11 +446,11 @@
       },
       {
         "path": "src/platform/docs/limitations.ts",
-        "sha256": "710cff9d398c4b20999e0e765c705e96c5080bcd5c86556ba6e21e8a23e8d797"
+        "sha256": "1042579918f922ee4cb877cab4c7d9562b29033ed6aec0502d60f4f0eba26642"
       },
       {
         "path": "src/platform/docs/sources.ts",
-        "sha256": "a07ca2e37d4ad0a69bc6e19c1349db2a7d6ef424868eb22ac7d695812ae5f328"
+        "sha256": "c594761376a22595d444f33821bde3e3325d6dcd8a08595f59f96159c021db27"
       },
       {
         "path": "src/platform/governance/publication.ts",
@@ -470,7 +470,7 @@
       },
       {
         "path": "src/platform/kernel/protocol.ts",
-        "sha256": "aa9f353498dc59c2f0423f3087e3971b47faa8ed828b377d9632bda2ff9950e5"
+        "sha256": "f9f741a2f8f5c6f0bbda0f048dba4ace717186c50262828fa9fce50334001fd3"
       },
       {
         "path": "src/platform/reporting/ScenarioProblemReport.tsx",
@@ -490,7 +490,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "f13671c934e5feab5621b17f6f55d4b5c81167c1e4fcd3134e913c4eae77bd5f"
+        "sha256": "58d085aa735ce88da9289eb62d32992d36c292251e8bbcb4acd200ec35d18a90"
       },
       {
         "path": "tests/integration/avp-deficiency-demonstration-session.test.tsx",

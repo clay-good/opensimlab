@@ -54,6 +54,7 @@ import { supportsCountedRate } from '../../medical-surgical-nursing/counted-rate
 import { supportsPairedReading } from '../../medical-surgical-nursing/paired-reading';
 import { supportsAfferentLimb } from '../../medical-surgical-nursing/afferent-limb';
 import { supportsQuietPatient } from '../../medical-surgical-nursing/quiet-patient';
+import { supportsProxyScale } from '../../medical-surgical-nursing/proxy-scale';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -627,6 +628,42 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-medical-surgical-nursing-proxy-scale-')) {
+      if (!supportsProxyScale(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The nursing proxy pain-scale lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^proxy-scale-${id}-\\d+$`).test(entry.eventId));
+      const attempted = event('self-report-attempted'); const behaviours = event('behaviours-recorded');
+      const limits = event('limits-recorded'); const proxy = event('proxy-recorded');
+      const intent = event('analgesic-intent'); const boundaries = event('boundary-review');
+      const monitoring = event('monitoring'); const handoff = event('handoff');
+      const reviewed = log.find((entry) => /^proxy-scale-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedShortcut = event('intensity-refused') ?? event('vitals-refused')
+        ?? event('zero-refused') ?? event('waiting-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'reconcile-medical-surgical-nursing-proxy-scale-an-attempt-that-came-first': { met: !!attempted, tick: attempted?.tick,
+          finding: (attempted ? 'Self-report was attempted first and recorded as attempted and unsuccessful. ' : 'Self-report was never attempted, so the assessment began by scoring a man nobody had asked. ')
+            + 'An unsuccessful attempt is different from no attempt, and different again from a denial of pain.' },
+        'recognize-medical-surgical-nursing-proxy-scale-a-total-is-not-an-intensity': { met: !!behaviours, tick: behaviours?.tick,
+          finding: (behaviours ? 'Four items each scoring one and consolability scoring zero were recorded as observations, with the total stated as their sum. ' : 'The behaviours were never recorded as behaviours. ')
+            + (refusedShortcut ? 'An intensity reading, a physiological confirmation, a comfortable-zero reading, or a wait-to-be-asked was attempted and refused; it remains in this run. ' : '')
+            + 'No validated conversion from a behavioural total to an intensity exists.' },
+        'record-medical-surgical-nursing-proxy-scale-what-a-low-total-cannot-license': { met: !!limits, tick: limits?.tick,
+          finding: (limits ? 'The record stated what the total cannot license in either direction. ' : 'What the total is not was never recorded. ')
+            + 'A limited behavioural repertoire produces few behaviours whether or not something hurts, and the item sets are not comprehensive, so a low total is weak evidence in the same way a high one is.' },
+        'activate-medical-surgical-nursing-proxy-scale-a-proxy-who-knows-the-person': { met: !!proxy && !!intent, tick: proxy?.tick,
+          finding: (proxy && intent ? 'His daughter was asked what he looks like in pain and what is different today, and bounded qualified-team analgesic intent was recorded with the reasoning stated. ' : 'The proxy history or the bounded analgesic intent remains incomplete. ')
+            + 'A proxy report sits above behavioural scoring and below his own report, which remains unavailable.' },
+        'review-medical-surgical-nursing-proxy-scale-boundaries-and-their-certainty': { met: !!boundaries && !!monitoring, tick: boundaries?.tick,
+          finding: (boundaries && monitoring ? 'The hierarchy was reviewed and reassessment was scheduled with the behaviours recorded alongside the total. ' : 'The hierarchy review or the reassessment schedule remains incomplete. ')
+            + 'Pulse and blood pressure sit at the bottom of that hierarchy as unreliable indicators, and a published review found no behavioural tool recommendable for broad adoption on its intensity claims.' },
+        'handoff-medical-surgical-nursing-proxy-scale-a-number-handed-over-as-what-it-is': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The attempted self-report, the behaviours with their total, the proxy account, and the reassessment schedule all travelled with the patient. ' : 'Current full findings or continuing-care ownership remains incomplete. ')
+            + (reviewed ? 'The review recorded the same limitation. ' : '')
+            + 'The response to treatment is further evidence rather than confirmation that the score was right.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-medical-surgical-nursing-quiet-patient-')) {
       if (!supportsQuietPatient(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The nursing delirium-screening lesson was not active.' } satisfies ObjectiveFinding;

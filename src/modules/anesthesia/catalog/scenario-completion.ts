@@ -30,6 +30,7 @@ import { countedRateCompletionEvidence } from '../../medical-surgical-nursing/co
 import { pairedReadingCompletionEvidence } from '../../medical-surgical-nursing/paired-reading-completion';
 import { afferentLimbCompletionEvidence } from '../../medical-surgical-nursing/afferent-limb-completion';
 import { quietPatientCompletionEvidence } from '../../medical-surgical-nursing/quiet-patient-completion';
+import { proxyScaleCompletionEvidence } from '../../medical-surgical-nursing/proxy-scale-completion';
 import {
   COMPLETION_SCHEMA_VERSION,
   type CompletionRequirementAudit,
@@ -141,6 +142,7 @@ export function auditClinicalScenario(
     ...pairedReadingCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...afferentLimbCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...quietPatientCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...proxyScaleCompletionEvidence(scenario, capabilityVersion, moduleId),
   ].map((entry) => [entry.id, entry]));
   const auditedRequirements = requirements.map((entry) => exactEvidence.get(entry.id) ?? entry);
   return {

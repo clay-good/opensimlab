@@ -5975,6 +5975,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Screening instruments are calibrated for detection, not for distinguishing delirium from dementia, depression, or an evolving neurological event; that separation is the review team\u2019s work. The sensitivity figures are properties of the tools measured across populations under particular conditions, and they describe what a negative result fails to exclude rather than any individual\u2019s probability.',
     briefIn: ['quiet-patient-a-screen-that-was-never-done'],
   },
+  {
+    id: 'proxy-scale-presentation-and-behaviours-are-authored',
+    headline: 'One authored set of behaviours stands in for a fluctuating picture.',
+    simplification: 'The case supplies four fixed behavioural items scoring one, consolability scoring zero, and observations that stay unremarkable throughout. No pain, analgesic, or physiological model runs underneath.',
+    whereItMisleads: 'A learner concludes that a total of four always means pain, or that the total staying still means nothing is changing.',
+    correctUnderstanding: 'Behaviour in this population fluctuates, and a total that moves is more informative than a total that is high. The number is held still here so the lesson stays about what the number is; a moving total would let a learner treat the movement itself as the measurement, which is a different and easier lesson.',
+    briefIn: ['proxy-scale-a-number-without-a-standard'],
+  },
+  {
+    id: 'proxy-scale-controls-are-assessment-and-bounded-intent-only',
+    headline: 'No analgesic is selected, and no trial is run by the learner.',
+    simplification: 'The learner attempts self-report, records behaviours, states the limits, obtains a proxy history, records bounded qualified-team analgesic intent, reviews the hierarchy, and schedules reassessment. No agent, dose, route, interval, or procedure exists.',
+    whereItMisleads: 'The analgesic trial step of the hierarchy is read as something the learner performs, or the bounded intent is read as a prescription.',
+    correctUnderstanding: 'Selection and delivery belong to the qualified team throughout. The trial appears here only as a boundary: its result is further evidence about whether pain was present, and it is explicitly not a test that confirms the original score was correct.',
+    briefIn: ['proxy-scale-a-number-without-a-standard'],
+  },
+  {
+    id: 'proxy-scale-no-validated-intensity-conversion-exists',
+    headline: 'The scenario asserts an absence, and that absence is the point.',
+    simplification: 'The case states that no validated conversion exists from a behavioural total to a self-reported intensity, and refuses charting the total as a number out of ten.',
+    whereItMisleads: 'A learner infers that the tools have been shown to be inaccurate, which is a stronger claim than the evidence supports.',
+    correctUnderstanding: 'The published position is that these instruments measure observable behaviour and were not developed or validated as intensity scales, and a state-of-the-science review concluded none could then be recommended for broad adoption on that basis. That is an absence of evidence for an intensity claim rather than evidence that the tools are wrong about behaviour, and the distinction matters: the scale is useful for what it measures.',
+    briefIn: ['proxy-scale-a-number-without-a-standard'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

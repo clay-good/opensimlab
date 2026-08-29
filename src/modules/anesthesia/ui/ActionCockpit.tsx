@@ -72,6 +72,8 @@ import { CountedRateTray } from '../../medical-surgical-nursing/CountedRateTray'
 import { PairedReadingTray } from '../../medical-surgical-nursing/PairedReadingTray';
 import { AfferentLimbTray } from '../../medical-surgical-nursing/AfferentLimbTray';
 import { QuietPatientTray } from '../../medical-surgical-nursing/QuietPatientTray';
+import { ProxyScaleTray } from '../../medical-surgical-nursing/ProxyScaleTray';
+import { supportsProxyScale, type ProxyScaleAction, type ProxyScaleSnapshot } from '../../medical-surgical-nursing/proxy-scale';
 import { supportsQuietPatient, type QuietPatientAction, type QuietPatientSnapshot } from '../../medical-surgical-nursing/quiet-patient';
 import { supportsAfferentLimb, type AfferentLimbAction, type AfferentLimbSnapshot } from '../../medical-surgical-nursing/afferent-limb';
 import { supportsPairedReading, type PairedReadingAction, type PairedReadingSnapshot } from '../../medical-surgical-nursing/paired-reading';
@@ -145,6 +147,7 @@ export interface ActionCockpitProps {
   readonly pairedReading?: PairedReadingSnapshot;
   readonly afferentLimb?: AfferentLimbSnapshot;
   readonly quietPatient?: QuietPatientSnapshot;
+  readonly proxyScale?: ProxyScaleSnapshot;
   readonly hypoglycemiaDemonstrating?: boolean;
   readonly scenario: Scenario;
   readonly region: RegionProfile;
@@ -2700,6 +2703,7 @@ export interface ActionCockpitProps {
   readonly onPairedReadingResponse?: (action: PairedReadingAction) => void;
   readonly onAfferentLimbResponse?: (action: AfferentLimbAction) => void;
   readonly onQuietPatientResponse?: (action: QuietPatientAction) => void;
+  readonly onProxyScaleResponse?: (action: ProxyScaleAction) => void;
   readonly renalHyponatremiaGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
@@ -2723,6 +2727,7 @@ export interface ActionCockpitProps {
   readonly pairedReadingDemonstrating?: boolean;
   readonly afferentLimbDemonstrating?: boolean;
   readonly quietPatientDemonstrating?: boolean;
+  readonly proxyScaleDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -2924,6 +2929,7 @@ export function crisisResponseAvailability(
   const hasPairedReadingResponse = supportsPairedReading(scenario);
   const hasAfferentLimbResponse = supportsAfferentLimb(scenario);
   const hasQuietPatientResponse = supportsQuietPatient(scenario);
+  const hasProxyScaleResponse = supportsProxyScale(scenario);
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -3496,7 +3502,7 @@ export function crisisResponseAvailability(
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
-    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse, hasToxicShockResponse, hasPossibleSepsisResponse, hasSepticShockLabelResponse, hasMeningitisImagingResponse, hasLowScoreResponse, hasCountedRateResponse, hasPairedReadingResponse, hasAfferentLimbResponse, hasQuietPatientResponse,
+    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse, hasToxicShockResponse, hasPossibleSepsisResponse, hasSepticShockLabelResponse, hasMeningitisImagingResponse, hasLowScoreResponse, hasCountedRateResponse, hasPairedReadingResponse, hasAfferentLimbResponse, hasQuietPatientResponse, hasProxyScaleResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3887,7 +3893,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
-    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse, hasToxicShockResponse, hasPossibleSepsisResponse, hasSepticShockLabelResponse, hasMeningitisImagingResponse, hasLowScoreResponse, hasCountedRateResponse, hasPairedReadingResponse, hasAfferentLimbResponse, hasQuietPatientResponse,
+    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse, hasToxicShockResponse, hasPossibleSepsisResponse, hasSepticShockLabelResponse, hasMeningitisImagingResponse, hasLowScoreResponse, hasCountedRateResponse, hasPairedReadingResponse, hasAfferentLimbResponse, hasQuietPatientResponse, hasProxyScaleResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -4076,8 +4082,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPairedReadingResponse
     || hasAfferentLimbResponse
     || hasQuietPatientResponse
+    || hasProxyScaleResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasQuietPatientResponse
+  const responseTray = hasProxyScaleResponse
+    ? { id: 'crisis', label: 'Ask + observe + record' } as const
+    : hasQuietPatientResponse
     ? { id: 'crisis', label: 'Review + screen + escalate' } as const
     : hasAfferentLimbResponse
     ? { id: 'crisis', label: 'Record + call + hand over' } as const
@@ -4622,6 +4631,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPairedReadingResponse
     || hasAfferentLimbResponse
     || hasQuietPatientResponse
+    || hasProxyScaleResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -5664,6 +5674,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <QuietPatientTray assessment={props.quietPatient}
                 demonstrating={props.quietPatientDemonstrating}
                 onAction={props.onQuietPatientResponse ?? (() => {})} />
+            )}
+            {hasProxyScaleResponse && (
+              <ProxyScaleTray assessment={props.proxyScale}
+                demonstrating={props.proxyScaleDemonstrating}
+                onAction={props.onProxyScaleResponse ?? (() => {})} />
             )}
             {hasToxicShockResponse && (
               <ToxicShockTray assessment={props.toxicShock}

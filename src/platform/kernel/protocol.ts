@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 193 adds the authored delirium-screening snapshot. */
-export const WORKER_PROTOCOL_VERSION = 193;
+/** Version 194 adds the authored proxy pain-scale snapshot. */
+export const WORKER_PROTOCOL_VERSION = 194;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -789,6 +789,45 @@ export interface QuietPatientSnapshot {
     readonly screenResults: number; readonly shifts: number;
     readonly rousable: boolean; readonly attentive: boolean;
     readonly agitated: boolean; readonly familyReportsChange: boolean;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
+}
+
+export interface ProxyScaleSnapshot {
+  readonly selfReportAttemptedAtTick: number | null;
+  readonly behavioursRecordedAtTick: number | null;
+  readonly limitsRecordedAtTick: number | null;
+  readonly proxyHistoryAtTick: number | null;
+  readonly analgesicIntentAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly behaviouralTotal: number;
+  readonly itemCount: number;
+  readonly selfReportAvailable: boolean;
+  readonly familyArrived: boolean;
+  readonly reviewArrived: boolean;
+  readonly reviewObserved: boolean;
+  readonly intensityReadAttempted: boolean;
+  readonly vitalsTrusted: boolean;
+  readonly zeroReadAttempted: boolean;
+  readonly waitedForRequest: boolean;
+  readonly behaviourRecord: {
+    readonly atTick: number; readonly total: number;
+    readonly selfReportAvailable: boolean; readonly itemCount: number;
+  } | null;
+  readonly contextRecord: {
+    readonly atTick: number; readonly recentSurgery: boolean; readonly analgesiaCharted: boolean;
+    readonly proxyAvailable: boolean; readonly baselineDescription: string;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly total: number; readonly selfReportAvailable: boolean;
+    readonly itemCount: number; readonly recentSurgery: boolean; readonly analgesiaCharted: boolean;
+    readonly proxyAvailable: boolean; readonly baselineDescription: string;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -4149,6 +4188,7 @@ export interface EquipmentSnapshot {
     readonly pairedReading?: PairedReadingSnapshot;
     readonly afferentLimb?: AfferentLimbSnapshot;
     readonly quietPatient?: QuietPatientSnapshot;
+    readonly proxyScale?: ProxyScaleSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

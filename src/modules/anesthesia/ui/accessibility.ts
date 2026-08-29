@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -125,6 +125,7 @@ export function stateSummary(
     readonly pairedReading?: PairedReadingSnapshot;
     readonly afferentLimb?: AfferentLimbSnapshot;
     readonly quietPatient?: QuietPatientSnapshot;
+    readonly proxyScale?: ProxyScaleSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -178,7 +179,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -203,6 +204,44 @@ export function stateSummary(
       }
     }
   }
+  if (options.proxyScale) {
+    const patient = options.proxyScale;
+    // The total is always announced with what it counts. A bare number invites being heard as
+    // an intensity, which is the error this lesson refuses.
+    lines.push(`Behavioural total ${patient.behaviouralTotal}, the sum of ${patient.itemCount} observed items. Self-report ${patient.selfReportAvailable ? 'available' : 'unavailable'}.`);
+    lines.push('Supplied starting observations were pulse 78 per minute, blood pressure 132 over 76, respiratory rate 18 per minute, oxygen saturation 96 percent in air, temperature 36.9 degrees Celsius, all unremarkable, one day after hemiarthroplasty. These remain historical starting observations.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push(patient.limitsRecordedAtTick === null
+      ? 'The reference standard for pain is self-report, and it is unavailable here.'
+      : 'The total is not an intensity out of ten and has no validated conversion to one. It also cannot be read downward: a limited behavioural repertoire produces few behaviours whether or not something hurts, and the item sets are not comprehensive.');
+    lines.push('The assessment hierarchy runs: attempt self-report; consider whether a cause of pain is present; observe behaviours; obtain a proxy report from someone who knows the person; and treat the response to an analgesic trial as further information. Pulse and blood pressure sit at the bottom as unreliable indicators. No agent, dose, route, or interval is selected here, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(`Self-report: ${patient.selfReportAttemptedAtTick === null ? 'not yet attempted' : `attempted at simulated ${formatElapsed(patient.selfReportAttemptedAtTick)} and unsuccessful`}. Behaviours: ${patient.behavioursRecordedAtTick === null ? 'not yet recorded' : 'recorded as behaviours'}. Limits: ${patient.limitsRecordedAtTick === null ? 'not yet stated' : 'stated in both directions'}. Proxy history: ${patient.proxyHistoryAtTick === null ? 'not obtained' : 'obtained and recorded'}. Analgesic intent: ${patient.analgesicIntentAtTick === null ? 'not recorded' : 'recorded with the reasoning stated'}. Reassessment: ${patient.monitoringAtTick === null ? 'not scheduled' : 'scheduled'}.`);
+    lines.push(patient.familyArrived
+      ? (patient.proxyHistoryAtTick === null
+        ? 'His daughter is here for visiting and has cared for him at home for four years.'
+        : 'Recorded in her words: he goes quiet and still rather than restless, he holds his breath in a particular way, and the flat expression is not how he was last week.')
+      : 'There is nobody present who knows his baseline.');
+    lines.push(patient.behaviourRecord
+      ? `Last requested observation at simulated ${formatElapsed(patient.behaviourRecord.atTick)}: total ${patient.behaviourRecord.total} across ${patient.behaviourRecord.itemCount} items.`
+      : 'No new behavioural observation has been requested.');
+    lines.push(patient.contextRecord
+      ? `Last requested context at simulated ${formatElapsed(patient.contextRecord.atTick)}: ${patient.contextRecord.recentSurgery ? 'an operation yesterday that would be expected to hurt' : 'no recent procedure'}; ${patient.contextRecord.proxyAvailable ? 'a relative who knows his baseline is present' : 'no proxy present'}.`
+      : 'No new context check has been requested.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: total ${patient.observation.total}; self-report ${patient.observation.selfReportAvailable ? 'available' : 'unavailable'}.`
+      : 'No new full assessment has been requested.');
+    if (patient.reviewObserved) {
+      lines.push('The qualified team has reviewed and recorded that the total is unchanged, that a total is not an intensity, and that the response to treatment is further evidence rather than confirmation.');
+    }
+    if (patient.choiceFeedback) lines.push(patient.choiceFeedback);
+    if (patient.ended) {
+      lines.push(patient.ended === 'handoff'
+        ? 'Practice complete. The attempted self-report, the behaviours with their total, the proxy account, and the reassessment schedule all travel with the patient.'
+        : 'Instructor takeover ended this branch. The teaching stop predicts no patient outcome.');
+    }
+    return lines.join('\n');
+  }
+
   if (options.quietPatient) {
     const patient = options.quietPatient;
     // The count of screening results leads, because zero is the finding.
