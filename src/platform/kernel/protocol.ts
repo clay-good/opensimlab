@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 199 adds the authored incidental-clot decision snapshot. */
-export const WORKER_PROTOCOL_VERSION = 199;
+/** Version 200 adds the authored oral-anticancer-toxicity snapshot. */
+export const WORKER_PROTOCOL_VERSION = 200;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -592,6 +592,51 @@ export interface MeningitisImagingSnapshot {
     readonly cerebrospinalFluidAvailable: boolean;
     readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
     readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
+}
+
+export interface NormalTestToxicitySnapshot {
+  readonly drugWithheldAtTick: number | null;
+  readonly exclusionsRecordedAtTick: number | null;
+  readonly toxicityRecordedAtTick: number | null;
+  readonly escalationAtTick: number | null;
+  readonly supportiveIntentAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly cycleNumber: number;
+  readonly dayOfCycle: number;
+  readonly genotypePanelWildType: boolean;
+  readonly supplyHeldByPatient: boolean;
+  readonly nextDoseDue: boolean;
+  readonly nextDoseTaken: boolean;
+  readonly serviceResponded: boolean;
+  readonly serviceObserved: boolean;
+  readonly testExclusionAttempted: boolean;
+  readonly waitForServiceAttempted: boolean;
+  readonly doseAdviceAttempted: boolean;
+  readonly symptomaticOnlyAttempted: boolean;
+  readonly observationRecord: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number; readonly stoolsToday: number;
+  } | null;
+  readonly treatmentRecord: {
+    readonly atTick: number; readonly cycleNumber: number; readonly dayOfCycle: number;
+    readonly genotypeResult: string; readonly suppliedToPatient: boolean;
+    readonly drugWithheld: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number; readonly stoolsToday: number;
+    readonly cycleNumber: number; readonly dayOfCycle: number; readonly genotypeResult: string;
+    readonly suppliedToPatient: boolean; readonly drugWithheld: boolean;
+    readonly alertness: string;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -4404,6 +4449,7 @@ export interface EquipmentSnapshot {
     readonly lowScore?: LowScoreSnapshot;
     readonly delayedImmuneEvent?: DelayedImmuneEventSnapshot;
     readonly incidentalClot?: IncidentalClotSnapshot;
+    readonly normalTestToxicity?: NormalTestToxicitySnapshot;
     readonly countedRate?: CountedRateSnapshot;
     readonly pairedReading?: PairedReadingSnapshot;
     readonly afferentLimb?: AfferentLimbSnapshot;

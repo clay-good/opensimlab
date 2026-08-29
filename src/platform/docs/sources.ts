@@ -4393,6 +4393,26 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'PubMed PMID 27660517 bibliographic record and indexed abstract, and its citation as reference 336 in the ASH 2021 guideline. A registry without a randomised comparator; the during-treatment and after-discontinuation periods are not equivalent populations.',
     verifiedOn: '2026-08-29',
   },
+  {
+    id: 'oncology-dpyd-genotype-guided-dosing-2018', pmid: '30348537',
+    authors: 'Henricks LM, Lunenburg CATC, de Man FM, et al',
+    title: 'DPYD genotype-guided dose individualisation of fluoropyrimidine therapy in patients with cancer: a prospective safety analysis',
+    publication: 'The Lancet Oncology', year: 2018,
+    locator: '19(11):1459-1467; doi:10.1016/S1470-2045(18)30686-7; Background and Findings; severe toxicity in up to 30% of patients treated with fluoropyrimidines; 1103 evaluable patients, 85 (8%) heterozygous DPYD variant carriers and 1018 (92%) wild type; severe fluoropyrimidine-related toxicity in 33 of 85 (39%) dose-reduced carriers versus 231 of 1018 (23%) wild-type patients, p=0.0013',
+    usedFor: 'The statement that a wild-type result on the pre-treatment variant panel is not a clearance: nearly a quarter of wild-type patients in the cohort that established genotype-guided dosing still had severe toxicity, and dose-reduced carriers remained at 39%. No dose, dose reduction, or restart rule is adopted.',
+    verifiedAgainst: 'PubMed PMID 30348537 bibliographic record and indexed abstract, including the trial registration NCT02324452. A prospective single-arm safety analysis with a historical comparator, not a randomised trial; the wild-type and carrier groups differ in more than genotype, so the 23% and 39% are cohort frequencies rather than individual risks.',
+    verifiedOn: '2026-08-29',
+  },
+  {
+    id: 'oncology-dpyd-variant-meta-analysis-2015', pmid: '26603945',
+    authors: 'Meulendijks D, Henricks LM, Sonke GS, et al',
+    title: 'Clinical relevance of DPYD variants c.1679T>G, c.1236G>A/HapB3, and c.1601G>A as predictors of severe fluoropyrimidine-associated toxicity: a systematic review and meta-analysis of individual patient data',
+    publication: 'The Lancet Oncology', year: 2015,
+    locator: '16(16):1639-1650; doi:10.1016/S1470-2045(15)00286-7; Findings; 7365 patients from eight studies; adjusted relative risk 4.40 (95% CI 2.08-9.30) for c.1679T>G, 2.85 (1.75-4.62) for DPYD*2A, 3.02 (2.22-4.10) for c.2846A>T, and 1.52 (0.86-2.70, not significant) for c.1601G>A',
+    usedFor: 'The boundary review statement that the variants screened for are genuine predictors of severe fluoropyrimidine-associated toxicity, which is why a wild-type result on that panel means those variants were absent rather than that the enzyme functions normally.',
+    verifiedAgainst: 'PubMed PMID 26603945 bibliographic record and indexed abstract. Pooled individual patient data from eight observational cohorts with a Bonferroni-corrected significance threshold; these are adjusted relative risks for a screened panel, not a measure of overall enzyme function.',
+    verifiedOn: '2026-08-29',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

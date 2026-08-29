@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot, DelayedImmuneEventSnapshot, IncidentalClotSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot, DelayedImmuneEventSnapshot, IncidentalClotSnapshot, NormalTestToxicitySnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -131,6 +131,7 @@ export function stateSummary(
     readonly lostContingency?: LostContingencySnapshot;
     readonly delayedImmuneEvent?: DelayedImmuneEventSnapshot;
     readonly incidentalClot?: IncidentalClotSnapshot;
+    readonly normalTestToxicity?: NormalTestToxicitySnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -184,7 +185,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale || options.lostContingency || options.delayedImmuneEvent || options.incidentalClot) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale || options.lostContingency || options.delayedImmuneEvent || options.incidentalClot || options.normalTestToxicity) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -208,6 +209,31 @@ export function stateSummary(
           + ' intravenous.');
       }
     }
+  }
+  if (options.normalTestToxicity) {
+    const patient = options.normalTestToxicity;
+    // The drug status leads, because it is the only thing here that changes with the clock and
+    // the only thing a listener can act on without asking anyone.
+    lines.push(`Cycle ${patient.cycleNumber}, day ${patient.dayOfCycle}. The drug is ${patient.drugWithheldAtTick === null ? 'not withheld' : 'withheld'}. The supply is ${patient.supplyHeldByPatient ? 'in the patient\u2019s own bag' : 'held by the service'}.`);
+    lines.push('Supplied starting observations were pulse 96 per minute, blood pressure 112 over 68, respiratory rate 16 per minute, oxygen saturation 98 percent in air, and temperature 36.9 degrees Celsius, with eight stools a day above baseline since yesterday, a mouth too sore to eat, and painful peeling palms and soles. These remain historical starting observations.');
+    lines.push(`Current alertness: ${patient.alertness}. The referral letter states his pre-treatment genotype panel was ${patient.genotypePanelWildType ? 'wild type' : 'variant'}.`);
+    lines.push(patient.exclusionsRecordedAtTick === null
+      ? 'What the normal pre-treatment panel does not exclude has not been recorded.'
+      : 'Recorded: severe toxicity still occurred in 231 of 1018 wild-type patients, 23 percent, and in 39 percent of variant carriers after dose reduction. The panel stratifies risk; it does not clear anybody.');
+    lines.push(`Toxicity recorded: ${patient.toxicityRecordedAtTick === null ? 'no' : 'yes, with its severity and the day of the cycle'}. Acute oncology: ${patient.escalationAtTick === null ? 'not contacted' : 'contacted'}. Bounded supportive intent: ${patient.supportiveIntentAtTick === null ? 'not recorded' : 'recorded as the qualified team\u2019s decision'}. Boundaries: ${patient.boundariesReviewedAtTick === null ? 'not reviewed' : 'reviewed'}.`);
+    if (patient.nextDoseDue) {
+      lines.push(patient.nextDoseTaken
+        ? 'The evening dose fell due and he took it, because nobody had told him not to. He did what he was asked to do.'
+        : 'The evening dose fell due and he did not take it, because he had been told plainly not to and why.');
+    }
+    lines.push('Nothing here diagnoses an enzyme deficiency, and none of these figures is a probability for this patient. Grading, dose modification, supportive treatment, and any restart belong to the qualified team; no drug, dose, route, or fluid is selected here, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: pulse ${patient.observation.heartRateBpm} per minute, ${patient.observation.stoolsToday} stools today, drug ${patient.observation.drugWithheld ? 'withheld' : 'not withheld'}.`
+      : 'No new full assessment has been requested.');
+    if (patient.serviceObserved) {
+      lines.push('Acute oncology has answered, confirmed the drug stays stopped, and taken ownership of grading, further treatment, and any restart.');
+    }
+    if (patient.choiceFeedback) lines.push(patient.choiceFeedback);
   }
   if (options.incidentalClot) {
     const patient = options.incidentalClot;

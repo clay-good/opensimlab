@@ -1917,11 +1917,16 @@ credited toward the catalog until every item in the completion contract passes.
     procedure, observation, disposition, prognosis, or outcome control exists.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.
-  The nursing module is registered at 9 of 9. Oncology is open at 1 of 11 with
-  `delayed-immune-event-a-drug-that-stopped-months-ago`, which teaches that an interval since the
-  last checkpoint-inhibitor dose does not exclude the drug. Surgery/trauma has not started. Every
+  The nursing module is registered at 9 of 9. Oncology is open at 3 of 11: a delayed immune-related
+  event after the drug has stopped, an incidentally found pulmonary embolus whose management is
+  only conditionally recommended, and severe first-cycle oral-fluoropyrimidine toxicity after a
+  wild-type pre-treatment panel. Surgery/trauma is declared planned and has not started. Every
   scenario in this wave remains preview: none carries clinical review, a state-space matrix, or
   inclusive-runtime evidence, so the wave's completion count is still zero.
+  The cockpit budget is the binding constraint on the remaining eight oncology lessons: each adds
+  roughly 10 KiB compressed, and the route stands at 1,597.9 of 1,664.0 KiB. Splitting the shared
+  limitation and source registers per module, or code-splitting the lesson trays, is needed before
+  the module completes.
 - [ ] After every wave, verify the exact cumulative count, distinctness, capability reuse, path and
   competency coverage, sources, maturity labels, domain-pack budget, offline behavior, mobile
   layout, and complete regression fixtures.

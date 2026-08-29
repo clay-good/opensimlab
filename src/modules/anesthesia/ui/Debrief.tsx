@@ -60,6 +60,7 @@ import { supportsOxygenTargetScale } from '../../medical-surgical-nursing/oxygen
 import { supportsLostContingency } from '../../medical-surgical-nursing/lost-contingency';
 import { supportsDelayedImmuneEvent } from '../../oncology/delayed-immune-event';
 import { supportsIncidentalClot } from '../../oncology/incidental-clot';
+import { supportsNormalTestToxicity } from '../../oncology/normal-test-toxicity';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -633,6 +634,51 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-oncology-normal-test-toxicity-')) {
+      if (!supportsNormalTestToxicity(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The oncology oral-anticancer-toxicity lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^normal-test-toxicity-${id}-\\d+$`).test(entry.eventId));
+      const withheld = event('drug-withheld'); const exclusions = event('exclusions-recorded');
+      const toxicity = event('toxicity-recorded'); const escalation = event('escalation-requested');
+      const intent = event('supportive-intent-recorded'); const boundaries = event('boundary-review');
+      const handoff = event('handoff');
+      const doseTaken = event('next-dose-taken'); const doseHeld = event('next-dose-withheld');
+      const answered = log.find((entry) => /^normal-test-toxicity-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedTest = event('test-exclusion-refused'); const refusedWait = event('wait-refused');
+      const refusedDose = event('dose-advice-refused'); const refusedSymptomatic = event('symptomatic-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'activate-oncology-normal-test-toxicity-the-action-that-is-yours': { met: !!withheld, tick: withheld?.tick,
+          finding: (withheld ? 'The drug was stopped, and stopped physically: he was told not to take the next dose and why, and the box in his bag was addressed rather than assumed. ' : 'The drug was never withheld, and it is the one action here that needed nobody’s permission. ')
+            + (refusedWait ? 'Waiting for acute oncology to call back before stopping was attempted and refused. ' : '')
+            + (doseTaken ? 'The evening dose fell due and was taken, because nobody had told him not to take it. He did what he was asked to do. ' : doseHeld ? 'The evening dose fell due and he did not take it. ' : '')
+            + 'Withholding is reversible. The swallowed dose is not.' },
+        'recognize-oncology-normal-test-toxicity-a-panel-is-not-a-clearance': { met: !!exclusions, tick: exclusions?.tick,
+          finding: (exclusions ? 'The record states what the pre-treatment panel does and does not support. ' : 'What the normal pre-treatment result does not exclude was never recorded. ')
+            + (refusedTest ? 'Excluding the drug because the test was normal was attempted and refused. ' : '')
+            + 'Severe toxicity still occurred in 231 of 1018 wild-type patients — 23 percent — and in 39 percent of variant carriers after dose reduction, with severe toxicity reported in up to 30 percent of treated patients overall. A wild-type result means those variants were absent, not that the enzyme works.' },
+        'record-oncology-normal-test-toxicity-severity-and-the-day': { met: !!toxicity, tick: toxicity?.tick,
+          finding: (toxicity ? 'The toxicity was recorded as severe rather than as unwell, against cycle 1 day 9. ' : 'The toxicity was never recorded with its severity or its place in the cycle. ')
+            + 'The day is part of the finding: a first-cycle presentation is not the same finding as one in the sixth.' },
+        'activate-oncology-normal-test-toxicity-the-service-that-prescribed-it': { met: !!escalation, tick: escalation?.tick,
+          finding: (escalation ? 'Acute oncology was contacted and asked for grading, further treatment, and any restart. ' : 'The service that prescribed the drug was never contacted. ')
+            + (refusedDose ? 'Advising a halved dose was attempted and refused; dose modification belongs to the qualified team and would have left him taking the drug. ' : '')
+            + (refusedSymptomatic ? 'Treating the symptoms with review tomorrow was attempted and refused; it leaves the cause running. ' : '')
+            + (answered ? 'They confirmed the drug stays stopped. ' : 'They had not answered by the end of this run. ')
+            + 'They own the treatment. They are not the ones holding the box.' },
+        'record-oncology-normal-test-toxicity-bounded-qualified-intent': { met: !!intent, tick: intent?.tick,
+          finding: (intent ? 'Grading, supportive treatment, rehydration, mouth care, and any specific antidotal treatment were recorded as the qualified team’s decisions. ' : 'Bounded qualified-team supportive intent was never recorded. ')
+            + 'Nothing was administered, and no drug, dose, route, fluid, or threshold was chosen or displayed here.' },
+        'review-oncology-normal-test-toxicity-boundaries-and-their-certainty': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The boundaries were reviewed with their certainty attached. ' : 'The boundary and certainty review is missing. ')
+            + 'The variants screened for were associated with severe toxicity at adjusted relative risks of roughly 2.9 to 4.4 across 7365 patients, which is why the panel stratifies risk rather than clearing anyone. Nothing here diagnoses an enzyme deficiency, and none of those figures is a probability for this patient.' },
+        'handoff-oncology-normal-test-toxicity-a-drug-that-stays-stopped': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The stopped drug and when it stopped, what the panel does not exclude, the toxicity with its severity and cycle day, and the bounded intent all travelled. ' : 'Current full findings, the withheld drug, or continuing-care ownership remains incomplete. ')
+            + (doseTaken ? 'That a further dose was taken before the drug was stopped travelled with it, because the next team needs to know what he has actually had. ' : '')
+            + 'No deficiency, grade, or outcome is certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-oncology-incidental-clot-')) {
       if (!supportsIncidentalClot(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The oncology incidental-finding lesson was not active.' } satisfies ObjectiveFinding;

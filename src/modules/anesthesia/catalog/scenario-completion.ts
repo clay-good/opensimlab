@@ -28,6 +28,7 @@ import { meningitisImagingCompletionEvidence } from '../../infectious-disease/me
 import { lowScoreCompletionEvidence } from '../../medical-surgical-nursing/low-score-completion';
 import { delayedImmuneEventCompletionEvidence } from '../../oncology/delayed-immune-event-completion';
 import { incidentalClotCompletionEvidence } from '../../oncology/incidental-clot-completion';
+import { normalTestToxicityCompletionEvidence } from '../../oncology/normal-test-toxicity-completion';
 import { countedRateCompletionEvidence } from '../../medical-surgical-nursing/counted-rate-completion';
 import { pairedReadingCompletionEvidence } from '../../medical-surgical-nursing/paired-reading-completion';
 import { afferentLimbCompletionEvidence } from '../../medical-surgical-nursing/afferent-limb-completion';
@@ -145,6 +146,7 @@ export function auditClinicalScenario(
     ...lowScoreCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...delayedImmuneEventCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...incidentalClotCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...normalTestToxicityCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...countedRateCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...pairedReadingCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...afferentLimbCompletionEvidence(scenario, capabilityVersion, moduleId),

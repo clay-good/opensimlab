@@ -6127,6 +6127,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'The effect estimates come from observational data with no randomised trial and no systematic review addressing the question, and the panel rated the certainty very low for risk of bias, inconsistency and imprecision. The 37 percent six-month mortality is the mortality of the population studied \u2014 people with advanced cancer \u2014 not a consequence of the embolus or of anticoagulating it. The registry cohort points the other way on bleeding, and its authors call the risk-benefit ratio uncertain.',
     briefIn: ['incidental-clot-a-decision-the-evidence-cannot-make'],
   },
+  {
+    id: 'normal-test-toxicity-presentation-and-service-response-are-authored',
+    headline: 'One presentation, one dose falling due, and one telephone call.',
+    simplification: 'The case supplies fixed observations, an evening dose that falls due at a fixed time and is taken unless the drug was withheld, and an acute oncology service that answers sixty minutes after it is contacted with a fixed reply. No enzyme, absorption, or toxicity-kinetics model runs underneath, and no grade is assigned.',
+    whereItMisleads: 'A learner reads the taken dose as a modelled harm, concludes that severe fluoropyrimidine toxicity always looks like this, or expects the treating service to answer.',
+    correctUnderstanding: 'The taken dose is recorded as a fact about what happened, not as a prediction about what it will do; the fixture models no consequence of it, because it cannot. A real presentation may be far more unwell, may involve fever or a low neutrophil count that this fixture does not supply, and the call may not be answered. The withholding has to happen regardless of any of that.',
+    briefIn: ['normal-test-toxicity-the-dose-in-his-bag'],
+  },
+  {
+    id: 'normal-test-toxicity-controls-are-withholding-and-escalation-only',
+    headline: 'One drug is stopped here, and no drug is ever chosen.',
+    simplification: 'The learner withholds the oral anticancer drug, records what the normal pre-treatment panel does and does not exclude, records the toxicity with its severity and cycle day, contacts acute oncology, records bounded qualified-team supportive intent, and reviews the boundaries.',
+    whereItMisleads: 'The bounded supportive-intent control is read as prescribing fluids or an antidote, or the refusal to advise a halved dose is read as this lesson taking a position on dose modification.',
+    correctUnderstanding: 'Stopping a drug and starting one are different acts, and only the first is exposed here. Grading, dose modification, supportive treatment, any specific antidotal treatment, and whether the drug is ever restarted all belong to the qualified team, and no agent, dose, route, fluid, or threshold appears anywhere in this lesson.',
+    briefIn: ['normal-test-toxicity-the-dose-in-his-bag'],
+  },
+  {
+    id: 'normal-test-toxicity-genotype-figures-are-not-this-patients-risk',
+    headline: 'The genotype figures describe cohorts, and this patient is not a cohort.',
+    simplification: 'The case reports severe toxicity in 23 percent of wild-type patients and 39 percent of dose-reduced variant carriers, severe toxicity in up to 30 percent of treated patients, and adjusted relative risks of roughly 2.9 to 4.4 for the screened variants.',
+    whereItMisleads: 'A learner reads 23 percent as this patient\u2019s probability, treats the panel as useless because it did not predict him, or infers that he has an enzyme deficiency.',
+    correctUnderstanding: 'These are cohort frequencies and adjusted relative risks, not individual probabilities, and the prospective analysis was a safety study rather than a randomised comparison. The panel is genuinely predictive, which is precisely why a wild-type result narrows the differential without closing it. Nothing in this lesson establishes why this patient became toxic; no enzyme activity was measured, and none is claimed.',
+    briefIn: ['normal-test-toxicity-the-dose-in-his-bag'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

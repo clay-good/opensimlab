@@ -3216,6 +3216,23 @@
       "limitationManifestHash": "sha256:e9b0b3eeaf70b63922adf72298b48f5f722da6d841d55e4b86c11bddf8d1f41c"
     },
     {
+      "scenarioId": "normal-test-toxicity-the-dose-in-his-bag",
+      "contentVersion": "0.1.0",
+      "moduleId": "oncology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:45ccf1ee073be1c1b86011b47ad97984bc4a7a5afe5d902f9e66d1d662d9c6dc",
+      "defaultsHash": "sha256:f72a97cb916ed933ee7dd49df8df30f37d019793f8ef35cddcb7bfe561edf8b0",
+      "maturityHash": "sha256:98b42f2eb6b4a42acf3f109023c635ff6dc992a3117faaed6edd4a6569928eb0",
+      "sourceManifestHash": "sha256:c53190399beaac69cff9280112f504b9b937684d0ac2c5f6e8c7884da5b90915",
+      "limitationManifestHash": "sha256:e02c71339ed4f977c86237b218bd3a8f21d47ee190a57b7d8d42f936d10a4b2f"
+    },
+    {
       "scenarioId": "bronchiolitis",
       "contentVersion": "0.1.0",
       "moduleId": "pediatrics",

@@ -1,0 +1,22 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
+import { NORMAL_TEST_TOXICITY_THE_DOSE_IN_HIS_BAG } from './scenarios/normal-test-toxicity-the-dose-in-his-bag';
+import { NORMAL_TEST_TOXICITY_FIXTURES } from './normal-test-toxicity-fixtures';
+
+export function normalTestToxicityCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
+  if (moduleId !== 'oncology' || capabilityVersion !== '0.1.0-alpha.48'
+    || scenario.metadata.id !== NORMAL_TEST_TOXICITY_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
+    || NORMAL_TEST_TOXICITY_FIXTURES.contentVersion !== '0.1.0' || NORMAL_TEST_TOXICITY_FIXTURES.seed !== 7312
+    || JSON.stringify(scenario) !== JSON.stringify(NORMAL_TEST_TOXICITY_THE_DOSE_IN_HIS_BAG)) return [];
+  return [
+    { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['normal-test-toxicity-fixtures.ts binds seed 7312 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No enzyme, absorption, or toxicity-kinetics model is claimed.'] },
+    { id: 'meaningful-progression', status: 'satisfied', evidence: ['normal-test-toxicity.ts runs two authored transitions, one of which is the only consequence of inaction anywhere in this module. At 40 minutes the evening dose falls due: withheld, he does not take it; not withheld, he takes it, because he has been correctly instructed to take it daily for nine days, and that is recorded as a fact rather than as a predicted harm. Acute oncology answers 60 minutes after it is contacted, confirms the drug stays stopped, and takes ownership of grading, further treatment, and any restart. Nothing arrives uncontacted.'] },
+    { id: 'meaningful-actions-and-choices', status: 'satisfied', evidence: ['The learner withholds the drug physically and explicitly, records what a wild-type pre-treatment panel does and does not exclude, records the toxicity with its severity against cycle and day, contacts acute oncology, records bounded qualified-team supportive intent, and reviews the boundaries. Excluding the drug because the test was normal, waiting for the service before stopping, advising a halved dose, and treating the symptoms with review tomorrow are each refused.'] },
+    { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The withheld drug, the recorded exclusions, the recorded toxicity, contact with acute oncology, bounded supportive intent, the boundary review, and a current full assessment permit handoff with the grade and any restart open. Instructor takeover bounds a run with no escalation at 180 minutes, or an unfinished session at eight hours.'] },
+    { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Seven event-bound objectives distinguish the action that needs no permission, refusing a risk-stratifying test as a clearance, recording severity against the day of the cycle, contacting the owning service without making that a precondition, bounded qualified-team intent, what a four-variant panel does and does not test, and accountable handoff of a drug that stays stopped. Refused shortcuts remain visible, and no deficiency, grade, or outcome is certified.'] },
+    { id: 'reference-transcripts', status: 'satisfied', evidence: ['normal-test-toxicity-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine, including the contrast between a withheld and a taken evening dose.'] },
+    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
+    { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
+  ];
+}
