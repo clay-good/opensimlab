@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: Oral-anticancer-toxicity state has protocol version 200', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(200);
+  it('Scenario: Prognosis-conversation state has protocol version 201', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(201);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

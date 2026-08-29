@@ -1917,10 +1917,11 @@ credited toward the catalog until every item in the completion contract passes.
     procedure, observation, disposition, prognosis, or outcome control exists.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.
-  The nursing module is registered at 9 of 9. Oncology is open at 3 of 11: a delayed immune-related
+  The nursing module is registered at 9 of 9. Oncology is open at 4 of 11: a delayed immune-related
   event after the drug has stopped, an incidentally found pulmonary embolus whose management is
-  only conditionally recommended, and severe first-cycle oral-fluoropyrimidine toxicity after a
-  wild-type pre-treatment panel. Surgery/trauma is declared planned and has not started. Every
+  only conditionally recommended, severe first-cycle oral-fluoropyrimidine toxicity after a
+  wild-type pre-treatment panel, and a prognosis conversation scored by what the patient repeats
+  back rather than by what was said to him. Surgery/trauma is declared planned and has not started. Every
   scenario in this wave remains preview: none carries clinical review, a state-space matrix, or
   inclusive-runtime evidence, so the wave's completion count is still zero.
   The cockpit budget was the binding constraint on the remaining eight oncology lessons: each adds

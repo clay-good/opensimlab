@@ -16,11 +16,11 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "a85a8ce6a24e1377b1d9fdc11c986bc264212a11bb67f5247e0312b576607ef2"
+        "sha256": "711dd9247f0b17a453ec5dd9bcd39c40ea058c136e91879c619b1452fa1de90e"
       },
       {
         "path": "src/modules/anesthesia/engine.ts",
-        "sha256": "cdb2d2159d3dcd2e3a039efb7f7d0f6079685d5b5415037cade1378a1798fddd"
+        "sha256": "cf643aae55d76043679a671039eaa87b3cdfba5652fff8d07ef0a84577c5d08a"
       },
       {
         "path": "src/modules/anesthesia/region/profiles.ts",
@@ -28,7 +28,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "194d9bb181bf89d9ee401b42acf5ffa547e83eb203941d44eaffbdf7ffc48762"
+        "sha256": "e68207bdb26694ee5066cf460c34ed8ca9917bb49669caa8f1930ae8245d5197"
       },
       {
         "path": "src/modules/endocrine-metabolic/HypocalcemiaTray.tsx",
@@ -116,7 +116,7 @@
       },
       {
         "path": "src/platform/docs/limitations/oncology.ts",
-        "sha256": "39a465e824b657e6164ef4995ac1fd2082efd8a9d27163b4c57d822858d7f9a1"
+        "sha256": "13bb9236b9712e79316e44c433fdabcbb893df86d1b891d6fa035f7d466cb666"
       },
       {
         "path": "src/platform/docs/limitations/pediatrics.ts",
@@ -144,7 +144,7 @@
       },
       {
         "path": "src/platform/docs/sources.ts",
-        "sha256": "5b7741547b7b485df43b9bc388470a2e7c8409a3ad35c519289a3eeeb4cfcaba"
+        "sha256": "5305a9835615513e0588900bbebd5f6a68bca8d7e93fed4a362707bd9397c470"
       },
       {
         "path": "src/platform/governance/publication.ts",
@@ -172,7 +172,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "48e6b76edbdd85d14860ae95e3ec6033d2a4bf2540123a22aa5014997ec99287"
+        "sha256": "5832c6b525676c80b0b81253f6f5b37c9d163e91baf1166c0f7c106df253161c"
       },
       {
         "path": "tests/integration/demonstration-runs.test.tsx",
@@ -221,7 +221,7 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "a85a8ce6a24e1377b1d9fdc11c986bc264212a11bb67f5247e0312b576607ef2"
+        "sha256": "711dd9247f0b17a453ec5dd9bcd39c40ea058c136e91879c619b1452fa1de90e"
       },
       {
         "path": "src/modules/anesthesia/demo/useObservedDemonstration.ts",
@@ -229,7 +229,7 @@
       },
       {
         "path": "src/modules/anesthesia/engine.ts",
-        "sha256": "cdb2d2159d3dcd2e3a039efb7f7d0f6079685d5b5415037cade1378a1798fddd"
+        "sha256": "cf643aae55d76043679a671039eaa87b3cdfba5652fff8d07ef0a84577c5d08a"
       },
       {
         "path": "src/modules/anesthesia/region/profiles.ts",
@@ -241,15 +241,15 @@
       },
       {
         "path": "src/modules/anesthesia/ui/ActionCockpit.tsx",
-        "sha256": "bd551e601825144c7ea9134577812f860bc1ddc156e0ac471b6c68b5c88bc6d8"
+        "sha256": "9b0ae962f2a9d9d6c653b9c9ec9df7e3ba1fed8673b3aadcdf08c070cc77518d"
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "f4e6924456a77d6c63a50639dcee4883e863f80e3fdc9b04fd4680648498c0b4"
+        "sha256": "47ea13fd1366a8709e8ff996c9e30ced8a014546aaf6bf19a70dc7a3678f3def"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "194d9bb181bf89d9ee401b42acf5ffa547e83eb203941d44eaffbdf7ffc48762"
+        "sha256": "e68207bdb26694ee5066cf460c34ed8ca9917bb49669caa8f1930ae8245d5197"
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
@@ -353,7 +353,7 @@
       },
       {
         "path": "src/platform/docs/limitations/oncology.ts",
-        "sha256": "39a465e824b657e6164ef4995ac1fd2082efd8a9d27163b4c57d822858d7f9a1"
+        "sha256": "13bb9236b9712e79316e44c433fdabcbb893df86d1b891d6fa035f7d466cb666"
       },
       {
         "path": "src/platform/docs/limitations/pediatrics.ts",
@@ -381,7 +381,7 @@
       },
       {
         "path": "src/platform/docs/sources.ts",
-        "sha256": "5b7741547b7b485df43b9bc388470a2e7c8409a3ad35c519289a3eeeb4cfcaba"
+        "sha256": "5305a9835615513e0588900bbebd5f6a68bca8d7e93fed4a362707bd9397c470"
       },
       {
         "path": "src/platform/governance/publication.ts",
@@ -401,7 +401,7 @@
       },
       {
         "path": "src/platform/kernel/protocol.ts",
-        "sha256": "8cf087fb9ce2dcc03a3f86bdd8e0f61cf0d7c6ccd72d46e3c14132a397dc0d5c"
+        "sha256": "00ac076a4bda9264500d7d934855e1a7ad20a0f54ded111329f54981c7384a9c"
       },
       {
         "path": "src/platform/log/event-log.ts",
@@ -429,7 +429,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "48e6b76edbdd85d14860ae95e3ec6033d2a4bf2540123a22aa5014997ec99287"
+        "sha256": "5832c6b525676c80b0b81253f6f5b37c9d163e91baf1166c0f7c106df253161c"
       },
       {
         "path": "tests/integration/hyponatremia-correction-runs.test.ts",
@@ -482,7 +482,7 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "a85a8ce6a24e1377b1d9fdc11c986bc264212a11bb67f5247e0312b576607ef2"
+        "sha256": "711dd9247f0b17a453ec5dd9bcd39c40ea058c136e91879c619b1452fa1de90e"
       },
       {
         "path": "src/modules/anesthesia/demo/useDemonstration.ts",
@@ -494,7 +494,7 @@
       },
       {
         "path": "src/modules/anesthesia/engine.ts",
-        "sha256": "cdb2d2159d3dcd2e3a039efb7f7d0f6079685d5b5415037cade1378a1798fddd"
+        "sha256": "cf643aae55d76043679a671039eaa87b3cdfba5652fff8d07ef0a84577c5d08a"
       },
       {
         "path": "src/modules/anesthesia/region/profiles.ts",
@@ -502,15 +502,15 @@
       },
       {
         "path": "src/modules/anesthesia/ui/ActionCockpit.tsx",
-        "sha256": "bd551e601825144c7ea9134577812f860bc1ddc156e0ac471b6c68b5c88bc6d8"
+        "sha256": "9b0ae962f2a9d9d6c653b9c9ec9df7e3ba1fed8673b3aadcdf08c070cc77518d"
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "f4e6924456a77d6c63a50639dcee4883e863f80e3fdc9b04fd4680648498c0b4"
+        "sha256": "47ea13fd1366a8709e8ff996c9e30ced8a014546aaf6bf19a70dc7a3678f3def"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "194d9bb181bf89d9ee401b42acf5ffa547e83eb203941d44eaffbdf7ffc48762"
+        "sha256": "e68207bdb26694ee5066cf460c34ed8ca9917bb49669caa8f1930ae8245d5197"
       },
       {
         "path": "src/modules/anesthesia/ui/DemonstrationBar.tsx",
@@ -522,7 +522,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/accessibility.ts",
-        "sha256": "46182c72af68ece5637ca7d0edf9480e06149c630af660c240913729319fa94c"
+        "sha256": "e7a2a16d34db296be3b405f136128a112e3f68e977b0a21c169084d91b9a896e"
       },
       {
         "path": "src/modules/anesthesia/ui/cockpit.css",
@@ -626,7 +626,7 @@
       },
       {
         "path": "src/platform/docs/limitations/oncology.ts",
-        "sha256": "39a465e824b657e6164ef4995ac1fd2082efd8a9d27163b4c57d822858d7f9a1"
+        "sha256": "13bb9236b9712e79316e44c433fdabcbb893df86d1b891d6fa035f7d466cb666"
       },
       {
         "path": "src/platform/docs/limitations/pediatrics.ts",
@@ -654,7 +654,7 @@
       },
       {
         "path": "src/platform/docs/sources.ts",
-        "sha256": "5b7741547b7b485df43b9bc388470a2e7c8409a3ad35c519289a3eeeb4cfcaba"
+        "sha256": "5305a9835615513e0588900bbebd5f6a68bca8d7e93fed4a362707bd9397c470"
       },
       {
         "path": "src/platform/governance/publication.ts",
@@ -674,7 +674,7 @@
       },
       {
         "path": "src/platform/kernel/protocol.ts",
-        "sha256": "8cf087fb9ce2dcc03a3f86bdd8e0f61cf0d7c6ccd72d46e3c14132a397dc0d5c"
+        "sha256": "00ac076a4bda9264500d7d934855e1a7ad20a0f54ded111329f54981c7384a9c"
       },
       {
         "path": "src/platform/reporting/ScenarioProblemReport.tsx",
@@ -694,7 +694,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "48e6b76edbdd85d14860ae95e3ec6033d2a4bf2540123a22aa5014997ec99287"
+        "sha256": "5832c6b525676c80b0b81253f6f5b37c9d163e91baf1166c0f7c106df253161c"
       },
       {
         "path": "tests/integration/avp-deficiency-demonstration-session.test.tsx",

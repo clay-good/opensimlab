@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 200 adds the authored oral-anticancer-toxicity snapshot. */
-export const WORKER_PROTOCOL_VERSION = 200;
+/** Version 201 adds the authored prognosis-conversation snapshot. */
+export const WORKER_PROTOCOL_VERSION = 201;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -592,6 +592,48 @@ export interface MeningitisImagingSnapshot {
     readonly cerebrospinalFluidAvailable: boolean;
     readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
     readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
+}
+
+export interface PrognosisQuestionSnapshot {
+  readonly intentAskedAtTick: number | null;
+  readonly questionRecordedAtTick: number | null;
+  readonly beliefCheckedAtTick: number | null;
+  readonly answeredAtTick: number | null;
+  readonly directionStatedAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly observationsAnswerTheQuestion: boolean;
+  readonly askedAgain: boolean;
+  readonly readbackHeard: boolean;
+  readonly readbackObserved: boolean;
+  /** What he repeated back, decided by what was said rather than by what was meant. */
+  readonly readback: 'nothing-to-repeat' | 'best-case-only' | 'all-three-scenarios' | null;
+  readonly singleNumberAttempted: boolean;
+  readonly nobodyKnowsAttempted: boolean;
+  readonly reassuranceAttempted: boolean;
+  readonly prematureAnswerAttempted: boolean;
+  readonly observationRecord: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+  } | null;
+  readonly conversationRecord: {
+    readonly atTick: number; readonly questionRecorded: boolean; readonly purposeKnown: boolean;
+    readonly beliefChecked: boolean; readonly answerGiven: boolean; readonly directionStated: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+    readonly questionRecorded: boolean; readonly purposeKnown: boolean;
+    readonly beliefChecked: boolean; readonly answerGiven: boolean; readonly directionStated: boolean;
+    readonly alertness: string;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -4450,6 +4492,7 @@ export interface EquipmentSnapshot {
     readonly delayedImmuneEvent?: DelayedImmuneEventSnapshot;
     readonly incidentalClot?: IncidentalClotSnapshot;
     readonly normalTestToxicity?: NormalTestToxicitySnapshot;
+    readonly prognosisQuestion?: PrognosisQuestionSnapshot;
     readonly countedRate?: CountedRateSnapshot;
     readonly pairedReading?: PairedReadingSnapshot;
     readonly afferentLimb?: AfferentLimbSnapshot;

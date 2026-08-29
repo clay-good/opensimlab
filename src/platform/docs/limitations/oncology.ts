@@ -82,4 +82,28 @@ export const ONCOLOGY_LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'These are cohort frequencies and adjusted relative risks, not individual probabilities, and the prospective analysis was a safety study rather than a randomised comparison. The panel is genuinely predictive, which is precisely why a wild-type result narrows the differential without closing it. Nothing in this lesson establishes why this patient became toxic; no enzyme activity was measured, and none is claimed.',
     briefIn: ['normal-test-toxicity-the-dose-in-his-bag'],
   },
+  {
+    id: 'prognosis-question-conversation-and-readback-are-authored',
+    headline: 'One conversation, one repeated question, and one readback in a corridor.',
+    simplification: 'The case supplies a patient who asks at a fixed time, states his reason at a fixed time, and repeats the answer back thirty minutes after it is given. What he repeats is decided by whether the direction of the error was stated. No survival, disease, or comprehension model runs underneath.',
+    whereItMisleads: 'A learner reads the readback as evidence that saying the right thing reliably produces understanding, or that a patient who repeats three scenarios has accepted them.',
+    correctUnderstanding: 'The readback is an authored contrast built to make one difference visible, not a measurement of comprehension. Real understanding is partial, moves between conversations, and often has to be rebuilt from the beginning next time. A patient may repeat a range accurately and still plan on the best case, and none of that is modelled here.',
+    briefIn: ['prognosis-question-a-number-he-asked-for'],
+  },
+  {
+    id: 'prognosis-question-controls-are-conversation-only',
+    headline: 'Nothing is examined, ordered, prescribed, or predicted in this lesson.',
+    simplification: 'The learner establishes what the question is for, records it, checks a belief, answers in scenarios, states the direction of the error, and reviews the boundaries. The observations are supplied and are deliberately irrelevant.',
+    whereItMisleads: 'The scenario answer is read as this project generating a prognosis, or the typical figure is taken to be computed from the patient in front of the learner.',
+    correctUnderstanding: 'No number here is derived from this patient. The lesson teaches the shape an honest answer takes and where its uncertainty comes from; the estimate a real answer is built around is a clinician\u2019s judgement, made with the patient\u2019s disease, treatment, and trajectory in front of them, and this simulator neither makes nor checks one.',
+    briefIn: ['prognosis-question-a-number-he-asked-for'],
+  },
+  {
+    id: 'prognosis-question-figures-describe-estimators-not-this-patient',
+    headline: 'Every figure in this lesson describes the people answering, not the man asking.',
+    simplification: 'The case reports that 20 percent of predictions were accurate to within a third, that 63 percent were over-optimistic by roughly fivefold, and that observed survival fell between half and double an estimate in 63 percent of patients.',
+    whereItMisleads: 'A learner carries the fivefold optimism onto a patient on second-line treatment, or reads the scenario proportions as this patient\u2019s probabilities.',
+    correctUnderstanding: 'The optimism cohort was 468 patients at hospice referral with a median survival of 24 days; what generalises from it is the direction of the error, which was consistent, not its size, which is not. The scenario proportions come from 114 patients of 21 oncologists and describe how often that method\u2019s brackets contained the truth, not how long anyone lived. Neither says anything about this man.',
+    briefIn: ['prognosis-question-a-number-he-asked-for'],
+  },
 ];

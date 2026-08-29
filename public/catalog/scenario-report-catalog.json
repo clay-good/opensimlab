@@ -3233,6 +3233,23 @@
       "limitationManifestHash": "sha256:e02c71339ed4f977c86237b218bd3a8f21d47ee190a57b7d8d42f936d10a4b2f"
     },
     {
+      "scenarioId": "prognosis-question-a-number-he-asked-for",
+      "contentVersion": "0.1.0",
+      "moduleId": "oncology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:551361caabe38316e5b2714765474c4ce2b5ee73d44045869e4c4a6d9620de5b",
+      "defaultsHash": "sha256:f2cbfee15ec25171e43e5a532bf69d6e46210302dea5a639bf91106b8ff64391",
+      "maturityHash": "sha256:211013c9c27f1f522b700b0896c95af79c83e83aadd9ae32927b70b2927f7fb9",
+      "sourceManifestHash": "sha256:5c5b8cc3e27f12fb9b507ffe0c8cf7419aa3a4de8ae6f0d7db41cb11f09e56e6",
+      "limitationManifestHash": "sha256:08a31ab7c406cf86d81625b28332bbb9579cb981780caa98406cb6a85b6aac1d"
+    },
+    {
       "scenarioId": "bronchiolitis",
       "contentVersion": "0.1.0",
       "moduleId": "pediatrics",

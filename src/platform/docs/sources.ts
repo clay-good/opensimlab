@@ -4413,6 +4413,36 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'PubMed PMID 26603945 bibliographic record and indexed abstract. Pooled individual patient data from eight observational cohorts with a Bonferroni-corrected significance threshold; these are adjusted relative risks for a screened panel, not a measure of overall enzyme function.',
     verifiedOn: '2026-08-29',
   },
+  {
+    id: 'oncology-prognostic-accuracy-2000', pmid: '10678857',
+    authors: 'Christakis NA, Lamont EB',
+    title: 'Extent and determinants of error in doctors\u2019 prognoses in terminally ill patients: prospective cohort study',
+    publication: 'BMJ (British Medical Journal)', year: 2000,
+    locator: '320(7233):469-472; doi:10.1136/bmj.320.7233.469; Results and Conclusion; 343 doctors, 468 patients at hospice referral; median survival 24 days; 20% (92/468) of predictions accurate to within 33% of actual survival, 63% (295/468) over-optimistic, 17% (81/468) over-pessimistic; survival overestimated by a factor of 5.3; accuracy decreased as the duration of the doctor-patient relationship increased',
+    usedFor: 'That a survival estimate is wrong in a known direction, that saying so belongs in the answer, and that familiarity with the patient makes the estimate worse rather than better. The direction is used, not the magnitude: the cohort was at hospice referral with a median survival of 24 days and the fivefold figure is not transferred to a patient on treatment.',
+    verifiedAgainst: 'PubMed PMID 10678857 bibliographic record and indexed abstract (PMC27288). Five outpatient hospice programmes in Chicago; an observational cohort, so the determinants are associations rather than causes.',
+    verifiedOn: '2026-08-29',
+  },
+  {
+    id: 'oncology-chemotherapy-expectations-2012', pmid: '23094723',
+    authors: 'Weeks JC, Catalano PJ, Cronin A, et al',
+    title: 'Patients\u2019 expectations about effects of chemotherapy for advanced cancer',
+    publication: 'New England Journal of Medicine', year: 2012,
+    locator: '367(17):1616-1625; doi:10.1056/NEJMoa1204410; Results; 69% of patients with lung cancer and 81% with colorectal cancer did not report understanding chemotherapy was not at all likely to cure their cancer; inaccurate belief more likely among those rating physician communication in the highest versus lowest third (odds ratio 1.90, 95% CI 1.33-2.72)',
+    usedFor: 'That an answer about survival lands on whatever the patient already believes the treatment is for, so that belief has to be checked first; and that a comfortable conversation is not evidence anything was understood, which is what makes reassurance a refused choice rather than a matter of style.',
+    verifiedAgainst: 'PubMed PMID 23094723 bibliographic record and indexed abstract (PMC3613151). A survey-based cohort: the communication finding is an association measured on patients\u2019 own ratings, and the direction of causation is not established by it.',
+    verifiedOn: '2026-08-29',
+  },
+  {
+    id: 'oncology-survival-scenarios-2013', pmid: '24002504',
+    authors: 'Kiely BE, Martin AJ, Tattersall MHN, et al',
+    title: 'The median informs the message: accuracy of individualized scenarios for survival time based on oncologists\u2019 estimates',
+    publication: 'Journal of Clinical Oncology', year: 2013,
+    locator: '31(28):3565-3571; doi:10.1200/JCO.2012.44.7821; Patients and Methods and Results; 21 oncologists estimating for 114 patients with advanced cancer; median survival 11 months; observed survival half to double the estimate in 63%, a quarter or less in 6%, three times or more in 14%; estimates imprecise, 29% within 0.67 to 1.33 times observed',
+    usedFor: 'The shape of an honest answer — a typical figure with a worse and a better case rather than a single number — together with the measured proportions each bracket contained, and the imprecision of the estimates the method is built on.',
+    verifiedAgainst: 'PubMed PMID 24002504 bibliographic record and indexed abstract. The brackets are derived from an oncologist\u2019s own estimate, so the method inherits that estimate\u2019s error; the paper reports it as relatively well-calibrated but imprecise and only moderately discriminative (Harrell C-statistic 0.63).',
+    verifiedOn: '2026-08-29',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

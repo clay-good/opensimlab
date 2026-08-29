@@ -61,6 +61,7 @@ import { supportsLostContingency } from '../../medical-surgical-nursing/lost-con
 import { supportsDelayedImmuneEvent } from '../../oncology/delayed-immune-event';
 import { supportsIncidentalClot } from '../../oncology/incidental-clot';
 import { supportsNormalTestToxicity } from '../../oncology/normal-test-toxicity';
+import { supportsPrognosisQuestion } from '../../oncology/prognosis-question';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -634,6 +635,54 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-oncology-prognosis-question-')) {
+      if (!supportsPrognosisQuestion(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The oncology prognosis-conversation lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^prognosis-question-${id}-\\d+$`).test(entry.eventId));
+      const intent = event('intent-asked'); const recorded = event('question-recorded');
+      const belief = event('belief-checked'); const answered = event('answered');
+      const direction = event('direction-stated'); const boundaries = event('boundary-review');
+      const handoff = event('handoff'); const askedAgain = event('asked-again');
+      const bestCase = event('readback-best-case'); const allThree = event('readback-scenarios');
+      const refusedSingle = event('single-number-refused'); const refusedNobody = event('nobody-knows-refused');
+      const refusedReassure = event('reassurance-refused'); const refusedPremature = event('premature-refused');
+      const prematureAnswer = event('answer-refused'); const prematureDirection = event('direction-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'reconcile-oncology-prognosis-question-the-question-behind-it': { met: !!intent, tick: intent?.tick,
+          finding: (intent ? 'He was asked what he wanted the number for, and what he would rather not be told, before he was answered. ' : 'He was never asked what he wanted the number for, so whatever he was given was aimed at a guess. ')
+            + (prematureAnswer ? 'Answering before that was attempted and refused. ' : '')
+            + (refusedPremature ? 'Answering first and asking afterwards was attempted and refused. ' : '')
+            + (askedAgain ? 'He said it himself in the end: a wedding in four months, and whether to book anything. He was deciding whether to buy a suit. ' : '')
+            + 'The question behind the question decides which answer is useful, and it costs one sentence to find out.' },
+        'record-oncology-prognosis-question-in-his-own-words': { met: !!recorded, tick: recorded?.tick,
+          finding: (recorded ? 'The words "how long have I got" went into the record with the date, who was present, and what he said he wanted it for. ' : 'The question was never recorded in his own words. ')
+            + 'A note saying he asked about prognosis is where the next person loses what he actually asked and how he asked it.' },
+        'recognize-oncology-prognosis-question-what-he-believes-treatment-is-for': { met: !!belief, tick: belief?.tick,
+          finding: (belief ? 'He was asked what he understood the treatment to be for, and said he assumed it was to get rid of it. ' : 'What he believed the treatment was for was never checked, so any answer landed on an assumption nobody had looked at. ')
+            + (refusedReassure ? 'Reassuring him and moving on was attempted and refused. ' : '')
+            + 'Among patients on chemotherapy for incurable lung or colorectal cancer, 69 and 81 percent did not report understanding it was not at all likely to cure them, and those who rated communication with their physician most favourably were about twice as likely to believe it.' },
+        'record-oncology-prognosis-question-scenarios-not-a-number': { met: !!answered, tick: answered?.tick,
+          finding: (answered ? 'He was given a typical figure with a worse and a better case, and told which of them a wedding in four months sits inside. ' : 'He was never answered. ')
+            + (refusedSingle ? 'A single number was attempted and refused; it is heard as a date. ' : '')
+            + (refusedNobody ? 'Telling him nobody can know was attempted and refused; it leaves him to fill the silence with whichever end he can bear. ' : '')
+            + 'In the study of that method, observed survival fell between half and double the estimate in 63 percent, at a quarter or less in 6 percent, and at three times or more in 14 percent.' },
+        'review-oncology-prognosis-question-the-direction-of-the-error': { met: !!direction, tick: direction?.tick,
+          finding: (direction ? 'He was told which way the estimate is likely to be wrong, and that it is a property of the people estimating rather than of him. ' : 'The direction of the error was never stated, which is the part of the answer that keeps him from planning on the best case. ')
+            + (prematureDirection ? 'Stating it before there was an estimate to attach it to was attempted and refused. ' : '')
+            + 'Only 20 percent of predictions in that cohort were accurate to within a third, 63 percent were over-optimistic, and the doctors who had known their patients longest were the least accurate of all.' },
+        'review-oncology-prognosis-question-boundaries-and-their-certainty': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The boundaries were reviewed with their certainty attached. ' : 'The boundary and certainty review is missing. ')
+            + 'The optimism figure comes from a hospice cohort with a median survival of 24 days, so it transfers as a direction rather than a size; the scenario method was measured on 114 patients with a median survival of 11 months, on estimates only 29 percent of which fell within a third of observed survival. None of those figures is his.' },
+        'handoff-oncology-prognosis-question-what-he-took-from-it': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The question in his words, his belief about the treatment, the scenarios, and the stated direction all travelled. ' : 'Current findings, the recorded question, or continuing-care ownership remains incomplete. ')
+            + (bestCase ? 'What he repeated back was the best case alone, as though it were the answer. Nothing was misheard: a range without its shape collapses to the end of it a person can bear, and that is where the next conversation has to start. ' : '')
+            + (allThree ? 'What he repeated back was all three scenarios, and he added, unprompted, that he was told doctors tend to guess long. He has the shape of it. ' : '')
+            + (!bestCase && !allThree ? 'What he took from it was never heard back, so nothing here establishes that any of it landed. ' : '')
+            + 'No prognosis or outcome is certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-oncology-normal-test-toxicity-')) {
       if (!supportsNormalTestToxicity(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The oncology oral-anticancer-toxicity lesson was not active.' } satisfies ObjectiveFinding;

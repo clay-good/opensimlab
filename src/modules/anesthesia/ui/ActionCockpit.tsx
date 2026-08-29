@@ -79,12 +79,14 @@ import { LostContingencyTray } from '../../medical-surgical-nursing/LostContinge
 import { DelayedImmuneEventTray } from '../../oncology/DelayedImmuneEventTray';
 import { IncidentalClotTray } from '../../oncology/IncidentalClotTray';
 import { NormalTestToxicityTray } from '../../oncology/NormalTestToxicityTray';
+import { PrognosisQuestionTray } from '../../oncology/PrognosisQuestionTray';
 import { supportsLastKnownWell, type LastKnownWellAction, type LastKnownWellSnapshot } from '../../medical-surgical-nursing/last-known-well';
 import { supportsOxygenTargetScale, type OxygenTargetScaleAction, type OxygenTargetScaleSnapshot } from '../../medical-surgical-nursing/oxygen-target-scale';
 import { supportsLostContingency, type LostContingencyAction, type LostContingencySnapshot } from '../../medical-surgical-nursing/lost-contingency';
 import { supportsDelayedImmuneEvent, type DelayedImmuneEventAction, type DelayedImmuneEventSnapshot } from '../../oncology/delayed-immune-event';
 import { supportsIncidentalClot, type IncidentalClotAction, type IncidentalClotSnapshot } from '../../oncology/incidental-clot';
 import { supportsNormalTestToxicity, type NormalTestToxicityAction, type NormalTestToxicitySnapshot } from '../../oncology/normal-test-toxicity';
+import { supportsPrognosisQuestion, type PrognosisQuestionAction, type PrognosisQuestionSnapshot } from '../../oncology/prognosis-question';
 import { supportsProxyScale, type ProxyScaleAction, type ProxyScaleSnapshot } from '../../medical-surgical-nursing/proxy-scale';
 import { supportsQuietPatient, type QuietPatientAction, type QuietPatientSnapshot } from '../../medical-surgical-nursing/quiet-patient';
 import { supportsAfferentLimb, type AfferentLimbAction, type AfferentLimbSnapshot } from '../../medical-surgical-nursing/afferent-limb';
@@ -166,6 +168,7 @@ export interface ActionCockpitProps {
   readonly delayedImmuneEvent?: DelayedImmuneEventSnapshot;
   readonly incidentalClot?: IncidentalClotSnapshot;
   readonly normalTestToxicity?: NormalTestToxicitySnapshot;
+  readonly prognosisQuestion?: PrognosisQuestionSnapshot;
   readonly hypoglycemiaDemonstrating?: boolean;
   readonly scenario: Scenario;
   readonly region: RegionProfile;
@@ -2728,6 +2731,7 @@ export interface ActionCockpitProps {
   readonly onDelayedImmuneEventResponse?: (action: DelayedImmuneEventAction) => void;
   readonly onIncidentalClotResponse?: (action: IncidentalClotAction) => void;
   readonly onNormalTestToxicityResponse?: (action: NormalTestToxicityAction) => void;
+  readonly onPrognosisQuestionResponse?: (action: PrognosisQuestionAction) => void;
   readonly renalHyponatremiaGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
@@ -2758,6 +2762,7 @@ export interface ActionCockpitProps {
   readonly delayedImmuneEventDemonstrating?: boolean;
   readonly incidentalClotDemonstrating?: boolean;
   readonly normalTestToxicityDemonstrating?: boolean;
+  readonly prognosisQuestionDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -2966,6 +2971,7 @@ export function crisisResponseAvailability(
   const hasDelayedImmuneEventResponse = supportsDelayedImmuneEvent(scenario);
   const hasIncidentalClotResponse = supportsIncidentalClot(scenario);
   const hasNormalTestToxicityResponse = supportsNormalTestToxicity(scenario);
+  const hasPrognosisQuestionResponse = supportsPrognosisQuestion(scenario);
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -3538,7 +3544,7 @@ export function crisisResponseAvailability(
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
-    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse, hasToxicShockResponse, hasPossibleSepsisResponse, hasSepticShockLabelResponse, hasMeningitisImagingResponse, hasLowScoreResponse, hasCountedRateResponse, hasPairedReadingResponse, hasAfferentLimbResponse, hasQuietPatientResponse, hasProxyScaleResponse, hasLastKnownWellResponse, hasOxygenTargetScaleResponse, hasLostContingencyResponse, hasDelayedImmuneEventResponse, hasIncidentalClotResponse, hasNormalTestToxicityResponse,
+    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse, hasToxicShockResponse, hasPossibleSepsisResponse, hasSepticShockLabelResponse, hasMeningitisImagingResponse, hasLowScoreResponse, hasCountedRateResponse, hasPairedReadingResponse, hasAfferentLimbResponse, hasQuietPatientResponse, hasProxyScaleResponse, hasLastKnownWellResponse, hasOxygenTargetScaleResponse, hasLostContingencyResponse, hasDelayedImmuneEventResponse, hasIncidentalClotResponse, hasNormalTestToxicityResponse, hasPrognosisQuestionResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3929,7 +3935,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
-    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse, hasToxicShockResponse, hasPossibleSepsisResponse, hasSepticShockLabelResponse, hasMeningitisImagingResponse, hasLowScoreResponse, hasCountedRateResponse, hasPairedReadingResponse, hasAfferentLimbResponse, hasQuietPatientResponse, hasProxyScaleResponse, hasLastKnownWellResponse, hasOxygenTargetScaleResponse, hasLostContingencyResponse, hasDelayedImmuneEventResponse, hasIncidentalClotResponse, hasNormalTestToxicityResponse,
+    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse, hasToxicShockResponse, hasPossibleSepsisResponse, hasSepticShockLabelResponse, hasMeningitisImagingResponse, hasLowScoreResponse, hasCountedRateResponse, hasPairedReadingResponse, hasAfferentLimbResponse, hasQuietPatientResponse, hasProxyScaleResponse, hasLastKnownWellResponse, hasOxygenTargetScaleResponse, hasLostContingencyResponse, hasDelayedImmuneEventResponse, hasIncidentalClotResponse, hasNormalTestToxicityResponse, hasPrognosisQuestionResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -4125,8 +4131,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasDelayedImmuneEventResponse
     || hasIncidentalClotResponse
     || hasNormalTestToxicityResponse
+    || hasPrognosisQuestionResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasNormalTestToxicityResponse
+  const responseTray = hasPrognosisQuestionResponse
+    ? { id: 'crisis', label: 'Ask + answer + hand over' } as const
+    : hasNormalTestToxicityResponse
     ? { id: 'crisis', label: 'Stop + record + hand over' } as const
     : hasIncidentalClotResponse
     ? { id: 'crisis', label: 'Record + weigh + hand over' } as const
@@ -4692,6 +4701,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasDelayedImmuneEventResponse
     || hasIncidentalClotResponse
     || hasNormalTestToxicityResponse
+    || hasPrognosisQuestionResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -5739,6 +5749,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <ProxyScaleTray assessment={props.proxyScale}
                 demonstrating={props.proxyScaleDemonstrating}
                 onAction={props.onProxyScaleResponse ?? (() => {})} />
+            )}
+            {hasPrognosisQuestionResponse && (
+              <PrognosisQuestionTray assessment={props.prognosisQuestion}
+                demonstrating={props.prognosisQuestionDemonstrating}
+                onAction={props.onPrognosisQuestionResponse ?? (() => {})} />
             )}
             {hasNormalTestToxicityResponse && (
               <NormalTestToxicityTray assessment={props.normalTestToxicity}
