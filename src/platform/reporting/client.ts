@@ -106,7 +106,13 @@ export function renderTurnstile(
   });
 }
 
-export async function submitScenarioReport(payload: ScenarioReportRequest): Promise<void> {
+/**
+ * Resolves to whether the report reached the review queue. The service accepts a report and
+ * declines to queue it when a daily cap is spent or the same report was already filed, and a
+ * learner told "your report is in the weekly review queue" when no row exists has been lied to
+ * in the one moment the feature asks them to trust it.
+ */
+export async function submitScenarioReport(payload: ScenarioReportRequest): Promise<boolean> {
   const response = await fetch(REPORT_PATH, {
     method: 'POST',
     credentials: 'omit',
@@ -115,6 +121,13 @@ export async function submitScenarioReport(payload: ScenarioReportRequest): Prom
     signal: AbortSignal.timeout(REPORT_REQUEST_TIMEOUT_MS),
   });
   if (!response.ok) throw new Error('report not accepted');
+  // An older worker answers without the field. Treat that as queued rather than alarming a
+  // learner whose report was in fact stored.
+  try {
+    const body: unknown = await response.json();
+    if (body && typeof body === 'object' && 'queued' in body) return (body as { queued: unknown }).queued !== false;
+  } catch { /* A body we cannot read is not evidence that the report was dropped. */ }
+  return true;
 }
 
 export type { TurnstileApi };

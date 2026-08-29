@@ -261,10 +261,14 @@ async function storeReport(db, report, reporter, env, now = new Date()) {
     SELECT ?, 'accepted', ?, ?, 1 WHERE EXISTS (SELECT 1 FROM scenario_reports WHERE id = ?)
     ON CONFLICT (day, kind, scope, subject) DO UPDATE SET count = count + 1
   `).bind(day, scope, subject, id);
-  await db.batch([
+  const results = await db.batch([
     insert, incrementAccepted('global', 'all'), incrementAccepted('reporter', reporter),
     incrementAccepted('scenario', scenarioSubject),
   ]);
+  // The insert is INSERT OR IGNORE with a cap predicate, so it succeeds while writing nothing when
+  // a cap is spent or the dedupe key repeats. Report that back rather than letting the caller tell
+  // the learner their report is in the review queue when no row exists.
+  return (results?.[0]?.meta?.changes ?? 0) > 0;
 }
 
 /** Reserve one Siteverify call in a single D1 statement so concurrent requests cannot pass a stale check. */
@@ -335,13 +339,14 @@ async function handleReport(request, env) {
   try {
     reporter = await hexDigest('SHA-256', `${day}\0${reporterNetwork(remoteIp)}`, env.REPORT_HASH_SECRET);
     if (!await reserveVerificationAttempt(env.REPORTS_DB, day, reporter)) {
-      return json(202, { ok: true });
+      return json(202, { ok: true, queued: false });
     }
   } catch { return json(503, { ok: false }); }
   if (!await verifyTurnstile(validated.value, remoteIp, env)) return json(400, { ok: false });
-  try { await storeReport(env.REPORTS_DB, validated.value, reporter, env); }
+  let queued;
+  try { queued = await storeReport(env.REPORTS_DB, validated.value, reporter, env); }
   catch { return json(503, { ok: false }); }
-  return json(202, { ok: true });
+  return json(202, { ok: true, queued });
 }
 
 export async function handleRequest(request, env) {

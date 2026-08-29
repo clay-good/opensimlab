@@ -24,6 +24,14 @@ const serviceConfig = {
   privacy_url: 'https://opensimlab.com/privacy#problem-reports',
 };
 
+const typeNote = async (note: HTMLTextAreaElement, text: string) => {
+  const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')!.set!;
+  await act(async () => {
+    setter.call(note, text);
+    note.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+};
+
 function SourceReportHarness({ onSourceClose, onReportClose }: {
   onSourceClose: () => void; onReportClose: () => void;
 }) {
@@ -460,6 +468,60 @@ describe('shared problem report dialog', () => {
     expect(live()!.textContent).toContain('weekly review queue');
     // One region carries both outcomes, so there is exactly one place to listen.
     expect(container.querySelectorAll('[role="status"][aria-live="polite"]')).toHaveLength(1);
+  });
+
+  // The counter and the warning sit inside the label for layout. With only the implicit
+  // association the textarea's accessible name would be the label's whole text content, so it
+  // would change on every keystroke and again when the warning appeared.
+  it('keeps the note field’s accessible name fixed while the counter changes', async () => {
+    await act(async () => { root.render(<ScenarioProblemReport context={context} />); });
+    await act(async () => { (container.querySelector('button') as HTMLButtonElement).click(); await Promise.resolve(); });
+    const note = container.querySelector('textarea') as HTMLTextAreaElement;
+    expect(note.getAttribute('aria-labelledby')).toBe('problem-report-note-label');
+    const label = container.querySelector('#problem-report-note-label')!;
+    expect(label.textContent).toBe('A short note (optional)');
+    const before = label.textContent;
+    await typeNote(note, 'x'.repeat(30));
+    // The counter moved; the name did not.
+    expect(container.querySelector('.problem-report__count')!.textContent).toContain('30 / 160');
+    expect(container.querySelector('#problem-report-note-label')!.textContent).toBe(before);
+  });
+
+  it('announces the note limit once on approach and once on arrival', async () => {
+    await act(async () => { root.render(<ScenarioProblemReport context={context} />); });
+    await act(async () => { (container.querySelector('button') as HTMLButtonElement).click(); await Promise.resolve(); });
+    const note = container.querySelector('textarea') as HTMLTextAreaElement;
+    const announcement = () => container.querySelector('.visually-hidden[role="status"]')!.textContent;
+    expect(announcement()).toBe('');
+    const type = (length: number) => typeNote(note, 'x'.repeat(length));
+    await type(100);
+    expect(announcement()).toBe('');
+    await type(140);
+    expect(announcement()).toBe('20 characters remaining.');
+    await type(150);
+    // Silent between the two thresholds, so it does not speak over the typed text.
+    expect(announcement()).toBe('');
+    await type(160);
+    expect(announcement()).toContain('160 character limit');
+  });
+
+  it('does not claim a queue place the service did not give', async () => {
+    await act(async () => { root.render(<ScenarioProblemReport context={context} />); });
+    await act(async () => { (container.querySelector('button') as HTMLButtonElement).click(); await Promise.resolve(); });
+    const select = container.querySelector('select') as HTMLSelectElement;
+    await act(async () => {
+      select.value = 'clinical-content';
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    fetchMock.mockResolvedValueOnce(Response.json({ ok: true, queued: false }, { status: 202 }));
+    const send = [...container.querySelectorAll('button')].find((button) => button.textContent === 'Send report')!;
+    await act(async () => { send.click(); await Promise.resolve(); });
+    await act(async () => { await Promise.resolve(); });
+    const message = container.querySelector('[role="status"][aria-live="polite"]')!.textContent ?? '';
+    expect(message).not.toContain('is in the weekly review queue');
+    expect(message).toContain('did not join the queue');
+    // It must not read as the learner's fault, or as something to retry immediately.
+    expect(message).toContain('Nothing is wrong on your side');
   });
 
   it('does not narrate the character counter on every keystroke', async () => {

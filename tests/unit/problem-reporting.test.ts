@@ -1164,6 +1164,67 @@ describe('scenario report abuse and privacy hardening', () => {
     expect(reporterNetwork('198.51.100.4')).not.toBe(reporterNetwork('203.0.113.9'));
   });
 
+  // A cap or a repeat makes the INSERT OR IGNORE write nothing while the batch still succeeds.
+  // Answering "in the weekly review queue" there tells the learner something untrue in the one
+  // moment the feature asks them to trust it.
+  it('says whether the report actually reached the queue', async () => {
+    const send = async (changes: number) => {
+      const statement = {
+        bind: vi.fn(function bind() { return statement; }),
+        first: vi.fn(async () => ({ count: 1 })),
+      };
+      const database = {
+        prepare: vi.fn(() => statement),
+        batch: vi.fn(async () => [{ meta: { changes } }, {}, {}, {}]),
+      };
+      vi.stubGlobal('fetch', vi.fn(async () => Response.json({
+        success: true, action: 'scenario-report', hostname: 'opensimlab.com',
+      })));
+      const response = await handleRequest(new Request('https://opensimlab.com/api/reports', {
+        method: 'POST',
+        headers: {
+          Origin: 'https://opensimlab.com', 'Content-Type': 'application/json',
+          'CF-Connecting-IP': '2001:db8:1234:5678::9',
+        },
+        body: JSON.stringify(valid()),
+      }), {
+        REPORTING_ENABLED: 'true', REPORTS_DB: database, TURNSTILE_SITE_KEY: 'site-key',
+        TURNSTILE_SECRET_KEY: 'secret', REPORT_HASH_SECRET: 'h'.repeat(32),
+        REPORT_ALLOWED_ORIGIN: 'https://opensimlab.com',
+      });
+      expect(response.status).toBe(202);
+      return response.json();
+    };
+    expect(await send(1)).toEqual({ ok: true, queued: true });
+    expect(await send(0)).toEqual({ ok: true, queued: false });
+  });
+
+  it('does not claim a queue place when the verification budget is already spent', async () => {
+    const statement = {
+      bind: vi.fn(function bind() { return statement; }),
+      // No row returned means the reservation was refused.
+      first: vi.fn(async () => null),
+    };
+    const fetcher = vi.fn();
+    vi.stubGlobal('fetch', fetcher);
+    const response = await handleRequest(new Request('https://opensimlab.com/api/reports', {
+      method: 'POST',
+      headers: {
+        Origin: 'https://opensimlab.com', 'Content-Type': 'application/json',
+        'CF-Connecting-IP': '2001:db8:1234:5678::9',
+      },
+      body: JSON.stringify(valid()),
+    }), {
+      REPORTING_ENABLED: 'true', REPORTS_DB: { prepare: vi.fn(() => statement), batch: vi.fn() },
+      TURNSTILE_SITE_KEY: 'site-key', TURNSTILE_SECRET_KEY: 'secret',
+      REPORT_HASH_SECRET: 'h'.repeat(32), REPORT_ALLOWED_ORIGIN: 'https://opensimlab.com',
+    });
+    expect(response.status).toBe(202);
+    expect(await response.json()).toEqual({ ok: true, queued: false });
+    // And it still costs no Siteverify call.
+    expect(fetcher).not.toHaveBeenCalled();
+  });
+
   it('caps acceptance per scenario so one subject cannot spend the global budget', async () => {
     const sql: string[] = [];
     const bound: unknown[][] = [];

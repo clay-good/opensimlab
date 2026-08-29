@@ -474,7 +474,7 @@
       },
       {
         "path": "src/platform/reporting/ScenarioProblemReport.tsx",
-        "sha256": "071af75537d0789d2ee5bec4f896302c2fc68b7cda16f52396c22578d97c145f"
+        "sha256": "6cf994a8c7d0681c94f76e96e8349279b396d0e9c0ab58ddd6ac83782d64a2ef"
       },
       {
         "path": "src/platform/reporting/contracts.ts",

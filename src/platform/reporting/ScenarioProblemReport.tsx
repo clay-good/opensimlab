@@ -83,15 +83,23 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose }:
     onClose?.();
   };
 
+  const remainingNoteCharacters = REPORT_NOTE_LIMIT - note.length;
+  const noteAnnouncement = remainingNoteCharacters === 0
+    ? `No characters remaining. The note is at its ${REPORT_NOTE_LIMIT} character limit.`
+    : remainingNoteCharacters === 20 ? '20 characters remaining.' : '';
+
   const send = async () => {
     if (!token || !category || sending || noteMayContainRealPatientInformation(note)) return;
     setSending(true);
     setStatus('Sending report…');
     try {
-      await submitScenarioReport(buildScenarioReportRequest(context, category, note, token, recentContext));
+      const queued = await submitScenarioReport(
+        buildScenarioReportRequest(context, category, note, token, recentContext));
       setSending(false);
       setSent(true);
-      setStatus('Thanks. Your report is in the weekly review queue.');
+      setStatus(queued
+        ? 'Thanks. Your report is in the weekly review queue.'
+        : 'Thanks. This one did not join the queue, either because it matches a report already filed today or because the queue is full. Nothing is wrong on your side. If it still looks wrong tomorrow, please send it again.');
     } catch {
       setToken('');
       setSending(false);
@@ -149,7 +157,7 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose }:
               </select>
             </label>
             <label className="field" htmlFor="problem-report-note">
-              <span className="field__label">A short note (optional)</span>
+              <span className="field__label" id="problem-report-note-label">A short note (optional)</span>
               <textarea
                 id="problem-report-note"
                 className="field__input"
@@ -157,6 +165,11 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose }:
                 maxLength={REPORT_NOTE_LIMIT}
                 autoComplete="off"
                 spellCheck={false}
+                // The counter and the warning live inside this label for layout. Without an
+                // explicit labelledby the accessible name would be the label's whole text
+                // content, so it would change on every keystroke and again when the warning
+                // appeared — narrating the field's name instead of its value.
+                aria-labelledby="problem-report-note-label"
                 aria-describedby="problem-report-count"
                 value={note}
                 onChange={(event) => setNote(event.target.value.slice(0, REPORT_NOTE_LIMIT))}
@@ -170,6 +183,10 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose }:
                   This may describe a real patient or include contact information. Remove it before sending.
                 </span>
               )}
+              {/* Running out of room is silent otherwise: the textarea simply stops accepting
+                  characters. Announced once on the way down and once at the limit, rather than
+                  on every keystroke. */}
+              <span className="visually-hidden" role="status" aria-live="polite">{noteAnnouncement}</span>
             </label>
             {context.collectRecentContext && (
               <label className="problem-report__context-choice">
