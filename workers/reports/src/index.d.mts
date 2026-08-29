@@ -14,11 +14,17 @@ export function verifyTurnstile(
   fetcher?: typeof fetch,
 ): Promise<boolean>;
 export function reporterNetwork(remoteIp: string): string;
+export function reporterAllocation(remoteIp: string): string;
 
 export function reserveVerificationAttempt(
   db: unknown,
   day: string,
   reporter: string,
+  allocation: string,
 ): Promise<boolean>;
-export function cleanupReports(db: unknown, now?: Date): Promise<void>;
+export function cleanupReports(
+  db: unknown,
+  now?: Date,
+  env?: Record<string, unknown>,
+): Promise<void>;
 export function handleRequest(request: Request, env: Record<string, unknown>): Promise<Response>;

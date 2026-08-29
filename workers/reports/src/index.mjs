@@ -16,6 +16,11 @@ const MAX_CONTEXT_SNAPSHOT_FIELDS = 32;
 export const MAX_CONTEXT_JSON_LENGTH = 16_384;
 const VERIFIED_GLOBAL_LIMIT = 400;
 const VERIFIED_REPORTER_LIMIT = 5;
+// A /64 is one host's worth of addresses, but a routed /48 hands that host 65,536 of them. At five
+// verifications each, eighty /64s from one allocation would spend the whole day's global budget and
+// silence every real learner until midnight for the cost of 400 requests. Capping each allocation
+// well below the global budget means no single allocation can close the channel.
+const VERIFIED_ALLOCATION_LIMIT = 25;
 const ACCEPTED_GLOBAL_LIMIT = 200;
 const ACCEPTED_REPORTER_LIMIT = 3;
 const ACCEPTED_SCENARIO_LIMIT = 25;
@@ -63,6 +68,15 @@ function safeText(value, max, allowEmpty = true) {
  * addresses, so hashing the full address makes every per-reporter limit unbounded in practice.
  */
 export function reporterNetwork(remoteIp) {
+  return ipv6Prefix(remoteIp, 4);
+}
+
+/** The routed allocation a /64 sits inside, so one allocation cannot spend the global budget. */
+export function reporterAllocation(remoteIp) {
+  return ipv6Prefix(remoteIp, 3);
+}
+
+function ipv6Prefix(remoteIp, hextets) {
   if (typeof remoteIp !== 'string' || !remoteIp.includes(':')) return remoteIp;
   const [address] = remoteIp.split('%');
   const expanded = address.includes('::')
@@ -73,7 +87,7 @@ export function reporterNetwork(remoteIp) {
       return [...left, ...Array(Math.max(0, 8 - left.length - right.length)).fill('0'), ...right];
     })()
     : address.split(':');
-  return expanded.slice(0, 4).map((part) => part.toLowerCase().padStart(4, '0')).join(':');
+  return expanded.slice(0, hextets).map((part) => part.toLowerCase().padStart(4, '0')).join(':');
 }
 
 function noteMayContainRealPatientInformation(note) {
@@ -271,36 +285,57 @@ async function storeReport(db, report, reporter, env, now = new Date()) {
   return (results?.[0]?.meta?.changes ?? 0) > 0;
 }
 
-/** Reserve one Siteverify call in a single D1 statement so concurrent requests cannot pass a stale check. */
-export async function reserveVerificationAttempt(db, day, reporter) {
-  const row = await db.prepare(`
-    INSERT INTO report_counters (day, kind, scope, subject, count)
-    SELECT ?, 'verified', 'reporter', ?, 1
-    WHERE COALESCE((
-      SELECT SUM(count) FROM report_counters
-      WHERE day=? AND kind='verified' AND scope='reporter'
-    ), 0) < ?
-    ON CONFLICT (day, kind, scope, subject) DO UPDATE SET count = count + 1
-    WHERE report_counters.count < ?
-      AND COALESCE((
+/**
+ * Reserve one Siteverify call in a single D1 statement so concurrent requests cannot pass a stale
+ * check. The subject encodes the allocation ahead of the network, so the allocation's own budget is
+ * a prefix sum over the same rows and all three caps are enforced in the one atomic statement.
+ * Both halves are opaque hashes, so the prefix carries no address and matches no wildcard.
+ */
+export async function reserveVerificationAttempt(db, day, reporter, allocation) {
+  const withinBudgets = `
+      COALESCE((
         SELECT SUM(count) FROM report_counters
         WHERE day=? AND kind='verified' AND scope='reporter'
       ), 0) < ?
+      AND COALESCE((
+        SELECT SUM(count) FROM report_counters
+        WHERE day=? AND kind='verified' AND scope='reporter' AND subject LIKE ?
+      ), 0) < ?`;
+  const allocationRows = `${allocation}:%`;
+  const row = await db.prepare(`
+    INSERT INTO report_counters (day, kind, scope, subject, count)
+    SELECT ?, 'verified', 'reporter', ?, 1
+    WHERE ${withinBudgets}
+    ON CONFLICT (day, kind, scope, subject) DO UPDATE SET count = count + 1
+    WHERE report_counters.count < ?
+      AND ${withinBudgets}
     RETURNING count
   `).bind(
-    day, reporter, day, VERIFIED_GLOBAL_LIMIT,
-    VERIFIED_REPORTER_LIMIT, day, VERIFIED_GLOBAL_LIMIT,
+    day, `${allocation}:${reporter}`,
+    day, VERIFIED_GLOBAL_LIMIT, day, allocationRows, VERIFIED_ALLOCATION_LIMIT,
+    VERIFIED_REPORTER_LIMIT,
+    day, VERIFIED_GLOBAL_LIMIT, day, allocationRows, VERIFIED_ALLOCATION_LIMIT,
   ).first();
   return Number.isInteger(Number(row?.count)) && Number(row.count) > 0;
 }
 
 function cutoff(now, days) { return new Date(now.getTime() - days * 86400000).toISOString(); }
 
-export async function cleanupReports(db, now = new Date()) {
-  await db.batch([
-    db.prepare('DELETE FROM scenario_reports WHERE created_at < ?').bind(cutoff(now, REPORT_RETENTION_DAYS)),
+/**
+ * Counters are day-scoped operational state and are always swept. Reports are the evidence, and
+ * deleting them is only safe once something is reading them: the export workflow ships disabled,
+ * so an unconditional sweep would retire every report at thirty days having shown nobody. Retention
+ * therefore has to be switched on deliberately, alongside the export that justifies it.
+ */
+export async function cleanupReports(db, now = new Date(), env = {}) {
+  const statements = [
     db.prepare('DELETE FROM report_counters WHERE day < ?').bind(cutoff(now, COUNTER_RETENTION_DAYS).slice(0, 10)),
-  ]);
+  ];
+  if (env.REPORT_RETENTION_ENABLED === 'true') {
+    statements.unshift(db.prepare('DELETE FROM scenario_reports WHERE created_at < ?')
+      .bind(cutoff(now, REPORT_RETENTION_DAYS)));
+  }
+  await db.batch(statements);
 }
 
 async function handleConfig(request, env) {
@@ -338,7 +373,8 @@ async function handleReport(request, env) {
   let reporter;
   try {
     reporter = await hexDigest('SHA-256', `${day}\0${reporterNetwork(remoteIp)}`, env.REPORT_HASH_SECRET);
-    if (!await reserveVerificationAttempt(env.REPORTS_DB, day, reporter)) {
+    const allocation = await hexDigest('SHA-256', `${day}\0allocation\0${reporterAllocation(remoteIp)}`, env.REPORT_HASH_SECRET);
+    if (!await reserveVerificationAttempt(env.REPORTS_DB, day, reporter, allocation)) {
       return json(202, { ok: true, queued: false });
     }
   } catch { return json(503, { ok: false }); }
@@ -359,5 +395,8 @@ export async function handleRequest(request, env) {
 
 export default {
   fetch: handleRequest,
-  scheduled(_event, env, ctx) { ctx.waitUntil(cleanupReports(env.REPORTS_DB)); },
+  scheduled(_event, env, ctx) {
+    // A rejected sweep must not become an unhandled rejection that hides the next one.
+    ctx.waitUntil(cleanupReports(env.REPORTS_DB, new Date(), env).catch(() => {}));
+  },
 };

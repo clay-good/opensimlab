@@ -7,7 +7,8 @@ import {
   type ScenarioReportContext,
 } from '@platform/reporting/contracts';
 import {
-  handleRequest, reporterNetwork, reserveVerificationAttempt, validateReportPayload, verifyTurnstile,
+  cleanupReports, handleRequest, reporterAllocation, reporterNetwork, reserveVerificationAttempt,
+  validateReportPayload, verifyTurnstile,
 } from '../../workers/reports/src/index.mjs';
 import { availableModules } from '@platform/modules/registry';
 import { SCENARIOS } from '@anesthesia/scenarios';
@@ -1067,13 +1068,52 @@ describe('scenario report contract', () => {
       first,
     };
     const database = { prepare: vi.fn((_sql: string) => statement) };
-    await expect(reserveVerificationAttempt(database, '2026-08-26', 'reporter')).resolves.toBe(true);
-    await expect(reserveVerificationAttempt(database, '2026-08-26', 'reporter')).resolves.toBe(false);
+    await expect(reserveVerificationAttempt(database, '2026-08-26', 'reporter', 'alloc')).resolves.toBe(true);
+    await expect(reserveVerificationAttempt(database, '2026-08-26', 'reporter', 'alloc')).resolves.toBe(false);
     expect(database.prepare.mock.calls[0]?.[0]).toContain("kind='verified'");
     expect(database.prepare.mock.calls[0]?.[0]).toContain('SUM(count)');
+    // The subject leads with the allocation so its budget is a prefix sum over the same rows,
+    // which is what lets one statement enforce the reporter, allocation, and global caps together.
     expect(statement.bind).toHaveBeenCalledWith(
-      '2026-08-26', 'reporter', '2026-08-26', 400, 5, '2026-08-26', 400,
+      '2026-08-26', 'alloc:reporter',
+      '2026-08-26', 400, '2026-08-26', 'alloc:%', 25,
+      5,
+      '2026-08-26', 400, '2026-08-26', 'alloc:%', 25,
     );
+  });
+
+  // Eighty /64s out of one routed /48, five verifications each, would have spent the whole day's
+  // global budget and closed the channel for every real learner until midnight.
+  it('stops one routed allocation from spending the global verification budget', () => {
+    const network = (address: string) => reporterNetwork(address);
+    const allocation = (address: string) => reporterAllocation(address);
+    // Different /64s inside one /48 are separate reporters and one allocation.
+    expect(network('2001:db8:1234:0001::5')).not.toBe(network('2001:db8:1234:0002::5'));
+    expect(allocation('2001:db8:1234:0001::5')).toBe(allocation('2001:db8:1234:0002::5'));
+    // A different /48 is a different allocation, so honest neighbours are unaffected.
+    expect(allocation('2001:db8:9999:0001::5')).not.toBe(allocation('2001:db8:1234:0001::5'));
+    // The allocation is strictly coarser than the network it contains.
+    expect(network('2001:db8:1234:0001::5').startsWith(allocation('2001:db8:1234:0001::5'))).toBe(true);
+    // IPv4 has no prefix to collapse, so both dimensions stay the address.
+    expect(allocation('203.0.113.9')).toBe('203.0.113.9');
+    expect(network('203.0.113.9')).toBe('203.0.113.9');
+  });
+
+  it('sweeps counters always and reports only once retention is switched on', async () => {
+    const swept: string[] = [];
+    const statement = { bind: vi.fn(function bind() { return statement; }) };
+    const database = {
+      prepare: vi.fn((sql: string) => { swept.push(sql); return statement; }),
+      batch: vi.fn(async (statements: unknown[]) => statements.map(() => ({}))),
+    };
+    await cleanupReports(database, new Date('2026-08-26T00:00:00Z'), {});
+    expect(swept.join(' ')).toContain('DELETE FROM report_counters');
+    // The export that would have read them ships disabled, so nothing may retire them yet.
+    expect(swept.join(' ')).not.toContain('DELETE FROM scenario_reports');
+    swept.length = 0;
+    await cleanupReports(database, new Date('2026-08-26T00:00:00Z'), { REPORT_RETENTION_ENABLED: 'true' });
+    expect(swept.join(' ')).toContain('DELETE FROM scenario_reports');
+    expect(swept.join(' ')).toContain('DELETE FROM report_counters');
   });
 
   it('spends an attempt on a failed token and skips Siteverify after quota', async () => {

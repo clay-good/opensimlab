@@ -23,6 +23,8 @@ REPORT_PRIVACY_URL = "https://opensimlab.com/privacy#problem-reports"
 TURNSTILE_SITE_KEY = ""
 REPORT_DAILY_LIMIT = "200"
 REPORT_REPORTER_DAILY_LIMIT = "3"
+# Reports are deleted at thirty days only once the weekly export that reads them is running.
+REPORT_RETENTION_ENABLED = "false"
 
 [[d1_databases]]
 binding = "REPORTS_DB"
