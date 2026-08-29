@@ -49,6 +49,7 @@ import { supportsToxicShock } from '../../infectious-disease/toxic-shock';
 import { supportsPossibleSepsis } from '../../infectious-disease/possible-sepsis';
 import { supportsSepticShockLabel } from '../../infectious-disease/septic-shock-label';
 import { supportsMeningitisImaging } from '../../infectious-disease/meningitis-imaging';
+import { supportsLowScore } from '../../medical-surgical-nursing/low-score';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -622,6 +623,42 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-medical-surgical-nursing-low-score-')) {
+      if (!supportsLowScore(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The nursing early-warning-score lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^low-score-${id}-\\d+$`).test(entry.eventId));
+      const observations = event('observations-recorded'); const exclusions = event('exclusions-recorded');
+      const family = event('family-report-recorded'); const escalation = event('escalation-requested');
+      const boundaries = event('boundary-review'); const monitoring = event('monitoring');
+      const handoff = event('handoff');
+      // Only a reassessment after the review can have shown what the review found.
+      const reviewed = log.find((entry) => /^low-score-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedShortcut = event('recheck-refused') ?? event('fever-refused')
+        ?? event('qsofa-refused') ?? event('documentation-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'reconcile-medical-surgical-nursing-low-score-observations-that-are-correct': { met: !!observations, tick: observations?.tick,
+          finding: (observations ? 'The observations were recorded as measured, with the aggregate score of 2 calculated correctly. ' : 'The observations and the score as calculated were never recorded. ')
+            + 'Nothing in this scenario is a documentation failure, which is what makes the rest of it difficult to see.' },
+        'recognize-medical-surgical-nursing-low-score-a-screen-is-not-a-rule-out': { met: !!exclusions, tick: exclusions?.tick,
+          finding: (exclusions ? 'The record stated what the score does and does not support. ' : 'What the score does not exclude was never recorded. ')
+            + 'A reported sensitivity near 87 percent leaves roughly one in eight patients with sepsis and a positive blood culture below the escalation threshold, and the study authors state that a score below it cannot definitively rule out sepsis.' },
+        'activate-medical-surgical-nursing-low-score-escalate-on-concern-not-threshold': { met: !!escalation && !!monitoring, tick: escalation?.tick,
+          finding: (escalation && monitoring ? 'Review was requested on recorded concern rather than on a threshold, with increased observation arranged. ' : 'Escalation on concern or the increased observation it depends on remains incomplete. ')
+            + (refusedShortcut ? 'A recheck interval chosen by the score, a temperature-based exclusion, a substituted tool, or documentation without a call was attempted and refused; it remains in this run. ' : '')
+            + 'Escalating below the trigger is what the protocol itself provides for.' },
+        'review-medical-surgical-nursing-low-score-boundaries-and-their-certainty': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The boundaries were reviewed with their certainty attached. ' : 'The boundary and certainty review is missing. ')
+            + 'The score is a screen rather than a diagnostic test, roughly a third of older adults with serious infection are afebrile, and a rate-controlling medication blunts the tachycardia the score partly depends on.' },
+        'record-medical-surgical-nursing-low-score-a-family-report-as-evidence': { met: !!family && !!reviewed, tick: family?.tick,
+          finding: (family && reviewed ? 'The family report was recorded in the words it was given, and a later full assessment showed what the review found. ' : 'The family report or a full assessment after the review remains incomplete. ')
+            + 'The review confirmed treatment was warranted while the score at the time of the call was still 2.' },
+        'handoff-medical-surgical-nursing-low-score-a-concern-that-outlived-the-shift': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The observations with the score as calculated, what the score does not exclude, the family report, and the reason review was requested all travelled with the patient. ' : 'Current full findings or continuing-care ownership remains incomplete. ')
+            + 'A rising score, a fever, and a confirmed organism are not handoff gates, and no outcome is certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-infectious-disease-meningitis-imaging-')) {
       if (!supportsMeningitisImaging(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The infectious-disease meningitis imaging lesson was not active.' } satisfies ObjectiveFinding;

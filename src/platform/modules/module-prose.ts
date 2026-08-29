@@ -103,6 +103,14 @@ export const MODULE_PROSE: Readonly<Record<string, ModuleProse>> = {
     plannedScope: 'Ten bounded infectious-disease rehearsals spanning invasive bacterial sepsis, soft-tissue and '
       + 'central-nervous-system infection, neutropenic and device-associated risk, and escalation timing.',
   },
+  'medical-surgical-nursing': {
+    description: 'Practice recognition, escalation, and honest handoff on the ward, where the tools are imperfect and the deterioration is quiet.',
+    audience: 'Nursing students, newly registered nurses, and ward teams responsible for recognising and escalating change.',
+    prerequisites: 'Basic assessment, vital-sign interpretation, and familiarity with local escalation pathways.',
+    plannedScope:
+      'Nine bounded ward rehearsals spanning early-warning scores and what they do not exclude, measurement error '
+      + 'in the observations themselves, escalation that fails for social reasons, and handoff of unresolved concern.',
+  },
   'oncology': {
     description: 'Planned.',
     audience: 'Medical students and residents.',

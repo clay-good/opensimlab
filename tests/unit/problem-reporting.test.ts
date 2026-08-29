@@ -23,6 +23,7 @@ import { NEONATOLOGY_SCENARIOS } from '../../src/modules/neonatology/scenarios';
 import { ENDOCRINE_METABOLIC_SCENARIOS } from '../../src/modules/endocrine-metabolic/scenarios';
 import { RENAL_ELECTROLYTE_SCENARIOS } from '../../src/modules/renal-electrolyte/scenarios';
 import { INFECTIOUS_DISEASE_SCENARIOS } from '../../src/modules/infectious-disease/scenarios';
+import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../../src/modules/medical-surgical-nursing/scenarios';
 
 /**
  * The module list the report catalog is built from is hand-maintained in
@@ -39,6 +40,7 @@ const PLAYABLE_MODULES = [
   ['endocrine-metabolic', ENDOCRINE_METABOLIC_SCENARIOS],
   ['renal-electrolyte', RENAL_ELECTROLYTE_SCENARIOS],
   ['infectious-disease', INFECTIOUS_DISEASE_SCENARIOS],
+  ['medical-surgical-nursing', MEDICAL_SURGICAL_NURSING_SCENARIOS],
 ] as const;
 
 const context: ScenarioReportContext = {
@@ -165,9 +167,9 @@ describe('scenario report contract', () => {
     expect(catalog.evidenceAlgorithm).toBe('scenario-evidence-v1');
     // 229, not 228: septic shock carries records for both 0.1.0 and 0.1.1, so a report filed
     // against the published version still resolves after a content-version bump.
-    expect(catalog.scenarios).toHaveLength(229);
+    expect(catalog.scenarios).toHaveLength(230);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(229);
+      .toBe(230);
     for (const contentVersion of ['0.1.0', '0.1.1', '0.1.2']) {
       expect(catalog.scenarios).toContainEqual(expect.objectContaining({
         moduleId: 'endocrine-metabolic', scenarioId: 'adrenal-crisis-treatment-before-tests', contentVersion,

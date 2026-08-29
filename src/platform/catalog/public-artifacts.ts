@@ -17,6 +17,7 @@ export const PUBLIC_CATALOG_ARTIFACTS = [
   '/catalog/endocrine-metabolic-completion-audit.json',
   '/catalog/renal-electrolyte-completion-audit.json',
   '/catalog/infectious-disease-completion-audit.json',
+  '/catalog/medical-surgical-nursing-completion-audit.json',
   '/catalog/training-value.schema.json',
   '/catalog/authored-defaults.schema.json',
   '/catalog/scenario-hazard.schema.json',
@@ -34,6 +35,7 @@ export const PUBLIC_CATALOG_ARTIFACTS = [
   '/catalog/endocrine-metabolic-quality-audit.json',
   '/catalog/renal-electrolyte-quality-audit.json',
   '/catalog/infectious-disease-quality-audit.json',
+  '/catalog/medical-surgical-nursing-quality-audit.json',
   '/catalog/maturity-record.schema.json',
   '/catalog/anesthesia-maturity.json',
   '/catalog/emergency-medicine-maturity.json',
@@ -48,6 +50,7 @@ export const PUBLIC_CATALOG_ARTIFACTS = [
   '/catalog/endocrine-metabolic-maturity.json',
   '/catalog/renal-electrolyte-maturity.json',
   '/catalog/infectious-disease-maturity.json',
+  '/catalog/medical-surgical-nursing-maturity.json',
   '/catalog/asset-licenses.json',
   '/catalog/evidence-sources.json',
 ] as const;

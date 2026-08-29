@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: Meningitis imaging state has protocol version 188', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(188);
+  it('Scenario: Low early-warning score state has protocol version 189', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(189);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

@@ -5855,6 +5855,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'The mortality comparison is observational and confounding by indication is not excluded: sicker patients are imaged more often. What the evidence supports is that the disagreement is real, that the delay is measurable, and that one widely cited set is archived by its own issuing society with a 2004 data cutoff. Which set a unit adopts is a governance decision made above the bedside, and this scenario reports the disagreement rather than settling it.',
     briefIn: ['meningitis-imaging-a-rule-that-does-not-agree'],
   },
+  {
+    id: 'low-score-presentation-and-review-outcome-are-authored',
+    headline: 'One authored patient who turns out to be septic stands in for a distribution.',
+    simplification: 'The case supplies one fixed presentation, observations that never drift, and one authored review that confirms treatment was warranted. No infection, host-response, or treatment model runs underneath.',
+    whereItMisleads: 'A learner concludes that every low score conceals sepsis, and escalates on every one of them.',
+    correctUnderstanding: 'Most patients with a low score are not septic; that is why the score is useful. The reported sensitivity leaves roughly one in eight patients with sepsis below the threshold, which makes a low score weak evidence of absence rather than no evidence. The transferable move is escalating on a recorded, articulable concern, not treating the score as meaningless.',
+    briefIn: ['low-score-what-the-threshold-does-not-exclude'],
+  },
+  {
+    id: 'low-score-controls-are-recording-and-escalation-only',
+    headline: 'The learner records, escalates, and hands over; nothing else.',
+    simplification: 'The learner records the observations with the score as calculated, records what the score does not exclude, records the family report, requests review, reviews the boundaries, and arranges increased observation. No drug, dose, route, fluid, investigation, examination, or procedure exists.',
+    whereItMisleads: 'The scenario is read as saying the nurse should have diagnosed sepsis, or that the score should have been overridden with a different number.',
+    correctUnderstanding: 'Diagnosis, investigation, and treatment belong to the reviewing team. What is owned here is noticing, recording something for which the chart has no field, and making a call that the numbers do not compel. Reviews of missed escalation find that staff believed the situation was under control in about half of cases, so the failure is rarely one of knowledge.',
+    briefIn: ['low-score-what-the-threshold-does-not-exclude'],
+  },
+  {
+    id: 'low-score-sensitivity-figures-are-population-statistics',
+    headline: 'The sensitivity figure describes a cohort, not this patient.',
+    simplification: 'The case states a sensitivity near 87 percent for an aggregate score at the escalation threshold, drawn from a cohort of patients with bacteraemia.',
+    whereItMisleads: 'A learner treats one in eight as this patient\u2019s probability of sepsis, or assumes the figure transfers unchanged to a different population.',
+    correctUnderstanding: 'Sensitivity is a property of the instrument measured in a particular population, not a posterior probability for an individual. It also depends on the threshold chosen and on how sepsis was defined in that study. What it licenses is the negative claim the study authors themselves make: a score below the threshold cannot definitively rule sepsis out.',
+    briefIn: ['low-score-what-the-threshold-does-not-exclude'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

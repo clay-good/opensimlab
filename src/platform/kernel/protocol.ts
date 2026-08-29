@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 188 adds the authored meningitis imaging snapshot. */
-export const WORKER_PROTOCOL_VERSION = 188;
+/** Version 189 adds the authored early-warning-score snapshot. */
+export const WORKER_PROTOCOL_VERSION = 189;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -592,6 +592,46 @@ export interface MeningitisImagingSnapshot {
     readonly cerebrospinalFluidAvailable: boolean;
     readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
     readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
+}
+
+export interface LowScoreSnapshot {
+  readonly observationsRecordedAtTick: number | null;
+  readonly exclusionsRecordedAtTick: number | null;
+  readonly familyReportRecordedAtTick: number | null;
+  readonly escalationAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly aggregateScore: number;
+  readonly belowEscalationThreshold: boolean;
+  readonly familyConcernRaised: boolean;
+  readonly reviewArrived: boolean;
+  readonly reviewObserved: boolean;
+  readonly recheckAttempted: boolean;
+  readonly feverExclusionAttempted: boolean;
+  readonly qsofaAttempted: boolean;
+  readonly documentationOnlyAttempted: boolean;
+  readonly observationRecord: {
+    readonly atTick: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly systolicMmHg: number; readonly heartRateBpm: number;
+    readonly coreTemperatureC: number; readonly aggregateScore: number;
+  } | null;
+  readonly contextRecord: {
+    readonly atTick: number; readonly rateControlMedication: boolean;
+    readonly afebrileOlderAdult: boolean; readonly baselineDescription: string;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly systolicMmHg: number; readonly heartRateBpm: number; readonly coreTemperatureC: number;
+    readonly aggregateScore: number; readonly rateControlMedication: boolean;
+    readonly afebrileOlderAdult: boolean; readonly baselineDescription: string;
+    readonly alertness: string;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -3947,6 +3987,7 @@ export interface EquipmentSnapshot {
     readonly possibleSepsis?: PossibleSepsisSnapshot;
     readonly septicShockLabel?: SepticShockLabelSnapshot;
     readonly meningitisImaging?: MeningitisImagingSnapshot;
+    readonly lowScore?: LowScoreSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

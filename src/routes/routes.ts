@@ -21,6 +21,7 @@ import { NEONATOLOGY_SCENARIOS } from '../modules/neonatology/scenarios';
 import { ENDOCRINE_METABOLIC_SCENARIOS } from '../modules/endocrine-metabolic/scenarios';
 import { RENAL_ELECTROLYTE_SCENARIOS } from '../modules/renal-electrolyte/scenarios';
 import { INFECTIOUS_DISEASE_SCENARIOS } from '../modules/infectious-disease/scenarios';
+import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../modules/medical-surgical-nursing/scenarios';
 import type { Scenario } from '@anesthesia/scenarios/types';
 import { ROOT_ROUTE, formatTitle } from './site-metadata';
 import type { RouteMetadata } from './site-metadata';
@@ -288,6 +289,23 @@ export const ROUTES: readonly RouteMetadata[] = [
   },
   ...INFECTIOUS_DISEASE_SCENARIOS.map((scenario) => ({
     path: `/infectious-disease/scenario/${scenario.metadata.id}`,
+    title: formatTitle(scenario.metadata.title.length > 44
+      ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
+    description: scenarioDescription(scenario),
+    indexable: true,
+    structuredData: ['LearningResource'] as const,
+    heading: scenario.metadata.title,
+  })),
+  {
+    path: '/medical-surgical-nursing',
+    title: formatTitle('Nursing simulator'),
+    description: 'Practice ward recognition when the early-warning score stays low, escalation when the system resists, and handoff of a concern left unresolved.',
+    indexable: true,
+    structuredData: ['SoftwareApplication'],
+    heading: 'Nursing simulator',
+  },
+  ...MEDICAL_SURGICAL_NURSING_SCENARIOS.map((scenario) => ({
+    path: `/medical-surgical-nursing/scenario/${scenario.metadata.id}`,
     title: formatTitle(scenario.metadata.title.length > 44
       ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
     description: scenarioDescription(scenario),

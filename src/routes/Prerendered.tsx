@@ -62,6 +62,10 @@ import {
   INFECTIOUS_DISEASE_SCENARIOS, DEFAULT_INFECTIOUS_DISEASE_SCENARIO_ID,
   getInfectiousDiseaseScenario,
 } from '../modules/infectious-disease/scenarios';
+import {
+  MEDICAL_SURGICAL_NURSING_SCENARIOS, DEFAULT_MEDICAL_SURGICAL_NURSING_SCENARIO_ID,
+  getMedicalSurgicalNursingScenario,
+} from '../modules/medical-surgical-nursing/scenarios';
 import { moduleProse } from '@platform/modules/module-prose';
 import type { Scenario } from '@anesthesia/scenarios/types';
 
@@ -170,6 +174,15 @@ export function PrerenderedBody({ path }: { path: string }) {
     <ScenarioMarkup path={path} basePath="/infectious-disease"
       defaultScenarioId={DEFAULT_INFECTIOUS_DISEASE_SCENARIO_ID}
       getScenario={getInfectiousDiseaseScenario} />
+  );
+  if (path === '/medical-surgical-nursing') return (
+    <ModuleMarkup moduleId="medical-surgical-nursing" basePath="/medical-surgical-nursing"
+      heading="Nursing simulator" scenarios={MEDICAL_SURGICAL_NURSING_SCENARIOS} />
+  );
+  if (path.startsWith('/medical-surgical-nursing/scenario/')) return (
+    <ScenarioMarkup path={path} basePath="/medical-surgical-nursing"
+      defaultScenarioId={DEFAULT_MEDICAL_SURGICAL_NURSING_SCENARIO_ID}
+      getScenario={getMedicalSurgicalNursingScenario} />
   );
   if (path.startsWith('/neurology/scenario/')) return (
     <ScenarioMarkup path={path} basePath="/neurology"

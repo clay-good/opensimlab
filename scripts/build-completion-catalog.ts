@@ -21,6 +21,7 @@ import { NEONATOLOGY_SCENARIOS } from '../src/modules/neonatology/scenarios';
 import { ENDOCRINE_METABOLIC_SCENARIOS } from '../src/modules/endocrine-metabolic/scenarios';
 import { RENAL_ELECTROLYTE_SCENARIOS } from '../src/modules/renal-electrolyte/scenarios';
 import { INFECTIOUS_DISEASE_SCENARIOS } from '../src/modules/infectious-disease/scenarios';
+import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../src/modules/medical-surgical-nursing/scenarios';
 import { SCENARIO_COMPLETION_SCHEMA } from '@platform/catalog/scenario-completion';
 import { buildScenarioQualityCatalogs, QUALITY_SCHEMAS } from '@platform/catalog/scenario-quality';
 import { QUALITY_DEPENDENCY_RECEIPTS, QUALITY_RECORDS } from './quality-records';
@@ -84,6 +85,9 @@ const renalElectrolyteCompletion = buildModuleCompletionCatalog(
 const infectiousDiseaseCompletion = buildModuleCompletionCatalog(
   INFECTIOUS_DISEASE_SCENARIOS, ENGINE_VERSION, 'infectious-disease', 'emergency-department', 'state_transition',
 );
+const medicalSurgicalNursingCompletion = buildModuleCompletionCatalog(
+  MEDICAL_SURGICAL_NURSING_SCENARIOS, ENGINE_VERSION, 'medical-surgical-nursing', 'ward', 'state_transition',
+);
 
 const qualityCatalogs = buildScenarioQualityCatalogs([
   completion,
@@ -99,6 +103,7 @@ const qualityCatalogs = buildScenarioQualityCatalogs([
   endocrineMetabolicCompletion,
   renalElectrolyteCompletion,
   infectiousDiseaseCompletion,
+  medicalSurgicalNursingCompletion,
 ], QUALITY_RECORDS);
 assertQualityDependencies(QUALITY_RECORDS, QUALITY_DEPENDENCY_RECEIPTS, root);
 const quality = qualityCatalogs.get('anesthesia')!;
@@ -114,6 +119,7 @@ const neonatologyQuality = qualityCatalogs.get('neonatology')!;
 const endocrineMetabolicQuality = qualityCatalogs.get('endocrine-metabolic')!;
 const renalElectrolyteQuality = qualityCatalogs.get('renal-electrolyte')!;
 const infectiousDiseaseQuality = qualityCatalogs.get('infectious-disease')!;
+const medicalSurgicalNursingQuality = qualityCatalogs.get('medical-surgical-nursing')!;
 
 function stableJson(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(stableJson).join(',')}]`;
@@ -142,6 +148,7 @@ const authoredScenarios = [
   ['endocrine-metabolic', ENDOCRINE_METABOLIC_SCENARIOS],
   ['renal-electrolyte', RENAL_ELECTROLYTE_SCENARIOS],
   ['infectious-disease', INFECTIOUS_DISEASE_SCENARIOS],
+  ['medical-surgical-nursing', MEDICAL_SURGICAL_NURSING_SCENARIOS],
 ] as const;
 const authoredByKey = new Map<string, Scenario>(authoredScenarios.flatMap(([moduleId, scenarios]) => scenarios.map(
   (scenario) => [`${moduleId}:${scenario.metadata.id}@${scenario.metadata.version}`, scenario] as const,
@@ -150,7 +157,7 @@ const currentReportRecords = [
   completion, emergencyCompletion, criticalCareCompletion, cardiologyCompletion,
   respiratoryMedicineCompletion, pediatricsCompletion, neurologyCompletion, toxicologyCompletion,
   obstetricsCompletion, neonatologyCompletion, endocrineMetabolicCompletion, renalElectrolyteCompletion,
-  infectiousDiseaseCompletion,
+  infectiousDiseaseCompletion, medicalSurgicalNursingCompletion,
 ].flatMap((catalog) => catalog.scenarios).map((scenario) => {
   const key = `${scenario.moduleId}:${scenario.scenarioId}@${scenario.contentVersion}`;
   const authored = authoredByKey.get(key);
@@ -315,6 +322,10 @@ writeFileSync(join(target, 'infectious-disease-completion-audit.json'),
   `${JSON.stringify(infectiousDiseaseCompletion, null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'infectious-disease-quality-audit.json'),
   `${JSON.stringify(infectiousDiseaseQuality, null, 2)}\n`, 'utf8');
+writeFileSync(join(target, 'medical-surgical-nursing-completion-audit.json'),
+  `${JSON.stringify(medicalSurgicalNursingCompletion, null, 2)}\n`, 'utf8');
+writeFileSync(join(target, 'medical-surgical-nursing-quality-audit.json'),
+  `${JSON.stringify(medicalSurgicalNursingQuality, null, 2)}\n`, 'utf8');
 writeFileSync(
   join(target, 'maturity-record.schema.json'),
   `${JSON.stringify(MATURITY_RECORD_SCHEMA, null, 2)}\n`,
@@ -352,9 +363,11 @@ writeFileSync(join(target, 'renal-electrolyte-maturity.json'),
   `${JSON.stringify(buildMaturityCatalog(renalElectrolyteCompletion, renalElectrolyteQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'infectious-disease-maturity.json'),
   `${JSON.stringify(buildMaturityCatalog(infectiousDiseaseCompletion, infectiousDiseaseQuality), null, 2)}\n`, 'utf8');
+writeFileSync(join(target, 'medical-surgical-nursing-maturity.json'),
+  `${JSON.stringify(buildMaturityCatalog(medicalSurgicalNursingCompletion, medicalSurgicalNursingQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'asset-licenses.json'), `${JSON.stringify(ASSET_LICENSE_MANIFEST, null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'evidence-sources.json'), `${JSON.stringify(buildEvidenceSourceManifest(SOURCES), null, 2)}\n`, 'utf8');
 
 process.stdout.write(
-  `catalog: audited ${SCENARIOS.length} anesthesia, ${EMERGENCY_MEDICINE_SCENARIOS.length} emergency medicine, ${CRITICAL_CARE_SCENARIOS.length} critical care, ${CARDIOLOGY_SCENARIOS.length} cardiology, ${RESPIRATORY_MEDICINE_SCENARIOS.length} respiratory medicine, ${PEDIATRICS_SCENARIOS.length} pediatrics, ${NEUROLOGY_SCENARIOS.length} neurology, ${TOXICOLOGY_SCENARIOS.length} toxicology, ${OBSTETRICS_SCENARIOS.length} obstetrics, ${NEONATOLOGY_SCENARIOS.length} neonatology, ${ENDOCRINE_METABOLIC_SCENARIOS.length} endocrine/metabolic, ${RENAL_ELECTROLYTE_SCENARIOS.length} renal/electrolyte, and ${INFECTIOUS_DISEASE_SCENARIOS.length} infectious-disease scenarios\n`,
+  `catalog: audited ${SCENARIOS.length} anesthesia, ${EMERGENCY_MEDICINE_SCENARIOS.length} emergency medicine, ${CRITICAL_CARE_SCENARIOS.length} critical care, ${CARDIOLOGY_SCENARIOS.length} cardiology, ${RESPIRATORY_MEDICINE_SCENARIOS.length} respiratory medicine, ${PEDIATRICS_SCENARIOS.length} pediatrics, ${NEUROLOGY_SCENARIOS.length} neurology, ${TOXICOLOGY_SCENARIOS.length} toxicology, ${OBSTETRICS_SCENARIOS.length} obstetrics, ${NEONATOLOGY_SCENARIOS.length} neonatology, ${ENDOCRINE_METABOLIC_SCENARIOS.length} endocrine/metabolic, ${RENAL_ELECTROLYTE_SCENARIOS.length} renal/electrolyte, ${INFECTIOUS_DISEASE_SCENARIOS.length} infectious-disease, and ${MEDICAL_SURGICAL_NURSING_SCENARIOS.length} nursing scenarios\n`,
 );

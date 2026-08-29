@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -120,6 +120,7 @@ export function stateSummary(
     readonly possibleSepsis?: PossibleSepsisSnapshot;
     readonly septicShockLabel?: SepticShockLabelSnapshot;
     readonly meningitisImaging?: MeningitisImagingSnapshot;
+    readonly lowScore?: LowScoreSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -173,7 +174,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -198,6 +199,42 @@ export function stateSummary(
       }
     }
   }
+  if (options.lowScore) {
+    const patient = options.lowScore;
+    // The score is announced first and plainly, because the lesson is not that it is wrong.
+    lines.push(`Aggregate early-warning score ${patient.aggregateScore}, which is below the local escalation threshold and is calculated correctly.`);
+    lines.push('Supplied starting observations were respiratory rate 18 counted for a full minute, oxygen saturation 96 percent in air with no supplemental oxygen, blood pressure 118 over 68, heart rate 88 per minute, temperature 36.9 degrees Celsius, and alert. These remain historical starting observations.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push('Her daughter reports that she is not herself and cannot say more than that. There is no field for that on the chart.');
+    lines.push(patient.exclusionsRecordedAtTick === null
+      ? 'What the score does and does not exclude has not been recorded yet.'
+      : 'Recorded: in a cohort of patients with bacteraemia, a score at the escalation threshold had a sensitivity for sepsis of about 87 percent, so roughly one in eight patients with sepsis and a positive blood culture scored below it. The study authors state that a score below the threshold cannot definitively rule out sepsis.');
+    lines.push('This score is a screening instrument rather than a diagnostic test. Roughly a third of older adults with serious infection are not febrile, and a rate-controlling medication blunts the tachycardia the score partly depends on. No drug, dose, route, fluid, investigation, or procedure is selected here, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(`Observations recorded: ${patient.observationsRecordedAtTick === null ? 'not yet' : `at simulated ${formatElapsed(patient.observationsRecordedAtTick)}`}. Family report: ${patient.familyReportRecordedAtTick === null ? 'not yet recorded' : 'recorded in the words it was given'}. Escalation: ${patient.escalationAtTick === null ? 'not yet requested' : 'requested on recorded concern'}. Boundaries: ${patient.boundariesReviewedAtTick === null ? 'not reviewed' : 'reviewed'}. Increased observation: ${patient.monitoringAtTick === null ? 'not arranged' : 'arranged'}.`);
+    if (patient.familyConcernRaised) {
+      lines.push('The daughter has stated the concern again, more plainly. The observations and the score have not moved.');
+    }
+    lines.push(patient.observationRecord
+      ? `Last requested observations at simulated ${formatElapsed(patient.observationRecord.atTick)}: respiratory rate ${patient.observationRecord.respiratoryRateBpm} per minute; heart rate ${patient.observationRecord.heartRateBpm} per minute; temperature ${patient.observationRecord.coreTemperatureC.toFixed(1)} degrees Celsius; aggregate score ${patient.observationRecord.aggregateScore}.`
+      : 'No new observation-only check has been requested.');
+    lines.push(patient.contextRecord
+      ? `Last requested context at simulated ${formatElapsed(patient.contextRecord.atTick)}: ${patient.contextRecord.rateControlMedication ? 'a rate-controlling medication is charted' : 'no rate-controlling medication is charted'}; baseline ${patient.contextRecord.baselineDescription}.`
+      : 'No new context check has been requested.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: respiratory rate ${patient.observation.respiratoryRateBpm} per minute; heart rate ${patient.observation.heartRateBpm} per minute; aggregate score ${patient.observation.aggregateScore}.`
+      : 'No new full assessment has been requested.');
+    if (patient.reviewObserved) {
+      lines.push(`The review has happened. Cultures were taken and later grew an organism, and the qualified team recorded that treatment was warranted at the time of the call. The score at that moment was still ${patient.aggregateScore}.`);
+    }
+    if (patient.choiceFeedback) lines.push(patient.choiceFeedback);
+    if (patient.ended) {
+      lines.push(patient.ended === 'handoff'
+        ? 'Practice complete. The observations with the score as calculated, what the score does not exclude, the family report, and the reason review was requested all travel with the patient.'
+        : 'Instructor takeover ended this branch. The teaching stop predicts no patient outcome.');
+    }
+    return lines.join('\n');
+  }
+
   if (options.meningitisImaging) {
     const patient = options.meningitisImaging;
     // The recorded fact is announced before the countdown, so a passed ceiling never reads as

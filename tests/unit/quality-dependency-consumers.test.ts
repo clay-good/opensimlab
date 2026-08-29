@@ -76,7 +76,7 @@ describe('Committed quality dependency receipts guard the actual catalog and rel
     const covered = registry.QUALITY_DEPENDENCY_RECEIPTS.flatMap((receipt) => receipt.files.map(({ path }) => path));
     for (const path of dependencies) expect(covered).toContain(path);
     await consume('build');
-    expect([...harness.writes.keys()].filter((path) => path.endsWith('-quality-audit.json'))).toHaveLength(13);
+    expect([...harness.writes.keys()].filter((path) => path.endsWith('-quality-audit.json'))).toHaveLength(14);
     for (const [path, content] of harness.writes) {
       if (!path.endsWith('-quality-audit.json')) continue;
       const audit = JSON.parse(content) as { playableScenarioCount: number };

@@ -65,6 +65,7 @@ import { ToxicShock, supportsToxicShock } from '../infectious-disease/toxic-shoc
 import { PossibleSepsis, supportsPossibleSepsis } from '../infectious-disease/possible-sepsis';
 import { SepticShockLabel, supportsSepticShockLabel } from '../infectious-disease/septic-shock-label';
 import { MeningitisImaging, supportsMeningitisImaging } from '../infectious-disease/meningitis-imaging';
+import { LowScore, supportsLowScore } from '../medical-surgical-nursing/low-score';
 
 /** The engine's own version, recorded in every transcript. */
 export const ENGINE_VERSION = '0.1.0-alpha.48';
@@ -1756,6 +1757,7 @@ export class AnesthesiaEngine {
   private readonly possibleSepsis: PossibleSepsis | null;
   private readonly septicShockLabel: SepticShockLabel | null;
   private readonly meningitisImaging: MeningitisImaging | null;
+  private readonly lowScore: LowScore | null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1903,6 +1905,8 @@ export class AnesthesiaEngine {
     if (this.septicShockLabel) this.rhythm = 'sinus';
     this.meningitisImaging = supportsMeningitisImaging(options.scenario) ? new MeningitisImaging() : null;
     if (this.meningitisImaging) this.rhythm = 'sinus';
+    this.lowScore = supportsLowScore(options.scenario) ? new LowScore() : null;
+    if (this.lowScore) this.rhythm = 'sinus';
     this.practiceRegion = options.practiceRegion;
     this.seed = options.seed;
     if (options.scenario.timeline.some((event) => event.type === 'narrative'
@@ -2036,6 +2040,11 @@ export class AnesthesiaEngine {
       || typeof action.payload !== 'object' || Array.isArray(action.payload)) {
       this.log('warning', 'assessment', `malformed-action-refused-${this.currentTick}`,
         'That action was malformed and was safely ignored. Nothing changed.');
+      return;
+    }
+    if (this.lowScore && action.type !== 'low-score-response' && action.type !== 'silence-alarm') {
+      this.log('warning', 'assessment', `low-score-generic-action-refused-${this.currentTick}`,
+        'Only this lesson\u2019s observation-recording, exclusion-recording, family-report, escalation, boundary-review, observation, and handoff choices are available.');
       return;
     }
     if (this.meningitisImaging && action.type !== 'meningitis-imaging-response' && action.type !== 'silence-alarm') {
@@ -3055,6 +3064,19 @@ export class AnesthesiaEngine {
         }
         for (const event of this.possibleSepsis.apply(action.payload.action, this.currentTick)) {
           this.log('warning', 'assessment', `possible-sepsis-${event.id}-${this.currentTick}`, event.message);
+        }
+        break;
+      }
+      case 'low-score-response': {
+        if (!this.lowScore || Reflect.ownKeys(action.payload).length !== 1
+          || !Object.hasOwn(action.payload, 'action')
+          || !Object.getOwnPropertyDescriptor(action.payload, 'action')!.enumerable
+          || !Object.hasOwn(Object.getOwnPropertyDescriptor(action.payload, 'action')!, 'value')) {
+          this.log('warning', 'assessment', `low-score-action-refused-${this.currentTick}`, 'Only the declared dose-free early-warning-score choices are available in this lesson.');
+          break;
+        }
+        for (const event of this.lowScore.apply(action.payload.action, this.currentTick)) {
+          this.log('warning', 'assessment', `low-score-${event.id}-${this.currentTick}`, event.message);
         }
         break;
       }
@@ -14774,6 +14796,9 @@ export class AnesthesiaEngine {
 
   /** Advance exactly one tick. */
   step(): EngineTick {
+    for (const event of this.lowScore?.advance(this.currentTick) ?? []) {
+      this.log('warning', 'assessment', `low-score-${event.id}-${this.currentTick}`, event.message);
+    }
     for (const event of this.meningitisImaging?.advance(this.currentTick) ?? []) {
       this.log('warning', 'assessment', `meningitis-imaging-${event.id}-${this.currentTick}`, event.message);
     }
@@ -15660,6 +15685,13 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: this.endocrineDkaResolutionReassessmentAtTick !== null ? 16 : 18,
         spo2Percent: 98, systolicMmHg: 118, diastolicMmHg: 70, meanArterialMmHg: 86,
         coreTemperatureC: 36.9 };
+    }
+    if (this.lowScore) {
+      const patient = this.lowScore.vitals();
+      crisisState = { ...crisisState, heartRateBpm: patient.heartRateBpm,
+        respiratoryRateBpm: patient.respiratoryRateBpm, spo2Percent: patient.spo2Percent,
+        systolicMmHg: patient.systolicMmHg, diastolicMmHg: patient.diastolicMmHg,
+        meanArterialMmHg: patient.meanArterialMmHg, coreTemperatureC: patient.coreTemperatureC };
     }
     if (this.meningitisImaging) {
       const patient = this.meningitisImaging.vitals();
@@ -20553,6 +20585,7 @@ export class AnesthesiaEngine {
         ...(this.possibleSepsis ? { possibleSepsis: this.possibleSepsis.snapshot(this.currentTick) } : {}),
         ...(this.septicShockLabel ? { septicShockLabel: this.septicShockLabel.snapshot(this.currentTick) } : {}),
         ...(this.meningitisImaging ? { meningitisImaging: this.meningitisImaging.snapshot(this.currentTick) } : {}),
+        ...(this.lowScore ? { lowScore: this.lowScore.snapshot(this.currentTick) } : {}),
         ...(this.avpDeficiency ? { avpDeficiency: this.avpDeficiency.snapshot(this.currentTick) } : {}),
         ...(this.hyponatremiaCorrection ? { hyponatremiaCorrection: this.hyponatremiaCorrection.snapshot(this.currentTick) } : {}),
         aspirationRiskAssessment: {
@@ -20749,7 +20782,7 @@ export class AnesthesiaEngine {
   invalidParameters(): Set<string> {
     const invalid = new Set<string>();
     // These lessons do not supply a capnogram or a modeled oxygen setting.
-    if (this.myxedema || this.hypercalcemia || this.hypocalcemia || this.hyponatremiaCorrection || this.avpDeficiency || this.refeeding || this.perioperativeDiabetes || this.renalHyperkalemia || this.renalHypokalemia || this.renalHyponatremia || this.renalHypernatremia || this.renalHypocalcemia || this.renalHypermagnesemia || this.meningococcalSepsis || this.obstructedKidney || this.febrileNeutropenia || this.necrotizingInfection || this.endocarditisHeartFailure || this.severePneumonia || this.toxicShock || this.possibleSepsis || this.septicShockLabel || this.meningitisImaging) {
+    if (this.myxedema || this.hypercalcemia || this.hypocalcemia || this.hyponatremiaCorrection || this.avpDeficiency || this.refeeding || this.perioperativeDiabetes || this.renalHyperkalemia || this.renalHypokalemia || this.renalHyponatremia || this.renalHypernatremia || this.renalHypocalcemia || this.renalHypermagnesemia || this.meningococcalSepsis || this.obstructedKidney || this.febrileNeutropenia || this.necrotizingInfection || this.endocarditisHeartFailure || this.severePneumonia || this.toxicShock || this.possibleSepsis || this.septicShockLabel || this.meningitisImaging || this.lowScore) {
       invalid.add('etco2MmHg');
       invalid.add('fio2');
     }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 358,
+  "sourceCount": 360,
   "sources": [
     {
       "id": "renal-hypermagnesemia-series-2018",
@@ -4281,6 +4281,28 @@
       "verifiedAgainst": "https://www.idsociety.org/practice-guideline/bacterial-meningitis/",
       "verifiedOn": "2026-08-28",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/15494903/"
+    },
+    {
+      "id": "news2-sepsis-bacteraemia-accuracy-2025",
+      "authors": "Prytz M, et al",
+      "title": "Diagnostic accuracy of the National Early Warning Score 2 for sepsis among patients with bacteraemia",
+      "publication": "APMIS",
+      "year": 2025,
+      "locator": "133(12):e70129. Sensitivity of NEWS2 of 5 or more for sepsis 86.6% (95% CI 83.0-89.7), specificity 51.5%; approximately 13% of patients with sepsis and a positive blood culture scored below 5. The authors state that a NEWS2 below 5 cannot definitively rule out sepsis.",
+      "usedFor": "The central claim of this scenario: that a screening score below its escalation threshold is weak evidence of absence rather than a rule-out, stated in the words of the study that measured it.",
+      "verifiedAgainst": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12745187/",
+      "verifiedOn": "2026-08-28"
+    },
+    {
+      "id": "afferent-limb-failure-systematic-review-2019",
+      "authors": "Difonzo M",
+      "title": "Performance of the Afferent Limb of Rapid Response Systems in Managing Deteriorating Patients: A Systematic Review",
+      "publication": "Critical Care Research and Practice",
+      "year": 2019,
+      "locator": "2019:6902420. Afferent limb failure and delayed activation are common contributors to adverse events; staff believed the situation was under control in 51.8% of missed activations, and calling a physician rather than the rapid response team was the more frequent first action.",
+      "usedFor": "The refused shortcut of documenting a concern without acting on it, and the debrief statement that escalation failures are rarely failures of knowledge.",
+      "verifiedAgainst": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6874970/",
+      "verifiedOn": "2026-08-28"
     },
     {
       "id": "sepsis-3-consensus-definitions-2016",

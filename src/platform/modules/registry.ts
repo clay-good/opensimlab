@@ -116,6 +116,13 @@ export const MODULES: readonly ModuleDeclaration[] = [
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
+    id: 'medical-surgical-nursing',
+    route: 'medical-surgical-nursing',
+    displayName: 'Nursing',
+    status: 'available',
+    timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
+  },
+  {
     id: 'oncology',
     route: 'oncology',
     displayName: 'Oncology',

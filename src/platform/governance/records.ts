@@ -23,6 +23,7 @@ import { NEONATOLOGY_SCENARIOS } from '../../modules/neonatology/scenarios';
 import { ENDOCRINE_METABOLIC_SCENARIOS } from '../../modules/endocrine-metabolic/scenarios';
 import { RENAL_ELECTROLYTE_SCENARIOS } from '../../modules/renal-electrolyte/scenarios';
 import { INFECTIOUS_DISEASE_SCENARIOS } from '../../modules/infectious-disease/scenarios';
+import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../../modules/medical-surgical-nursing/scenarios';
 import type { MaturitySubjectInput } from '@platform/catalog/maturity';
 
 /**
@@ -127,6 +128,11 @@ export function reviewableItems(): ReviewableItem[] {
     items.push({ id: scenario.metadata.id, kind: 'scenario',
       contentVersion: scenario.metadata.version, review: scenario.metadata.clinicalReview,
       domains: ['infectious-disease'] });
+  }
+  for (const scenario of MEDICAL_SURGICAL_NURSING_SCENARIOS) {
+    items.push({ id: scenario.metadata.id, kind: 'scenario',
+      contentVersion: scenario.metadata.version, review: scenario.metadata.clinicalReview,
+      domains: ['medical-surgical-nursing'] });
   }
 
   for (const explainer of EXPLAINERS) {

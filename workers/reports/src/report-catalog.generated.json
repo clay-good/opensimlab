@@ -2315,6 +2315,23 @@
       "limitationManifestHash": "sha256:dd60b358c4e8bbd94b6f2e55f0433aacf74e54851f67bdcdcc282ce27a12fc06"
     },
     {
+      "scenarioId": "low-score-what-the-threshold-does-not-exclude",
+      "contentVersion": "0.1.0",
+      "moduleId": "medical-surgical-nursing",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:06dfab9c9d80a9861e5e93d4c8580d7a50abe3e456a9b56beb6bb548f0f5ad8d",
+      "defaultsHash": "sha256:3341e43b6fd4a8acdb15cb66a9df1e6e0c2e35dffc402f99608c11499d438d1e",
+      "maturityHash": "sha256:0814712d584955e9ad24769d7c5b0aae6eb7cfbc687b6be7e2e99750c2438f82",
+      "sourceManifestHash": "sha256:5f96f7bcac5e7272aa0acf4119d92fbb23fe2b4dfa07630a09b246aca5d09850",
+      "limitationManifestHash": "sha256:9ca94fa65fbd5a993d289ee1d734893fec74a76f56c4d939ad637e7d5725085b"
+    },
+    {
       "scenarioId": "delivery-room-to-nicu-handoff",
       "contentVersion": "0.1.0",
       "moduleId": "neonatology",

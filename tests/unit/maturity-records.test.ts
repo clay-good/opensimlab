@@ -18,6 +18,7 @@ import { NEONATOLOGY_SCENARIOS } from '../../src/modules/neonatology/scenarios';
 import { ENDOCRINE_METABOLIC_SCENARIOS } from '../../src/modules/endocrine-metabolic/scenarios';
 import { RENAL_ELECTROLYTE_SCENARIOS } from '../../src/modules/renal-electrolyte/scenarios';
 import { INFECTIOUS_DISEASE_SCENARIOS } from '../../src/modules/infectious-disease/scenarios';
+import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../../src/modules/medical-surgical-nursing/scenarios';
 import { buildScenarioQualityCatalog } from '@platform/catalog/scenario-quality';
 import {
   buildMaturityCatalog, MATURITY_RECORD_SCHEMA, MATURITY_STATUSES,
@@ -102,6 +103,12 @@ const infectiousDiseaseCatalog = buildMaturityCatalog(
 const renalElectrolyteCatalog = buildMaturityCatalog(
   renalElectrolyteCompletion, buildScenarioQualityCatalog(renalElectrolyteCompletion),
 );
+const medicalSurgicalNursingCompletion = buildModuleCompletionCatalog(
+  MEDICAL_SURGICAL_NURSING_SCENARIOS, ENGINE_VERSION, 'medical-surgical-nursing', 'ward', 'state_transition',
+);
+const medicalSurgicalNursingCatalog = buildMaturityCatalog(
+  medicalSurgicalNursingCompletion, buildScenarioQualityCatalog(medicalSurgicalNursingCompletion),
+);
 
 describe('exact-version maturity records', () => {
   it('supports the complete public vocabulary and records every clinical item honestly', () => {
@@ -114,7 +121,8 @@ describe('exact-version maturity records', () => {
       + cardiologyCatalog.recordCount + respiratoryMedicineCatalog.recordCount
       + pediatricsCatalog.recordCount + neurologyCatalog.recordCount + toxicologyCatalog.recordCount
       + obstetricsCatalog.recordCount + neonatologyCatalog.recordCount + endocrineMetabolicCatalog.recordCount
-      + renalElectrolyteCatalog.recordCount + infectiousDiseaseCatalog.recordCount)
+      + renalElectrolyteCatalog.recordCount + infectiousDiseaseCatalog.recordCount
+      + medicalSurgicalNursingCatalog.recordCount)
       .toBe(reviewableItems().length);
     expect(catalog.recordCount).toBe(54);
     expect(catalog.records.filter((record) => record.subjectKind === 'scenario')
