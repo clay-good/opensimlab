@@ -226,7 +226,11 @@ async function storeReport(db, report, reporter, env, now = new Date()) {
   const createdAt = now.toISOString();
   const day = createdAt.slice(0, 10);
   const id = crypto.randomUUID();
-  const dedupe = await hexDigest('SHA-256', `${day}\0${JSON.stringify({ ...report, turnstileToken: undefined })}`);
+  // The reporter belongs in this key. Without it, two people filing the same category on the same
+  // scenario, surface, and tick with no note collide, and the second is dropped by the UNIQUE
+  // constraint — which is exactly the corroboration a triage queue exists to count, and it is
+  // near-certain for prebrief reports, where tick is 0 and the note is usually empty.
+  const dedupe = await hexDigest('SHA-256', `${day}\0${reporter}\0${JSON.stringify({ ...report, turnstileToken: undefined })}`);
   const acceptedGlobal = configuredLimit(env.REPORT_DAILY_LIMIT, ACCEPTED_GLOBAL_LIMIT, ACCEPTED_GLOBAL_LIMIT);
   const acceptedReporter = configuredLimit(env.REPORT_REPORTER_DAILY_LIMIT, ACCEPTED_REPORTER_LIMIT, ACCEPTED_REPORTER_LIMIT);
   // One noisy subject must not be able to spend the whole day's global budget and silence every
