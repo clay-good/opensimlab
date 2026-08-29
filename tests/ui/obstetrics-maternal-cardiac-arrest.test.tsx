@@ -7,6 +7,7 @@ import { Prebrief } from '@anesthesia/ui/Prebrief';
 import { monitorUnavailableParameters } from '@anesthesia/ui/Cockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { MATERNAL_CARDIAC_ARREST_COORDINATED_RESPONSE as SCENARIO } from '../../src/modules/obstetrics/scenarios/maternal-cardiac-arrest-coordinated-response';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 const markup = (assessment: NonNullable<ActionCockpitProps['resuscitation']['obstetricsMaternalArrestAssessment']>) => renderToStaticMarkup(createElement(ActionCockpit, {
   scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
@@ -19,7 +20,7 @@ describe('Obstetrics maternal cardiac-arrest experience', () => {
     const index = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/obstetrics' }));
     expect(index).toContain('href="/obstetrics/scenario/maternal-cardiac-arrest-coordinated-response"'); expect(index).toContain('Maternal cardiac arrest: coordinated care');
     const route = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/obstetrics/scenario/maternal-cardiac-arrest-coordinated-response' })); expect(route).toContain('<h1>Maternal cardiac arrest: coordinated care</h1>');
-    const prebrief = renderToStaticMarkup(createElement(Prebrief, { scenario: SCENARIO, region: UNITED_STATES, environment: 'obstetrics', onStart: () => {}, guidance: 'coached', onGuidance: () => {} }));
+    const prebrief = renderToStaticMarkup(createElement(Prebrief, { limitations: LIMITATIONS, scenario: SCENARIO, region: UNITED_STATES, environment: 'obstetrics', onStart: () => {}, guidance: 'coached', onGuidance: () => {} }));
     expect(prebrief).toContain('without a central pulse or obtainable blood pressure');
     expect(prebrief).not.toContain('mean arterial pressure 40 mmHg');
   });

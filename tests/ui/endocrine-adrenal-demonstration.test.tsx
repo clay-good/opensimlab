@@ -10,6 +10,7 @@ import type { AdrenalCrisisSnapshot, LearnerAction } from '@platform/kernel/prot
 import { ADRENAL_CRISIS_TREATMENT_BEFORE_TESTS as SCENARIO } from '../../src/modules/endocrine-metabolic/scenarios/adrenal-crisis-treatment-before-tests';
 import { AdrenalCrisisTray } from '../../src/modules/endocrine-metabolic/AdrenalCrisisTray';
 import { useAdrenalDemonstration } from '../../src/modules/endocrine-metabolic/demo/useAdrenalDemonstration';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 function Harness(props: { active: boolean; running: boolean; patient?: AdrenalCrisisSnapshot;
   onAction: (action: Omit<LearnerAction, 'tick'>) => void; onFinish: () => void; onTake: () => void;
@@ -66,7 +67,7 @@ describe('Adrenal crisis worked-example controls', () => {
   });
   it('offers the exact optional worked example at 60× speed from the briefing', () => {
     const watch = vi.fn();
-    act(() => root.render(<Prebrief scenario={SCENARIO} region={UNITED_STATES} environment="endocrine-metabolic"
+    act(() => root.render(<Prebrief scenario={SCENARIO} limitations={LIMITATIONS} region={UNITED_STATES} environment="endocrine-metabolic"
       guidance="coached" onGuidance={() => {}} onStart={() => {}} onWatch={watch} />));
     const button = [...container.querySelectorAll('button')].find((entry) => entry.textContent === 'Watch a worked example')!;
     expect(SCENARIO.metadata.version).toBe('0.1.2');

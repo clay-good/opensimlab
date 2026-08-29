@@ -6,9 +6,11 @@
  */
 import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRoute';
 import { CRITICAL_CARE_SCENARIOS, DEFAULT_CRITICAL_CARE_SCENARIO_ID, getCriticalCareScenario } from '../../modules/critical-care/scenarios';
+import { CRITICAL_CARE_LIMITATIONS } from '@platform/docs/limitations/critical-care';
 
 const CRITICAL_CARE_CONFIG: ClinicalModuleConfig = {
   id: 'critical-care', basePath: '/critical-care', heading: 'Critical care simulator',
+  limitations: CRITICAL_CARE_LIMITATIONS,
   catalogIntroduction: 'Quiet ICU rehearsals for the decisions that change organ support. Read the trend, make one purposeful change, then reassess what actually moved.',
   catalogStatus: 'Twenty-four bounded critical care labs are playable.',
   scenarios: CRITICAL_CARE_SCENARIOS, defaultScenarioId: DEFAULT_CRITICAL_CARE_SCENARIO_ID,

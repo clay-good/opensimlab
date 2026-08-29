@@ -6,9 +6,11 @@
  */
 import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRoute';
 import { DEFAULT_TOXICOLOGY_SCENARIO_ID, TOXICOLOGY_SCENARIOS, getToxicologyScenario } from '../../modules/toxicology/scenarios';
+import { TOXICOLOGY_LIMITATIONS } from '@platform/docs/limitations/toxicology';
 
 const TOXICOLOGY_CONFIG: ClinicalModuleConfig = {
   id: 'toxicology', basePath: '/toxicology', heading: 'Toxicology simulator',
+  limitations: TOXICOLOGY_LIMITATIONS,
   catalogIntroduction: 'Calm poisoning rehearsals for finding the dangerous pattern without losing the whole patient. Support first, keep antidote hazards visible, and make reassessment count.',
   catalogStatus: `${TOXICOLOGY_SCENARIOS.length} of 15 bounded Toxicology labs is playable.`,
   scenarios: TOXICOLOGY_SCENARIOS, defaultScenarioId: DEFAULT_TOXICOLOGY_SCENARIO_ID,

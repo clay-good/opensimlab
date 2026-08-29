@@ -129,12 +129,18 @@ import {
   REPORT_CONTEXT_ACTION_LIMIT, REPORT_CONTEXT_SNAPSHOT_LIMIT,
   type ReportContextScalar, type ReportSurface, type ScenarioReportRecentContext,
 } from '@platform/reporting/contracts';
+import type { Limitation } from '@platform/docs/limitations/types';
 import { SITE_ORIGIN } from './site-metadata';
 
 export interface ClinicalModuleConfig {
   readonly id: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics' | 'neonatology' | 'endocrine-metabolic' | 'renal-electrolyte' | 'infectious-disease' | 'medical-surgical-nursing' | 'oncology';
   readonly basePath: '/anesthesia' | '/emergency-medicine' | '/critical-care' | '/cardiology' | '/respiratory-medicine' | '/pediatrics' | '/neurology' | '/toxicology' | '/obstetrics' | '/neonatology' | '/endocrine-metabolic' | '/renal-electrolyte' | '/infectious-disease' | '/medical-surgical-nursing' | '/oncology';
   readonly heading: string;
+  /**
+   * This module's limitations. Carried on the config so the shared prebrief can name them without
+   * every module's chunk importing all fifteen modules' entries.
+   */
+  readonly limitations: readonly Limitation[];
   readonly catalogIntroduction: string;
   readonly catalogStatus: string;
   readonly scenarios: readonly Scenario[];
@@ -947,6 +953,7 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
         <Prebrief
           scenario={scenario}
           region={region}
+          limitations={config.limitations}
           environment={config.id}
           guidance={session.guidance}
           onGuidance={session.setGuidance}

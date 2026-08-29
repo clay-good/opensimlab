@@ -970,7 +970,7 @@
                   "https://doi.org/10.1530/EC-16-0056a",
                   "https://doi.org/10.1530/EC-16-0056",
                   "src/modules/endocrine-metabolic/scenarios/hypocalcemic-tetany-rescue-and-recurrence.ts#hypocalcemia-boundary",
-                  "src/platform/docs/limitations.ts#hypocalcemia-qualified-care-and-cause-limits",
+                  "src/platform/docs/limitations/endocrine-metabolic.ts#hypocalcemia-qualified-care-and-cause-limits",
                   "src/modules/endocrine-metabolic/hypocalcemia.ts: rescue includes qualified monitoring but selects no prescription."
                 ]
               },
@@ -980,7 +980,7 @@
                 "disposition": "limited",
                 "evidence": [
                   "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md#fictional-defaults-and-clocks",
-                  "src/platform/docs/limitations.ts#hypocalcemia-authored-response-and-recurrence",
+                  "src/platform/docs/limitations/endocrine-metabolic.ts#hypocalcemia-authored-response-and-recurrence",
                   "tests/integration/hypocalcemia-runs.test.ts: automatic checkpoints do not refresh stored calcium.",
                   "src/modules/endocrine-metabolic/HypocalcemiaTray.tsx: QTc is explicitly supplied, never calculated."
                 ]
@@ -994,7 +994,7 @@
                   "https://doi.org/10.1093/ejendo/lvaf222",
                   "https://doi.org/10.1111/anae.15585",
                   "src/modules/endocrine-metabolic/scenarios/hypocalcemic-tetany-rescue-and-recurrence.ts#hypocalcemia-risk",
-                  "src/platform/docs/limitations.ts#hypocalcemia-postoperative-airway-and-handoff",
+                  "src/platform/docs/limitations/endocrine-metabolic.ts#hypocalcemia-postoperative-airway-and-handoff",
                   "src/modules/endocrine-metabolic/hypocalcemia.ts: risk review retains postoperative airway/surgical escalation."
                 ]
               },

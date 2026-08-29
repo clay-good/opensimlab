@@ -9,6 +9,7 @@ import { SevereHypoglycemiaTray } from '../../src/modules/endocrine-metabolic/Se
 import { SevereHypoglycemia } from '../../src/modules/endocrine-metabolic/severe-hypoglycemia';
 import { HYPOGLYCEMIA_FIXTURES } from '../../src/modules/endocrine-metabolic/severe-hypoglycemia-fixtures';
 import { SEVERE_HYPOGLYCEMIA_RECURRENCE as SCENARIO } from '../../src/modules/endocrine-metabolic/scenarios/severe-hypoglycemia-recurrence';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 const markup = (model: SevereHypoglycemia, tick: number) => renderToStaticMarkup(createElement(SevereHypoglycemiaTray, { assessment: model.snapshot(tick), onAction: () => {} }));
 
@@ -17,7 +18,7 @@ describe('Severe hypoglycemia experience', () => {
     const html = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/endocrine-metabolic/scenario/severe-hypoglycemia-recurrence' }));
     expect(html).toContain('<h1>Severe hypoglycemia: rescue is not the end</h1>');
     expect(html).not.toContain('ASA 4');
-    const briefing = renderToStaticMarkup(createElement(Prebrief, { scenario: SCENARIO, region: UNITED_STATES, environment: 'endocrine-metabolic', guidance: 'coached', onGuidance: () => {}, onStart: () => {} }));
+    const briefing = renderToStaticMarkup(createElement(Prebrief, { limitations: LIMITATIONS, scenario: SCENARIO, region: UNITED_STATES, environment: 'endocrine-metabolic', guidance: 'coached', onGuidance: () => {}, onStart: () => {} }));
     expect(briefing).not.toContain('prompts are not yet available');
     expect(briefing).toContain('Guided — prompt me');
     expect(crisisResponseAvailability(SCENARIO).hasSevereHypoglycemiaResponse).toBe(true);

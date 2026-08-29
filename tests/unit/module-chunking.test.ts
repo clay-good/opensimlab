@@ -70,15 +70,16 @@ describe('Requirement: One Module Downloads One Catalogue', () => {
     // the three tests above prove the seam still holds: each module has its own chunk, pulls at
     // least one exclusive asset, and cannot see another module's scenario prose.
     //
-    // This number is a headroom guard, not the seam. It was 1100 and the graph reached 1104.3 when
-    // the ninth nursing lesson landed, so it is raised here to 1150 with the measurement recorded
-    // rather than adjusted quietly. What actually grew is shared, not per-module: the largest
-    // assets in this graph are practice-history at 352.7 KB gz, AnesthesiaRoute at 255.4, the
-    // limitations register at 133.0 (626 KB raw) and the source register at 83.5 (272 KB raw).
-    // Both registers are single flat arrays covering all 238 scenarios, and every module ships
-    // both entire in order to call limitationsFor(id) and requireSource(id) for one scenario.
-    // Splitting those per module is the durable fix and is worth more than this margin; raising
-    // this number a second time instead of doing it would be the wrong instinct.
-    expect(gzipBytes(anesthesia) / 1024).toBeLessThan(1150);
+    // This number is a headroom guard, not the seam. It was raised from 1100 to 1150 when the
+    // ninth nursing lesson pushed the graph to 1104.3, with a note that splitting the shared
+    // registers per module was the durable fix and that raising it again would be the wrong
+    // instinct. The limitations register is now split: one file per module, assembled into the
+    // whole register only for the limitations page and the reviewer index. The graph fell to
+    // 1025.0 KB gz, so the guard comes back down to 1075 rather than staying loose.
+    //
+    // The source register has not been split and is the remaining shared weight in this graph,
+    // at 83.5 KB gz for 272 KB raw, carried by every module so that one anesthesia drug card can
+    // call requireSource(id). That is the next one to do.
+    expect(gzipBytes(anesthesia) / 1024).toBeLessThan(1075);
   });
 });

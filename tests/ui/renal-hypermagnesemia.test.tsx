@@ -17,6 +17,7 @@ import { renalHypermagnesemiaInlinePrompt, RENAL_HYPERMAGNESEMIA_SOURCE_HREF } f
 import { renalHypermagnesemiaDemonstrationStep, supportsRenalHypermagnesemiaDemonstration,
   RENAL_HYPERMAGNESEMIA_DEMONSTRATION_VERSION } from '../../src/modules/renal-electrolyte/demo/renal-hypermagnesemia-demonstration';
 import { useRenalHypermagnesemiaDemonstration } from '../../src/modules/renal-electrolyte/demo/useRenalHypermagnesemiaDemonstration';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 const labels: Record<RenalHypermagnesemiaAction, string> = {
   'support-breathing': 'Start qualified breathing support', calcium: 'Request qualified calcium antagonism',
@@ -59,7 +60,7 @@ describe('Renal hypermagnesemia symptoms, sodium, and separate observations', ()
   }
   it('offers twelve reading-paused decisions with clinically reviewed repeat antagonism', () => {
     const watch = vi.fn();
-    act(() => root.render(<Prebrief scenario={SCENARIO} region={UNITED_STATES} environment="renal-electrolyte"
+    act(() => root.render(<Prebrief scenario={SCENARIO} limitations={LIMITATIONS} region={UNITED_STATES} environment="renal-electrolyte"
       guidance="guided" onGuidance={() => {}} onStart={() => {}} onWatch={watch} />));
     expect(container.textContent).toContain('twelve-decision'); expect(container.textContent).not.toContain('90-second');
     expect(container.textContent).toContain('Reading time does not advance the patient');

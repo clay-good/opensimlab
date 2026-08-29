@@ -18,6 +18,7 @@ import { perioperativeDiabetesInlinePrompt, PERIOPERATIVE_DIABETES_SOURCE_HREF, 
 import { perioperativeDiabetesDemonstrationStep, supportsPerioperativeDiabetesDemonstration,
   PERIOPERATIVE_DIABETES_DEMONSTRATION_VERSION } from '../../src/modules/endocrine-metabolic/demo/perioperative-diabetes-demonstration';
 import { usePerioperativeDiabetesDemonstration } from '../../src/modules/endocrine-metabolic/demo/usePerioperativeDiabetesDemonstration';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 const labels: Record<PerioperativeDiabetesAction, string> = {
   'restore-insulin': 'Restore qualified insulin delivery', 'call-support': 'Call qualified perioperative support',
@@ -59,7 +60,7 @@ describe('Perioperative insulin continuity and separate observation streams', ()
 
   it('offers an eight-decision worked example without fixed routes or a generic induction script', () => {
     const watch = vi.fn();
-    act(() => root.render(<Prebrief scenario={SCENARIO} region={UNITED_STATES} environment="endocrine-metabolic"
+    act(() => root.render(<Prebrief scenario={SCENARIO} limitations={LIMITATIONS} region={UNITED_STATES} environment="endocrine-metabolic"
       guidance="guided" onGuidance={() => {}} onStart={() => {}} onWatch={watch} />));
     expect(container.textContent).toContain('eight-decision'); expect(container.textContent).not.toContain('90-second');
     expect(container.textContent).toContain('Reading time does not advance the patient');

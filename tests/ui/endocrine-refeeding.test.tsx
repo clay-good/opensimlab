@@ -16,6 +16,7 @@ import { REFEEDING_ELECTROLYTE_SHIFT as SCENARIO } from '../../src/modules/endoc
 import { refeedingInlinePrompt, REFEEDING_SOURCE_HREF, REFEEDING_ALTERNATIVE_SOURCE_HREF } from '../../src/modules/endocrine-metabolic/refeeding-tutor';
 import { refeedingDemonstrationStep, supportsRefeedingDemonstration, REFEEDING_DEMONSTRATION_VERSION } from '../../src/modules/endocrine-metabolic/demo/refeeding-demonstration';
 import { useRefeedingDemonstration } from '../../src/modules/endocrine-metabolic/demo/useRefeedingDemonstration';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 const labels: Record<RefeedingAction, string> = {
   'replace-electrolytes': 'Request comprehensive electrolyte care', 'phosphate-only': 'Request phosphate-only care',
@@ -58,7 +59,7 @@ describe('Refeeding electrolyte care and learner-paced observation', () => {
 
   it('offers a paused worked example and explains feeding uncertainty without a fixed strategy', () => {
     const watch = vi.fn();
-    act(() => root.render(<Prebrief scenario={SCENARIO} region={UNITED_STATES} environment="endocrine-metabolic"
+    act(() => root.render(<Prebrief scenario={SCENARIO} limitations={LIMITATIONS} region={UNITED_STATES} environment="endocrine-metabolic"
       guidance="guided" onGuidance={() => {}} onStart={() => {}} onWatch={watch} />));
     expect(container.textContent).toContain('Reading time does not advance the patient');
     expect(container.textContent).toContain('neither a universal rate nor stopping all nutrition');

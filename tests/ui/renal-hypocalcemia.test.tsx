@@ -17,6 +17,7 @@ import { renalHypocalcemiaInlinePrompt, RENAL_HYPOCALCEMIA_SOURCE_HREF } from '.
 import { renalHypocalcemiaDemonstrationStep, supportsRenalHypocalcemiaDemonstration,
   RENAL_HYPOCALCEMIA_DEMONSTRATION_VERSION } from '../../src/modules/renal-electrolyte/demo/renal-hypocalcemia-demonstration';
 import { useRenalHypocalcemiaDemonstration } from '../../src/modules/renal-electrolyte/demo/useRenalHypocalcemiaDemonstration';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 const labels: Record<RenalHypocalcemiaAction, string> = {
   'rescue-calcium': 'Request qualified calcium rescue', 'continue-calcium': 'Deliver qualified continuing calcium care',
@@ -63,7 +64,7 @@ describe('Renal hypocalcemia symptoms, sodium, and separate observations', () =>
 
   it('offers a ten-decision example with immediate continuing care and longer-term follow-up', () => {
     const watch = vi.fn();
-    act(() => root.render(<Prebrief scenario={SCENARIO} region={UNITED_STATES} environment="renal-electrolyte"
+    act(() => root.render(<Prebrief scenario={SCENARIO} limitations={LIMITATIONS} region={UNITED_STATES} environment="renal-electrolyte"
       guidance="guided" onGuidance={() => {}} onStart={() => {}} onWatch={watch} />));
     expect(container.textContent).toContain('ten-decision'); expect(container.textContent).not.toContain('90-second');
     expect(container.textContent).toContain('Reading time does not advance the patient');

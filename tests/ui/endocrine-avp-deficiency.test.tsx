@@ -18,6 +18,7 @@ import { avpDeficiencyInlinePrompt, AVP_DEFICIENCY_SOURCE_HREF } from '../../src
 import { avpDeficiencyDemonstrationStep, supportsAvpDeficiencyDemonstration,
   AVP_DEFICIENCY_DEMONSTRATION_VERSION } from '../../src/modules/endocrine-metabolic/demo/avp-deficiency-demonstration';
 import { useAvpDeficiencyDemonstration } from '../../src/modules/endocrine-metabolic/demo/useAvpDeficiencyDemonstration';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 const VERSION = '0.1.1';
 const labels: Record<AvpDeficiencyAction, string> = {
@@ -65,7 +66,7 @@ describe('AVP deficiency circulation and water-balance experience', () => {
 
   it('offers a learner-paced worked example without the unrelated induction script', () => {
     const start = vi.fn(); const watch = vi.fn();
-    act(() => root.render(<Prebrief scenario={SCENARIO} region={UNITED_STATES} environment="endocrine-metabolic"
+    act(() => root.render(<Prebrief scenario={SCENARIO} limitations={LIMITATIONS} region={UNITED_STATES} environment="endocrine-metabolic"
       guidance="guided" onGuidance={() => {}} onStart={start} onWatch={watch} />));
     expect(container.textContent).toContain('observation periods run at 60× speed');
     expect(container.textContent).toContain('Reading time does not advance the patient');

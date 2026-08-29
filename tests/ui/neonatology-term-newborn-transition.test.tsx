@@ -6,6 +6,7 @@ import { Prebrief } from '@anesthesia/ui/Prebrief';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { TERM_NEWBORN_TRANSITION as SCENARIO } from '../../src/modules/neonatology/scenarios/term-newborn-transition';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 const markup = (assessment: NonNullable<ActionCockpitProps['resuscitation']['neonatologyTermTransitionAssessment']>) => renderToStaticMarkup(createElement(ActionCockpit, { scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, neonatologyTermTransitionAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 24, respiratoryRateBpm: 42, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 2 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onNeonatologyTermTransitionResponse: () => {} } satisfies ActionCockpitProps));
 
@@ -18,7 +19,7 @@ describe('Neonatology term-newborn-transition experience', () => {
     expect(index).toContain('Term newborn transition: protect the quiet start');
     const route = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/neonatology/scenario/term-newborn-transition' }));
     expect(route).toContain('<h1>Term newborn transition: protect the quiet start</h1>');
-    const prebrief = renderToStaticMarkup(createElement(Prebrief, { scenario: SCENARIO, region: UNITED_STATES, environment: 'neonatology', guidance: 'coached', onGuidance: () => {}, onStart: () => {} }));
+    const prebrief = renderToStaticMarkup(createElement(Prebrief, { limitations: LIMITATIONS, scenario: SCENARIO, region: UNITED_STATES, environment: 'neonatology', guidance: 'coached', onGuidance: () => {}, onStart: () => {} }));
     expect(prebrief).toContain('newborn findings, parent-dyad context');
   });
 

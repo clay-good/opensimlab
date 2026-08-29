@@ -5,6 +5,7 @@ import { PrerenderedBody } from '@routes/Prerendered';
 import { Prebrief } from '@anesthesia/ui/Prebrief';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { PEDIATRIC_RESPIRATORY_DISTRESS as SCENARIO } from '../../src/modules/pediatrics/scenarios/pediatric-respiratory-distress';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 describe('Pediatrics module user-facing foundation', () => {
   it('renders a calm index with ten child-focused scenarios and shared navigation', () => {
@@ -35,7 +36,7 @@ describe('Pediatrics module user-facing foundation', () => {
   });
 
   it('briefs the bounded child without perioperative ASA language or treatment claims', () => {
-    const markup = renderToStaticMarkup(createElement(Prebrief, {
+    const markup = renderToStaticMarkup(createElement(Prebrief, { limitations: LIMITATIONS,
       scenario: SCENARIO, region: UNITED_STATES, environment: 'pediatrics',
       onStart: () => {}, guidance: 'guided', onGuidance: () => {},
     }));

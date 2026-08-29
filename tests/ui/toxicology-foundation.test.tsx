@@ -20,6 +20,7 @@ import { SYMPATHOMIMETIC_HYPERADRENERGIC_HYPERTHERMIA } from '../../src/modules/
 import { METHANOL_VISUAL_ACIDOSIS_GAPS } from '../../src/modules/toxicology/scenarios/methanol-visual-acidosis-gaps';
 import { DELAYED_LOCAL_ANESTHETIC_CNS_CARDIAC_TOXICITY } from '../../src/modules/toxicology/scenarios/delayed-local-anesthetic-cns-cardiac-toxicity';
 import { OPIOID_XYLAZINE_PERSISTENT_SEDATION } from '../../src/modules/toxicology/scenarios/opioid-xylazine-persistent-sedation';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 describe('Toxicology module user-facing foundation', () => {
   const cockpitMarkup = (
@@ -98,7 +99,7 @@ describe('Toxicology module user-facing foundation', () => {
   });
 
   it('briefs the bounded poisoning rehearsal without dose or diagnostic claims', () => {
-    const markup = renderToStaticMarkup(createElement(Prebrief, {
+    const markup = renderToStaticMarkup(createElement(Prebrief, { limitations: LIMITATIONS,
       scenario: SCENARIO, region: UNITED_STATES, environment: 'toxicology',
       onStart: () => {}, guidance: 'guided', onGuidance: () => {},
     }));

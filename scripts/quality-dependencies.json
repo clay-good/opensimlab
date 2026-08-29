@@ -4,7 +4,7 @@
     "scenarioId": "hypocalcemic-tetany-rescue-and-recurrence",
     "contentVersion": "0.1.0",
     "algorithm": "sha256-files-v1",
-    "recordsSha256": "041538ba2dfa9d84c828d4052c9856c543caf1f22339ddd063b29a76f9987fa4",
+    "recordsSha256": "80ae10941a7a8a1338a444cdcc55ccd29da461c31c6a0d59583cef726cd63ed3",
     "files": [
       {
         "path": "docs/evidence-briefs/hypocalcemic-tetany-rescue-and-recurrence.md",
@@ -44,7 +44,7 @@
       },
       {
         "path": "src/modules/endocrine-metabolic/hypocalcemia-quality.ts",
-        "sha256": "aaedb9c3bee6b47a103421bec54b94199a2c7657ed8d885b40cbdf6f3c48ccc0"
+        "sha256": "c741214d3240eb813f29661a200f5db070de32816cf4aca190fc84968ddf5704"
       },
       {
         "path": "src/modules/endocrine-metabolic/hypocalcemia.ts",
@@ -72,7 +72,75 @@
       },
       {
         "path": "src/platform/docs/limitations.ts",
-        "sha256": "8a391ee1f54c34830a05033b28444f45d4ca046d9aa7935b2ebcc2d6c9317264"
+        "sha256": "f4818a4974d9b76747216918d9cb4834104e4435f459df71e152bd2be9aee318"
+      },
+      {
+        "path": "src/platform/docs/limitations/anesthesia.ts",
+        "sha256": "f144fa2ec4ff280e4888dd933eb22270ebe1ea8ee81d9522d44a559b1e358dc0"
+      },
+      {
+        "path": "src/platform/docs/limitations/cardiology.ts",
+        "sha256": "558aa8537b4fac513bbd8a970b5c0e71085d3b3f99e1998cb5e4edb1ce849a8d"
+      },
+      {
+        "path": "src/platform/docs/limitations/critical-care.ts",
+        "sha256": "b9eefe61ca27331b5046328a06ae1c2fb9c73aba326d0aadb9a230d364ef1bc3"
+      },
+      {
+        "path": "src/platform/docs/limitations/emergency-medicine.ts",
+        "sha256": "00cfd8661c6d8e197db3b6f70771efd4ae3e94b6a60c3ebb3d10d0e685b76a41"
+      },
+      {
+        "path": "src/platform/docs/limitations/endocrine-metabolic.ts",
+        "sha256": "ef9ad8dfc8c88179e5b68a19d3ca915e139293d484b940374e88ba6027b4e5f5"
+      },
+      {
+        "path": "src/platform/docs/limitations/infectious-disease.ts",
+        "sha256": "700334799d8b0d5480d0add2f4f95c9c9b038f0c4262a9aa78707eee9cc0ec9b"
+      },
+      {
+        "path": "src/platform/docs/limitations/medical-surgical-nursing.ts",
+        "sha256": "5a5c5cc64b0e133c9bf21b7de1ed5d339a647e0e41ef83d02f89db94a9e76be0"
+      },
+      {
+        "path": "src/platform/docs/limitations/neonatology.ts",
+        "sha256": "622f2b2ec2b123ec29cbf575e0958b1d64a804ccf86edde96f962ae08a4d8857"
+      },
+      {
+        "path": "src/platform/docs/limitations/neurology.ts",
+        "sha256": "6f5f4375b5d58729c355053ac8fd04b23803eef7d0487a08d166a4c6129b0ee8"
+      },
+      {
+        "path": "src/platform/docs/limitations/obstetrics.ts",
+        "sha256": "67b5632400d978654c2831ae134acdae6ae370974ee92c5a6913c2c807c3bd3a"
+      },
+      {
+        "path": "src/platform/docs/limitations/oncology.ts",
+        "sha256": "39a465e824b657e6164ef4995ac1fd2082efd8a9d27163b4c57d822858d7f9a1"
+      },
+      {
+        "path": "src/platform/docs/limitations/pediatrics.ts",
+        "sha256": "83c0c574bea5e613da557457217b386ac30aabd61ecda7f350193b1ec44de89d"
+      },
+      {
+        "path": "src/platform/docs/limitations/renal-electrolyte.ts",
+        "sha256": "89aa6f2ffe3f1a7c7521a0ba13325b98ee18a7c12903462208311be3f04d9810"
+      },
+      {
+        "path": "src/platform/docs/limitations/respiratory-medicine.ts",
+        "sha256": "a6063d9d450924088e8c57cf18cec0dcb27989d9d07b61bd8c8984cdd84fed6b"
+      },
+      {
+        "path": "src/platform/docs/limitations/shared.ts",
+        "sha256": "1cf6dc995d6c71b1c22cac05741aeb78531f06902c9891d9196e6f52d5f180c7"
+      },
+      {
+        "path": "src/platform/docs/limitations/toxicology.ts",
+        "sha256": "02fd60a45e2e116c232984a43d15d7a8afc145d23491b68ef266db0a4f2a2597"
+      },
+      {
+        "path": "src/platform/docs/limitations/types.ts",
+        "sha256": "a441700b568b3782a0f91bb4f709acf00213344d06a367afd3c23bb71faffbca"
       },
       {
         "path": "src/platform/docs/sources.ts",
@@ -104,7 +172,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "e992d5120f70188d1b0885398bbff5f4c864a35c7e9a86dba56676c2bbfefc92"
+        "sha256": "48e6b76edbdd85d14860ae95e3ec6033d2a4bf2540123a22aa5014997ec99287"
       },
       {
         "path": "tests/integration/demonstration-runs.test.tsx",
@@ -116,7 +184,7 @@
       },
       {
         "path": "tests/ui/endocrine-hypocalcemia.test.tsx",
-        "sha256": "eb5b3829e7ee8581bfccbafb038a8d7f51e9c01c560bdd042a5ffeb92069314d"
+        "sha256": "23ab5808fa0bedf9d0713fe7f93bd0cd11c93299c314a5a7c763e64e668b2d7d"
       },
       {
         "path": "tests/ui/hypocalcemia-accessibility.test.tsx",
@@ -185,7 +253,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
-        "sha256": "522653b243dc54857100dbc44c4c32034f6e55cfca655d88f29f5a4e20ca57fd"
+        "sha256": "c4bcfd07863ddae85da75e6c2bd3f1d93bf982f430f30a56105c98dbf236331e"
       },
       {
         "path": "src/modules/endocrine-metabolic/HyponatremiaCorrectionTray.tsx",
@@ -241,7 +309,75 @@
       },
       {
         "path": "src/platform/docs/limitations.ts",
-        "sha256": "8a391ee1f54c34830a05033b28444f45d4ca046d9aa7935b2ebcc2d6c9317264"
+        "sha256": "f4818a4974d9b76747216918d9cb4834104e4435f459df71e152bd2be9aee318"
+      },
+      {
+        "path": "src/platform/docs/limitations/anesthesia.ts",
+        "sha256": "f144fa2ec4ff280e4888dd933eb22270ebe1ea8ee81d9522d44a559b1e358dc0"
+      },
+      {
+        "path": "src/platform/docs/limitations/cardiology.ts",
+        "sha256": "558aa8537b4fac513bbd8a970b5c0e71085d3b3f99e1998cb5e4edb1ce849a8d"
+      },
+      {
+        "path": "src/platform/docs/limitations/critical-care.ts",
+        "sha256": "b9eefe61ca27331b5046328a06ae1c2fb9c73aba326d0aadb9a230d364ef1bc3"
+      },
+      {
+        "path": "src/platform/docs/limitations/emergency-medicine.ts",
+        "sha256": "00cfd8661c6d8e197db3b6f70771efd4ae3e94b6a60c3ebb3d10d0e685b76a41"
+      },
+      {
+        "path": "src/platform/docs/limitations/endocrine-metabolic.ts",
+        "sha256": "ef9ad8dfc8c88179e5b68a19d3ca915e139293d484b940374e88ba6027b4e5f5"
+      },
+      {
+        "path": "src/platform/docs/limitations/infectious-disease.ts",
+        "sha256": "700334799d8b0d5480d0add2f4f95c9c9b038f0c4262a9aa78707eee9cc0ec9b"
+      },
+      {
+        "path": "src/platform/docs/limitations/medical-surgical-nursing.ts",
+        "sha256": "5a5c5cc64b0e133c9bf21b7de1ed5d339a647e0e41ef83d02f89db94a9e76be0"
+      },
+      {
+        "path": "src/platform/docs/limitations/neonatology.ts",
+        "sha256": "622f2b2ec2b123ec29cbf575e0958b1d64a804ccf86edde96f962ae08a4d8857"
+      },
+      {
+        "path": "src/platform/docs/limitations/neurology.ts",
+        "sha256": "6f5f4375b5d58729c355053ac8fd04b23803eef7d0487a08d166a4c6129b0ee8"
+      },
+      {
+        "path": "src/platform/docs/limitations/obstetrics.ts",
+        "sha256": "67b5632400d978654c2831ae134acdae6ae370974ee92c5a6913c2c807c3bd3a"
+      },
+      {
+        "path": "src/platform/docs/limitations/oncology.ts",
+        "sha256": "39a465e824b657e6164ef4995ac1fd2082efd8a9d27163b4c57d822858d7f9a1"
+      },
+      {
+        "path": "src/platform/docs/limitations/pediatrics.ts",
+        "sha256": "83c0c574bea5e613da557457217b386ac30aabd61ecda7f350193b1ec44de89d"
+      },
+      {
+        "path": "src/platform/docs/limitations/renal-electrolyte.ts",
+        "sha256": "89aa6f2ffe3f1a7c7521a0ba13325b98ee18a7c12903462208311be3f04d9810"
+      },
+      {
+        "path": "src/platform/docs/limitations/respiratory-medicine.ts",
+        "sha256": "a6063d9d450924088e8c57cf18cec0dcb27989d9d07b61bd8c8984cdd84fed6b"
+      },
+      {
+        "path": "src/platform/docs/limitations/shared.ts",
+        "sha256": "1cf6dc995d6c71b1c22cac05741aeb78531f06902c9891d9196e6f52d5f180c7"
+      },
+      {
+        "path": "src/platform/docs/limitations/toxicology.ts",
+        "sha256": "02fd60a45e2e116c232984a43d15d7a8afc145d23491b68ef266db0a4f2a2597"
+      },
+      {
+        "path": "src/platform/docs/limitations/types.ts",
+        "sha256": "a441700b568b3782a0f91bb4f709acf00213344d06a367afd3c23bb71faffbca"
       },
       {
         "path": "src/platform/docs/sources.ts",
@@ -293,7 +429,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "e992d5120f70188d1b0885398bbff5f4c864a35c7e9a86dba56676c2bbfefc92"
+        "sha256": "48e6b76edbdd85d14860ae95e3ec6033d2a4bf2540123a22aa5014997ec99287"
       },
       {
         "path": "tests/integration/hyponatremia-correction-runs.test.ts",
@@ -305,7 +441,7 @@
       },
       {
         "path": "tests/ui/endocrine-hyponatremia-correction.test.tsx",
-        "sha256": "a3f95d86ba847e3f688679ff0f352921a6498f1e863502fdb0b046131c67760c"
+        "sha256": "1813d75dee6e6e1b36c43d799a8ba2d92611ff90d5f0bd31cf3d826321ed4385"
       },
       {
         "path": "tests/ui/hyponatremia-correction-accessibility.test.tsx",
@@ -382,7 +518,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
-        "sha256": "522653b243dc54857100dbc44c4c32034f6e55cfca655d88f29f5a4e20ca57fd"
+        "sha256": "c4bcfd07863ddae85da75e6c2bd3f1d93bf982f430f30a56105c98dbf236331e"
       },
       {
         "path": "src/modules/anesthesia/ui/accessibility.ts",
@@ -446,7 +582,75 @@
       },
       {
         "path": "src/platform/docs/limitations.ts",
-        "sha256": "8a391ee1f54c34830a05033b28444f45d4ca046d9aa7935b2ebcc2d6c9317264"
+        "sha256": "f4818a4974d9b76747216918d9cb4834104e4435f459df71e152bd2be9aee318"
+      },
+      {
+        "path": "src/platform/docs/limitations/anesthesia.ts",
+        "sha256": "f144fa2ec4ff280e4888dd933eb22270ebe1ea8ee81d9522d44a559b1e358dc0"
+      },
+      {
+        "path": "src/platform/docs/limitations/cardiology.ts",
+        "sha256": "558aa8537b4fac513bbd8a970b5c0e71085d3b3f99e1998cb5e4edb1ce849a8d"
+      },
+      {
+        "path": "src/platform/docs/limitations/critical-care.ts",
+        "sha256": "b9eefe61ca27331b5046328a06ae1c2fb9c73aba326d0aadb9a230d364ef1bc3"
+      },
+      {
+        "path": "src/platform/docs/limitations/emergency-medicine.ts",
+        "sha256": "00cfd8661c6d8e197db3b6f70771efd4ae3e94b6a60c3ebb3d10d0e685b76a41"
+      },
+      {
+        "path": "src/platform/docs/limitations/endocrine-metabolic.ts",
+        "sha256": "ef9ad8dfc8c88179e5b68a19d3ca915e139293d484b940374e88ba6027b4e5f5"
+      },
+      {
+        "path": "src/platform/docs/limitations/infectious-disease.ts",
+        "sha256": "700334799d8b0d5480d0add2f4f95c9c9b038f0c4262a9aa78707eee9cc0ec9b"
+      },
+      {
+        "path": "src/platform/docs/limitations/medical-surgical-nursing.ts",
+        "sha256": "5a5c5cc64b0e133c9bf21b7de1ed5d339a647e0e41ef83d02f89db94a9e76be0"
+      },
+      {
+        "path": "src/platform/docs/limitations/neonatology.ts",
+        "sha256": "622f2b2ec2b123ec29cbf575e0958b1d64a804ccf86edde96f962ae08a4d8857"
+      },
+      {
+        "path": "src/platform/docs/limitations/neurology.ts",
+        "sha256": "6f5f4375b5d58729c355053ac8fd04b23803eef7d0487a08d166a4c6129b0ee8"
+      },
+      {
+        "path": "src/platform/docs/limitations/obstetrics.ts",
+        "sha256": "67b5632400d978654c2831ae134acdae6ae370974ee92c5a6913c2c807c3bd3a"
+      },
+      {
+        "path": "src/platform/docs/limitations/oncology.ts",
+        "sha256": "39a465e824b657e6164ef4995ac1fd2082efd8a9d27163b4c57d822858d7f9a1"
+      },
+      {
+        "path": "src/platform/docs/limitations/pediatrics.ts",
+        "sha256": "83c0c574bea5e613da557457217b386ac30aabd61ecda7f350193b1ec44de89d"
+      },
+      {
+        "path": "src/platform/docs/limitations/renal-electrolyte.ts",
+        "sha256": "89aa6f2ffe3f1a7c7521a0ba13325b98ee18a7c12903462208311be3f04d9810"
+      },
+      {
+        "path": "src/platform/docs/limitations/respiratory-medicine.ts",
+        "sha256": "a6063d9d450924088e8c57cf18cec0dcb27989d9d07b61bd8c8984cdd84fed6b"
+      },
+      {
+        "path": "src/platform/docs/limitations/shared.ts",
+        "sha256": "1cf6dc995d6c71b1c22cac05741aeb78531f06902c9891d9196e6f52d5f180c7"
+      },
+      {
+        "path": "src/platform/docs/limitations/toxicology.ts",
+        "sha256": "02fd60a45e2e116c232984a43d15d7a8afc145d23491b68ef266db0a4f2a2597"
+      },
+      {
+        "path": "src/platform/docs/limitations/types.ts",
+        "sha256": "a441700b568b3782a0f91bb4f709acf00213344d06a367afd3c23bb71faffbca"
       },
       {
         "path": "src/platform/docs/sources.ts",
@@ -490,7 +694,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "e992d5120f70188d1b0885398bbff5f4c864a35c7e9a86dba56676c2bbfefc92"
+        "sha256": "48e6b76edbdd85d14860ae95e3ec6033d2a4bf2540123a22aa5014997ec99287"
       },
       {
         "path": "tests/integration/avp-deficiency-demonstration-session.test.tsx",
@@ -510,7 +714,7 @@
       },
       {
         "path": "tests/ui/endocrine-avp-deficiency.test.tsx",
-        "sha256": "92a7edd584f4510364d259568ea75c57ddedf375d8846a4e4a689be5be38c461"
+        "sha256": "12d267bb6a1e796b19c0044b38e50720496432db9bb6ad3c990f3e0838c455a9"
       },
       {
         "path": "tests/unit/avp-deficiency-quality.test.ts",

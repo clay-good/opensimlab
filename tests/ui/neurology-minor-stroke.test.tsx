@@ -12,6 +12,7 @@ import { MINOR_NONDISABLING_ACUTE_ISCHEMIC_STROKE } from '../../src/modules/neur
 import { PrerenderedBody } from '../../src/routes/Prerendered';
 import { routeFor } from '../../src/routes/routes';
 import { structuredDataFor } from '@platform/docs/structured-data';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 const emptyAssessment = {
   trajectoryAtTick: null, threatsAtTick: null, boundaryAtTick: null,
@@ -160,7 +161,7 @@ describe('Neurology minor nondisabling stroke UI', () => {
     const staticMarkup = renderToStaticMarkup(createElement(PrerenderedBody, { path }));
     expect(staticMarkup).toContain('Minor nondisabling acute ischemic stroke');
     expect(staticMarkup).toContain('Review and sources');
-    const prebrief = renderToStaticMarkup(createElement(Prebrief, {
+    const prebrief = renderToStaticMarkup(createElement(Prebrief, { limitations: LIMITATIONS,
       scenario: MINOR_NONDISABLING_ACUTE_ISCHEMIC_STROKE,
       region: UNITED_STATES, environment: 'neurology', onStart: () => {},
       guidance: 'guided', onGuidance: () => {},

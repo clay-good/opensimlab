@@ -7,6 +7,7 @@ import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { SITE_BAR_LINKS, SiteBar } from '@platform/ui';
 import { PrerenderedBody } from '@routes/Prerendered';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 const moduleId = 'respiratory-medicine';
 const modulePath = '/respiratory-medicine';
@@ -83,7 +84,7 @@ describe('respiratory medicine foundation surfaces', () => {
   });
 
   it('gives respiratory learners a specialty-specific prebrief, not anesthesia controls', () => {
-    const markup = renderToStaticMarkup(createElement(Prebrief, {
+    const markup = renderToStaticMarkup(createElement(Prebrief, { limitations: LIMITATIONS,
       scenario: ROUTINE_INDUCTION,
       region: UNITED_STATES,
       environment: moduleId as never,

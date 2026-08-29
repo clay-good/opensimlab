@@ -6,10 +6,12 @@
  */
 import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRoute';
 import { DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID, EMERGENCY_MEDICINE_SCENARIOS, getEmergencyMedicineScenario } from '../../modules/emergency-medicine/scenarios';
+import { EMERGENCY_MEDICINE_LIMITATIONS } from '@platform/docs/limitations/emergency-medicine';
 
 const EMERGENCY_MEDICINE_CONFIG: ClinicalModuleConfig = {
   id: 'emergency-medicine', basePath: '/emergency-medicine',
   heading: 'Emergency medicine simulator', scenarios: EMERGENCY_MEDICINE_SCENARIOS,
+  limitations: EMERGENCY_MEDICINE_LIMITATIONS,
   catalogIntroduction: 'Short, focused emergency-department rehearsals. Start with one uncertain patient, make the next useful decision, then see exactly what your sequence established.',
   catalogStatus: 'Twenty-five bounded emergency medicine labs are playable.',
   defaultScenarioId: DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID,

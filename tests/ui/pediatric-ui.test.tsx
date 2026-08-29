@@ -23,6 +23,7 @@ import { PEDIATRIC_INJURY_SAFEGUARDING_ESCALATION } from '../../src/modules/pedi
 import { PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION } from '../../src/modules/pediatrics/scenarios/pediatric-foreign-body-airway-obstruction';
 import { PrerenderedBody } from '../../src/routes/Prerendered';
 import { ROUTES } from '../../src/routes/routes';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 const CHILD_SCENARIO = {
   ...ROUTINE_INDUCTION,
@@ -829,7 +830,7 @@ describe('Requirement: scenario descriptions use age-appropriate nouns', () => {
   });
 
   it('renders the child prebrief without calling the patient a man', () => {
-    const markup = renderToStaticMarkup(createElement(Prebrief, {
+    const markup = renderToStaticMarkup(createElement(Prebrief, { limitations: LIMITATIONS,
       scenario: CHILD_SCENARIO,
       region: UNITED_STATES,
       onStart: () => {},

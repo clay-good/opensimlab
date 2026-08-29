@@ -9,6 +9,7 @@
 
 import { Badge, Button, Panel, SiteBar } from '@platform/ui';
 import { limitationsToBrief } from '@platform/docs/scenario-limitations';
+import type { Limitation } from '@platform/docs/limitations/types';
 import { isUnreviewed, UNREVIEWED_NOTICE } from '@platform/governance/review-gate';
 import { FlagControl } from '@platform/governance/FlagControl';
 import { reviewModeFrom } from '@platform/governance/review-notes';
@@ -46,6 +47,11 @@ export const FICTION_CONTRACT =
 export interface PrebriefProps {
   readonly scenario: Scenario;
   readonly region: RegionProfile;
+  /**
+   * The module's own limitations. Passed in rather than imported so this shared component does
+   * not drag all fifteen modules' entries into every module's chunk.
+   */
+  readonly limitations: readonly Limitation[];
   readonly environment?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics' | 'neonatology' | 'endocrine-metabolic' | 'renal-electrolyte' | 'infectious-disease' | 'medical-surgical-nursing' | 'oncology';
   readonly onStart: () => void;
   /**
@@ -61,7 +67,7 @@ export interface PrebriefProps {
 }
 
 export function Prebrief({
-  scenario, region, environment = 'anesthesia', onStart, onWatch, guidance, onGuidance,
+  scenario, region, limitations, environment = 'anesthesia', onStart, onWatch, guidance, onGuidance,
   assignmentLabel, onReportLimitation,
 }: PrebriefProps) {
   const patient = scenario.patient;
@@ -414,11 +420,11 @@ export function Prebrief({
           used to print `scenario.metadata.limitations` verbatim, which for
           three of the four scenarios meant showing a learner the bullet
           "no-shunt-or-dead-space-dynamics". */}
-      {limitationsToBrief(scenario).length > 0 && (
+      {limitationsToBrief(scenario, limitations).length > 0 && (
         <section>
           <h2>What this scenario does not model</h2>
           <ul>
-            {limitationsToBrief(scenario).map((limitation) => (
+            {limitationsToBrief(scenario, limitations).map((limitation) => (
               <li key={limitation.id}>{limitation.headline}</li>
             ))}
           </ul>

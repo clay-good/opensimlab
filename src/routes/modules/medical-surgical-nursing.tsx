@@ -6,10 +6,12 @@
  */
 import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRoute';
 import { DEFAULT_MEDICAL_SURGICAL_NURSING_SCENARIO_ID, MEDICAL_SURGICAL_NURSING_SCENARIOS, getMedicalSurgicalNursingScenario } from '../../modules/medical-surgical-nursing/scenarios';
+import { MEDICAL_SURGICAL_NURSING_LIMITATIONS } from '@platform/docs/limitations/medical-surgical-nursing';
 
 const MEDICAL_SURGICAL_NURSING_CONFIG: ClinicalModuleConfig = {
   id: 'medical-surgical-nursing', basePath: '/medical-surgical-nursing',
   heading: 'Nursing simulator',
+  limitations: MEDICAL_SURGICAL_NURSING_LIMITATIONS,
   catalogIntroduction: 'Calm ward rehearsals for the part of nursing that is hardest to teach: seeing a change the tools do not register, escalating it when the system resists, and handing over a concern that is still unresolved.',
   catalogStatus: `${MEDICAL_SURGICAL_NURSING_SCENARIOS.length} of 9 planned Nursing labs are available as previews. Registration does not establish completed review.`,
   scenarios: MEDICAL_SURGICAL_NURSING_SCENARIOS,

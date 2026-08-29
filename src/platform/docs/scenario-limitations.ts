@@ -1,6 +1,9 @@
 /**
  * Which limitations a scenario's briefing names, and in what words.
  *
+ * The register is passed in rather than imported, so a module's cockpit chunk carries its own
+ * entries and not the whole project's.
+ *
  * Two sources, unioned. A scenario lists the ids it wants named, and a
  * limitation can nominate scenarios through its own `briefIn` — the register
  * knows where a limitation bites, and requiring both ends to be edited in step
@@ -14,7 +17,7 @@
  * "no-shunt-or-dead-space-dynamics".
  */
 
-import { LIMITATIONS, type Limitation } from './limitations';
+import type { Limitation } from './limitations/types';
 
 /**
  * The limitations to name in a scenario's briefing, deduplicated and in
@@ -26,9 +29,9 @@ import { LIMITATIONS, type Limitation } from './limitations';
  */
 export function limitationsToBrief(scenario: {
   metadata: { id: string; limitations?: readonly string[] };
-}): Limitation[] {
+}, register: readonly Limitation[]): Limitation[] {
   const wanted = new Set(scenario.metadata.limitations ?? []);
-  return LIMITATIONS.filter(
+  return register.filter(
     (limitation) => wanted.has(limitation.id) || limitation.briefIn.includes(scenario.metadata.id),
   );
 }
@@ -36,7 +39,7 @@ export function limitationsToBrief(scenario: {
 /** Ids a scenario declares that no limitation in the register carries. */
 export function unknownLimitationIds(scenario: {
   metadata: { limitations?: readonly string[] };
-}): string[] {
-  const known = new Set(LIMITATIONS.map((limitation) => limitation.id));
+}, register: readonly Limitation[]): string[] {
+  const known = new Set(register.map((limitation) => limitation.id));
   return (scenario.metadata.limitations ?? []).filter((id) => !known.has(id));
 }

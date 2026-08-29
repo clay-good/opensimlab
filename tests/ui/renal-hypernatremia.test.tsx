@@ -17,6 +17,7 @@ import { renalHypernatremiaInlinePrompt, RENAL_HYPERNATREMIA_SOURCE_HREF } from 
 import { renalHypernatremiaDemonstrationStep, supportsRenalHypernatremiaDemonstration,
   RENAL_HYPERNATREMIA_DEMONSTRATION_VERSION } from '../../src/modules/renal-electrolyte/demo/renal-hypernatremia-demonstration';
 import { useRenalHypernatremiaDemonstration } from '../../src/modules/renal-electrolyte/demo/useRenalHypernatremiaDemonstration';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 const labels: Record<RenalHypernatremiaAction, string> = {
   'restore-volume': 'Request qualified circulation restoration', 'replace-water': 'Request qualified water replacement',
@@ -62,7 +63,7 @@ describe('Renal hypernatremia symptoms, sodium, and separate observations', () =
 
   it('offers a ten-decision example with distinct circulation, water, loss, and access needs', () => {
     const watch = vi.fn();
-    act(() => root.render(<Prebrief scenario={SCENARIO} region={UNITED_STATES} environment="renal-electrolyte"
+    act(() => root.render(<Prebrief scenario={SCENARIO} limitations={LIMITATIONS} region={UNITED_STATES} environment="renal-electrolyte"
       guidance="guided" onGuidance={() => {}} onStart={() => {}} onWatch={watch} />));
     expect(container.textContent).toContain('ten-decision'); expect(container.textContent).not.toContain('90-second');
     expect(container.textContent).toContain('Reading time does not advance the patient');

@@ -13,8 +13,8 @@ Each `sha256-files-v1` receipt pins:
   `qualityRecordsSha256` sorts object keys and envelope serializations; payload array order matters.
 - Raw SHA-256 file bytes at explicit repository-relative paths, including every local file
   reference in those bodies and the checker's required shared boundaries.
-- For the initial hypocalcemia snapshot, 31 files covering its model, scenario, tutor, defaults,
-  tests, evidence brief, engine, source registry, limitations, governance, and shared policies.
+- For the initial hypocalcemia snapshot, its model, scenario, tutor, defaults, tests, evidence
+  brief, engine, source registry, limitations, governance, and shared policies.
 - For post-rescue hyponatremia, its three supplied records and 47 named implementation, fixture,
   real-session replay, reporting, and accessibility dependencies. The absent state-space matrix
   remains absent; a receipt cannot promote either lesson to complete or clinically reviewed.
@@ -24,6 +24,14 @@ or evaluating publication. Missing, changed, duplicate, malformed, or uncovered 
 in development and both release channels. Paths must resolve to regular files without symlink
 ancestors. No URL is fetched. Unrelated files outside the receipt do not affect it; even a comment
 change inside a pinned shared file does. This conservative whole-file policy is intentional.
+
+The limitations register is one file per module under `src/platform/docs/limitations/`, assembled
+into the whole register by `src/platform/docs/limitations.ts`. Every part is a shared boundary, so
+splitting it did not narrow what a receipt covers; hypocalcemia's three evidence references to
+`limitations.ts#<entry>` were repointed at the file that now holds those entries, which is the only
+change to a published record. Moving an entry between module files therefore invalidates any
+receipt that cites it, which is the intended behaviour.
+
 Write file references as POSIX `src/...`, `tests/...`, or `docs/...` paths with an extension;
 an optional `./` and a `#` locator are supported. URLs are not local references. Other files may
 be pinned explicitly; prose and directory-only references are not a dependency graph.

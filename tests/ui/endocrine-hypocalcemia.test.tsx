@@ -15,6 +15,7 @@ import { HYPOCALCEMIC_TETANY_RESCUE_AND_RECURRENCE as SCENARIO } from '../../src
 import { hypocalcemiaInlinePrompt, HYPOCALCEMIA_SOURCE_HREF, HYPOCALCEMIA_ESE_SOURCE_HREF } from '../../src/modules/endocrine-metabolic/tutor/hypocalcemia-guidance';
 import { hypocalcemiaDemonstrationStep, supportsHypocalcemiaDemonstration, HYPOCALCEMIA_DEMONSTRATION_VERSION } from '../../src/modules/endocrine-metabolic/demo/hypocalcemia-demonstration';
 import { useHypocalcemiaDemonstration } from '../../src/modules/endocrine-metabolic/demo/useHypocalcemiaDemonstration';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 const VERSION = '0.1.0';
 const labels: Record<HypocalcemiaAction, string> = {
@@ -61,7 +62,7 @@ describe('Hypocalcemia rescue and continuing-care experience', () => {
 
   it('offers a learner-paced 60× example without the unrelated 90-second script', () => {
     const start = vi.fn(); const watch = vi.fn();
-    act(() => root.render(<Prebrief scenario={SCENARIO} region={UNITED_STATES} environment="endocrine-metabolic"
+    act(() => root.render(<Prebrief scenario={SCENARIO} limitations={LIMITATIONS} region={UNITED_STATES} environment="endocrine-metabolic"
       guidance="guided" onGuidance={() => {}} onStart={start} onWatch={watch} />));
     expect(container.textContent).toContain('observation periods run at 60× speed');
     expect(container.textContent).toContain('Reading time does not advance the patient');

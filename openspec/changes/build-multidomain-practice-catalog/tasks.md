@@ -1923,10 +1923,12 @@ credited toward the catalog until every item in the completion contract passes.
   wild-type pre-treatment panel. Surgery/trauma is declared planned and has not started. Every
   scenario in this wave remains preview: none carries clinical review, a state-space matrix, or
   inclusive-runtime evidence, so the wave's completion count is still zero.
-  The cockpit budget is the binding constraint on the remaining eight oncology lessons: each adds
-  roughly 10 KiB compressed, and the route stands at 1,597.9 of 1,664.0 KiB. Splitting the shared
-  limitation and source registers per module, or code-splitting the lesson trays, is needed before
-  the module completes.
+  The cockpit budget was the binding constraint on the remaining eight oncology lessons: each adds
+  roughly 10 KiB compressed, and the route stood at 1,597.9 of 1,664.0 KiB. The limitations
+  register is now one file per module, which brought the route to 1,491.6 KiB and the anesthesia
+  module graph from 1,104.3 to 1,025.0 KiB. The source register is still a single flat array
+  carried by every module for the sake of one anesthesia drug card, at 83.5 KiB compressed, and is
+  the next one to split.
 - [ ] After every wave, verify the exact cumulative count, distinctness, capability reuse, path and
   competency coverage, sources, maturity labels, domain-pack budget, offline behavior, mobile
   layout, and complete regression fixtures.

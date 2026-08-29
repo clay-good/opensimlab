@@ -6,6 +6,7 @@ import { Prebrief } from '@anesthesia/ui/Prebrief';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { POSTPARTUM_HEMORRHAGE_UTERINE_ATONY as SCENARIO } from '../../src/modules/obstetrics/scenarios/postpartum-hemorrhage-uterine-atony';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 const cockpitMarkup = (assessment: NonNullable<ActionCockpitProps['resuscitation']['obstetricsAtonyAssessment']>) => renderToStaticMarkup(createElement(ActionCockpit, {
   scenario: SCENARIO, region: UNITED_STATES, infusions: [],
@@ -38,7 +39,7 @@ describe('Obstetrics module user-facing foundation', () => {
     expect(index).toContain('Postpartum hemorrhage: act early and keep every cause open');
     const scenario = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/obstetrics/scenario/postpartum-hemorrhage-uterine-atony' }));
     expect(scenario).toContain('<h1>Postpartum hemorrhage: act early and keep every cause open</h1>');
-    const prebrief = renderToStaticMarkup(createElement(Prebrief, { scenario: SCENARIO,
+    const prebrief = renderToStaticMarkup(createElement(Prebrief, { limitations: LIMITATIONS, scenario: SCENARIO,
       region: UNITED_STATES, environment: 'obstetrics', guidance: 'coached',
       onGuidance: () => {}, onStart: () => {} }));
     expect(prebrief).toContain('The supplied birth record, maternal findings, family context, and monitor stay visible');

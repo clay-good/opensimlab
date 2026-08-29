@@ -62,7 +62,7 @@ describe('the scenario briefings', () => {
   it.each(SCENARIOS.map((scenario) => [scenario.metadata.id, scenario] as const))(
     '%s shows no identifiers',
     (_id, scenario) => {
-      const markup = renderToStaticMarkup(createElement(Prebrief, {
+      const markup = renderToStaticMarkup(createElement(Prebrief, { limitations: LIMITATIONS,
         scenario,
         region: UNITED_STATES,
         onStart: () => {},
@@ -77,7 +77,7 @@ describe('the scenario briefings', () => {
     // The trap in a test like this: deleting the section makes it pass. Every
     // briefing has to still be saying something about what is not modelled.
     for (const scenario of SCENARIOS) {
-      const markup = renderToStaticMarkup(createElement(Prebrief, {
+      const markup = renderToStaticMarkup(createElement(Prebrief, { limitations: LIMITATIONS,
         scenario, region: UNITED_STATES, onStart: () => {},
         guidance: 'coached' as const, onGuidance: () => {},
       }));

@@ -20,6 +20,7 @@ import { hyponatremiaCorrectionInlinePrompt, HYPONATREMIA_CORRECTION_SOURCE_HREF
 import { hyponatremiaCorrectionDemonstrationStep, supportsHyponatremiaCorrectionDemonstration,
   HYPONATREMIA_CORRECTION_DEMONSTRATION_VERSION } from '../../src/modules/endocrine-metabolic/demo/hyponatremia-correction-demonstration';
 import { useHyponatremiaCorrectionDemonstration } from '../../src/modules/endocrine-metabolic/demo/useHyponatremiaCorrectionDemonstration';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 const VERSION = '0.1.0';
 const labels: Record<HyponatremiaCorrectionAction, string> = {
@@ -67,7 +68,7 @@ describe('Post-rescue sodium correction experience', () => {
 
   it('offers the focused correction tray and a learner-paced worked example', () => {
     const start = vi.fn(); const watch = vi.fn();
-    act(() => root.render(<Prebrief scenario={SCENARIO} region={UNITED_STATES} environment="endocrine-metabolic"
+    act(() => root.render(<Prebrief scenario={SCENARIO} limitations={LIMITATIONS} region={UNITED_STATES} environment="endocrine-metabolic"
       guidance="guided" onGuidance={() => {}} onStart={start} onWatch={watch} />));
     expect(container.textContent).toContain('observation periods run at 60× speed');
     expect(container.textContent).toContain('Reading time does not advance the patient');

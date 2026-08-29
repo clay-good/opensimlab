@@ -20,6 +20,7 @@ import { Prebrief } from '@anesthesia/ui/Prebrief';
 import { About } from '@landing/About';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 const hrefs = (markup: string) =>
   [...markup.matchAll(/href="([^"]+)"/g)].map((match) => match[1]!);
@@ -158,7 +159,7 @@ describe('the site bar', () => {
 });
 
 describe('the scenario briefing', () => {
-  const markup = renderToStaticMarkup(createElement(Prebrief, {
+  const markup = renderToStaticMarkup(createElement(Prebrief, { limitations: LIMITATIONS,
     scenario: ROUTINE_INDUCTION,
     region: UNITED_STATES,
     onStart: () => {},

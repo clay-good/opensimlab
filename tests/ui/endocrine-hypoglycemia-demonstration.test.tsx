@@ -10,6 +10,7 @@ import type { LearnerAction, SevereHypoglycemiaSnapshot } from '@platform/kernel
 import { SEVERE_HYPOGLYCEMIA_RECURRENCE as SCENARIO } from '../../src/modules/endocrine-metabolic/scenarios/severe-hypoglycemia-recurrence';
 import { SevereHypoglycemiaTray } from '../../src/modules/endocrine-metabolic/SevereHypoglycemiaTray';
 import { useHypoglycemiaDemonstration } from '../../src/modules/endocrine-metabolic/demo/useHypoglycemiaDemonstration';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 function Harness(props: { active: boolean; running: boolean; patient?: SevereHypoglycemiaSnapshot;
   onAction: (action: Omit<LearnerAction, 'tick'>) => void; onFinish: () => void; onTake: () => void;
@@ -31,7 +32,7 @@ describe('Live worked-example controls', () => {
   afterEach(() => { act(() => root.unmount()); container.remove(); });
   it('offers a correctly labeled optional example from the briefing', () => {
     const watch = vi.fn();
-    act(() => root.render(<Prebrief scenario={SCENARIO} region={UNITED_STATES} environment="endocrine-metabolic"
+    act(() => root.render(<Prebrief scenario={SCENARIO} limitations={LIMITATIONS} region={UNITED_STATES} environment="endocrine-metabolic"
       guidance="coached" onGuidance={() => {}} onStart={() => {}} onWatch={watch} />));
     const button = [...container.querySelectorAll('button')].find((entry) => entry.textContent === 'Watch a worked example')!;
     expect(SCENARIO.metadata.version).toBe('0.1.3');

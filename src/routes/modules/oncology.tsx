@@ -6,10 +6,12 @@
  */
 import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRoute';
 import { DEFAULT_ONCOLOGY_SCENARIO_ID, ONCOLOGY_SCENARIOS, getOncologyScenario } from '../../modules/oncology/scenarios';
+import { ONCOLOGY_LIMITATIONS } from '@platform/docs/limitations/oncology';
 
 const ONCOLOGY_CONFIG: ClinicalModuleConfig = {
   id: 'oncology', basePath: '/oncology',
   heading: 'Oncology simulator',
+  limitations: ONCOLOGY_LIMITATIONS,
   catalogIntroduction: 'Rehearsals for the part of cancer care that happens away from the oncology clinic: a treatment exposure that has already stopped, a complication that arrives without its label, and a decision that belongs to the team holding the record.',
   // "1 ... are available" reads as a typo on a module that has just opened with one lab.
   catalogStatus: `${ONCOLOGY_SCENARIOS.length} of 11 planned Oncology labs ${ONCOLOGY_SCENARIOS.length === 1 ? 'is' : 'are'} available as previews. Registration does not establish completed review.`,

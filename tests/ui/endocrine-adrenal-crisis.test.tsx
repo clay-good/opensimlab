@@ -12,6 +12,7 @@ import { AdrenalCrisisTray } from '../../src/modules/endocrine-metabolic/Adrenal
 import { AdrenalCrisis } from '../../src/modules/endocrine-metabolic/adrenal-crisis';
 import { ADRENAL_FIXTURES } from '../../src/modules/endocrine-metabolic/adrenal-crisis-fixtures';
 import { ADRENAL_CRISIS_TREATMENT_BEFORE_TESTS as SCENARIO } from '../../src/modules/endocrine-metabolic/scenarios/adrenal-crisis-treatment-before-tests';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 describe('Adrenal crisis experience', () => {
   it('opens the debrief in this emergency-care context rather than claiming anesthesia was performed', () => {
@@ -35,7 +36,7 @@ describe('Adrenal crisis experience', () => {
     const html = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/endocrine-metabolic/scenario/adrenal-crisis-treatment-before-tests' }));
     expect(html).toContain('<h1>Adrenal crisis: treatment cannot wait for tests</h1>');
     expect(html).not.toContain('ASA 4');
-    const briefing = renderToStaticMarkup(createElement(Prebrief, { scenario: SCENARIO, region: UNITED_STATES,
+    const briefing = renderToStaticMarkup(createElement(Prebrief, { limitations: LIMITATIONS, scenario: SCENARIO, region: UNITED_STATES,
       environment: 'endocrine-metabolic', guidance: 'guided', onGuidance: () => {}, onStart: () => {} }));
     expect(briefing).toContain('No test result unlocks');
     expect(crisisResponseAvailability(SCENARIO).hasAdrenalCrisisResponse).toBe(true);

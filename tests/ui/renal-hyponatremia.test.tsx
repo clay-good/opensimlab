@@ -17,6 +17,7 @@ import { renalHyponatremiaInlinePrompt, RENAL_HYPONATREMIA_SOURCE_HREF } from '.
 import { renalHyponatremiaDemonstrationStep, supportsRenalHyponatremiaDemonstration,
   RENAL_HYPONATREMIA_DEMONSTRATION_VERSION } from '../../src/modules/renal-electrolyte/demo/renal-hyponatremia-demonstration';
 import { useRenalHyponatremiaDemonstration } from '../../src/modules/renal-electrolyte/demo/useRenalHyponatremiaDemonstration';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 const labels: Record<RenalHyponatremiaAction, string> = {
   rescue: 'Request qualified symptom-led rescue', 'call-support': 'Call qualified acute-care and specialist support',
@@ -62,7 +63,7 @@ describe('Renal hyponatremia symptoms, sodium, and separate observations', () =>
 
   it('offers a nine-decision example with a selected symptom pathway and continuing treatment review', () => {
     const watch = vi.fn();
-    act(() => root.render(<Prebrief scenario={SCENARIO} region={UNITED_STATES} environment="renal-electrolyte"
+    act(() => root.render(<Prebrief scenario={SCENARIO} limitations={LIMITATIONS} region={UNITED_STATES} environment="renal-electrolyte"
       guidance="guided" onGuidance={() => {}} onStart={() => {}} onWatch={watch} />));
     expect(container.textContent).toContain('nine-decision'); expect(container.textContent).not.toContain('90-second');
     expect(container.textContent).toContain('Reading time does not advance the patient');

@@ -17,6 +17,7 @@ import { renalHypokalemiaInlinePrompt, RENAL_HYPOKALEMIA_SOURCE_HREF, RENAL_HYPO
 import { renalHypokalemiaDemonstrationStep, supportsRenalHypokalemiaDemonstration,
   RENAL_HYPOKALEMIA_DEMONSTRATION_VERSION } from '../../src/modules/renal-electrolyte/demo/renal-hypokalemia-demonstration';
 import { useRenalHypokalemiaDemonstration } from '../../src/modules/renal-electrolyte/demo/useRenalHypokalemiaDemonstration';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 const labels: Record<RenalHypokalemiaAction, string> = {
   potassium: 'Request qualified potassium replacement', magnesium: 'Request qualified magnesium replacement',
@@ -61,7 +62,7 @@ describe('Renal hypokalemia replacement, magnesium, ongoing losses, and separate
 
   it('offers a nine-decision example without a generic induction script or a fixed prescription', () => {
     const watch = vi.fn();
-    act(() => root.render(<Prebrief scenario={SCENARIO} region={UNITED_STATES} environment="renal-electrolyte"
+    act(() => root.render(<Prebrief scenario={SCENARIO} limitations={LIMITATIONS} region={UNITED_STATES} environment="renal-electrolyte"
       guidance="guided" onGuidance={() => {}} onStart={() => {}} onWatch={watch} />));
     expect(container.textContent).toContain('nine-decision'); expect(container.textContent).not.toContain('90-second');
     expect(container.textContent).toContain('Reading time does not advance the patient');

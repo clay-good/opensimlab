@@ -6,9 +6,11 @@
  */
 import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRoute';
 import { DEFAULT_OBSTETRICS_SCENARIO_ID, OBSTETRICS_SCENARIOS, getObstetricsScenario } from '../../modules/obstetrics/scenarios';
+import { OBSTETRICS_LIMITATIONS } from '@platform/docs/limitations/obstetrics';
 
 const OBSTETRICS_CONFIG: ClinicalModuleConfig = {
   id: 'obstetrics', basePath: '/obstetrics', heading: 'Obstetrics simulator',
+  limitations: OBSTETRICS_LIMITATIONS,
   catalogIntroduction: 'Calm delivery-room rehearsals for recognizing change early, bringing the right team together, and protecting the whole family through reassessment and handoff.',
   catalogStatus: `${OBSTETRICS_SCENARIOS.length} of 15 bounded Obstetrics labs is playable.`,
   scenarios: OBSTETRICS_SCENARIOS, defaultScenarioId: DEFAULT_OBSTETRICS_SCENARIO_ID,

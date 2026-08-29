@@ -17,6 +17,7 @@ import { renalHyperkalemiaInlinePrompt, RENAL_HYPERKALEMIA_SOURCE_HREF, RENAL_HY
 import { renalHyperkalemiaDemonstrationStep, supportsRenalHyperkalemiaDemonstration,
   RENAL_HYPERKALEMIA_DEMONSTRATION_VERSION } from '../../src/modules/renal-electrolyte/demo/renal-hyperkalemia-demonstration';
 import { useRenalHyperkalemiaDemonstration } from '../../src/modules/renal-electrolyte/demo/useRenalHyperkalemiaDemonstration';
+import { LIMITATIONS } from '@platform/docs/limitations';
 
 const labels: Record<RenalHyperkalemiaAction, string> = {
   calcium: 'Request qualified calcium cardioprotection', shift: 'Request qualified potassium shifting',
@@ -60,7 +61,7 @@ describe('Renal hyperkalemia protection, shifting, removal, and separate observa
 
   it('offers a ten-decision example without a generic induction script or a fixed removal modality', () => {
     const watch = vi.fn();
-    act(() => root.render(<Prebrief scenario={SCENARIO} region={UNITED_STATES} environment="renal-electrolyte"
+    act(() => root.render(<Prebrief scenario={SCENARIO} limitations={LIMITATIONS} region={UNITED_STATES} environment="renal-electrolyte"
       guidance="guided" onGuidance={() => {}} onStart={() => {}} onWatch={watch} />));
     expect(container.textContent).toContain('ten-decision'); expect(container.textContent).not.toContain('90-second');
     expect(container.textContent).toContain('Reading time does not advance the patient');
