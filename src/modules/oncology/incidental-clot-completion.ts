@@ -1,0 +1,22 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
+import { INCIDENTAL_CLOT_A_DECISION_THE_EVIDENCE_CANNOT_MAKE } from './scenarios/incidental-clot-a-decision-the-evidence-cannot-make';
+import { INCIDENTAL_CLOT_FIXTURES } from './incidental-clot-fixtures';
+
+export function incidentalClotCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
+  if (moduleId !== 'oncology' || capabilityVersion !== '0.1.0-alpha.48'
+    || scenario.metadata.id !== INCIDENTAL_CLOT_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
+    || INCIDENTAL_CLOT_FIXTURES.contentVersion !== '0.1.0' || INCIDENTAL_CLOT_FIXTURES.seed !== 6403
+    || JSON.stringify(scenario) !== JSON.stringify(INCIDENTAL_CLOT_A_DECISION_THE_EVIDENCE_CANNOT_MAKE)) return [];
+  return [
+    { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['incidental-clot-fixtures.ts binds seed 6403 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No thrombosis, bleeding, or anticoagulation-response model is claimed.'] },
+    { id: 'meaningful-progression', status: 'satisfied', evidence: ['incidental-clot.ts runs two authored transitions. At 30 minutes the patient asks the question himself and states, unprompted, that the bleeding frightened him more than anything else has. The treating service answers 60 minutes after it is contacted, accepts the finding as a decision rather than an automatic action, takes ownership of whether to anticoagulate and with what, and asks that the bleeding history travel with the referral. Nothing arrives uncontacted. The observations deliberately never move: a deteriorating patient would answer the question the lesson is asking.'] },
+    { id: 'meaningful-actions-and-choices', status: 'satisfied', evidence: ['The learner records the finding with how it was found, records the conditional strength and very low certainty, records the benefit and the harm together as figures, records this patient’s own bleeding risk, contacts the treating service asking for a decision, records the decision as shared, and reviews the boundaries. Filing it as incidental with no action, anticoagulating on the grounds that an embolus is an embolus, waiting for symptoms, and leaving it for the clinic letter are each refused.'] },
+    { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The recorded finding, the recorded certainty, the paired figures, the bleeding risk, contact with the treating service, the shared-decision record, the boundary review, and a current full assessment permit handoff with the decision open. Instructor takeover bounds a run with no escalation at 180 minutes, or an unfinished session at eight hours.'] },
+    { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Eight event-bound objectives distinguish what incidental describes, what a conditional recommendation on very low certainty asks of the reader, holding benefit and harm together, this patient’s own bleeding risk, returning the decision to its owner, recording it as shared, the certainty of the underlying figures, and accountable handoff of an unresolved decision. Refused shortcuts remain visible, and no decision, treatment, or outcome is certified.'] },
+    { id: 'reference-transcripts', status: 'satisfied', evidence: ['incidental-clot-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine.'] },
+    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
+    { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
+  ];
+}

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 376,
+  "sourceCount": 379,
   "sources": [
     {
       "id": "renal-hypermagnesemia-series-2018",
@@ -4867,6 +4867,45 @@
       "verifiedAgainst": "PubMed PMID 30242316 bibliographic record and indexed abstract (PMC6440712), including the December 2018 erratum notice. These are pharmacovigilance reports subject to reporting bias, not a measured population risk.",
       "verifiedOn": "2026-08-29",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/30242316/"
+    },
+    {
+      "id": "oncology-ash-cancer-vte-2021",
+      "pmid": "33570602",
+      "authors": "Lyman GH, Carrier M, Ay C, et al",
+      "title": "American Society of Hematology 2021 guidelines for management of venous thromboembolism: prevention and treatment in patients with cancer",
+      "publication": "Blood Advances",
+      "year": 2021,
+      "locator": "5(4):927-974; doi:10.1182/bloodadvances.2020003442; Recommendation 26 with its Remarks, the incidental-PE summary of evidence, benefits, harms and certainty sections, and Good practice statement 1",
+      "usedFor": "That short-term anticoagulation rather than observation is suggested for incidental (unsuspected) pulmonary embolism in cancer as a conditional recommendation on very low certainty; that no systematic review or randomised trial addressed the question and the panel named it a research priority; the paired effect estimates of about 89 fewer deaths, 77 fewer symptomatic emboli and 128 more major bleeds per 1000; and that consideration of treatment should rest on the individual risk of thrombosis and of major bleeding after full discussion of the potential benefits and harms. No anticoagulant, dose, or duration is adopted.",
+      "verifiedAgainst": "Open-access full text at PMC7903232, read directly: Recommendation 26 verbatim, the Remarks for Recommendations 26 to 28, the summary of evidence, benefits, harms and burden, certainty, and conclusions sections for incidental PE, and Good practice statement 1. The effect estimates are relative and absolute figures from observational data, not trial results.",
+      "verifiedOn": "2026-08-29",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/33570602/"
+    },
+    {
+      "id": "oncology-incidental-pe-pooled-analysis-2016",
+      "pmid": "26469193",
+      "authors": "van der Hulle T, den Exter PL, Planquette B, et al",
+      "title": "Risk of recurrent venous thromboembolism and major hemorrhage in cancer-associated incidental pulmonary embolism among treated and untreated patients: a pooled analysis of 926 patients",
+      "publication": "Journal of Thrombosis and Haemostasis",
+      "year": 2016,
+      "locator": "14(1):105-113; doi:10.1111/jth.13172; Background, Methods and Results; incidental PE defined as PE diagnosed on computed tomography not performed for suspected PE, estimated at 3.1% of all cancer patients; weighted pooled six-month recurrent VTE 5.8% (95% CI 3.7-8.3), major haemorrhage 4.7% (3.0-6.8), mortality 37% (28-47); recurrence 12% untreated; subsegmental versus more proximal HR 1.1 (0.50-2.4)",
+      "usedFor": "The definition of an incidental pulmonary embolism as a route to the finding rather than a property of the clot, its approximate frequency, the six-month mortality that belongs to the underlying illness rather than to the clot or its treatment, the higher recurrence in untreated patients, and the comparable recurrence risk after subsegmental and more proximal clots.",
+      "verifiedAgainst": "PubMed PMID 26469193 bibliographic record and indexed abstract. Individual patient data pooled from 11 observational cohorts, so the treated and untreated groups were not randomised and the comparison is confounded by indication.",
+      "verifiedOn": "2026-08-29",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/26469193/"
+    },
+    {
+      "id": "oncology-riete-incidental-pe-2016",
+      "pmid": "27660517",
+      "authors": "Peris M, Jiménez D, Maestre A, et al",
+      "title": "Outcome during and after anticoagulant therapy in cancer patients with incidentally found pulmonary embolism",
+      "publication": "European Respiratory Journal",
+      "year": 2016,
+      "locator": "48(5):1360-1368; doi:10.1183/13993003.00779-2016; 715 RIETE registry patients; during anticoagulation (mean 235 days) major bleeding 10.1 (95% CI 7.48-13.4) versus symptomatic PE 3.17 (1.80-5.19) per 100 patient-years, with fatal bleeding exceeding fatal PE; after discontinuation (mean 117 days) major bleeding 3.00 (1.10-6.65) versus symptomatic PE 8.37 (4.76-13.7) per 100 patient-years",
+      "usedFor": "The counterweight the lesson is required to state alongside the guideline estimates: that in this registry the rate of major and of fatal bleeding during anticoagulation exceeded the rate of symptomatic and of fatal pulmonary embolism, and that its authors conclude the risk-benefit ratio of anticoagulation in these patients is uncertain and must be evaluated in further studies.",
+      "verifiedAgainst": "PubMed PMID 27660517 bibliographic record and indexed abstract, and its citation as reference 336 in the ASH 2021 guideline. A registry without a randomised comparator; the during-treatment and after-discontinuation periods are not equivalent populations.",
+      "verifiedOn": "2026-08-29",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/27660517/"
     }
   ]
 }

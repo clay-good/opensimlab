@@ -27,6 +27,7 @@ import { septicShockLabelCompletionEvidence } from '../../infectious-disease/sep
 import { meningitisImagingCompletionEvidence } from '../../infectious-disease/meningitis-imaging-completion';
 import { lowScoreCompletionEvidence } from '../../medical-surgical-nursing/low-score-completion';
 import { delayedImmuneEventCompletionEvidence } from '../../oncology/delayed-immune-event-completion';
+import { incidentalClotCompletionEvidence } from '../../oncology/incidental-clot-completion';
 import { countedRateCompletionEvidence } from '../../medical-surgical-nursing/counted-rate-completion';
 import { pairedReadingCompletionEvidence } from '../../medical-surgical-nursing/paired-reading-completion';
 import { afferentLimbCompletionEvidence } from '../../medical-surgical-nursing/afferent-limb-completion';
@@ -143,6 +144,7 @@ export function auditClinicalScenario(
     ...meningitisImagingCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...lowScoreCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...delayedImmuneEventCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...incidentalClotCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...countedRateCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...pairedReadingCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...afferentLimbCompletionEvidence(scenario, capabilityVersion, moduleId),

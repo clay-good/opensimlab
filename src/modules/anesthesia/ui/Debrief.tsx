@@ -59,6 +59,7 @@ import { supportsLastKnownWell } from '../../medical-surgical-nursing/last-known
 import { supportsOxygenTargetScale } from '../../medical-surgical-nursing/oxygen-target-scale';
 import { supportsLostContingency } from '../../medical-surgical-nursing/lost-contingency';
 import { supportsDelayedImmuneEvent } from '../../oncology/delayed-immune-event';
+import { supportsIncidentalClot } from '../../oncology/incidental-clot';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -632,6 +633,52 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-oncology-incidental-clot-')) {
+      if (!supportsIncidentalClot(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The oncology incidental-finding lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^incidental-clot-${id}-\\d+$`).test(entry.eventId));
+      const finding = event('finding-recorded'); const certainty = event('certainty-recorded');
+      const tradeoff = event('tradeoff-recorded'); const bleeding = event('bleeding-risk-recorded');
+      const escalation = event('escalation-requested'); const shared = event('shared-decision-recorded');
+      const boundaries = event('boundary-review'); const handoff = event('handoff');
+      const asked = event('patient-question');
+      const answered = log.find((entry) => /^incidental-clot-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedDismissal = event('dismissal-refused'); const refusedReflex = event('reflex-refused');
+      const refusedWait = event('wait-refused'); const refusedDefer = event('defer-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'record-oncology-incidental-clot-how-the-finding-was-found': { met: !!finding, tick: finding?.tick,
+          finding: (finding ? 'The segmental embolus was recorded together with the fact that the scan was done to assess response, not to look for it. ' : 'The finding was never recorded with how it was found. ')
+            + 'Incidental means found on a scan not performed for suspected embolus. It describes the route to the finding and says nothing about the clot.' },
+        'recognize-oncology-incidental-clot-a-conditional-recommendation': { met: !!certainty, tick: certainty?.tick,
+          finding: (certainty ? 'The conditional strength and the very low certainty were recorded alongside the recommendation rather than underneath it. ' : 'The recommendation was never recorded with its strength or its certainty. ')
+            + 'The panel found no systematic review and no randomised trial addressing this question, judged the certainty very low for risk of bias, inconsistency and imprecision, and named it a research priority. A conditional recommendation is an instruction to decide with the patient, not a weak instruction.' },
+        'record-oncology-incidental-clot-the-benefit-and-the-harm-together': { met: !!tradeoff, tick: tradeoff?.tick,
+          finding: (tradeoff ? 'Both directions were recorded in the same place: about 89 fewer deaths and 77 fewer symptomatic emboli per 1000, against about 128 more major bleeds per 1000, all on very uncertain evidence. ' : 'The benefit and the harm were never recorded together, and either figure alone teaches the wrong lesson. ')
+            + 'In the registry cohort the panel drew on, major bleeding exceeded symptomatic embolism during anticoagulation and fatal bleeding exceeded fatal embolism; those authors concluded the risk-benefit ratio is uncertain.' },
+        'record-oncology-incidental-clot-this-patients-bleeding-risk': { met: !!bleeding, tick: bleeding?.tick,
+          finding: (bleeding ? 'His own bleeding history was recorded rather than assumed. ' : 'This patient’s bleeding risk was never recorded, so the decision was framed without the input that weighs it. ')
+            + (refusedReflex ? 'Anticoagulating immediately was attempted and refused; it is a treatment decision belonging to the qualified team, and this patient is already bleeding. ' : '')
+            + (refusedDismissal ? 'Filing it as incidental with no action was attempted and refused; doing nothing is one of the two options, not the absence of a choice. ' : '')
+            + 'The guidance is explicit that caution is needed to keep a favourable balance when anticoagulating a patient at higher bleeding risk.' },
+        'activate-oncology-incidental-clot-a-decision-returned-to-its-owner': { met: !!escalation, tick: escalation?.tick,
+          finding: (escalation ? 'The treating service was asked for a decision rather than told one. ' : 'The service that owns the anticoagulation decision was never contacted. ')
+            + (refusedDefer ? 'Leaving it for the clinic letter was attempted and refused; the report had already gone four days unacknowledged. ' : '')
+            + (answered ? 'They accepted the finding as a decision rather than an automatic action and asked that the bleeding history travel with the referral. ' : 'They had not answered by the end of this run, and the handoff had to survive that. ') },
+        'record-oncology-incidental-clot-a-decision-made-with-him': { met: !!shared, tick: shared?.tick,
+          finding: (shared ? 'The record states this is a decision to be made with him: the recommendation conditional, the benefit and the harm put to him together, his bleeding history and his own account of it as deciding inputs. ' : 'Nothing in the record says whose decision this is. ')
+            + (asked ? 'He raised it himself before he was asked, and said the bleeding frightened him more than anything else has. ' : '')
+            + (refusedWait ? 'Waiting for symptoms was attempted and refused; deciding to observe is legitimate, drifting into it is not. ' : '')
+            + 'No agreement was recorded, because none was reached.' },
+        'review-oncology-incidental-clot-boundaries-and-their-certainty': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The boundaries were reviewed with their certainty attached. ' : 'The boundary and certainty review is missing. ')
+            + 'Incidental pulmonary embolism is reported in roughly 3 percent of cancer patients; the pooled analysis followed 926 patients across 11 cohorts, whose six-month mortality of about 37 percent belongs to the illness rather than to the clot or its treatment; the panel’s estimates are observational; and recurrence after a subsegmental clot was comparable to a more proximal one, so the size of the clot does not settle it either.' },
+        'handoff-oncology-incidental-clot-an-unresolved-decision': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The finding, its route, the conditional strength and very low certainty, the figures in both directions, and his bleeding history all travelled. ' : 'Current full findings, the recorded certainty, or continuing-care ownership remains incomplete. ')
+            + 'The decision was handed over open, which is what an unresolved decision looks like when it is handed over honestly rather than closed to make the handoff tidy.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-oncology-delayed-immune-event-')) {
       if (!supportsDelayedImmuneEvent(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The oncology delayed immune-event lesson was not active.' } satisfies ObjectiveFinding;

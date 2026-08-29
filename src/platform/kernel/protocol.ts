@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 198 adds the authored delayed immune-event snapshot. */
-export const WORKER_PROTOCOL_VERSION = 198;
+/** Version 199 adds the authored incidental-clot decision snapshot. */
+export const WORKER_PROTOCOL_VERSION = 199;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -592,6 +592,49 @@ export interface MeningitisImagingSnapshot {
     readonly cerebrospinalFluidAvailable: boolean;
     readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
     readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
+}
+
+export interface IncidentalClotSnapshot {
+  readonly findingRecordedAtTick: number | null;
+  readonly certaintyRecordedAtTick: number | null;
+  readonly tradeoffRecordedAtTick: number | null;
+  readonly bleedingRiskRecordedAtTick: number | null;
+  readonly escalationAtTick: number | null;
+  readonly sharedDecisionAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly recommendationIsConditional: boolean;
+  readonly certaintyOfEvidence: string;
+  readonly reportUnacknowledgedDays: number;
+  readonly patientAsked: boolean;
+  readonly serviceResponded: boolean;
+  readonly serviceObserved: boolean;
+  readonly dismissalAttempted: boolean;
+  readonly reflexTreatmentAttempted: boolean;
+  readonly waitForSymptomsAttempted: boolean;
+  readonly deferralAttempted: boolean;
+  readonly observationRecord: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+  } | null;
+  readonly reportRecord: {
+    readonly atTick: number; readonly clotLocation: string; readonly reportedDaysAgo: number;
+    readonly scanIndication: string; readonly acknowledgedInRecord: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+    readonly clotLocation: string; readonly reportedDaysAgo: number;
+    readonly scanIndication: string; readonly acknowledgedInRecord: boolean;
+    readonly alertness: string;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -4360,6 +4403,7 @@ export interface EquipmentSnapshot {
     readonly meningitisImaging?: MeningitisImagingSnapshot;
     readonly lowScore?: LowScoreSnapshot;
     readonly delayedImmuneEvent?: DelayedImmuneEventSnapshot;
+    readonly incidentalClot?: IncidentalClotSnapshot;
     readonly countedRate?: CountedRateSnapshot;
     readonly pairedReading?: PairedReadingSnapshot;
     readonly afferentLimb?: AfferentLimbSnapshot;

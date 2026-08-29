@@ -6103,6 +6103,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'The series is a literature collation of reported cases with no denominator: it establishes that these events occur late and are missed, not how likely they are in any patient. Its own argument is diagnostic rather than epidemiological. The fatality spectrum differs by drug class — anti-PD-1 and anti-PD-L1 fatalities were more often pneumonitis, hepatitis, and neurotoxic effects — so the colitis figure describes a class this patient did not receive.',
     briefIn: ['delayed-immune-event-a-drug-that-stopped-months-ago'],
   },
+  {
+    id: 'incidental-clot-presentation-and-service-response-are-authored',
+    headline: 'One report, one telephone call, and a patient who stays well throughout.',
+    simplification: 'The case supplies a fixed set of observations that never move, a patient who asks his question at a fixed time, and a treating service that answers sixty minutes after it is contacted with a fixed reply. No thrombosis, bleeding, or anticoagulation-response model runs underneath, and no decision is reached.',
+    whereItMisleads: 'A learner concludes that an incidental pulmonary embolus is always this quiet, that the treating service always answers, or that patients reliably volunteer what matters to them.',
+    correctUnderstanding: 'Nothing the learner does changes his course, because nothing was going to. He is held well so that the decision cannot be settled by a deterioration, and his question is authored so that the values input arrives at all. In practice the patient may be unwell, may never raise it, and the call may not be answered; the plan has to survive each of those.',
+    briefIn: ['incidental-clot-a-decision-the-evidence-cannot-make'],
+  },
+  {
+    id: 'incidental-clot-controls-are-recording-and-escalation-only',
+    headline: 'No anticoagulant is selected, and no decision is reached.',
+    simplification: 'The learner records the finding and how it was found, records the strength and certainty of the recommendation, records the benefit and the harm together, records this patient\u2019s bleeding risk, contacts the treating service, records the decision as shared, and reviews the boundaries.',
+    whereItMisleads: 'The shared-decision control is read as obtaining consent or agreeing a plan, or the refusal of immediate anticoagulation is read as this lesson recommending observation.',
+    correctUnderstanding: 'Nothing is agreed and nothing is administered. The lesson refuses both reflexes and reaches neither conclusion, because the guidance it rests on suggests treatment conditionally on very low certainty and says the individual risk of thrombosis and of major bleeding should decide after full discussion. Observation is a legitimate outcome of that discussion; so is anticoagulation. Neither is this learner\u2019s to declare.',
+    briefIn: ['incidental-clot-a-decision-the-evidence-cannot-make'],
+  },
+  {
+    id: 'incidental-clot-figures-are-population-estimates-on-very-low-certainty',
+    headline: 'Every number in this lesson is a population estimate the panel itself rated very low.',
+    simplification: 'The case reports about 89 fewer deaths, 77 fewer symptomatic emboli, and 128 more major bleeds per 1000 with treatment, a six-month mortality of about 37 percent, and an incidence of about 3 percent.',
+    whereItMisleads: 'A learner reads the per-1000 figures as this patient\u2019s risks, treats the mortality figure as an effect of the clot or of the decision, or takes the direction of the estimates as settled.',
+    correctUnderstanding: 'The effect estimates come from observational data with no randomised trial and no systematic review addressing the question, and the panel rated the certainty very low for risk of bias, inconsistency and imprecision. The 37 percent six-month mortality is the mortality of the population studied \u2014 people with advanced cancer \u2014 not a consequence of the embolus or of anticoagulating it. The registry cohort points the other way on bleeding, and its authors call the risk-benefit ratio uncertain.',
+    briefIn: ['incidental-clot-a-decision-the-evidence-cannot-make'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

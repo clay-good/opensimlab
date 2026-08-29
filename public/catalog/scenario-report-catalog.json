@@ -3199,6 +3199,23 @@
       "limitationManifestHash": "sha256:e3d07c392083eee300225b62a494caf623a3829067e2d6c512a36a3d682803e2"
     },
     {
+      "scenarioId": "incidental-clot-a-decision-the-evidence-cannot-make",
+      "contentVersion": "0.1.0",
+      "moduleId": "oncology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:090234df98c6a1233f1d6b8525d2e2b5310e7979c2ad7f73a054e7128a991b01",
+      "defaultsHash": "sha256:79f393841bb31903a9da7f568df87c8cadd0f288f46b4154097f43fc4ddcb2bc",
+      "maturityHash": "sha256:6a5c224eb85a00d5d10618ebb3a40913059f8c5082dfffe88d9d34acfcaa198f",
+      "sourceManifestHash": "sha256:bb5d0354249673d41e51cf9e7789595698ddd40b3af3da72e69caf041a9fd0f4",
+      "limitationManifestHash": "sha256:e9b0b3eeaf70b63922adf72298b48f5f722da6d841d55e4b86c11bddf8d1f41c"
+    },
+    {
       "scenarioId": "bronchiolitis",
       "contentVersion": "0.1.0",
       "moduleId": "pediatrics",

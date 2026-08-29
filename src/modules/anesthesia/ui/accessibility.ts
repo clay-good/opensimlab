@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot, DelayedImmuneEventSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot, DelayedImmuneEventSnapshot, IncidentalClotSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -130,6 +130,7 @@ export function stateSummary(
     readonly oxygenTargetScale?: OxygenTargetScaleSnapshot;
     readonly lostContingency?: LostContingencySnapshot;
     readonly delayedImmuneEvent?: DelayedImmuneEventSnapshot;
+    readonly incidentalClot?: IncidentalClotSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -183,7 +184,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale || options.lostContingency || options.delayedImmuneEvent) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale || options.lostContingency || options.delayedImmuneEvent || options.incidentalClot) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -207,6 +208,32 @@ export function stateSummary(
           + ' intravenous.');
       }
     }
+  }
+  if (options.incidentalClot) {
+    const patient = options.incidentalClot;
+    // Strength and certainty are announced together with the recommendation. Either alone is
+    // the misreading this lesson exists to prevent.
+    lines.push(`The recommendation here is ${patient.recommendationIsConditional ? 'conditional' : 'strong'}, on ${patient.certaintyOfEvidence} certainty in the evidence of effects. The report has gone ${patient.reportUnacknowledgedDays} days unacknowledged.`);
+    lines.push('Supplied starting observations were pulse 78 per minute, blood pressure 128 over 74, respiratory rate 15 per minute, oxygen saturation 97 percent in air, and temperature 36.6 degrees Celsius, with no chest symptoms. These remain historical starting observations.');
+    lines.push(`Current alertness: ${patient.alertness}. He has bled intermittently from the primary tumour for two months, most recently last week.`);
+    lines.push(patient.findingRecordedAtTick === null
+      ? 'The finding has not been recorded with how it was found.'
+      : `Finding recorded at simulated ${formatElapsed(patient.findingRecordedAtTick)}, with how it was found.`);
+    lines.push(patient.tradeoffRecordedAtTick === null
+      ? 'The benefit and the harm have not been recorded together, and either figure alone is a different lesson.'
+      : 'Recorded together: about 89 fewer deaths and 77 fewer symptomatic emboli per 1000, and about 128 more major bleeds per 1000, all on very uncertain evidence.');
+    lines.push(`Certainty: ${patient.certaintyRecordedAtTick === null ? 'not recorded' : 'recorded alongside the recommendation'}. Bleeding risk: ${patient.bleedingRiskRecordedAtTick === null ? 'not recorded' : 'recorded as his own'}. Treating service: ${patient.escalationAtTick === null ? 'not contacted' : 'contacted'}. Shared decision: ${patient.sharedDecisionAtTick === null ? 'not recorded' : 'recorded as one to be made with him'}. Boundaries: ${patient.boundariesReviewedAtTick === null ? 'not reviewed' : 'reviewed'}.`);
+    if (patient.patientAsked) {
+      lines.push('He has asked whether he has to have this treatment if he feels well, and said, unprompted, that the bleeding frightened him more than anything else has. He is not refusing anything.');
+    }
+    lines.push('Incidental pulmonary embolism is reported in roughly 3 percent of cancer patients, and the pooled analysis behind these figures followed 926 patients across 11 cohorts of observational data. Whether to anticoagulate, with what, and for how long belongs to the qualified team; no drug, dose, route, or eligibility is selected here, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: pulse ${patient.observation.heartRateBpm} per minute, blood pressure ${patient.observation.systolicMmHg} over ${patient.observation.diastolicMmHg}, oxygen saturation ${patient.observation.spo2Percent} percent in air.`
+      : 'No new full assessment has been requested.');
+    if (patient.serviceObserved) {
+      lines.push('The treating service has answered, accepted the finding as a decision rather than an automatic action, taken ownership of whether to anticoagulate and with what, and asked that the bleeding history travel with the referral.');
+    }
+    if (patient.choiceFeedback) lines.push(patient.choiceFeedback);
   }
   if (options.delayedImmuneEvent) {
     const patient = options.delayedImmuneEvent;
