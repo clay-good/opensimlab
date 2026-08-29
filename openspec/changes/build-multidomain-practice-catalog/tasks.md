@@ -1920,8 +1920,9 @@ credited toward the catalog until every item in the completion contract passes.
   The nursing module is registered at 9 of 9. Oncology is open at 4 of 11: a delayed immune-related
   event after the drug has stopped, an incidentally found pulmonary embolus whose management is
   only conditionally recommended, severe first-cycle oral-fluoropyrimidine toxicity after a
-  wild-type pre-treatment panel, and a prognosis conversation scored by what the patient repeats
-  back rather than by what was said to him. Surgery/trauma is declared planned and has not started. Every
+  wild-type pre-treatment panel, a prognosis conversation scored by what the patient repeats back
+  rather than by what was said to him, and a laboratory tumour-lysis picture in a patient who does
+  not meet the clinical definition. Surgery/trauma is declared planned and has not started. Every
   scenario in this wave remains preview: none carries clinical review, a state-space matrix, or
   inclusive-runtime evidence, so the wave's completion count is still zero.
   The cockpit budget was the binding constraint on the remaining eight oncology lessons: each adds

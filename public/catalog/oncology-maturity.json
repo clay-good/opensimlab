@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "oncology",
-  "recordCount": 4,
+  "recordCount": 5,
   "records": [
     {
       "recordId": "scenario:delayed-immune-event-a-drug-that-stopped-months-ago@0.1.0",
@@ -45,6 +45,17 @@
       "evidence": [
         "/catalog/oncology-completion-audit.json#prognosis-question-a-number-he-asked-for@0.1.0",
         "/catalog/oncology-quality-audit.json#prognosis-question-a-number-he-asked-for@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:laboratory-tls-a-syndrome-he-does-not-have-yet@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "laboratory-tls-a-syndrome-he-does-not-have-yet",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/oncology-completion-audit.json#laboratory-tls-a-syndrome-he-does-not-have-yet@0.1.0",
+        "/catalog/oncology-quality-audit.json#laboratory-tls-a-syndrome-he-does-not-have-yet@0.1.0"
       ]
     }
   ]

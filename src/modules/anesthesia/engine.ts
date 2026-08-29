@@ -78,6 +78,7 @@ import { DelayedImmuneEvent, supportsDelayedImmuneEvent } from '../oncology/dela
 import { IncidentalClot, supportsIncidentalClot } from '../oncology/incidental-clot';
 import { NormalTestToxicity, supportsNormalTestToxicity } from '../oncology/normal-test-toxicity';
 import { PrognosisQuestion, supportsPrognosisQuestion } from '../oncology/prognosis-question';
+import { LaboratoryTls, supportsLaboratoryTls } from '../oncology/laboratory-tls';
 
 /** The engine's own version, recorded in every transcript. */
 export const ENGINE_VERSION = '0.1.0-alpha.48';
@@ -1782,6 +1783,7 @@ export class AnesthesiaEngine {
   private readonly incidentalClot: IncidentalClot | null;
   private readonly normalTestToxicity: NormalTestToxicity | null;
   private readonly prognosisQuestion: PrognosisQuestion | null;
+  private readonly laboratoryTls: LaboratoryTls | null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1955,6 +1957,8 @@ export class AnesthesiaEngine {
     if (this.normalTestToxicity) this.rhythm = 'sinus';
     this.prognosisQuestion = supportsPrognosisQuestion(options.scenario) ? new PrognosisQuestion() : null;
     if (this.prognosisQuestion) this.rhythm = 'sinus';
+    this.laboratoryTls = supportsLaboratoryTls(options.scenario) ? new LaboratoryTls() : null;
+    if (this.laboratoryTls) this.rhythm = 'sinus';
     this.practiceRegion = options.practiceRegion;
     this.seed = options.seed;
     if (options.scenario.timeline.some((event) => event.type === 'narrative'
@@ -2093,6 +2097,11 @@ export class AnesthesiaEngine {
     if (this.lastKnownWell && action.type !== 'last-known-well-response' && action.type !== 'silence-alarm') {
       this.log('warning', 'assessment', `last-known-well-generic-action-refused-${this.currentTick}`,
         'Only this lesson\u2019s bound-recording, recollection-recording, activation, consequence-recording, boundary-review, observation, and handoff choices are available.');
+      return;
+    }
+    if (this.laboratoryTls && action.type !== 'laboratory-tls-response' && action.type !== 'silence-alarm') {
+      this.log('warning', 'assessment', `laboratory-tls-generic-action-refused-${this.currentTick}`,
+        'Only this lesson\u2019s definition-recording, timing, crossing-risk, escalation, bounded-intent, boundary-review, observation, and handoff choices are available.');
       return;
     }
     if (this.prognosisQuestion && action.type !== 'prognosis-question-response' && action.type !== 'silence-alarm') {
@@ -3172,6 +3181,19 @@ export class AnesthesiaEngine {
         }
         for (const event of this.possibleSepsis.apply(action.payload.action, this.currentTick)) {
           this.log('warning', 'assessment', `possible-sepsis-${event.id}-${this.currentTick}`, event.message);
+        }
+        break;
+      }
+      case 'laboratory-tls-response': {
+        if (!this.laboratoryTls || Reflect.ownKeys(action.payload).length !== 1
+          || !Object.hasOwn(action.payload, 'action')
+          || !Object.getOwnPropertyDescriptor(action.payload, 'action')!.enumerable
+          || !Object.hasOwn(Object.getOwnPropertyDescriptor(action.payload, 'action')!, 'value')) {
+          this.log('warning', 'assessment', `laboratory-tls-action-refused-${this.currentTick}`, 'Only the declared dose-free laboratory tumour-lysis choices are available in this lesson.');
+          break;
+        }
+        for (const event of this.laboratoryTls.apply(action.payload.action, this.currentTick)) {
+          this.log('warning', 'assessment', `laboratory-tls-${event.id}-${this.currentTick}`, event.message);
         }
         break;
       }
@@ -15060,6 +15082,9 @@ export class AnesthesiaEngine {
 
   /** Advance exactly one tick. */
   step(): EngineTick {
+    for (const event of this.laboratoryTls?.advance(this.currentTick) ?? []) {
+      this.log('warning', 'assessment', `laboratory-tls-${event.id}-${this.currentTick}`, event.message);
+    }
     for (const event of this.prognosisQuestion?.advance(this.currentTick) ?? []) {
       this.log('warning', 'assessment', `prognosis-question-${event.id}-${this.currentTick}`, event.message);
     }
@@ -15985,6 +16010,13 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: this.endocrineDkaResolutionReassessmentAtTick !== null ? 16 : 18,
         spo2Percent: 98, systolicMmHg: 118, diastolicMmHg: 70, meanArterialMmHg: 86,
         coreTemperatureC: 36.9 };
+    }
+    if (this.laboratoryTls) {
+      const patient = this.laboratoryTls.vitals();
+      crisisState = { ...crisisState, heartRateBpm: patient.heartRateBpm,
+        respiratoryRateBpm: patient.respiratoryRateBpm, spo2Percent: patient.spo2Percent,
+        systolicMmHg: patient.systolicMmHg, diastolicMmHg: patient.diastolicMmHg,
+        meanArterialMmHg: patient.meanArterialMmHg, coreTemperatureC: patient.coreTemperatureC };
     }
     if (this.prognosisQuestion) {
       const patient = this.prognosisQuestion.vitals();
@@ -20982,6 +21014,7 @@ export class AnesthesiaEngine {
         ...(this.incidentalClot ? { incidentalClot: this.incidentalClot.snapshot(this.currentTick) } : {}),
         ...(this.normalTestToxicity ? { normalTestToxicity: this.normalTestToxicity.snapshot(this.currentTick) } : {}),
         ...(this.prognosisQuestion ? { prognosisQuestion: this.prognosisQuestion.snapshot(this.currentTick) } : {}),
+        ...(this.laboratoryTls ? { laboratoryTls: this.laboratoryTls.snapshot(this.currentTick) } : {}),
         ...(this.avpDeficiency ? { avpDeficiency: this.avpDeficiency.snapshot(this.currentTick) } : {}),
         ...(this.hyponatremiaCorrection ? { hyponatremiaCorrection: this.hyponatremiaCorrection.snapshot(this.currentTick) } : {}),
         aspirationRiskAssessment: {
@@ -21178,7 +21211,7 @@ export class AnesthesiaEngine {
   invalidParameters(): Set<string> {
     const invalid = new Set<string>();
     // These lessons do not supply a capnogram or a modeled oxygen setting.
-    if (this.myxedema || this.hypercalcemia || this.hypocalcemia || this.hyponatremiaCorrection || this.avpDeficiency || this.refeeding || this.perioperativeDiabetes || this.renalHyperkalemia || this.renalHypokalemia || this.renalHyponatremia || this.renalHypernatremia || this.renalHypocalcemia || this.renalHypermagnesemia || this.meningococcalSepsis || this.obstructedKidney || this.febrileNeutropenia || this.necrotizingInfection || this.endocarditisHeartFailure || this.severePneumonia || this.toxicShock || this.possibleSepsis || this.septicShockLabel || this.meningitisImaging || this.lowScore || this.countedRate || this.pairedReading || this.afferentLimb || this.quietPatient || this.proxyScale || this.lastKnownWell || this.oxygenTargetScale || this.lostContingency || this.delayedImmuneEvent || this.incidentalClot || this.normalTestToxicity || this.prognosisQuestion) {
+    if (this.myxedema || this.hypercalcemia || this.hypocalcemia || this.hyponatremiaCorrection || this.avpDeficiency || this.refeeding || this.perioperativeDiabetes || this.renalHyperkalemia || this.renalHypokalemia || this.renalHyponatremia || this.renalHypernatremia || this.renalHypocalcemia || this.renalHypermagnesemia || this.meningococcalSepsis || this.obstructedKidney || this.febrileNeutropenia || this.necrotizingInfection || this.endocarditisHeartFailure || this.severePneumonia || this.toxicShock || this.possibleSepsis || this.septicShockLabel || this.meningitisImaging || this.lowScore || this.countedRate || this.pairedReading || this.afferentLimb || this.quietPatient || this.proxyScale || this.lastKnownWell || this.oxygenTargetScale || this.lostContingency || this.delayedImmuneEvent || this.incidentalClot || this.normalTestToxicity || this.prognosisQuestion || this.laboratoryTls) {
       invalid.add('etco2MmHg');
       invalid.add('fio2');
     }

@@ -106,4 +106,28 @@ export const ONCOLOGY_LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'The optimism cohort was 468 patients at hospice referral with a median survival of 24 days; what generalises from it is the direction of the error, which was consistent, not its size, which is not. The scenario proportions come from 114 patients of 21 oncologists and describe how often that method\u2019s brackets contained the truth, not how long anyone lived. Neither says anything about this man.',
     briefIn: ['prognosis-question-a-number-he-asked-for'],
   },
+  {
+    id: 'laboratory-tls-bloods-and-team-response-are-authored',
+    headline: 'One set of bloods, one repeat, and a patient who stays well throughout.',
+    simplification: 'The case supplies a laboratory picture that meets the definition, a repeat set thirty minutes later that has moved further, and a treating team that answers sixty minutes after it is contacted. The observations never change. No metabolic, renal, or tumour-burden model runs underneath.',
+    whereItMisleads: 'A learner concludes that laboratory tumour lysis reliably stays laboratory, that a patient who is well at 18 hours will be well at 72, or that the repeat set moving is itself reassuring because he did not.',
+    correctUnderstanding: 'The fixture holds him well so that the definition cannot be settled by a deterioration, which is the only way to keep the lesson about what a definition is for. It says nothing about whether this patient would cross over, and it models no consequence of the bloods it moves. A real patient may cross, quickly, and the window exists precisely because that cannot be read off how he looks.',
+    briefIn: ['laboratory-tls-a-syndrome-he-does-not-have-yet'],
+  },
+  {
+    id: 'laboratory-tls-controls-are-recording-and-escalation-only',
+    headline: 'Nothing is given, corrected, prescribed, or ordered in this lesson.',
+    simplification: 'The learner records which definition is met, what crossed and when, and what raises the risk of crossing over, contacts the treating team, records bounded qualified-team intent, and reviews the boundaries.',
+    whereItMisleads: 'The refusal of "treat the potassium and stand down" is read as this lesson taking a position on whether the potassium should be treated, or the bounded-intent control is read as ordering fluids.',
+    correctUnderstanding: 'What was refused is the standing down, not the treating: correcting one value and recording the problem as handled is how a laboratory picture becomes a clinical one unobserved. Hydration, hypouricaemic treatment, electrolyte management, monitoring frequency and any renal referral all belong to the qualified team, and no agent, dose, rate, or threshold appears anywhere in this lesson.',
+    briefIn: ['laboratory-tls-a-syndrome-he-does-not-have-yet'],
+  },
+  {
+    id: 'laboratory-tls-published-rates-disagree-and-none-is-his',
+    headline: 'The published incidence figures disagree, and one is widely restated wrongly.',
+    simplification: 'The case reports laboratory tumour lysis in 42 percent and clinical in 6 percent of one series, and hyperuricaemia in 18.9 percent of a second cohort with 27.8 percent of those meeting tumour-lysis criteria.',
+    whereItMisleads: 'A learner reads either figure as this patient\u2019s probability of crossing over, or repeats the version of the second study that a 2024 review states, in which 18.9 percent is a laboratory tumour-lysis rate.',
+    correctUnderstanding: 'The two studies used different definitions, populations and eras of prophylaxis, and neither is a risk estimate for an individual. The second measured hyperuricaemia, not laboratory tumour lysis, and its authors noted their rates were lower than earlier reports; a review restating it otherwise is the ordinary way a number drifts from what was measured. That drift is the reason this lesson records the finding in front of the learner rather than the name of a syndrome.',
+    briefIn: ['laboratory-tls-a-syndrome-he-does-not-have-yet'],
+  },
 ];

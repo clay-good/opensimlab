@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 384,
+  "sourceCount": 387,
   "sources": [
     {
       "id": "renal-hypermagnesemia-series-2018",
@@ -4971,6 +4971,45 @@
       "verifiedAgainst": "PubMed PMID 24002504 bibliographic record and indexed abstract. The brackets are derived from an oncologist’s own estimate, so the method inherits that estimate’s error; the paper reports it as relatively well-calibrated but imprecise and only moderately discriminative (Harrell C-statistic 0.63).",
       "verifiedOn": "2026-08-29",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/24002504/"
+    },
+    {
+      "id": "oncology-tumour-lysis-definitions-1993",
+      "pmid": "8430709",
+      "authors": "Hande KR, Garrow GC",
+      "title": "Acute tumor lysis syndrome in patients with high-grade non-Hodgkin’s lymphoma",
+      "publication": "American Journal of Medicine",
+      "year": 1993,
+      "locator": "94(2):133-139; doi:10.1016/0002-9343(93)90174-N; Patients and Methods and Results; 102 patients; laboratory tumor lysis defined as two of a 25% rise in serum phosphate, potassium, uric acid or urea nitrogen or a 25% fall in calcium within 4 days of treatment; clinical tumor lysis defined as that plus potassium above 6 mmol/L, creatinine above 221 micromol/L, calcium below 1.5 mmol/L, a life-threatening arrhythmia, or sudden death; laboratory tumor lysis 42%, clinical 6%; clinical tumor lysis more frequent with pretreatment renal insufficiency",
+      "usedFor": "The distinction the lesson turns on — that the laboratory definition is met by the movement of blood results alone and the clinical one requires a consequence — together with the proportions reaching each, and the pre-treatment renal function that the next reader will weigh.",
+      "verifiedAgainst": "PubMed PMID 8430709 bibliographic record and indexed abstract, including the two 1995 published comments on it. A retrospective single-centre case-record review from 1993, so its rates predate current prophylaxis and are not transferred to any individual.",
+      "verifiedOn": "2026-08-29",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/8430709/"
+    },
+    {
+      "id": "oncology-tumour-lysis-european-incidence-2003",
+      "pmid": "12691145",
+      "authors": "Annemans L, Moeremans K, Lamotte M, et al",
+      "title": "Incidence, medical resource utilisation and costs of hyperuricemia and tumour lysis syndrome in patients with acute leukaemia and non-Hodgkin’s lymphoma in four European countries",
+      "publication": "Leukemia & Lymphoma",
+      "year": 2003,
+      "locator": "44(1):77-83; doi:10.1080/1042819021000054661; 788 patients screened retrospectively in Belgium, the Netherlands, Spain and the UK; hyperuricaemia in 18.9%, of whom 27.8% fulfilled tumour-lysis criteria; authors note observed incidence rates were lower than earlier reports",
+      "usedFor": "The second, disagreeing incidence estimate in the boundary review, stated as what it actually measured: hyperuricaemia in 18.9% with 27.8% of those meeting tumour-lysis criteria, which is roughly 5% of the cohort.",
+      "verifiedAgainst": "PubMed PMID 12691145 bibliographic record and indexed abstract. Note that a 2024 narrative review (PMID 39768494) restates this study as a laboratory tumour-lysis incidence of 18.9% with clinical at 5%, which the abstract does not support; the figures used here come from the primary. A retrospective health-economic screening study, not an incidence trial.",
+      "verifiedOn": "2026-08-29",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/12691145/"
+    },
+    {
+      "id": "oncology-haematology-emergencies-review-2024",
+      "pmid": "39768494",
+      "authors": "Duminuco A, Del Fabro V, De Luca P, Leotta D",
+      "title": "Emergencies in Hematology: Why, When and How I Treat?",
+      "publication": "Journal of Clinical Medicine",
+      "year": 2024,
+      "locator": "13(24):7572; doi:10.3390/jcm13247572; tumour lysis syndrome section, Symptoms and Management",
+      "usedFor": "The interval the lesson is built on: laboratory data may be present in the first 6 to 24 hours after chemotherapy starts, and the first clinical signs appear in the first 48 to 72 hours. Cited as a narrative review rather than as primary evidence, and its prophylaxis and treatment dosing is deliberately not reproduced anywhere in this project.",
+      "verifiedAgainst": "Open-access full text at PMC11728391, tumour-lysis section read in full. Its restatement of Annemans et al. as a laboratory tumour-lysis rate of 18.9% does not match that study’s abstract, so this review is used only for the timing statement and is named in the lesson as the source of that drift.",
+      "verifiedOn": "2026-08-29",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/39768494/"
     }
   ]
 }

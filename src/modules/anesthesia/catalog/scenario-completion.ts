@@ -30,6 +30,7 @@ import { delayedImmuneEventCompletionEvidence } from '../../oncology/delayed-imm
 import { incidentalClotCompletionEvidence } from '../../oncology/incidental-clot-completion';
 import { normalTestToxicityCompletionEvidence } from '../../oncology/normal-test-toxicity-completion';
 import { prognosisQuestionCompletionEvidence } from '../../oncology/prognosis-question-completion';
+import { laboratoryTlsCompletionEvidence } from '../../oncology/laboratory-tls-completion';
 import { countedRateCompletionEvidence } from '../../medical-surgical-nursing/counted-rate-completion';
 import { pairedReadingCompletionEvidence } from '../../medical-surgical-nursing/paired-reading-completion';
 import { afferentLimbCompletionEvidence } from '../../medical-surgical-nursing/afferent-limb-completion';
@@ -149,6 +150,7 @@ export function auditClinicalScenario(
     ...incidentalClotCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...normalTestToxicityCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...prognosisQuestionCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...laboratoryTlsCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...countedRateCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...pairedReadingCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...afferentLimbCompletionEvidence(scenario, capabilityVersion, moduleId),

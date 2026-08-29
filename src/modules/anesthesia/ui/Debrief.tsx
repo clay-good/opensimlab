@@ -62,6 +62,7 @@ import { supportsDelayedImmuneEvent } from '../../oncology/delayed-immune-event'
 import { supportsIncidentalClot } from '../../oncology/incidental-clot';
 import { supportsNormalTestToxicity } from '../../oncology/normal-test-toxicity';
 import { supportsPrognosisQuestion } from '../../oncology/prognosis-question';
+import { supportsLaboratoryTls } from '../../oncology/laboratory-tls';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -635,6 +636,49 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-oncology-laboratory-tls-')) {
+      if (!supportsLaboratoryTls(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The oncology laboratory tumour-lysis lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^laboratory-tls-${id}-\\d+$`).test(entry.eventId));
+      const definition = event('definition-recorded'); const crossing = event('crossing-recorded');
+      const risk = event('risk-recorded'); const escalation = event('escalation-requested');
+      const intent = event('intent-recorded'); const boundaries = event('boundary-review');
+      const handoff = event('handoff'); const repeat = event('repeat-returned');
+      const answered = log.find((entry) => /^laboratory-tls-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedDismissal = event('dismissal-refused'); const refusedOvercall = event('overcall-refused');
+      const refusedWait = event('wait-refused'); const refusedStandDown = event('stand-down-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'recognize-oncology-laboratory-tls-which-definition-is-met': { met: !!definition, tick: definition?.tick,
+          finding: (definition ? 'The record names the laboratory criteria as met and the clinical criteria as not. ' : 'Which definition is met was never recorded, so the note says a syndrome rather than a finding. ')
+            + (refusedOvercall ? 'Calling it tumour lysis syndrome and moving him was attempted and refused. ' : '')
+            + (refusedDismissal ? 'Filing it as numbers in a well patient was attempted and refused. ' : '')
+            + 'The clinical definition requires the laboratory picture plus a consequence: a potassium above 6, a creatinine above 221 micromoles per litre, a calcium below 1.5, a life-threatening arrhythmia, or sudden death. He has none of those.' },
+        'record-oncology-laboratory-tls-what-crossed-and-when': { met: !!crossing, tick: crossing?.tick,
+          finding: (crossing ? 'What crossed was recorded with the hours since treatment. ' : 'What crossed was never recorded against the clock. ')
+            + 'Laboratory changes are described within the first 6 to 24 hours and the first clinical signs at 48 to 72, so 18 hours places him early in a window rather than late in an event.' },
+        'record-oncology-laboratory-tls-the-crossing-risk': { met: !!risk, tick: risk?.tick,
+          finding: (risk ? 'The factors that raise the risk of crossing over were recorded, including that his pre-treatment renal function was normal. ' : 'What raises his risk of crossing over was never recorded, so the next person has a label and no way to weigh it. ')
+            + 'Clinical tumour lysis occurred more often in the patients who came in with renal impairment, which is why that number is the one the next reader wants.' },
+        'activate-oncology-laboratory-tls-a-trajectory-not-an-alarm': { met: !!escalation, tick: escalation?.tick,
+          finding: (escalation ? 'The treating team was told both halves together and asked for the decisions that belong to them. ' : 'The team that owns the treatment was never told either reading. ')
+            + (refusedWait ? 'Waiting for the next set was attempted and refused; the people who decide when it is taken are the people not yet told. ' : '')
+            + (refusedStandDown ? 'Correcting the potassium and standing down was attempted and refused. ' : '')
+            + (repeat ? 'The repeat set moved while he did not, which is the trajectory that was there to report. ' : '')
+            + 'Reporting a trajectory is not raising an alarm.' },
+        'record-oncology-laboratory-tls-bounded-qualified-intent': { met: !!intent, tick: intent?.tick,
+          finding: (intent ? 'Hydration, hypouricaemic treatment, monitoring frequency, electrolyte management, and any renal referral were recorded as the qualified team’s decisions. ' : 'Bounded qualified-team intent was never recorded. ')
+            + 'Nothing was given, and no drug, dose, route, fluid rate, or threshold was chosen or displayed here.' },
+        'review-oncology-laboratory-tls-boundaries-and-their-certainty': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The boundaries were reviewed with their certainty attached. ' : 'The boundary and certainty review is missing. ')
+            + 'The published rates disagree: 42 percent laboratory and 6 percent clinical in the defining 102-patient series, against hyperuricaemia in 18.9 percent of 788 European patients with 27.8 percent of those meeting tumour-lysis criteria. A 2024 review restates the second as a laboratory rate of 18.9 percent, which is not what it measured — which is the reason to record what was measured in front of you rather than the name of a syndrome.' },
+        'handoff-oncology-laboratory-tls-a-window-not-an-event': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'Which definition is met, what crossed and when, the pre-treatment renal function, and the bounded intent all travelled. ' : 'Current findings including the latest bloods, the recorded definition, or continuing-care ownership remains incomplete. ')
+            + (answered ? 'The treating team asked to be told if the creatinine moves or the rhythm changes rather than when the next number crosses a line, and that travelled with it. ' : 'The treating team had not answered by the end of this run. ')
+            + 'What was handed over is a window to keep watching, not an event to react to.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-oncology-prognosis-question-')) {
       if (!supportsPrognosisQuestion(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The oncology prognosis-conversation lesson was not active.' } satisfies ObjectiveFinding;

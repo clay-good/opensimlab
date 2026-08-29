@@ -170,9 +170,9 @@ describe('scenario report contract', () => {
     expect(catalog.evidenceAlgorithm).toBe('scenario-evidence-v1');
     // 229, not 228: septic shock carries records for both 0.1.0 and 0.1.1, so a report filed
     // against the published version still resolves after a content-version bump.
-    expect(catalog.scenarios).toHaveLength(243);
+    expect(catalog.scenarios).toHaveLength(244);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(243);
+      .toBe(244);
     for (const contentVersion of ['0.1.0', '0.1.1', '0.1.2']) {
       expect(catalog.scenarios).toContainEqual(expect.objectContaining({
         moduleId: 'endocrine-metabolic', scenarioId: 'adrenal-crisis-treatment-before-tests', contentVersion,

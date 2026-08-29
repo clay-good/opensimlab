@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 201 adds the authored prognosis-conversation snapshot. */
-export const WORKER_PROTOCOL_VERSION = 201;
+/** Version 202 adds the authored laboratory tumour-lysis snapshot. */
+export const WORKER_PROTOCOL_VERSION = 202;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -592,6 +592,51 @@ export interface MeningitisImagingSnapshot {
     readonly cerebrospinalFluidAvailable: boolean;
     readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
     readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
+}
+
+export interface LaboratoryTlsSnapshot {
+  readonly definitionRecordedAtTick: number | null;
+  readonly crossingRecordedAtTick: number | null;
+  readonly riskRecordedAtTick: number | null;
+  readonly escalationAtTick: number | null;
+  readonly treatmentIntentAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly hoursAfterTreatment: number;
+  readonly laboratoryCriteriaMet: boolean;
+  readonly clinicalCriteriaMet: boolean;
+  readonly repeatReturned: boolean;
+  readonly teamResponded: boolean;
+  readonly teamObserved: boolean;
+  readonly dismissalAttempted: boolean;
+  readonly overcallAttempted: boolean;
+  readonly waitForNextSetAttempted: boolean;
+  readonly standDownAttempted: boolean;
+  readonly observationRecord: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+    readonly rhythm: string; readonly urineOutput: string;
+  } | null;
+  readonly bloodRecord: {
+    readonly atTick: number; readonly hoursAfterTreatment: number; readonly risingSet: boolean;
+    readonly creatinineUnchanged: boolean; readonly laboratoryCriteriaMet: boolean;
+    readonly clinicalCriteriaMet: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+    readonly rhythm: string; readonly urineOutput: string;
+    readonly hoursAfterTreatment: number; readonly risingSet: boolean;
+    readonly creatinineUnchanged: boolean; readonly laboratoryCriteriaMet: boolean;
+    readonly clinicalCriteriaMet: boolean; readonly alertness: string;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -4493,6 +4538,7 @@ export interface EquipmentSnapshot {
     readonly incidentalClot?: IncidentalClotSnapshot;
     readonly normalTestToxicity?: NormalTestToxicitySnapshot;
     readonly prognosisQuestion?: PrognosisQuestionSnapshot;
+    readonly laboratoryTls?: LaboratoryTlsSnapshot;
     readonly countedRate?: CountedRateSnapshot;
     readonly pairedReading?: PairedReadingSnapshot;
     readonly afferentLimb?: AfferentLimbSnapshot;

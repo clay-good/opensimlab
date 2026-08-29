@@ -1,0 +1,22 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
+import { LABORATORY_TLS_A_SYNDROME_HE_DOES_NOT_HAVE_YET } from './scenarios/laboratory-tls-a-syndrome-he-does-not-have-yet';
+import { LABORATORY_TLS_FIXTURES } from './laboratory-tls-fixtures';
+
+export function laboratoryTlsCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
+  if (moduleId !== 'oncology' || capabilityVersion !== '0.1.0-alpha.48'
+    || scenario.metadata.id !== LABORATORY_TLS_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
+    || LABORATORY_TLS_FIXTURES.contentVersion !== '0.1.0' || LABORATORY_TLS_FIXTURES.seed !== 3958
+    || JSON.stringify(scenario) !== JSON.stringify(LABORATORY_TLS_A_SYNDROME_HE_DOES_NOT_HAVE_YET)) return [];
+  return [
+    { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['laboratory-tls-fixtures.ts binds seed 3958 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No metabolic, renal, or tumour-burden model is claimed, and no individualized risk is computed.'] },
+    { id: 'meaningful-progression', status: 'satisfied', evidence: ['laboratory-tls.ts runs two authored transitions whose whole content is a widening gap. At 30 minutes the repeat set returns with the phosphate risen again and the corrected calcium fallen further while the creatinine, rhythm and patient are unchanged. The treating team answers 60 minutes after it is contacted, accepts the laboratory definition as met and the clinical one as not, takes ownership of hydration, hypouricaemic treatment, monitoring and any renal referral, and asks to be told if the creatinine moves or the rhythm changes rather than when the next number crosses a line.'] },
+    { id: 'meaningful-actions-and-choices', status: 'satisfied', evidence: ['The learner records which definition is met and which is not, records what crossed and how long after treatment, records what raises the risk of crossing over, contacts the treating team with both halves stated together, records bounded qualified-team monitoring and treatment intent, and reviews the boundaries. Dismissing it as numbers, calling it tumour lysis and moving him to intensive care, waiting for the next set, and correcting the potassium and standing down are each refused, and the two refusals point in opposite directions.'] },
+    { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The recorded definition, the recorded timing, the crossing risk, contact with the treating team, bounded intent, the boundary review, and a current assessment including the latest bloods permit handoff with the window open. Instructor takeover bounds a run with no escalation at 180 minutes, or an unfinished session at eight hours.'] },
+    { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Seven event-bound objectives distinguish naming which definition is met, the timing that makes it a window, the risk of crossing over, reporting a trajectory rather than raising an alarm, bounded qualified-team intent, the disagreement between the published rates, and handing off a window rather than an event. Refused shortcuts remain visible, and no clinical tumour lysis or outcome is certified.'] },
+    { id: 'reference-transcripts', status: 'satisfied', evidence: ['laboratory-tls-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine, including the repeat set that moves while the patient does not.'] },
+    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
+    { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
+  ];
+}

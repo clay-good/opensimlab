@@ -3216,6 +3216,23 @@
       "limitationManifestHash": "sha256:e9b0b3eeaf70b63922adf72298b48f5f722da6d841d55e4b86c11bddf8d1f41c"
     },
     {
+      "scenarioId": "laboratory-tls-a-syndrome-he-does-not-have-yet",
+      "contentVersion": "0.1.0",
+      "moduleId": "oncology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:356a5fdde7d18ce80f3725c058416a90adf5f0df8a94d13ada7c54f7e8fcfba3",
+      "defaultsHash": "sha256:0d15987366cbf3a9cdf24c84b8363722b31be58dc5efc64aea1652530b1339ca",
+      "maturityHash": "sha256:84b11cbfc016dc6105aebd550f7aaa185fddd4140ecbe041a1670944b9567845",
+      "sourceManifestHash": "sha256:a9bdcede87a7698d44d01d1c086ff179e120dc31583a1d7f68ea09a87cc95780",
+      "limitationManifestHash": "sha256:6505856b1ee694dda842618476b0fb35eea3a676d4f312420f2bd945a493d388"
+    },
+    {
       "scenarioId": "normal-test-toxicity-the-dose-in-his-bag",
       "contentVersion": "0.1.0",
       "moduleId": "oncology",
