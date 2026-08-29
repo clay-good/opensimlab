@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 189 adds the authored early-warning-score snapshot. */
-export const WORKER_PROTOCOL_VERSION = 189;
+/** Version 190 adds the authored counted-respiratory-rate snapshot. */
+export const WORKER_PROTOCOL_VERSION = 190;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -632,6 +632,43 @@ export interface LowScoreSnapshot {
     readonly aggregateScore: number; readonly rateControlMedication: boolean;
     readonly afebrileOlderAdult: boolean; readonly baselineDescription: string;
     readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
+}
+
+export interface CountedRateSnapshot {
+  readonly trendReviewedAtTick: number | null;
+  readonly countedAtTick: number | null;
+  readonly discrepancyRecordedAtTick: number | null;
+  readonly escalationAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly chartedEntries: readonly number[];
+  readonly countedRate: number | null;
+  readonly reviewArrived: boolean;
+  readonly reviewObserved: boolean;
+  readonly trendTrusted: boolean;
+  readonly monitorCharted: boolean;
+  readonly roundedToPrevious: boolean;
+  readonly retrospectiveEditAttempted: boolean;
+  readonly chartRecord: {
+    readonly atTick: number; readonly entries: readonly number[];
+    readonly shifts: number; readonly distinctValues: number;
+  } | null;
+  readonly patientRecord: {
+    readonly atTick: number; readonly countedRate: number; readonly spo2Percent: number;
+    readonly usingAccessoryMuscles: boolean; readonly speakingFullSentences: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly entries: readonly number[];
+    readonly shifts: number; readonly distinctValues: number;
+    readonly countedRate: number; readonly spo2Percent: number;
+    readonly usingAccessoryMuscles: boolean; readonly speakingFullSentences: boolean;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -3988,6 +4025,7 @@ export interface EquipmentSnapshot {
     readonly septicShockLabel?: SepticShockLabelSnapshot;
     readonly meningitisImaging?: MeningitisImagingSnapshot;
     readonly lowScore?: LowScoreSnapshot;
+    readonly countedRate?: CountedRateSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

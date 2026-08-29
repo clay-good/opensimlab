@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -121,6 +121,7 @@ export function stateSummary(
     readonly septicShockLabel?: SepticShockLabelSnapshot;
     readonly meningitisImaging?: MeningitisImagingSnapshot;
     readonly lowScore?: LowScoreSnapshot;
+    readonly countedRate?: CountedRateSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -174,7 +175,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -199,6 +200,40 @@ export function stateSummary(
       }
     }
   }
+  if (options.countedRate) {
+    const patient = options.countedRate;
+    // Both numbers are announced together once the second exists: the discrepancy is the finding.
+    lines.push(`Charted respiratory rates: ${patient.chartedEntries.join(', ')}. ${patient.countedRate === null
+      ? 'Nothing has been counted for a full minute in this rehearsal yet.'
+      : `Counted for a full minute: ${patient.countedRate}.`}`);
+    lines.push('Supplied starting observations were oxygen saturation 95 percent in air, pulse 96 per minute, blood pressure 124 over 72, temperature 37.2 degrees Celsius, alert and speaking in full sentences, two days after open abdominal surgery. These remain historical starting observations.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push(patient.trendReviewedAtTick === null
+      ? 'The charted trend has not been reviewed yet.'
+      : 'Read as a trend, the charted column is a stable patient. Read as a distribution, it is six values drawn from a set of two, which is what estimation looks like when it is written down.');
+    lines.push('Respiratory rate is the single strongest routine predictor of in-hospital cardiac arrest and also the observation most often estimated rather than counted. A rising rate precedes desaturation, so a normal oxygen saturation does not make it redundant. Whether a monitor-derived rate is equivalent to a counted one is not established in the retrievable evidence. No drug, dose, route, fluid, investigation, or procedure is selected here, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(`Trend reviewed: ${patient.trendReviewedAtTick === null ? 'not yet' : `at simulated ${formatElapsed(patient.trendReviewedAtTick)}`}. Counted: ${patient.countedAtTick === null ? 'not yet' : `at simulated ${formatElapsed(patient.countedAtTick)}`}. Discrepancy: ${patient.discrepancyRecordedAtTick === null ? 'not recorded' : 'recorded, and left unreconciled'}. Escalation: ${patient.escalationAtTick === null ? 'not yet requested' : 'requested on the counted value'}. Boundaries: ${patient.boundariesReviewedAtTick === null ? 'not reviewed' : 'reviewed'}. Increased observation: ${patient.monitoringAtTick === null ? 'not arranged' : 'arranged, with counting rather than estimation'}.`);
+    lines.push(patient.chartRecord
+      ? `Last requested chart review at simulated ${formatElapsed(patient.chartRecord.atTick)}: ${patient.chartRecord.entries.join(', ')} across ${patient.chartRecord.shifts} shifts, taking ${patient.chartRecord.distinctValues} distinct values.`
+      : 'No new chart review has been requested.');
+    lines.push(patient.patientRecord
+      ? `Last requested observation at simulated ${formatElapsed(patient.patientRecord.atTick)}: respiratory rate ${patient.patientRecord.countedRate} counted for a full minute; oxygen saturation ${patient.patientRecord.spo2Percent} percent on air.`
+      : 'No new observation of the patient has been requested.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: charted ${patient.observation.entries.join(', ')}; counted ${patient.observation.countedRate}.`
+      : 'No new full assessment has been requested.');
+    if (patient.reviewObserved) {
+      lines.push('The qualified team counted independently and reached the same number, and recorded that the charted column gave no indication of it.');
+    }
+    if (patient.choiceFeedback) lines.push(patient.choiceFeedback);
+    if (patient.ended) {
+      lines.push(patient.ended === 'handoff'
+        ? 'Practice complete. The charted column as written, the counted rate, and the unreconciled discrepancy all travel with the patient.'
+        : 'Instructor takeover ended this branch. The teaching stop predicts no patient outcome.');
+    }
+    return lines.join('\n');
+  }
+
   if (options.lowScore) {
     const patient = options.lowScore;
     // The score is announced first and plainly, because the lesson is not that it is wrong.

@@ -50,6 +50,7 @@ import { supportsPossibleSepsis } from '../../infectious-disease/possible-sepsis
 import { supportsSepticShockLabel } from '../../infectious-disease/septic-shock-label';
 import { supportsMeningitisImaging } from '../../infectious-disease/meningitis-imaging';
 import { supportsLowScore } from '../../medical-surgical-nursing/low-score';
+import { supportsCountedRate } from '../../medical-surgical-nursing/counted-rate';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -623,6 +624,42 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-medical-surgical-nursing-counted-rate-')) {
+      if (!supportsCountedRate(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The nursing counted-rate lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^counted-rate-${id}-\\d+$`).test(entry.eventId));
+      const trend = event('trend-reviewed'); const counted = event('counted');
+      const discrepancy = event('discrepancy-recorded'); const escalation = event('escalation-requested');
+      const boundaries = event('boundary-review'); const monitoring = event('monitoring');
+      const handoff = event('handoff');
+      const reviewed = log.find((entry) => /^counted-rate-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedShortcut = event('trend-refused') ?? event('monitor-refused')
+        ?? event('rounding-refused') ?? event('retrospective-edit-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'reconcile-medical-surgical-nursing-counted-rate-a-trend-read-as-a-distribution': { met: !!trend, tick: trend?.tick,
+          finding: (trend ? 'The charted column was read as a distribution rather than a trajectory: six entries taking two distinct values. ' : 'The charted trend was never examined as evidence in its own right. ')
+            + 'That clustering is the documented signature of estimation, and a column of estimates is stable whatever the patient is doing.' },
+        'recognize-medical-surgical-nursing-counted-rate-the-measurement-is-the-finding': { met: !!counted, tick: counted?.tick,
+          finding: (counted ? 'A rate counted for a full sixty seconds returned 28. ' : 'No rate was counted for a full minute, so the only respiratory rate available was the charted one. ')
+            + 'Nothing about the patient changed at that moment. The difference between the two numbers is the difference between counting and estimating.' },
+        'record-medical-surgical-nursing-counted-rate-a-discrepancy-left-unreconciled': { met: !!discrepancy, tick: discrepancy?.tick,
+          finding: (discrepancy ? 'Both numbers were recorded side by side, with the earlier entries left exactly as another clinician wrote them. ' : 'The discrepancy between the charted column and a counted rate was never recorded. ')
+            + (refusedShortcut ? 'A trusted trend, a monitor value charted as counted, an anchored entry, or a retrospective amendment was attempted and refused; it remains in this run. ' : '')
+            + 'Amending the earlier entries would have destroyed the only evidence that the trend was unreliable.' },
+        'activate-medical-surgical-nursing-counted-rate-escalation-on-the-counted-value': { met: !!escalation && !!monitoring, tick: escalation?.tick,
+          finding: (escalation && monitoring ? 'Review was requested on the counted value with the charted column given unaltered alongside it, and increased observation was arranged with counting rather than estimation. ' : 'Escalation on the counted value or the counted observation it depends on remains incomplete. ')
+            + 'The reviewer needs to know that the record they will look at does not show this.' },
+        'review-medical-surgical-nursing-counted-rate-boundaries-and-their-certainty': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The boundaries were reviewed with their certainty attached. ' : 'The boundary and certainty review is missing. ')
+            + 'Respiratory rate is the strongest routine predictor of in-hospital cardiac arrest and the least reliably recorded observation, a rising rate precedes desaturation, and monitor-derived equivalence is not established in retrievable evidence.' },
+        'handoff-medical-surgical-nursing-counted-rate-a-record-that-disagrees-with-itself': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The charted column as written, the counted rate, and the unreconciled discrepancy all travelled with the patient. ' : 'Current full findings or continuing-care ownership remains incomplete. ')
+            + (reviewed ? 'An independent count reached the same number while the chart still showed nothing. ' : '')
+            + 'A corrected chart and an explained cause are not handoff gates, and no outcome is certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-medical-surgical-nursing-low-score-')) {
       if (!supportsLowScore(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The nursing early-warning-score lesson was not active.' } satisfies ObjectiveFinding;

@@ -2315,6 +2315,23 @@
       "limitationManifestHash": "sha256:dd60b358c4e8bbd94b6f2e55f0433aacf74e54851f67bdcdcc282ce27a12fc06"
     },
     {
+      "scenarioId": "counted-rate-a-number-nobody-counted",
+      "contentVersion": "0.1.0",
+      "moduleId": "medical-surgical-nursing",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:f655e9feb3968019db58cfb557f4e61d7b0d4e1461eb89b54933646d74fc9b92",
+      "defaultsHash": "sha256:ce6b5fdbbf84bcf83dd4aaf86e13bd59e86b5bc36a12bfe1558e61651f7da94f",
+      "maturityHash": "sha256:56603e943aa14f448774d7c9799b80576aa12d0368a9aa9d851ceb02e76e61ea",
+      "sourceManifestHash": "sha256:1c5f882b95aad34fb05343c02e63afff548bad16a992306ca0aef16a15ceaa14",
+      "limitationManifestHash": "sha256:aeba42503801c5ef5a3bddd876efa06deb696e69a6e0234db91073316bb52d52"
+    },
+    {
       "scenarioId": "low-score-what-the-threshold-does-not-exclude",
       "contentVersion": "0.1.0",
       "moduleId": "medical-surgical-nursing",

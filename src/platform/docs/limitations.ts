@@ -5879,6 +5879,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Sensitivity is a property of the instrument measured in a particular population, not a posterior probability for an individual. It also depends on the threshold chosen and on how sepsis was defined in that study. What it licenses is the negative claim the study authors themselves make: a score below the threshold cannot definitively rule sepsis out.',
     briefIn: ['low-score-what-the-threshold-does-not-exclude'],
   },
+  {
+    id: 'counted-rate-charted-trend-and-counted-value-are-authored',
+    headline: 'One authored column and one authored count stand in for a distribution.',
+    simplification: 'The case supplies six fixed charted entries and one fixed counted rate of 28. No respiratory or physiological model runs underneath, and the patient never changes.',
+    whereItMisleads: 'A learner concludes that a clustered column always conceals a raised rate, or that counting always disagrees with the chart.',
+    correctUnderstanding: 'Most clustered columns belong to patients who are genuinely stable; that is why the estimate usually goes unnoticed. What the clustering establishes is that the column is not evidence either way, not that the patient is deteriorating. The transferable move is counting when it matters, not distrusting every chart.',
+    briefIn: ['counted-rate-a-number-nobody-counted'],
+  },
+  {
+    id: 'counted-rate-controls-are-counting-recording-and-escalation-only',
+    headline: 'The only measurement the learner makes is counting for a minute.',
+    simplification: 'The learner reviews the charted trend, counts, records the discrepancy, escalates, reviews the boundaries, and arranges counted observation. No drug, dose, route, fluid, investigation, examination beyond counting, or procedure exists.',
+    whereItMisleads: 'The scenario is read as saying the earlier nurses were negligent, or that the fix is to correct the chart.',
+    correctUnderstanding: 'Estimation of respiratory rate is a documented, near-universal feature of ward practice under time pressure rather than an individual failing, which is why the lesson refuses retrospective amendment: the earlier entries are contemporaneous records whose unreliability is itself the evidence. Recording both numbers is more useful, and more honest, than making the record agree with itself.',
+    briefIn: ['counted-rate-a-number-nobody-counted'],
+  },
+  {
+    id: 'counted-rate-monitor-equivalence-is-not-claimed',
+    headline: 'This scenario does not tell you whether the monitor value would do.',
+    simplification: 'The case refuses charting a monitor-derived respiratory rate as a counted one, and states that equivalence is not established.',
+    whereItMisleads: 'A learner infers that monitor-derived rates are known to be inaccurate, which is a stronger claim than the evidence supports.',
+    correctUnderstanding: 'Diagnostic accuracy of ward impedance-derived respiratory rate against manual counting was not retrievable at authoring time, so this lesson asserts neither equivalence nor inaccuracy. What it does refuse is recording a value obtained one way as though it were obtained another, which is a documentation claim rather than a measurement one.',
+    briefIn: ['counted-rate-a-number-nobody-counted'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

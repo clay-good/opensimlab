@@ -27,13 +27,13 @@ const read = (file: string) => readFileSync(join(process.cwd(), file), 'utf8');
 const json = (file: string) => JSON.parse(read(file));
 
 describe('Nursing module foundation', () => {
-  it('registers one preview toward nine planned lessons', () => {
+  it('registers two previews toward nine planned lessons', () => {
     expect(getModule('medical-surgical-nursing')).toMatchObject({
       route: 'medical-surgical-nursing', displayName: 'Nursing', status: 'available',
       timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
     });
     expect(moduleProse('medical-surgical-nursing').plannedScope).toContain('Nine bounded');
-    expect(MEDICAL_SURGICAL_NURSING_SCENARIOS).toHaveLength(1);
+    expect(MEDICAL_SURGICAL_NURSING_SCENARIOS).toHaveLength(2);
     expect(DEFAULT_MEDICAL_SURGICAL_NURSING_SCENARIO_ID).toBe(id);
     expect(getMedicalSurgicalNursingScenario(id)).toBe(scenario);
     expect(getMedicalSurgicalNursingScenario('not-a-scenario')).toBeUndefined();
@@ -56,7 +56,7 @@ describe('Nursing module foundation', () => {
     expect(route.indexable).toBe(true);
     expect(route.description.length).toBeGreaterThanOrEqual(110);
     expect(route.description.length).toBeLessThanOrEqual(160);
-    expect(ROUTES.filter((entry) => entry.path.startsWith('/medical-surgical-nursing'))).toHaveLength(2);
+    expect(ROUTES.filter((entry) => entry.path.startsWith('/medical-surgical-nursing'))).toHaveLength(3);
     const markup = renderToStaticMarkup(createElement(PrerenderedBody, { path }));
     expect(markup).toContain('what the threshold does not exclude');
     const moduleMarkup = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/medical-surgical-nursing' }));
@@ -70,7 +70,7 @@ describe('Nursing module foundation', () => {
       expect(PUBLIC_CATALOG_ARTIFACTS).toContain(`/catalog/medical-surgical-nursing-${artifact}.json`);
     }
     const completion = json('public/catalog/medical-surgical-nursing-completion-audit.json');
-    expect(completion.scenarioCount).toBe(1);
+    expect(completion.scenarioCount).toBe(2);
     expect(completion.scenarios[0].scenarioId).toBe(id);
     // The two report catalogs must stay byte-identical, or a report can resolve in one and not the other.
     expect(read('public/catalog/scenario-report-catalog.json'))
@@ -92,11 +92,13 @@ describe('Nursing module foundation', () => {
     }
   });
 
-  it('is reportable, like every other scenario', () => {
+  it('makes every scenario in the module reportable, not just the first', () => {
     const catalog = json('public/catalog/scenario-report-catalog.json');
-    const record = catalog.scenarios.find((entry: { scenarioId: string }) => entry.scenarioId === id);
-    expect(record).toMatchObject({
-      moduleId: 'medical-surgical-nursing', contentVersion: '0.1.0', maturity: 'preview',
-    });
+    for (const entry of MEDICAL_SURGICAL_NURSING_SCENARIOS) {
+      const record = catalog.scenarios.find((row: { scenarioId: string }) => row.scenarioId === entry.metadata.id);
+      expect(record, `${entry.metadata.id} is missing from the report catalog`).toMatchObject({
+        moduleId: 'medical-surgical-nursing', contentVersion: entry.metadata.version, maturity: 'preview',
+      });
+    }
   });
 });
