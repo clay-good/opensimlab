@@ -56,6 +56,7 @@ import { supportsAfferentLimb } from '../../medical-surgical-nursing/afferent-li
 import { supportsQuietPatient } from '../../medical-surgical-nursing/quiet-patient';
 import { supportsProxyScale } from '../../medical-surgical-nursing/proxy-scale';
 import { supportsLastKnownWell } from '../../medical-surgical-nursing/last-known-well';
+import { supportsOxygenTargetScale } from '../../medical-surgical-nursing/oxygen-target-scale';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -629,6 +630,52 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-medical-surgical-nursing-oxygen-target-scale-')) {
+      if (!supportsOxygenTargetScale(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The nursing oxygen-target scoring lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^oxygen-target-scale-${id}-\\d+$`).test(entry.eventId));
+      const prescription = event('prescription-check'); const chart = event('chart-check');
+      const mismatch = event('mismatch-recorded'); const rescored = event('rescored');
+      const consequences = event('consequences-recorded'); const confirmation = event('confirmation-requested');
+      const boundaries = event('boundary-review'); const monitoring = event('monitoring');
+      const handoff = event('handoff'); const colleague = event('colleague-asked');
+      const reviewed = log.find((entry) => /^oxygen-target-scale-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const prematureMismatch = event('mismatch-refused'); const prematureRescore = event('rescore-refused');
+      const refusedOxygen = event('oxygen-raise-refused'); const refusedBoth = event('both-scales-refused');
+      const refusedAssumption = event('assumed-scale-refused'); const refusedImprovement = event('improvement-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'reconcile-medical-surgical-nursing-oxygen-target-scale-two-documents-before-one-verdict': { met: !!mismatch, tick: mismatch?.tick,
+          finding: (mismatch ? 'The prescription and the chart were both read, and the disagreement was recorded after both. ' : 'The disagreement between the two documents was never recorded from both of them. ')
+            + (prescription && chart ? '' : 'One of the two documents was never read. ')
+            + (prematureMismatch ? 'Recording it from one document alone was attempted and refused. ' : '')
+            + 'A mismatch is a statement about two documents, and it says nothing about how the saturation was measured.' },
+        'recognize-medical-surgical-nursing-oxygen-target-scale-a-number-compared-with-the-wrong-range': { met: !!rescored, tick: rescored?.tick,
+          finding: (rescored ? 'The saturation was recalculated on the prescribed scale and the score fell with the measurement unchanged. ' : 'The saturation was never recalculated against the prescribed range. ')
+            + (prematureRescore ? 'Rescoring before the mismatch was recorded was attempted and refused, because it replaces one number with another and leaves no trace of why. ' : '')
+            + (refusedBoth ? 'Carrying the higher of the two scales was attempted and refused. ' : '')
+            + 'Ninety percent on air is a deviation on one scale and exactly on target on the other; only one of them is the range somebody prescribed for her.' },
+        'record-medical-surgical-nursing-oxygen-target-scale-what-a-corrected-score-does-not-supply': { met: !!consequences, tick: consequences?.tick,
+          finding: (consequences ? 'The record stated that only the score changed. ' : 'What the rescore changes was never stated. ')
+            + (refusedImprovement ? 'Reading the fall as an improvement was attempted and refused. ' : '')
+            + (refusedOxygen ? 'Raising the inspired oxygen to lift the saturation was attempted and refused, and no oxygen was selected or delivered. ' : '')
+            + (colleague ? 'A colleague offered to do exactly that during this run. ' : '')
+            + 'What the correction removes is a reason to give oxygen she does not need; what it does not supply is evidence that she is well.' },
+        'activate-medical-surgical-nursing-oxygen-target-scale-a-decision-that-is-not-the-wards-to-make': { met: !!confirmation, tick: confirmation?.tick,
+          finding: (confirmation ? 'The documented decision and the prescribed range were taken to the qualified team for confirmation. ' : 'The scale decision was never taken to a competent decision maker. ')
+            + (refusedAssumption ? 'Switching scales on the diagnosis alone was attempted and refused. ' : '')
+            + 'The scale requires hypercapnic respiratory failure confirmed on blood gas, a prescribed range, and a decision recorded in the notes; a nurse who finds the wrong chart takes it to be confirmed rather than switching it alone.' },
+        'review-medical-surgical-nursing-oxygen-target-scale-boundaries-and-their-certainty': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The boundaries were reviewed with their certainty attached. ' : 'The boundary and certainty review is missing. ')
+            + 'The guideline itself warns that a patient inside the prescribed range scores points on the ordinary scale and that this may prompt staff to raise the oxygen and put her at risk; it also states that it is not known whether this range is the ideal one, and the second scale has not been shown to detect deterioration better than the first.' },
+        'handoff-medical-surgical-nursing-oxygen-target-scale-a-corrected-score-handed-over-as-corrected': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The prescribed range with its documented decision, the scale the chart had been using, and a score that fell without the patient changing all travelled with her. ' : 'Current full findings, observation on the corrected chart, or continuing-care ownership remains incomplete. ')
+            + (monitoring ? '' : 'Observation on the corrected chart was never arranged. ')
+            + (reviewed ? 'The qualified team recorded the same distinction. ' : '')
+            + 'The next reader has to be able to tell a corrected score from an improvement.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-medical-surgical-nursing-last-known-well-')) {
       if (!supportsLastKnownWell(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The nursing unwitnessed-onset lesson was not active.' } satisfies ObjectiveFinding;

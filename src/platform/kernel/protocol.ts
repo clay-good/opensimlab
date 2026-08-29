@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 195 adds the authored unwitnessed-onset snapshot. */
-export const WORKER_PROTOCOL_VERSION = 195;
+/** Version 196 adds the authored oxygen-target scoring-scale snapshot. */
+export const WORKER_PROTOCOL_VERSION = 196;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -828,6 +828,52 @@ export interface ProxyScaleSnapshot {
     readonly atTick: number; readonly total: number; readonly selfReportAvailable: boolean;
     readonly itemCount: number; readonly recentSurgery: boolean; readonly analgesiaCharted: boolean;
     readonly proxyAvailable: boolean; readonly baselineDescription: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
+}
+
+export interface OxygenTargetScaleSnapshot {
+  readonly prescriptionCheckedAtTick: number | null;
+  readonly chartCheckedAtTick: number | null;
+  readonly mismatchRecordedAtTick: number | null;
+  readonly rescoredAtTick: number | null;
+  readonly consequencesRecordedAtTick: number | null;
+  readonly confirmationAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly saturationPercent: number;
+  readonly onSupplementalOxygen: boolean;
+  readonly prescribedTargetRange: string;
+  readonly chartedScale: 1 | 2;
+  readonly prescribedScale: 1 | 2;
+  readonly scaleDecisionDocumented: boolean;
+  readonly chartedScore: number;
+  readonly prescribedScaleScore: number;
+  readonly colleagueAskedToRaiseOxygen: boolean;
+  readonly reviewArrived: boolean;
+  readonly reviewObserved: boolean;
+  readonly oxygenRaiseAttempted: boolean;
+  readonly scaleAssumedFromDiagnosis: boolean;
+  readonly lowerScoreReadAsWell: boolean;
+  readonly higherOfBothScoresTaken: boolean;
+  readonly prescriptionRecord: {
+    readonly atTick: number; readonly prescribedTargetRange: string;
+    readonly prescribedScale: 1 | 2; readonly scaleDecisionDocumented: boolean;
+  } | null;
+  readonly chartRecord: {
+    readonly atTick: number; readonly chartedScale: 1 | 2; readonly chartedScore: number;
+    readonly saturationPercent: number; readonly onSupplementalOxygen: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly prescribedTargetRange: string;
+    readonly prescribedScale: 1 | 2; readonly scaleDecisionDocumented: boolean;
+    readonly chartedScale: 1 | 2; readonly chartedScore: number;
+    readonly saturationPercent: number; readonly onSupplementalOxygen: boolean;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -4229,6 +4275,7 @@ export interface EquipmentSnapshot {
     readonly quietPatient?: QuietPatientSnapshot;
     readonly proxyScale?: ProxyScaleSnapshot;
     readonly lastKnownWell?: LastKnownWellSnapshot;
+    readonly oxygenTargetScale?: OxygenTargetScaleSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

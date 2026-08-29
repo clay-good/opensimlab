@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 370,
+  "sourceCount": 373,
   "sources": [
     {
       "id": "renal-hypermagnesemia-series-2018",
@@ -4761,6 +4761,47 @@
       "usedFor": "High-risk criteria for the authored vital signs, referral to critical care to review vasoactive and access needs, continuous or half-hourly observations with a recorded conscious level, the requirement to alert a consultant to attend in person when there is no response within an hour, and the United Kingdom paediatric bolus ceiling.",
       "verifiedAgainst": "https://www.nice.org.uk/guidance/ng254",
       "verifiedOn": "2026-08-28"
+    },
+    {
+      "id": "rcp-news2-report-2017",
+      "currency": {
+        "lastAmended": "2017-12-01",
+        "checkedAt": "2026-08-29"
+      },
+      "authors": "Royal College of Physicians",
+      "title": "National Early Warning Score (NEWS) 2: Standardising the assessment of acute-illness severity in the NHS",
+      "publication": "Updated report of a working party. London: RCP",
+      "year": 2017,
+      "locator": "Chart 1 (SpO2 Scale 1: 91% or below 3, 92-93% 2, 94-95% 1, 96% or above 0; SpO2 Scale 2: 83% or below or 97% or above on oxygen 3, 84-85% or 95-96% on oxygen 2, 86-87% or 93-94% on oxygen 1, 88-92% or 93% or above on air 0) and recommendations 25, 26, and 27",
+      "usedFor": "The two published saturation scales and their exact bands, the requirement that Scale 2 is confined to patients with hypercapnic respiratory failure confirmed on blood gas who require supplemental oxygen and are prescribed an 88-92% target, read as a property of the admission rather than of the current minute because the scale carries its own band for 93% or above on air, the requirement that the decision be made by a competent clinical decision maker and recorded in the notes, and the instruction that the section of the chart not in use is crossed out.",
+      "verifiedAgainst": "https://www.rcp.ac.uk/media/alxev00t/news2-chart-1_the-news-scoring-system_0_0.pdf",
+      "verifiedOn": "2026-08-29"
+    },
+    {
+      "id": "austin-titrated-oxygen-copd-2010",
+      "pmid": "20959284",
+      "authors": "Austin MA, Wills KE, Blizzard L, Walters EH, Wood-Baker R",
+      "title": "Effect of high flow oxygen on mortality in chronic obstructive pulmonary disease patients in prehospital setting: randomised controlled trial",
+      "publication": "BMJ (British Medical Journal)",
+      "year": 2010,
+      "locator": "341:c5462; doi:10.1136/bmj.c5462; cluster-randomised by paramedic; intention-to-treat mortality 21/226 (9%) high-flow versus 7/179 (4%) titrated, relative risk 0.42 (95% CI 0.20-0.89), P=0.02; confirmed COPD 11/117 versus 2/97, RR 0.22 (0.05-0.91), P=0.04; per-protocol differences not significant",
+      "usedFor": "The boundary review statement that one trial randomised by paramedic rather than by patient found lower mortality with a titrated oxygen strategy than with routine high-flow oxygen, stated with its 37% protocol non-adherence and its non-significant per-protocol result, as a population-level finding rather than as a claim about any individual.",
+      "verifiedAgainst": "https://www.bmj.com/content/341/bmj.c5462",
+      "verifiedOn": "2026-08-29",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/20959284/"
+    },
+    {
+      "id": "tirkkonen-news-spo2-scale-two-2019",
+      "pmid": "31881904",
+      "authors": "Tirkkonen J, Karlsson S, Skrifvars MB",
+      "title": "National early warning score (NEWS) and the new alternative SpO2 scale during rapid response team reviews: a prospective observational study",
+      "publication": "Scandinavian Journal of Trauma, Resuscitation and Emergency Medicine",
+      "year": 2019,
+      "locator": "27:111; doi:10.1186/s13049-019-0691-6; 886 rapid-response reviews, 104 (11.7%) with confirmed hypercapnic respiratory failure; area under the receiver operating characteristic curve unchanged at 0.73 for immediate and 0.68 for in-hospital outcome with either scale",
+      "usedFor": "The boundary review statement that the second saturation scale has not been shown to detect deterioration better than the first, so a corrected score removes a false alarm rather than supplying reassurance.",
+      "verifiedAgainst": "https://sjtrem.biomedcentral.com/articles/10.1186/s13049-019-0691-6",
+      "verifiedOn": "2026-08-29",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/31881904/"
     },
     {
       "id": "wake-up-unknown-onset-thrombolysis-2018",

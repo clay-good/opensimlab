@@ -6023,6 +6023,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'The estimate is an average effect over an enrolled population under trial conditions, with a confidence interval attached and entry criteria this patient has not been assessed against. Her atrial fibrillation is not itself disqualifying, since the enrolled population contained a similar proportion of it; whether she is anticoagulated for it is the question that would matter, and this fixture does not answer it. The trial also stopped at 503 of a planned 800 patients when its funding ended, so its reassuring harm figures are underpowered rather than negative, and its imaging surrogate was misapplied by local readers often enough that dozens of randomised patients failed central review. Whether she resembles that population is an imaging question the qualified team answers, and no individualized effect, eligibility, or outcome is reported here.',
     briefIn: ['last-known-well-a-time-nobody-can-supply'],
   },
+  {
+    id: 'oxygen-target-scale-observation-and-documents-are-authored',
+    headline: 'One saturation, held still, and two documents that never change.',
+    simplification: 'The case supplies a fixed observation of 90% breathing air, a patient who has needed controlled oxygen at intervals through the admission, a prescribed range of 88 to 92% with a documented scale decision, and an observation chart scored on the ordinary scale. No respiratory, gas-exchange, or oxygen-delivery model runs underneath, and the saturation does not move for the length of the rehearsal.',
+    whereItMisleads: 'A learner concludes that a patient at the bottom of a target range is stable, or that finding the charting error is the end of the work.',
+    correctUnderstanding: 'A patient in an exacerbation can deteriorate while sitting inside her prescribed range, which is why the observation frequency is set by her condition rather than by the corrected score. The saturation is held still here so the lesson stays about the comparison; a drifting number would let a learner treat the drift as the answer, which is a different and easier lesson.',
+    briefIn: ['oxygen-target-scale-a-score-that-should-be-lower'],
+  },
+  {
+    id: 'oxygen-target-scale-controls-are-reading-and-recording-only',
+    headline: 'No oxygen is selected, set, or delivered by the learner.',
+    simplification: 'The learner reads two documents, records that they disagree, recalculates the score, states what the recalculation does and does not change, requests confirmation of the scale decision, reviews the boundaries, and arranges observation. No device, flow rate, inspired concentration, drug, dose, or procedure exists.',
+    whereItMisleads: 'The refused choice to raise the inspired oxygen is read as a control the learner could have used correctly, or the confirmation request is read as the learner changing the scale.',
+    correctUnderstanding: 'Oxygen is prescribed and titrated by the qualified team against a target range, and no part of that is exposed here. The refusal exists because the guideline names raising the oxygen to reach a normal-looking number as a route to harm, not because the timing was wrong; and the scale decision belongs to a competent clinical decision maker, so the learner takes it to be confirmed rather than making it.',
+    briefIn: ['oxygen-target-scale-a-score-that-should-be-lower'],
+  },
+  {
+    id: 'oxygen-target-scale-a-corrected-score-is-not-reassurance',
+    headline: 'The score falls, and that is not evidence about the patient.',
+    simplification: 'The case has the saturation score 3 on the ordinary scale and 0 on the prescribed one, and refuses reading the fall as an improvement.',
+    whereItMisleads: 'A learner infers that the second scale is the better instrument, or that a 0 on it carries the reassurance a 0 usually carries.',
+    correctUnderstanding: 'The second scale exists so that a patient at her prescribed target is not scored as deviating from a target she was never given; that is a safety rationale rather than a demonstrated improvement in detection. The one study to compare the two scales found no improvement in discrimination for either immediate or in-hospital outcome, so a 0 on it excludes less than a low score usually feels like it excludes, and the correction removes a false alarm rather than adding evidence.',
+    briefIn: ['oxygen-target-scale-a-score-that-should-be-lower'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

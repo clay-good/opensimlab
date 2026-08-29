@@ -2400,6 +2400,23 @@
       "limitationManifestHash": "sha256:9ca94fa65fbd5a993d289ee1d734893fec74a76f56c4d939ad637e7d5725085b"
     },
     {
+      "scenarioId": "oxygen-target-scale-a-score-that-should-be-lower",
+      "contentVersion": "0.1.0",
+      "moduleId": "medical-surgical-nursing",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:a8d2cdc2cde0b1c4f31c417617d63a118c21471173369139447f6f1b71b4a72b",
+      "defaultsHash": "sha256:dab1d559227b3baecab0c85bfb176a98668b34c4f47f0896b4c934f2d74d25dd",
+      "maturityHash": "sha256:dac4466a4b7f723d08be9798591b8562269aeafc03a0bebf1c087c1dc3e009f6",
+      "sourceManifestHash": "sha256:2bba314068ebab2b05de3e410c23349f5286138e1a8f7bf6eff0d363e66e5710",
+      "limitationManifestHash": "sha256:ca00dcea16acabad26e99e76c76323ea899e894c15c459b728d71e312be96899"
+    },
+    {
       "scenarioId": "paired-reading-a-number-wrong-in-one-direction",
       "contentVersion": "0.1.0",
       "moduleId": "medical-surgical-nursing",

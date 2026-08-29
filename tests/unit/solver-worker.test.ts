@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: Unwitnessed onset state has protocol version 195', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(195);
+  it('Scenario: Oxygen-target scoring-scale state has protocol version 196', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(196);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

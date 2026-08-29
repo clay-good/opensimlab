@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "medical-surgical-nursing",
-  "recordCount": 7,
+  "recordCount": 8,
   "records": [
     {
       "recordId": "scenario:low-score-what-the-threshold-does-not-exclude@0.1.0",
@@ -78,6 +78,17 @@
       "evidence": [
         "/catalog/medical-surgical-nursing-completion-audit.json#last-known-well-a-time-nobody-can-supply@0.1.1",
         "/catalog/medical-surgical-nursing-quality-audit.json#last-known-well-a-time-nobody-can-supply@0.1.1"
+      ]
+    },
+    {
+      "recordId": "scenario:oxygen-target-scale-a-score-that-should-be-lower@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "oxygen-target-scale-a-score-that-should-be-lower",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/medical-surgical-nursing-completion-audit.json#oxygen-target-scale-a-score-that-should-be-lower@0.1.0",
+        "/catalog/medical-surgical-nursing-quality-audit.json#oxygen-target-scale-a-score-that-should-be-lower@0.1.0"
       ]
     }
   ]

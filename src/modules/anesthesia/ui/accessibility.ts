@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -127,6 +127,7 @@ export function stateSummary(
     readonly quietPatient?: QuietPatientSnapshot;
     readonly proxyScale?: ProxyScaleSnapshot;
     readonly lastKnownWell?: LastKnownWellSnapshot;
+    readonly oxygenTargetScale?: OxygenTargetScaleSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -180,7 +181,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -205,6 +206,42 @@ export function stateSummary(
       }
     }
   }
+  if (options.oxygenTargetScale) {
+    const patient = options.oxygenTargetScale;
+    // The score is never announced without the scale it was computed on. A bare 3 is the error the
+    // lesson is about, and a screen reader that says only the number reproduces it.
+    lines.push(`Saturation ${patient.saturationPercent} percent ${patient.onSupplementalOxygen ? 'on oxygen' : 'breathing air'}, scored ${patient.chartedScore} on scale ${patient.chartedScale}. The prescribed target range is ${patient.prescribedTargetRange} on scale ${patient.prescribedScale}, and the scale decision is ${patient.scaleDecisionDocumented ? 'documented in the notes' : 'not documented'}.`);
+    lines.push('Supplied starting observations were pulse 84 per minute, blood pressure 128 over 74, respiratory rate 18 per minute, temperature 36.8 degrees Celsius, and oxygen saturation 90 percent breathing air. These remain historical starting observations.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push(patient.rescoredAtTick === null
+      ? 'The saturation has not been recalculated against the prescribed range.'
+      : `Recalculated: ${patient.saturationPercent} percent breathing air scores ${patient.prescribedScaleScore} on the prescribed scale. The measurement is unchanged; the range it is compared with is not.`);
+    lines.push('The guideline that sets this range warns that a patient inside it scores points on the ordinary scale and that this may prompt staff to raise the inspired oxygen to reach a normal-looking figure and put her at risk. One cluster-randomised trial found lower mortality with a titrated oxygen strategy than with routine high-flow oxygen, and the same guideline states that it is not known whether this range is the ideal one. The second scale has not been shown to detect deterioration better than the first. No drug, dose, route, oxygen device, flow rate, inspired concentration, or procedure is selected here, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(`Prescription: ${patient.prescriptionCheckedAtTick === null ? 'not read' : 'read'}. Chart: ${patient.chartCheckedAtTick === null ? 'not read' : 'read'}. Mismatch: ${patient.mismatchRecordedAtTick === null ? 'not recorded' : 'recorded'}. Rescore: ${patient.rescoredAtTick === null ? 'not done' : 'done'}. Consequences: ${patient.consequencesRecordedAtTick === null ? 'not yet stated' : 'stated'}. Confirmation: ${patient.confirmationAtTick === null ? 'not requested' : 'requested'}. Boundaries: ${patient.boundariesReviewedAtTick === null ? 'not reviewed' : 'reviewed'}. Observation: ${patient.monitoringAtTick === null ? 'not arranged' : 'arranged on the corrected chart'}.`);
+    if (patient.colleagueAskedToRaiseOxygen) {
+      lines.push('A colleague has read the score off the chart and offered to put oxygen on her to bring the saturation up.');
+    }
+    lines.push(patient.prescriptionRecord
+      ? `Last prescription read at simulated ${formatElapsed(patient.prescriptionRecord.atTick)}: target ${patient.prescriptionRecord.prescribedTargetRange} on scale ${patient.prescriptionRecord.prescribedScale}.`
+      : 'The prescription has not been read.');
+    lines.push(patient.chartRecord
+      ? `Last chart read at simulated ${formatElapsed(patient.chartRecord.atTick)}: scale ${patient.chartRecord.chartedScale}, scoring ${patient.chartRecord.chartedScore}.`
+      : 'The observation chart has not been read.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: saturation ${patient.observation.saturationPercent} percent, unchanged; chart on scale ${patient.observation.chartedScale}, scoring ${patient.observation.chartedScore}.`
+      : 'No new full assessment has been requested.');
+    if (patient.reviewObserved) {
+      lines.push('The qualified team has confirmed the documented decision and the prescribed range, recorded that the wrong chart was in use, and recorded that a corrected score is not a statement that she is well.');
+    }
+    if (patient.choiceFeedback) lines.push(patient.choiceFeedback);
+    if (patient.ended) {
+      lines.push(patient.ended === 'handoff'
+        ? 'Practice complete. The prescribed range with its documented decision, the scale the chart had been using, and a score that fell without the patient changing all travel with her.'
+        : 'Instructor takeover ended this branch. The teaching stop predicts no patient outcome.');
+    }
+    return lines.join('\n');
+  }
+
   if (options.lastKnownWell) {
     const patient = options.lastKnownWell;
     // The empty onset field is announced as empty. Saying "not known" out loud is what stops it

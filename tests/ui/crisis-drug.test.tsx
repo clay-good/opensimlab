@@ -291,6 +291,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       hasMeningitisImagingResponse: false,
       hasLowScoreResponse: false,
       hasCountedRateResponse: false,
+      hasOxygenTargetScaleResponse: false,
       hasPairedReadingResponse: false,
       hasAfferentLimbResponse: false,
       hasQuietPatientResponse: false,
