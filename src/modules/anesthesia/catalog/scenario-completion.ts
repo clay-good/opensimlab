@@ -33,6 +33,7 @@ import { quietPatientCompletionEvidence } from '../../medical-surgical-nursing/q
 import { proxyScaleCompletionEvidence } from '../../medical-surgical-nursing/proxy-scale-completion';
 import { lastKnownWellCompletionEvidence } from '../../medical-surgical-nursing/last-known-well-completion';
 import { oxygenTargetScaleCompletionEvidence } from '../../medical-surgical-nursing/oxygen-target-scale-completion';
+import { lostContingencyCompletionEvidence } from '../../medical-surgical-nursing/lost-contingency-completion';
 import {
   COMPLETION_SCHEMA_VERSION,
   type CompletionRequirementAudit,
@@ -147,6 +148,7 @@ export function auditClinicalScenario(
     ...proxyScaleCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...lastKnownWellCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...oxygenTargetScaleCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...lostContingencyCompletionEvidence(scenario, capabilityVersion, moduleId),
   ].map((entry) => [entry.id, entry]));
   const auditedRequirements = requirements.map((entry) => exactEvidence.get(entry.id) ?? entry);
   return {

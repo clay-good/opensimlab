@@ -57,6 +57,7 @@ import { supportsQuietPatient } from '../../medical-surgical-nursing/quiet-patie
 import { supportsProxyScale } from '../../medical-surgical-nursing/proxy-scale';
 import { supportsLastKnownWell } from '../../medical-surgical-nursing/last-known-well';
 import { supportsOxygenTargetScale } from '../../medical-surgical-nursing/oxygen-target-scale';
+import { supportsLostContingency } from '../../medical-surgical-nursing/lost-contingency';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -630,6 +631,55 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-medical-surgical-nursing-lost-contingency-')) {
+      if (!supportsLostContingency(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The nursing handover-loss lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^lost-contingency-${id}-\\d+$`).test(entry.eventId));
+      const spoken = event('spoken-recorded'); const notes = event('notes-check');
+      const gap = event('gap-recorded'); const reconstructed = event('reconstructed');
+      const consequences = event('consequences-recorded'); const confirmation = event('confirmation-requested');
+      const boundaries = event('boundary-review'); const monitoring = event('monitoring');
+      const handoff = event('handoff'); const output = event('output-reported');
+      const confirmed = log.find((entry) => /^lost-contingency-confirmed-reassessment-\d+$/.test(entry.eventId));
+      const prematureGap = event('gap-refused'); const prematureReconstruct = event('reconstruct-refused');
+      const prematureConfirm = event('confirmation-refused');
+      const refusedOwnPlan = event('own-plan-refused'); const refusedNothingApplies = event('nothing-applies-refused');
+      const refusedMemory = event('memory-refused'); const refusedQuiet = event('quiet-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'reconcile-medical-surgical-nursing-lost-contingency-what-was-said-against-what-is-written': { met: !!spoken && !!notes, tick: spoken?.tick,
+          finding: (spoken ? 'What was said was written down before it faded. ' : 'The spoken handover was never written down, so there is no account of it to compare anything against. ')
+            + (notes ? 'The notes were read separately. ' : 'The post-operative notes were never read. ')
+            + (prematureGap ? 'Recording a difference from one source alone was attempted and refused. ' : '')
+            + 'An account of what was said has a short shelf life, and it is the only evidence that something was not said.' },
+        'recognize-medical-surgical-nursing-lost-contingency-a-gap-the-handover-created': { met: !!gap, tick: gap?.tick,
+          finding: (gap ? 'The difference was recorded as a transmission gap. ' : 'The difference was never recorded as what it is. ')
+            + (refusedNothingApplies ? 'Treating the unmentioned plan as absent was attempted and refused. ' : '')
+            + (refusedQuiet ? 'Reading a short handover as a straightforward patient was attempted and refused. ' : '')
+            + 'The contingency is present, correct, signed and dated; nothing was charted wrongly and the patient is as described. The failure is in the spoken transfer, and its only trace is a receiver who cannot repeat the plan back.' },
+        'record-medical-surgical-nursing-lost-contingency-reconstructed-not-authored': { met: !!reconstructed, tick: reconstructed?.tick,
+          finding: (reconstructed ? 'The trigger, threshold, action, and owner were transcribed from the notes with attribution. ' : 'The contingency was never reconstructed from the record. ')
+            + (prematureReconstruct ? 'Reconstructing before the gap was recorded was attempted and refused, because it produces a plan with no account of where it came from. ' : '')
+            + (refusedOwnPlan ? 'Authoring a replacement plan was attempted and refused, and no threshold or action of the learner\u2019s own was written. ' : '')
+            + 'A second plan leaves the next reader unable to tell which one the surgical team meant.' },
+        'activate-medical-surgical-nursing-lost-contingency-a-plan-returned-to-its-owner': { met: !!confirmation, tick: confirmation?.tick,
+          finding: (confirmation ? 'The reconstructed plan was taken back to the surgical registrar to confirm it stands as written. ' : 'The recovered plan was never taken back to the team that wrote it. ')
+            + (prematureConfirm ? 'Requesting confirmation before there was a reconstructed plan was attempted and refused. ' : '')
+            + (refusedMemory ? 'Telephoning the day nurse to recall what she omitted was attempted and refused; memory is what failed, and asking it again is not a check. ' : '')
+            + 'This is neither asking permission to follow the plan nor requesting a new one; it puts a plan recovered by one person overnight back into more than one head.' },
+        'review-medical-surgical-nursing-lost-contingency-boundaries-and-their-certainty': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The boundaries were reviewed with their certainty attached. ' : 'The boundary and certainty review is missing. ')
+            + 'Contingency planning is among the elements most often absent from spoken handovers and information degrades as it is passed on, but the strongest trial raised compliance without moving preventable adverse events, mortality improved in none of the four studies that examined it, no study isolates a lost contingency as a cause of harm, and every figure was measured on doctors, residents, anaesthetists, or ambulance crews rather than on nursing handover.' },
+        'handoff-medical-surgical-nursing-lost-contingency-said-out-loud-before-it-is-needed': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The contingency was said out loud, in the surgical team\u2019s words, with its trigger, threshold, action, and owner. ' : 'Current full findings, observation against the threshold, or continuing-care ownership remains incomplete. ')
+            + (monitoring ? '' : 'Observation against the written threshold was never arranged. ')
+            + (consequences ? '' : 'What the gap changed was never stated. ')
+            + (output ? 'The hourly output was reported during this run, above the threshold and for one hour rather than two, which is what made the plan matter without triggering it. ' : '')
+            + (confirmed ? 'The surgical registrar confirmed the plan stands as written. ' : '')
+            + 'It was said before it was needed, and the next receiver was told it had been missing, because a receiver who is told that is a receiver who checks.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-medical-surgical-nursing-oxygen-target-scale-')) {
       if (!supportsOxygenTargetScale(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The nursing oxygen-target scoring lesson was not active.' } satisfies ObjectiveFinding;

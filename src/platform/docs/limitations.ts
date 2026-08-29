@@ -6047,6 +6047,38 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'The second scale exists so that a patient at her prescribed target is not scored as deviating from a target she was never given; that is a safety rationale rather than a demonstrated improvement in detection. The one study to compare the two scales found no improvement in discrimination for either immediate or in-hospital outcome, so a 0 on it excludes less than a low score usually feels like it excludes, and the correction removes a false alarm rather than adding evidence.',
     briefIn: ['oxygen-target-scale-a-score-that-should-be-lower'],
   },
+  {
+    id: 'lost-contingency-handover-and-notes-are-authored',
+    headline: 'One handover, one set of notes, and a patient who stays well.',
+    simplification: 'The case supplies three spoken elements, four written ones, an hourly urine output that sits just above the plan\u2019s threshold, and observations that do not change. No physiological, renal, or surgical model runs underneath, and the contingency is never triggered.',
+    whereItMisleads: 'A learner concludes that a lost contingency is safe because this one was, or that recovering the plan is what kept her well.',
+    correctUnderstanding: 'Nothing the learner does in this rehearsal changes her course, because nothing was going to. The plan is recovered before it is needed, which is the only ordering in which recovery is worth anything, and the fixture withholds a deterioration precisely so that the value of the recovery cannot be read off an outcome it did not cause.',
+    briefIn: ['lost-contingency-a-plan-that-was-not-said'],
+  },
+  {
+    id: 'lost-contingency-controls-are-reading-and-recording-only',
+    headline: 'No plan is authored, and no threshold is the learner\u2019s.',
+    simplification: 'The learner records what was said, reads the notes, records the difference, transcribes the contingency with attribution, states what the gap changed, requests confirmation, reviews the boundaries, and keeps the observations against the written threshold.',
+    whereItMisleads: 'The refused choice to write a fresh plan is read as a control that would be correct if the notes had held nothing, or the reconstruction is read as the learner deciding what the plan should say.',
+    correctUnderstanding: 'The trigger, the threshold, the action, and the owner are all the surgical team\u2019s, and the reconstruction is transcription with attribution. If the notes had held no contingency, the answer would still not be to write one: it would be to say so and ask the team that owns the patient, which is the same escalation by a different route.',
+    briefIn: ['lost-contingency-a-plan-that-was-not-said'],
+  },
+  {
+    id: 'lost-contingency-completeness-is-not-a-harm-reduction',
+    headline: 'Saying more is well evidenced. Preventing harm by saying more is not.',
+    simplification: 'The case reports that structured handoff raises the completeness of what is transferred, and that a systematic review grades its effect on errors and adverse events as moderate certainty.',
+    whereItMisleads: 'A learner infers that saying the plan out loud is known to prevent harm, or that the flagship error reductions are causal estimates.',
+    correctUnderstanding: 'The completeness finding is robust and the harm finding is not: the flagship study compared a period before with a period after and improved at six of its nine sites, the one cluster-randomised replication raised compliance while preventable adverse events did not move, and across the wider literature mortality was examined in four studies and improved in none. No study isolates a lost contingency as a cause of harm. The honest case for saying it out loud rests on the completeness evidence alone, which is enough.',
+    briefIn: ['lost-contingency-a-plan-that-was-not-said'],
+  },
+  {
+    id: 'lost-contingency-evidence-is-not-from-nursing-handover',
+    headline: 'Every figure in this lesson was measured on somebody else.',
+    simplification: 'The case cites observation and trial evidence on what handovers omit and how information degrades, and applies it to a nursing shift handover on a surgical ward.',
+    whereItMisleads: 'A learner reads the omission and degradation rates as properties of nursing handover, or as what would be found on their own ward.',
+    correctUnderstanding: 'The sources describe internal-medicine house staff, paediatric and anaesthesia residents, intensive-care teams, and ambulance crews. None of them observed nursing shift handover, and the one nursing meta-analysis that exists pools incompatible error definitions with almost total heterogeneity, which makes its figure unusable rather than reassuring. Whether these rates transfer is an assumption this lesson makes openly, not a finding it reports.',
+    briefIn: ['lost-contingency-a-plan-that-was-not-said'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

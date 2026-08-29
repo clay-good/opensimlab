@@ -109,7 +109,7 @@ export const MODULE_PROSE: Readonly<Record<string, ModuleProse>> = {
     prerequisites: 'Basic assessment, vital-sign interpretation, and familiarity with local escalation pathways.',
     plannedScope:
       'Nine bounded ward rehearsals spanning early-warning scores and what they do not exclude, measurement error '
-      + 'in the observations themselves, escalation that fails for social reasons, and handoff of unresolved concern.',
+      + 'in the observations themselves, escalation that fails for social reasons, and what a handover loses.',
   },
   'oncology': {
     description: 'Planned.',

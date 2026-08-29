@@ -1,0 +1,22 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
+import { LOST_CONTINGENCY_A_PLAN_THAT_WAS_NOT_SAID } from './scenarios/lost-contingency-a-plan-that-was-not-said';
+import { LOST_CONTINGENCY_FIXTURES } from './lost-contingency-fixtures';
+
+export function lostContingencyCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
+  if (moduleId !== 'medical-surgical-nursing' || capabilityVersion !== '0.1.0-alpha.48'
+    || scenario.metadata.id !== LOST_CONTINGENCY_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
+    || LOST_CONTINGENCY_FIXTURES.contentVersion !== '0.1.0' || LOST_CONTINGENCY_FIXTURES.seed !== 6194
+    || JSON.stringify(scenario) !== JSON.stringify(LOST_CONTINGENCY_A_PLAN_THAT_WAS_NOT_SAID)) return [];
+  return [
+    { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['lost-contingency-fixtures.ts binds seed 6194 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No physiological, renal, or surgical model is claimed; the spoken handover, the written notes, and the hourly output are authored.'] },
+    { id: 'meaningful-progression', status: 'satisfied', evidence: ['lost-contingency.ts runs two authored transitions. At 12 minutes the hourly urine output is reported at 35 millilitres, above the threshold the written plan names and for one hour rather than two, so nothing is triggered; what it does is make the plan matter. If the reconstructed plan is taken to the surgical registrar, they confirm 18 minutes later that it stands as written, unchanged. The patient does not deteriorate, because a decline would let a learner treat the decline as the reason the plan mattered when the point is that it mattered before.'] },
+    { id: 'meaningful-actions-and-choices', status: 'satisfied', evidence: ['The learner records what was said, reads the notes, records the difference as a transmission gap rather than a documentation gap, reconstructs the contingency in the surgical team’s words, states what the gap changed, takes the plan to be confirmed, reviews the boundaries, and keeps the observations against the named threshold. Treating an unmentioned plan as absent, telephoning the day nurse to recall what she omitted, reading a short handover as a straightforward patient, and authoring a replacement plan are each refused. Recording the gap before both sources are read, reconstructing before the gap is recorded, and requesting confirmation before there is a reconstructed plan are refused as premature.'] },
+    { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['A recorded spoken handover, the notes read, the gap recorded as a transmission gap, the reconstruction, the stated consequences, a confirmation request, the boundary review, observation against the threshold, and a current full assessment permit handoff. Instructor takeover bounds a run with no confirmation request at 90 minutes, or an unfinished session at eight hours.'] },
+    { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Six event-bound objectives distinguish recording the spoken account before it fades, recognising a gap the handover created in a record that is complete, reconstructing rather than authoring, routing the recovered plan back to its owner, the handoff evidence and its stated limits, and saying the plan out loud before it is needed. Refused shortcuts remain visible, and no cause, trajectory, or outcome is certified.'] },
+    { id: 'reference-transcripts', status: 'satisfied', evidence: ['lost-contingency-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine.'] },
+    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
+    { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
+  ];
+}

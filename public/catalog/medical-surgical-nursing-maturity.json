@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "medical-surgical-nursing",
-  "recordCount": 8,
+  "recordCount": 9,
   "records": [
     {
       "recordId": "scenario:low-score-what-the-threshold-does-not-exclude@0.1.0",
@@ -89,6 +89,17 @@
       "evidence": [
         "/catalog/medical-surgical-nursing-completion-audit.json#oxygen-target-scale-a-score-that-should-be-lower@0.1.0",
         "/catalog/medical-surgical-nursing-quality-audit.json#oxygen-target-scale-a-score-that-should-be-lower@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:lost-contingency-a-plan-that-was-not-said@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "lost-contingency-a-plan-that-was-not-said",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/medical-surgical-nursing-completion-audit.json#lost-contingency-a-plan-that-was-not-said@0.1.0",
+        "/catalog/medical-surgical-nursing-quality-audit.json#lost-contingency-a-plan-that-was-not-said@0.1.0"
       ]
     }
   ]

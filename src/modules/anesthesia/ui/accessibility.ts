@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -128,6 +128,7 @@ export function stateSummary(
     readonly proxyScale?: ProxyScaleSnapshot;
     readonly lastKnownWell?: LastKnownWellSnapshot;
     readonly oxygenTargetScale?: OxygenTargetScaleSnapshot;
+    readonly lostContingency?: LostContingencySnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -181,7 +182,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale || options.lostContingency) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -206,6 +207,41 @@ export function stateSummary(
       }
     }
   }
+  if (options.lostContingency) {
+    const patient = options.lostContingency;
+    // Both counts, always together. A single total would hide the one line that is the lesson.
+    lines.push(`Said at handover: ${patient.spokenElements.length} elements. Written in the notes: ${patient.recordedElements.length}. The contingency is ${patient.contingencyWasSpoken ? 'in both' : 'in the notes and was not said'}.`);
+    lines.push('Supplied starting observations were pulse 88 per minute, blood pressure 118 over 70, respiratory rate 17 per minute, oxygen saturation 96 percent in air, and temperature 37.1 degrees Celsius. These remain historical starting observations.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push(patient.spokenRecordedAtTick === null
+      ? 'The spoken handover has not been written down. It is the only evidence that something was not said, and it fades.'
+      : `Handover recorded: ${patient.spokenElements.join('; ')}.`);
+    lines.push(patient.notesCheckedAtTick === null
+      ? 'The post-operative notes have not been read.'
+      : `Notes read. The record is complete and correct, and holds one element more than was said: ${patient.recordedElements[patient.recordedElements.length - 1]}.`);
+    lines.push(patient.contingencyReconstructed === null
+      ? 'The contingency is still held only in the notes.'
+      : `Reconstructed in the surgical team\u2019s words: ${patient.contingencyReconstructed}`);
+    lines.push(`Gap recorded: ${patient.gapRecordedAtTick === null ? 'no' : 'yes, as a transmission gap rather than a documentation gap'}. Consequences: ${patient.consequencesRecordedAtTick === null ? 'not yet stated' : 'stated'}. Confirmation: ${patient.confirmationAtTick === null ? 'not requested' : 'requested'}. Boundaries: ${patient.boundariesReviewedAtTick === null ? 'not reviewed' : 'reviewed'}. Observation: ${patient.monitoringAtTick === null ? 'not arranged' : 'arranged against the written threshold'}.`);
+    if (patient.outputReported) {
+      lines.push(`The last hourly urine output was ${patient.urineHourlyMl} millilitres, above the plan\u2019s threshold of ${patient.urineThresholdMl} millilitres, with ${patient.consecutiveHoursBelowThreshold} consecutive hours below it. Nothing is triggered. What it does is make the plan matter.`);
+    }
+    lines.push('Structured handoff reliably increases what the next person holds, and has not been shown to reduce harm: the one cluster-randomised replication raised compliance while preventable adverse events did not move, and no study isolates a lost contingency as a cause of harm. Every quantitative source describes doctors, residents, anaesthetists, or ambulance crews rather than nursing handover. No drug, dose, route, fluid, threshold of the learner\u2019s own devising, or procedure is selected here, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: ${patient.observation.spokenElements.length} elements said, ${patient.observation.recordedElements.length} written.`
+      : 'No new full assessment has been requested.');
+    if (patient.confirmationObserved) {
+      lines.push('The surgical registrar has confirmed the plan stands as written, unchanged, and recorded that it was confirmed overnight.');
+    }
+    if (patient.choiceFeedback) lines.push(patient.choiceFeedback);
+    if (patient.ended) {
+      lines.push(patient.ended === 'handoff'
+        ? 'Practice complete. The contingency travels in the surgical team\u2019s words, with its trigger, threshold, action, and owner, and with the fact that it was missing from the handover this shift received.'
+        : 'Instructor takeover ended this branch. The teaching stop predicts no patient outcome.');
+    }
+    return lines.join('\n');
+  }
+
   if (options.oxygenTargetScale) {
     const patient = options.oxygenTargetScale;
     // The score is never announced without the scale it was computed on. A bare 3 is the error the

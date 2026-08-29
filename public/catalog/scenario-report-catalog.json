@@ -2383,6 +2383,23 @@
       "limitationManifestHash": "sha256:6d995f84ea12da4584b931ce0959658a2bda8638737518217ceb0c6de86d8873"
     },
     {
+      "scenarioId": "lost-contingency-a-plan-that-was-not-said",
+      "contentVersion": "0.1.0",
+      "moduleId": "medical-surgical-nursing",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:cc467340f37012710e615fb395104698f2dd5e292fba0b3bd88d6eaf9471eb87",
+      "defaultsHash": "sha256:9780953c4c744d06fd78234d56a8a41853a3a1bb1725fa80356d3c38917366d9",
+      "maturityHash": "sha256:d9773a572ac8b615117c27cf678402c84bb88c5ebe7c163a5ae2599c10470b3d",
+      "sourceManifestHash": "sha256:62405710a812fe7817a9cef7947b4615f7a47dcaf841bdf8d011dbb083da1077",
+      "limitationManifestHash": "sha256:95c97862028c1168f7653041daad0a862f61c4318fa33b16ac42721cddfb1317"
+    },
+    {
       "scenarioId": "low-score-what-the-threshold-does-not-exclude",
       "contentVersion": "0.1.0",
       "moduleId": "medical-surgical-nursing",

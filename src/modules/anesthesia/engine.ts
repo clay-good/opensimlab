@@ -73,6 +73,7 @@ import { QuietPatient, supportsQuietPatient } from '../medical-surgical-nursing/
 import { ProxyScale, supportsProxyScale } from '../medical-surgical-nursing/proxy-scale';
 import { LastKnownWell, supportsLastKnownWell } from '../medical-surgical-nursing/last-known-well';
 import { OxygenTargetScale, supportsOxygenTargetScale } from '../medical-surgical-nursing/oxygen-target-scale';
+import { LostContingency, supportsLostContingency } from '../medical-surgical-nursing/lost-contingency';
 
 /** The engine's own version, recorded in every transcript. */
 export const ENGINE_VERSION = '0.1.0-alpha.48';
@@ -1772,6 +1773,7 @@ export class AnesthesiaEngine {
   private readonly proxyScale: ProxyScale | null;
   private readonly lastKnownWell: LastKnownWell | null;
   private readonly oxygenTargetScale: OxygenTargetScale | null;
+  private readonly lostContingency: LostContingency | null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1935,6 +1937,8 @@ export class AnesthesiaEngine {
     if (this.lastKnownWell) this.rhythm = 'sinus';
     this.oxygenTargetScale = supportsOxygenTargetScale(options.scenario) ? new OxygenTargetScale() : null;
     if (this.oxygenTargetScale) this.rhythm = 'sinus';
+    this.lostContingency = supportsLostContingency(options.scenario) ? new LostContingency() : null;
+    if (this.lostContingency) this.rhythm = 'sinus';
     this.practiceRegion = options.practiceRegion;
     this.seed = options.seed;
     if (options.scenario.timeline.some((event) => event.type === 'narrative'
@@ -2073,6 +2077,11 @@ export class AnesthesiaEngine {
     if (this.lastKnownWell && action.type !== 'last-known-well-response' && action.type !== 'silence-alarm') {
       this.log('warning', 'assessment', `last-known-well-generic-action-refused-${this.currentTick}`,
         'Only this lesson\u2019s bound-recording, recollection-recording, activation, consequence-recording, boundary-review, observation, and handoff choices are available.');
+      return;
+    }
+    if (this.lostContingency && action.type !== 'lost-contingency-response' && action.type !== 'silence-alarm') {
+      this.log('warning', 'assessment', `lost-contingency-generic-action-refused-${this.currentTick}`,
+        'Only this lesson\u2019s handover-recording, note-reading, gap-recording, reconstruction, confirmation, boundary-review, observation, and handoff choices are available. No plan is authored here.');
       return;
     }
     if (this.oxygenTargetScale && action.type !== 'oxygen-target-scale-response' && action.type !== 'silence-alarm') {
@@ -3127,6 +3136,19 @@ export class AnesthesiaEngine {
         }
         for (const event of this.possibleSepsis.apply(action.payload.action, this.currentTick)) {
           this.log('warning', 'assessment', `possible-sepsis-${event.id}-${this.currentTick}`, event.message);
+        }
+        break;
+      }
+      case 'lost-contingency-response': {
+        if (!this.lostContingency || Reflect.ownKeys(action.payload).length !== 1
+          || !Object.hasOwn(action.payload, 'action')
+          || !Object.getOwnPropertyDescriptor(action.payload, 'action')!.enumerable
+          || !Object.hasOwn(Object.getOwnPropertyDescriptor(action.payload, 'action')!, 'value')) {
+          this.log('warning', 'assessment', `lost-contingency-action-refused-${this.currentTick}`, 'Only the declared dose-free handover choices are available in this lesson.');
+          break;
+        }
+        for (const event of this.lostContingency.apply(action.payload.action, this.currentTick)) {
+          this.log('warning', 'assessment', `lost-contingency-${event.id}-${this.currentTick}`, event.message);
         }
         break;
       }
@@ -14950,6 +14972,9 @@ export class AnesthesiaEngine {
 
   /** Advance exactly one tick. */
   step(): EngineTick {
+    for (const event of this.lostContingency?.advance(this.currentTick) ?? []) {
+      this.log('warning', 'assessment', `lost-contingency-${event.id}-${this.currentTick}`, event.message);
+    }
     for (const event of this.oxygenTargetScale?.advance(this.currentTick) ?? []) {
       this.log('warning', 'assessment', `oxygen-target-scale-${event.id}-${this.currentTick}`, event.message);
     }
@@ -15860,6 +15885,13 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: this.endocrineDkaResolutionReassessmentAtTick !== null ? 16 : 18,
         spo2Percent: 98, systolicMmHg: 118, diastolicMmHg: 70, meanArterialMmHg: 86,
         coreTemperatureC: 36.9 };
+    }
+    if (this.lostContingency) {
+      const patient = this.lostContingency.vitals();
+      crisisState = { ...crisisState, heartRateBpm: patient.heartRateBpm,
+        respiratoryRateBpm: patient.respiratoryRateBpm, spo2Percent: patient.spo2Percent,
+        systolicMmHg: patient.systolicMmHg, diastolicMmHg: patient.diastolicMmHg,
+        meanArterialMmHg: patient.meanArterialMmHg, coreTemperatureC: patient.coreTemperatureC };
     }
     if (this.oxygenTargetScale) {
       const patient = this.oxygenTargetScale.vitals();
@@ -20817,6 +20849,7 @@ export class AnesthesiaEngine {
         ...(this.proxyScale ? { proxyScale: this.proxyScale.snapshot(this.currentTick) } : {}),
         ...(this.lastKnownWell ? { lastKnownWell: this.lastKnownWell.snapshot(this.currentTick) } : {}),
         ...(this.oxygenTargetScale ? { oxygenTargetScale: this.oxygenTargetScale.snapshot(this.currentTick) } : {}),
+        ...(this.lostContingency ? { lostContingency: this.lostContingency.snapshot(this.currentTick) } : {}),
         ...(this.avpDeficiency ? { avpDeficiency: this.avpDeficiency.snapshot(this.currentTick) } : {}),
         ...(this.hyponatremiaCorrection ? { hyponatremiaCorrection: this.hyponatremiaCorrection.snapshot(this.currentTick) } : {}),
         aspirationRiskAssessment: {
@@ -21013,7 +21046,7 @@ export class AnesthesiaEngine {
   invalidParameters(): Set<string> {
     const invalid = new Set<string>();
     // These lessons do not supply a capnogram or a modeled oxygen setting.
-    if (this.myxedema || this.hypercalcemia || this.hypocalcemia || this.hyponatremiaCorrection || this.avpDeficiency || this.refeeding || this.perioperativeDiabetes || this.renalHyperkalemia || this.renalHypokalemia || this.renalHyponatremia || this.renalHypernatremia || this.renalHypocalcemia || this.renalHypermagnesemia || this.meningococcalSepsis || this.obstructedKidney || this.febrileNeutropenia || this.necrotizingInfection || this.endocarditisHeartFailure || this.severePneumonia || this.toxicShock || this.possibleSepsis || this.septicShockLabel || this.meningitisImaging || this.lowScore || this.countedRate || this.pairedReading || this.afferentLimb || this.quietPatient || this.proxyScale || this.lastKnownWell || this.oxygenTargetScale) {
+    if (this.myxedema || this.hypercalcemia || this.hypocalcemia || this.hyponatremiaCorrection || this.avpDeficiency || this.refeeding || this.perioperativeDiabetes || this.renalHyperkalemia || this.renalHypokalemia || this.renalHyponatremia || this.renalHypernatremia || this.renalHypocalcemia || this.renalHypermagnesemia || this.meningococcalSepsis || this.obstructedKidney || this.febrileNeutropenia || this.necrotizingInfection || this.endocarditisHeartFailure || this.severePneumonia || this.toxicShock || this.possibleSepsis || this.septicShockLabel || this.meningitisImaging || this.lowScore || this.countedRate || this.pairedReading || this.afferentLimb || this.quietPatient || this.proxyScale || this.lastKnownWell || this.oxygenTargetScale || this.lostContingency) {
       invalid.add('etco2MmHg');
       invalid.add('fio2');
     }

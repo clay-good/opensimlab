@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: Oxygen-target scoring-scale state has protocol version 196', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(196);
+  it('Scenario: Lost-contingency handoff state has protocol version 197', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(197);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 196 adds the authored oxygen-target scoring-scale snapshot. */
-export const WORKER_PROTOCOL_VERSION = 196;
+/** Version 197 adds the authored lost-contingency handoff snapshot. */
+export const WORKER_PROTOCOL_VERSION = 197;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -828,6 +828,52 @@ export interface ProxyScaleSnapshot {
     readonly atTick: number; readonly total: number; readonly selfReportAvailable: boolean;
     readonly itemCount: number; readonly recentSurgery: boolean; readonly analgesiaCharted: boolean;
     readonly proxyAvailable: boolean; readonly baselineDescription: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
+}
+
+export interface LostContingencySnapshot {
+  readonly spokenRecordedAtTick: number | null;
+  readonly notesCheckedAtTick: number | null;
+  readonly gapRecordedAtTick: number | null;
+  readonly reconstructedAtTick: number | null;
+  readonly consequencesRecordedAtTick: number | null;
+  readonly confirmationAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly spokenElements: readonly string[];
+  readonly recordedElements: readonly string[];
+  readonly contingencyInTheRecord: boolean;
+  readonly contingencyWasSpoken: boolean;
+  readonly contingencyReconstructed: string | null;
+  readonly urineHourlyMl: number;
+  readonly urineThresholdMl: number;
+  readonly consecutiveHoursBelowThreshold: number;
+  readonly outputReported: boolean;
+  readonly confirmationArrived: boolean;
+  readonly confirmationObserved: boolean;
+  readonly nothingSaidReadAsNothingApplies: boolean;
+  readonly memoryAskedFor: boolean;
+  readonly quietReadAsStable: boolean;
+  readonly ownPlanAttempted: boolean;
+  readonly spokenRecord: {
+    readonly atTick: number; readonly spokenElements: readonly string[];
+    readonly contingencyWasSpoken: boolean;
+  } | null;
+  readonly notesRecord: {
+    readonly atTick: number; readonly recordedElements: readonly string[];
+    readonly contingencyInTheRecord: boolean; readonly urineThresholdMl: number;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly spokenElements: readonly string[];
+    readonly contingencyWasSpoken: boolean; readonly recordedElements: readonly string[];
+    readonly contingencyInTheRecord: boolean; readonly urineThresholdMl: number;
+    readonly urineHourlyMl: number; readonly consecutiveHoursBelowThreshold: number;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -4276,6 +4322,7 @@ export interface EquipmentSnapshot {
     readonly proxyScale?: ProxyScaleSnapshot;
     readonly lastKnownWell?: LastKnownWellSnapshot;
     readonly oxygenTargetScale?: OxygenTargetScaleSnapshot;
+    readonly lostContingency?: LostContingencySnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {
