@@ -16,28 +16,29 @@ import { PrerenderedBody } from '@routes/Prerendered';
 import { validateScenario } from '@anesthesia/scenarios/schema';
 import { moduleProse } from '@platform/modules/module-prose';
 import {
-  DEFAULT_MEDICAL_SURGICAL_NURSING_SCENARIO_ID, MEDICAL_SURGICAL_NURSING_SCENARIOS,
-  getMedicalSurgicalNursingScenario,
-} from '../../src/modules/medical-surgical-nursing/scenarios';
+  DEFAULT_ONCOLOGY_SCENARIO_ID, ONCOLOGY_SCENARIOS, getOncologyScenario,
+} from '../../src/modules/oncology/scenarios';
 
-const id = 'low-score-what-the-threshold-does-not-exclude';
-const path = `/medical-surgical-nursing/scenario/${id}`;
-const scenario = MEDICAL_SURGICAL_NURSING_SCENARIOS[0]!;
+const id = 'delayed-immune-event-a-drug-that-stopped-months-ago';
+const path = `/oncology/scenario/${id}`;
+const scenario = ONCOLOGY_SCENARIOS[0]!;
 const read = (file: string) => readFileSync(join(process.cwd(), file), 'utf8');
 const json = (file: string) => JSON.parse(read(file));
 
-describe('Nursing module foundation', () => {
-  it('registers all nine planned lessons', () => {
-    expect(getModule('medical-surgical-nursing')).toMatchObject({
-      route: 'medical-surgical-nursing', displayName: 'Nursing', status: 'available',
+describe('Oncology module foundation', () => {
+  it('opens the module with the first of eleven planned lessons', () => {
+    expect(getModule('oncology')).toMatchObject({
+      route: 'oncology', displayName: 'Oncology', status: 'available',
       timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
     });
-    expect(moduleProse('medical-surgical-nursing').plannedScope).toContain('Nine bounded');
-    expect(MEDICAL_SURGICAL_NURSING_SCENARIOS).toHaveLength(9);
-    expect(DEFAULT_MEDICAL_SURGICAL_NURSING_SCENARIO_ID).toBe(id);
-    expect(getMedicalSurgicalNursingScenario(id)).toBe(scenario);
-    expect(getMedicalSurgicalNursingScenario('not-a-scenario')).toBeUndefined();
-    expect(availableModules().map((entry) => entry.id)).toContain('medical-surgical-nursing');
+    expect(moduleProse('oncology').plannedScope).toContain('Eleven bounded');
+    // The prose must no longer read as an unbuilt module, because the route now runs one.
+    expect(moduleProse('oncology').description).not.toBe('Planned.');
+    expect(ONCOLOGY_SCENARIOS).toHaveLength(1);
+    expect(DEFAULT_ONCOLOGY_SCENARIO_ID).toBe(id);
+    expect(getOncologyScenario(id)).toBe(scenario);
+    expect(getOncologyScenario('not-a-scenario')).toBeUndefined();
+    expect(availableModules().map((entry) => entry.id)).toContain('oncology');
     expect(READY_MODULE_COUNT).toBe(15);
   });
 
@@ -48,30 +49,31 @@ describe('Nursing module foundation', () => {
   // A module is only reachable if every surface knows about it. Each of these has been a
   // separate omission in past module launches.
   it('is reachable from the nav, the routes, and the prerendered markup', () => {
-    expect(SITE_BAR_LINKS.map((link) => link.href)).toContain('/medical-surgical-nursing');
-    expect(routeFor('/medical-surgical-nursing')).toMatchObject({
-      indexable: true, heading: 'Nursing simulator',
+    expect(SITE_BAR_LINKS.map((link) => link.href)).toContain('/oncology');
+    expect(routeFor('/oncology')).toMatchObject({
+      indexable: true, heading: 'Oncology simulator',
     });
     const route = routeFor(path)!;
     expect(route.indexable).toBe(true);
     expect(route.description.length).toBeGreaterThanOrEqual(110);
     expect(route.description.length).toBeLessThanOrEqual(160);
-    expect(ROUTES.filter((entry) => entry.path.startsWith('/medical-surgical-nursing'))).toHaveLength(10);
+    expect(ROUTES.filter((entry) => entry.path.startsWith('/oncology'))).toHaveLength(2);
     const markup = renderToStaticMarkup(createElement(PrerenderedBody, { path }));
-    expect(markup).toContain('what the threshold does not exclude');
-    const moduleMarkup = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/medical-surgical-nursing' }));
-    expect(moduleMarkup).toContain('Nursing simulator');
+    expect(markup).toContain('a drug that stopped months ago');
+    const moduleMarkup = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/oncology' }));
+    expect(moduleMarkup).toContain('Oncology simulator');
   });
 
   it('publishes structured data and its own catalog artifacts', () => {
     const data = structuredDataFor(['LearningResource'], path);
     expect(data.some((entry) => JSON.stringify(entry).includes(id))).toBe(true);
     for (const artifact of ['completion-audit', 'quality-audit', 'maturity']) {
-      expect(PUBLIC_CATALOG_ARTIFACTS).toContain(`/catalog/medical-surgical-nursing-${artifact}.json`);
+      expect(PUBLIC_CATALOG_ARTIFACTS).toContain(`/catalog/oncology-${artifact}.json`);
     }
-    const completion = json('public/catalog/medical-surgical-nursing-completion-audit.json');
-    expect(completion.scenarioCount).toBe(9);
+    const completion = json('public/catalog/oncology-completion-audit.json');
+    expect(completion.scenarioCount).toBe(1);
     expect(completion.scenarios[0].scenarioId).toBe(id);
+    expect(completion.scenarios[0].environment).toBe('clinic');
     // The two report catalogs must stay byte-identical, or a report can resolve in one and not the other.
     expect(read('public/catalog/scenario-report-catalog.json'))
       .toBe(read('workers/reports/src/report-catalog.generated.json'));
@@ -79,28 +81,27 @@ describe('Nursing module foundation', () => {
 
   it('enters the governance record under its own domain', () => {
     const item = reviewableItems().find((entry) => entry.id === id);
-    expect(item).toMatchObject({ kind: 'scenario', domains: ['medical-surgical-nursing'] });
+    expect(item).toMatchObject({ kind: 'scenario', domains: ['oncology'] });
     expect(item!.review.reviewer).toBe('UNSIGNED');
   });
 
   it('declares its limitations and resolves every cited source', () => {
     const limitations = limitationsFor(id);
     expect(limitations).toHaveLength(3);
-    expect(limitations.map((entry) => entry.id)).toContain('low-score-sensitivity-figures-are-population-statistics');
-    for (const source of ['news2-sepsis-bacteraemia-accuracy-2025', 'afferent-limb-failure-systematic-review-2019']) {
-      expect(requireSource(source).verifiedOn).toBe('2026-08-28');
+    expect(limitations.map((entry) => entry.id)).toContain('delayed-immune-event-series-figures-are-not-an-incidence');
+    for (const source of ['oncology-delayed-immune-related-events-2019',
+      'oncology-sitc-checkpoint-adverse-events-2021', 'oncology-fatal-checkpoint-toxicity-2018']) {
+      expect(requireSource(source).verifiedOn).toBe('2026-08-29');
     }
   });
 
   it('makes every scenario in the module reportable, not just the first', () => {
     const catalog = json('public/catalog/scenario-report-catalog.json');
-    for (const entry of MEDICAL_SURGICAL_NURSING_SCENARIOS) {
-      // A corrected scenario keeps its superseded record, so match the current version rather
-      // than the first row that happens to carry the id.
+    for (const entry of ONCOLOGY_SCENARIOS) {
       const record = catalog.scenarios.find((row: { scenarioId: string; contentVersion: string }) =>
         row.scenarioId === entry.metadata.id && row.contentVersion === entry.metadata.version);
       expect(record, `${entry.metadata.id} is missing from the report catalog at its current version`).toMatchObject({
-        moduleId: 'medical-surgical-nursing', contentVersion: entry.metadata.version, maturity: 'preview',
+        moduleId: 'oncology', contentVersion: entry.metadata.version, maturity: 'preview',
       });
     }
   });

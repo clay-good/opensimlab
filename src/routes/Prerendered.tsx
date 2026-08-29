@@ -66,6 +66,9 @@ import {
   MEDICAL_SURGICAL_NURSING_SCENARIOS, DEFAULT_MEDICAL_SURGICAL_NURSING_SCENARIO_ID,
   getMedicalSurgicalNursingScenario,
 } from '../modules/medical-surgical-nursing/scenarios';
+import {
+  ONCOLOGY_SCENARIOS, DEFAULT_ONCOLOGY_SCENARIO_ID, getOncologyScenario,
+} from '../modules/oncology/scenarios';
 import { moduleProse } from '@platform/modules/module-prose';
 import type { Scenario } from '@anesthesia/scenarios/types';
 
@@ -174,6 +177,15 @@ export function PrerenderedBody({ path }: { path: string }) {
     <ScenarioMarkup path={path} basePath="/infectious-disease"
       defaultScenarioId={DEFAULT_INFECTIOUS_DISEASE_SCENARIO_ID}
       getScenario={getInfectiousDiseaseScenario} />
+  );
+  if (path === '/oncology') return (
+    <ModuleMarkup moduleId="oncology" basePath="/oncology"
+      heading="Oncology simulator" scenarios={ONCOLOGY_SCENARIOS} />
+  );
+  if (path.startsWith('/oncology/scenario/')) return (
+    <ScenarioMarkup path={path} basePath="/oncology"
+      defaultScenarioId={DEFAULT_ONCOLOGY_SCENARIO_ID}
+      getScenario={getOncologyScenario} />
   );
   if (path === '/medical-surgical-nursing') return (
     <ModuleMarkup moduleId="medical-surgical-nursing" basePath="/medical-surgical-nursing"

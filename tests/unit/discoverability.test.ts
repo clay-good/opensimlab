@@ -30,6 +30,7 @@ import { ENDOCRINE_METABOLIC_SCENARIOS } from '../../src/modules/endocrine-metab
 import { RENAL_ELECTROLYTE_SCENARIOS } from '../../src/modules/renal-electrolyte/scenarios';
 import { INFECTIOUS_DISEASE_SCENARIOS } from '../../src/modules/infectious-disease/scenarios';
 import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../../src/modules/medical-surgical-nursing/scenarios';
+import { ONCOLOGY_SCENARIOS } from '../../src/modules/oncology/scenarios';
 import { Landing } from '@landing/Landing';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -165,6 +166,7 @@ describe('Requirement: Structured Data That Is Accurate', () => {
       { basePath: '/renal-electrolyte', scenarios: RENAL_ELECTROLYTE_SCENARIOS },
       { basePath: '/infectious-disease', scenarios: INFECTIOUS_DISEASE_SCENARIOS },
       { basePath: '/medical-surgical-nursing', scenarios: MEDICAL_SURGICAL_NURSING_SCENARIOS },
+      { basePath: '/oncology', scenarios: ONCOLOGY_SCENARIOS },
     ] as const;
     for (const { basePath, scenarios } of modules) {
       for (const scenario of scenarios) {
@@ -193,7 +195,8 @@ describe('Requirement: One Screen, One Action', () => {
       + PEDIATRICS_SCENARIOS.length + NEUROLOGY_SCENARIOS.length
       + TOXICOLOGY_SCENARIOS.length + OBSTETRICS_SCENARIOS.length + NEONATOLOGY_SCENARIOS.length
       + ENDOCRINE_METABOLIC_SCENARIOS.length + RENAL_ELECTROLYTE_SCENARIOS.length
-      + INFECTIOUS_DISEASE_SCENARIOS.length + MEDICAL_SURGICAL_NURSING_SCENARIOS.length,
+      + INFECTIOUS_DISEASE_SCENARIOS.length + MEDICAL_SURGICAL_NURSING_SCENARIOS.length
+      + ONCOLOGY_SCENARIOS.length,
     );
     for (const word of FORBIDDEN_MARKETING_WORDS) {
       expect(ONE_LINE_DESCRIPTION.toLowerCase(), `contains "${word}"`).not.toContain(word.toLowerCase());
@@ -237,7 +240,7 @@ describe('Requirement: The Hero Is The Product Running', () => {
 describe('Requirement: Modules Directory Is Honest About What Exists', () => {
   it('Scenario: Available and planned are visually distinct, with no date', () => {
     expect(availableModules().map((module) => module.id))
-      .toEqual(['anesthesia', 'emergency-medicine', 'cardiology', 'respiratory-medicine', 'pediatrics', 'neurology', 'toxicology', 'obstetrics', 'neonatology', 'endocrine-metabolic', 'renal-electrolyte', 'infectious-disease', 'medical-surgical-nursing', 'critical-care']);
+      .toEqual(['anesthesia', 'emergency-medicine', 'cardiology', 'respiratory-medicine', 'pediatrics', 'neurology', 'toxicology', 'obstetrics', 'neonatology', 'endocrine-metabolic', 'renal-electrolyte', 'infectious-disease', 'medical-surgical-nursing', 'oncology', 'critical-care']);
     expect(plannedModules().length).toBeGreaterThanOrEqual(1);
     for (const module of plannedModules()) {
       const prose = moduleProse(module.id);
@@ -393,11 +396,16 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
     expect([...speedsFor(anesthesia)]).toEqual([1, 2, 5, 60]);
     expect(anesthesia.timescale.stepSeconds).toBe(0.1);
 
-    // A long-timescale module uses its own units and its own step.
-    const oncology = MODULES.find((module) => module.id === 'oncology')!;
-    expect(oncology.timescale.unit).toBe('days');
-    expect(oncology.timescale.stepSeconds).toBeGreaterThan(0.1);
-    expect(speedsFor(oncology)).not.toEqual(speedsFor(anesthesia));
+    // Oncology was the long-timescale example while it was planned, on the assumption that it
+    // would open with chemotherapy over weeks. It opened with clinic lessons that run in minutes,
+    // so its declaration now says seconds and no module in the registry declares a longer unit.
+    // The contract is still enforced on every module rather than on one illustrative case.
+    for (const module of MODULES) {
+      expect(['seconds', 'minutes', 'hours', 'days']).toContain(module.timescale.unit);
+      expect(module.timescale.stepSeconds).toBeGreaterThan(0);
+      expect([...speedsFor(module)].length).toBeGreaterThan(0);
+      expect([...speedsFor(module)]).toEqual([...module.timescale.speeds]);
+    }
     const criticalCare = MODULES.find((module) => module.id === 'critical-care')!;
     expect(criticalCare.timescale.unit).toBe('seconds');
     expect(criticalCare.timescale.stepSeconds).toBe(0.1);
@@ -456,7 +464,7 @@ describe('Requirement: Footer Carries The Trust Signals', () => {
 describe('Requirement: Crawlability Basics', () => {
   it('Scenario: The sitemap is generated and complete', () => {
     const indexable = indexableRoutes();
-    expect(indexable).toHaveLength(253);
+    expect(indexable).toHaveLength(255);
     expect(indexable.every((route) => route.indexable)).toBe(true);
     expect(indexable.map((route) => route.path)).toContain('/');
     expect(indexable.map((route) => route.path)).toContain('/anesthesia');

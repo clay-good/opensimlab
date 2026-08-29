@@ -58,6 +58,7 @@ import { supportsProxyScale } from '../../medical-surgical-nursing/proxy-scale';
 import { supportsLastKnownWell } from '../../medical-surgical-nursing/last-known-well';
 import { supportsOxygenTargetScale } from '../../medical-surgical-nursing/oxygen-target-scale';
 import { supportsLostContingency } from '../../medical-surgical-nursing/lost-contingency';
+import { supportsDelayedImmuneEvent } from '../../oncology/delayed-immune-event';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -631,6 +632,50 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-oncology-delayed-immune-event-')) {
+      if (!supportsDelayedImmuneEvent(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The oncology delayed immune-event lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^delayed-immune-event-${id}-\\d+$`).test(entry.eventId));
+      const exposure = event('exposure-recorded'); const course = event('course-recorded');
+      const infection = event('infection-evaluation-recorded'); const escalation = event('escalation-requested');
+      const intent = event('treatment-intent-recorded'); const boundaries = event('boundary-review');
+      const handoff = event('handoff'); const progressed = event('course-progressed');
+      const answered = log.find((entry) => /^delayed-immune-event-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedAttribution = event('attribution-refused'); const refusedMotility = event('motility-refused');
+      const refusedWait = event('wait-refused'); const refusedDischarge = event('discharge-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'record-oncology-delayed-immune-event-an-exposure-that-ended': { met: !!exposure, tick: exposure?.tick,
+          finding: (exposure ? 'The four completed cycles and the 22-week interval were recorded as current history. ' : 'The completed exposure was never recorded where the next reader would find it. ')
+            + 'The drug is absent from the current medication list and from the referral letter because it stopped, which is a property of those lists rather than of the patient. A drug that finished is still an exposure.' },
+        'recognize-oncology-delayed-immune-event-an-interval-is-not-a-defence': { met: !!exposure && !refusedDischarge, tick: exposure?.tick,
+          finding: (refusedAttribution ? 'Excluding the drug because it stopped months ago was attempted and refused. ' : '')
+            + 'Immune-related events can occur at any point during treatment or after it has ceased, including beyond six to twelve months; in the collected series the median interval from the last dose was six months, after a median of four doses. '
+            + (refusedDischarge ? 'Discharge with oral fluids was attempted, which is the same exclusion made by disposition rather than by argument. ' : '')
+            + 'An interval is not a defence.' },
+        'record-oncology-delayed-immune-event-infection-alongside-not-ahead': { met: !!infection, tick: infection?.tick,
+          finding: (infection ? 'Infection evaluation was recorded as running alongside rather than ahead. ' : 'Infection evaluation was never recorded, so nothing states whether it is running at all. ')
+            + (refusedWait ? 'Waiting for the stool results before telling anyone was attempted and refused. ' : '')
+            + 'Guidance seeks other causes — stool infectious analysis including Clostridioides difficile, and cytomegalovirus where suspicion warrants — while treatment for an immune-related event is initiated as clinically appropriate. A negative result would not change who needs to be told, and a positive one would not exclude the second process.' },
+        'activate-oncology-delayed-immune-event-the-service-that-gave-the-drug': { met: !!escalation, tick: escalation?.tick,
+          finding: (escalation ? 'The service that gave the drug was contacted with the exposure and the course stated together. ' : 'The service holding the treatment record was never contacted. ')
+            + (refusedMotility ? 'Slowing the gut and reviewing tomorrow was attempted and refused; removing the only sign being followed is not a plan. ' : '')
+            + (course ? '' : 'The symptom course against his own baseline was never recorded, so the call, if made, carried a count without a denominator. ')
+            + 'This is not asking permission to treat. It returns the problem to the people whose records hold the drug.' },
+        'record-oncology-delayed-immune-event-bounded-qualified-intent': { met: !!intent, tick: intent?.tick,
+          finding: (intent ? 'Grading, corticosteroid consideration, and further investigation including endoscopy were recorded as the qualified team’s decisions. ' : 'Bounded qualified-team treatment intent was never recorded. ')
+            + 'Nothing was administered and no drug, dose, route, threshold, or eligibility was chosen or displayed here.' },
+        'review-oncology-delayed-immune-event-boundaries-and-their-certainty': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The boundaries were reviewed with their certainty attached. ' : 'The boundary and certainty review is missing. ')
+            + 'The delayed-event series collected 23 reported cases with no denominator, so it establishes that these events occur late and are missed rather than how likely this one is. In pharmacovigilance data colitis caused 135 of 193 reported anti-CTLA-4 deaths while colitis itself carried a reported fatality of about 2 to 5 percent, and this patient received an anti-PD-1 drug, whose fatal spectrum was different.' },
+        'handoff-oncology-delayed-immune-event-an-exposure-that-travels': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The exposure, the course, the concurrent infection evaluation, the contact made, and the bounded intent all travelled. ' : 'Current full findings, the recorded exposure, or continuing-care ownership remains incomplete. ')
+            + (progressed ? 'An eighth stool was counted during this run with the observations barely moved, which is what an unremarkable trajectory looks like while something is still wrong. ' : '')
+            + (answered ? 'The treating service confirmed the cycles and the interval from its own records and recorded that the interval does not exclude an immune-related cause. ' : 'The treating service had not answered by the end of this run, and the handoff had to survive that. ')
+            + 'No diagnosis, grade, or outcome is certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-medical-surgical-nursing-lost-contingency-')) {
       if (!supportsLostContingency(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The nursing handover-loss lesson was not active.' } satisfies ObjectiveFinding;

@@ -16,24 +16,28 @@ any device, with or without a network.
 
 ## What it covers
 
-238 bounded labs across 14 specialties:
+230 bounded labs across 15 specialties:
 
 | Module | Labs | Where |
 | --- | --- | --- |
 | Anesthesia | 39 | `/anesthesia` |
 | Emergency medicine | 25 | `/emergency-medicine` |
 | Critical care | 24 | `/critical-care` |
-| Endocrine & metabolic | 20 | `/endocrine-metabolic` |
 | Cardiology | 17 | `/cardiology` |
 | Pediatrics | 16 | `/pediatrics` |
 | Neurology | 15 | `/neurology` |
 | Obstetrics | 15 | `/obstetrics` |
 | Respiratory medicine | 15 | `/respiratory-medicine` |
 | Toxicology | 15 | `/toxicology` |
+| Endocrine & metabolic | 12 | `/endocrine-metabolic` |
 | Neonatology | 11 | `/neonatology` |
-| Renal & electrolyte | 6 | `/renal-electrolyte` |
 | Infectious disease | 10 | `/infectious-disease` |
 | Nursing | 9 | `/medical-surgical-nursing` |
+| Renal & electrolyte | 6 | `/renal-electrolyte` |
+| Oncology | 1 | `/oncology` |
+
+Counts are the registered scenarios the build audits, not a roadmap. Oncology has just opened
+and is the module with the most left to build.
 
 Each lab is a closed-loop scenario: the physiology keeps running while you decide, and
 what you do changes where the patient goes next.

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 373,
+  "sourceCount": 376,
   "sources": [
     {
       "id": "renal-hypermagnesemia-series-2018",
@@ -4828,6 +4828,45 @@
       "verifiedAgainst": "https://jamanetwork.com/journals/jama/fullarticle/2814296",
       "verifiedOn": "2026-08-28",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/38245897/"
+    },
+    {
+      "id": "oncology-delayed-immune-related-events-2019",
+      "pmid": "31269983",
+      "authors": "Couey MA, Bell RB, Patel AA, et al",
+      "title": "Delayed immune-related events (DIRE) after discontinuation of immunotherapy: diagnostic hazard of autoimmunity at a distance",
+      "publication": "Journal for ImmunoTherapy of Cancer",
+      "year": 2019,
+      "locator": "7(1):165; doi:10.1186/s40425-019-0645-6; Methods, Results, and Conclusions; DIRE defined as new immune-related adverse events manifesting 90 or more days after discontinuation; 23 qualifying cases (21 by literature review, 2 institutional); median off-treatment interval to DIRE 6 months (range 3 to 28); median cumulative exposure 4 doses (range 3 to 42); endocrine, neurologic, gastrointestinal, pulmonary, cardiac, rheumatologic and dermatologic involvement",
+      "usedFor": "The boundary review statement that immune-related events are reported months after immunotherapy has been discontinued, that the collected series reports a median off-treatment interval of six months after a median of four doses, and that its own argument is diagnostic — misattribution can lead to unnecessary or harmful interventions — rather than an incidence or a risk estimate for any individual patient.",
+      "verifiedAgainst": "PubMed PMID 31269983 bibliographic record and indexed abstract (PMC6609357); the DIRE cutoff was derived from a median 90-day clinical-trial safety-reporting window, and the 23 cases are collated reports with no denominator, so no rate is taken from it.",
+      "verifiedOn": "2026-08-29",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/31269983/"
+    },
+    {
+      "id": "oncology-sitc-checkpoint-adverse-events-2021",
+      "pmid": "34172516",
+      "authors": "Brahmer JR, Abu-Sbeih H, Ascierto PA, et al",
+      "title": "Society for Immunotherapy of Cancer (SITC) clinical practice guideline on immune checkpoint inhibitor-related adverse events",
+      "publication": "Journal for ImmunoTherapy of Cancer",
+      "year": 2021,
+      "locator": "9(6):e002435; doi:10.1136/jitc-2021-002435; general principles and the diarrhea and colitis section",
+      "usedFor": "That immune-related adverse events can occur at any point during or after cessation of treatment, beyond 6 to 12 months; that diagnostic evaluation should attempt to rule out other etiologies such as diarrhea or colitis associated with Clostridium difficile infection while treatment for an immune-related event is initiated as is deemed clinically appropriate; and that additional workup at grade 2 or above includes stool infectious analysis with C. difficile and cytomegalovirus polymerase-chain-reaction testing. No dose, threshold, or grading assignment is adopted.",
+      "verifiedAgainst": "Open-access full text via Europe PMC PMC8237720, general-principles and diarrhea-and-colitis sections read in full. The guideline’s corticosteroid, infliximab, and vedolizumab dosing is deliberately not reproduced anywhere in this project.",
+      "verifiedOn": "2026-08-29",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/34172516/"
+    },
+    {
+      "id": "oncology-fatal-checkpoint-toxicity-2018",
+      "pmid": "30242316",
+      "authors": "Wang DY, Salem JE, Cohen JV, et al",
+      "title": "Fatal Toxic Effects Associated With Immune Checkpoint Inhibitors: A Systematic Review and Meta-analysis",
+      "publication": "JAMA Oncology",
+      "year": 2018,
+      "locator": "4(12):1721-1728; doi:10.1001/jamaoncol.2018.3923; Results; 613 fatal events in the WHO Vigilyze pharmacovigilance database 2009 to January 2018; of 193 anti-CTLA-4 deaths, 135 (70%) usually from colitis; anti-PD-1/PD-L1 fatalities more often pneumonitis (35%), hepatitis (22%) and neurotoxic effects (15%); colitis reported fatality 2% to 5%; toxicity-related fatality rates 0.36% anti-PD-1, 0.38% anti-PD-L1, 1.08% anti-CTLA-4, 1.23% combination",
+      "usedFor": "The boundary review statement that checkpoint-inhibitor colitis is not a minor complication in the reported fatal spectrum, together with the explicit qualification that the 70% figure describes anti-CTLA-4 deaths rather than the anti-PD-1 exposure in this scenario, and that colitis itself carried a reported fatality of only 2% to 5%.",
+      "verifiedAgainst": "PubMed PMID 30242316 bibliographic record and indexed abstract (PMC6440712), including the December 2018 erratum notice. These are pharmacovigilance reports subject to reporting bias, not a measured population risk.",
+      "verifiedOn": "2026-08-29",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/30242316/"
     }
   ]
 }

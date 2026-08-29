@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 1,
+  "moduleId": "oncology",
+  "capabilityVersion": "0.1.0-alpha.48",
+  "scenarioCount": 1,
+  "completeScenarioCount": 0,
+  "scenarios": [
+    {
+      "scenarioId": "delayed-immune-event-a-drug-that-stopped-months-ago",
+      "title": "A delayed immune event: a drug that stopped months ago",
+      "moduleId": "oncology",
+      "environment": "clinic",
+      "estimatedMinutes": 9,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario delayed-immune-event-a-drug-that-stopped-months-ago carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "missing",
+          "evidence": [
+            "The completion contract requires 2–5 objectives and a rubric mapping for every objective."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "delayed-immune-event-fixtures.ts binds seed 5177 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No immune, mucosal, or treatment-response model is claimed."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "delayed-immune-event.ts runs two authored transitions. An eighth stool is counted at 45 minutes with the observations barely moved. The treating service answers 60 minutes after it is contacted, confirms the four cycles and the 22-week interval from its own records, takes ownership of grading, investigation and treatment, and records that the interval does not exclude an immune-related cause. Nothing arrives uncontacted, because the failure being taught is that the exposure never reached the people holding it. The observations deliberately stay unremarkable: a deteriorating patient would turn this into an ordinary sepsis drill."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "The learner records the completed exposure as current history, records the symptom course against the patient’s own baseline, records infection evaluation as running alongside rather than ahead, contacts the treating service, records bounded qualified-team treatment intent, and reviews the boundaries. Excluding the drug because it stopped, slowing the gut with review tomorrow, waiting for stool results before telling anyone, and discharging with oral fluids are each refused."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "The recorded exposure, the recorded course, concurrent infection evaluation, contact with the treating service, bounded treatment intent, the boundary review, and a current full assessment permit handoff with the diagnosis and grade open. Instructor takeover bounds a run with no escalation at 180 minutes, or an unfinished session at eight hours."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "Seven event-bound objectives distinguish recording a completed exposure as current history, refusing an elapsed interval as an exclusion, carrying infection evaluation alongside rather than ahead, returning the problem to the service that gave the drug, bounded qualified-team intent, the certainty of a 23-case series, and accountable handoff. Refused shortcuts remain visible, and no diagnosis, grade, or outcome is certified."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "3 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "delayed-immune-event-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version."
+          ]
+        }
+      ]
+    }
+  ]
+}

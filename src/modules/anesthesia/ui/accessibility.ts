@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot, DelayedImmuneEventSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -129,6 +129,7 @@ export function stateSummary(
     readonly lastKnownWell?: LastKnownWellSnapshot;
     readonly oxygenTargetScale?: OxygenTargetScaleSnapshot;
     readonly lostContingency?: LostContingencySnapshot;
+    readonly delayedImmuneEvent?: DelayedImmuneEventSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -182,7 +183,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale || options.lostContingency) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale || options.lostContingency || options.delayedImmuneEvent) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -206,6 +207,31 @@ export function stateSummary(
           + ' intravenous.');
       }
     }
+  }
+  if (options.delayedImmuneEvent) {
+    const patient = options.delayedImmuneEvent;
+    // The exposure and the interval, always together. Either one alone is what the lists already say.
+    lines.push(`Completed exposure: ${patient.checkpointInhibitorCycles} cycles of an anti-PD-1 checkpoint inhibitor, last dose ${patient.weeksSinceLastDose} weeks ago. It is ${patient.absentFromCurrentMedicationList ? 'absent from the current medication list, because it stopped' : 'on the current medication list'}.`);
+    lines.push('Supplied starting observations were pulse 104 per minute, blood pressure 106 over 64, respiratory rate 18 per minute, oxygen saturation 98 percent in air, and temperature 36.8 degrees Celsius, with seven stools today above his own baseline over three weeks. These remain historical starting observations.');
+    lines.push(`Current alertness: ${patient.alertness}. Stools counted today: ${patient.stoolsToday}.`);
+    lines.push(patient.exposureRecordedAtTick === null
+      ? 'The completed exposure has not been recorded as current history.'
+      : `Exposure recorded at simulated ${formatElapsed(patient.exposureRecordedAtTick)} as current history.`);
+    lines.push(patient.courseRecordedAtTick === null
+      ? 'The symptom course has not been recorded against his own baseline.'
+      : 'Course recorded against his own baseline, with its duration.');
+    lines.push(`Infection evaluation: ${patient.infectionEvaluationAtTick === null ? 'not recorded' : 'recorded as running alongside rather than ahead'}. Treating service: ${patient.escalationAtTick === null ? 'not contacted' : 'contacted'}. Bounded intent: ${patient.treatmentIntentAtTick === null ? 'not recorded' : 'recorded as the qualified team\u2019s decision'}. Boundaries: ${patient.boundariesReviewedAtTick === null ? 'not reviewed' : 'reviewed'}.`);
+    if (patient.courseProgressed) {
+      lines.push('An eighth stool has been counted today, with cramping that settles between episodes. The observations have barely moved.');
+    }
+    lines.push('Immune-related adverse events can occur at any point during treatment or after it has ceased, including beyond six to twelve months. The series naming delayed events collected 23 reported cases with no denominator, so it cannot say how likely this is here. Grading, investigation including endoscopy, and every treatment decision belong to the qualified team; no drug, dose, route, threshold, or eligibility is selected here, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: pulse ${patient.observation.heartRateBpm} per minute, blood pressure ${patient.observation.systolicMmHg} over ${patient.observation.diastolicMmHg}, ${patient.observation.stoolsToday} stools today.`
+      : 'No new full assessment has been requested.');
+    if (patient.serviceObserved) {
+      lines.push('The treating service has answered, confirmed the cycles and the interval from its own records, taken ownership of grading, investigation and treatment, and recorded that the interval does not exclude an immune-related cause.');
+    }
+    if (patient.choiceFeedback) lines.push(patient.choiceFeedback);
   }
   if (options.lostContingency) {
     const patient = options.lostContingency;

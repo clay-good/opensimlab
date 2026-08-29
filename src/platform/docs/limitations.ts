@@ -6079,6 +6079,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'The sources describe internal-medicine house staff, paediatric and anaesthesia residents, intensive-care teams, and ambulance crews. None of them observed nursing shift handover, and the one nursing meta-analysis that exists pools incompatible error definitions with almost total heterogeneity, which makes its figure unusable rather than reassuring. Whether these rates transfer is an assumption this lesson makes openly, not a finding it reports.',
     briefIn: ['lost-contingency-a-plan-that-was-not-said'],
   },
+  {
+    id: 'delayed-immune-event-presentation-and-service-response-are-authored',
+    headline: 'One presentation, one telephone call, and a patient who does not deteriorate.',
+    simplification: 'The case supplies a fixed set of observations, a stool count that rises once, and a treating service that answers sixty minutes after it is contacted with a fixed reply. No immune, mucosal, infective, or treatment-response model runs underneath, and no grade is assigned.',
+    whereItMisleads: 'A learner concludes that a delayed immune-related event presents this calmly, that the treating service always answers, or that recognising the exposure is what kept this patient stable.',
+    correctUnderstanding: 'Nothing the learner does in this rehearsal changes his course, because nothing was going to. The observations are held unremarkable so that the attribution problem is the only thing being tested, and a real presentation may be more unwell, may have another cause entirely, or may be both at once. The service reply is authored: in practice the call may not be answered, and the plan has to survive that.',
+    briefIn: ['delayed-immune-event-a-drug-that-stopped-months-ago'],
+  },
+  {
+    id: 'delayed-immune-event-controls-are-recording-and-escalation-only',
+    headline: 'No drug is selected, no grade is assigned, and no test is ordered.',
+    simplification: 'The learner records the completed exposure, records the course against the patient\u2019s own baseline, records infection evaluation as running alongside, contacts the treating service, records bounded qualified-team intent, and reviews the boundaries.',
+    whereItMisleads: 'The bounded treatment-intent control is read as prescribing corticosteroids, or the infection-evaluation control is read as the learner ordering and interpreting stool tests.',
+    correctUnderstanding: 'Grading, investigation including endoscopy, and every treatment decision belong to the qualified team, and this lesson exposes no drug, dose, route, threshold, or eligibility rule. Recording that a decision exists and belongs to somebody else is not making it.',
+    briefIn: ['delayed-immune-event-a-drug-that-stopped-months-ago'],
+  },
+  {
+    id: 'delayed-immune-event-series-figures-are-not-an-incidence',
+    headline: 'Twenty-three collected cases cannot tell you how often this happens.',
+    simplification: 'The case reports that the series naming delayed immune-related events found a median off-treatment interval of six months after a median of four doses, and that pharmacovigilance data attribute most reported anti-CTLA-4 fatalities to colitis.',
+    whereItMisleads: 'A learner reads the six-month median as the expected timing, treats 23 cases as a risk estimate, or carries the anti-CTLA-4 colitis fatality figure onto an anti-PD-1 patient.',
+    correctUnderstanding: 'The series is a literature collation of reported cases with no denominator: it establishes that these events occur late and are missed, not how likely they are in any patient. Its own argument is diagnostic rather than epidemiological. The fatality spectrum differs by drug class — anti-PD-1 and anti-PD-L1 fatalities were more often pneumonitis, hepatitis, and neurotoxic effects — so the colitis figure describes a class this patient did not receive.',
+    briefIn: ['delayed-immune-event-a-drug-that-stopped-months-ago'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

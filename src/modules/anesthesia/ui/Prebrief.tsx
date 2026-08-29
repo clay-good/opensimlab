@@ -46,7 +46,7 @@ export const FICTION_CONTRACT =
 export interface PrebriefProps {
   readonly scenario: Scenario;
   readonly region: RegionProfile;
-  readonly environment?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics' | 'neonatology' | 'endocrine-metabolic' | 'renal-electrolyte' | 'infectious-disease' | 'medical-surgical-nursing';
+  readonly environment?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics' | 'neonatology' | 'endocrine-metabolic' | 'renal-electrolyte' | 'infectious-disease' | 'medical-surgical-nursing' | 'oncology';
   readonly onStart: () => void;
   /**
    * Offered only where the demonstration was authored. A "watch this" control on

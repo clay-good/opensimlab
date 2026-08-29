@@ -35,6 +35,7 @@ const EndocrineMetabolicRoute = lazy(async () => ({ default: (await import('./mo
 const RenalElectrolyteRoute = lazy(async () => ({ default: (await import('./modules/renal-electrolyte')).RenalElectrolyteRoute }));
 const InfectiousDiseaseRoute = lazy(async () => ({ default: (await import('./modules/infectious-disease')).InfectiousDiseaseRoute }));
 const MedicalSurgicalNursingRoute = lazy(async () => ({ default: (await import('./modules/medical-surgical-nursing')).MedicalSurgicalNursingRoute }));
+const OncologyRoute = lazy(async () => ({ default: (await import('./modules/oncology')).OncologyRoute }));
 // About and the planned-module page carry the module prose, which the landing directory never
 // renders. Loading them on demand keeps four paragraphs per module out of the landing bundle.
 const About = lazy(async () => ({ default: (await import('@landing/About')).About }));
@@ -232,6 +233,13 @@ function CurrentRoute() {
     return (
       <ErrorBoundary surface="simulator">
         <Suspense fallback={<Loading />}><InfectiousDiseaseRoute path={path} /></Suspense>
+      </ErrorBoundary>
+    );
+  }
+  if (path === '/oncology' || path.startsWith('/oncology/')) {
+    return (
+      <ErrorBoundary surface="simulator">
+        <Suspense fallback={<Loading />}><OncologyRoute path={path} /></Suspense>
       </ErrorBoundary>
     );
   }

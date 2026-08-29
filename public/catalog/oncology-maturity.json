@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "moduleId": "oncology",
+  "recordCount": 1,
+  "records": [
+    {
+      "recordId": "scenario:delayed-immune-event-a-drug-that-stopped-months-ago@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "delayed-immune-event-a-drug-that-stopped-months-ago",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/oncology-completion-audit.json#delayed-immune-event-a-drug-that-stopped-months-ago@0.1.0",
+        "/catalog/oncology-quality-audit.json#delayed-immune-event-a-drug-that-stopped-months-ago@0.1.0"
+      ]
+    }
+  ]
+}

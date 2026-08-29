@@ -1,0 +1,22 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
+import { DELAYED_IMMUNE_EVENT_A_DRUG_THAT_STOPPED_MONTHS_AGO } from './scenarios/delayed-immune-event-a-drug-that-stopped-months-ago';
+import { DELAYED_IMMUNE_EVENT_FIXTURES } from './delayed-immune-event-fixtures';
+
+export function delayedImmuneEventCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
+  if (moduleId !== 'oncology' || capabilityVersion !== '0.1.0-alpha.48'
+    || scenario.metadata.id !== DELAYED_IMMUNE_EVENT_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
+    || DELAYED_IMMUNE_EVENT_FIXTURES.contentVersion !== '0.1.0' || DELAYED_IMMUNE_EVENT_FIXTURES.seed !== 5177
+    || JSON.stringify(scenario) !== JSON.stringify(DELAYED_IMMUNE_EVENT_A_DRUG_THAT_STOPPED_MONTHS_AGO)) return [];
+  return [
+    { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['delayed-immune-event-fixtures.ts binds seed 5177 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No immune, mucosal, or treatment-response model is claimed.'] },
+    { id: 'meaningful-progression', status: 'satisfied', evidence: ['delayed-immune-event.ts runs two authored transitions. An eighth stool is counted at 45 minutes with the observations barely moved. The treating service answers 60 minutes after it is contacted, confirms the four cycles and the 22-week interval from its own records, takes ownership of grading, investigation and treatment, and records that the interval does not exclude an immune-related cause. Nothing arrives uncontacted, because the failure being taught is that the exposure never reached the people holding it. The observations deliberately stay unremarkable: a deteriorating patient would turn this into an ordinary sepsis drill.'] },
+    { id: 'meaningful-actions-and-choices', status: 'satisfied', evidence: ['The learner records the completed exposure as current history, records the symptom course against the patient’s own baseline, records infection evaluation as running alongside rather than ahead, contacts the treating service, records bounded qualified-team treatment intent, and reviews the boundaries. Excluding the drug because it stopped, slowing the gut with review tomorrow, waiting for stool results before telling anyone, and discharging with oral fluids are each refused.'] },
+    { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The recorded exposure, the recorded course, concurrent infection evaluation, contact with the treating service, bounded treatment intent, the boundary review, and a current full assessment permit handoff with the diagnosis and grade open. Instructor takeover bounds a run with no escalation at 180 minutes, or an unfinished session at eight hours.'] },
+    { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Seven event-bound objectives distinguish recording a completed exposure as current history, refusing an elapsed interval as an exclusion, carrying infection evaluation alongside rather than ahead, returning the problem to the service that gave the drug, bounded qualified-team intent, the certainty of a 23-case series, and accountable handoff. Refused shortcuts remain visible, and no diagnosis, grade, or outcome is certified.'] },
+    { id: 'reference-transcripts', status: 'satisfied', evidence: ['delayed-immune-event-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine.'] },
+    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
+    { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
+  ];
+}

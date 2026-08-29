@@ -22,6 +22,7 @@ import { ENDOCRINE_METABOLIC_SCENARIOS } from '../modules/endocrine-metabolic/sc
 import { RENAL_ELECTROLYTE_SCENARIOS } from '../modules/renal-electrolyte/scenarios';
 import { INFECTIOUS_DISEASE_SCENARIOS } from '../modules/infectious-disease/scenarios';
 import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../modules/medical-surgical-nursing/scenarios';
+import { ONCOLOGY_SCENARIOS } from '../modules/oncology/scenarios';
 import type { Scenario } from '@anesthesia/scenarios/types';
 import { ROOT_ROUTE, formatTitle } from './site-metadata';
 import type { RouteMetadata } from './site-metadata';
@@ -306,6 +307,23 @@ export const ROUTES: readonly RouteMetadata[] = [
   },
   ...MEDICAL_SURGICAL_NURSING_SCENARIOS.map((scenario) => ({
     path: `/medical-surgical-nursing/scenario/${scenario.metadata.id}`,
+    title: formatTitle(scenario.metadata.title.length > 44
+      ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
+    description: scenarioDescription(scenario),
+    indexable: true,
+    structuredData: ['LearningResource'] as const,
+    heading: scenario.metadata.title,
+  })),
+  {
+    path: '/oncology',
+    title: formatTitle('Oncology simulator'),
+    description: 'Practice recognising a cancer-treatment exposure that has already stopped, a complication that arrives late, and returning the problem to the treating service.',
+    indexable: true,
+    structuredData: ['SoftwareApplication'],
+    heading: 'Oncology simulator',
+  },
+  ...ONCOLOGY_SCENARIOS.map((scenario) => ({
+    path: `/oncology/scenario/${scenario.metadata.id}`,
     title: formatTitle(scenario.metadata.title.length > 44
       ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
     description: scenarioDescription(scenario),

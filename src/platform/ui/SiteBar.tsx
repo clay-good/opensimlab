@@ -37,6 +37,7 @@ export const SITE_BAR_LINKS: readonly SiteBarLink[] = [
   { href: '/renal-electrolyte', label: 'Renal + electrolyte' },
   { href: '/infectious-disease', label: 'Infectious disease' },
   { href: '/medical-surgical-nursing', label: 'Nursing' },
+  { href: '/oncology', label: 'Oncology' },
   { href: '/about', label: 'About' },
   { href: '/validation', label: 'Validation' },
   { href: '/governance', label: 'Governance' },

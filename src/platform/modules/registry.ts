@@ -126,8 +126,17 @@ export const MODULES: readonly ModuleDeclaration[] = [
     id: 'oncology',
     route: 'oncology',
     displayName: 'Oncology',
+    status: 'available',
+    // The planned entry assumed chemotherapy over weeks. The lessons this module actually
+    // opens with run in minutes of simulated ward and clinic time, like every other module.
+    timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
+  },
+  {
+    id: 'surgery-trauma',
+    route: 'surgery-trauma',
+    displayName: 'Surgery and trauma',
     status: 'planned',
-    timescale: { unit: 'days', stepSeconds: 3600, speeds: [1, 24, 168] },
+    timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
     id: 'critical-care',

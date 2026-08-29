@@ -1917,6 +1917,11 @@ credited toward the catalog until every item in the completion contract passes.
     procedure, observation, disposition, prognosis, or outcome control exists.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.
+  The nursing module is registered at 9 of 9. Oncology is open at 1 of 11 with
+  `delayed-immune-event-a-drug-that-stopped-months-ago`, which teaches that an interval since the
+  last checkpoint-inhibitor dose does not exclude the drug. Surgery/trauma has not started. Every
+  scenario in this wave remains preview: none carries clinical review, a state-space matrix, or
+  inclusive-runtime evidence, so the wave's completion count is still zero.
 - [ ] After every wave, verify the exact cumulative count, distinctness, capability reuse, path and
   competency coverage, sources, maturity labels, domain-pack budget, offline behavior, mobile
   layout, and complete regression fixtures.

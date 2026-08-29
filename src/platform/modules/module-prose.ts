@@ -112,11 +112,20 @@ export const MODULE_PROSE: Readonly<Record<string, ModuleProse>> = {
       + 'in the observations themselves, escalation that fails for social reasons, and what a handover loses.',
   },
   'oncology': {
+    description: 'Practice the recognition problems cancer treatment creates: an exposure that has already stopped, a complication that arrives late, and a decision that belongs to another team.',
+    audience: 'Medical students, residents, and acute and emergency clinicians who meet these patients away from the oncology service.',
+    prerequisites: 'Basic pharmacology, history taking, and familiarity with escalation to a treating specialty.',
+    plannedScope: 'Eleven bounded haematology and oncology rehearsals spanning delayed immune-related events, '
+      + 'treatment emergencies that present without their label, and returning a problem to the team holding the '
+      + 'treatment record.',
+  },
+  'surgery-trauma': {
     description: 'Planned.',
-    audience: 'Medical students and residents.',
-    prerequisites: 'Basic pharmacology.',
-    plannedScope: 'Chemotherapy exposure and response over weeks rather than minutes, dose adjustment for organ '
-      + 'function, and the management of common toxicities.',
+    audience: 'Medical students, surgical and emergency trainees, and teams receiving injured patients.',
+    prerequisites: 'Primary-survey familiarity, basic resuscitation, and escalation to a surgical team.',
+    plannedScope: 'Ten bounded surgery and trauma rehearsals spanning the deteriorating post-operative patient, '
+      + 'injury patterns whose severity is not yet visible, damage-control priorities, and the decision to call '
+      + 'for an operation somebody else will do.',
   },
   'critical-care': {
     description: 'Reassess organ support over time and make each ventilator, circulation, and escalation change earn a measured response.',

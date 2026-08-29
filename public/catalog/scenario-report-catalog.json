@@ -3182,6 +3182,23 @@
       "limitationManifestHash": "sha256:d1eb52219e4f7dff2c297a97991c7764c837a44e5c8decbc3817905a12ca79db"
     },
     {
+      "scenarioId": "delayed-immune-event-a-drug-that-stopped-months-ago",
+      "contentVersion": "0.1.0",
+      "moduleId": "oncology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:5b012a06db9cde4e0be49f6e5a31a76809035fa89d15da992b9fb824d8b7f50c",
+      "defaultsHash": "sha256:09f5095cffa59d81904f4b4e0474c3df315d15d93d47049b44cd53e332cea60b",
+      "maturityHash": "sha256:0a36922701d1b2dd367486b5b15be4569bab77d3a067f2c82ff169853d292365",
+      "sourceManifestHash": "sha256:bada219dc2f9b08bc6a44992f21c04eb50686c1b854a83472310038d0ebc29c7",
+      "limitationManifestHash": "sha256:e3d07c392083eee300225b62a494caf623a3829067e2d6c512a36a3d682803e2"
+    },
+    {
       "scenarioId": "bronchiolitis",
       "contentVersion": "0.1.0",
       "moduleId": "pediatrics",
