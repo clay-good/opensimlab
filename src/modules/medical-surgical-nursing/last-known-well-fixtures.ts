@@ -1,7 +1,7 @@
 import type { LastKnownWellAction } from './last-known-well';
 
 export const LAST_KNOWN_WELL_FIXTURES = {
-  scenarioId: 'last-known-well-a-time-nobody-can-supply', contentVersion: '0.1.0', seed: 7845,
+  scenarioId: 'last-known-well-a-time-nobody-can-supply', contentVersion: '0.1.1', seed: 7845,
   noAction: [],
   expert: [[0, 'record-last-known-well'], [1, 'record-the-uncertain-recollection'],
     [2, 'activate-the-stroke-pathway'], [3, 'record-what-the-unknown-changes'],

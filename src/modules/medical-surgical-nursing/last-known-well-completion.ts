@@ -5,8 +5,8 @@ import { LAST_KNOWN_WELL_FIXTURES } from './last-known-well-fixtures';
 
 export function lastKnownWellCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'medical-surgical-nursing' || capabilityVersion !== '0.1.0-alpha.48'
-    || scenario.metadata.id !== LAST_KNOWN_WELL_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
-    || LAST_KNOWN_WELL_FIXTURES.contentVersion !== '0.1.0' || LAST_KNOWN_WELL_FIXTURES.seed !== 7845
+    || scenario.metadata.id !== LAST_KNOWN_WELL_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.1'
+    || LAST_KNOWN_WELL_FIXTURES.contentVersion !== '0.1.1' || LAST_KNOWN_WELL_FIXTURES.seed !== 7845
     || JSON.stringify(scenario) !== JSON.stringify(LAST_KNOWN_WELL_A_TIME_NOBODY_CAN_SUPPLY)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['last-known-well-fixtures.ts binds seed 7845 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No stroke, perfusion, or treatment model is claimed; the timeline and the deficit are authored.'] },

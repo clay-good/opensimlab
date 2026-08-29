@@ -649,8 +649,10 @@ export function objectiveFindings(
             + (pressed ? 'Pressed on the time she moved it by an hour, which is what pressing an uncertain recollection produces. ' : '')
             + (refusedShortcut ? 'An onset-field entry, a stand-down, or a wait for the family was attempted and refused; it remains in this run. ' : '')
             + 'A timestamp cannot later be distinguished from a witnessed observation.' },
-        'activate-medical-surgical-nursing-last-known-well-on-the-deficit-not-the-clock': { met: !!pathway && !!monitoring, tick: pathway?.tick,
-          finding: (pathway && monitoring ? 'The pathway was activated on the deficit and timed neurological observation was arranged. ' : 'Activation on the deficit or the timed observation remains incomplete. ')
+        'activate-medical-surgical-nursing-last-known-well-on-the-deficit-not-the-clock': { met: !!pathway, tick: pathway?.tick,
+          finding: (pathway ? 'The pathway was activated on the deficit. ' : 'The pathway was never activated. ')
+            + (monitoring ? 'Timed neurological observation was arranged alongside it. ' : '')
+            + (refusedShortcut ? 'A stand-down or a wait for the family was attempted and refused. ' : '')
             + 'Activation depends on a new focal deficit, not on knowing when it started.' },
         'record-medical-surgical-nursing-last-known-well-what-the-unknown-changes': { met: !!consequences, tick: consequences?.tick,
           finding: (consequences ? 'The record stated what the unknown changes and what it leaves untouched. ' : 'What the unknown changes was never stated. ')

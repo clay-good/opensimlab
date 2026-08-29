@@ -396,7 +396,7 @@ describe('Renal and Electrolyte Medicine module foundation', () => {
       expect(reports.scenarios).toContainEqual(expect.objectContaining({ moduleId: 'renal-electrolyte', scenarioId: metadata.id,
         contentVersion: metadata.version, maturity: 'preview' }));
     }
-    expect(reports.scenarios).toHaveLength(236);
+    expect(reports.scenarios).toHaveLength(237);
     // Every earlier module's published evidence must survive a later module launch byte for byte.
     const prior218 = reports.scenarios.filter((entry: { moduleId: string }) => entry.moduleId !== 'infectious-disease'
       && entry.moduleId !== 'medical-surgical-nursing');

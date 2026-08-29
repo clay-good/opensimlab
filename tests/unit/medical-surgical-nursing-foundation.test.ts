@@ -95,8 +95,11 @@ describe('Nursing module foundation', () => {
   it('makes every scenario in the module reportable, not just the first', () => {
     const catalog = json('public/catalog/scenario-report-catalog.json');
     for (const entry of MEDICAL_SURGICAL_NURSING_SCENARIOS) {
-      const record = catalog.scenarios.find((row: { scenarioId: string }) => row.scenarioId === entry.metadata.id);
-      expect(record, `${entry.metadata.id} is missing from the report catalog`).toMatchObject({
+      // A corrected scenario keeps its superseded record, so match the current version rather
+      // than the first row that happens to carry the id.
+      const record = catalog.scenarios.find((row: { scenarioId: string; contentVersion: string }) =>
+        row.scenarioId === entry.metadata.id && row.contentVersion === entry.metadata.version);
+      expect(record, `${entry.metadata.id} is missing from the report catalog at its current version`).toMatchObject({
         moduleId: 'medical-surgical-nursing', contentVersion: entry.metadata.version, maturity: 'preview',
       });
     }

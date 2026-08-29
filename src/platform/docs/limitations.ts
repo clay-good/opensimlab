@@ -6018,9 +6018,9 @@ export const LIMITATIONS: readonly Limitation[] = [
   {
     id: 'last-known-well-trial-evidence-describes-a-population',
     headline: 'A trial result is a population statement, not a statement about her.',
-    simplification: 'The case cites a randomised trial in deficits of unknown onset reporting a higher rate of favourable outcome in the treated group, with eligibility assessed by imaging as a surrogate for lesion age.',
+    simplification: 'The case cites a randomised trial in deficits of unknown onset reporting a higher rate of favourable outcome in the treated group, with eligibility assessed by imaging as a surrogate for lesion age, alongside the harms and the early stop reported in the same paper.',
     whereItMisleads: 'A learner reads the trial as establishing that this patient would benefit, or that an unwitnessed onset therefore carries an expected outcome.',
-    correctUnderstanding: 'The estimate is an average effect over an enrolled population under trial conditions, with a confidence interval attached and entry criteria this patient has not been assessed against. Whether she resembles that population is an imaging question the qualified team answers, and no individualized effect, eligibility, or outcome is reported here.',
+    correctUnderstanding: 'The estimate is an average effect over an enrolled population under trial conditions, with a confidence interval attached and entry criteria this patient has not been assessed against. Her atrial fibrillation is not itself disqualifying, since the enrolled population contained a similar proportion of it; whether she is anticoagulated for it is the question that would matter, and this fixture does not answer it. The trial also stopped at 503 of a planned 800 patients when its funding ended, so its reassuring harm figures are underpowered rather than negative, and its imaging surrogate was misapplied by local readers often enough that dozens of randomised patients failed central review. Whether she resembles that population is an imaging question the qualified team answers, and no individualized effect, eligibility, or outcome is reported here.',
     briefIn: ['last-known-well-a-time-nobody-can-supply'],
   },
 ];

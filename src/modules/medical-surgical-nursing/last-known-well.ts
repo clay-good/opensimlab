@@ -105,7 +105,7 @@ export class LastKnownWell {
       case 'activate-the-stroke-pathway':
         if (this.pathwayAt !== null) return events;
         this.pathwayAt = tick;
-        return emit('pathway-activated', `The stroke pathway is activated on the deficit${this.recollectionPressed ? ', without waiting for the recollection to firm up' : ''}. Activation depends on a new focal deficit, not on knowing when it started, and the assessment that follows is the qualified team's to make.`);
+        return emit('pathway-activated', `The stroke pathway is activated on the deficit${this.recollectionPressed ? ', without waiting for the recollection to firm up' : ''}. Activation depends on the new focal deficit she was found with, not on knowing when it started and not on a further look first; observation continues alongside it rather than in front of it, and the assessment that follows is the qualified team's to make.`);
       case 'record-what-the-unknown-changes':
         if (this.boundRecordedAt === null) {
           return emit('consequences-refused', 'There is no recorded bound yet, so there is nothing whose consequences can be stated.');
@@ -116,7 +116,7 @@ export class LastKnownWell {
       case 'review-boundaries':
         if (this.boundariesAt !== null) return events;
         this.boundariesAt = tick;
-        return emit('boundary-review', 'Supplied boundaries. Last known well is a bound: the deficit began after it. It is not an onset and should never be charted as one. An unknown time of onset is a reason to escalate for assessment rather than a reason to stand down: a randomised trial in patients with unknown-onset deficits found a higher rate of favourable outcome in the treated group, with eligibility resting on imaging as a surrogate for lesion age rather than on any remembered time. That trial describes a population and an assessment pathway; it does not establish what will happen to this patient, and the eligibility decision is not the ward’s to make.');
+        return emit('boundary-review', 'Supplied boundaries. Last known well is a bound: the deficit began after it. It is not an onset and should never be charted as one. An unknown time of onset is a reason to escalate for assessment rather than a reason to stand down: a randomised trial in patients with unknown-onset deficits found a higher rate of favourable outcome in the treated group, with eligibility resting on imaging as a surrogate for lesion age rather than on any remembered time. It was stopped at 503 of a planned 800 patients when its funding ended, without an interim analysis, so it was never powered to measure harm: death at ninety days was 4.1 percent against 1.2 percent and symptomatic haemorrhage 2.0 percent against 0.4 percent, neither reaching significance, while parenchymal haematoma did, at 4.0 percent against 0.4 percent. A benefit reported without those numbers is not the finding. That trial describes a population and an assessment pathway; it does not establish what will happen to this patient, and the eligibility decision is not the ward’s to make.');
       case 'monitor':
         if (this.monitoringAt !== null) return events;
         this.monitoringAt = tick;
@@ -126,7 +126,7 @@ export class LastKnownWell {
         return emit('timeline-check', `Requested timeline: ${LAST_KNOWN_WELL_TIMELINE.map((entry) => `${entry.clock}, ${entry.label.toLowerCase()}, ${entry.certain ? 'documented' : 'uncertain'}`).join('; ')}. ${this.timelineRecord.certainEntries} of ${this.timelineRecord.totalEntries} entries are documented. The interval containing the onset is ${this.timelineRecord.unwitnessedHours} hours wide. This partial check supplies no examination of the patient.`);
       case 'check-patient':
         this.patientRecord = this.patientFinding(tick);
-        return emit('patient-check', `Requested observation: ${this.patientRecord.focalDeficit ? 'new right-sided weakness present' : 'no focal deficit'}; ${this.patientRecord.speaking ? 'speaking, with word-finding difficulty' : 'not speaking'}; blood glucose ${this.patientRecord.glucoseMmolL.toFixed(1)} mmol/L; ${this.patientRecord.airwayProtected ? 'airway protected' : 'airway at risk'}. The deficit is what activates the pathway, and it is present whatever time it began. This partial observation supplies no timeline.`);
+        return emit('patient-check', `Requested observation: ${this.patientRecord.focalDeficit ? 'new right-sided weakness present' : 'no focal deficit'}; ${this.patientRecord.speaking ? 'speaking, with word-finding difficulty' : 'not speaking'}; ${this.patientRecord.airwayProtected ? 'airway protected' : 'airway at risk'}. The blood glucose supplied at discovery was ${this.patientRecord.glucoseMmolL.toFixed(1)} mmol/L and is not retested here. The deficit is what activates the pathway, and it is present whatever time it began. This partial observation supplies no timeline.`);
       case 'reassess': {
         this.timelineRecord = this.timelineFinding(tick);
         this.patientRecord = this.patientFinding(tick);
@@ -135,7 +135,7 @@ export class LastKnownWell {
         if (this.assessmentArrived) this.assessmentObserved = true;
         const view = this.observation;
         return emit(this.assessmentArrived ? 'assessed-reassessment' : 'initial-reassessment',
-          `Fresh fictional assessment: ${view.focalDeficit ? 'new right-sided weakness persists' : 'no focal deficit'}; ${view.speaking ? 'speaking with word-finding difficulty' : 'not speaking'}; blood glucose ${view.glucoseMmolL.toFixed(1)} mmol/L. The unwitnessed interval remains ${view.unwitnessedHours} hours wide and will not narrow. ${this.assessmentArrived ? 'The stroke team has assessed and is proceeding on imaging-based assessment rather than a remembered time.' : 'No time of onset has become available, and none is going to.'} No diagnosis, eligibility, or outcome is established here.`);
+          `Fresh fictional assessment: ${view.focalDeficit ? 'new right-sided weakness persists' : 'no focal deficit'}; ${view.speaking ? 'speaking with word-finding difficulty' : 'not speaking'}. The unwitnessed interval remains ${view.unwitnessedHours} hours wide and will not narrow. ${this.recollectionPressed ? 'The recollection has since moved by an hour under questioning and is no firmer than it was. ' : ''}${this.assessmentArrived ? 'The stroke team has assessed and is proceeding on imaging-based assessment rather than a remembered time.' : 'No time of onset has become available, and none is going to.'} No diagnosis, eligibility, or outcome is established here.`);
       }
       case 'chart-the-recollection-as-onset':
         this.recollectionCharted = true;
@@ -145,7 +145,7 @@ export class LastKnownWell {
         return emit('bound-charted-refused', 'Entering 22:40 in the onset field was refused. It is defensible as a bound and wrong as an onset: it asserts the deficit began at the last moment anyone saw her well, which is the earliest possible time rather than a known one. Recording the safest-sounding number is still recording a number nobody measured.');
       case 'unknown-onset-means-nothing-offered':
         this.nothingOffered = true;
-        return emit('nothing-offered-refused', 'Treating an unknown onset as a reason to stand down was refused. A randomised trial enrolled precisely this population, patients with deficits of unknown onset, and assessed eligibility by imaging rather than by a remembered clock. An unknown time is a reason to escalate for that assessment, not a reason to stop.');
+        return emit('nothing-offered-refused', 'Treating an unknown onset as a reason to stand down was refused. A randomised trial enrolled patients with deficits of unknown onset and assessed eligibility by imaging rather than by a remembered clock. Whether this patient belongs inside its entry criteria is an imaging question nobody here has answered. An unknown time is a reason to escalate for that assessment, not a reason to stop.');
       case 'wait-for-the-family-to-confirm':
         this.waitedForFamily = true;
         return emit('waiting-refused', 'Waiting for the family to supply a time was refused. Nobody who was present knows it, and the family were not here; a time produced by a telephone call at this distance would be another recollection wearing a timestamp. The deficit is present now and activation does not depend on the answer.');
