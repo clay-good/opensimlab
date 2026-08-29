@@ -3,9 +3,8 @@ import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { IncidentalClotTray } from '../../src/modules/oncology/IncidentalClotTray';
-import { IncidentalClot, INCIDENTAL_CLOT_QUESTION_TICKS as QUESTION,
-  INCIDENTAL_CLOT_SERVICE_TICKS as SERVICE,
-  type IncidentalClotAction } from '../../src/modules/oncology/incidental-clot';
+import { IncidentalClot } from '../../src/modules/oncology/incidental-clot';
+import { INCIDENTAL_CLOT_QUESTION_TICKS as QUESTION, INCIDENTAL_CLOT_SERVICE_TICKS as SERVICE, type IncidentalClotAction } from '../../src/modules/oncology/incidental-clot';
 
 const labels: Record<IncidentalClotAction, string> = {
   'record-the-finding-and-how-it-was-found': 'Record the finding and how it was found',

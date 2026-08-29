@@ -3,9 +3,8 @@ import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { PrognosisQuestionTray } from '../../src/modules/oncology/PrognosisQuestionTray';
-import { PrognosisQuestion, PROGNOSIS_QUESTION_REPEAT_TICKS as REPEAT,
-  PROGNOSIS_QUESTION_READBACK_TICKS as READBACK,
-  type PrognosisQuestionAction } from '../../src/modules/oncology/prognosis-question';
+import { PrognosisQuestion } from '../../src/modules/oncology/prognosis-question';
+import { PROGNOSIS_QUESTION_REPEAT_TICKS as REPEAT, PROGNOSIS_QUESTION_READBACK_TICKS as READBACK, type PrognosisQuestionAction } from '../../src/modules/oncology/prognosis-question';
 
 const labels: Record<PrognosisQuestionAction, string> = {
   'ask-what-he-wants-to-know': 'Ask what he wants the number for',

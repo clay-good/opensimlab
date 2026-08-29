@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { stateSummary } from '@anesthesia/ui/accessibility';
-import { LaboratoryTls, LABORATORY_TLS_REPEAT_TICKS as REPEAT,
-  LABORATORY_TLS_TEAM_TICKS as TEAM } from '../../src/modules/oncology/laboratory-tls';
+import { LaboratoryTls } from '../../src/modules/oncology/laboratory-tls';
+import { LABORATORY_TLS_REPEAT_TICKS as REPEAT, LABORATORY_TLS_TEAM_TICKS as TEAM } from '../../src/modules/oncology/laboratory-tls';
 
 const common = {
   alarms: [], infusions: [],

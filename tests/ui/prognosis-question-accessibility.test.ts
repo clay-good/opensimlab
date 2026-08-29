@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { stateSummary } from '@anesthesia/ui/accessibility';
-import { PrognosisQuestion, PROGNOSIS_QUESTION_REPEAT_TICKS as REPEAT,
-  PROGNOSIS_QUESTION_READBACK_TICKS as READBACK } from '../../src/modules/oncology/prognosis-question';
+import { PrognosisQuestion } from '../../src/modules/oncology/prognosis-question';
+import { PROGNOSIS_QUESTION_REPEAT_TICKS as REPEAT, PROGNOSIS_QUESTION_READBACK_TICKS as READBACK } from '../../src/modules/oncology/prognosis-question';
 
 const common = {
   alarms: [], infusions: [],

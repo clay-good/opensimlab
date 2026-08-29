@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { EngineEvent, LearnerAction } from '@platform/kernel/protocol';
-import { LaboratoryTls, LABORATORY_TLS_ACTIONS } from '../../src/modules/oncology/laboratory-tls';
+import { LaboratoryTls } from '../../src/modules/oncology/laboratory-tls';
+import { LABORATORY_TLS_ACTIONS } from '../../src/modules/oncology/laboratory-tls';
 import { laboratoryTlsReportActions as reportActions } from '../../src/modules/oncology/laboratory-tls-reporting';
 
 const request = (action: string, tick = 3): LearnerAction => ({ tick, type: 'laboratory-tls-response', payload: { action } });

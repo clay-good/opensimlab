@@ -64,6 +64,7 @@ import { supportsNormalTestToxicity } from '../../oncology/normal-test-toxicity'
 import { supportsPrognosisQuestion } from '../../oncology/prognosis-question';
 import { supportsLaboratoryTls } from '../../oncology/laboratory-tls';
 import { supportsRareEarlyMyocarditis } from '../../oncology/rare-early-myocarditis';
+import { supportsLoweringTheCount } from '../../oncology/lowering-the-count';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -637,6 +638,47 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-oncology-lowering-the-count-')) {
+      if (!supportsLoweringTheCount(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The oncology hyperleukocytosis lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^lowering-the-count-${id}-\\d+$`).test(entry.eventId));
+      const picture = event('picture-recorded'); const licence = event('licence-recorded');
+      const escalation = event('escalation-requested'); const intent = event('intent-recorded');
+      const boundaries = event('boundary-review'); const handoff = event('handoff');
+      const worse = event('clinically-worse');
+      const answered = log.find((entry) => /^lowering-the-count-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedApheresis = event('apheresis-refused'); const refusedCountOnly = event('count-only-refused');
+      const refusedWait = event('wait-refused'); const refusedDelirium = event('delirium-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'recognize-oncology-lowering-the-count-a-clinical-designation': { met: !!picture, tick: picture?.tick,
+          finding: (picture ? 'The count was recorded with the breathlessness and the confusion, as the findings that make this leukostasis. ' : 'The clinical picture was never recorded, so what was passed on was the one part any laboratory could have supplied. ')
+            + (refusedCountOnly ? 'Making the diagnosis on the count alone was attempted and refused. ' : '')
+            + (refusedDelirium ? 'Treating the confusion as delirium was attempted and refused; it removes the very finding that made the diagnosis. ' : '')
+            + 'A count above 100 without those findings is a different situation with a different urgency.' },
+        'record-oncology-lowering-the-count-urgency-without-a-manoeuvre': { met: !!licence, tick: licence?.tick,
+          finding: (licence ? 'What the count licenses and what it does not were recorded separately. ' : 'The count was never separated into what it licenses and what it does not, which is how urgency turns into a chosen manoeuvre. ')
+            + 'Up to 20 percent of acute myeloid leukaemia presents with a count above 100 and early mortality is high, so cytoreduction is indicated; the optimal strategy is unknown and a systematic review found no standardised guidelines.' },
+        'activate-oncology-lowering-the-count-the-shortest-path': { met: !!escalation, tick: escalation?.tick,
+          finding: (escalation ? 'Haematology was called immediately, with the findings and their timing. ' : 'Haematology was never called, and it is the only route here to treatment of the underlying disease. ')
+            + (refusedWait ? 'Waiting for the marrow first was attempted and refused; it would arrive after the window in which this is decided. ' : '')
+            + (answered ? 'They answered, accepted clinical leukostasis, and said that treating the leukaemia rather than any manoeuvre on the count is what changes the outcome. ' : 'They had not answered by the end of this run. ') },
+        'recognize-oncology-lowering-the-count-moving-a-number-is-not-helping': { met: !!boundaries && !!escalation, tick: boundaries?.tick,
+          finding: (refusedApheresis ? 'Sending him for apheresis and standing down was attempted and refused, for the standing down rather than the route. ' : '')
+            + 'Across 13 retrospective studies of 1,743 patients the risk ratio for early death with leukapheresis was 0.88, 95% CI 0.69 to 1.13, and its authors argue against routine use. Watching a number fall is the most convincing feedback available in that room, and it is not evidence that anything has been achieved.' },
+        'record-oncology-lowering-the-count-bounded-qualified-intent': { met: !!intent, tick: intent?.tick,
+          finding: (intent ? 'The cytoreduction strategy and its route, transfusion, prophylaxis, supportive care and definitive treatment were recorded as the qualified team’s. ' : 'Bounded qualified-team intent was never recorded. ')
+            + 'Nothing was started, and no drug, dose, route, product, threshold, or procedure was chosen or displayed here.' },
+        'review-oncology-lowering-the-count-boundaries-and-their-certainty': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The boundaries were reviewed in both directions. ' : 'The boundary and certainty review is missing. ')
+            + 'The confidence interval includes benefit as well as harm; the studies are retrospective; and their own data show confounding by indication, with patients in clinical leukostasis about twice as likely to receive leukapheresis. Nobody has shown it helps, which is not the same as showing it does not.' },
+        'handoff-oncology-lowering-the-count-what-makes-it-an-emergency': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The count with the findings that make it an emergency, their timing, and the bounded intent all travelled. ' : 'Current findings, the recorded picture, or continuing-care ownership remains incomplete. ')
+            + (worse ? 'He deteriorated in both findings during this rehearsal while the supplied count stayed exactly where it was, and that travelled with it. ' : '')
+            + 'What was handed over is a patient rather than a number.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-oncology-rare-early-myocarditis-')) {
       if (!supportsRareEarlyMyocarditis(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The oncology checkpoint-myocarditis lesson was not active.' } satisfies ObjectiveFinding;

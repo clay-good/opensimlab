@@ -154,4 +154,28 @@ export const ONCOLOGY_LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'The incidence describes how often the event occurs among people treated; the fatality describes what happens to those who have it, and comes from spontaneously reported cases, which over-represent severity. The series is retrospective and drawn from centres that see these patients, so it describes people already diagnosed. Multiplying them together produces a number that corresponds to nothing, and none of the three is a probability for the man in front of the learner.',
     briefIn: ['rare-early-myocarditis-a-base-rate-is-not-a-threshold'],
   },
+  {
+    id: 'lowering-the-count-presentation-and-deterioration-are-authored',
+    headline: 'One presentation, one deterioration, and a supplied count that cannot change.',
+    simplification: 'The case supplies a film taken an hour before, observations that worsen once at twenty minutes, and a haematology team that answers forty minutes after it is called. No leukocyte, viscosity, or cytoreduction model runs underneath.',
+    whereItMisleads: 'A learner reads the deterioration as a consequence of being too slow, or expects a real presentation to deteriorate on this schedule and no faster.',
+    correctUnderstanding: 'The deterioration is authored and follows from nothing the learner did or failed to do; the fixture models no relationship between any action and his trajectory, and the rehearsal ends the same way whatever is chosen. A real patient may deteriorate far faster, may arrest, or may be stable for hours. The urgency in this lesson comes from the published mortality, not from the fixture.',
+    briefIn: ['lowering-the-count-a-number-that-can-be-moved'],
+  },
+  {
+    id: 'lowering-the-count-controls-are-recording-and-escalation-only',
+    headline: 'No cytoreduction is started here, and no route is chosen.',
+    simplification: 'The learner records the clinical picture, records what the count licenses, calls haematology, records bounded qualified-team intent, and reviews the boundaries. The film and the count are supplied.',
+    whereItMisleads: 'The refusal of apheresis is read as this lesson recommending against leukapheresis for this patient, or the bounded-intent control is read as starting cytoreduction.',
+    correctUnderstanding: 'What was refused is standing down once the count is being lowered, not the route: the cited meta-analysis argues against routine use, and choosing between leukapheresis, hydroxyurea and chemotherapy is a qualified-team decision that this lesson deliberately does not make. Nothing here selects, gives, or withholds any treatment.',
+    briefIn: ['lowering-the-count-a-number-that-can-be-moved'],
+  },
+  {
+    id: 'lowering-the-count-absence-of-benefit-is-not-proof-of-uselessness',
+    headline: 'A confidence interval that crosses one supports two wrong conclusions.',
+    simplification: 'The case reports a meta-analytic risk ratio for early death with leukapheresis of 0.88, with a 95 percent confidence interval from 0.69 to 1.13, across 13 retrospective studies of 1,743 patients.',
+    whereItMisleads: 'A learner concludes that leukapheresis has been shown not to work, or alternatively that a point estimate below one means it does.',
+    correctUnderstanding: 'The interval contains a substantial possible benefit and a possible harm, so it establishes neither. The studies are retrospective and confounded by indication in a direction their own data show: patients in clinical leukostasis were about twice as likely to receive the intervention, which biases the estimate against it. What can honestly be said is that nobody has demonstrated a short-term mortality benefit, which is why the authors argue against routine rather than against any use.',
+    briefIn: ['lowering-the-count-a-number-that-can-be-moved'],
+  },
 ];

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { EngineEvent, LearnerAction } from '@platform/kernel/protocol';
-import { NormalTestToxicity, NORMAL_TEST_TOXICITY_ACTIONS } from '../../src/modules/oncology/normal-test-toxicity';
+import { NormalTestToxicity } from '../../src/modules/oncology/normal-test-toxicity';
+import { NORMAL_TEST_TOXICITY_ACTIONS } from '../../src/modules/oncology/normal-test-toxicity';
 import { normalTestToxicityReportActions as reportActions } from '../../src/modules/oncology/normal-test-toxicity-reporting';
 
 const request = (action: string, tick = 3): LearnerAction => ({ tick, type: 'normal-test-toxicity-response', payload: { action } });

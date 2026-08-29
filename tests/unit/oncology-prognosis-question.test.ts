@@ -4,9 +4,8 @@ import { auditClinicalScenario } from '@anesthesia/catalog/scenario-completion';
 import { objectiveFindings } from '@anesthesia/ui/Debrief';
 import { PROGNOSIS_QUESTION_A_NUMBER_HE_ASKED_FOR as SCENARIO } from '../../src/modules/oncology/scenarios/prognosis-question-a-number-he-asked-for';
 import { PROGNOSIS_QUESTION_FIXTURES as FIXTURES } from '../../src/modules/oncology/prognosis-question-fixtures';
-import { PrognosisQuestion, PROGNOSIS_QUESTION_REPEAT_TICKS as REPEAT,
-  PROGNOSIS_QUESTION_READBACK_TICKS as READBACK, PROGNOSIS_QUESTION_TAKEOVER_TICKS as STOP,
-  PROGNOSIS_QUESTION_ACTIONS, type PrognosisQuestionAction } from '../../src/modules/oncology/prognosis-question';
+import { PrognosisQuestion } from '../../src/modules/oncology/prognosis-question';
+import { PROGNOSIS_QUESTION_REPEAT_TICKS as REPEAT, PROGNOSIS_QUESTION_READBACK_TICKS as READBACK, PROGNOSIS_QUESTION_TAKEOVER_TICKS as STOP, PROGNOSIS_QUESTION_ACTIONS, type PrognosisQuestionAction } from '../../src/modules/oncology/prognosis-question';
 
 type Choices = readonly (readonly [number, PrognosisQuestionAction])[];
 

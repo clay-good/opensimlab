@@ -3,9 +3,8 @@ import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { RareEarlyMyocarditisTray } from '../../src/modules/oncology/RareEarlyMyocarditisTray';
-import { RareEarlyMyocarditis, RARE_EARLY_MYOCARDITIS_RHYTHM_TICKS as RHYTHM,
-  RARE_EARLY_MYOCARDITIS_TEAM_TICKS as TEAMS,
-  type RareEarlyMyocarditisAction } from '../../src/modules/oncology/rare-early-myocarditis';
+import { RareEarlyMyocarditis } from '../../src/modules/oncology/rare-early-myocarditis';
+import { RARE_EARLY_MYOCARDITIS_RHYTHM_TICKS as RHYTHM, RARE_EARLY_MYOCARDITIS_TEAM_TICKS as TEAMS, type RareEarlyMyocarditisAction } from '../../src/modules/oncology/rare-early-myocarditis';
 
 const labels: Record<RareEarlyMyocarditisAction, string> = {
   'record-the-exposure-interval': 'Record the exposure interval',

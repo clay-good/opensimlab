@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { stateSummary } from '@anesthesia/ui/accessibility';
-import { NormalTestToxicity, NORMAL_TEST_TOXICITY_NEXT_DOSE_TICKS as NEXT_DOSE,
-  NORMAL_TEST_TOXICITY_SERVICE_TICKS as SERVICE } from '../../src/modules/oncology/normal-test-toxicity';
+import { NormalTestToxicity } from '../../src/modules/oncology/normal-test-toxicity';
+import { NORMAL_TEST_TOXICITY_NEXT_DOSE_TICKS as NEXT_DOSE, NORMAL_TEST_TOXICITY_SERVICE_TICKS as SERVICE } from '../../src/modules/oncology/normal-test-toxicity';
 
 const common = {
   alarms: [], infusions: [],

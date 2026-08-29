@@ -3233,6 +3233,23 @@
       "limitationManifestHash": "sha256:6505856b1ee694dda842618476b0fb35eea3a676d4f312420f2bd945a493d388"
     },
     {
+      "scenarioId": "lowering-the-count-a-number-that-can-be-moved",
+      "contentVersion": "0.1.0",
+      "moduleId": "oncology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:9c0cad3a37c3009d390938b56311163c784a1496ae7149a692d8d1207b0e1adb",
+      "defaultsHash": "sha256:57f8740c651e09e8adf4b7468f94b0b8dfa2495667d97dec7ec8de00cfebbc8b",
+      "maturityHash": "sha256:d4fc32d8b56f83123d4639bb12b322bdd6acc98923f2b4cdf1a2fcf83ecfac9c",
+      "sourceManifestHash": "sha256:ca2f700e271fa2a2bd48615373fc902ba3f007ef75821508fbbb3647b680d5e9",
+      "limitationManifestHash": "sha256:c267d3796cdccfd2cd23a73b1d9c558de8ddd612e67f62dbbd27c2afd317d910"
+    },
+    {
       "scenarioId": "normal-test-toxicity-the-dose-in-his-bag",
       "contentVersion": "0.1.0",
       "moduleId": "oncology",

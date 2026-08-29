@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { EngineEvent, LearnerAction } from '@platform/kernel/protocol';
-import { IncidentalClot, INCIDENTAL_CLOT_ACTIONS } from '../../src/modules/oncology/incidental-clot';
+import { IncidentalClot } from '../../src/modules/oncology/incidental-clot';
+import { INCIDENTAL_CLOT_ACTIONS } from '../../src/modules/oncology/incidental-clot';
 import { incidentalClotReportActions as reportActions } from '../../src/modules/oncology/incidental-clot-reporting';
 
 const request = (action: string, tick = 3): LearnerAction => ({ tick, type: 'incidental-clot-response', payload: { action } });

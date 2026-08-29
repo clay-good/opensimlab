@@ -4483,6 +4483,16 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'Open-access full text at PMC12808996, introduction and results read directly, including the presentation table. A retrospective multicentre series of patients already diagnosed at centres that see them, so it describes the diagnosed rather than the exposed and its predictors are associations.',
     verifiedOn: '2026-08-29',
   },
+  {
+    id: 'oncology-leukapheresis-meta-analysis-2020', pmid: '32776542',
+    authors: 'Bewersdorf JP, Giri S, Tallman MS, et al',
+    title: 'Leukapheresis for the management of hyperleukocytosis in acute myeloid leukemia \u2014 a systematic review and meta-analysis',
+    publication: 'Transfusion', year: 2020,
+    locator: '60(10):2360-2369; doi:10.1111/trf.15994; Background and Results; up to 20% of AML presents with hyperleukocytosis, usually defined as a white blood cell count above 100 x 10^9/L; emergent cytoreduction indicated but the optimal strategy unknown; 13 two-arm retrospective studies, 1743 patients (486 leukapheresis, 1257 not); risk ratio for early death 0.88 (95% CI 0.69-1.13, P=.321), no significant heterogeneity; patients with clinical leukostasis more likely to undergo leukapheresis (odds ratio 2.01, 95% CI 0.99-4.08, P=.052)',
+    usedFor: 'That the intervention which most visibly lowers the count has not been shown to lower early mortality, stated with the interval in both directions and with the confounding by indication that the studies themselves reveal; and the definition and frequency of hyperleukocytosis in acute myeloid leukaemia. No cytoreduction route, agent, dose, or threshold is adopted.',
+    verifiedAgainst: 'PubMed PMID 32776542 bibliographic record and indexed abstract (PMC8631180). All 13 included studies are retrospective and two-arm; the pooled estimate is therefore subject to confounding by indication, which the paper measures rather than removes.',
+    verifiedOn: '2026-08-29',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

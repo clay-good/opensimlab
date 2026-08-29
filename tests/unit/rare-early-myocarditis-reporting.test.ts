@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { EngineEvent, LearnerAction } from '@platform/kernel/protocol';
-import { RareEarlyMyocarditis, RARE_EARLY_MYOCARDITIS_ACTIONS } from '../../src/modules/oncology/rare-early-myocarditis';
+import { RareEarlyMyocarditis } from '../../src/modules/oncology/rare-early-myocarditis';
+import { RARE_EARLY_MYOCARDITIS_ACTIONS } from '../../src/modules/oncology/rare-early-myocarditis';
 import { rareEarlyMyocarditisReportActions as reportActions } from '../../src/modules/oncology/rare-early-myocarditis-reporting';
 
 const request = (action: string, tick = 3): LearnerAction => ({ tick, type: 'rare-early-myocarditis-response', payload: { action } });

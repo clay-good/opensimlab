@@ -3,9 +3,8 @@ import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { LaboratoryTlsTray } from '../../src/modules/oncology/LaboratoryTlsTray';
-import { LaboratoryTls, LABORATORY_TLS_REPEAT_TICKS as REPEAT,
-  LABORATORY_TLS_TEAM_TICKS as TEAM,
-  type LaboratoryTlsAction } from '../../src/modules/oncology/laboratory-tls';
+import { LaboratoryTls } from '../../src/modules/oncology/laboratory-tls';
+import { LABORATORY_TLS_REPEAT_TICKS as REPEAT, LABORATORY_TLS_TEAM_TICKS as TEAM, type LaboratoryTlsAction } from '../../src/modules/oncology/laboratory-tls';
 
 const labels: Record<LaboratoryTlsAction, string> = {
   'record-which-definition-is-met': 'Record which definition is met',

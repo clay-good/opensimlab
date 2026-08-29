@@ -4,9 +4,8 @@ import { auditClinicalScenario } from '@anesthesia/catalog/scenario-completion';
 import { objectiveFindings } from '@anesthesia/ui/Debrief';
 import { DELAYED_IMMUNE_EVENT_A_DRUG_THAT_STOPPED_MONTHS_AGO as SCENARIO } from '../../src/modules/oncology/scenarios/delayed-immune-event-a-drug-that-stopped-months-ago';
 import { DELAYED_IMMUNE_EVENT_FIXTURES as FIXTURES } from '../../src/modules/oncology/delayed-immune-event-fixtures';
-import { DelayedImmuneEvent, DELAYED_IMMUNE_EVENT_COURSE_TICKS as COURSE,
-  DELAYED_IMMUNE_EVENT_SERVICE_TICKS as SERVICE, DELAYED_IMMUNE_EVENT_TAKEOVER_TICKS as STOP,
-  DELAYED_IMMUNE_EVENT_ACTIONS, type DelayedImmuneEventAction } from '../../src/modules/oncology/delayed-immune-event';
+import { DelayedImmuneEvent } from '../../src/modules/oncology/delayed-immune-event';
+import { DELAYED_IMMUNE_EVENT_COURSE_TICKS as COURSE, DELAYED_IMMUNE_EVENT_SERVICE_TICKS as SERVICE, DELAYED_IMMUNE_EVENT_TAKEOVER_TICKS as STOP, DELAYED_IMMUNE_EVENT_ACTIONS, type DelayedImmuneEventAction } from '../../src/modules/oncology/delayed-immune-event';
 
 type Choices = readonly (readonly [number, DelayedImmuneEventAction])[];
 

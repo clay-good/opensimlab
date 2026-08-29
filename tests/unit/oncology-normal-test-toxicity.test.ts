@@ -4,9 +4,8 @@ import { auditClinicalScenario } from '@anesthesia/catalog/scenario-completion';
 import { objectiveFindings } from '@anesthesia/ui/Debrief';
 import { NORMAL_TEST_TOXICITY_THE_DOSE_IN_HIS_BAG as SCENARIO } from '../../src/modules/oncology/scenarios/normal-test-toxicity-the-dose-in-his-bag';
 import { NORMAL_TEST_TOXICITY_FIXTURES as FIXTURES } from '../../src/modules/oncology/normal-test-toxicity-fixtures';
-import { NormalTestToxicity, NORMAL_TEST_TOXICITY_NEXT_DOSE_TICKS as NEXT_DOSE,
-  NORMAL_TEST_TOXICITY_SERVICE_TICKS as SERVICE, NORMAL_TEST_TOXICITY_TAKEOVER_TICKS as STOP,
-  NORMAL_TEST_TOXICITY_ACTIONS, type NormalTestToxicityAction } from '../../src/modules/oncology/normal-test-toxicity';
+import { NormalTestToxicity } from '../../src/modules/oncology/normal-test-toxicity';
+import { NORMAL_TEST_TOXICITY_NEXT_DOSE_TICKS as NEXT_DOSE, NORMAL_TEST_TOXICITY_SERVICE_TICKS as SERVICE, NORMAL_TEST_TOXICITY_TAKEOVER_TICKS as STOP, NORMAL_TEST_TOXICITY_ACTIONS, type NormalTestToxicityAction } from '../../src/modules/oncology/normal-test-toxicity';
 
 type Choices = readonly (readonly [number, NormalTestToxicityAction])[];
 

@@ -3,9 +3,8 @@ import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DelayedImmuneEventTray } from '../../src/modules/oncology/DelayedImmuneEventTray';
-import { DelayedImmuneEvent, DELAYED_IMMUNE_EVENT_COURSE_TICKS as COURSE,
-  DELAYED_IMMUNE_EVENT_SERVICE_TICKS as SERVICE,
-  type DelayedImmuneEventAction } from '../../src/modules/oncology/delayed-immune-event';
+import { DelayedImmuneEvent } from '../../src/modules/oncology/delayed-immune-event';
+import { DELAYED_IMMUNE_EVENT_COURSE_TICKS as COURSE, DELAYED_IMMUNE_EVENT_SERVICE_TICKS as SERVICE, type DelayedImmuneEventAction } from '../../src/modules/oncology/delayed-immune-event';
 
 const labels: Record<DelayedImmuneEventAction, string> = {
   'record-the-completed-exposure': 'Record the completed exposure as current history',

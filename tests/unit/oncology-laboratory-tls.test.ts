@@ -4,9 +4,8 @@ import { auditClinicalScenario } from '@anesthesia/catalog/scenario-completion';
 import { objectiveFindings } from '@anesthesia/ui/Debrief';
 import { LABORATORY_TLS_A_SYNDROME_HE_DOES_NOT_HAVE_YET as SCENARIO } from '../../src/modules/oncology/scenarios/laboratory-tls-a-syndrome-he-does-not-have-yet';
 import { LABORATORY_TLS_FIXTURES as FIXTURES } from '../../src/modules/oncology/laboratory-tls-fixtures';
-import { LaboratoryTls, LABORATORY_TLS_REPEAT_TICKS as REPEAT,
-  LABORATORY_TLS_TEAM_TICKS as TEAM, LABORATORY_TLS_TAKEOVER_TICKS as STOP,
-  LABORATORY_TLS_ACTIONS, type LaboratoryTlsAction } from '../../src/modules/oncology/laboratory-tls';
+import { LaboratoryTls } from '../../src/modules/oncology/laboratory-tls';
+import { LABORATORY_TLS_REPEAT_TICKS as REPEAT, LABORATORY_TLS_TEAM_TICKS as TEAM, LABORATORY_TLS_TAKEOVER_TICKS as STOP, LABORATORY_TLS_ACTIONS, type LaboratoryTlsAction } from '../../src/modules/oncology/laboratory-tls';
 
 type Choices = readonly (readonly [number, LaboratoryTlsAction])[];
 

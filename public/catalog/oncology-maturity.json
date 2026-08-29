@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "oncology",
-  "recordCount": 6,
+  "recordCount": 7,
   "records": [
     {
       "recordId": "scenario:delayed-immune-event-a-drug-that-stopped-months-ago@0.1.0",
@@ -67,6 +67,17 @@
       "evidence": [
         "/catalog/oncology-completion-audit.json#rare-early-myocarditis-a-base-rate-is-not-a-threshold@0.1.0",
         "/catalog/oncology-quality-audit.json#rare-early-myocarditis-a-base-rate-is-not-a-threshold@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:lowering-the-count-a-number-that-can-be-moved@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "lowering-the-count-a-number-that-can-be-moved",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/oncology-completion-audit.json#lowering-the-count-a-number-that-can-be-moved@0.1.0",
+        "/catalog/oncology-quality-audit.json#lowering-the-count-a-number-that-can-be-moved@0.1.0"
       ]
     }
   ]

@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 203 adds the authored checkpoint-inhibitor myocarditis snapshot. */
-export const WORKER_PROTOCOL_VERSION = 203;
+/** Version 204 adds the authored hyperleukocytosis snapshot. */
+export const WORKER_PROTOCOL_VERSION = 204;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -592,6 +592,47 @@ export interface MeningitisImagingSnapshot {
     readonly cerebrospinalFluidAvailable: boolean;
     readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
     readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
+}
+
+export interface LoweringTheCountSnapshot {
+  readonly pictureRecordedAtTick: number | null;
+  readonly licenceRecordedAtTick: number | null;
+  readonly escalationAtTick: number | null;
+  readonly treatmentIntentAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly whiteCellCount: number;
+  readonly leukostasisIsClinical: boolean;
+  readonly clinicallyWorse: boolean;
+  readonly teamResponded: boolean;
+  readonly teamObserved: boolean;
+  readonly apheresisStandDownAttempted: boolean;
+  readonly countOnlyAttempted: boolean;
+  readonly waitForMarrowAttempted: boolean;
+  readonly deliriumAttempted: boolean;
+  readonly observationRecord: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+    readonly consciousLevel: string;
+  } | null;
+  readonly resultRecord: {
+    readonly atTick: number; readonly whiteCellCount: number; readonly resultAgeMinutes: number;
+    readonly leukostasisIsClinical: boolean; readonly marrowAvailable: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+    readonly consciousLevel: string; readonly whiteCellCount: number;
+    readonly resultAgeMinutes: number; readonly leukostasisIsClinical: boolean;
+    readonly marrowAvailable: boolean; readonly alertness: string;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -4586,6 +4627,7 @@ export interface EquipmentSnapshot {
     readonly prognosisQuestion?: PrognosisQuestionSnapshot;
     readonly laboratoryTls?: LaboratoryTlsSnapshot;
     readonly rareEarlyMyocarditis?: RareEarlyMyocarditisSnapshot;
+    readonly loweringTheCount?: LoweringTheCountSnapshot;
     readonly countedRate?: CountedRateSnapshot;
     readonly pairedReading?: PairedReadingSnapshot;
     readonly afferentLimb?: AfferentLimbSnapshot;

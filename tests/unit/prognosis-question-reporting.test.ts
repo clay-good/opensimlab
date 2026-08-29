@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { EngineEvent, LearnerAction } from '@platform/kernel/protocol';
-import { PrognosisQuestion, PROGNOSIS_QUESTION_ACTIONS } from '../../src/modules/oncology/prognosis-question';
+import { PrognosisQuestion } from '../../src/modules/oncology/prognosis-question';
+import { PROGNOSIS_QUESTION_ACTIONS } from '../../src/modules/oncology/prognosis-question';
 import { prognosisQuestionReportActions as reportActions } from '../../src/modules/oncology/prognosis-question-reporting';
 
 const request = (action: string, tick = 3): LearnerAction => ({ tick, type: 'prognosis-question-response', payload: { action } });

@@ -4,9 +4,8 @@ import { auditClinicalScenario } from '@anesthesia/catalog/scenario-completion';
 import { objectiveFindings } from '@anesthesia/ui/Debrief';
 import { RARE_EARLY_MYOCARDITIS_A_BASE_RATE_IS_NOT_A_THRESHOLD as SCENARIO } from '../../src/modules/oncology/scenarios/rare-early-myocarditis-a-base-rate-is-not-a-threshold';
 import { RARE_EARLY_MYOCARDITIS_FIXTURES as FIXTURES } from '../../src/modules/oncology/rare-early-myocarditis-fixtures';
-import { RareEarlyMyocarditis, RARE_EARLY_MYOCARDITIS_RHYTHM_TICKS as RHYTHM,
-  RARE_EARLY_MYOCARDITIS_TEAM_TICKS as TEAMS, RARE_EARLY_MYOCARDITIS_TAKEOVER_TICKS as STOP,
-  RARE_EARLY_MYOCARDITIS_ACTIONS, type RareEarlyMyocarditisAction } from '../../src/modules/oncology/rare-early-myocarditis';
+import { RareEarlyMyocarditis } from '../../src/modules/oncology/rare-early-myocarditis';
+import { RARE_EARLY_MYOCARDITIS_RHYTHM_TICKS as RHYTHM, RARE_EARLY_MYOCARDITIS_TEAM_TICKS as TEAMS, RARE_EARLY_MYOCARDITIS_TAKEOVER_TICKS as STOP, RARE_EARLY_MYOCARDITIS_ACTIONS, type RareEarlyMyocarditisAction } from '../../src/modules/oncology/rare-early-myocarditis';
 
 type Choices = readonly (readonly [number, RareEarlyMyocarditisAction])[];
 

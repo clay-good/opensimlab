@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: Checkpoint-myocarditis state has protocol version 203', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(203);
+  it('Scenario: Hyperleukocytosis state has protocol version 204', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(204);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

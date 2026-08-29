@@ -3,9 +3,8 @@ import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { NormalTestToxicityTray } from '../../src/modules/oncology/NormalTestToxicityTray';
-import { NormalTestToxicity, NORMAL_TEST_TOXICITY_NEXT_DOSE_TICKS as NEXT_DOSE,
-  NORMAL_TEST_TOXICITY_SERVICE_TICKS as SERVICE,
-  type NormalTestToxicityAction } from '../../src/modules/oncology/normal-test-toxicity';
+import { NormalTestToxicity } from '../../src/modules/oncology/normal-test-toxicity';
+import { NORMAL_TEST_TOXICITY_NEXT_DOSE_TICKS as NEXT_DOSE, NORMAL_TEST_TOXICITY_SERVICE_TICKS as SERVICE, type NormalTestToxicityAction } from '../../src/modules/oncology/normal-test-toxicity';
 
 const labels: Record<NormalTestToxicityAction, string> = {
   'withhold-the-drug-now': 'Withhold the drug now',

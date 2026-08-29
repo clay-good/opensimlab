@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { EngineEvent, LearnerAction } from '@platform/kernel/protocol';
-import { DelayedImmuneEvent, DELAYED_IMMUNE_EVENT_ACTIONS } from '../../src/modules/oncology/delayed-immune-event';
+import { DelayedImmuneEvent } from '../../src/modules/oncology/delayed-immune-event';
+import { DELAYED_IMMUNE_EVENT_ACTIONS } from '../../src/modules/oncology/delayed-immune-event';
 import { delayedImmuneEventReportActions as reportActions } from '../../src/modules/oncology/delayed-immune-event-reporting';
 
 const request = (action: string, tick = 3): LearnerAction => ({ tick, type: 'delayed-immune-event-response', payload: { action } });

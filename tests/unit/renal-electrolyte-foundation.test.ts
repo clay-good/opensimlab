@@ -295,10 +295,10 @@ describe('Renal and Electrolyte Medicine module foundation', () => {
   it('keeps registry, landing, routes, and published artifact counts aligned', () => {
     expect(availableModules()).toHaveLength(15);
     expect(READY_MODULE_COUNT).toBe(15);
-    expect(READY_SCENARIO_COUNT).toBe(235);
-    expect(reviewableItems().filter((item) => item.kind === 'scenario')).toHaveLength(235);
-    expect(ROUTES).toHaveLength(263);
-    expect(indexableRoutes()).toHaveLength(260);
+    expect(READY_SCENARIO_COUNT).toBe(236);
+    expect(reviewableItems().filter((item) => item.kind === 'scenario')).toHaveLength(236);
+    expect(ROUTES).toHaveLength(264);
+    expect(indexableRoutes()).toHaveLength(261);
     expect(PUBLIC_CATALOG_ARTIFACTS).toHaveLength(56);
     expect(new Set(PUBLIC_CATALOG_ARTIFACTS).size).toBe(56);
     expect(PUBLIC_CATALOG_ARTIFACTS).toEqual(expect.arrayContaining([
@@ -396,7 +396,7 @@ describe('Renal and Electrolyte Medicine module foundation', () => {
       expect(reports.scenarios).toContainEqual(expect.objectContaining({ moduleId: 'renal-electrolyte', scenarioId: metadata.id,
         contentVersion: metadata.version, maturity: 'preview' }));
     }
-    expect(reports.scenarios).toHaveLength(245);
+    expect(reports.scenarios).toHaveLength(246);
     // Every earlier module's published evidence must survive a later module launch byte for byte.
     const prior218 = reports.scenarios.filter((entry: { moduleId: string }) => entry.moduleId !== 'infectious-disease'
       && entry.moduleId !== 'medical-surgical-nursing' && entry.moduleId !== 'oncology');

@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot, DelayedImmuneEventSnapshot, IncidentalClotSnapshot, NormalTestToxicitySnapshot, PrognosisQuestionSnapshot, LaboratoryTlsSnapshot, RareEarlyMyocarditisSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot, DelayedImmuneEventSnapshot, IncidentalClotSnapshot, NormalTestToxicitySnapshot, PrognosisQuestionSnapshot, LaboratoryTlsSnapshot, RareEarlyMyocarditisSnapshot, LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -135,6 +135,7 @@ export function stateSummary(
     readonly prognosisQuestion?: PrognosisQuestionSnapshot;
     readonly laboratoryTls?: LaboratoryTlsSnapshot;
     readonly rareEarlyMyocarditis?: RareEarlyMyocarditisSnapshot;
+    readonly loweringTheCount?: LoweringTheCountSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -188,7 +189,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale || options.lostContingency || options.delayedImmuneEvent || options.incidentalClot || options.normalTestToxicity || options.prognosisQuestion || options.laboratoryTls || options.rareEarlyMyocarditis) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale || options.lostContingency || options.delayedImmuneEvent || options.incidentalClot || options.normalTestToxicity || options.prognosisQuestion || options.laboratoryTls || options.rareEarlyMyocarditis || options.loweringTheCount) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -212,6 +213,25 @@ export function stateSummary(
           + ' intravenous.');
       }
     }
+  }
+  if (options.loweringTheCount) {
+    const patient = options.loweringTheCount;
+    // Count and findings in the same sentence, always. The count alone is what is being refused.
+    lines.push(`Supplied white cell count ${patient.whiteCellCount} times ten to the ninth per litre with blasts on the film, breathless at rest and confused. Leukostasis here is ${patient.leukostasisIsClinical ? 'a clinical designation, not a number' : 'defined by the count'}.`);
+    lines.push('Supplied starting observations were pulse 108 per minute, blood pressure 108 over 62, respiratory rate 26 per minute, oxygen saturation 92 percent in air, and temperature 37.4 degrees Celsius. These remain historical starting observations.');
+    lines.push(`Current state: ${patient.alertness}. There is no marrow result.`);
+    lines.push(`Clinical picture recorded: ${patient.pictureRecordedAtTick === null ? 'no' : 'yes'}. What the count licenses: ${patient.licenceRecordedAtTick === null ? 'not recorded' : 'recorded'}. Haematology: ${patient.escalationAtTick === null ? 'not called' : 'called'}. Bounded intent: ${patient.treatmentIntentAtTick === null ? 'not recorded' : 'recorded as the qualified team\u2019s decision'}. Boundaries: ${patient.boundariesReviewedAtTick === null ? 'not reviewed' : 'reviewed'}.`);
+    if (patient.clinicallyWorse) {
+      lines.push('He is more breathless and harder to rouse than he was. The supplied count has not changed, because it is the same sample.');
+    }
+    lines.push('Across 13 retrospective studies of 1,743 patients, the risk ratio for early death with leukapheresis was 0.88, with a confidence interval from 0.69 to 1.13, and its authors argue against routine use. That interval includes benefit as well as harm. The cytoreduction strategy and its route, transfusion, prophylaxis and definitive treatment belong to the qualified team; no drug, dose, route, product, or procedure is selected here, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: respiratory rate ${patient.observation.respiratoryRateBpm} per minute; oxygen saturation ${patient.observation.spo2Percent} percent in air; ${patient.observation.consciousLevel}.`
+      : 'No new full assessment has been requested.');
+    if (patient.teamObserved) {
+      lines.push('Haematology has answered and is coming, and says that treating the leukaemia rather than any single manoeuvre on the count is what changes his outcome.');
+    }
+    if (patient.choiceFeedback) lines.push(patient.choiceFeedback);
   }
   if (options.rareEarlyMyocarditis) {
     const patient = options.rareEarlyMyocarditis;

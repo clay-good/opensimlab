@@ -4,9 +4,8 @@ import { auditClinicalScenario } from '@anesthesia/catalog/scenario-completion';
 import { objectiveFindings } from '@anesthesia/ui/Debrief';
 import { INCIDENTAL_CLOT_A_DECISION_THE_EVIDENCE_CANNOT_MAKE as SCENARIO } from '../../src/modules/oncology/scenarios/incidental-clot-a-decision-the-evidence-cannot-make';
 import { INCIDENTAL_CLOT_FIXTURES as FIXTURES } from '../../src/modules/oncology/incidental-clot-fixtures';
-import { IncidentalClot, INCIDENTAL_CLOT_QUESTION_TICKS as QUESTION,
-  INCIDENTAL_CLOT_SERVICE_TICKS as SERVICE, INCIDENTAL_CLOT_TAKEOVER_TICKS as STOP,
-  INCIDENTAL_CLOT_ACTIONS, type IncidentalClotAction } from '../../src/modules/oncology/incidental-clot';
+import { IncidentalClot } from '../../src/modules/oncology/incidental-clot';
+import { INCIDENTAL_CLOT_QUESTION_TICKS as QUESTION, INCIDENTAL_CLOT_SERVICE_TICKS as SERVICE, INCIDENTAL_CLOT_TAKEOVER_TICKS as STOP, INCIDENTAL_CLOT_ACTIONS, type IncidentalClotAction } from '../../src/modules/oncology/incidental-clot';
 
 type Choices = readonly (readonly [number, IncidentalClotAction])[];
 

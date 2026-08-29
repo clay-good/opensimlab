@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { stateSummary } from '@anesthesia/ui/accessibility';
-import { DelayedImmuneEvent, DELAYED_IMMUNE_EVENT_COURSE_TICKS as COURSE,
-  DELAYED_IMMUNE_EVENT_SERVICE_TICKS as SERVICE } from '../../src/modules/oncology/delayed-immune-event';
+import { DelayedImmuneEvent } from '../../src/modules/oncology/delayed-immune-event';
+import { DELAYED_IMMUNE_EVENT_COURSE_TICKS as COURSE, DELAYED_IMMUNE_EVENT_SERVICE_TICKS as SERVICE } from '../../src/modules/oncology/delayed-immune-event';
 
 const common = {
   alarms: [], infusions: [],

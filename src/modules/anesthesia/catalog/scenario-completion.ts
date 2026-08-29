@@ -32,6 +32,7 @@ import { normalTestToxicityCompletionEvidence } from '../../oncology/normal-test
 import { prognosisQuestionCompletionEvidence } from '../../oncology/prognosis-question-completion';
 import { laboratoryTlsCompletionEvidence } from '../../oncology/laboratory-tls-completion';
 import { rareEarlyMyocarditisCompletionEvidence } from '../../oncology/rare-early-myocarditis-completion';
+import { loweringTheCountCompletionEvidence } from '../../oncology/lowering-the-count-completion';
 import { countedRateCompletionEvidence } from '../../medical-surgical-nursing/counted-rate-completion';
 import { pairedReadingCompletionEvidence } from '../../medical-surgical-nursing/paired-reading-completion';
 import { afferentLimbCompletionEvidence } from '../../medical-surgical-nursing/afferent-limb-completion';
@@ -153,6 +154,7 @@ export function auditClinicalScenario(
     ...prognosisQuestionCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...laboratoryTlsCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...rareEarlyMyocarditisCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...loweringTheCountCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...countedRateCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...pairedReadingCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...afferentLimbCompletionEvidence(scenario, capabilityVersion, moduleId),

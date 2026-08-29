@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { stateSummary } from '@anesthesia/ui/accessibility';
-import { RareEarlyMyocarditis, RARE_EARLY_MYOCARDITIS_RHYTHM_TICKS as RHYTHM,
-  RARE_EARLY_MYOCARDITIS_TEAM_TICKS as TEAMS } from '../../src/modules/oncology/rare-early-myocarditis';
+import { RareEarlyMyocarditis } from '../../src/modules/oncology/rare-early-myocarditis';
+import { RARE_EARLY_MYOCARDITIS_RHYTHM_TICKS as RHYTHM, RARE_EARLY_MYOCARDITIS_TEAM_TICKS as TEAMS } from '../../src/modules/oncology/rare-early-myocarditis';
 
 const common = {
   alarms: [], infusions: [],

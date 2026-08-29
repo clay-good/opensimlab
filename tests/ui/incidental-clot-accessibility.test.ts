@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { stateSummary } from '@anesthesia/ui/accessibility';
-import { IncidentalClot, INCIDENTAL_CLOT_QUESTION_TICKS as QUESTION,
-  INCIDENTAL_CLOT_SERVICE_TICKS as SERVICE } from '../../src/modules/oncology/incidental-clot';
+import { IncidentalClot } from '../../src/modules/oncology/incidental-clot';
+import { INCIDENTAL_CLOT_QUESTION_TICKS as QUESTION, INCIDENTAL_CLOT_SERVICE_TICKS as SERVICE } from '../../src/modules/oncology/incidental-clot';
 
 const common = {
   alarms: [], infusions: [],
