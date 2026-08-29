@@ -12,6 +12,7 @@
 
 import './landing.css';
 import { MODULES, RELEASE_FEED_URL } from '@platform/modules/registry';
+import { moduleProse } from '@platform/modules/module-prose';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { HONEST_STATUS } from '@platform/governance/status';
 import {
@@ -58,7 +59,7 @@ export function About() {
                     <span className="landing__module-name">{module.displayName}</span>
                   )}
                   <p className="landing__module-note">
-                    {module.status === 'available' ? module.description : module.plannedScope}
+                    {module.status === 'available' ? moduleProse(module.id).description : moduleProse(module.id).plannedScope}
                   </p>
                 </div>
                 <span className="badge">{module.status === 'available' ? 'Available' : 'Planned'}</span>

@@ -15,6 +15,7 @@ import { ROUTES, indexableRoutes, routeFor } from '@routes/routes';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { getEmergencyMedicineScenario } from '../../src/modules/emergency-medicine/scenarios';
 import { validateScenario } from '@anesthesia/scenarios/schema';
+import { moduleProse } from '@platform/modules/module-prose';
 import {
   DEFAULT_RENAL_ELECTROLYTE_SCENARIO_ID, RENAL_ELECTROLYTE_SCENARIOS, getRenalElectrolyteScenario,
 } from '../../src/modules/renal-electrolyte/scenarios';
@@ -30,7 +31,7 @@ describe('Renal and Electrolyte Medicine module foundation', () => {
     expect(getModule('renal-electrolyte')).toMatchObject({ route: 'renal-electrolyte',
       displayName: 'Renal and Electrolyte Medicine', status: 'available',
       timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] } });
-    expect(getModule('renal-electrolyte').plannedScope).toContain('Twelve bounded');
+    expect(moduleProse('renal-electrolyte').plannedScope).toContain('Twelve bounded');
     expect(RENAL_ELECTROLYTE_SCENARIOS).toHaveLength(6);
     expect(RENAL_ELECTROLYTE_SCENARIOS.map(({ metadata }) => metadata.id)).toEqual([
       id, 'hypokalemia-magnesium-and-ongoing-losses', 'hyponatremia-symptoms-and-reassessment',

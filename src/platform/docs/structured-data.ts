@@ -26,6 +26,7 @@ import { getRenalElectrolyteScenario } from '../../modules/renal-electrolyte/sce
 import { getInfectiousDiseaseScenario } from '../../modules/infectious-disease/scenarios';
 import { ONE_LINE_DESCRIPTION } from '@landing/content';
 import { SITE_NAME, SITE_ORIGIN, canonicalUrl } from '@routes/routes';
+import { moduleProse } from '@platform/modules/module-prose';
 
 export type JsonLd = Record<string, unknown>;
 
@@ -72,7 +73,7 @@ export function softwareApplicationJsonLd(path = '/anesthesia'): JsonLd {
     url: canonicalUrl(`/${module?.route ?? 'anesthesia'}`),
     applicationCategory: 'EducationalApplication',
     operatingSystem: 'Any browser',
-    description: module?.description ?? '',
+    description: module ? moduleProse(module.id).description : '',
     isAccessibleForFree: true,
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
     inLanguage: 'en',

@@ -62,6 +62,7 @@ import {
   INFECTIOUS_DISEASE_SCENARIOS, DEFAULT_INFECTIOUS_DISEASE_SCENARIO_ID,
   getInfectiousDiseaseScenario,
 } from '../modules/infectious-disease/scenarios';
+import { moduleProse } from '@platform/modules/module-prose';
 import type { Scenario } from '@anesthesia/scenarios/types';
 
 export function PrerenderedBody({ path }: { path: string }) {
@@ -227,7 +228,7 @@ function ModuleMarkup({ moduleId, basePath, heading, scenarios }: {
       <SiteBar current={basePath} />
       <main className="reading" id="main">
         <h1>{heading}</h1>
-        <p>{module?.description}</p>
+        <p>{module ? moduleProse(module.id).description : ''}</p>
         <ul>
           {scenarios.map((scenario) => (
             <li key={scenario.metadata.id}>

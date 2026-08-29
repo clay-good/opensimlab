@@ -36,6 +36,7 @@ import { MODULES, RELEASE_FEED_URL, availableModules, plannedModules, speedsFor 
 import { EDITORIAL_BOARD } from '@platform/governance/records';
 import { isCrawler } from '@platform/offline/register';
 import { PrerenderedBody } from '@routes/Prerendered';
+import { moduleProse } from '@platform/modules/module-prose';
 
 describe('Requirement: Per-Route Metadata', () => {
   it('Scenario: Titles are specific and consistently formed', () => {
@@ -237,9 +238,10 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
       .toEqual(['anesthesia', 'emergency-medicine', 'cardiology', 'respiratory-medicine', 'pediatrics', 'neurology', 'toxicology', 'obstetrics', 'neonatology', 'endocrine-metabolic', 'renal-electrolyte', 'infectious-disease', 'critical-care']);
     expect(plannedModules().length).toBeGreaterThanOrEqual(1);
     for (const module of plannedModules()) {
-      expect(module.plannedScope, `${module.id} needs a description of its scope`).toBeTruthy();
+      const prose = moduleProse(module.id);
+      expect(prose.plannedScope, `${module.id} needs a description of its scope`).toBeTruthy();
       // No launch date, no quarter, no countdown.
-      const text = `${module.description} ${module.plannedScope ?? ''}`;
+      const text = `${prose.description} ${prose.plannedScope ?? ''}`;
       expect(text).not.toMatch(/\bQ[1-4]\b|\b20\d\d\b|\bcoming (soon|in)\b/i);
     }
   });
@@ -255,8 +257,8 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
     for (const module of MODULES) {
       expect(module.route.length).toBeGreaterThan(2);
       expect(module.displayName.length).toBeGreaterThan(2);
-      expect(module.audience.length).toBeGreaterThan(10);
-      expect(module.prerequisites.length).toBeGreaterThan(10);
+      expect(moduleProse(module.id).audience.length).toBeGreaterThan(10);
+      expect(moduleProse(module.id).prerequisites.length).toBeGreaterThan(10);
       expect(['available', 'planned']).toContain(module.status);
     }
   });
@@ -266,7 +268,7 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
     expect(emergency).toMatchObject({
       route: 'emergency-medicine', displayName: 'Emergency medicine', status: 'available',
     });
-    expect(emergency?.plannedScope).toContain('Twenty-five');
+    expect(moduleProse('emergency-medicine').plannedScope).toContain('Twenty-five');
     expect(routeFor('/emergency-medicine')).toMatchObject({
       indexable: true, heading: 'Emergency medicine simulator',
     });

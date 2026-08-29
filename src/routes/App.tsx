@@ -8,8 +8,6 @@
 import { Suspense, lazy, useEffect, useState } from 'react';
 import '@platform/tokens/base.css';
 import { Landing } from '@landing/Landing';
-import { About } from '@landing/About';
-import { PlannedModuleRoute } from './PlannedModuleRoute';
 import { MODULES } from '@platform/modules/registry';
 import {
   ROOT_ROUTE, canonicalUrl, formatTitle, socialImageUrl, type RouteMetadata,
@@ -36,6 +34,10 @@ const NeonatologyRoute = lazy(async () => ({ default: (await import('./modules/n
 const EndocrineMetabolicRoute = lazy(async () => ({ default: (await import('./modules/endocrine-metabolic')).EndocrineMetabolicRoute }));
 const RenalElectrolyteRoute = lazy(async () => ({ default: (await import('./modules/renal-electrolyte')).RenalElectrolyteRoute }));
 const InfectiousDiseaseRoute = lazy(async () => ({ default: (await import('./modules/infectious-disease')).InfectiousDiseaseRoute }));
+// About and the planned-module page carry the module prose, which the landing directory never
+// renders. Loading them on demand keeps four paragraphs per module out of the landing bundle.
+const About = lazy(async () => ({ default: (await import('@landing/About')).About }));
+const PlannedModuleRoute = lazy(async () => ({ default: (await import('./PlannedModuleRoute')).PlannedModuleRoute }));
 const GalleryRoute = lazy(async () => ({ default: (await import('./GalleryRoute')).GalleryRoute }));
 const FrameBudgetRoute = lazy(async () => ({ default: (await import('./FrameBudgetRoute')).FrameBudgetRoute }));
 // The informational routes read the validation report and the governance records,
@@ -154,7 +156,7 @@ function CurrentRoute() {
   }, [path]);
 
   if (path === '/') return <Landing />;
-  if (path === '/about') return <About />;
+  if (path === '/about') return <Suspense fallback={<Loading />}><About /></Suspense>;
   if (path === '/anesthesia' || path.startsWith('/anesthesia/')) {
     return (
       <ErrorBoundary surface="simulator">
@@ -257,7 +259,7 @@ function CurrentRoute() {
   }
 
   const planned = MODULES.find((module) => `/${module.route}` === path && module.status === 'planned');
-  if (planned) return <PlannedModuleRoute module={planned} />;
+  if (planned) return <Suspense fallback={<Loading />}><PlannedModuleRoute module={planned} /></Suspense>;
 
   // The client-side not-found view. It has to match the prerendered 404
   // document, because this is the one a visitor actually sees once the script

@@ -6,6 +6,7 @@
  */
 
 import { SiteBar } from '@platform/ui';
+import { moduleProse } from '@platform/modules/module-prose';
 import { RELEASE_FEED_URL, type ModuleDeclaration } from '@platform/modules/registry';
 
 export function PlannedModuleRoute({ module }: { module: ModuleDeclaration }) {
@@ -20,11 +21,11 @@ export function PlannedModuleRoute({ module }: { module: ModuleDeclaration }) {
       </p>
 
       <h2>What it will cover</h2>
-      <p>{module.plannedScope}</p>
+      <p>{moduleProse(module.id).plannedScope}</p>
 
       <h2>Who it will be for</h2>
-      <p>{module.audience}</p>
-      <p className="field__hint">Prerequisites: {module.prerequisites}</p>
+      <p>{moduleProse(module.id).audience}</p>
+      <p className="field__hint">Prerequisites: {moduleProse(module.id).prerequisites}</p>
 
       <h2>When</h2>
       <p>

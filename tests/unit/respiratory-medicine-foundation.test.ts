@@ -5,6 +5,7 @@ import { PUBLIC_CATALOG_ARTIFACTS } from '@platform/catalog/public-artifacts';
 import { reviewableItems } from '@platform/governance/records';
 import { MODULES, availableModules } from '@platform/modules/registry';
 import { ROUTES, canonicalUrl, routeFor } from '@routes/routes';
+import { moduleProse } from '@platform/modules/module-prose';
 
 const root = process.cwd();
 const moduleId = 'respiratory-medicine';
@@ -43,9 +44,10 @@ describe('respiratory medicine module foundation', () => {
       displayName: 'Respiratory medicine',
       status: 'available',
     });
-    expect(module?.description.toLowerCase()).toContain('respiratory');
-    expect(module?.audience.length).toBeGreaterThan(10);
-    expect(module?.prerequisites.length).toBeGreaterThan(10);
+    const prose = moduleProse('respiratory-medicine');
+    expect(prose.description.toLowerCase()).toContain('respiratory');
+    expect(prose.audience.length).toBeGreaterThan(10);
+    expect(prose.prerequisites.length).toBeGreaterThan(10);
     expect(availableModules().map((entry) => entry.id)).toContain(moduleId);
 
     const indexPath = 'src/modules/respiratory-medicine/scenarios/index.ts';

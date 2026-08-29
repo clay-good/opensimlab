@@ -14,6 +14,7 @@ import { READY_MODULE_COUNT, READY_SCENARIO_COUNT } from '@landing/content';
 import { ROUTES, indexableRoutes, routeFor } from '@routes/routes';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { validateScenario } from '@anesthesia/scenarios/schema';
+import { moduleProse } from '@platform/modules/module-prose';
 import {
   DEFAULT_INFECTIOUS_DISEASE_SCENARIO_ID, INFECTIOUS_DISEASE_SCENARIOS, getInfectiousDiseaseScenario,
 } from '../../src/modules/infectious-disease/scenarios';
@@ -32,7 +33,7 @@ describe('Infectious disease module foundation', () => {
       route: 'infectious-disease', displayName: 'Infectious disease', status: 'available',
       timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
     });
-    expect(getModule('infectious-disease').plannedScope).toContain('Ten bounded');
+    expect(moduleProse('infectious-disease').plannedScope).toContain('Ten bounded');
     expect(INFECTIOUS_DISEASE_SCENARIOS).toHaveLength(10);
     expect(DEFAULT_INFECTIOUS_DISEASE_SCENARIO_ID).toBe(id);
     expect(getInfectiousDiseaseScenario(id)).toBe(scenario);
