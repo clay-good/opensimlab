@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 190 adds the authored counted-respiratory-rate snapshot. */
-export const WORKER_PROTOCOL_VERSION = 190;
+/** Version 191 adds the authored paired-oximetry-reading snapshot. */
+export const WORKER_PROTOCOL_VERSION = 191;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -669,6 +669,46 @@ export interface CountedRateSnapshot {
     readonly shifts: number; readonly distinctValues: number;
     readonly countedRate: number; readonly spo2Percent: number;
     readonly usingAccessoryMuscles: boolean; readonly speakingFullSentences: boolean;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
+}
+
+export interface PairedReadingSnapshot {
+  readonly oximeterRecordedAtTick: number | null;
+  readonly pairedAtTick: number | null;
+  readonly gapExplainedAtTick: number | null;
+  readonly escalationAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly oximeterPercent: number;
+  readonly arterialPercent: number | null;
+  readonly gasReturned: boolean;
+  readonly gasObserved: boolean;
+  readonly reviewArrived: boolean;
+  readonly reviewObserved: boolean;
+  readonly repositionAttempted: boolean;
+  readonly warmingAttempted: boolean;
+  readonly trendTrusted: boolean;
+  readonly standardAssumedFixed: boolean;
+  readonly oximeterRecord: {
+    readonly atTick: number; readonly readingPercent: number; readonly goodTrace: boolean;
+    readonly warmPeriphery: boolean; readonly nailCoveringPresent: boolean;
+  } | null;
+  readonly patientRecord: {
+    readonly atTick: number; readonly respiratoryRateBpm: number;
+    readonly speakingFullSentences: boolean; readonly usingAccessoryMuscles: boolean;
+    readonly arterialAvailable: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly readingPercent: number; readonly goodTrace: boolean;
+    readonly warmPeriphery: boolean; readonly nailCoveringPresent: boolean;
+    readonly respiratoryRateBpm: number; readonly speakingFullSentences: boolean;
+    readonly usingAccessoryMuscles: boolean; readonly arterialAvailable: boolean;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -4026,6 +4066,7 @@ export interface EquipmentSnapshot {
     readonly meningitisImaging?: MeningitisImagingSnapshot;
     readonly lowScore?: LowScoreSnapshot;
     readonly countedRate?: CountedRateSnapshot;
+    readonly pairedReading?: PairedReadingSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

@@ -5903,6 +5903,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Diagnostic accuracy of ward impedance-derived respiratory rate against manual counting was not retrievable at authoring time, so this lesson asserts neither equivalence nor inaccuracy. What it does refuse is recording a value obtained one way as though it were obtained another, which is a documentation claim rather than a measurement one.',
     briefIn: ['counted-rate-a-number-nobody-counted'],
   },
+  {
+    id: 'paired-reading-presentation-and-arterial-value-are-authored',
+    headline: 'One authored pair of numbers stands in for a distribution.',
+    simplification: 'The case supplies one fixed oximeter reading of 94 percent and one fixed arterial saturation of 86 percent from the same minute. No gas-exchange, oximetry, or respiratory model runs underneath, and the displayed reading never moves.',
+    whereItMisleads: 'A learner concludes that oximetry is unreliable in general, or that every reading in a patient with darker skin conceals hypoxaemia.',
+    correctUnderstanding: 'Most readings are close enough to act on, which is why the device remains standard. What the evidence establishes is that the error is not symmetric: occult hypoxaemia was roughly two-thirds more common in Black patients across 732,505 paired measurements at moderate certainty. The transferable move is knowing when the reading needs corroboration, not distrusting every number.',
+    briefIn: ['paired-reading-a-number-wrong-in-one-direction'],
+  },
+  {
+    id: 'paired-reading-controls-are-recording-and-escalation-only',
+    headline: 'The learner records and escalates; nobody here orders a gas or changes oxygen.',
+    simplification: 'The learner records the oximeter reading as a device reading, records both values once the arterial result returns, characterises the gap, escalates, reviews the boundaries, and arranges oximeter-independent observation. The arterial sample was sent by the qualified team before the rehearsal, and no drug, dose, oxygen setting, investigation, or procedure exists.',
+    whereItMisleads: 'The scenario is read as saying the nurse should have obtained an arterial sample, or that whoever charted the reading did something wrong.',
+    correctUnderstanding: 'Sampling and oxygen decisions belong to the qualified team. Nobody charted anything incorrectly: the reading is a true record of what the device displayed, which is exactly why it is left unamended and the second value is recorded beside it rather than replacing it.',
+    briefIn: ['paired-reading-a-number-wrong-in-one-direction'],
+  },
+  {
+    id: 'paired-reading-prevalence-ratios-are-population-statistics',
+    headline: 'A prevalence ratio describes groups, not the patient in front of you.',
+    simplification: 'The case states a prevalence ratio of 1.67 for occult hypoxaemia in Black compared with white patients, from a systematic review at moderate certainty.',
+    whereItMisleads: 'A learner treats the ratio as this patient\u2019s probability of being hypoxaemic, or treats skin colour as a clinical measurement.',
+    correctUnderstanding: 'The ratio is a property of a device interacting with tissue optics, measured across populations; it is not a posterior probability for an individual and not a diagnostic criterion. What it licenses is corroborating a reading when the clinical picture and the number disagree, which is a judgement about the measurement rather than about the person.',
+    briefIn: ['paired-reading-a-number-wrong-in-one-direction'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

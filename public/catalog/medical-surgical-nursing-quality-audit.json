@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "medical-surgical-nursing",
-  "scenarioCount": 2,
+  "scenarioCount": 3,
   "playableScenarioCount": 0,
   "scenarios": [
     {
@@ -71,6 +71,42 @@
           "status": "missing",
           "evidence": [
             "No version-bound state-space-verification record exists for counted-rate-a-number-nobody-counted 0.1.0."
+          ]
+        }
+      ],
+      "playable": false
+    },
+    {
+      "scenarioId": "paired-reading-a-number-wrong-in-one-direction",
+      "contentVersion": "0.1.0",
+      "completionComplete": false,
+      "qualityRecords": [
+        {
+          "kind": "training-value",
+          "status": "missing",
+          "evidence": [
+            "No version-bound training-value record exists for paired-reading-a-number-wrong-in-one-direction 0.1.0."
+          ]
+        },
+        {
+          "kind": "authored-defaults",
+          "status": "missing",
+          "evidence": [
+            "No version-bound authored-defaults record exists for paired-reading-a-number-wrong-in-one-direction 0.1.0."
+          ]
+        },
+        {
+          "kind": "scenario-hazard",
+          "status": "missing",
+          "evidence": [
+            "No version-bound scenario-hazard record exists for paired-reading-a-number-wrong-in-one-direction 0.1.0."
+          ]
+        },
+        {
+          "kind": "state-space-verification",
+          "status": "missing",
+          "evidence": [
+            "No version-bound state-space-verification record exists for paired-reading-a-number-wrong-in-one-direction 0.1.0."
           ]
         }
       ],

@@ -51,6 +51,7 @@ import { supportsSepticShockLabel } from '../../infectious-disease/septic-shock-
 import { supportsMeningitisImaging } from '../../infectious-disease/meningitis-imaging';
 import { supportsLowScore } from '../../medical-surgical-nursing/low-score';
 import { supportsCountedRate } from '../../medical-surgical-nursing/counted-rate';
+import { supportsPairedReading } from '../../medical-surgical-nursing/paired-reading';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -624,6 +625,41 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-medical-surgical-nursing-paired-reading-')) {
+      if (!supportsPairedReading(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The nursing paired-reading lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^paired-reading-${id}-\\d+$`).test(entry.eventId));
+      const reading = event('oximeter-recorded'); const paired = event('paired-recorded');
+      const gap = event('gap-explained'); const escalation = event('escalation-requested');
+      const boundaries = event('boundary-review'); const monitoring = event('monitoring');
+      const handoff = event('handoff');
+      const later = log.find((entry) => /^paired-reading-(paired|reviewed)-reassessment-\d+$/.test(entry.eventId));
+      const refusedShortcut = event('reposition-refused') ?? event('warming-refused')
+        ?? event('trend-refused') ?? event('standard-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'reconcile-medical-surgical-nursing-paired-reading-a-reading-recorded-as-a-reading': { met: !!reading, tick: reading?.tick,
+          finding: (reading ? 'The oximeter reading was recorded as what the device displayed rather than as the arterial saturation. ' : 'The oximeter reading was never recorded as a device reading. ')
+            + 'Those are different quantities, and only one of them was measured at the bedside.' },
+        'recognize-medical-surgical-nursing-paired-reading-error-with-a-direction': { met: !!paired && !!later, tick: paired?.tick,
+          finding: (paired && later ? 'Both values from the same minute were recorded together, 94 percent by oximeter and 86 percent by arterial sample, with the oximeter entry left unamended. ' : 'The paired values or a full assessment after the arterial result remains incomplete. ')
+            + 'The reading is a true record of what the device showed, so amending it would be a falsification rather than a correction.' },
+        'record-medical-surgical-nursing-paired-reading-what-the-gap-is-not': { met: !!gap, tick: gap?.tick,
+          finding: (gap ? 'The gap was characterised as a known limitation of optical measurement. ' : 'What the gap is and is not was never recorded. ')
+            + (refusedShortcut ? 'A repositioned probe, a warmed hand, a trusted trend, or an assumed regulatory fix was attempted and refused; it remains in this run. ' : '')
+            + 'Skin pigmentation changes light absorbance, so the error runs toward reassurance, and nothing at the bedside corrects it.' },
+        'activate-medical-surgical-nursing-paired-reading-escalation-on-the-arterial-value': { met: !!escalation && !!monitoring, tick: escalation?.tick,
+          finding: (escalation && monitoring ? 'Review was requested on the arterial value with the oximeter reading given and labelled, and observation independent of the oximeter was arranged. ' : 'Escalation on the arterial value or the oximeter-independent observation it depends on remains incomplete. ')
+            + 'A reviewer looking at the observation chart will otherwise see only the number in the nineties.' },
+        'review-medical-surgical-nursing-paired-reading-boundaries-and-their-certainty': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The boundaries were reviewed with their certainty attached. ' : 'The boundary and certainty review is missing. ')
+            + 'The meta-analytic evidence is moderate certainty, the 2025 draft guidance governs future device submissions rather than devices in service, and the oximeter trends change better than it reports an absolute value.' },
+        'handoff-medical-surgical-nursing-paired-reading-a-chart-that-reads-reassuringly': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'Both values, the reason the gap exists, and the fact that the chart will keep reading reassuringly all travelled with the patient. ' : 'Current full findings or continuing-care ownership remains incomplete. ')
+            + 'A corrected device and an explained cause are not handoff gates, and no outcome is certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-medical-surgical-nursing-counted-rate-')) {
       if (!supportsCountedRate(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The nursing counted-rate lesson was not active.' } satisfies ObjectiveFinding;

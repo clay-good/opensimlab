@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "medical-surgical-nursing",
-  "recordCount": 2,
+  "recordCount": 3,
   "records": [
     {
       "recordId": "scenario:low-score-what-the-threshold-does-not-exclude@0.1.0",
@@ -23,6 +23,17 @@
       "evidence": [
         "/catalog/medical-surgical-nursing-completion-audit.json#counted-rate-a-number-nobody-counted@0.1.0",
         "/catalog/medical-surgical-nursing-quality-audit.json#counted-rate-a-number-nobody-counted@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:paired-reading-a-number-wrong-in-one-direction@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "paired-reading-a-number-wrong-in-one-direction",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/medical-surgical-nursing-completion-audit.json#paired-reading-a-number-wrong-in-one-direction@0.1.0",
+        "/catalog/medical-surgical-nursing-quality-audit.json#paired-reading-a-number-wrong-in-one-direction@0.1.0"
       ]
     }
   ]

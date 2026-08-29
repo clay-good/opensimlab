@@ -2349,6 +2349,23 @@
       "limitationManifestHash": "sha256:9ca94fa65fbd5a993d289ee1d734893fec74a76f56c4d939ad637e7d5725085b"
     },
     {
+      "scenarioId": "paired-reading-a-number-wrong-in-one-direction",
+      "contentVersion": "0.1.0",
+      "moduleId": "medical-surgical-nursing",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:26191edd7538319a2540fed84eb756539bfa3246b319c48775ad064698dd4b1d",
+      "defaultsHash": "sha256:69778911bcf2c666a627a40c95120eadb85de53560bf37232ceb845d8a01932d",
+      "maturityHash": "sha256:6721bd206a12c608256c947b139a4d05730ea865d89c4a18b0e38b57e079b2d7",
+      "sourceManifestHash": "sha256:867aeb08d983c81abcf1b7b14f86c09ba9479091b2f265a63692ed26c769e4b2",
+      "limitationManifestHash": "sha256:2ec78d2754e1419130bd2fb3282377132fac24e1167dd715837529f836246f06"
+    },
+    {
       "scenarioId": "delivery-room-to-nicu-handoff",
       "contentVersion": "0.1.0",
       "moduleId": "neonatology",

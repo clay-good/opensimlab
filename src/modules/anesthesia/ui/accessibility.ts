@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -122,6 +122,7 @@ export function stateSummary(
     readonly meningitisImaging?: MeningitisImagingSnapshot;
     readonly lowScore?: LowScoreSnapshot;
     readonly countedRate?: CountedRateSnapshot;
+    readonly pairedReading?: PairedReadingSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -175,7 +176,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -200,6 +201,43 @@ export function stateSummary(
       }
     }
   }
+  if (options.pairedReading) {
+    const patient = options.pairedReading;
+    // Both numbers are announced together once the second exists, and the first is never amended.
+    lines.push(`Oximeter reading ${patient.oximeterPercent} percent on air with a good trace. ${patient.arterialPercent === null
+      ? 'The arterial sample sent earlier has not returned.'
+      : `Arterial saturation from the same minute: ${patient.arterialPercent} percent.`}`);
+    lines.push('Supplied starting observations were oximeter 94 percent on room air with a good trace, a warm hand, no nail covering, respiratory rate 24 counted for a full minute, blood pressure 132 over 78, pulse 98 per minute, temperature 37.4 degrees Celsius, alert and speaking in full sentences, four days after abdominal surgery. These remain historical starting observations.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push(patient.gapExplainedAtTick === null
+      ? 'Every bedside explanation for a wrong reading, meaning poor trace, cold hand, nail covering, motion, or probe position, can be checked. None of them explains a reading that is too high.'
+      : 'This gap is not a poor trace, a cold hand, nail covering, motion, or probe position. Pulse oximetry infers saturation from how light is absorbed, and skin pigmentation changes that absorbance, so the device overestimates arterial saturation more often in patients with darker skin. A systematic review of 732,505 paired measurements reports occult hypoxaemia roughly two-thirds more common in Black patients, at moderate certainty of evidence.');
+    lines.push('The bias is optical rather than a perfusion artifact, so repositioning the probe, warming the hand, or switching digits does not correct it. A 2025 draft regulatory guidance applies to devices submitted for approval in future and does not recall or recalibrate devices already in service. No drug, dose, route, fluid, oxygen setting, investigation, or procedure is selected here, and exhaled carbon dioxide is not supplied in this lesson.');
+    lines.push(`Reading recorded: ${patient.oximeterRecordedAtTick === null ? 'not yet' : `at simulated ${formatElapsed(patient.oximeterRecordedAtTick)}`}. Paired values: ${patient.pairedAtTick === null ? 'not recorded' : 'recorded together, with the reading unamended'}. Gap characterised: ${patient.gapExplainedAtTick === null ? 'not yet' : 'recorded'}. Escalation: ${patient.escalationAtTick === null ? 'not yet requested' : 'requested on the arterial value'}. Boundaries: ${patient.boundariesReviewedAtTick === null ? 'not reviewed' : 'reviewed'}. Observation: ${patient.monitoringAtTick === null ? 'not arranged' : 'arranged, independent of the oximeter'}.`);
+    lines.push(patient.oximeterRecord
+      ? `Last requested device check at simulated ${formatElapsed(patient.oximeterRecord.atTick)}: reading ${patient.oximeterRecord.readingPercent} percent; ${patient.oximeterRecord.goodTrace ? 'good trace' : 'poor trace'}; ${patient.oximeterRecord.warmPeriphery ? 'warm periphery' : 'cool periphery'}.`
+      : 'No new device check has been requested.');
+    lines.push(patient.patientRecord
+      ? `Last requested observation at simulated ${formatElapsed(patient.patientRecord.atTick)}: respiratory rate ${patient.patientRecord.respiratoryRateBpm} counted for a full minute; ${patient.patientRecord.arterialAvailable ? 'arterial result available' : 'no arterial result yet'}.`
+      : 'No new observation of the patient has been requested.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: oximeter ${patient.observation.readingPercent} percent; respiratory rate ${patient.observation.respiratoryRateBpm}.`
+      : 'No new full assessment has been requested.');
+    if (patient.gasObserved) {
+      lines.push(`The arterial sample returned at ${patient.arterialPercent} percent while the oximeter read ${patient.oximeterPercent} percent. Both numbers are from the same minute and the same patient.`);
+    }
+    if (patient.reviewObserved) {
+      lines.push('The review is acting on the arterial value. The oximeter continues to read in the nineties, correctly by its own calibration, and no fault is found with the device or with anyone who read it.');
+    }
+    if (patient.choiceFeedback) lines.push(patient.choiceFeedback);
+    if (patient.ended) {
+      lines.push(patient.ended === 'handoff'
+        ? 'Practice complete. Both values, the reason the gap exists, and the fact that the chart will keep reading reassuringly all travel with the patient.'
+        : 'Instructor takeover ended this branch. The teaching stop predicts no patient outcome.');
+    }
+    return lines.join('\n');
+  }
+
   if (options.countedRate) {
     const patient = options.countedRate;
     // Both numbers are announced together once the second exists: the discrepancy is the finding.

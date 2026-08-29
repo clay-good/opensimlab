@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: Counted respiratory rate state has protocol version 190', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(190);
+  it('Scenario: Paired oximetry reading state has protocol version 191', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(191);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

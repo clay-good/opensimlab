@@ -27,6 +27,7 @@ import { septicShockLabelCompletionEvidence } from '../../infectious-disease/sep
 import { meningitisImagingCompletionEvidence } from '../../infectious-disease/meningitis-imaging-completion';
 import { lowScoreCompletionEvidence } from '../../medical-surgical-nursing/low-score-completion';
 import { countedRateCompletionEvidence } from '../../medical-surgical-nursing/counted-rate-completion';
+import { pairedReadingCompletionEvidence } from '../../medical-surgical-nursing/paired-reading-completion';
 import {
   COMPLETION_SCHEMA_VERSION,
   type CompletionRequirementAudit,
@@ -135,6 +136,7 @@ export function auditClinicalScenario(
     ...meningitisImagingCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...lowScoreCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...countedRateCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...pairedReadingCompletionEvidence(scenario, capabilityVersion, moduleId),
   ].map((entry) => [entry.id, entry]));
   const auditedRequirements = requirements.map((entry) => exactEvidence.get(entry.id) ?? entry);
   return {
