@@ -52,6 +52,7 @@ import { supportsMeningitisImaging } from '../../infectious-disease/meningitis-i
 import { supportsLowScore } from '../../medical-surgical-nursing/low-score';
 import { supportsCountedRate } from '../../medical-surgical-nursing/counted-rate';
 import { supportsPairedReading } from '../../medical-surgical-nursing/paired-reading';
+import { supportsAfferentLimb } from '../../medical-surgical-nursing/afferent-limb';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -625,6 +626,43 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-medical-surgical-nursing-afferent-limb-')) {
+      if (!supportsAfferentLimb(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The nursing escalation lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^afferent-limb-${id}-\\d+$`).test(entry.eventId));
+      const criteria = event('criteria-recorded'); const obstacles = event('obstacles-recorded');
+      const called = event('team-called'); const stated = event('concern-stated');
+      const boundaries = event('boundary-review'); const monitoring = event('monitoring');
+      const handoff = event('handoff'); const pressure = event('pressure-applied');
+      const attended = log.find((entry) => /^afferent-limb-attended-reassessment-\d+$/.test(entry.eventId));
+      const refusedShortcut = event('doctor-first-refused') ?? event('round-refused')
+        ?? event('documentation-refused') ?? event('permission-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'reconcile-medical-surgical-nursing-afferent-limb-criteria-already-met': { met: !!criteria, tick: criteria?.tick,
+          finding: (criteria ? 'A respiratory rate of 30, a new oxygen requirement, and a systolic of 88 were recorded as met criteria against a policy requiring one. ' : 'The met criteria were never recorded as met. ')
+            + 'Recording them is not a preliminary to deciding whether to call; the threshold had already decided that.' },
+        'recognize-medical-surgical-nursing-afferent-limb-obstacles-that-are-not-clinical': { met: !!obstacles, tick: obstacles?.tick,
+          finding: (obstacles ? 'The obstacles were recorded plainly: yesterday\u2019s visit, the team being occupied, the covering doctor in theatre. ' : 'The reasons not to call were never written down, so they operated without being weighed. ')
+            + (pressure ? 'The discouragement was repeated while nothing about the patient changed. ' : '')
+            + 'None of them is a clinical finding and none appears among the criteria.' },
+        'activate-medical-surgical-nursing-afferent-limb-a-call-on-the-threshold': { met: !!called, tick: called?.tick,
+          finding: (called ? 'The response team was called directly on the met criteria, without seeking permission. ' : 'The response team was never called. ')
+            + (refusedShortcut ? 'A doctor-first call, a wait for the round, documentation without calling, or a request for permission was attempted and refused; it remains in this run. ' : '')
+            + 'A threshold that requires someone senior to agree before it can be used is not a threshold.' },
+        'record-medical-surgical-nursing-afferent-limb-a-concern-stated-to-a-person': { met: !!stated, tick: stated?.tick,
+          finding: (stated ? 'The concern was stated to the person on the other end: which criteria are met, what changed, and what is being asked for. ' : 'The concern was never stated to a person. ')
+            + 'A concern recorded in the notes is not a concern stated, and softening it into a question about availability is one of the documented ways a call stops functioning as an escalation.' },
+        'review-medical-surgical-nursing-afferent-limb-boundaries-and-their-certainty': { met: !!boundaries && !!monitoring, tick: boundaries?.tick,
+          finding: (boundaries && monitoring ? 'The boundaries were reviewed and observation was increased with its reason recorded. ' : 'The boundary review or the increased observation remains incomplete. ')
+            + 'Afferent-limb failure appears in roughly a fifth to a third of reviewed adverse events, and staff believed the situation was under control in about half of missed activations. These are observational system findings, not predictions about this patient.' },
+        'handoff-medical-surgical-nursing-afferent-limb-a-call-made-on-a-threshold': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'Which criteria were met and when, that the call was made on the threshold, and the obstacles as recorded all travelled with the patient. ' : 'Current full findings or continuing-care ownership remains incomplete. ')
+            + (attended ? 'The team attended and took over. ' : '')
+            + 'Whether the call proves necessary is not what made it correct.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-medical-surgical-nursing-paired-reading-')) {
       if (!supportsPairedReading(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The nursing paired-reading lesson was not active.' } satisfies ObjectiveFinding;

@@ -2315,6 +2315,23 @@
       "limitationManifestHash": "sha256:dd60b358c4e8bbd94b6f2e55f0433aacf74e54851f67bdcdcc282ce27a12fc06"
     },
     {
+      "scenarioId": "afferent-limb-a-threshold-met-and-a-call-not-made",
+      "contentVersion": "0.1.0",
+      "moduleId": "medical-surgical-nursing",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:f1f36be0a23d8e4271ef383d0c45e567a308a79a1596d119ce718b0008c2f6c9",
+      "defaultsHash": "sha256:3ee055338309b0334d119365e3c8824bff9d55fb513317f7bcdaea31658f3d63",
+      "maturityHash": "sha256:0639ba6650cca3a6915a8ec9136dae428d60ab3f02fd7cbac66216a7995307d6",
+      "sourceManifestHash": "sha256:86a1ba86665d8e95dc85ab06988110b37c90d3207f807b062f407e4ce416ba0d",
+      "limitationManifestHash": "sha256:c731c35fc21cf132607f5ca23721d5f9d90e13519daea2648a352c6d3731b602"
+    },
+    {
       "scenarioId": "counted-rate-a-number-nobody-counted",
       "contentVersion": "0.1.0",
       "moduleId": "medical-surgical-nursing",

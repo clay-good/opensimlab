@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -123,6 +123,7 @@ export function stateSummary(
     readonly lowScore?: LowScoreSnapshot;
     readonly countedRate?: CountedRateSnapshot;
     readonly pairedReading?: PairedReadingSnapshot;
+    readonly afferentLimb?: AfferentLimbSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -176,7 +177,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -201,6 +202,43 @@ export function stateSummary(
       }
     }
   }
+  if (options.afferentLimb) {
+    const patient = options.afferentLimb;
+    // The threshold state leads, because it was settled before the rehearsal began.
+    lines.push(`${patient.metCriteriaCount} of ${patient.totalCriteriaCount} activation criteria met, against a local policy requiring ${patient.policyThreshold}. ${patient.calledAtTick === null
+      ? 'The call has not been made.'
+      : `Response team called at simulated ${formatElapsed(patient.calledAtTick)}.`}`);
+    lines.push('Supplied starting observations were respiratory rate 30 per minute, blood pressure 88 over 54, oxygen saturation 93 percent on newly required supplemental oxygen, pulse 118 per minute, temperature 37.8 degrees Celsius, five days after emergency laparotomy. These remain historical starting observations.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push(patient.obstaclesRecordedAtTick === null
+      ? 'The charge nurse says the team came yesterday and found nothing, and that they are busy elsewhere. The covering doctor is in theatre.'
+      : 'Recorded: the team attended yesterday and found nothing, they are occupied elsewhere, and the covering doctor is in theatre. None of these is a clinical finding, and none appears among the criteria.');
+    lines.push('The criteria are the authorisation and no permission is required. No drug, dose, route, fluid, oxygen setting, investigation, or procedure is selected here, and exhaled carbon dioxide is not supplied in this lesson.');
+    lines.push(`Criteria recorded: ${patient.criteriaRecordedAtTick === null ? 'not yet' : `at simulated ${formatElapsed(patient.criteriaRecordedAtTick)}`}. Obstacles recorded: ${patient.obstaclesRecordedAtTick === null ? 'not yet' : 'recorded plainly'}. Call: ${patient.calledAtTick === null ? 'not made' : 'made on the met threshold'}. Concern stated: ${patient.concernStatedAtTick === null ? 'not yet' : 'stated to a person'}. Boundaries: ${patient.boundariesReviewedAtTick === null ? 'not reviewed' : 'reviewed'}. Observation: ${patient.monitoringAtTick === null ? 'not increased' : 'increased, with the reason recorded'}.`);
+    if (patient.pressureApplied && patient.calledAtTick === null) {
+      lines.push('The charge nurse has repeated the discouragement. Nothing about the patient has changed, and the criteria are still met.');
+    }
+    lines.push(patient.criteriaRecord
+      ? `Last requested criteria check at simulated ${formatElapsed(patient.criteriaRecord.atTick)}: ${patient.criteriaRecord.metCount} of ${patient.criteriaRecord.totalCount} met against a threshold of ${patient.criteriaRecord.policyThreshold}.`
+      : 'No new criteria check has been requested.');
+    lines.push(patient.availabilityRecord
+      ? `Last requested availability at simulated ${formatElapsed(patient.availabilityRecord.atTick)}: response team ${patient.availabilityRecord.responseTeamReachable ? 'reachable' : 'not reachable'}; covering doctor ${patient.availabilityRecord.coveringDoctorAvailable ? 'available' : 'in theatre'}. The response team is reachable regardless of the rest.`
+      : 'No new availability check has been requested.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: respiratory rate ${patient.observation.respiratoryRateBpm} per minute; systolic ${patient.observation.systolicMmHg}; ${patient.observation.metCount} of ${patient.observation.totalCount} criteria met.`
+      : 'No new full assessment has been requested.');
+    if (patient.arrivalObserved) {
+      lines.push('The response team is present and has taken over. They recorded that the criteria were met on arrival.');
+    }
+    if (patient.choiceFeedback) lines.push(patient.choiceFeedback);
+    if (patient.ended) {
+      lines.push(patient.ended === 'handoff'
+        ? 'Practice complete. Which criteria were met and when, that the call was made on the threshold rather than on permission, and the obstacles as recorded all travel with the patient.'
+        : 'Instructor takeover ended this branch. The teaching stop predicts no patient outcome and is not evidence that the delay caused harm.');
+    }
+    return lines.join('\n');
+  }
+
   if (options.pairedReading) {
     const patient = options.pairedReading;
     // Both numbers are announced together once the second exists, and the first is never amended.

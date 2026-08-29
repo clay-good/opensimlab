@@ -5927,6 +5927,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'The ratio is a property of a device interacting with tissue optics, measured across populations; it is not a posterior probability for an individual and not a diagnostic criterion. What it licenses is corroborating a reading when the clinical picture and the number disagree, which is a judgement about the measurement rather than about the person.',
     briefIn: ['paired-reading-a-number-wrong-in-one-direction'],
   },
+  {
+    id: 'afferent-limb-presentation-and-team-response-are-authored',
+    headline: 'One authored obstruction and one authored arrival stand in for a range.',
+    simplification: 'The case supplies one fixed set of met criteria, one discouraging charge nurse, one unavailable doctor, and a response team that attends when called. The patient deliberately never deteriorates.',
+    whereItMisleads: 'A learner concludes that colleagues who discourage a call are careless, or that the team always arrives promptly.',
+    correctUnderstanding: 'The obstruction here is ordinary rather than negligent: a team that found nothing yesterday, a genuine competing emergency, a doctor legitimately occupied. That is precisely why afferent-limb failure is common. The patient is held still so the lesson stays about escalation; a deteriorating patient would make the call easy and teach nothing about the hard case.',
+    briefIn: ['afferent-limb-a-threshold-met-and-a-call-not-made'],
+  },
+  {
+    id: 'afferent-limb-controls-are-recording-and-calling-only',
+    headline: 'The learner records, calls, and speaks; nothing is treated here.',
+    simplification: 'The learner records the met criteria, records the obstacles, calls the response team, states the concern to a person, reviews the boundaries, and increases observation. No drug, dose, route, fluid, oxygen setting, examination, investigation, or procedure exists.',
+    whereItMisleads: 'The scenario is read as saying the nurse should have started treatment, or that the charge nurse should be overruled.',
+    correctUnderstanding: 'Assessment and treatment belong to the responding team, which is the entire reason the call matters. Nobody is overruled either: the criteria are the authorisation, so calling is not a challenge to a colleague\u2019s judgement but the use of a system designed so that judgement is not required.',
+    briefIn: ['afferent-limb-a-threshold-met-and-a-call-not-made'],
+  },
+  {
+    id: 'afferent-limb-system-findings-are-not-causal-claims',
+    headline: 'The escalation-failure figures describe systems, not this patient.',
+    simplification: 'The case states that afferent-limb failure appears in roughly a fifth to a third of reviewed adverse events and that staff believed the situation was under control in about half of missed activations.',
+    whereItMisleads: 'A learner infers that a delayed call causes death at those rates, or that the authored takeover implies harm followed.',
+    correctUnderstanding: 'These are observational findings from case reviews, which select on the adverse event having happened; they establish that failed escalation is common in cases that went wrong, not that a given delay causes a given death. The instructor takeover in this lesson ends an unfinished rehearsal and is explicitly not evidence of harm.',
+    briefIn: ['afferent-limb-a-threshold-met-and-a-call-not-made'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

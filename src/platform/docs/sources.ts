@@ -3930,6 +3930,16 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-28',
   },
   {
+    id: 'failure-to-rescue-surgery-systematic-review-2015', pmid: '25794627',
+    authors: 'Johnston MJ, Arora S, King D, et al',
+    title: 'A systematic review to identify the factors that affect failure to rescue and escalation of care in surgery',
+    publication: 'Surgery', year: 2015,
+    locator: '157(4):752-763. Failure-to-rescue incidence reported between 8.0% and 16.9%; delayed escalation of care reported in 20.7% to 47.1% of cases. Systematic review of observational studies; no recommendation grade assigned.',
+    usedFor: 'The stated range for delayed escalation in failure-to-rescue cases, reported as an observational system finding rather than a causal claim about any individual delay.',
+    verifiedAgainst: 'https://pubmed.ncbi.nlm.nih.gov/25794627/',
+    verifiedOn: '2026-08-28',
+  },
+  {
     id: 'respiratory-rate-neglected-vital-sign-2008',
     authors: 'Cretikos MA, Bellomo R, Hillman K, et al',
     title: 'Respiratory rate: the neglected vital sign',

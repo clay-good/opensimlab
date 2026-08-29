@@ -27,13 +27,13 @@ const read = (file: string) => readFileSync(join(process.cwd(), file), 'utf8');
 const json = (file: string) => JSON.parse(read(file));
 
 describe('Nursing module foundation', () => {
-  it('registers three previews toward nine planned lessons', () => {
+  it('registers four previews toward nine planned lessons', () => {
     expect(getModule('medical-surgical-nursing')).toMatchObject({
       route: 'medical-surgical-nursing', displayName: 'Nursing', status: 'available',
       timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
     });
     expect(moduleProse('medical-surgical-nursing').plannedScope).toContain('Nine bounded');
-    expect(MEDICAL_SURGICAL_NURSING_SCENARIOS).toHaveLength(3);
+    expect(MEDICAL_SURGICAL_NURSING_SCENARIOS).toHaveLength(4);
     expect(DEFAULT_MEDICAL_SURGICAL_NURSING_SCENARIO_ID).toBe(id);
     expect(getMedicalSurgicalNursingScenario(id)).toBe(scenario);
     expect(getMedicalSurgicalNursingScenario('not-a-scenario')).toBeUndefined();
@@ -56,7 +56,7 @@ describe('Nursing module foundation', () => {
     expect(route.indexable).toBe(true);
     expect(route.description.length).toBeGreaterThanOrEqual(110);
     expect(route.description.length).toBeLessThanOrEqual(160);
-    expect(ROUTES.filter((entry) => entry.path.startsWith('/medical-surgical-nursing'))).toHaveLength(4);
+    expect(ROUTES.filter((entry) => entry.path.startsWith('/medical-surgical-nursing'))).toHaveLength(5);
     const markup = renderToStaticMarkup(createElement(PrerenderedBody, { path }));
     expect(markup).toContain('what the threshold does not exclude');
     const moduleMarkup = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/medical-surgical-nursing' }));
@@ -70,7 +70,7 @@ describe('Nursing module foundation', () => {
       expect(PUBLIC_CATALOG_ARTIFACTS).toContain(`/catalog/medical-surgical-nursing-${artifact}.json`);
     }
     const completion = json('public/catalog/medical-surgical-nursing-completion-audit.json');
-    expect(completion.scenarioCount).toBe(3);
+    expect(completion.scenarioCount).toBe(4);
     expect(completion.scenarios[0].scenarioId).toBe(id);
     // The two report catalogs must stay byte-identical, or a report can resolve in one and not the other.
     expect(read('public/catalog/scenario-report-catalog.json'))

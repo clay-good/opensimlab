@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 191 adds the authored paired-oximetry-reading snapshot. */
-export const WORKER_PROTOCOL_VERSION = 191;
+/** Version 192 adds the authored escalation-threshold snapshot. */
+export const WORKER_PROTOCOL_VERSION = 192;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -709,6 +709,47 @@ export interface PairedReadingSnapshot {
     readonly warmPeriphery: boolean; readonly nailCoveringPresent: boolean;
     readonly respiratoryRateBpm: number; readonly speakingFullSentences: boolean;
     readonly usingAccessoryMuscles: boolean; readonly arterialAvailable: boolean;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
+}
+
+export interface AfferentLimbSnapshot {
+  readonly criteriaRecordedAtTick: number | null;
+  readonly obstaclesRecordedAtTick: number | null;
+  readonly calledAtTick: number | null;
+  readonly concernStatedAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly metCriteriaCount: number;
+  readonly totalCriteriaCount: number;
+  readonly policyThreshold: number;
+  readonly pressureApplied: boolean;
+  readonly teamArrived: boolean;
+  readonly arrivalObserved: boolean;
+  readonly permissionSought: boolean;
+  readonly doctorFirstAttempted: boolean;
+  readonly roundWaitAttempted: boolean;
+  readonly documentedOnlyAttempted: boolean;
+  readonly criteriaRecord: {
+    readonly atTick: number; readonly metCount: number;
+    readonly totalCount: number; readonly policyThreshold: number;
+  } | null;
+  readonly availabilityRecord: {
+    readonly atTick: number; readonly responseTeamReachable: boolean;
+    readonly coveringDoctorAvailable: boolean; readonly chargeNurseSupportive: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly metCount: number; readonly totalCount: number;
+    readonly policyThreshold: number; readonly responseTeamReachable: boolean;
+    readonly coveringDoctorAvailable: boolean; readonly chargeNurseSupportive: boolean;
+    readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
+    readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly coreTemperatureC: number; readonly alertness: string;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -4067,6 +4108,7 @@ export interface EquipmentSnapshot {
     readonly lowScore?: LowScoreSnapshot;
     readonly countedRate?: CountedRateSnapshot;
     readonly pairedReading?: PairedReadingSnapshot;
+    readonly afferentLimb?: AfferentLimbSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {
