@@ -2383,6 +2383,23 @@
       "limitationManifestHash": "sha256:2ec78d2754e1419130bd2fb3282377132fac24e1167dd715837529f836246f06"
     },
     {
+      "scenarioId": "proxy-scale-a-number-without-a-standard",
+      "contentVersion": "0.1.0",
+      "moduleId": "medical-surgical-nursing",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:1bc2329dea65c12ada9b93ce2634466bbff8afa59f8b6dd17b2e2a7c3ff41933",
+      "defaultsHash": "sha256:402d3cda5f52beafd38c8f0a60659ae888e7d96626ad7db84b79334388a74f84",
+      "maturityHash": "sha256:00e48e5d276e361016c4a0c2d7f4460aa55c8e6bc1bda4a2d6bd27b398ee5106",
+      "sourceManifestHash": "sha256:9e33e0713655480240576f7aba117d2108ed6fe44e7556d30c4133898003f28b",
+      "limitationManifestHash": "sha256:9d9d3e837965bf2de8d9eaf5aaea3bdac6dc8f0c0672307210b97878be233300"
+    },
+    {
       "scenarioId": "quiet-patient-a-screen-that-was-never-done",
       "contentVersion": "0.1.0",
       "moduleId": "medical-surgical-nursing",

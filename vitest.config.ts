@@ -21,13 +21,19 @@ export default defineConfig({
     reporters: ['default'],
     // The engine tests run tens of thousands of solver steps deliberately; they
     // are the regression net, not unit-sized. The replay files step the solver
-    // 216,000 times per guidance level and the slowest single test measures
-    // 19.7s on an idle machine, so 60s left only a 3x margin. Under ordinary
-    // machine load that same test measured 99.1s and reported as a failure
-    // even though nothing had regressed. A false failure here is worse than a
-    // slow one, because it teaches you to dismiss this file's output. 180s sits
-    // comfortably above the worst observed run while still catching a hang.
-    testTimeout: 180_000,
+    // 216,000 times per guidance level, and they are not uniform: the
+    // hypokalemia file's slowest test measures 19.7s on an idle machine while
+    // the hypernatremia file's measures 80.8s. An earlier fix here set 180s
+    // from the 19.7s figure alone and failed within two runs, because that
+    // number was measured on the wrong file. Under external machine load the
+    // 80.8s test has been observed at 368.4s, a 4.6x contention factor, and a
+    // sibling test passed at 163.8s in the same run. 600s absorbs that
+    // contention on the measured worst case while still catching a hang. The
+    // durable fix is making the replays cheaper without weakening the
+    // frame-by-frame determinism they prove; that is a separate change, and
+    // raising this number again instead of making it would be the wrong
+    // instinct.
+    testTimeout: 600_000,
     // A dozen integration files each step the solver for minutes of CPU. Left
     // unbounded, the pool spawns more workers than this machine has cores, and
     // those files miss their own timeouts through contention rather than any
