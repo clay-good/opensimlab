@@ -81,6 +81,8 @@ import { QUIET_PATIENT_ACTIONS, supportsQuietPatient } from '../modules/medical-
 import { quietPatientReportActions } from '../modules/medical-surgical-nursing/quiet-patient-reporting';
 import { PROXY_SCALE_ACTIONS, supportsProxyScale } from '../modules/medical-surgical-nursing/proxy-scale';
 import { proxyScaleReportActions } from '../modules/medical-surgical-nursing/proxy-scale-reporting';
+import { LAST_KNOWN_WELL_ACTIONS, supportsLastKnownWell } from '../modules/medical-surgical-nursing/last-known-well';
+import { lastKnownWellReportActions } from '../modules/medical-surgical-nursing/last-known-well-reporting';
 import { possibleSepsisReportActions } from '../modules/infectious-disease/possible-sepsis-reporting';
 import { supportsRenalHypermagnesemiaDemonstration } from '../modules/renal-electrolyte/demo/renal-hypermagnesemia-demonstration';
 import { renalHyponatremiaReportActions } from '../modules/renal-electrolyte/hyponatremia-reporting';
@@ -539,11 +541,13 @@ function collectReportRecentContext(session: SessionState, seed: number, sodiumL
   septicShockLabelLesson: boolean, meningitisImagingLesson: boolean,
   lowScoreLesson: boolean, countedRateLesson: boolean,
   pairedReadingLesson: boolean, afferentLimbLesson: boolean,
-  quietPatientLesson: boolean, proxyScaleLesson: boolean): ScenarioReportRecentContext {
+  quietPatientLesson: boolean, proxyScaleLesson: boolean,
+  lastKnownWellLesson: boolean): ScenarioReportRecentContext {
   const actions = sessionInternals().recorder?.build('pending').actions ?? [];
   return {
     seed: Math.trunc(seed),
-    actions: proxyScaleLesson ? proxyScaleReportActions(actions, session.log)
+    actions: lastKnownWellLesson ? lastKnownWellReportActions(actions, session.log)
+      : proxyScaleLesson ? proxyScaleReportActions(actions, session.log)
       : quietPatientLesson ? quietPatientReportActions(actions, session.log)
       : afferentLimbLesson ? afferentLimbReportActions(actions, session.log)
       : pairedReadingLesson ? pairedReadingReportActions(actions, session.log)
@@ -570,7 +574,8 @@ function collectReportRecentContext(session: SessionState, seed: number, sodiumL
       : avpLesson ? avpDeficiencyReportActions(actions, session.log)
       : sodiumLesson ? hyponatremiaCorrectionReportActions(actions, session.log)
       : actions.slice(-REPORT_CONTEXT_ACTION_LIMIT).map((action) => {
-      const lessonActions = action.type === 'proxy-scale-response' ? PROXY_SCALE_ACTIONS
+      const lessonActions = action.type === 'last-known-well-response' ? LAST_KNOWN_WELL_ACTIONS
+        : action.type === 'proxy-scale-response' ? PROXY_SCALE_ACTIONS
         : action.type === 'quiet-patient-response' ? QUIET_PATIENT_ACTIONS
         : action.type === 'afferent-limb-response' ? AFFERENT_LIMB_ACTIONS
         : action.type === 'paired-reading-response' ? PAIRED_READING_ACTIONS
@@ -611,14 +616,14 @@ function collectReportRecentContext(session: SessionState, seed: number, sodiumL
         // Invalid lesson payloads remain refused attempts, without reproducing
         // an injected note or making their named action look accepted.
         payload: lessonActions ? lessonChoice !== undefined ? { action: lessonChoice } : {}
-          : (session.equipment?.resuscitation.hyponatremiaCorrection || session.equipment?.resuscitation.avpDeficiency || session.equipment?.resuscitation.refeeding || session.equipment?.resuscitation.perioperativeDiabetes || session.equipment?.resuscitation.renalHyperkalemia || session.equipment?.resuscitation.renalHypokalemia || session.equipment?.resuscitation.renalHyponatremia || session.equipment?.resuscitation.renalHypernatremia || session.equipment?.resuscitation.renalHypocalcemia || session.equipment?.resuscitation.renalHypermagnesemia || session.equipment?.resuscitation.meningococcalSepsis || session.equipment?.resuscitation.obstructedKidney || session.equipment?.resuscitation.febrileNeutropenia || session.equipment?.resuscitation.necrotizingInfection || session.equipment?.resuscitation.endocarditisHeartFailure || session.equipment?.resuscitation.severePneumonia || session.equipment?.resuscitation.toxicShock || session.equipment?.resuscitation.possibleSepsis || session.equipment?.resuscitation.septicShockLabel || session.equipment?.resuscitation.meningitisImaging || session.equipment?.resuscitation.lowScore || session.equipment?.resuscitation.countedRate || session.equipment?.resuscitation.pairedReading || session.equipment?.resuscitation.afferentLimb || session.equipment?.resuscitation.quietPatient || session.equipment?.resuscitation.proxyScale) ? {}
+          : (session.equipment?.resuscitation.hyponatremiaCorrection || session.equipment?.resuscitation.avpDeficiency || session.equipment?.resuscitation.refeeding || session.equipment?.resuscitation.perioperativeDiabetes || session.equipment?.resuscitation.renalHyperkalemia || session.equipment?.resuscitation.renalHypokalemia || session.equipment?.resuscitation.renalHyponatremia || session.equipment?.resuscitation.renalHypernatremia || session.equipment?.resuscitation.renalHypocalcemia || session.equipment?.resuscitation.renalHypermagnesemia || session.equipment?.resuscitation.meningococcalSepsis || session.equipment?.resuscitation.obstructedKidney || session.equipment?.resuscitation.febrileNeutropenia || session.equipment?.resuscitation.necrotizingInfection || session.equipment?.resuscitation.endocarditisHeartFailure || session.equipment?.resuscitation.severePneumonia || session.equipment?.resuscitation.toxicShock || session.equipment?.resuscitation.possibleSepsis || session.equipment?.resuscitation.septicShockLabel || session.equipment?.resuscitation.meningitisImaging || session.equipment?.resuscitation.lowScore || session.equipment?.resuscitation.countedRate || session.equipment?.resuscitation.pairedReading || session.equipment?.resuscitation.afferentLimb || session.equipment?.resuscitation.quietPatient || session.equipment?.resuscitation.proxyScale || session.equipment?.resuscitation.lastKnownWell) ? {}
           : boundedScalars(action.payload, 12),
       };
     }),
     snapshot: {
       patient: Object.fromEntries(Object.entries(session.state ?? {})
         .filter((entry): entry is [string, number] => Number.isFinite(entry[1]))
-        .filter(([field]) => !(sodiumLesson || avpLesson || refeedingLesson || diabetesLesson || renalLesson || hypokalemiaLesson || renalSodiumLesson || renalWaterLesson || renalCalciumLesson || renalMagnesiumLesson || meningococcalLesson || obstructionLesson || neutropeniaLesson || necrotizingLesson || endocarditisLesson || pneumoniaLesson || toxicShockLesson || possibleSepsisLesson || septicShockLabelLesson || meningitisImagingLesson || lowScoreLesson || countedRateLesson || pairedReadingLesson || afferentLimbLesson || quietPatientLesson || proxyScaleLesson)
+        .filter(([field]) => !(sodiumLesson || avpLesson || refeedingLesson || diabetesLesson || renalLesson || hypokalemiaLesson || renalSodiumLesson || renalWaterLesson || renalCalciumLesson || renalMagnesiumLesson || meningococcalLesson || obstructionLesson || neutropeniaLesson || necrotizingLesson || endocarditisLesson || pneumoniaLesson || toxicShockLesson || possibleSepsisLesson || septicShockLabelLesson || meningitisImagingLesson || lowScoreLesson || countedRateLesson || pairedReadingLesson || afferentLimbLesson || quietPatientLesson || proxyScaleLesson || lastKnownWellLesson)
           || ['systolicMmHg', 'diastolicMmHg', 'meanArterialMmHg', 'heartRateBpm',
             'respiratoryRateBpm', 'spo2Percent', 'coreTemperatureC'].includes(field))
         // These authored cases supply neither a continuous CO2 measurement nor oxygen settings.
@@ -652,6 +657,7 @@ function collectReportRecentContext(session: SessionState, seed: number, sodiumL
         || (afferentLimbLesson && !session.equipment?.resuscitation.afferentLimb)
         || (quietPatientLesson && !session.equipment?.resuscitation.quietPatient)
         || (proxyScaleLesson && !session.equipment?.resuscitation.proxyScale)
+        || (lastKnownWellLesson && !session.equipment?.resuscitation.lastKnownWell)
         ? {} : collectReportEquipmentContext(session.equipment),
     },
   };
@@ -764,7 +770,7 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
           : session.phase === 'briefing' || session.phase === 'idle' ? 'prebrief' : 'live'),
         simulatedTick: session.tick,
         canonicalUrl: `${SITE_ORIGIN}${config.basePath}/scenario/${scenario.metadata.id}`,
-        collectRecentContext: () => collectReportRecentContext(session, assignment.seed, supportsHyponatremiaCorrection(scenario), supportsAvpDeficiency(scenario), supportsRefeeding(scenario), supportsPerioperativeDiabetes(scenario), supportsRenalHyperkalemia(scenario), supportsRenalHypokalemia(scenario), supportsRenalHyponatremia(scenario), supportsRenalHypernatremia(scenario), supportsRenalHypocalcemia(scenario), supportsRenalHypermagnesemia(scenario), supportsMeningococcalSepsis(scenario), supportsObstructedKidney(scenario), supportsFebrileNeutropenia(scenario), supportsNecrotizingInfection(scenario), supportsEndocarditisHeartFailure(scenario), supportsSeverePneumonia(scenario), supportsToxicShock(scenario), supportsPossibleSepsis(scenario), supportsSepticShockLabel(scenario), supportsMeningitisImaging(scenario), supportsLowScore(scenario), supportsCountedRate(scenario), supportsPairedReading(scenario), supportsAfferentLimb(scenario), supportsQuietPatient(scenario), supportsProxyScale(scenario)),
+        collectRecentContext: () => collectReportRecentContext(session, assignment.seed, supportsHyponatremiaCorrection(scenario), supportsAvpDeficiency(scenario), supportsRefeeding(scenario), supportsPerioperativeDiabetes(scenario), supportsRenalHyperkalemia(scenario), supportsRenalHypokalemia(scenario), supportsRenalHyponatremia(scenario), supportsRenalHypernatremia(scenario), supportsRenalHypocalcemia(scenario), supportsRenalHypermagnesemia(scenario), supportsMeningococcalSepsis(scenario), supportsObstructedKidney(scenario), supportsFebrileNeutropenia(scenario), supportsNecrotizingInfection(scenario), supportsEndocarditisHeartFailure(scenario), supportsSeverePneumonia(scenario), supportsToxicShock(scenario), supportsPossibleSepsis(scenario), supportsSepticShockLabel(scenario), supportsMeningitisImaging(scenario), supportsLowScore(scenario), supportsCountedRate(scenario), supportsPairedReading(scenario), supportsAfferentLimb(scenario), supportsQuietPatient(scenario), supportsProxyScale(scenario), supportsLastKnownWell(scenario)),
       }}
       {...(reportRequest ? { openRequest: reportRequest.id } : {})}
       onOpen={() => {

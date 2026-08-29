@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 194 adds the authored proxy pain-scale snapshot. */
-export const WORKER_PROTOCOL_VERSION = 194;
+/** Version 195 adds the authored unwitnessed-onset snapshot. */
+export const WORKER_PROTOCOL_VERSION = 195;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -828,6 +828,45 @@ export interface ProxyScaleSnapshot {
     readonly atTick: number; readonly total: number; readonly selfReportAvailable: boolean;
     readonly itemCount: number; readonly recentSurgery: boolean; readonly analgesiaCharted: boolean;
     readonly proxyAvailable: boolean; readonly baselineDescription: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
+}
+
+export interface LastKnownWellSnapshot {
+  readonly boundRecordedAtTick: number | null;
+  readonly recollectionRecordedAtTick: number | null;
+  readonly pathwayActivatedAtTick: number | null;
+  readonly consequencesRecordedAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly lastKnownWellClock: string;
+  readonly foundClock: string;
+  readonly unwitnessedHours: number;
+  readonly onsetTimeRecorded: string | null;
+  readonly recollectionPressed: boolean;
+  readonly assessmentArrived: boolean;
+  readonly assessmentObserved: boolean;
+  readonly recollectionChartedAttempted: boolean;
+  readonly boundChartedAttempted: boolean;
+  readonly nothingOfferedAttempted: boolean;
+  readonly waitedForFamily: boolean;
+  readonly timelineRecord: {
+    readonly atTick: number; readonly certainEntries: number;
+    readonly totalEntries: number; readonly unwitnessedHours: number;
+  } | null;
+  readonly patientRecord: {
+    readonly atTick: number; readonly focalDeficit: boolean; readonly speaking: boolean;
+    readonly glucoseMmolL: number; readonly airwayProtected: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly certainEntries: number; readonly totalEntries: number;
+    readonly unwitnessedHours: number; readonly focalDeficit: boolean; readonly speaking: boolean;
+    readonly glucoseMmolL: number; readonly airwayProtected: boolean;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -4189,6 +4228,7 @@ export interface EquipmentSnapshot {
     readonly afferentLimb?: AfferentLimbSnapshot;
     readonly quietPatient?: QuietPatientSnapshot;
     readonly proxyScale?: ProxyScaleSnapshot;
+    readonly lastKnownWell?: LastKnownWellSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

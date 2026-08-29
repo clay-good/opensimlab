@@ -162,6 +162,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
     ])).toEqual({
       hasAnaphylaxisResponse: true,
       hasHypermetabolicResponse: true,
+      hasLastKnownWellResponse: false,
       hasLastResponse: true,
       hasCardiacArrestResponse: true,
       hasHighSpinalResponse: true,

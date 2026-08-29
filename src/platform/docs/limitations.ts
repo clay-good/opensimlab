@@ -5999,6 +5999,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'The published position is that these instruments measure observable behaviour and were not developed or validated as intensity scales, and a state-of-the-science review concluded none could then be recommended for broad adoption on that basis. That is an absence of evidence for an intensity claim rather than evidence that the tools are wrong about behaviour, and the distinction matters: the scale is useful for what it measures.',
     briefIn: ['proxy-scale-a-number-without-a-standard'],
   },
+  {
+    id: 'last-known-well-timeline-and-assessment-response-are-authored',
+    headline: 'One authored timeline, and a deficit that never moves.',
+    simplification: 'The case supplies three fixed points \u2014 a 22:40 nursing entry, an uncertain recollection of about three o\u2019clock, and discovery at 06:10 \u2014 and a deficit that does not change for the length of the rehearsal. No neurological, perfusion, or imaging model runs underneath.',
+    whereItMisleads: 'A learner concludes that an unwitnessed deficit is always stable, or that continued observation will eventually resolve the missing hours.',
+    correctUnderstanding: 'Deficits of unknown onset can worsen, improve, or fluctuate, and timed observation exists precisely because they can. The deficit is held still here so the lesson stays about the record: a deficit that evolved would let a learner treat the evolution as the answer, when nothing about watching her supplies a time nobody observed.',
+    briefIn: ['last-known-well-a-time-nobody-can-supply'],
+  },
+  {
+    id: 'last-known-well-controls-are-recording-and-activation-only',
+    headline: 'No imaging is requested, and no eligibility is determined.',
+    simplification: 'The learner records a bound, records an uncertain account as uncertain, activates the pathway on the deficit, states what the unknown changes, reviews the boundaries, arranges timed observation, and hands off. No imaging request, interpretation, eligibility determination, drug, dose, route, or procedure exists.',
+    whereItMisleads: 'The imaging-based assessment described in the boundary review is read as something the learner requests or interprets, or activation is read as a decision that treatment will be given.',
+    correctUnderstanding: 'Assessment, imaging, interpretation, eligibility, and every treatment decision belong to the qualified team throughout. Activation summons the people who make those decisions; it does not make any of them, and this rehearsal never reports what they decided.',
+    briefIn: ['last-known-well-a-time-nobody-can-supply'],
+  },
+  {
+    id: 'last-known-well-trial-evidence-describes-a-population',
+    headline: 'A trial result is a population statement, not a statement about her.',
+    simplification: 'The case cites a randomised trial in deficits of unknown onset reporting a higher rate of favourable outcome in the treated group, with eligibility assessed by imaging as a surrogate for lesion age.',
+    whereItMisleads: 'A learner reads the trial as establishing that this patient would benefit, or that an unwitnessed onset therefore carries an expected outcome.',
+    correctUnderstanding: 'The estimate is an average effect over an enrolled population under trial conditions, with a confidence interval attached and entry criteria this patient has not been assessed against. Whether she resembles that population is an imaging question the qualified team answers, and no individualized effect, eligibility, or outcome is reported here.',
+    briefIn: ['last-known-well-a-time-nobody-can-supply'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

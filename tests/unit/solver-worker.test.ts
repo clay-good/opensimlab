@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: Proxy pain scale state has protocol version 194', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(194);
+  it('Scenario: Unwitnessed onset state has protocol version 195', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(195);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

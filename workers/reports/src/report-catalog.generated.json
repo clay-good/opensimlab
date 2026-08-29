@@ -2349,6 +2349,23 @@
       "limitationManifestHash": "sha256:aeba42503801c5ef5a3bddd876efa06deb696e69a6e0234db91073316bb52d52"
     },
     {
+      "scenarioId": "last-known-well-a-time-nobody-can-supply",
+      "contentVersion": "0.1.0",
+      "moduleId": "medical-surgical-nursing",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:31444d3fc3820bae44d20119e30b5f4da287ae8dc27a64ff14f3cd87e95fc50d",
+      "defaultsHash": "sha256:bce61b656834bbc43c1dc517b310a4fa3058cb524867cc47afcedebf6eb3ec98",
+      "maturityHash": "sha256:8d15a2b218ac1783b00f63bcbdfac4679ad5daf8c5cdd5fe0a52697025046729",
+      "sourceManifestHash": "sha256:91d588e8565b027aa3bc6e01fd15259cce5c5e87afdd5a337832f16a80269811",
+      "limitationManifestHash": "sha256:6d995f84ea12da4584b931ce0959658a2bda8638737518217ceb0c6de86d8873"
+    },
+    {
       "scenarioId": "low-score-what-the-threshold-does-not-exclude",
       "contentVersion": "0.1.0",
       "moduleId": "medical-surgical-nursing",

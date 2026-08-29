@@ -4283,6 +4283,16 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-28',
   },
   {
+    id: 'wake-up-unknown-onset-thrombolysis-2018', pmid: '29766770',
+    authors: 'Thomalla G, Simonsen CZ, Boutitie F, et al',
+    title: 'MRI-Guided Thrombolysis for Stroke with Unknown Time of Onset',
+    publication: 'New England Journal of Medicine', year: 2018,
+    locator: '379(7):611-622; doi:10.1056/NEJMoa1804355; 503 patients randomised, favourable outcome 53.3% versus 41.8%, odds ratio 1.61 (95% CI 1.09-2.36), P=0.02',
+    usedFor: 'The boundary review statement that a randomised trial enrolled patients whose deficits began at an unknown time, that eligibility rested on imaging as a surrogate for lesion age rather than on a remembered clock time, and that the reported benefit is an average over an enrolled population rather than a statement about this patient.',
+    verifiedAgainst: 'https://www.nejm.org/doi/full/10.1056/NEJMoa1804355',
+    verifiedOn: '2026-08-29',
+  },
+  {
     id: 'phoenix-pediatric-sepsis-criteria-2024', pmid: '38245897',
     authors: 'Sanchez-Pinto LN, Bennett TD, DeWitt PE, et al',
     title: 'Development and Validation of the Phoenix Criteria for Pediatric Sepsis and Septic Shock',

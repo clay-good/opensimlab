@@ -55,6 +55,7 @@ import { supportsPairedReading } from '../../medical-surgical-nursing/paired-rea
 import { supportsAfferentLimb } from '../../medical-surgical-nursing/afferent-limb';
 import { supportsQuietPatient } from '../../medical-surgical-nursing/quiet-patient';
 import { supportsProxyScale } from '../../medical-surgical-nursing/proxy-scale';
+import { supportsLastKnownWell } from '../../medical-surgical-nursing/last-known-well';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -628,6 +629,43 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-medical-surgical-nursing-last-known-well-')) {
+      if (!supportsLastKnownWell(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The nursing unwitnessed-onset lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^last-known-well-${id}-\\d+$`).test(entry.eventId));
+      const bound = event('bound-recorded'); const recollection = event('recollection-recorded');
+      const pathway = event('pathway-activated'); const consequences = event('consequences-recorded');
+      const boundaries = event('boundary-review'); const monitoring = event('monitoring');
+      const handoff = event('handoff'); const pressed = event('recollection-pressed');
+      const assessed = log.find((entry) => /^last-known-well-assessed-reassessment-\d+$/.test(entry.eventId));
+      const refusedShortcut = event('recollection-charted-refused') ?? event('bound-charted-refused')
+        ?? event('nothing-offered-refused') ?? event('waiting-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'reconcile-medical-surgical-nursing-last-known-well-a-bound-and-not-an-onset': { met: !!bound, tick: bound?.tick,
+          finding: (bound ? 'The 22:40 entry was recorded as the last documented interaction and explicitly as a bound. ' : 'Last known well was never recorded as a bound. ')
+            + 'It says the deficit began after that time, which is true. It does not say the deficit began at that time, which nobody knows.' },
+        'recognize-medical-surgical-nursing-last-known-well-an-uncertain-account-kept-uncertain': { met: !!recollection, tick: recollection?.tick,
+          finding: (recollection ? 'The care assistant\u2019s account was recorded in her words, in its own field, marked uncertain. ' : 'The recollection was never recorded as an uncertain account. ')
+            + (pressed ? 'Pressed on the time she moved it by an hour, which is what pressing an uncertain recollection produces. ' : '')
+            + (refusedShortcut ? 'An onset-field entry, a stand-down, or a wait for the family was attempted and refused; it remains in this run. ' : '')
+            + 'A timestamp cannot later be distinguished from a witnessed observation.' },
+        'activate-medical-surgical-nursing-last-known-well-on-the-deficit-not-the-clock': { met: !!pathway && !!monitoring, tick: pathway?.tick,
+          finding: (pathway && monitoring ? 'The pathway was activated on the deficit and timed neurological observation was arranged. ' : 'Activation on the deficit or the timed observation remains incomplete. ')
+            + 'Activation depends on a new focal deficit, not on knowing when it started.' },
+        'record-medical-surgical-nursing-last-known-well-what-the-unknown-changes': { met: !!consequences, tick: consequences?.tick,
+          finding: (consequences ? 'The record stated what the unknown changes and what it leaves untouched. ' : 'What the unknown changes was never stated. ')
+            + 'It does not change the deficit, the activation, or the observations; it changes which assessments the qualified team uses, because an unwitnessed onset is assessed by imaging rather than by a clock.' },
+        'review-medical-surgical-nursing-last-known-well-boundaries-and-their-certainty': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The boundaries were reviewed with their certainty attached. ' : 'The boundary and certainty review is missing. ')
+            + 'The trial enrolled patients with deficits of unknown onset and assessed eligibility by imaging as a surrogate for lesion age; it describes a population rather than this patient, and the eligibility decision is not the ward\u2019s.' },
+        'handoff-medical-surgical-nursing-last-known-well-an-empty-field-handed-over-empty': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The bound, the uncertain recollection, the basis for activation, and an empty onset field all travelled with the patient. ' : 'Current full findings or continuing-care ownership remains incomplete. ')
+            + (assessed ? 'The stroke team recorded the same distinction. ' : '')
+            + 'The field is empty because nobody knows what belongs in it, and that is the honest entry.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-medical-surgical-nursing-proxy-scale-')) {
       if (!supportsProxyScale(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The nursing proxy pain-scale lesson was not active.' } satisfies ObjectiveFinding;

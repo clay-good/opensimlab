@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -126,6 +126,7 @@ export function stateSummary(
     readonly afferentLimb?: AfferentLimbSnapshot;
     readonly quietPatient?: QuietPatientSnapshot;
     readonly proxyScale?: ProxyScaleSnapshot;
+    readonly lastKnownWell?: LastKnownWellSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -179,7 +180,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -204,6 +205,42 @@ export function stateSummary(
       }
     }
   }
+  if (options.lastKnownWell) {
+    const patient = options.lastKnownWell;
+    // The empty onset field is announced as empty. Saying "not known" out loud is what stops it
+    // being quietly filled with something that reads like an observation.
+    lines.push(`Onset time: ${patient.onsetTimeRecorded ?? 'not known'}. Last known well ${patient.lastKnownWellClock}, found ${patient.foundClock}, an unwitnessed interval ${patient.unwitnessedHours} hours wide.`);
+    lines.push('Supplied starting observations were pulse 86 per minute, blood pressure 158 over 88, respiratory rate 16 per minute, oxygen saturation 96 percent in air, temperature 36.7 degrees Celsius, and blood glucose 6.2 millimoles per liter. These remain historical starting observations.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push(patient.boundRecordedAtTick === null
+      ? 'The chart offers a box labelled onset time.'
+      : 'Last known well is a bound: the deficit began at some point after 22:40. That is true and useful, and it is not an onset.');
+    lines.push('An unknown onset is a reason to escalate for assessment rather than to stand down. A randomised trial in this population assessed eligibility by imaging as a surrogate for lesion age rather than by a remembered time, and that describes a population and a pathway rather than this patient. No drug, dose, route, imaging request, eligibility determination, or procedure is selected here, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(`Bound: ${patient.boundRecordedAtTick === null ? 'not yet recorded' : 'recorded and labelled as a bound'}. Recollection: ${patient.recollectionRecordedAtTick === null ? 'not yet recorded' : 'recorded in her words and marked uncertain'}. Pathway: ${patient.pathwayActivatedAtTick === null ? 'not activated' : 'activated on the deficit'}. Consequences: ${patient.consequencesRecordedAtTick === null ? 'not yet stated' : 'stated'}. Boundaries: ${patient.boundariesReviewedAtTick === null ? 'not reviewed' : 'reviewed'}. Observation: ${patient.monitoringAtTick === null ? 'not arranged' : 'arranged, with each finding timed'}.`);
+    if (patient.recollectionPressed) {
+      lines.push('Pressed on the time, the care assistant moved it by an hour and said she would not swear to it. Pressing an uncertain recollection does not make it certain.');
+    }
+    lines.push(patient.timelineRecord
+      ? `Last requested timeline check at simulated ${formatElapsed(patient.timelineRecord.atTick)}: ${patient.timelineRecord.certainEntries} of ${patient.timelineRecord.totalEntries} entries documented; the interval containing the onset is ${patient.timelineRecord.unwitnessedHours} hours wide.`
+      : 'No new timeline check has been requested.');
+    lines.push(patient.patientRecord
+      ? `Last requested observation at simulated ${formatElapsed(patient.patientRecord.atTick)}: ${patient.patientRecord.focalDeficit ? 'new right-sided weakness present' : 'no focal deficit'}; blood glucose ${patient.patientRecord.glucoseMmolL.toFixed(1)} millimoles per liter.`
+      : 'No new observation of the patient has been requested.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: ${patient.observation.focalDeficit ? 'deficit persists' : 'no deficit'}; unwitnessed interval ${patient.observation.unwitnessedHours} hours.`
+      : 'No new full assessment has been requested.');
+    if (patient.assessmentObserved) {
+      lines.push('The stroke team has assessed, recorded the bound as a bound, kept the recollection separate and uncertain, and is proceeding on imaging-based assessment rather than a remembered time.');
+    }
+    if (patient.choiceFeedback) lines.push(patient.choiceFeedback);
+    if (patient.ended) {
+      lines.push(patient.ended === 'handoff'
+        ? 'Practice complete. The bound, the uncertain recollection, the basis for activation, and an onset field that is empty because nobody knows what belongs in it all travel with the patient.'
+        : 'Instructor takeover ended this branch. The teaching stop predicts no patient outcome.');
+    }
+    return lines.join('\n');
+  }
+
   if (options.proxyScale) {
     const patient = options.proxyScale;
     // The total is always announced with what it counts. A bare number invites being heard as
