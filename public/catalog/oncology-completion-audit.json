@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "moduleId": "oncology",
   "capabilityVersion": "0.1.0-alpha.48",
-  "scenarioCount": 5,
+  "scenarioCount": 6,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -617,6 +617,132 @@
           "status": "satisfied",
           "evidence": [
             "laboratory-tls-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine, including the repeat set that moves while the patient does not."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "rare-early-myocarditis-a-base-rate-is-not-a-threshold",
+      "title": "A base rate is not a threshold",
+      "moduleId": "oncology",
+      "environment": "clinic",
+      "estimatedMinutes": 9,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario rare-early-myocarditis-a-base-rate-is-not-a-threshold carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "missing",
+          "evidence": [
+            "The completion contract requires 2–5 objectives and a rubric mapping for every objective."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "rare-early-myocarditis-fixtures.ts binds seed 5604 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No myocardial, conduction, or immune model is claimed, and no individualized risk is computed."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "rare-early-myocarditis.ts runs two authored transitions, one of them conditional on the learner having looked. Twenty-five minutes after monitoring is arranged the conduction progresses to intermittent Mobitz type I without symptoms; where monitoring was not arranged it does not appear at all, which is the honest consequence of not arranging it rather than a hidden state. Both teams answer 60 minutes after both are contacted, take joint ownership, and record that neither owns it alone."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "The learner records the exposure interval against the described onset, records what is present that does not sound cardiac, arranges continuous rhythm monitoring with its reason, contacts both teams together, records bounded qualified-team treatment intent, and reviews the boundaries. Setting it aside as too rare, discounting the troponin, deferring the repeat by a week, and running the coronary pathway and stopping there are each refused, the last for stopping rather than for considering."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "The recorded interval, the recorded non-cardiac findings, arranged monitoring, contact with both teams, bounded intent, the boundary review, and a current assessment including the rhythm permit handoff with the diagnosis open. Instructor takeover bounds a run with no escalation at 180 minutes, or an unfinished session at eight hours."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "Seven event-bound objectives distinguish the exposure interval as a finding, the symptoms that do not sound cardiac, monitoring what can move unobserved, escalating to both teams rather than one, refusing rarity as a reason, the certainty of a referral-centre series, and handing off a problem neither team owns alone. Refused shortcuts remain visible, and no diagnosis or outcome is certified."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "2 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "rare-early-myocarditis-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine, including the contrast between a monitored and an unmonitored run."
           ]
         },
         {

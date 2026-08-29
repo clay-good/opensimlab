@@ -1921,8 +1921,9 @@ credited toward the catalog until every item in the completion contract passes.
   event after the drug has stopped, an incidentally found pulmonary embolus whose management is
   only conditionally recommended, severe first-cycle oral-fluoropyrimidine toxicity after a
   wild-type pre-treatment panel, a prognosis conversation scored by what the patient repeats back
-  rather than by what was said to him, and a laboratory tumour-lysis picture in a patient who does
-  not meet the clinical definition. Surgery/trauma is declared planned and has not started. Every
+  rather than by what was said to him, a laboratory tumour-lysis picture in a patient who does not
+  meet the clinical definition, and a checkpoint-inhibitor myocarditis whose base rate is not a
+  threshold. Surgery/trauma is declared planned and has not started. Every
   scenario in this wave remains preview: none carries clinical review, a state-space matrix, or
   inclusive-runtime evidence, so the wave's completion count is still zero.
   The cockpit budget was the binding constraint on the remaining eight oncology lessons: each adds

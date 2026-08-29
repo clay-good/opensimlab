@@ -3267,6 +3267,23 @@
       "limitationManifestHash": "sha256:08a31ab7c406cf86d81625b28332bbb9579cb981780caa98406cb6a85b6aac1d"
     },
     {
+      "scenarioId": "rare-early-myocarditis-a-base-rate-is-not-a-threshold",
+      "contentVersion": "0.1.0",
+      "moduleId": "oncology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:9a127e87cb7e51a0631d63eacd84366a5373f41e599ba1d4316c39a807295318",
+      "defaultsHash": "sha256:415ed59ff047fe208777ae9c833d3bc3663330ff8a98a34fb99d8e048cd86fc0",
+      "maturityHash": "sha256:97537ed570f29fb133dca0dd44e865e33f73ed23841927f00b29eea3e3b7f5cb",
+      "sourceManifestHash": "sha256:cfe8b2deabd260796982b6eb880e6e5cb5906d24d64b09545eb9204a435db5d7",
+      "limitationManifestHash": "sha256:aca932b122651610eaa59088467a2b7d7e94ca9de8d5d0e9931e2877214cd0e0"
+    },
+    {
       "scenarioId": "bronchiolitis",
       "contentVersion": "0.1.0",
       "moduleId": "pediatrics",

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 387,
+  "sourceCount": 388,
   "sources": [
     {
       "id": "renal-hypermagnesemia-series-2018",
@@ -5010,6 +5010,19 @@
       "verifiedAgainst": "Open-access full text at PMC11728391, tumour-lysis section read in full. Its restatement of Annemans et al. as a laboratory tumour-lysis rate of 18.9% does not match that study’s abstract, so this review is used only for the timing statement and is named in the lesson as the source of that drift.",
       "verifiedOn": "2026-08-29",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/39768494/"
+    },
+    {
+      "id": "oncology-checkpoint-myocarditis-series-2025",
+      "pmid": "40996334",
+      "authors": "Fan Y, Xu Y, Liu X, Liu G",
+      "title": "Immune checkpoint inhibitor-related myocarditis: a comprehensive analysis of clinical manifestations and prognostic factors",
+      "publication": "The Oncologist",
+      "year": 2025,
+      "locator": "30(10); doi:10.1093/oncolo/oyaf285; Introduction, Methods and Results; 161 patients with biopsy-proven or clinically diagnosed ICI-myocarditis across multiple centres; onset a median of 4 weeks after initiation at a median of the second cycle, with mortality occurring mainly within 60 days; reported incidence 0.1% to 1% in clinical trials and higher with combination regimens; historical mortality quoted at 30% to 50%; predictors of cardiotoxicity-related death included initial LVEF below 50%, alanine aminotransferase, creatine kinase-MB, and concomitant ICI-myositis",
+      "usedFor": "The window the lesson is built on — a median onset of 4 weeks at the second cycle with deaths mainly inside 60 days — and the association between concomitant myositis and death, which is why the shoulder symptoms are recorded rather than set aside. No individualized risk is derived, and no treatment or dose is adopted.",
+      "verifiedAgainst": "Open-access full text at PMC12808996, introduction and results read directly, including the presentation table. A retrospective multicentre series of patients already diagnosed at centres that see them, so it describes the diagnosed rather than the exposed and its predictors are associations.",
+      "verifiedOn": "2026-08-29",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/40996334/"
     }
   ]
 }

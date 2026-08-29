@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot, DelayedImmuneEventSnapshot, IncidentalClotSnapshot, NormalTestToxicitySnapshot, PrognosisQuestionSnapshot, LaboratoryTlsSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot, DelayedImmuneEventSnapshot, IncidentalClotSnapshot, NormalTestToxicitySnapshot, PrognosisQuestionSnapshot, LaboratoryTlsSnapshot, RareEarlyMyocarditisSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -134,6 +134,7 @@ export function stateSummary(
     readonly normalTestToxicity?: NormalTestToxicitySnapshot;
     readonly prognosisQuestion?: PrognosisQuestionSnapshot;
     readonly laboratoryTls?: LaboratoryTlsSnapshot;
+    readonly rareEarlyMyocarditis?: RareEarlyMyocarditisSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -187,7 +188,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale || options.lostContingency || options.delayedImmuneEvent || options.incidentalClot || options.normalTestToxicity || options.prognosisQuestion || options.laboratoryTls) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale || options.lostContingency || options.delayedImmuneEvent || options.incidentalClot || options.normalTestToxicity || options.prognosisQuestion || options.laboratoryTls || options.rareEarlyMyocarditis) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -211,6 +212,28 @@ export function stateSummary(
           + ' intravenous.');
       }
     }
+  }
+  if (options.rareEarlyMyocarditis) {
+    const patient = options.rareEarlyMyocarditis;
+    // Whether he is monitored is announced every time. A listener cannot see an empty trace, and
+    // "unchanged" means nothing if nothing is watching the part of him that moves.
+    lines.push(`${patient.weeksSinceStart} weeks and ${patient.cyclesGiven} cycles into combination checkpoint therapy. Supplied troponin ${patient.troponinMarkedlyRaised ? 'markedly raised' : 'not raised'}; supplied electrocardiogram shows new first-degree block. He is ${patient.monitored ? 'on a monitor' : 'not on a monitor'}.`);
+    lines.push('Supplied starting observations were pulse 72 per minute, blood pressure 118 over 70, respiratory rate 18 per minute, oxygen saturation 96 percent in air, and temperature 36.6 degrees Celsius. These remain historical starting observations.');
+    lines.push(`Current alertness: ${patient.alertness}. Five days of fatigue, breathlessness on exertion only, and aching, weak shoulders, with no chest pain.`);
+    lines.push(`Interval recorded: ${patient.intervalRecordedAtTick === null ? 'no' : 'yes'}. What does not sound cardiac: ${patient.nonCardiacRecordedAtTick === null ? 'not recorded' : 'recorded, shoulders included'}. Monitoring: ${patient.monitoringAtTick === null ? 'not arranged' : 'arranged with its reason'}. Both teams: ${patient.escalationAtTick === null ? 'not contacted' : 'contacted'}. Bounded intent: ${patient.treatmentIntentAtTick === null ? 'not recorded' : 'recorded as the qualified teams\u2019 decision'}. Boundaries: ${patient.boundariesReviewedAtTick === null ? 'not reviewed' : 'reviewed'}.`);
+    if (patient.conductionProgressed) {
+      lines.push('The monitor has recorded a change: the first-degree block is now intermittent Mobitz type one, with no symptoms accompanying it.');
+    } else if (!patient.monitored) {
+      lines.push('Nothing is watching his conduction. Whatever it is doing, it is not being recorded.');
+    }
+    lines.push('Reported trial incidence is roughly 0.1 to 1 percent and higher with combination regimens, while myocarditis had the highest fatality of any checkpoint-inhibitor toxicity at 52 of 131 reported cases. Those two numbers answer different questions. None of them is a probability for this man. Imaging, further testing, immunosuppressive treatment, rhythm management and any restart belong to the qualified teams; no drug, dose, route, or threshold is selected here, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: pulse ${patient.observation.heartRateBpm} per minute; rhythm ${patient.observation.rhythm}.`
+      : 'No new full assessment has been requested.');
+    if (patient.teamsObserved) {
+      lines.push('Both teams have answered together and hold imaging, testing, treatment, rhythm management and any restart jointly, having recorded that neither owns this alone.');
+    }
+    if (patient.choiceFeedback) lines.push(patient.choiceFeedback);
   }
   if (options.laboratoryTls) {
     const patient = options.laboratoryTls;

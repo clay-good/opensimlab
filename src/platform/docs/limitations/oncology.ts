@@ -130,4 +130,28 @@ export const ONCOLOGY_LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'The two studies used different definitions, populations and eras of prophylaxis, and neither is a risk estimate for an individual. The second measured hyperuricaemia, not laboratory tumour lysis, and its authors noted their rates were lower than earlier reports; a review restating it otherwise is the ordinary way a number drifts from what was measured. That drift is the reason this lesson records the finding in front of the learner rather than the name of a syndrome.',
     briefIn: ['laboratory-tls-a-syndrome-he-does-not-have-yet'],
   },
+  {
+    id: 'rare-early-myocarditis-presentation-and-conduction-are-authored',
+    headline: 'One presentation, one conduction change, and a patient who looks well throughout.',
+    simplification: 'The case supplies fixed observations, a supplied troponin and electrocardiogram, and a conduction change that appears twenty-five minutes after monitoring is arranged. No myocardial, conduction, or immune model runs underneath, and nothing deteriorates.',
+    whereItMisleads: 'A learner concludes that checkpoint-inhibitor myocarditis presents this quietly, that conduction always moves within half an hour, or that a patient who still looks well is not in danger.',
+    correctUnderstanding: 'He is held well and the change is held small so that the decision cannot be made for the learner by a collapse, which is the only way to keep the lesson about a threshold. Real presentations include fulminant heart failure, arrest and malignant arrhythmia, and the conduction may move far faster or not at all. Nothing here models what would have happened next.',
+    briefIn: ['rare-early-myocarditis-a-base-rate-is-not-a-threshold'],
+  },
+  {
+    id: 'rare-early-myocarditis-controls-are-monitoring-and-escalation-only',
+    headline: 'No test is acquired here, and no treatment is chosen.',
+    simplification: 'The learner records the exposure interval, records what is present that does not sound cardiac, arranges continuous rhythm monitoring, contacts both teams, records bounded qualified-team intent, and reviews the boundaries. The troponin and electrocardiogram are supplied.',
+    whereItMisleads: 'Arranging monitoring is read as ordering investigations, or the refusal of the coronary pathway is read as this lesson ruling out a coronary syndrome.',
+    correctUnderstanding: 'Monitoring is a decision to observe, not a test or a treatment, and it is the only intervention this lesson exposes. What was refused about the coronary pathway is stopping there, not considering it: nothing in this lesson excludes coronary disease, and imaging, further testing, immunosuppressive treatment, rhythm management and any restart all belong to the qualified teams.',
+    briefIn: ['rare-early-myocarditis-a-base-rate-is-not-a-threshold'],
+  },
+  {
+    id: 'rare-early-myocarditis-incidence-and-fatality-answer-different-questions',
+    headline: 'The incidence and the fatality are about different things, and neither is about him.',
+    simplification: 'The case reports a trial incidence of roughly 0.1 to 1 percent, a historical mortality of 30 to 50 percent, and the highest reported fatality of any checkpoint-inhibitor toxicity at 52 of 131 cases.',
+    whereItMisleads: 'A learner combines the two into a risk for this patient, or reads the 161-patient series as describing everyone exposed to these drugs.',
+    correctUnderstanding: 'The incidence describes how often the event occurs among people treated; the fatality describes what happens to those who have it, and comes from spontaneously reported cases, which over-represent severity. The series is retrospective and drawn from centres that see these patients, so it describes people already diagnosed. Multiplying them together produces a number that corresponds to nothing, and none of the three is a probability for the man in front of the learner.',
+    briefIn: ['rare-early-myocarditis-a-base-rate-is-not-a-threshold'],
+  },
 ];

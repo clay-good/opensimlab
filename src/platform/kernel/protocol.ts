@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 202 adds the authored laboratory tumour-lysis snapshot. */
-export const WORKER_PROTOCOL_VERSION = 202;
+/** Version 203 adds the authored checkpoint-inhibitor myocarditis snapshot. */
+export const WORKER_PROTOCOL_VERSION = 203;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -592,6 +592,52 @@ export interface MeningitisImagingSnapshot {
     readonly cerebrospinalFluidAvailable: boolean;
     readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
     readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
+}
+
+export interface RareEarlyMyocarditisSnapshot {
+  readonly intervalRecordedAtTick: number | null;
+  readonly nonCardiacRecordedAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly escalationAtTick: number | null;
+  readonly treatmentIntentAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly weeksSinceStart: number;
+  readonly cyclesGiven: number;
+  readonly troponinMarkedlyRaised: boolean;
+  readonly monitored: boolean;
+  readonly conductionProgressed: boolean;
+  readonly conductionObserved: boolean;
+  readonly teamsResponded: boolean;
+  readonly teamsObserved: boolean;
+  readonly rarityDismissalAttempted: boolean;
+  readonly troponinDismissalAttempted: boolean;
+  readonly deferralAttempted: boolean;
+  readonly coronaryOnlyAttempted: boolean;
+  readonly observationRecord: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+    readonly rhythm: string; readonly monitored: boolean;
+  } | null;
+  readonly resultRecord: {
+    readonly atTick: number; readonly weeksSinceStart: number; readonly cyclesGiven: number;
+    readonly conduction: string; readonly troponinMarkedlyRaised: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+    readonly rhythm: string; readonly monitored: boolean;
+    readonly weeksSinceStart: number; readonly cyclesGiven: number;
+    readonly conduction: string; readonly troponinMarkedlyRaised: boolean;
+    readonly alertness: string;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -4539,6 +4585,7 @@ export interface EquipmentSnapshot {
     readonly normalTestToxicity?: NormalTestToxicitySnapshot;
     readonly prognosisQuestion?: PrognosisQuestionSnapshot;
     readonly laboratoryTls?: LaboratoryTlsSnapshot;
+    readonly rareEarlyMyocarditis?: RareEarlyMyocarditisSnapshot;
     readonly countedRate?: CountedRateSnapshot;
     readonly pairedReading?: PairedReadingSnapshot;
     readonly afferentLimb?: AfferentLimbSnapshot;

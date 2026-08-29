@@ -63,6 +63,7 @@ import { supportsIncidentalClot } from '../../oncology/incidental-clot';
 import { supportsNormalTestToxicity } from '../../oncology/normal-test-toxicity';
 import { supportsPrognosisQuestion } from '../../oncology/prognosis-question';
 import { supportsLaboratoryTls } from '../../oncology/laboratory-tls';
+import { supportsRareEarlyMyocarditis } from '../../oncology/rare-early-myocarditis';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -636,6 +637,49 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-oncology-rare-early-myocarditis-')) {
+      if (!supportsRareEarlyMyocarditis(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The oncology checkpoint-myocarditis lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^rare-early-myocarditis-${id}-\\d+$`).test(entry.eventId));
+      const interval = event('interval-recorded'); const nonCardiac = event('non-cardiac-recorded');
+      const monitoring = event('monitoring-arranged'); const escalation = event('escalation-requested');
+      const intent = event('intent-recorded'); const boundaries = event('boundary-review');
+      const handoff = event('handoff'); const progressed = event('conduction-progressed');
+      const answered = log.find((entry) => /^rare-early-myocarditis-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedRarity = event('rarity-refused'); const refusedTroponin = event('troponin-refused');
+      const refusedDefer = event('defer-refused'); const refusedCoronary = event('coronary-only-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'record-oncology-rare-early-myocarditis-the-exposure-interval': { met: !!interval, tick: interval?.tick,
+          finding: (interval ? 'Four weeks and two cycles were recorded as part of the finding. ' : 'The exposure interval was never recorded, so the strongest thing pointing at the diagnosis stayed as background. ')
+            + 'In the 161-patient series, onset came a median of 4 weeks after starting, at a median of the second cycle, with deaths mainly within 60 days. He is standing in the middle of that window.' },
+        'recognize-oncology-rare-early-myocarditis-what-does-not-sound-cardiac': { met: !!nonCardiac, tick: nonCardiac?.tick,
+          finding: (nonCardiac ? 'The fatigue, the exertional breathlessness, the aching weak shoulders, and the absence of chest pain were recorded together. ' : 'What is present that does not sound cardiac was never recorded, and the shoulders are the part most easily left out of a referral. ')
+            + 'Concomitant myositis was among the predictors of cardiotoxicity-related death in that series.' },
+        'activate-oncology-rare-early-myocarditis-watch-the-conduction': { met: !!monitoring, tick: monitoring?.tick,
+          finding: (monitoring ? 'Continuous rhythm monitoring was arranged, with its reason recorded. ' : 'No monitoring was arranged, so nothing was watching the part of him that moves. ')
+            + (progressed ? 'The conduction progressed to intermittent Mobitz type I during this run, without a symptom, and it was seen because somebody had asked for a monitor. ' : monitoring ? 'The conduction did not move during this run. ' : 'Whatever his conduction did in this run, nothing recorded it. ')
+            + 'A single strip is a photograph of something that is being watched for because it changes.' },
+        'activate-oncology-rare-early-myocarditis-both-teams-not-one': { met: !!escalation, tick: escalation?.tick,
+          finding: (escalation ? 'Cardiology and the treating oncology service were contacted together. ' : 'Neither team, or only one, was told. ')
+            + (answered ? 'They answered together and recorded that neither owns this alone. ' : 'They had not answered by the end of this run. ')
+            + 'A cardiologist called alone receives a troponin without the drug; an oncologist called alone receives a drug without the conduction.' },
+        'recognize-oncology-rare-early-myocarditis-rarity-is-not-a-reason': { met: !!interval && !!nonCardiac && !!monitoring && !!intent, tick: interval?.tick,
+          finding: (refusedRarity ? 'Setting it aside as too rare was attempted and refused. ' : '')
+            + (refusedTroponin ? 'Discounting the troponin because it rises in many things was attempted and refused; the value is not the finding, the company it keeps is. ' : '')
+            + (refusedDefer ? 'Repeating the troponin in a week was attempted and refused; that interval is longer than the one over which this deteriorates. ' : '')
+            + (refusedCoronary ? 'Running the coronary pathway and stopping there was attempted and refused — for stopping, not for considering. ' : '')
+            + 'An incidence of 0.1 to 1 percent says how often you will meet this. The highest reported fatality of its class says what it costs to meet it late. A base rate sets your expectation; the consequence and the window set your threshold.' },
+        'review-oncology-rare-early-myocarditis-boundaries-and-their-certainty': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The boundaries were reviewed with their certainty attached. ' : 'The boundary and certainty review is missing. ')
+            + 'The 161-patient series is retrospective and drawn from centres that see these patients, so it describes people already diagnosed rather than everyone at risk, and its predictors are associations. Nothing in it estimates a probability for this man.' },
+        'handoff-oncology-rare-early-myocarditis-a-window-held-jointly': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The interval, the troponin with the conduction and the shoulders together, the monitoring and its reason, and the bounded intent all travelled. ' : 'Current findings including the rhythm, the arranged monitoring, or continuing-care ownership remains incomplete. ')
+            + (progressed ? 'That the conduction had already moved once while he was watched travelled with it. ' : '')
+            + 'What was handed over is a problem neither team owns alone, which is the only way it does not fall between them.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-oncology-laboratory-tls-')) {
       if (!supportsLaboratoryTls(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The oncology laboratory tumour-lysis lesson was not active.' } satisfies ObjectiveFinding;
