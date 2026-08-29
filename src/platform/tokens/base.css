@@ -165,6 +165,23 @@ a:hover { text-decoration-color: var(--text-secondary); }
   background: var(--surface-1);
   justify-items: start;
 }
+/* Choosing a scenario is the one browsing decision in the product, and the card that carries it
+   answered neither the pointer nor the keyboard. The lift is small on purpose: enough to say the
+   card is the thing you are choosing, not enough to make a quiet list restless. */
+.scenario-index__item {
+  transition: border-color 160ms ease, background-color 160ms ease, transform 160ms ease;
+}
+.scenario-index__item:hover,
+.scenario-index__item:focus-within {
+  border-color: var(--line-strong);
+  background: var(--surface-2);
+  transform: translateY(-1px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .scenario-index__item { transition: border-color 160ms ease, background-color 160ms ease; }
+  .scenario-index__item:hover,
+  .scenario-index__item:focus-within { transform: none; }
+}
 .scenario-index__title { font: var(--type-subtitle); }
 .scenario-index__patient { font: var(--type-body); color: var(--text-secondary); }
 .scenario-index__teaches { font: var(--type-micro); color: var(--text-tertiary); }

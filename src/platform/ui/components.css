@@ -343,6 +343,10 @@ textarea.field__input {
   border-radius: var(--radius-panel);
   padding: var(--space-6);
 }
+/* Consecutive paragraphs in a dialog ran together as one block. The consent dialog is the first
+   thing a learner reads, and two dense paragraphs with no seam between them is the least
+   welcoming shape the product can open with. */
+.modal > p + p { margin-block-start: var(--space-3); }
 .drawer {
   position: fixed;
   inset-block: 0;
@@ -520,6 +524,22 @@ button.vital-tile__value {
   text-align: center;
 }
 .empty-state__title { font: var(--type-subtitle); color: var(--text-secondary); }
+/* A route transition used to show one grey word pinned under the site bar, which reads as a page
+   that failed rather than one that is arriving. Giving it room to sit in and a slow breath makes
+   the wait feel deliberate. The animation is decorative, so motion-sensitive viewers get the
+   settled state instead of none. */
+.loading-state {
+  min-block-size: min(52vh, 22rem);
+  align-content: center;
+  animation: loading-breath 2.4s ease-in-out infinite;
+}
+@keyframes loading-breath {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .loading-state { animation: none; opacity: 1; }
+}
 
 /* --- CitationLink ---------------------------------------------------------- */
 .citation-link {

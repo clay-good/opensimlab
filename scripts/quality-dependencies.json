@@ -100,7 +100,7 @@
       },
       {
         "path": "src/platform/tokens/base.css",
-        "sha256": "d316dcc5504d59ab9d68651a47cf2835ab161288d9f663fcf831c5455700e385"
+        "sha256": "ed98e7a3e83d4709b84f318b4d93a61d37cc61348d843c64f93c724036bbd315"
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
@@ -185,7 +185,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
-        "sha256": "dd43e10de9eaabc834e4812c8dae19fc20de0c8ecd962fd2b3e03e6e2b8f972a"
+        "sha256": "f3b617366d102df198d285f21b9606032c682c490a39b9e235fb0df8296097ad"
       },
       {
         "path": "src/modules/endocrine-metabolic/HyponatremiaCorrectionTray.tsx",
@@ -285,7 +285,7 @@
       },
       {
         "path": "src/platform/tokens/base.css",
-        "sha256": "d316dcc5504d59ab9d68651a47cf2835ab161288d9f663fcf831c5455700e385"
+        "sha256": "ed98e7a3e83d4709b84f318b4d93a61d37cc61348d843c64f93c724036bbd315"
       },
       {
         "path": "src/platform/transcript/transcript.ts",
@@ -382,7 +382,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
-        "sha256": "dd43e10de9eaabc834e4812c8dae19fc20de0c8ecd962fd2b3e03e6e2b8f972a"
+        "sha256": "f3b617366d102df198d285f21b9606032c682c490a39b9e235fb0df8296097ad"
       },
       {
         "path": "src/modules/anesthesia/ui/accessibility.ts",
@@ -390,7 +390,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/cockpit.css",
-        "sha256": "2e1088aeed00de22288ad00d04352295f300ed6f79681b84e2d598bec69dc43d"
+        "sha256": "769516ad51d05593680e21207387e21aafa3e6d9ca8757062ac1ef4b70abe2e7"
       },
       {
         "path": "src/modules/endocrine-metabolic/AvpDeficiencyTray.tsx",
@@ -486,7 +486,7 @@
       },
       {
         "path": "src/platform/tokens/base.css",
-        "sha256": "d316dcc5504d59ab9d68651a47cf2835ab161288d9f663fcf831c5455700e385"
+        "sha256": "ed98e7a3e83d4709b84f318b4d93a61d37cc61348d843c64f93c724036bbd315"
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",

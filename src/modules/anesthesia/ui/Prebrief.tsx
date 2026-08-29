@@ -87,10 +87,12 @@ export function Prebrief({
         <h2>What you are here to do</h2>
         <ol>
           {scenario.metadata.objectives.map((objective) => (
-            <li key={objective.id}>
+            <li key={objective.id} className="prebrief__objective">
               <strong>{objective.statement}</strong>
-              <br />
-              <span className="field__hint">The debrief will look at: {objective.measure}</span>
+              {/* These measures are full sentences, sometimes several. They were rendered in the
+                  form-hint style, which is 11px with tight leading and correct for a one-line hint
+                  under a field — it made the densest prose on the page the hardest to read. */}
+              <span className="prebrief__measure">The debrief will look at: {objective.measure}</span>
             </li>
           ))}
         </ol>
