@@ -27,20 +27,20 @@ const read = (file: string) => readFileSync(join(process.cwd(), file), 'utf8');
 const json = (file: string) => JSON.parse(read(file));
 
 describe('Infectious disease module foundation', () => {
-  it('registers nine previews toward ten planned lessons', () => {
+  it('registers all ten planned lessons', () => {
     expect(getModule('infectious-disease')).toMatchObject({
       route: 'infectious-disease', displayName: 'Infectious disease', status: 'available',
       timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
     });
     expect(getModule('infectious-disease').plannedScope).toContain('Ten bounded');
-    expect(INFECTIOUS_DISEASE_SCENARIOS).toHaveLength(9);
+    expect(INFECTIOUS_DISEASE_SCENARIOS).toHaveLength(10);
     expect(DEFAULT_INFECTIOUS_DISEASE_SCENARIO_ID).toBe(id);
     expect(getInfectiousDiseaseScenario(id)).toBe(scenario);
     expect(getInfectiousDiseaseScenario(obstructionId)).toBe(INFECTIOUS_DISEASE_SCENARIOS[1]);
     expect(getInfectiousDiseaseScenario('not-a-scenario')).toBeUndefined();
     expect(availableModules().map((entry) => entry.id)).toContain('infectious-disease');
     expect(READY_MODULE_COUNT).toBe(13);
-    expect(READY_SCENARIO_COUNT).toBe(219);
+    expect(READY_SCENARIO_COUNT).toBe(220);
   });
 
   it('validates the authored scenario and declares honest preview evidence', () => {

@@ -1595,6 +1595,33 @@ credited toward the catalog until every item in the completion contract passes.
     ceiling, so the passed-ceiling feedback branch was unreachable. The ceiling now precedes the
     deterioration, and a regression check pins that order. The published report catalog grows to
     226 records.
+  - [x] Infectious-disease slice 10/10 completes the module with meningitis imaging, a lesson about
+    a boundary that is a governance choice rather than a clinical fact. A 68-year-old kidney
+    transplant recipient on maintenance immunosuppression arrives with twelve hours of headache,
+    fever, and neck stiffness, a Glasgow Coma Scale of 14, and no focal deficit, seizure,
+    papilloedema, pupillary abnormality, or purpura. Three features are present that appear on some
+    published lists of indications for imaging before lumbar puncture: age 68, a severely
+    immunocompromised state, and a Glasgow Coma Scale of 14. The Swedish criteria and NICE NG240
+    list none of them and send this patient straight to puncture; ESCMID and WHO list severe
+    immunocompromise, and the archived IDSA guideline lists all three, so those sets image first.
+    The patient does not change between the five readings. The learner records the features and,
+    just as deliberately, the absences beside them, activates time-critical ownership with cultures
+    drawn rather than resulted, records bounded antimicrobial intent that does not wait for imaging
+    or puncture, compares the five sets, reviews the boundaries, and arranges monitoring. Treating a
+    scan first as the safe default, holding antimicrobials for the puncture, and excluding on a
+    normal C-reactive protein or a negative Gram stain are refused. The receiving unit applies its
+    own local criteria at 40 minutes and sends the patient for imaging, which the learner never
+    chooses; the scan reports at 75 minutes with no contraindication, having changed no management.
+    The neurology deliberately never moves, because a deterioration would end the disagreement and
+    make this a lesson about escalation instead. No agent, dose, route, adjunct, imaging request,
+    interpretation, puncture, or procedure control exists.
+  - [x] Verify slice 10 with fifteen contract checks, twenty-one reporting checks, ten tray checks,
+    and seven screen-reader checks, including that the five sets split two against three, that the
+    neurological features never move in any state, that no action orders or declines imaging, that
+    the scan cannot result before the pathway that ordered it, and that neither of the other two
+    meningitis lessons in the repository can drive or report as this one. A pre-build collision
+    sweep was run before any code was written, after slice 9 hit a namespace clash late. The
+    published report catalog grows to 228 records and the module reaches 10 of 10.
   - [x] Infectious-disease slice 9/10 adds septic shock as a lesson about a label that the
     treatment creates. A 71-year-old presents with a mean arterial pressure of 60 mmHg, heart rate
     118/min, lactate 3.6 mmol/L, capillary refill 4.1 s, no vasopressor running, and no completed

@@ -146,18 +146,36 @@ describe('Infectious disease septic shock label contract', () => {
     expect(frame.equipment.resuscitation.septicShockLabel!.monitoringAtTick).toBeNull();
   });
 
-  it('names no fluid, agent, or dose anywhere in the snapshot', () => {
+  it('names no fluid, agent, or dose after ANY action, not just the obvious one', () => {
+    // The first version of this guard exercised one action and missed a fluid volume that the
+    // boundary review put straight into the snapshot. Every action now has to clear it.
+    const forbidden = ['noradrenaline', 'norepinephrine', 'vasopressin', 'hartmann', 'saline',
+      'ml/kg', 'mcg/kg/min', 'milligram', 'bolus of'];
+    for (const action of SEPTIC_SHOCK_LABEL_ACTIONS) {
+      const engine = new AnesthesiaEngine({ scenario: SCENARIO, seed: FIXTURES.seed, practiceRegion: 'US' });
+      engine.step();
+      engine.apply({ tick: 0, type: 'septic-shock-label-response', payload: { action } });
+      const snapshot = engine.step().equipment.resuscitation.septicShockLabel!;
+      const serialized = JSON.stringify(snapshot).toLowerCase();
+      for (const term of forbidden) expect(serialized, `${action} leaked ${term}`).not.toContain(term);
+    }
     const engine = new AnesthesiaEngine({ scenario: SCENARIO, seed: FIXTURES.seed, practiceRegion: 'US' });
     engine.step();
     engine.apply({ tick: 0, type: 'septic-shock-label-response', payload: { action: 'record-resuscitation-intent' } });
     const snapshot = engine.step().equipment.resuscitation.septicShockLabel!;
     expect(snapshot.resuscitationIntentAtTick).not.toBeNull();
     expect(snapshot.doseModelAvailable).toBe(false);
-    const serialized = JSON.stringify(snapshot).toLowerCase();
-    for (const forbidden of ['noradrenaline', 'norepinephrine', 'vasopressin', 'hartmann', 'saline', 'ml/kg', 'mcg/kg/min']) {
-      expect(serialized).not.toContain(forbidden);
-    }
     expect(snapshot.choiceFeedback).toContain('No fluid volume, rate, vasoactive agent, dose, or endpoint is selected here');
+  });
+
+  it('treats a repeated recording action as a no-op rather than a fresh claim', () => {
+    // Re-applying must not emit a second acceptance, or the record would re-assert the
+    // pre-treatment state as current long after the trial has changed it.
+    const once = drive([[0, 'record-hypoperfusion']], 10);
+    expect(once.ids.filter((id) => id === 'hypoperfusion-recorded')).toHaveLength(1);
+    const twice = drive([[0, 'record-hypoperfusion'], [TRIAL + 20, 'record-hypoperfusion']], TRIAL + 30);
+    expect(twice.ids.filter((id) => id === 'hypoperfusion-recorded')).toHaveLength(1);
+    expect(twice.snapshot.hypoperfusionAtTick).toBe(0);
   });
 
   it('reports objectives only for this lesson', () => {

@@ -48,6 +48,7 @@ import { supportsSeverePneumonia } from '../../infectious-disease/severe-pneumon
 import { supportsToxicShock } from '../../infectious-disease/toxic-shock';
 import { supportsPossibleSepsis } from '../../infectious-disease/possible-sepsis';
 import { supportsSepticShockLabel } from '../../infectious-disease/septic-shock-label';
+import { supportsMeningitisImaging } from '../../infectious-disease/meningitis-imaging';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -621,6 +622,43 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-infectious-disease-meningitis-imaging-')) {
+      if (!supportsMeningitisImaging(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The infectious-disease meningitis imaging lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^meningitis-imaging-${id}-\\d+$`).test(entry.eventId));
+      const features = event('features-recorded'); const owners = event('owners-activated');
+      const antimicrobial = event('antimicrobial-intent'); const criteria = event('criteria-compared');
+      const boundaries = event('boundary-review'); const monitoring = event('monitoring');
+      const handoff = event('handoff'); const ceiling = event('ceiling-passed');
+      // Only a reassessment after the scan reported can have shown what it did and did not change.
+      const imaged = log.find((entry) => /^meningitis-imaging-imaged-reassessment-\d+$/.test(entry.eventId));
+      const refusedShortcut = event('scan-default-refused') ?? event('delay-refused')
+        ?? event('crp-refused') ?? event('gram-stain-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'reconcile-infectious-disease-meningitis-imaging-the-features-and-their-absences': { met: !!features, tick: features?.tick,
+          finding: (features ? 'Age 68, maintenance immunosuppression, and a Glasgow Coma Scale of 14 were recorded alongside the absence of focal deficit, seizure, papilloedema, pupillary abnormality, and purpura. ' : 'The triggering features and the absences beside them were never recorded. ')
+            + 'Every published rule set turns on exactly which features are and are not present, so the absences carry as much weight as the presences.' },
+        'recognize-infectious-disease-meningitis-imaging-that-the-rule-sets-disagree': { met: !!criteria, tick: criteria?.tick,
+          finding: (criteria ? 'Five published criteria sets were compared against this one patient: two indicate imaging before lumbar puncture and three do not. ' : 'The criteria sets were never compared, so the imaging question was treated as having one answer. ')
+            + 'The patient did not change between those readings. What differs is the rule set the unit has adopted, and in a published cohort the same population met the criteria in roughly 7, 32, and 65 percent of cases under three of them.' },
+        'activate-infectious-disease-meningitis-imaging-ownership-without-waiting-on-the-question': { met: !!owners && !!monitoring, tick: owners?.tick,
+          finding: (owners && monitoring ? 'Time-critical ownership was activated with monitoring arranged and cultures drawn rather than resulted. ' : 'Time-critical ownership or the monitoring the wait depends on remains incomplete. ')
+            + (refusedShortcut ? 'A scan-first default, an antimicrobial delay, or a rule-out shortcut was attempted and refused; it remains in this run. ' : '')
+            + 'Nothing here waited for the imaging question to be settled.' },
+        'review-infectious-disease-meningitis-imaging-boundaries-and-their-certainty': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The boundaries were reviewed with their certainty attached. ' : 'The boundary and certainty review is missing. ')
+            + 'The one-hour target rests on evidence graded very low to low quality, making it a system-design margin rather than a validated deadline; one widely cited criteria set is archived with a 2004 data cutoff; and the mortality comparison favouring prompt puncture is observational, with confounding by indication not excluded.' },
+        'record-infectious-disease-meningitis-imaging-intent-that-does-not-wait': { met: !!antimicrobial && !!imaged, tick: antimicrobial?.tick,
+          finding: (antimicrobial && imaged ? 'Bounded antimicrobial intent was recorded without waiting for the imaging or the puncture, and a later full assessment showed what the scan did and did not change. ' : 'Bounded antimicrobial intent or a full assessment after the scan reported remains incomplete. ')
+            + (ceiling ? 'The one-hour ceiling passed before intent was recorded, which is reported rather than hidden. ' : '')
+            + 'The scan showed no contraindication and changed no management, which is the common result rather than a lucky one.' },
+        'handoff-infectious-disease-meningitis-imaging-what-the-pathway-cost': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The recorded features and absences, the criteria sets they satisfy, whether intent fell inside the hour, and what the pathway cost in time travelled with the patient. ' : 'Current full findings or continuing-care ownership remains incomplete. ')
+            + 'A completed scan, an identified organism, and a normal biomarker are not handoff gates, and no outcome is certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-infectious-disease-septic-shock-')) {
       if (!supportsSepticShockLabel(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The infectious-disease septic shock label lesson was not active.' } satisfies ObjectiveFinding;

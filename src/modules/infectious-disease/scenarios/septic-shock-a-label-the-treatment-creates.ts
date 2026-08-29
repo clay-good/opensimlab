@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const SEPTIC_SHOCK_A_LABEL_THE_TREATMENT_CREATES: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'septic-shock-a-label-the-treatment-creates', version: '0.1.0', maturity: 'preview',
+    id: 'septic-shock-a-label-the-treatment-creates', version: '0.1.1', maturity: 'preview',
     title: 'Septic shock: a label the treatment creates', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 8, difficulty: 'advanced', objectives: [
       { id: 'reconcile-infectious-disease-septic-shock-hypoperfusion-before-any-label', statement: 'Reconcile measured hypoperfusion before any label.', measure: 'Mean arterial pressure 60 mmHg, heart rate 118/min, lactate 3.6 mmol/L, capillary refill 4.1 s, and no vasopressor running were recorded as measured, without learner history, examination, sampling, classification, or treatment selection.' },
@@ -16,10 +16,10 @@ export const SEPTIC_SHOCK_A_LABEL_THE_TREATMENT_CREATES: Scenario = {
       { id: 'handoff-infectious-disease-septic-shock-a-label-that-reflects-a-treatment', statement: 'Hand off a label that reflects a treatment.', measure: 'The handoff preserved the measured state before treatment, the recorded reason the classification was open, whether intent fell inside the one-hour ceiling, and that the label reflects a treatment as much as a patient, with organism, treatment effect, and outcome left uncertified.' },
     ],
     clinicalReview: { reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED',
-      competingInterests: 'None declared', reviewedOn: '1970-01-01', reviewBy: '1970-01-01', contentVersion: '0.1.0', sources: [
+      competingInterests: 'None declared', reviewedOn: '1970-01-01', reviewBy: '1970-01-01', contentVersion: '0.1.1', sources: [
         'Singer M, Deutschman CS, Seymour CW, et al. The Third International Consensus Definitions for Sepsis and Septic Shock (Sepsis-3). JAMA. 2016;315(8):801-810. doi:10.1001/jama.2016.0287. Box 3: septic shock is identified by a clinical construct of sepsis with persisting hypotension requiring vasopressors to maintain MAP >= 65 mmHg and a serum lactate > 2 mmol/L despite adequate volume resuscitation. The task force states that criteria for adequate fluid resuscitation and for need for vasopressor therapy could not be explicitly specified because these are highly user dependent.',
         'Prescott HC, Antonelli M, Alhazzani W, et al. Surviving Sepsis Campaign: International Guidelines for Management of Sepsis and Septic Shock 2026. Crit Care Med. Published 2026-03-23. doi:10.1097/CCM.0000000000007075. Initial MAP target 65 mmHg over higher targets, strong recommendation, moderate certainty; for adults 65 or older an initial range of 60 to 65 mmHg, conditional, low certainty; at least 30 mL/kg crystalloid in the first 3 hours, conditional, low certainty; initial crystalloid followed by vasopressor support if hypotension persists, conditional, very low certainty, with a carve-out for concurrent vasopressors in unstable shock; serial lactate to guide resuscitation, conditional, low certainty, individualized after the initial bolus by lactate decrement rather than continuing fluids until normalization. Statement numbers were not retrievable; wording taken from the issuing society guideline page.',
-        'Levy B, Gibot S, Franck P, et al. Relation between muscle Na+K+ ATPase activity and raised lactate concentrations in septic shock. Lancet. 2005;365(9462):871-875. PMID 18323749 review context: hyperlactatemia in sepsis is substantially driven by epinephrine-stimulated aerobic glycolysis in skeletal muscle and by reduced hepatic clearance, so an elevated lactate is not a direct reading of tissue oxygen debt.',
+        'Levy B. Lactate and shock state: the metabolic view. Curr Opin Crit Care. 2006. PMID 18323749. Hyperlactatemia in sepsis is substantially driven by epinephrine-stimulated aerobic glycolysis in skeletal muscle and by reduced hepatic clearance, so an elevated lactate is not a direct reading of tissue oxygen debt.',
       ] },
     limitations: ['septic-shock-presentation-and-trial-response-are-authored',
       'septic-shock-controls-are-recording-and-bounded-intent-only',

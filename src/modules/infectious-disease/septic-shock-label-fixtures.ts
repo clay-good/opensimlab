@@ -1,7 +1,7 @@
 import type { SepticShockLabelAction } from './septic-shock-label';
 
 export const SEPTIC_SHOCK_LABEL_FIXTURES = {
-  scenarioId: 'septic-shock-a-label-the-treatment-creates', contentVersion: '0.1.0', seed: 6127,
+  scenarioId: 'septic-shock-a-label-the-treatment-creates', contentVersion: '0.1.1', seed: 6127,
   noAction: [],
   expert: [[0, 'record-hypoperfusion'], [1, 'activate-critical-care'], [2, 'record-classification-open'],
     [3, 'record-resuscitation-intent'], [4, 'review-boundaries'], [5, 'monitor'], [3001, 'reassess'],

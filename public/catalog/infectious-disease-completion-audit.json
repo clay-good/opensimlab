@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "moduleId": "infectious-disease",
   "capabilityVersion": "0.1.0-alpha.48",
-  "scenarioCount": 9,
+  "scenarioCount": 10,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -1026,7 +1026,7 @@
         "GB"
       ],
       "fidelityClass": "state_transition",
-      "contentVersion": "0.1.0",
+      "contentVersion": "0.1.1",
       "capabilityVersion": "0.1.0-alpha.48",
       "maturity": "preview",
       "complete": false,
@@ -1035,7 +1035,7 @@
           "id": "identity-and-versions",
           "status": "satisfied",
           "evidence": [
-            "Scenario septic-shock-a-label-the-treatment-creates carries stable content version 0.1.0.",
+            "Scenario septic-shock-a-label-the-treatment-creates carries stable content version 0.1.1.",
             "Capability version 0.1.0-alpha.48 is bound by this audit."
           ]
         },
@@ -1057,14 +1057,14 @@
           "id": "deterministic-seed-policy",
           "status": "satisfied",
           "evidence": [
-            "septic-shock-fixtures.ts binds seed 6127 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No infection, host-response, fluid, or vasoactive model is claimed."
+            "septic-shock-label-fixtures.ts binds seed 6127 and content 0.1.1 to expert, incomplete-care, recovery, and no-action contrasts. No infection, host-response, fluid, or vasoactive model is claimed."
           ]
         },
         {
           "id": "meaningful-progression",
           "status": "satisfied",
           "evidence": [
-            "septic-shock.ts runs two authored transitions. The one-hour ceiling is reported as passed rather than hidden if no bounded resuscitation intent has been recorded. The authored resuscitation completes 90 minutes after intent is recorded, holding the mean pressure at 68 mmHg on vasopressor support with a lactate of 3.1 mmol/L, which is the first moment all three parts of the definition can be read together. Nothing completes a resuscitation that was never intended, because the trial is what makes the label readable."
+            "septic-shock-label.ts runs two authored transitions. The one-hour ceiling is reported as passed rather than hidden if no bounded resuscitation intent has been recorded. The authored resuscitation completes 90 minutes after intent is recorded, holding the mean pressure at 68 mmHg on vasopressor support with a lactate of 3.1 mmol/L, which is the first moment all three parts of the definition can be read together. Nothing completes a resuscitation that was never intended, because the trial is what makes the label readable."
           ]
         },
         {
@@ -1120,7 +1120,133 @@
           "id": "reference-transcripts",
           "status": "satisfied",
           "evidence": [
-            "septic-shock-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
+            "septic-shock-label-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "meningitis-imaging-a-rule-that-does-not-agree",
+      "title": "Meningitis imaging: a rule that does not agree",
+      "moduleId": "infectious-disease",
+      "environment": "emergency-department",
+      "estimatedMinutes": 8,
+      "difficulty": "advanced",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario meningitis-imaging-a-rule-that-does-not-agree carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "missing",
+          "evidence": [
+            "The completion contract requires 2–5 objectives and a rubric mapping for every objective."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "meningitis-imaging-fixtures.ts binds seed 7314 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No infection, host-response, imaging, or antimicrobial model is claimed."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "meningitis-imaging.ts runs three authored transitions. The receiving unit applies its own local criteria at 40 minutes and sends the patient for imaging, which is the unit’s rule set acting rather than the learner. The one-hour ceiling is reported as passed rather than hidden if no antimicrobial intent has been recorded. The scan is reported at 75 minutes showing nothing that contraindicates a puncture, having changed no management. The neurology deliberately never moves, because a deterioration would end the disagreement between the criteria sets and make this a different lesson."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "The learner records the three triggering features and the absences alongside them, activates time-critical ownership, records bounded antimicrobial intent that does not wait for imaging or puncture, compares five published criteria sets against this one patient, reviews the boundaries, and arranges monitoring. Treating a scan first as the safe default, holding antimicrobials for the puncture, excluding meningitis on a normal C-reactive protein, and excluding it on a negative Gram stain are each refused."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "Recorded features, activated ownership, bounded antimicrobial intent, the criteria comparison, the boundary review, monitoring, and a current full assessment permit handoff with the imaging question reported as a property of the local rule set. Instructor takeover bounds a run with no recorded intent at 150 minutes, or an unfinished session at eight hours."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "Six event-bound objectives distinguish recording the features and their absences, comparing the criteria sets rather than applying one, activating without waiting on the imaging question, the boundaries and their certainty, bounded intent inside the hour, and accountable handoff of what the pathway cost. Refused shortcuts remain visible, and no organism, treatment effect, or outcome is certified."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "4 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "meningitis-imaging-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
           ]
         },
         {

@@ -19,14 +19,17 @@ describe('Septic shock label screen-reader summary', () => {
     const summary = summarize(new SepticShockLabel(), 0);
     expect(summary).toContain('Vasopressors needed to maintain a mean arterial pressure at or above 65: not yet decidable');
     expect(summary).toContain('That mean pressure held at target on support: not yet decidable');
-    expect(summary).toContain('A serum lactate above 2 millimoles per liter after adequate fluid resuscitation: met');
+    expect(summary).toContain('which the current value already exceeds, though the definition asks for it after resuscitation: met');
   });
 
-  it('changes only the treatment-dependent criteria once the trial completes', () => {
+  it('changes the treatment-dependent criteria only once the learner has looked', () => {
     const model = new SepticShockLabel();
     model.apply('record-resuscitation-intent', 0);
     model.advance(TRIAL + 10);
-    const summary = summarize(model, TRIAL + 10);
+    // The authored trial firing is not the same as the learner seeing it.
+    expect(summarize(model, TRIAL + 10)).toContain('not yet decidable');
+    model.apply('reassess', TRIAL + 11);
+    const summary = summarize(model, TRIAL + 12);
     expect(summary).not.toContain('not yet decidable');
     expect(summary).toContain('this meets septic shock');
     expect(summary).toContain('the label reflects a treatment as much as a patient');

@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 187 adds the authored septic shock label snapshot. */
-export const WORKER_PROTOCOL_VERSION = 187;
+/** Version 188 adds the authored meningitis imaging snapshot. */
+export const WORKER_PROTOCOL_VERSION = 188;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -547,6 +547,51 @@ export interface SepticShockLabelSnapshot {
     readonly systolicMmHg: number; readonly diastolicMmHg: number; readonly meanArterialMmHg: number;
     readonly heartRateBpm: number; readonly capillaryRefillSeconds: number;
     readonly vasopressorRunning: boolean; readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
+}
+
+export interface MeningitisImagingSnapshot {
+  readonly featuresRecordedAtTick: number | null;
+  readonly ownersActivatedAtTick: number | null;
+  readonly antimicrobialIntentAtTick: number | null;
+  readonly criteriaComparedAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly ceilingDueInSeconds: number | null;
+  readonly ceilingPassed: boolean;
+  readonly antimicrobialInsideCeiling: boolean;
+  readonly localPathwayApplied: boolean;
+  readonly imagingResulted: boolean;
+  readonly imagingObserved: boolean;
+  readonly imagingChangedManagement: boolean;
+  readonly criteriaCompared: boolean;
+  readonly scanIsSaferAttempted: boolean;
+  readonly delayAttempted: boolean;
+  readonly crpAttempted: boolean;
+  readonly gramStainAttempted: boolean;
+  readonly featureObservation: {
+    readonly atTick: number; readonly glasgowComaScale: number;
+    readonly pupilsEqualReactive: boolean; readonly focalDeficit: boolean;
+    readonly seizure: boolean; readonly papilloedema: boolean;
+  } | null;
+  readonly labObservation: {
+    readonly atTick: number; readonly crpMgL: number; readonly whiteCellsX109L: number;
+    readonly plateletsX109L: number; readonly cerebrospinalFluidAvailable: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly glasgowComaScale: number;
+    readonly pupilsEqualReactive: boolean; readonly focalDeficit: boolean;
+    readonly seizure: boolean; readonly papilloedema: boolean;
+    readonly crpMgL: number; readonly whiteCellsX109L: number; readonly plateletsX109L: number;
+    readonly cerebrospinalFluidAvailable: boolean;
+    readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
+    readonly coreTemperatureC: number; readonly alertness: string;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -3901,6 +3946,7 @@ export interface EquipmentSnapshot {
     readonly toxicShock?: ToxicShockSnapshot;
     readonly possibleSepsis?: PossibleSepsisSnapshot;
     readonly septicShockLabel?: SepticShockLabelSnapshot;
+    readonly meningitisImaging?: MeningitisImagingSnapshot;
     readonly hyponatremiaCorrection?: HyponatremiaCorrectionSnapshot;
     readonly hypocalcemia?: HypocalcemiaSnapshot;
     readonly endocrineHhsAssessment?: {

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 353,
+  "sourceCount": 358,
   "sources": [
     {
       "id": "renal-hypermagnesemia-series-2018",
@@ -4227,6 +4227,62 @@
       "verifiedOn": "2026-08-26"
     },
     {
+      "id": "nice-meningitis-ng240-2024-imaging",
+      "currency": {
+        "lastAmended": "2024-03-19",
+        "checkedAt": "2026-08-28"
+      },
+      "authors": "National Institute for Health and Care Excellence",
+      "title": "Meningitis (bacterial) and meningococcal disease: recognition, diagnosis and management (NG240)",
+      "publication": "NICE guideline",
+      "year": 2024,
+      "locator": "Published 2024-03-19, last reviewed 2024-03-19; replaces CG102. Recommendation 1.4.1: antibiotics within 1 hour of arrival; blood tests and lumbar puncture before antibiotics if safe and not causing clinically significant delay. 1.4.6: do not routinely perform neuroimaging before lumbar puncture. 1.4.7: image for new focal neurological features, abnormal pupillary reactions, GCS 9 or less or a progressive and sustained or rapid fall, or risk factors for an evolving space-occupying lesion. 1.4.5: do not rule out bacterial meningitis on a normal CRP, procalcitonin, or white cell count. Immunocompromise is not listed as an imaging indication.",
+      "usedFor": "One of the five criteria sets compared in this scenario, the one-hour antimicrobial target, and the refusal to exclude on a normal C-reactive protein.",
+      "verifiedAgainst": "https://www.nice.org.uk/guidance/ng240/chapter/Recommendations",
+      "verifiedOn": "2026-08-28"
+    },
+    {
+      "id": "who-meningitis-guidelines-2025-imaging",
+      "currency": {
+        "lastAmended": "2025-04-10",
+        "checkedAt": "2026-08-28"
+      },
+      "authors": "World Health Organization",
+      "title": "WHO guidelines on meningitis diagnosis, treatment and care",
+      "publication": "World Health Organization",
+      "year": 2025,
+      "locator": "Published 2025-04-10, ISBN 978-92-4-010804-2; the first WHO guideline on this topic. Cranial imaging should not be performed routinely, strong recommendation on very low certainty. Where imaging is readily accessible, image before lumbar puncture for GCS below 10, focal neurological signs, cranial nerve deficits, papilloedema, new-onset seizures in adults, or a severe immunocompromised state, strong recommendation on very low certainty. Treatment should not be delayed for cranial imaging. None of the included peripheral blood tests can confirm or exclude the diagnosis.",
+      "usedFor": "One of the five criteria sets compared in this scenario, and the rule that treatment is not delayed for imaging.",
+      "verifiedAgainst": "https://www.who.int/publications/i/item/9789240108042",
+      "verifiedOn": "2026-08-28"
+    },
+    {
+      "id": "glimaker-prompt-lumbar-puncture-2018",
+      "pmid": "29020334",
+      "authors": "Glimåker M, Johansson B, Grindborg Ö, et al",
+      "title": "Adult bacterial meningitis: earlier treatment and improved outcome following guideline revision promoting prompt lumbar puncture",
+      "publication": "Clinical Infectious Diseases",
+      "year": 2018,
+      "locator": "66(3):321-328; doi:10.1093/cid/cix806. Indications for neuroimaging before lumbar puncture existed in 7%, 32%, and 65% of the same 815-patient cohort under Swedish, ESCMID, and IDSA criteria respectively. Lumbar puncture without previous computed tomography was associated with mortality of 14 of 323 (4%) versus 37 of 378 (10%), and with more patients treated within one hour. Observational; confounding by indication is not excluded.",
+      "usedFor": "The size of the disagreement between criteria sets, and the measured association between imaging-preceded puncture and both mortality and treatment delay, reported with its observational limitation stated.",
+      "verifiedAgainst": "https://academic.oup.com/cid/article/66/3/321/4110207",
+      "verifiedOn": "2026-08-28",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/29020334/"
+    },
+    {
+      "id": "idsa-bacterial-meningitis-2004-archived",
+      "pmid": "15494903",
+      "authors": "Tunkel AR, Hartman BJ, Kaplan SL, et al",
+      "title": "Practice Guidelines for the Management of Bacterial Meningitis",
+      "publication": "Clinical Infectious Diseases",
+      "year": 2004,
+      "locator": "39(9):1267-1284. Marked ARCHIVED by the Infectious Diseases Society of America, with data published through May 2004 and no named replacement for community-acquired bacterial meningitis. Recommends computed tomography before lumbar puncture for an immunocompromised state, a history of central nervous system disease, new-onset seizure within one week, papilloedema, an abnormal level of consciousness, or specific focal findings, and for age 60 or over.",
+      "usedFor": "The most expansive of the five criteria sets compared in this scenario, and the point that a widely cited set can be archived by its own issuing society while remaining in local use.",
+      "verifiedAgainst": "https://www.idsociety.org/practice-guideline/bacterial-meningitis/",
+      "verifiedOn": "2026-08-28",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/15494903/"
+    },
+    {
       "id": "sepsis-3-consensus-definitions-2016",
       "pmid": "26903338",
       "authors": "Singer M, Deutschman CS, Seymour CW, et al",
@@ -4240,7 +4296,7 @@
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/26903338/"
     },
     {
-      "id": "lactate-adrenergic-aerobic-glycolysis-2008",
+      "id": "lactate-adrenergic-aerobic-glycolysis-2006",
       "pmid": "18323749",
       "authors": "Levy B",
       "title": "Lactate and shock state: the metabolic view",
@@ -4251,6 +4307,19 @@
       "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/18323749/",
       "verifiedOn": "2026-08-28",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/18323749/"
+    },
+    {
+      "id": "sepsis-2-shock-failing-sepsis-3-2021",
+      "pmid": "34739619",
+      "authors": "Prospective cohort reported in Annals of Intensive Care",
+      "title": "Comparison of Sepsis-2 and Sepsis-3 septic shock criteria and their association with mortality",
+      "publication": "Annals of Intensive Care",
+      "year": 2021,
+      "locator": "233 of 1198 (19.4%) patients meeting Sepsis-2 septic shock criteria did not meet the Sepsis-3 criteria, almost all by failing the lactate threshold while receiving vasopressors; hospital mortality was 31.6% in that group versus 55.3% in those meeting both.",
+      "usedFor": "The limitation stating that roughly one in five patients meeting older septic shock criteria fail the current ones, almost all on the lactate threshold, which is why the authored trial response is one of several possible ones.",
+      "verifiedAgainst": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8557229/",
+      "verifiedOn": "2026-08-28",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/34739619/"
     },
     {
       "id": "surviving-sepsis-campaign-2026",

@@ -2162,6 +2162,23 @@
       "limitationManifestHash": "sha256:3138368ff9b288a8a0f003b9f2b751109f3fa56f13881a3b97bd5519d22b5351"
     },
     {
+      "scenarioId": "meningitis-imaging-a-rule-that-does-not-agree",
+      "contentVersion": "0.1.0",
+      "moduleId": "infectious-disease",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:4344f65c6107a213da19f265ca736a88419c213f96ef4389e870f4b8ae758ba6",
+      "defaultsHash": "sha256:05eadaa2c8882b8edc6a60b489554b1525537037ba3d253452a2d638d2ce1f49",
+      "maturityHash": "sha256:22ba00f0918ecbc053d6b9e809047aad3375b4ae07964858790639c31c284eb4",
+      "sourceManifestHash": "sha256:22b00110121cb1f97e9911f4d24f9077c59789370c2e32033666e37a5b03fda6",
+      "limitationManifestHash": "sha256:4453a22b5acee14c27b42ae4c5fad15b3db9e358a4c11cf0be8ef30296936653"
+    },
+    {
       "scenarioId": "meningococcal-sepsis-recognition-and-escalation",
       "contentVersion": "0.1.0",
       "moduleId": "infectious-disease",
@@ -2244,6 +2261,23 @@
       "defaultsHash": "sha256:9066620d439a9948aa03c0d841a77a93887b244dad63232f536f2a1328498f4f",
       "maturityHash": "sha256:2f2e0646c0cc0d8f2825592417855fa64d9e7a2761231bf3da2d265733c2cad0",
       "sourceManifestHash": "sha256:aa10208ba3d848c6f2a422ae5306999d8ff99bdf19790a1f197b512057f4dd4c",
+      "limitationManifestHash": "sha256:39b558c5d09116b15d2423b254febe41b2814ec79ff4d81a4bbf42aeba95ab28"
+    },
+    {
+      "scenarioId": "septic-shock-a-label-the-treatment-creates",
+      "contentVersion": "0.1.1",
+      "moduleId": "infectious-disease",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:584191e89f02c7268f9e114abe535fe86cdc985d0db47be9f85750a55730db23",
+      "defaultsHash": "sha256:9066620d439a9948aa03c0d841a77a93887b244dad63232f536f2a1328498f4f",
+      "maturityHash": "sha256:f302f9cf0c44b609a75c9e3b81a35130b269be3eb2fbe09fb2025c00c2cff275",
+      "sourceManifestHash": "sha256:6c7e047af3598934e4f863a6ba8807608342742a22944d5c1d27b7c89f052515",
       "limitationManifestHash": "sha256:39b558c5d09116b15d2423b254febe41b2814ec79ff4d81a4bbf42aeba95ab28"
     },
     {

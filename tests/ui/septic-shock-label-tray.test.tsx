@@ -47,15 +47,22 @@ describe('Septic shock label tray', () => {
     expect(items.find((text) => text.startsWith('Met'))).toContain('lactate above 2 mmol/L');
   });
 
-  it('turns both undecidable criteria into answers once the trial completes', () => {
+  it('turns both undecidable criteria into answers only once the learner has looked', () => {
     const model = new SepticShockLabel();
     model.apply('record-resuscitation-intent', 0);
     model.advance(TRIAL + 10);
     render(model, TRIAL + 10);
+    // The authored trial firing is not the same as the learner seeing it.
+    expect([...host.querySelectorAll('li')].filter((entry) => entry.textContent?.startsWith('Not yet decidable')))
+      .toHaveLength(2);
+    model.apply('reassess', TRIAL + 11);
+    render(model, TRIAL + 12);
     const items = [...host.querySelectorAll('li')].map((entry) => entry.textContent ?? '');
     expect(items.filter((text) => text.startsWith('Met'))).toHaveLength(3);
     expect(items.some((text) => text.startsWith('Not yet decidable'))).toBe(false);
     expect(host.textContent).toContain('It did so only once the treatment had run');
+    // The heading must stop contradicting the list below it.
+    expect(host.textContent).toContain('All three can now be answered.');
   });
 
   it('says the label is not withheld out of caution', () => {

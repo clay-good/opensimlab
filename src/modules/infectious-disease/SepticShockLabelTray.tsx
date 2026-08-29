@@ -17,28 +17,29 @@ export function SepticShockLabelTray({ assessment, onAction, demonstrating = fal
   };
   // Each part of the definition is shown separately. A single verdict would hide the thing this
   // lesson is about: which parts the treatment made answerable, and which were answerable already.
-  const part = (met: boolean, readable: boolean, text: string) =>
-    <li>{readable ? (met ? 'Met' : 'Not met') : 'Not yet decidable'}: {text}</li>;
+  // Two states, because in this authored case the completed trial always satisfies the criterion it
+  // makes readable. Rendering a "Not met" arm that cannot occur would be decoration, not information.
+  const part = (readable: boolean, text: string) =>
+    <li>{readable ? 'Met' : 'Not yet decidable'}: {text}</li>;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    <p className="syringe__remaining" role="status">{assessment.ceilingPassed
-      ? 'One hour has elapsed with no bounded resuscitation intent recorded. The ceiling has passed, and that is reported rather than hidden.'
-      : assessment.ceilingDueInSeconds !== null
-        ? `Ceiling: ${Math.ceil(assessment.ceilingDueInSeconds / 60)} simulated min remain of the hour this tier carries.`
-        : assessment.resuscitationIntentAtTick !== null
-          ? `Resuscitation intent recorded ${assessment.resuscitationIntentInsideCeiling ? 'inside the hour' : 'after the hour had passed'}.`
-          : 'The ceiling is not counting down.'}</p>
+    <p className="syringe__remaining" role="status">{assessment.resuscitationIntentAtTick !== null
+      ? `Resuscitation intent recorded ${assessment.resuscitationIntentInsideCeiling ? 'inside the hour' : 'after the hour had passed'}.`
+      : assessment.ceilingPassed
+        ? 'One hour has elapsed with no bounded resuscitation intent recorded. The ceiling has passed, and that is reported rather than hidden.'
+        : `Ceiling: ${Math.ceil((assessment.ceilingDueInSeconds ?? 0) / 60)} simulated min remain of the hour this tier carries.`}</p>
     <p className="syringe__remaining">Selected sources: the Sepsis-3 consensus definitions and the 2026 international sepsis guidelines. Open the source view for exact wording and grades.</p>
     <section className="syringe septic-shock-label__section" aria-labelledby="septic-shock-label-definition-title">
-      <div id="septic-shock-label-definition-title" className="syringe__name">Two of these three cannot be answered yet.</div>
-      <p className="syringe__remaining">Supplied findings: temperature 38.9 C, heart rate 118/min, BP 84/48 mmHg with a mean of 60, respiratory rate 26/min, SpO2 94% in air, drowsy but rousable. Lactate 3.6 mmol/L, white cells 17.1 x10^9/L, creatinine 132 µmol/L, capillary refill 4.1 s. No vasopressor is running and no fluid resuscitation has completed.</p>
+      <div id="septic-shock-label-definition-title" className="syringe__name">{assessment.trialObserved
+        ? 'All three can now be answered.' : 'Two of these three cannot be answered yet.'}</div>
+      <p className="syringe__remaining">Supplied starting findings were temperature 38.9 C, heart rate 118/min, BP 84/48 mmHg with a mean of 60, respiratory rate 26/min, SpO2 94% in air, drowsy but rousable, lactate 3.6 mmol/L, white cells 17.1 x10^9/L, creatinine 132 µmol/L, and capillary refill 4.1 s, with no vasopressor running and no fluid resuscitation completed. These remain historical starting findings.</p>
       <p className="syringe__remaining">Septic shock requires all three of the following together:</p>
       <ul className="syringe__remaining">
-        {part(assessment.vasopressorDependent, assessment.trialComplete, 'vasopressors needed to maintain a mean arterial pressure at or above 65 mmHg')}
-        {part(assessment.meanPressureAtTarget, assessment.trialComplete, 'that mean pressure actually held at the target on support')}
-        {part(assessment.lactateAboveThreshold, true, 'a serum lactate above 2 mmol/L, measured after adequate fluid resuscitation')}
+        {part(assessment.trialObserved, 'vasopressors needed to maintain a mean arterial pressure at or above 65 mmHg')}
+        {part(assessment.trialObserved, 'that mean pressure actually held at the target on support')}
+        {part(true, 'a serum lactate above 2 mmol/L, which the current value already exceeds; the definition asks for it after resuscitation')}
       </ul>
-      <p className="syringe__remaining">{assessment.definitionReadable
+      <p className="syringe__remaining">{assessment.trialObserved
         ? 'All three can now be read together, and this meets septic shock. It did so only once the treatment had run: the label reflects a treatment as much as a patient, and a team resuscitating differently could have produced a different label for the same person. That is a property of the definition rather than a failure of care.'
         : 'The lactate is already above the threshold, but the threshold applies after resuscitation, and the other two parts describe a vasopressor that is not running. This is not caution. Two of the three have no truth value yet.'}</p>
       <p className="syringe__remaining">The consensus task force stated plainly that criteria for adequate fluid resuscitation and for need for vasopressor therapy could not be explicitly specified, because they are highly user dependent. Nothing here supplies the missing definition.</p>

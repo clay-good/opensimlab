@@ -89,22 +89,28 @@ export class SepticShockLabel {
     if (this.ended) return emit('action-refused', 'This practice branch has ended. Open the debrief or restart.');
     switch (action) {
       case 'record-hypoperfusion':
-        if (this.hypoperfusionAt === null) this.hypoperfusionAt = tick;
+        if (this.hypoperfusionAt !== null) return events;
+        this.hypoperfusionAt = tick;
         return emit('hypoperfusion-recorded', 'The record states what is measurable now: a mean arterial pressure of 60 mmHg, a lactate of 3.6 mmol/L, and no vasopressor running yet. That is hypoperfusion with infection suspected. It is not yet septic shock, and recording it this way is what makes the later comparison possible.');
       case 'activate-critical-care':
-        if (this.criticalCareAt === null) this.criticalCareAt = tick;
+        if (this.criticalCareAt !== null) return events;
+        this.criticalCareAt = tick;
         return emit('critical-care-activated', 'Critical care is activated on the perfusion pattern rather than on a label. Nothing about the activation waits for the classification, which is the point: the team is needed now, and the name for what they are treating can be settled afterwards.');
       case 'record-classification-open':
-        if (this.classificationAt === null) this.classificationAt = tick;
+        if (this.classificationAt !== null) return events;
+        this.classificationAt = tick;
         return emit('classification-open', 'The classification is recorded as open, with the reason. Septic shock requires vasopressors to hold a mean pressure at or above 65 mmHg and a lactate above 2 mmol/L despite adequate fluid resuscitation. Two of those cannot be evaluated before the resuscitation has happened, so the label is not withheld out of caution: it is genuinely not yet decidable.');
       case 'record-resuscitation-intent':
-        if (this.resuscitationAt === null) this.resuscitationAt = tick;
+        if (this.resuscitationAt !== null) return events;
+        this.resuscitationAt = tick;
         return emit('resuscitation-intent', `Bounded qualified-team resuscitation intent is recorded ${this.ceilingPassed ? 'after the one-hour ceiling has passed, which is reported rather than hidden' : 'inside the one-hour ceiling'}. No fluid volume, rate, vasoactive agent, dose, or endpoint is selected here. Note what follows: the trial about to run is also the measurement, so the same act both treats the patient and decides what the patient will be called.`);
       case 'review-boundaries':
-        if (this.boundariesAt === null) this.boundariesAt = tick;
-        return emit('boundary-review', 'Supplied boundaries, with the grades attached rather than stripped off. An initial mean arterial pressure target of 65 mmHg over higher targets is a strong recommendation on moderate certainty, and for patients 65 or older an initial range of 60 to 65 mmHg is suggested on low certainty: the target is a floor with a tolerance band, not a proven optimum, and the evidence supports 65 over higher rather than over lower. At least 30 mL/kg of crystalloid in the first three hours is a conditional suggestion on low certainty, hedged with an explicit warning about the harms of both under- and over-resuscitation. Fluids first and vasopressors if hypotension persists is conditional on very low certainty, the weakest statement here, with an explicit carve-out for concurrent vasopressors in unstable shock. Serial lactate to guide resuscitation is conditional on low certainty, with the instruction to individualize after the initial bolus and monitor the decrement rather than continuing fluids until the lactate normalizes. Capillary refill time is a conditional adjunct. Corticosteroids are a conditional suggestion on low certainty; trials agree they speed shock reversal and disagree about mortality.');
+        if (this.boundariesAt !== null) return events;
+        this.boundariesAt = tick;
+        return emit('boundary-review', 'Supplied boundaries, with the grades attached rather than stripped off. An initial mean arterial pressure target of 65 mmHg over higher targets is a strong recommendation on moderate certainty, and for patients 65 or older an initial range of 60 to 65 mmHg is suggested on low certainty: the target is a floor with a tolerance band, not a proven optimum, and the evidence supports 65 over higher rather than over lower. An initial crystalloid volume is suggested in the first three hours, conditional on low certainty, hedged with an explicit warning about the harms of both under- and over-resuscitation; the volume itself is a qualified-team decision and is not stated here. Fluids first and vasopressors if hypotension persists is conditional on very low certainty, the weakest statement here, with an explicit carve-out for concurrent vasopressors in unstable shock. Serial lactate to guide resuscitation is conditional on low certainty, with the instruction to individualize after the initial bolus and monitor the decrement rather than continuing fluids until the lactate normalizes. Capillary refill time is a conditional adjunct. Corticosteroids are a conditional suggestion on low certainty; trials agree they speed shock reversal and disagree about mortality.');
       case 'monitor':
-        if (this.monitoringAt === null) this.monitoringAt = tick;
+        if (this.monitoringAt !== null) return events;
+        this.monitoringAt = tick;
         return emit('monitoring', 'Continuous perfusion monitoring continues through the resuscitation, because the trial is the measurement and an unmonitored trial measures nothing. A laboratory-only result or a perfusion-only look is useful but does not refresh the full assessment.');
       case 'check-labs':
         this.labObservation = this.labFinding(tick);

@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -119,6 +119,7 @@ export function stateSummary(
     readonly toxicShock?: ToxicShockSnapshot;
     readonly possibleSepsis?: PossibleSepsisSnapshot;
     readonly septicShockLabel?: SepticShockLabelSnapshot;
+    readonly meningitisImaging?: MeningitisImagingSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -172,7 +173,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -197,15 +198,51 @@ export function stateSummary(
       }
     }
   }
+  if (options.meningitisImaging) {
+    const patient = options.meningitisImaging;
+    // The recorded fact is announced before the countdown, so a passed ceiling never reads as
+    // "nothing recorded" alongside a line reporting what was recorded.
+    lines.push(patient.antimicrobialIntentAtTick !== null
+      ? `Antimicrobial intent recorded ${patient.antimicrobialInsideCeiling ? 'inside the hour' : 'after the hour had passed'}.`
+      : patient.ceilingPassed
+        ? 'One hour has elapsed since arrival with no antimicrobial intent recorded. The ceiling has passed, and that is reported rather than hidden.'
+        : `Ceiling: ${Math.ceil((patient.ceilingDueInSeconds ?? 0) / 60)} simulated minutes remain of the hour.`);
+    lines.push('Supplied starting findings were temperature 38.7 degrees Celsius, heart rate 104 per minute, blood pressure 128 over 74, respiratory rate 20 per minute, Glasgow Coma Scale 14, C-reactive protein 142 milligrams per liter, and white cells 15.1. Present: age 68, maintenance immunosuppression after kidney transplantation, and a Glasgow Coma Scale of 14. Absent: focal deficit, seizure, papilloedema, pupillary abnormality, purpura, shock, and bleeding risk. These remain historical starting findings.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push('Every published rule set turns on exactly which of those features are present, so the absences matter as much as the presences.');
+    lines.push(patient.criteriaCompared
+      ? 'Applied to this one patient: the Swedish national criteria indicate no imaging before lumbar puncture. NICE NG240 indicates no imaging. ESCMID indicates imaging, on a severely immunocompromised state. The archived IDSA guideline indicates imaging, on immunocompromise, an abnormal level of consciousness, and age 60 or over. WHO indicates imaging where it is readily accessible, on a severe immunocompromised state. Two say image, three do not, and the patient did not change between those readings.'
+      : 'The published criteria sets have not been compared yet. Whether this patient needs imaging before lumbar puncture depends on which set is applied.');
+    lines.push('Antimicrobials start within the hour and diagnostics, imaging included, must not delay them. The evidence behind that target was graded very low to low quality by its own developers, which makes it a system-design margin rather than a validated deadline. No agent, dose, route, combination, or adjunct is selected here, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(`Features: ${patient.featuresRecordedAtTick === null ? 'not yet recorded' : `recorded at simulated ${formatElapsed(patient.featuresRecordedAtTick)}`}. Ownership: ${patient.ownersActivatedAtTick === null ? 'not yet activated' : 'activated, with cultures drawn rather than resulted'}. Criteria comparison: ${patient.criteriaComparedAtTick === null ? 'not done' : 'done'}. Boundaries: ${patient.boundariesReviewedAtTick === null ? 'not reviewed' : 'reviewed'}. Monitoring: ${patient.monitoringAtTick === null ? 'not arranged' : 'arranged'}.`);
+    lines.push(patient.featureObservation
+      ? `Last requested neurological observation at simulated ${formatElapsed(patient.featureObservation.atTick)}: Glasgow Coma Scale ${patient.featureObservation.glasgowComaScale}; ${patient.featureObservation.focalDeficit ? 'focal deficit present' : 'no focal deficit'}; ${patient.featureObservation.seizure ? 'seizure observed' : 'no seizure'}.`
+      : 'No new neurological-only observation has been requested.');
+    lines.push(patient.labObservation
+      ? `Last requested laboratory evidence at simulated ${formatElapsed(patient.labObservation.atTick)}: C-reactive protein ${patient.labObservation.crpMgL} milligrams per liter; white cells ${patient.labObservation.whiteCellsX109L.toFixed(1)}.`
+      : 'No new laboratory-only measurement has been requested.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: Glasgow Coma Scale ${patient.observation.glasgowComaScale}; heart rate ${patient.observation.heartRateBpm} per minute; C-reactive protein ${patient.observation.crpMgL} milligrams per liter.`
+      : 'No new full assessment has been requested.');
+    if (patient.imagingObserved) {
+      lines.push('The scan is reported as showing no space-occupying lesion and no midline shift. It changed no management, which is the common result rather than a lucky one.');
+    }
+    if (patient.choiceFeedback) lines.push(patient.choiceFeedback);
+    if (patient.ended) {
+      lines.push(patient.ended === 'handoff'
+        ? 'Practice complete. The recorded features and absences, which criteria sets they satisfy, whether intent fell inside the hour, and any microbiological yield lost all travel with the patient.'
+        : 'Instructor takeover ended this branch. The teaching stop predicts no patient outcome.');
+    }
+    return lines.join('\n');
+  }
+
   if (options.septicShockLabel) {
     const patient = options.septicShockLabel;
-    lines.push(patient.ceilingPassed
-      ? 'One hour has elapsed with no bounded resuscitation intent recorded. The ceiling has passed, and that is reported rather than hidden.'
-      : patient.ceilingDueInSeconds !== null
-        ? `Ceiling: ${Math.ceil(patient.ceilingDueInSeconds / 60)} simulated minutes remain of the hour this tier carries.`
-        : patient.resuscitationIntentAtTick !== null
-          ? `Resuscitation intent recorded ${patient.resuscitationIntentInsideCeiling ? 'inside the hour' : 'after the hour had passed'}.`
-          : 'The ceiling is not counting down.');
+    lines.push(patient.resuscitationIntentAtTick !== null
+      ? `Resuscitation intent recorded ${patient.resuscitationIntentInsideCeiling ? 'inside the hour' : 'after the hour had passed'}.`
+      : patient.ceilingPassed
+        ? 'One hour has elapsed with no bounded resuscitation intent recorded. The ceiling has passed, and that is reported rather than hidden.'
+        : `Ceiling: ${Math.ceil((patient.ceilingDueInSeconds ?? 0) / 60)} simulated minutes remain of the hour this tier carries.`);
     for (const field of ['systolicMmHg', 'diastolicMmHg'] as const) {
       const value = state[field];
       if (!options.invalid.has(field) && Number.isFinite(value)) {
@@ -216,8 +253,8 @@ export function stateSummary(
     lines.push(`Current alertness: ${patient.alertness}.`);
     // Each part is announced separately, because a single verdict would hide which parts the
     // treatment made answerable and which were answerable already.
-    lines.push(`Septic shock requires three things together. Vasopressors needed to maintain a mean arterial pressure at or above 65: ${patient.trialComplete ? (patient.vasopressorDependent ? 'met' : 'not met') : 'not yet decidable'}. That mean pressure held at target on support: ${patient.trialComplete ? (patient.meanPressureAtTarget ? 'met' : 'not met') : 'not yet decidable'}. A serum lactate above 2 millimoles per liter after adequate fluid resuscitation: ${patient.lactateAboveThreshold ? 'met' : 'not met'}.`);
-    lines.push(patient.definitionReadable
+    lines.push(`Septic shock requires three things together. Vasopressors needed to maintain a mean arterial pressure at or above 65: ${patient.trialObserved ? 'met' : 'not yet decidable'}. That mean pressure held at target on support: ${patient.trialObserved ? 'met' : 'not yet decidable'}. A serum lactate above 2 millimoles per liter, which the current value already exceeds, though the definition asks for it after resuscitation: met.`);
+    lines.push(patient.trialObserved
       ? 'All three can now be read together, and this meets septic shock. It did so only once the treatment had run, so the label reflects a treatment as much as a patient.'
       : 'The lactate is already above the threshold, but that threshold applies after resuscitation, and the other two describe a vasopressor that is not running. Two of the three have no truth value yet.');
     lines.push('The consensus task force stated that criteria for adequate fluid resuscitation and for need for vasopressor therapy could not be explicitly specified, because they are highly user dependent. No fluid volume, rate, vasoactive agent, dose, or endpoint is selected here, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');

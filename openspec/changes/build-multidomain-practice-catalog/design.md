@@ -3311,14 +3311,41 @@ added a duplicate switch case that would have shadowed the existing lesson. Ever
 namespaced `septic-shock-label`, and a reporting test pins that the two lessons do not answer to
 each other's action types or event prefixes.
 
-Remaining one: meningitis. Research is banked. The lesson must be distinct from the existing
-`acute-bacterial-meningitis-first-hour` scenario in the neurology module, which teaches protecting
-the first hour for one authored patient who supports prompt lumbar puncture without pre-imaging,
-and from this module's own meningococcal sepsis lesson. The candidate is the contested imaging
-boundary: the same patient meets the criteria for imaging before lumbar puncture under roughly 7,
-32, and 65 percent of the Swedish, ESCMID, and IDSA rule sets respectively, with an observed
-mortality difference between prompt and imaging-preceded puncture, so the criteria set a unit uses
-is a choice rather than a fact.
+The tenth and final infectious-disease preview,
+`meningitis-imaging-a-rule-that-does-not-agree@0.1.0`, completes the module with a boundary that is
+a governance choice rather than a clinical fact. Three features are present that appear on some
+published lists of indications for imaging before lumbar puncture: age 68, a severely
+immunocompromised state, and a Glasgow Coma Scale of 14. The Swedish criteria and NICE NG240 list
+none of them; ESCMID and WHO list severe immunocompromise; the archived IDSA guideline lists all
+three. Two sets image first and three do not, and the patient is identical in all five readings.
+
+Distinctness was checked against the two neighbouring lessons before any code was written, because
+the overlap was real. Neurology's `acute-bacterial-meningitis-first-hour` already teaches prompt
+puncture without routine pre-imaging, but it does so for a patient with no deferral trigger at all,
+and its own text scopes the conclusion to "this exact case". This scenario takes the complementary
+patient: the one the rule sets disagree about. This module's meningococcal sepsis lesson exposes no
+imaging or puncture control at all, so there is no conflict there.
+
+The learner never chooses the pathway, because in most settings nobody at the bedside does. The
+receiving unit applies its own local criteria and sends the patient for imaging, and the delay
+follows from the rule set rather than from a judgement. That is why the authored progression takes
+the decision away: recognizing which rule set you are standing in is the transferable skill, and
+adjudicating between them at the bedside is not. The neurology deliberately never moves, because a
+deterioration would make the sets agree and turn this into a lesson about escalation.
+
+The evidence is reported with its limits attached. The mortality association favouring prompt
+puncture is observational and confounding by indication is not excluded, since sicker patients are
+imaged more often. The one-hour antimicrobial target rests on evidence its own developers graded
+very low to low quality, which makes it a system-design margin rather than a validated deadline and
+does not make missing it acceptable. One widely cited criteria set is marked archived by its own
+issuing society with a 2004 data cutoff, and remains in local use.
+
+Wave F is complete at ten of ten. Two process changes came out of it and should carry into Wave G.
+Adversarial audits now run before the push rather than after, because the four defects found in
+possible sepsis and the ten found in septic shock all survived per-scenario suites written by the
+same author who wrote the code. And a collision sweep runs before any code is written, because
+`septic-shock-response` was already owned by the critical-care module and the first draft added a
+duplicate switch case that TypeScript accepts in silence.
 Sepsis without shock should teach the 2026 tiered structure and must be written so it teaches
 judgement rather than delay, with a visible three-hour ceiling running from first suspicion, no
 selectable waiting action, and any drift toward hypotension collapsing the branch to the one-hour

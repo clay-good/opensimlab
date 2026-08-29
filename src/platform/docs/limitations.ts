@@ -5831,6 +5831,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'The recommendation is 65 over higher targets on moderate certainty; it does not establish 65 as superior to lower, and 60 to 65 is now suggested for adults 65 or older. The fluid volume is a conditional suggestion on low certainty, hedged with an explicit warning about over-resuscitation, and restrictive and liberal strategies have not separated on mortality. An elevated lactate in sepsis reflects adrenergically stimulated aerobic glycolysis and reduced hepatic clearance as well as perfusion, so guidance directs individualizing after the initial bolus by watching the decrement rather than continuing fluids until normalization.',
     briefIn: ['septic-shock-a-label-the-treatment-creates'],
   },
+  {
+    id: 'meningitis-imaging-presentation-and-scan-result-are-authored',
+    headline: 'One authored scan result stands in for a distribution of them.',
+    simplification: 'The case supplies one fixed presentation and one authored scan reporting no space-occupying lesion and no midline shift, changing no management. No infection, imaging, or antimicrobial model runs underneath, and the neurology deliberately never changes.',
+    whereItMisleads: 'A learner concludes that pre-puncture imaging is always negative, or that a scan can be skipped on that basis.',
+    correctUnderstanding: 'Scans before lumbar puncture are usually normal and rarely alter management, but not always, and the features that would change the answer are exactly the ones that can evolve during a wait. The neurology is held still here so the disagreement between the criteria sets stays visible; a deterioration would make this a different lesson about escalation, in which imaging may well be indicated under every set.',
+    briefIn: ['meningitis-imaging-a-rule-that-does-not-agree'],
+  },
+  {
+    id: 'meningitis-imaging-controls-are-recording-and-comparison-only',
+    headline: 'The learner records and compares; nobody here orders a scan.',
+    simplification: 'The learner records the triggering features and their absences, activates time-critical ownership, records bounded antimicrobial intent, compares five published criteria sets, reviews the boundaries, and arranges monitoring. No agent, dose, route, combination, adjunct, imaging request, interpretation, lumbar puncture, or procedure exists.',
+    whereItMisleads: 'A learner believes choosing the imaging pathway was theirs to make, or that comparing the criteria sets is how the decision is made in practice.',
+    correctUnderstanding: 'In most settings the pathway follows the local rule set rather than a bedside judgement, which is why the authored progression has the unit apply its own criteria and send the patient for imaging without the learner choosing it. Recognizing which rule set you are standing in is the transferable skill; adjudicating between them at the bedside is not.',
+    briefIn: ['meningitis-imaging-a-rule-that-does-not-agree'],
+  },
+  {
+    id: 'meningitis-imaging-criteria-disagreement-is-the-lesson-not-a-verdict',
+    headline: 'This scenario does not tell you which criteria set is right.',
+    simplification: 'The case states five published criteria sets and what each says about this one patient, alongside a cohort study associating prompt lumbar puncture with lower mortality and more patients treated inside the hour.',
+    whereItMisleads: 'A learner reads the scenario as endorsing the most permissive rule set, or as evidence that imaging before puncture causes death.',
+    correctUnderstanding: 'The mortality comparison is observational and confounding by indication is not excluded: sicker patients are imaged more often. What the evidence supports is that the disagreement is real, that the delay is measurable, and that one widely cited set is archived by its own issuing society with a 2004 data cutoff. Which set a unit adopts is a governance decision made above the bedside, and this scenario reports the disagreement rather than settling it.',
+    briefIn: ['meningitis-imaging-a-rule-that-does-not-agree'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

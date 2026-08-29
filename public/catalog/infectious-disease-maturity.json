@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "infectious-disease",
-  "recordCount": 9,
+  "recordCount": 10,
   "records": [
     {
       "recordId": "scenario:meningococcal-sepsis-recognition-and-escalation@0.1.0",
@@ -92,14 +92,25 @@
       ]
     },
     {
-      "recordId": "scenario:septic-shock-a-label-the-treatment-creates@0.1.0",
+      "recordId": "scenario:septic-shock-a-label-the-treatment-creates@0.1.1",
       "subjectKind": "scenario",
       "subjectId": "septic-shock-a-label-the-treatment-creates",
+      "contentVersion": "0.1.1",
+      "status": "preview",
+      "evidence": [
+        "/catalog/infectious-disease-completion-audit.json#septic-shock-a-label-the-treatment-creates@0.1.1",
+        "/catalog/infectious-disease-quality-audit.json#septic-shock-a-label-the-treatment-creates@0.1.1"
+      ]
+    },
+    {
+      "recordId": "scenario:meningitis-imaging-a-rule-that-does-not-agree@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "meningitis-imaging-a-rule-that-does-not-agree",
       "contentVersion": "0.1.0",
       "status": "preview",
       "evidence": [
-        "/catalog/infectious-disease-completion-audit.json#septic-shock-a-label-the-treatment-creates@0.1.0",
-        "/catalog/infectious-disease-quality-audit.json#septic-shock-a-label-the-treatment-creates@0.1.0"
+        "/catalog/infectious-disease-completion-audit.json#meningitis-imaging-a-rule-that-does-not-agree@0.1.0",
+        "/catalog/infectious-disease-quality-audit.json#meningitis-imaging-a-rule-that-does-not-agree@0.1.0"
       ]
     }
   ]
