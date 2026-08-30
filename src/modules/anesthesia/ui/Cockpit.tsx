@@ -61,6 +61,8 @@ import { useLoweringTheCountDemonstration } from '../../oncology/demo/useLowerin
 import { useInheritedUrgencyDemonstration } from '../../oncology/demo/useInheritedUrgencyDemonstration';
 import { useTrialRuleDemonstration } from '../../oncology/demo/useTrialRuleDemonstration';
 import { useSilentInteractionDemonstration } from '../../oncology/demo/useSilentInteractionDemonstration';
+import { useEasyLabelDemonstration } from '../../oncology/demo/useEasyLabelDemonstration';
+import { supportsEasyLabelDemonstration } from '../../oncology/demo/easy-label-demonstration';
 import { supportsSilentInteractionDemonstration } from '../../oncology/demo/silent-interaction-demonstration';
 import { supportsTrialRuleDemonstration } from '../../oncology/demo/trial-rule-demonstration';
 import { supportsInheritedUrgencyDemonstration } from '../../oncology/demo/inherited-urgency-demonstration';
@@ -224,6 +226,7 @@ export function Cockpit({
   const inheritedUrgencyDemoSupported = supportsInheritedUrgencyDemonstration(scenario);
   const trialRuleDemoSupported = supportsTrialRuleDemonstration(scenario);
   const silentInteractionDemoSupported = supportsSilentInteractionDemonstration(scenario);
+  const easyLabelDemoSupported = supportsEasyLabelDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
   const renalHypocalcemiaDemoSupported = supportsRenalHypocalcemiaDemonstration(scenario);
   const renalHypermagnesemiaDemoSupported = supportsRenalHypermagnesemiaDemonstration(scenario);
@@ -246,7 +249,7 @@ export function Cockpit({
     || normalTestToxicityDemoSupported || prognosisQuestionDemoSupported
     || laboratoryTlsDemoSupported || rareEarlyMyocarditisDemoSupported
     || loweringTheCountDemoSupported || inheritedUrgencyDemoSupported
-    || trialRuleDemoSupported || silentInteractionDemoSupported;
+    || trialRuleDemoSupported || silentInteractionDemoSupported || easyLabelDemoSupported;
   const scenarioDemoSupported = hypoglycemiaDemoSupported || adrenalDemoSupported
     || thyroidDemoSupported || myxedemaDemoSupported || observedStateDemoSupported;
   const inductionDemonstration = useDemonstration({
@@ -330,6 +333,11 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyponatremia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  const easyLabelDemonstration = useEasyLabelDemonstration({
+    active: demonstrating && easyLabelDemoSupported,
+    running: session.transport === 'running', patient: session.equipment?.resuscitation.easyLabel,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const silentInteractionDemonstration = useSilentInteractionDemonstration({
     active: demonstrating && silentInteractionDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.silentInteraction,
@@ -395,7 +403,8 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypermagnesemia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = silentInteractionDemoSupported ? silentInteractionDemonstration
+  const demonstration = easyLabelDemoSupported ? easyLabelDemonstration
+    : silentInteractionDemoSupported ? silentInteractionDemonstration
     : trialRuleDemoSupported ? trialRuleDemonstration
     : inheritedUrgencyDemoSupported ? inheritedUrgencyDemonstration
     : loweringTheCountDemoSupported ? loweringTheCountDemonstration
@@ -1071,6 +1080,7 @@ export function Cockpit({
           inheritedUrgencyGuidance={session.guidance}
           trialRuleGuidance={session.guidance}
           silentInteractionGuidance={session.guidance}
+          easyLabelGuidance={session.guidance}
           renalHypernatremiaGuidance={session.guidance}
           renalHypocalcemiaGuidance={session.guidance}
           renalHypermagnesemiaGuidance={session.guidance}

@@ -2782,6 +2782,7 @@ export interface ActionCockpitProps {
   readonly inheritedUrgencyGuidance?: GuidanceLevel;
   readonly trialRuleGuidance?: GuidanceLevel;
   readonly silentInteractionGuidance?: GuidanceLevel;
+  readonly easyLabelGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -5835,6 +5836,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasEasyLabelResponse && (
               <EasyLabelTray assessment={props.easyLabel}
+                guidance={props.easyLabelGuidance}
+                scenarioVersion={props.scenario.metadata.version}
                 demonstrating={props.easyLabelDemonstrating}
                 onAction={props.onEasyLabelResponse ?? (() => {})} />
             )}

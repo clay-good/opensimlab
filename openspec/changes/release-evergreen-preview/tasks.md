@@ -65,7 +65,10 @@ preview-channel blockers until it is. Updating the specification does not clear 
     `lowering-the-count-a-number-that-can-be-moved` and
     `inherited-urgency-an-emergency-that-mostly-is-not-one` and
     `trial-rule-a-rule-written-for-a-database` and
-    `silent-interaction-a-harm-with-nothing-to-find`; 1 of 11 remains. The pattern is an
+    `silent-interaction-a-harm-with-nothing-to-find` and
+    `easy-label-a-label-that-fits-too-easily`. All 11 done. Every oncology scenario now carries an
+    observed-state tutor and a worked example, leaving only the objectives cap and the two
+    people-and-hardware requirements outstanding for the module. The pattern is an
     observed-state tutor reading the learner's own recorded steps, a snapshot-driven worked
     example, tray and cockpit wiring, and a test that drives the example through the real engine
     to handoff rather than asserting it as a script. Each example also has to be held to its own

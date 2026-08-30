@@ -1,14 +1,18 @@
 import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { EasyLabelSnapshot } from '@platform/kernel/protocol';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { EasyLabelAction } from './easy-label';
+import { easyLabelInlinePrompt } from './easy-label-tutor';
 
-export function EasyLabelTray({ assessment, onAction, demonstrating = false }: {
-  readonly assessment?: EasyLabelSnapshot;
+export function EasyLabelTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
+  readonly assessment?: EasyLabelSnapshot; readonly scenarioVersion: string;
   readonly onAction: (action: EasyLabelAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = easyLabelInlinePrompt(guidance, { scenarioVersion, easyLabel: assessment });
   const observations = assessment.observationRecord; const results = assessment.resultRecord;
   const observation = assessment.observation;
   const decision = (action: EasyLabelAction, label: string, accepted = false) => {
@@ -17,6 +21,10 @@ export function EasyLabelTray({ assessment, onAction, demonstrating = false }: {
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     {/* The label and the thing it still requires, in the same sentence, always. */}
     <p className="syringe__remaining" role="status">{assessment.stoolsAboveBaseline} stools a day above his baseline, four cycles in. The obvious label is a diagnosis of exclusion, and the competing causes are {assessment.competingCausesExcluded ? 'excluded' : 'not excluded'}.</p>
     <p className="syringe__remaining">Selected sources: a review of the differential diagnosis and management of this colitis, and a clinical practice update on its diagnosis and management. Open the source view for exact wording and grades.</p>

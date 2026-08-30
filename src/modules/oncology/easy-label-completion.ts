@@ -2,11 +2,13 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { EASY_LABEL_A_LABEL_THAT_FITS_TOO_EASILY } from './scenarios/easy-label-a-label-that-fits-too-easily';
 import { EASY_LABEL_FIXTURES } from './easy-label-fixtures';
+import { EASY_LABEL_DEMONSTRATION_VERSION } from './demo/easy-label-demonstration';
 
 export function easyLabelCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'oncology' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== EASY_LABEL_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
     || EASY_LABEL_FIXTURES.contentVersion !== '0.1.0' || EASY_LABEL_FIXTURES.seed !== 2830
+    || EASY_LABEL_DEMONSTRATION_VERSION !== '0.1.0'
     || JSON.stringify(scenario) !== JSON.stringify(EASY_LABEL_A_LABEL_THAT_FITS_TOO_EASILY)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['easy-label-fixtures.ts binds seed 2830 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No inflammatory, infective, or treatment-response model is claimed, and no outcome follows from any choice.'] },
@@ -15,7 +17,7 @@ export function easyLabelCompletionEvidence(scenario: Scenario, capabilityVersio
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The recorded exclusion requirement, the recorded open causes, the call that starts both halves, bounded intent, the boundary review, and a current assessment permit handoff with the diagnosis and the treatment open. Instructor takeover bounds a run with no escalation at 90 minutes, the shortest in this module, because this is the one lesson here where a guideline names treatment as indicated and delay therefore costs something.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Seven event-bound objectives distinguish a label from a diagnosis that has been made, recording an open question rather than an assumed answer, refusing the sequence rather than either action, naming why this particular wrong answer is not the ordinary cost of being wrong, bounded qualified-team intent, holding two guideline statements that pull against each other without dropping either, and handing off a question rather than a conclusion. Refused shortcuts remain visible, and no diagnosis, treatment effect, or outcome is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['easy-label-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine, including the authored surfacing of the discharge summary.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Observed-state guidance and learner-paused example ${EASY_LABEL_DEMONSTRATION_VERSION} use ordinary recorded actions. Unassisted mode is silent and coached withholds the single non-urgent beat. The label here may well be right, which is the trap rather than a complication of it, so the example is held to finishing with it unconfirmed: a test asserts handoff is reached with competing causes still unexcluded. It escalates so evaluation and treatment start together rather than queueing them, and when the unopened discharge summary surfaces it adds the recent antibiotic course to what is outstanding rather than treating it as an overturn — the narration says the label becomes one of at least two things, which is what a diagnosis of exclusion means. No prompt argues the label is likely or unlikely.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];

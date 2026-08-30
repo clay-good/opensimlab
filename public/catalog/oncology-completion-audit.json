@@ -1342,9 +1342,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary recorded actions. Unassisted mode is silent and coached withholds the single non-urgent beat. The label here may well be right, which is the trap rather than a complication of it, so the example is held to finishing with it unconfirmed: a test asserts handoff is reached with competing causes still unexcluded. It escalates so evaluation and treatment start together rather than queueing them, and when the unopened discharge summary surfaces it adds the recent antibiotic course to what is outstanding rather than treating it as an overturn — the narration says the label becomes one of at least two things, which is what a diagnosis of exclusion means. No prompt argues the label is likely or unlikely."
           ]
         },
         {
