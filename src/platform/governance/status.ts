@@ -30,7 +30,7 @@ export const HONEST_STATUS = {
   // the source of truth for the label; a test asserts the two stay identical.
   // They are duplicated rather than imported so that the landing route keeps
   // pulling in nothing but this module.
-  headline: 'Educational use only — not clinically reviewed.',
+  headline: 'Educational use only. Not clinically reviewed.',
   detail:
     'No clinician has signed any content in this build. The pharmacology parameters are '
     + 'transcribed from the primary literature but have not had the independent second-source '

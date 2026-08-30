@@ -5,7 +5,7 @@ is, without softening it.
 
 ## Status
 
-**Educational use only — not clinically reviewed.**
+**Educational use only. Not clinically reviewed.**
 
 That is the whole claim, and it is not a stage on the way to a different one. Open Sim Lab
 publishes in a single evergreen state: the catalog grows and gets corrected continuously,

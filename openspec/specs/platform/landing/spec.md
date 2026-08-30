@@ -6,14 +6,16 @@ Defines the front door at `opensimlab.com`. It has two jobs and they pull in opp
 
 ## Requirements
 
-### Requirement: One Screen, One Action
+### Requirement: One Screen, Every Door
 
-The landing page SHALL fit its essential content — the name, the one-line description, the hero, and the primary action — within the first viewport at every breakpoint from 360 px wide upward, with no carousel, no modal, no cookie banner, no newsletter capture, and no interstitial of any kind.
+The landing page SHALL fit its essential content — the name, the one-line description, the hero, and the module choices — within the first viewport at every breakpoint from 360 px wide upward, with no carousel, no modal, no cookie banner, no newsletter capture, and no interstitial of any kind.
 
-#### Scenario: The primary action is unmissable and singular
+#### Scenario: Every available module is offered at the same weight
 
 - **WHEN** the page renders at any supported breakpoint
-- **THEN** exactly one primary Button is present, labeled to name the destination — for example "Open the anesthesia simulator" — linking to `/anesthesia`, and no other control competes with it visually
+- **THEN** every module with `available` status is present as its own control linking to its route, all at the same size and visual weight, and no single module is styled as the primary one
+
+Fifteen modules are registered at their full planned count, and a visitor arriving here is not necessarily an anaesthetist. This requirement previously named exactly one primary Button linking to `/anesthesia`, with the other modules listed beneath it as small text; that said the product was an anaesthesia simulator with extras, which is not what it is. The one-screen half of the requirement is unchanged and is what constrains the design: offering every module costs vertical space, so the space comes from the hero and the spacing rather than from the fold.
 
 #### Scenario: Nothing interrupts arrival
 

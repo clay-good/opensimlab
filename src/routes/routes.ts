@@ -265,11 +265,11 @@ export const ROUTES: readonly RouteMetadata[] = [
   })),
   {
     path: '/renal-electrolyte',
-    title: formatTitle('Renal and Electrolyte Medicine simulator'),
+    title: formatTitle('Renal and electrolyte medicine simulator'),
     description: 'Practice calm kidney and electrolyte reassessment, immediate protection, treatment boundaries, and recurrence-aware handoff in focused simulations.',
     indexable: true,
     structuredData: ['SoftwareApplication'],
-    heading: 'Renal and Electrolyte Medicine simulator',
+    heading: 'Renal and electrolyte medicine simulator',
   },
   ...RENAL_ELECTROLYTE_SCENARIOS.map((scenario) => ({
     path: `/renal-electrolyte/scenario/${scenario.metadata.id}`,

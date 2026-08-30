@@ -254,8 +254,12 @@ describe('the demonstration link', () => {
     const landing = readFileSync(join(process.cwd(), 'src/landing/Landing.tsx'), 'utf8');
     expect(landing).toContain('DEMONSTRATION_HREF');
     expect(landing).toContain('Watch a 90-second demonstration');
-    // And it stays a quiet link: the page is allowed exactly one primary action.
-    expect((landing.match(/className="button button--primary"/g) ?? []).length).toBe(1);
+    // And it stays a quiet link. It used to be the quiet half of a pair beside a
+    // primary anaesthesia button; the front door now offers all fifteen modules
+    // at the same weight and has no primary button at all, so the thing to hold
+    // is that the demonstration did not become one.
+    expect(landing).not.toContain('button--primary');
+    expect(landing).toContain('className="landing__watch"');
   });
 });
 

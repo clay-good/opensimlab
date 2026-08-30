@@ -38,7 +38,7 @@ export const NOT_FOR_CLINICAL_USE =
  */
 export const NOT_CLINICALLY_REVIEWED =
   'No clinician has reviewed this content. Every item in this build is published as '
-  + '"Educational use only — not clinically reviewed", the editorial board is empty and '
+  + '"Educational use only. Not clinically reviewed", the editorial board is empty and '
   + 'published as empty, and the status of every item is listed at '
   + 'https://opensimlab.com/review-status.';
 

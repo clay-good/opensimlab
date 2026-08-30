@@ -47,7 +47,7 @@ describe('maturity publication policy', () => {
     // One published state, carrying both facts: the scope it is for, and that
     // nothing in it is signed. Dropping the second half would leave the product
     // described only by its purpose and not by its evidence.
-    expect(MATURITY_LABELS.preview).toBe('Educational use only — not clinically reviewed');
+    expect(MATURITY_LABELS.preview).toBe('Educational use only. Not clinically reviewed');
     expect(MATURITY_LABELS.preview.toLowerCase()).toContain('not clinically reviewed');
     expect(MATURITY_LABELS.source_checked).toContain('clinical behavior not reviewed');
     expect(MATURITY_LABELS.institution_endorsed.toLowerCase()).not.toContain('certified');

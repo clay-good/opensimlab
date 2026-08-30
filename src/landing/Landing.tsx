@@ -77,14 +77,11 @@ export function Landing() {
           <canvas ref={canvasRef} aria-hidden="true" />
         </div>
 
+        {/* The shortest path to the thing this simulator does that a textbook
+            cannot. It used to be four clicks from here — front door, module
+            index, scenario, briefing — which is three too many for someone
+            deciding in ten seconds whether any of this is worth their time. */}
         <div className="landing__action">
-          <a className="button button--primary" href="/anesthesia">
-            Practice anesthesia—free
-          </a>
-          {/* The shortest path to the thing this simulator does that a textbook
-              cannot. It used to be four clicks from here — front door, module
-              index, scenario, briefing — which is three too many for someone
-              deciding in ten seconds whether any of this is worth their time. */}
           <a className="landing__watch" href={DEMONSTRATION_HREF}>
             Watch a 90-second demonstration
           </a>
@@ -100,27 +97,30 @@ export function Landing() {
           ))}
         </p>
 
-        {/* The module directory, compact and unambiguous. Each planned module's
-            scope lives on its own route, which is one click from here. */}
+        {/* Every module, offered at the same weight.
+            This used to be one primary button to anaesthesia with the other
+            fourteen listed underneath as small grey text. That told a visitor the
+            product was an anaesthesia simulator with extras, which is not what it
+            is: fifteen modules are registered at their full planned count and any
+            of them is a reasonable place to start. Nobody arriving here is
+            necessarily an anaesthetist, and the front door should not assume it.
+            The planned sixteenth keeps its honest tail. */}
         <p className="landing__modules">
-          <span>Ready to practice: </span>
-          {available.map((module, index) => (
-            <span key={module.id}>
-              {index > 0 && <span aria-hidden="true"> · </span>}
-              <a className="landing__module-live" href={`/${module.route}`}>
-                {module.displayName}
-              </a>
-            </span>
+          {available.map((module) => (
+            <a key={module.id} className="landing__module-live" href={`/${module.route}`}>
+              {module.displayName}
+            </a>
           ))}
           <span className="landing__module-planned">
-            {' · '}
             {planned.map((module, index) => (
               <span key={module.id}>
                 {index > 0 && ', '}
                 <a href={`/${module.route}`}>{module.displayName}</a>
               </span>
             ))}
-            {' planned. No dates.'}
+            {/* A non-breaking space, so the module name and the two words that
+                qualify it wrap together rather than breaking across a line. */}
+            {'\u00A0planned. No dates.'}
           </span>
         </p>
       </main>

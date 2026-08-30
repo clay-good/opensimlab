@@ -162,7 +162,7 @@ export function PrerenderedBody({ path }: { path: string }) {
   );
   if (path === '/renal-electrolyte') return (
     <ModuleMarkup moduleId="renal-electrolyte" basePath="/renal-electrolyte"
-      heading="Renal and Electrolyte Medicine simulator" scenarios={RENAL_ELECTROLYTE_SCENARIOS} />
+      heading="Renal and electrolyte medicine simulator" scenarios={RENAL_ELECTROLYTE_SCENARIOS} />
   );
   if (path.startsWith('/renal-electrolyte/scenario/')) return (
     <ScenarioMarkup path={path} basePath="/renal-electrolyte"

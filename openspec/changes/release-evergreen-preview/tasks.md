@@ -68,7 +68,13 @@ preview-channel blockers until it is. Updating the specification does not clear 
     `silent-interaction-a-harm-with-nothing-to-find` and
     `easy-label-a-label-that-fits-too-easily`. All 11 done. Every oncology scenario now carries an
     observed-state tutor and a worked example, leaving only the objectives cap and the two
-    people-and-hardware requirements outstanding for the module. The pattern is an
+    people-and-hardware requirements outstanding for the module.
+    Renal-electrolyte was already complete on this requirement. Endocrine-metabolic has it on ten
+    of twelve: `dka-resolution-transition` and `hhs-osmolality-trajectory` are an earlier
+    construction with action types and blocked-action guards but no snapshot in
+    `platform/kernel/protocol.ts`, so there is no observed state for a tutor or example to read.
+    Giving them one means adding engine state to two shipped scenarios, which is a larger change
+    than the pattern above and deserves its own. The pattern is an
     observed-state tutor reading the learner's own recorded steps, a snapshot-driven worked
     example, tray and cockpit wiring, and a test that drives the example through the real engine
     to handoff rather than asserting it as a script. Each example also has to be held to its own

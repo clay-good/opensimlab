@@ -12,7 +12,7 @@ export const READY_SCENARIO_COUNT = 240;
 export const READY_MODULE_COUNT = 15;
 
 export const ONE_LINE_DESCRIPTION =
-  `Practice ${READY_SCENARIO_COUNT} clinical scenarios across ${READY_MODULE_COUNT} specialties—free online—`
+  `Practice ${READY_SCENARIO_COUNT} clinical scenarios across ${READY_MODULE_COUNT} specialties, free online, `
   + 'for medical students, residents, and nurse anesthetists.';
 
 /** Exactly three facts, chosen because they answer the objections a visitor has. */

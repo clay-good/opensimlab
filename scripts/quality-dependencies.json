@@ -148,7 +148,7 @@
       },
       {
         "path": "src/platform/governance/publication.ts",
-        "sha256": "67572279cdde0e70fe913866845a1d44ab6f105345521783e84c554f4d6a50f1"
+        "sha256": "a64b18c1e1d3c245db8969f24f1a5cfe39b297c6ce2e4dcf2caac0507861f2c4"
       },
       {
         "path": "src/platform/governance/records.ts",
@@ -385,7 +385,7 @@
       },
       {
         "path": "src/platform/governance/publication.ts",
-        "sha256": "67572279cdde0e70fe913866845a1d44ab6f105345521783e84c554f4d6a50f1"
+        "sha256": "a64b18c1e1d3c245db8969f24f1a5cfe39b297c6ce2e4dcf2caac0507861f2c4"
       },
       {
         "path": "src/platform/governance/records.ts",
@@ -425,7 +425,7 @@
       },
       {
         "path": "src/platform/transcript/transcript.ts",
-        "sha256": "e92df917470e0d3c2bf1d3ef4a2b21a47e4d2e400a4377efad729d430b64b537"
+        "sha256": "9880ab30b9e6bb712117a49e40c495b9da31ffe528d61e3c96d1c4f04e1f630a"
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
@@ -658,7 +658,7 @@
       },
       {
         "path": "src/platform/governance/publication.ts",
-        "sha256": "67572279cdde0e70fe913866845a1d44ab6f105345521783e84c554f4d6a50f1"
+        "sha256": "a64b18c1e1d3c245db8969f24f1a5cfe39b297c6ce2e4dcf2caac0507861f2c4"
       },
       {
         "path": "src/platform/governance/records.ts",

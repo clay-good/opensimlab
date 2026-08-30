@@ -104,7 +104,7 @@ export const MODULES: readonly ModuleDeclaration[] = [
   {
     id: 'renal-electrolyte',
     route: 'renal-electrolyte',
-    displayName: 'Renal and Electrolyte Medicine',
+    displayName: 'Renal and electrolyte medicine',
     status: 'available',
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },

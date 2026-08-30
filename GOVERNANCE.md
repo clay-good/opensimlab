@@ -15,7 +15,7 @@ are two release channels:
 
 | Channel | What it requires | What it is |
 | --- | --- | --- |
-| `preview` | Six blocking technical and evidence gates: build integrity, sources, safety scope, limitations, validation report, documented face-validity procedure. The completion contract and the full quality-record set are computed and reported but do not block — no item has ever passed them, and a channel nothing can pass is not a channel. **No signature.** | The public site. Every item labeled "Educational use only — not clinically reviewed." |
+| `preview` | Six blocking technical and evidence gates: build integrity, sources, safety scope, limitations, validation report, documented face-validity procedure. The completion contract and the full quality-record set are computed and reported but do not block — no item has ever passed them, and a channel nothing can pass is not a channel. **No signature.** | The public site. Every item labeled "Educational use only. Not clinically reviewed." |
 | `reviewed` | All of the above, plus current exact-version signatures, board coverage for every domain, and completed face-validity review. | Institutional adoption packs. **Still refuses to publish.** |
 
 Publishing on `preview` is a deliberate decision recorded in

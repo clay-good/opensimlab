@@ -90,7 +90,7 @@ describe('Requirement: Governance Is Auditable From Outside', () => {
     expect(report.current).toBe(0);
     expect(report.percentCurrent).toBe(0);
     expect(EDITORIAL_BOARD).toHaveLength(0);
-    expect(HONEST_STATUS.headline).toContain('not clinically reviewed');
+    expect(HONEST_STATUS.headline.toLowerCase()).toContain('not clinically reviewed');
     expect(HONEST_STATUS.detail).toContain('No clinician has signed');
   });
 

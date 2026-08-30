@@ -32,7 +32,7 @@ describe('Requirement: One Published State', () => {
 
   it('states the one label the corpus ships under, in the same words as the marker', () => {
     expect(HONEST_STATUS.headline).toBe(`${MATURITY_LABELS.preview}.`);
-    expect(HONEST_STATUS.headline).toContain('not clinically reviewed');
+    expect(HONEST_STATUS.headline.toLowerCase()).toContain('not clinically reviewed');
     expect(HONEST_STATUS.detail).toContain('No clinician has signed');
   });
 });

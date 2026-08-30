@@ -10,10 +10,10 @@ import { RENAL_ELECTROLYTE_LIMITATIONS } from '@platform/docs/limitations/renal-
 
 const RENAL_ELECTROLYTE_CONFIG: ClinicalModuleConfig = {
   id: 'renal-electrolyte', basePath: '/renal-electrolyte',
-  heading: 'Renal and Electrolyte Medicine simulator',
+  heading: 'Renal and electrolyte medicine simulator',
   limitations: RENAL_ELECTROLYTE_LIMITATIONS,
   catalogIntroduction: 'Calm kidney and electrolyte rehearsals for protecting the person while following the trajectory. Distinguish immediate protection from correction, reassess what changed, and keep recurrent risk visible.',
-  catalogStatus: `${RENAL_ELECTROLYTE_SCENARIOS.length} of 12 planned Renal and Electrolyte Medicine labs are available as previews. Registration does not establish completed review.`,
+  catalogStatus: `${RENAL_ELECTROLYTE_SCENARIOS.length} of 12 planned Renal and electrolyte medicine labs are available as previews. Registration does not establish completed review.`,
   scenarios: RENAL_ELECTROLYTE_SCENARIOS,
   defaultScenarioId: DEFAULT_RENAL_ELECTROLYTE_SCENARIO_ID,
   getScenario: getRenalElectrolyteScenario,

@@ -22,16 +22,21 @@
  * as a fragment of a longer document rather than as a front door. Centring the
  * short block and giving the hero real width makes the page look like the one
  * screen it is. */
+/* The gap and the block padding are one notch tighter than they were, and the
+   hero is shorter, because fifteen chips take five rows where a single button
+   took one. The one-screen guarantee is the constraint that pays for the change:
+   offering every module costs vertical space, so the space comes from the
+   generous parts rather than from the fold. */
 .landing__front {
   display: grid;
-  gap: var(--space-4);
+  gap: var(--space-3);
   align-content: center;
   justify-items: center;
   text-align: center;
   inline-size: 100%;
   max-inline-size: 68ch;
   margin-inline: auto;
-  padding: var(--space-7) var(--space-5);
+  padding: var(--space-6) var(--space-5);
 }
 
 /* The wordmark scales with the window rather than holding 56px everywhere. At a
@@ -43,6 +48,8 @@
   font: var(--type-vital-xl);
   font-size: clamp(2.5rem, 13vw, 56px);
   letter-spacing: var(--type-vital-xl-tracking);
+  /* Three short words that must never break two-and-one. */
+  text-wrap: balance;
 }
 
 /* The front door is meant to be one screen. On a phone the 48px band above and
@@ -75,6 +82,7 @@
   color: var(--text-secondary);
   max-inline-size: 46ch;
   text-wrap: balance;
+  line-height: 1.45;
 }
 
 /* The hero: a live electrocardiogram from the project's own waveform engine.
@@ -88,8 +96,9 @@
 .landing__hero {
   position: relative;
   inline-size: 100%;
-  /* The hero is the argument the page makes, so it gets the room to make it. */
-  block-size: clamp(190px, 28dvh, 320px);
+  /* The hero is the argument the page makes, so it gets the room to make it —
+     but not at the cost of pushing the choices it is arguing for off the screen. */
+  block-size: clamp(176px, 24dvh, 280px);
   margin-block: var(--space-3);
   background: var(--void);
   border: 1px solid var(--line);
@@ -97,18 +106,41 @@
   overflow: hidden;
 }
 /* A soft edge, so the trace emerges and retreats instead of being clipped by a
- * hard border at both ends. */
+ * hard border at both ends. The same layer carries a faint corner vignette, so
+ * the glass reads as curved rather than as a rectangle with a line around it. */
 .landing__hero::after {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
+  background:
+    radial-gradient(120% 140% at 50% 50%, transparent 55%, color-mix(in srgb, var(--void) 65%, transparent) 100%),
+    linear-gradient(
+      to right,
+      var(--void) 0%,
+      transparent 6%,
+      transparent 94%,
+      var(--void) 100%
+    );
+}
+/* One hairline of light along the top inside edge. A real bezel catches the
+ * room; a border alone never does.
+ *
+ * A gradient rather than an inset box-shadow, which the design system forbids
+ * outright: surfaces are separated by a step and a hairline, never by a shadow,
+ * and `tests/arch/boundaries.test.ts` enforces that with no exception for
+ * decorative insets. */
+.landing__hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
   background: linear-gradient(
-    to right,
-    var(--void) 0%,
-    transparent 6%,
-    transparent 94%,
-    var(--void) 100%
+    to bottom,
+    color-mix(in srgb, var(--line-strong) 70%, transparent) 0 1px,
+    transparent 1px
   );
 }
 /* The static fallback occupies exactly the same box, so nothing shifts when the
@@ -142,21 +174,109 @@
   gap: var(--space-4);
 }
 
+
 .landing__watch {
   font: var(--type-body);
   color: var(--text-secondary);
 }
 
-/* The three facts and the module directory: two quiet lines, not two panels. */
+/* The three facts and the module directory: two quiet lines, not two panels.
+ *
+ * They belong to each other and not to the button, so they are pulled together
+ * as a pair and pushed away from the action above. Before this they sat on the
+ * same uniform gap as everything else and read as two more unrelated rows. */
 .landing__facts,
 .landing__modules {
   font: var(--type-micro);
   letter-spacing: var(--type-micro-tracking);
   color: var(--text-tertiary);
 }
-.landing__facts a { color: var(--text-secondary); }
+.landing__facts { margin-block-start: var(--space-2); }
+
+/* Fifteen equal choices, not one choice and fourteen footnotes.
+ *
+ * These were dot-separated grey text under a single anaesthesia button, which
+ * said the product was an anaesthesia simulator with extras. They are chips now,
+ * all the same size and weight, wrapping into a block that reads as a set of
+ * doors. Chips also give each one a real tap target on a phone, which fifteen
+ * 11px links in a running line never did. */
+.landing__modules {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  max-inline-size: 60ch;
+  font: var(--type-micro);
+  letter-spacing: var(--type-micro-tracking);
+}
+.landing__modules .landing__module-live {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 32px;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface-1);
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition:
+    background var(--motion-micro) var(--ease),
+    border-color var(--motion-micro) var(--ease),
+    color var(--motion-micro) var(--ease);
+}
+.landing__modules .landing__module-live:hover {
+  background: var(--surface-2);
+  border-color: var(--line-strong);
+  color: var(--text-primary);
+}
+.landing__modules .landing__module-live:active { background: var(--surface-1); }
+
+/* The one that is not built yet is a sentence, not a door. It sits on its own
+   line under the chips and keeps saying there is no date. */
+.landing__module-planned {
+  flex-basis: 100%;
+  text-align: center;
+  color: var(--text-tertiary);
+  margin-block-start: var(--space-1);
+}
+
+/* The names carry the line; the separators only keep them apart. Giving both the
+   same weight is what made this read as pasted data rather than a directory. */
+.landing__facts a,
 .landing__module-live { color: var(--text-secondary); }
+/* Descendant, not child: each fact is wrapped in its own span, so the separators
+   sit a level deeper than a child selector reaches. */
+.landing__facts span[aria-hidden='true'] {
+  color: color-mix(in srgb, var(--text-tertiary) 50%, transparent);
+}
 .landing__module-planned a { color: var(--text-tertiary); }
+/* The planned module's name stays whole. With the non-breaking space that ties
+   it to "planned.", the whole tail moves to the next line together instead of
+   breaking across one. */
+.landing__module-planned a { white-space: nowrap; }
+
+/* Underlines that sit off the baseline rather than through the descenders, and
+   only on the pointer. Every one of these is a small link in a quiet line, and
+   permanently underlining fifteen of them would shout. */
+.landing__facts a,
+.landing__module-planned a,
+.landing__watch {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: color var(--motion-micro) var(--ease);
+}
+.landing__facts a:hover,
+.landing__module-planned a:hover,
+.landing__watch:hover { color: var(--text-primary); }
+.landing__facts a:focus-visible,
+.landing__modules a:focus-visible { outline-offset: 3px; border-radius: var(--radius-pill); }
+
+/* Selection picks up the interface accent rather than the browser default,
+   which on this palette arrives as an unrelated blue block. */
+.landing ::selection {
+  background: color-mix(in srgb, var(--focus) 30%, transparent);
+  color: var(--text-primary);
+}
 
 /* --- The About page ------------------------------------------------------- */
 
@@ -227,3 +347,21 @@
    is a link at all. */
 .landing__status a { color: inherit; text-decoration: underline; }
 .landing__disclaimer { font: var(--type-micro); color: var(--text-secondary); }
+
+/* --- Phone overrides ------------------------------------------------------ */
+
+/* These live at the end of the file on purpose.
+ *
+ * They were first written next to the other front-door rules, near the top, and
+ * did nothing: `.landing__hero` and `.landing__modules` are defined further down
+ * at the same specificity, so the later rule won and the media query matched
+ * while changing nothing. The computed height was still the desktop value. Any
+ * phone override for this file belongs below the rule it overrides. */
+@media (max-width: 767px) {
+  /* Fifteen chips wrap to seven rows on a phone, which put the last of them
+     under the fold. The hero gives the room back: it is still the largest thing
+     on the screen and still the argument, and a visitor who cannot see the
+     choices it is arguing for has been sold nothing. */
+  .landing__hero { block-size: clamp(150px, 20dvh, 220px); }
+  .landing__modules { gap: var(--space-1); }
+}

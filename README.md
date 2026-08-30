@@ -43,17 +43,21 @@ started, so it has no scenarios and no row here.
 Each lab is a closed-loop scenario: the physiology keeps running while you decide, and
 what you do changes where the patient goes next.
 
-## How it works
+Some labs also carry a **worked example** you can watch and take the controls back from at any
+point, and a private tutor that reads only what you have actually done. The tutor is silent
+unless you ask for it, says nothing at all on the unassisted setting, and never supplies the
+diagnosis a lesson exists to leave open. Every renal and oncology lab has both, and most
+endocrine ones; the rest are being written toward the same standard.
 
-Every file the simulator exports — transcript, event log, concentration CSV, reviewer notes,
-practice history — carries both statements: that this is not for clinical use, and that no
-clinician has reviewed it. A file that leaves the interface leaves the labels behind, so it says
-so itself.
+## How it works
 
 **Your practice stays on your device.** No accounts, no analytics, no telemetry. Progress,
 transcripts, reflections, and debriefs live in your browser. Nothing is sent anywhere
 unless you open the problem-report form, preview exactly what it contains, and submit it
-yourself.
+yourself. Every file you export — transcript, event log, concentration CSV, reviewer notes,
+practice history — carries both statements with it: that this is not for clinical use, and that
+no clinician has reviewed it. A file that leaves the interface leaves the labels behind, so it
+says so itself.
 
 **The pharmacology is ours.** Model parameters are transcribed by hand from the primary
 literature, each carrying its citation and the range it is valid over. Nothing is fetched
@@ -72,7 +76,7 @@ Everything above is what the project is *for*. This is what it currently *is*.
 
 There is no alpha, beta, or 1.0 here, and no staged content vocabulary either. Open Sim Lab is one
 evergreen product in one state: the catalog grows and gets corrected continuously, and every item
-ships labeled **"Educational use only — not clinically reviewed."** That label is the whole claim.
+ships labeled **"Educational use only. Not clinically reviewed."** That label is the whole claim.
 A build identifies itself by its date and the commit it came from, not by a stage, and
 `npm run lint` fails on a prerelease version or staged-release wording anywhere a reader can
 reach it.
@@ -100,7 +104,7 @@ adoption packs are built from, and it will stay refused until named clinicians s
 content versions.
 
 What is done: the waveform engine, compartment solver, physiology, design system, cockpit, sound,
-accessibility, debrief, practice regions, and offline shell — with hundreds of automated tests and
+accessibility, debrief, practice regions, and offline shell — with over 7,000 automated tests and
 the Benumof apnea benchmarks inside 5% of published times.
 
 ## Running it

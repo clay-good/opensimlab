@@ -48,7 +48,7 @@ export function NotForClinicalUseGate({ open, onAcknowledge }: {
           which is what the link is for. */}
       <p>
         <strong>No clinician has reviewed this content.</strong> The editorial board is empty and
-        published as empty, and every item here is labeled &ldquo;Educational use only — not
+        published as empty, and every item here is labeled &ldquo;Educational use only. Not
         clinically reviewed&rdquo;. <a href="/review-status">The review-status page</a> lists every
         item and the label it carries.
       </p>

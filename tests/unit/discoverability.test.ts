@@ -570,25 +570,53 @@ describe('Requirement: One Screen, One Action', () => {
     expect(about).toContain('SUGGESTED_CITATION');
   });
 
-  it('Scenario: exactly one primary action, naming its destination', () => {
-    const primaries = [...landing.matchAll(/className="button button--primary"/g)];
-    expect(primaries).toHaveLength(1);
-    expect(landing).toContain('Practice anesthesia—free');
-    expect(landing).toContain('href="/anesthesia"');
+  /**
+   * The front door offers every module at the same weight.
+   *
+   * It used to be one primary button to anaesthesia with the other fourteen
+   * listed underneath as small grey text, which told a visitor the product was an
+   * anaesthesia simulator with extras. All fifteen are registered at their full
+   * planned count and any is a reasonable place to start, so none of them is
+   * styled as the one that matters.
+   */
+  it('Scenario: every available module is offered at the same weight', () => {
     const markup = renderToStaticMarkup(createElement(Landing));
-    expect(markup).toContain('class="button button--primary" href="/anesthesia"');
+    const available = MODULES.filter((module) => module.status === 'available');
+    const chips = [...markup.matchAll(/class="landing__module-live" href="\/([a-z-]+)"/g)]
+      .map((match) => match[1]);
+    expect(chips).toEqual(available.map((module) => module.route));
+    // Nothing singles one out: no primary button remains on the front door.
+    expect(markup).not.toContain('button--primary');
+    expect(landing).not.toContain('Practice anesthesia—free');
   });
 
   it('Scenario: the front door names every module and promises no date', () => {
     const markup = renderToStaticMarkup(createElement(Landing));
     for (const module of MODULES) expect(markup).toContain(module.displayName);
-    expect(markup).toContain('Ready to practice:');
     expect(markup).toContain('planned. No dates.');
     const directory = /<p class="landing__modules">([\s\S]*?)<\/p>/.exec(markup)?.[1] ?? '';
     const availableCount = MODULES.filter((module) => module.status === 'available').length;
-    expect(directory.match(/aria-hidden="true"> · <\/span>/g)).toHaveLength(availableCount - 1);
+    // Each available module is its own control rather than an item in a
+    // dot-separated run, so the separators the old directory needed are gone.
+    expect(directory.match(/landing__module-live/g)).toHaveLength(availableCount);
+    expect(directory).not.toContain('aria-hidden="true"> · </span>');
     // No date, no quarter, no countdown anywhere in what a visitor actually sees.
     expect(markup).not.toMatch(/\bQ[1-4]\s*20\d\d|coming soon|\b20[2-9]\d\b/i);
+  });
+
+  /**
+   * No em-dash or en-dash renders on the front door.
+   *
+   * Asserted on the rendered text rather than on the source, because the strings
+   * that reach this page come from four different modules — the tagline, the
+   * shared maturity label, the not-for-clinical-use statement, and the module
+   * registry — and only the rendered output shows what a visitor actually gets.
+   */
+  it('Scenario: the front door sets no em-dashes', () => {
+    const markup = renderToStaticMarkup(createElement(Landing));
+    const text = markup.replace(/<[^>]*>/g, ' ');
+    const dashes = [...text.matchAll(/.{0,30}[\u2014\u2013].{0,30}/g)].map((match) => match[0].trim());
+    expect(dashes, dashes.join(' | ')).toEqual([]);
   });
 
   it('Scenario: the front door carries no prose in its rendered markup', () => {

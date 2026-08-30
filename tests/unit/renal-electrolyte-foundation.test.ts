@@ -26,10 +26,10 @@ const scenario = RENAL_ELECTROLYTE_SCENARIOS[0]!;
 const read = (file: string) => readFileSync(join(process.cwd(), file), 'utf8');
 const json = (file: string) => JSON.parse(read(file));
 
-describe('Renal and Electrolyte Medicine module foundation', () => {
+describe('Renal and electrolyte medicine module foundation', () => {
   it('registers six separate previews toward twelve planned lessons without changing the default', () => {
     expect(getModule('renal-electrolyte')).toMatchObject({ route: 'renal-electrolyte',
-      displayName: 'Renal and Electrolyte Medicine', status: 'available',
+      displayName: 'Renal and electrolyte medicine', status: 'available',
       timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] } });
     expect(moduleProse('renal-electrolyte').plannedScope).toContain('Twelve bounded');
     expect(RENAL_ELECTROLYTE_SCENARIOS).toHaveLength(6);
@@ -50,7 +50,7 @@ describe('Renal and Electrolyte Medicine module foundation', () => {
     expect(routeFor(path)).toMatchObject({ indexable: true, structuredData: ['LearningResource'] });
     expect(routeFor('/renal-electrolyte/scenario/missing')).toBeUndefined();
     expect(structuredDataFor(['SoftwareApplication'], '/renal-electrolyte')[0]).toMatchObject({
-      name: 'Open Sim Lab Renal and Electrolyte Medicine', url: 'https://opensimlab.com/renal-electrolyte' });
+      name: 'Open Sim Lab Renal and electrolyte medicine', url: 'https://opensimlab.com/renal-electrolyte' });
     const resource = structuredDataFor(['LearningResource'], path)[0];
     expect(resource).toMatchObject({ url: `https://opensimlab.com${path}`, name: scenario.metadata.title,
       timeRequired: 'PT60M', teaches: scenario.metadata.objectives.map((objective) => objective.statement) });
@@ -87,7 +87,7 @@ describe('Renal and Electrolyte Medicine module foundation', () => {
   it('server-renders both destinations, sources, and unsigned status without JavaScript', () => {
     const directory = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/renal-electrolyte' }));
     expect(directory).toContain(`href="${path}"`);
-    expect(directory).toContain('Renal and Electrolyte Medicine simulator');
+    expect(directory).toContain('Renal and electrolyte medicine simulator');
     const briefing = renderToStaticMarkup(createElement(PrerenderedBody, { path }));
     expect(briefing).toContain(scenario.metadata.title);
     expect(briefing).toContain('Not clinically reviewed');
@@ -254,7 +254,7 @@ describe('Renal and Electrolyte Medicine module foundation', () => {
   it('mounts the live module and preserves unknown-address feedback', async () => {
     const { RenalElectrolyteRoute } = await import('@routes/modules/renal-electrolyte');
     const directory = renderToStaticMarkup(createElement(RenalElectrolyteRoute, { path: '/renal-electrolyte' }));
-    expect(directory).toContain('6 of 12 planned Renal and Electrolyte Medicine labs');
+    expect(directory).toContain('6 of 12 planned Renal and electrolyte medicine labs');
     expect(directory).toContain(`href="${path}"`);
     vi.stubGlobal('localStorage', { getItem: (key: string) => key === ACKNOWLEDGEMENT_KEY ? 'true' : null });
     try {
