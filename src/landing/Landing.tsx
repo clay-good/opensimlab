@@ -126,7 +126,13 @@ export function Landing() {
       </main>
 
       <footer className="landing__footer">
-        <p className="landing__status">{HONEST_STATUS.headline}</p>
+        {/* The label is the link. The front door has a hard word budget and this
+            claim is the one a visitor is most entitled to interrogate, so the
+            route to the evidence is the sentence making the claim rather than
+            another line of copy beside it. */}
+        <p className="landing__status">
+          <a href="/review-status">{HONEST_STATUS.headline}</a>
+        </p>
         <ul className="landing__footer-links">
           <li><a href="/about">About</a></li>
           {FOOTER_LINKS.map((link) => (

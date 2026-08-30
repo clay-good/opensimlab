@@ -15,7 +15,7 @@ are two release channels:
 
 | Channel | What it requires | What it is |
 | --- | --- | --- |
-| `preview` | Technical and evidence gates: build integrity, sources, safety scope, completion contract, tests, limitations, validation report, documented face-validity procedure. **No signature.** | The public site. Every item labeled "Preview — not clinically reviewed." |
+| `preview` | Six blocking technical and evidence gates: build integrity, sources, safety scope, limitations, validation report, documented face-validity procedure. The completion contract and the full quality-record set are computed and reported but do not block — no item has ever passed them, and a channel nothing can pass is not a channel. **No signature.** | The public site. Every item labeled "Educational use only — not clinically reviewed." |
 | `reviewed` | All of the above, plus current exact-version signatures, board coverage for every domain, and completed face-validity review. | Institutional adoption packs. **Still refuses to publish.** |
 
 Publishing on `preview` is a deliberate decision recorded in
@@ -24,7 +24,9 @@ The reasoning: an unreviewed corpus nobody can open does not become more accurat
 and the correction path only detects errors once real readers meet the content. The trade is
 stated rather than hidden — the material is available, nothing in it is signed, the review
 status of every item is public, and the report control is the mechanism for telling us we are
-wrong.
+wrong. [The review-status page](https://opensimlab.com/review-status) is where that status
+lives: every item, the label it is published under, and the board state, with no count reported
+without the list behind it. The release gate refuses to publish without it.
 
 A professor should read that as: usable for rehearsal and self-directed practice by students
 who are told it is unreviewed; **not** usable as an authority, a reference, or assessed

@@ -71,7 +71,10 @@ A build identifies itself by its date and the commit it came from, not by a stag
 reach it.
 
 - **No clinician has signed any content.** The editorial board is empty and published as empty.
-  Nothing is described anywhere in the interface as reviewed, validated, or endorsed.
+  Nothing is described anywhere in the interface as reviewed, validated, or endorsed. The
+  [review-status page](https://opensimlab.com/review-status) lists every item, the label it is
+  published under, and the board state — no count without the list behind it. It is linked from
+  the front page, and the release gate refuses to publish without it.
 - **No pharmacology parameter has had its independent second-source check.** Values are
   transcribed from the primary publications, but the second-person verification this project
   requires has not happened. Every number is marked as pending.

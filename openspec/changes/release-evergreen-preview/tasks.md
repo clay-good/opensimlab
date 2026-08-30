@@ -43,12 +43,18 @@ preview-channel blockers until it is. Updating the specification does not clear 
 
 ## 5. Build the release-honesty surfaces
 
-- [ ] Add the permanent review-status route reporting exact counts and the full item list for
-  every maturity status plus the board state; link it from the front page.
+- [x] Add the permanent review-status route reporting exact counts and the full item list for
+  every maturity status plus the board state; link it from the front page. `/review-status`,
+  rendered by `DocumentRoute` from `reviewStatusReport()`, which derives every item's status from
+  the content rather than a written-down list. The front-page link is the honest-status line
+  itself, so the claim carries the route to its own evidence.
 - [ ] Extend the first-load acknowledgement to state that content is not clinically reviewed, and
   link it to the review-status route.
 - [ ] Add the unreviewed-content statement to every export alongside the existing statement.
 - [ ] Add the release gate check that refuses to publish when any honesty surface is missing.
+  Done for the review-status surface: `honestySurfaceBlockers()` blocks a missing route, a
+  non-indexable one, and a list that has stopped covering the corpus. The acknowledgement and
+  export surfaces above are not yet covered, because they are not yet built.
 
 ## 6. Turn on public correction intake
 

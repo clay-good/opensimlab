@@ -33,6 +33,8 @@ import {
 } from '@platform/governance/publication';
 import { EDITORIAL_BOARD, additionalMaturitySubjects, reviewableItems } from '@platform/governance/records';
 import { gate, reportCoverage, uncoveredDomains } from '@platform/governance/review-gate';
+import { honestySurfaceBlockers, reviewStatusReport } from '@platform/governance/review-status';
+import { ROUTES } from '@routes/routes';
 import { buildValidationReport } from '@platform/docs/validation-report';
 import { EXPLAINERS } from '@anesthesia/content/explainers';
 import { DRUG_CARDS } from '@anesthesia/content/drug-cards';
@@ -279,6 +281,16 @@ const medicalSurgicalNursingQuality = qualityCatalogs.get('medical-surgical-nurs
       );
     }
   }
+  // The honesty surfaces. Publishing an unsigned corpus is defensible only while
+  // a reader can see, by name, what is published and under what label — so the
+  // surface that says it is a release gate, not a nice-to-have. If it goes
+  // missing, or stops covering every item, the release stops.
+  blocking.push(...honestySurfaceBlockers(
+    ROUTES,
+    reviewStatusReport(),
+    moduleCatalogs.reduce((sum, catalog) => sum + catalog.maturity.recordCount, 0),
+  ));
+
   const failedBenchmarks = validation.benchmarks.filter((benchmark) => !benchmark.passes);
   if (failedBenchmarks.length > 0) {
     blocking.push(`${failedBenchmarks.length} physiological benchmark(s) outside tolerance`);

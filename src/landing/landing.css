@@ -222,4 +222,8 @@
   letter-spacing: var(--type-micro-tracking);
 }
 .landing__status { font: var(--type-micro); color: var(--text-tertiary); }
+/* The status line is a link now, and it must not read louder than the tagline
+   above it. It keeps the tertiary colour and carries the underline that says it
+   is a link at all. */
+.landing__status a { color: inherit; text-decoration: underline; }
 .landing__disclaimer { font: var(--type-micro); color: var(--text-secondary); }

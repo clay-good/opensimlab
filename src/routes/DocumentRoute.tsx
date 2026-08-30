@@ -1,6 +1,6 @@
 /**
  * The informational routes: the validation report, the governance dashboard, the
- * limitations register, and the privacy statement.
+ * review-status page, the limitations register, and the privacy statement.
  *
  * They are generated from the same records the build gate and the tests read, so
  * a document cannot claim something the code does not do.
@@ -11,6 +11,7 @@ import { Badge, Button, CitationLink, Panel, SiteBar } from '@platform/ui';
 import { buildValidationReport } from '@platform/docs/validation-report';
 import { EDITORIAL_BOARD, HONEST_STATUS, reviewableItems } from '@platform/governance/records';
 import { reportCoverage } from '@platform/governance/review-gate';
+import { itemKey, reviewStatusReport } from '@platform/governance/review-status';
 import { LIMITATIONS } from '@platform/docs/limitations';
 import { SOURCES, formatSource, requireSource } from '@platform/docs/sources';
 import { VERIFIED_CONSTANTS, confirmedCount } from '@platform/docs/verified-constants';
@@ -44,6 +45,7 @@ const VERDICT_SUMMARY: Record<string, string> = {
  * that are specific to a reader working through the documents are added here.
  */
 const DOCUMENT_EXTRAS: readonly { href: string; label: string }[] = [
+  { href: '/review-status', label: 'Review status' },
   { href: '/privacy', label: 'Privacy' },
   { href: '/content-review', label: 'Review the content' },
 ];
@@ -60,6 +62,7 @@ export function DocumentRoute({ path }: { path: string }) {
         <h1>{metadata?.heading ?? 'Document'}</h1>
         {path === '/validation' && <ValidationBody />}
         {path === '/governance' && <GovernanceBody />}
+        {path === '/review-status' && <ReviewStatusBody />}
         {path === '/limitations' && <LimitationsBody />}
         {path === '/privacy' && <PrivacyBody />}
       </main>
@@ -232,6 +235,12 @@ function GovernanceBody() {
         </ul>
       )}
 
+      <p>
+        This page is about signatures. What each item is actually published as — the maturity
+        status the interface labels it with — is on <a href="/review-status">the review-status
+        page</a>, item by item.
+      </p>
+
       <h2>Review coverage</h2>
       <p className="numeric">
         {coverage.percentCurrent.toFixed(0)}% of {coverage.total} clinical content items are under
@@ -278,6 +287,102 @@ function GovernanceBody() {
         <a href="https://github.com/clay-good/opensimlab/issues/new" rel="noreferrer noopener">
           Open a clinical issue on the public repository
         </a>
+      </p>
+    </>
+  );
+}
+
+/**
+ * What is published, under what label, item by item.
+ *
+ * The governance page answers who has signed what. This answers the other half:
+ * which maturity status each item carries, which is the label a reader sees beside
+ * it in the interface. Two of the eight preview gates report rather than block,
+ * and that trade is only defensible while the gap is visible — so every count here
+ * is printed with the list behind it, and every status in the vocabulary gets a
+ * row even when nothing is in it.
+ */
+function ReviewStatusBody() {
+  const report = reviewStatusReport();
+  const populated = report.groups.filter((group) => group.count > 0);
+  return (
+    <>
+      <Badge kind="out-of-range">{HONEST_STATUS.headline}</Badge>
+      <p>
+        Every one of the {report.total} clinical content items in this build carries a maturity
+        status, and that status is the label shown beside it wherever it appears. This page is the
+        complete list. It is generated from the content itself, so it cannot disagree with what the
+        interface says.
+      </p>
+
+      <h2>The board</h2>
+      <p className="numeric">
+        {report.boardSize} clinician{report.boardSize === 1 ? '' : 's'} on the editorial board.{' '}
+        {report.signedItems} of {report.total} items signed.
+      </p>
+      <p>
+        {report.boardSize === 0
+          ? 'The board is empty and published as empty. Nothing here has been signed by a '
+            + 'credentialed clinician, and nothing is described anywhere in the interface as '
+            + 'reviewed, validated, or endorsed.'
+          : 'Signed items name their reviewer and the exact content version reviewed on the '
+            + 'governance page.'}{' '}
+        <a href="/governance">The governance page</a> names every outstanding item and why.
+      </p>
+
+      <h2>What is published, and under what label</h2>
+      <p className="field__hint">
+        No count is reported without the list behind it. A status nothing is in still gets a row,
+        because an absent row reads as an oversight and a zero reads as the fact it is.
+      </p>
+      <ul>
+        {report.groups.map((group) => (
+          <li key={group.status} className="numeric">
+            <code>{group.status}</code> — {group.count}. {group.label}.
+          </li>
+        ))}
+      </ul>
+
+      <h2>Every item</h2>
+      {populated.map((group) => (
+        <section key={group.status} className="document__group">
+          <h3>{group.label} — {group.count} items</h3>
+          <dl className="document__items">
+            {[...new Set(group.items.map((item) => item.kind))].map((kind) => {
+              const matching = group.items.filter((item) => item.kind === kind);
+              return (
+                <div key={kind}>
+                  <dt><code>{kind}</code> — {matching.length}</dt>
+                  <dd>
+                    <ul>
+                      {matching.map((item) => (
+                        <li key={itemKey(item)}>
+                          {item.route === null
+                            ? item.title
+                            : (
+                              <a href={`/${item.route}/scenario/${item.id}`}>{item.title}</a>
+                            )}{' '}
+                          <code>{item.id}</code> <span className="numeric">v{item.contentVersion}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </dd>
+                </div>
+              );
+            })}
+          </dl>
+        </section>
+      ))}
+
+      <h2>What this page does not tell you</h2>
+      <p>
+        A maturity status records that an item passed the gates the build can check. It does not
+        record that a clinician agrees with it. Two of the eight preview gates — the completion
+        contract and the full quality-record set — are computed and reported but do not block
+        publication, because no item has ever passed them and a channel nothing can pass is not a
+        channel. The per-module audits behind those two gates are published as JSON alongside the
+        build, and the <a href="/limitations">limitations register</a> names what the simulation
+        deliberately does not model.
       </p>
     </>
   );

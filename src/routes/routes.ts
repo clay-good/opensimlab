@@ -393,6 +393,16 @@ export const ROUTES: readonly RouteMetadata[] = [
     heading: 'Clinical governance',
   },
   {
+    path: '/review-status',
+    title: formatTitle('Review status'),
+    description:
+      'Every content item in this build, the maturity status it carries, and the label shown '
+      + 'beside it, plus the editorial board state. No count without its list.',
+    indexable: true,
+    structuredData: [],
+    heading: 'Review status',
+  },
+  {
     path: '/limitations',
     title: formatTitle('Limitations register'),
     description:
