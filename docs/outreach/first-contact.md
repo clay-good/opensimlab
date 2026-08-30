@@ -82,6 +82,7 @@ Do not ask for:
 
 Give them `/for-educators`, not a slide deck. Then put their name, credential,
 declared competing interests and re-review date into the editorial board record
-and let the build gate do the rest — the moment a real reviewer signs, the alpha
-banner and the "not clinically reviewed" markers stop appearing on what they
-signed, automatically. That is the point of building the gate first.
+and let the build gate do the rest — the moment a real reviewer signs, the
+"not clinically reviewed" markers stop appearing on what they signed, and it
+starts counting toward reviewed coverage, automatically. That is the point of
+building the gate first.

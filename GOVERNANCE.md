@@ -1,20 +1,40 @@
 # Clinical governance
 
-Why a professor should trust Open Sim Lab with their students — and, right now, why they
-should not yet.
+Why a professor should trust Open Sim Lab with their students — and exactly how far that
+trust should currently extend.
 
 ## The honest state of this build
 
 **No clinician has signed any content in this build.** The editorial board below is empty.
 Every scenario, drug card, concept explainer and region profile carries an `UNSIGNED`
-review record, the release gate refuses to publish, and no scenario is described anywhere
-in the interface as reviewed.
+review record, and no item is described anywhere in the interface as reviewed, validated,
+or endorsed.
+
+The project publishes anyway, and is explicit about what that does and does not mean. There
+are two release channels:
+
+| Channel | What it requires | What it is |
+| --- | --- | --- |
+| `preview` | Technical and evidence gates: build integrity, sources, safety scope, completion contract, tests, limitations, validation report, documented face-validity procedure. **No signature.** | The public site. Every item labeled "Preview — not clinically reviewed." |
+| `reviewed` | All of the above, plus current exact-version signatures, board coverage for every domain, and completed face-validity review. | Institutional adoption packs. **Still refuses to publish.** |
+
+Publishing on `preview` is a deliberate decision recorded in
+[`openspec/changes/release-evergreen-preview/`](openspec/changes/release-evergreen-preview/).
+The reasoning: an unreviewed corpus nobody can open does not become more accurate by waiting,
+and the correction path only detects errors once real readers meet the content. The trade is
+stated rather than hidden — the material is available, nothing in it is signed, the review
+status of every item is public, and the report control is the mechanism for telling us we are
+wrong.
+
+A professor should read that as: usable for rehearsal and self-directed practice by students
+who are told it is unreviewed; **not** usable as an authority, a reference, or assessed
+course material until items they care about reach `clinically_reviewed`.
 
 Recruiting at least three credentialed clinician reviewers is task 13.1 of
 [`mvp-anesthesia-alpha`](openspec/changes/mvp-anesthesia-alpha/tasks.md), started in
-parallel with the build rather than at the review, and it has not completed. Until it does,
-the honest-status notice on the front page says so and the governance page lists every
-outstanding item by name.
+parallel with the build rather than at the review, and it has not completed. **Publication
+does not close it.** Until it does, the review-status surface says so and the governance page
+lists every outstanding item and every uncovered domain by name.
 
 ## The editorial board
 
@@ -74,13 +94,19 @@ register and every item citing the old version is queued for re-review.
 
 Every playable scenario inherits the shared in-product report control. The isolated Worker, D1
 migration, bounded request contract, Turnstile verification, quotas, retention, and kill switch are
-implemented; deployment remains fail-closed until the production Cloudflare values are configured
-and explicitly enabled. The repository remains private, so there is no public issue intake today.
-Clinician reviewers can also record claim-specific notes on `/content-review`, export one local
-file, and send it through the private channel by which they were invited.
+implemented, and deployment remains fail-closed until the production Cloudflare values are
+configured and explicitly enabled. Enabling it is a prerequisite of the public release, not a
+follow-up: a public unreviewed corpus with no working correction path is not the arrangement this
+release is premised on. Where intake is unavailable — including on a static-only fork — the control
+says so rather than silently sending anywhere.
 
-Once public intake ships, usable reports will be acknowledged within five working days. Corrections
-are appended permanently to [`CORRECTIONS.md`](CORRECTIONS.md) and never deleted or rewritten.
+Clinician reviewers can also record claim-specific notes on `/content-review` and export one local
+file. A flag is not a signature; recording notes marks nothing as reviewed.
+
+Usable reports are acknowledged within five working days. A report is detection, not review: no
+item's status changes on report volume, only after reproduction and authoritative source
+verification. Corrections are appended permanently to [`CORRECTIONS.md`](CORRECTIONS.md) and never
+deleted or rewritten.
 
 An error that could teach an unsafe practice is triaged as urgent: the affected content is
 disabled in the next build regardless of the release schedule, and the corrections log
@@ -88,10 +114,10 @@ records the timeline.
 
 ## Auditing this from outside
 
-The repository is intended to become the public source of truth, but it remains private today. The
-current records are internally auditable and the public-readiness result is recorded in
-[`docs/public-readiness-audit.md`](docs/public-readiness-audit.md). Do not infer public availability
-from the planned architecture.
+The repository is the public source of truth. The readiness result that gates the visibility
+change is recorded in [`docs/public-readiness-audit.md`](docs/public-readiness-audit.md), and its
+history and advisory checks are re-run immediately before publication rather than trusted from an
+earlier date.
 
 | Record | Where |
 | --- | --- |
@@ -99,6 +125,7 @@ from the planned architecture.
 | Review records | On each content item, in its own source file |
 | The gate | `src/platform/governance/review-gate.ts` |
 | Coverage, by name | `/governance` in the running application |
+| Review status, by item | the review-status surface in the running application |
 | Corrections | [`CORRECTIONS.md`](CORRECTIONS.md) |
 | Limitations | `src/platform/docs/limitations.ts` and `/limitations` |
 | Validation | `src/platform/docs/validation-report.ts` and `/validation` |

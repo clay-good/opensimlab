@@ -58,22 +58,36 @@ fails immediately.
 physiology is checked against published benchmarks, the limitations register is public,
 and confirmed mistakes stay in a permanent [corrections log](CORRECTIONS.md).
 
-## Status: alpha, not yet clinically reviewed
+## Status: public and unreviewed, on purpose
 
-Everything above is what the project is *for*. This is what it currently *is*:
+Everything above is what the project is *for*. This is what it currently *is*.
 
-- **No clinician has signed any content in this build.** The editorial board is empty,
-  every scenario and drug card carries an unsigned review record, and the release gate
-  refuses to publish because of it.
+There is no alpha, beta, or 1.0 here. Open Sim Lab is one evergreen product: the catalog grows
+and gets corrected continuously, and the honest signal is the per-item review status, not a
+version word. Every item ships labeled **"Preview — not clinically reviewed."**
+
+- **No clinician has signed any content.** The editorial board is empty and published as empty.
+  Nothing is described anywhere in the interface as reviewed, validated, or endorsed.
 - **No pharmacology parameter has had its independent second-source check.** Values are
-  transcribed from the primary publications, but the second-person verification this
-  project requires has not happened. Every number is marked as pending.
-- **Face-validity review and on-device frame-budget measurement have not been run.**
-  Both need people and hardware rather than more code.
+  transcribed from the primary publications, but the second-person verification this project
+  requires has not happened. Every number is marked as pending.
+- **Face-validity review and on-device frame-budget measurement have not been run.** Both need
+  people and hardware rather than more code.
 
-What is done: the waveform engine, compartment solver, physiology, design system, cockpit,
-sound, accessibility, debrief, practice regions, and offline shell — with hundreds of
-automated tests and the Benumof apnea benchmarks inside 5% of published times.
+Publishing anyway is a deliberate decision, recorded in
+[`openspec/changes/release-evergreen-preview/`](openspec/changes/release-evergreen-preview/). An
+unreviewed corpus nobody can open does not get more accurate by waiting. A public one with a
+working correction path does. So the trade is explicit: you get the material, you are told plainly
+that nothing in it is signed, and the **report a problem** control in every scenario is how you
+tell us we are wrong. Confirmed errors are appended permanently to [CORRECTIONS.md](CORRECTIONS.md).
+
+The `reviewed` release channel still exists and still refuses to publish. It is what institutional
+adoption packs are built from, and it will stay refused until named clinicians sign specific
+content versions.
+
+What is done: the waveform engine, compartment solver, physiology, design system, cockpit, sound,
+accessibility, debrief, practice regions, and offline shell — with hundreds of automated tests and
+the Benumof apnea benchmarks inside 5% of published times.
 
 ## Running it
 

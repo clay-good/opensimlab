@@ -68,11 +68,20 @@ Preview does not require a clinical signature. It does require an exact-version
 the completion contract, tests, limitations, a validation report, and a
 documented face-validity procedure for every included item.
 
-All current scenarios, explainers, drug cards, and practice regions remain
-`draft`, and their completion evidence is not finished, so this command refuses
-today. There is no unsigned-alpha bypass: work advances by satisfying preview
-evidence and changing the exact status record, not by weakening the release
-command.
+Preview is the public channel. Until the work in
+[`openspec/changes/release-evergreen-preview/`](../openspec/changes/release-evergreen-preview/)
+lands, this command refuses: 14 oncology scenarios have unfinished completion
+evidence, and every explainer, drug card, and practice region is still `draft`
+because its kind had no preview-evidence contract defined. There is no bypass.
+Work advances by defining the per-kind evidence contract, satisfying it, and
+changing the exact-version status record — never by weakening the release
+command or asserting a status without evidence.
+
+Preview publication also requires the honesty surfaces to be present: the
+not-for-clinical-use and unreviewed-content acknowledgement, the per-item
+maturity labels, the limitations register, the corrections log, the
+review-status route, and configured report intake. Publishing unreviewed
+content is conditional on disclosing that it is unreviewed.
 
 To build the stricter reviewed-only channel:
 

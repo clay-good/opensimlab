@@ -19,3 +19,12 @@ check because advisory data changes independently of the repository.
 
 This is a point-in-time readiness result, not permission to make the repository public. Repeat the
 history and advisory checks immediately before any visibility change.
+
+## Relationship to the publication decision
+
+The decision to publish the corpus without clinical sign-off is recorded separately in
+[`openspec/changes/release-evergreen-preview/`](../openspec/changes/release-evergreen-preview/) and
+turns on clinical governance, not on this audit. This document covers only whether the repository is
+safe to make public — secrets, private data, licensing, advisories, and contributor metadata — and
+it neither authorizes nor blocks that decision. Both must hold before publication: a clean
+readiness re-run, and the honesty surfaces the release gate requires.

@@ -19,6 +19,6 @@ Include the affected commit/version, surface, impact, minimal reproduction, and 
 Maintainers will acknowledge a usable report within 5 working days, avoid public disclosure while a
 fix is prepared, and publish educational-content corrections under [CORRECTIONS.md](CORRECTIONS.md).
 
-Only the latest main-branch build is supported during alpha. Never test against real patient data,
+Only the latest main-branch build is supported; there are no maintained older releases. Never test against real patient data,
 production accounts, third-party systems, or infrastructure you do not own. Safe local proof is
 enough.
