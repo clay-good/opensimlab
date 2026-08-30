@@ -586,9 +586,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary recorded actions. Unassisted mode is silent and coached withholds the non-urgent observation beat. Both failures this lesson teaches are one dropped qualifier pointing opposite ways, so the example records which definition is met before anything else and carries both halves to handoff; a test asserts neither the dismissal nor the overcall is taken, and that no narration states the bare syndrome name except where it is being refused. Neither the prompts nor the example resolve the gap between the moving bloods and the unchanged patient in favour of either."
           ]
         },
         {

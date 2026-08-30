@@ -2776,6 +2776,7 @@ export interface ActionCockpitProps {
   readonly incidentalClotGuidance?: GuidanceLevel;
   readonly normalTestToxicityGuidance?: GuidanceLevel;
   readonly prognosisQuestionGuidance?: GuidanceLevel;
+  readonly laboratoryTlsGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -5859,6 +5860,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasLaboratoryTlsResponse && (
               <LaboratoryTlsTray assessment={props.laboratoryTls}
+                guidance={props.laboratoryTlsGuidance}
+                scenarioVersion={props.scenario.metadata.version}
                 demonstrating={props.laboratoryTlsDemonstrating}
                 onAction={props.onLaboratoryTlsResponse ?? (() => {})} />
             )}

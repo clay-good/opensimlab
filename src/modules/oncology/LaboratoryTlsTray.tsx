@@ -1,14 +1,18 @@
 import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { LaboratoryTlsSnapshot } from '@platform/kernel/protocol';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { LaboratoryTlsAction } from './laboratory-tls';
+import { laboratoryTlsInlinePrompt } from './laboratory-tls-tutor';
 
-export function LaboratoryTlsTray({ assessment, onAction, demonstrating = false }: {
-  readonly assessment?: LaboratoryTlsSnapshot;
+export function LaboratoryTlsTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
+  readonly assessment?: LaboratoryTlsSnapshot; readonly scenarioVersion: string;
   readonly onAction: (action: LaboratoryTlsAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = laboratoryTlsInlinePrompt(guidance, { scenarioVersion, laboratoryTls: assessment });
   const observations = assessment.observationRecord; const bloods = assessment.bloodRecord;
   const observation = assessment.observation;
   const decision = (action: LaboratoryTlsAction, label: string, accepted = false) => {
@@ -17,6 +21,10 @@ export function LaboratoryTlsTray({ assessment, onAction, demonstrating = false 
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     {/* Both halves, always together. Either alone is one of the two readings the ward is stuck on. */}
     <p className="syringe__remaining" role="status">Laboratory criteria: {assessment.laboratoryCriteriaMet ? 'met' : 'not met'}. Clinical criteria: {assessment.clinicalCriteriaMet ? 'met' : 'not met'}. This is {assessment.hoursAfterTreatment} hours after the first cycle.</p>
     <p className="syringe__remaining">Selected sources: the 1993 series that defined both terms, a 788-patient European incidence review, and a 2024 narrative review of haematological emergencies. Open the source view for exact wording and grades.</p>

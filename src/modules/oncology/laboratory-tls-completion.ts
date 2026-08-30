@@ -2,11 +2,13 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { LABORATORY_TLS_A_SYNDROME_HE_DOES_NOT_HAVE_YET } from './scenarios/laboratory-tls-a-syndrome-he-does-not-have-yet';
 import { LABORATORY_TLS_FIXTURES } from './laboratory-tls-fixtures';
+import { LABORATORY_TLS_DEMONSTRATION_VERSION } from './demo/laboratory-tls-demonstration';
 
 export function laboratoryTlsCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'oncology' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== LABORATORY_TLS_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
     || LABORATORY_TLS_FIXTURES.contentVersion !== '0.1.0' || LABORATORY_TLS_FIXTURES.seed !== 3958
+    || LABORATORY_TLS_DEMONSTRATION_VERSION !== '0.1.0'
     || JSON.stringify(scenario) !== JSON.stringify(LABORATORY_TLS_A_SYNDROME_HE_DOES_NOT_HAVE_YET)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['laboratory-tls-fixtures.ts binds seed 3958 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No metabolic, renal, or tumour-burden model is claimed, and no individualized risk is computed.'] },
@@ -15,7 +17,7 @@ export function laboratoryTlsCompletionEvidence(scenario: Scenario, capabilityVe
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The recorded definition, the recorded timing, the crossing risk, contact with the treating team, bounded intent, the boundary review, and a current assessment including the latest bloods permit handoff with the window open. Instructor takeover bounds a run with no escalation at 180 minutes, or an unfinished session at eight hours.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Seven event-bound objectives distinguish naming which definition is met, the timing that makes it a window, the risk of crossing over, reporting a trajectory rather than raising an alarm, bounded qualified-team intent, the disagreement between the published rates, and handing off a window rather than an event. Refused shortcuts remain visible, and no clinical tumour lysis or outcome is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['laboratory-tls-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine, including the repeat set that moves while the patient does not.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Observed-state guidance and learner-paused example ${LABORATORY_TLS_DEMONSTRATION_VERSION} use ordinary recorded actions. Unassisted mode is silent and coached withholds the non-urgent observation beat. Both failures this lesson teaches are one dropped qualifier pointing opposite ways, so the example records which definition is met before anything else and carries both halves to handoff; a test asserts neither the dismissal nor the overcall is taken, and that no narration states the bare syndrome name except where it is being refused. Neither the prompts nor the example resolve the gap between the moving bloods and the unchanged patient in favour of either.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];
