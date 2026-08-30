@@ -28,7 +28,7 @@ import {
   buildMaturityCatalog, maturityFor, type MaturitySubjectKind,
 } from '@platform/catalog/maturity';
 import {
-  isReviewedOnlyStatus, nonScenarioPreviewEvidence, previewPublication, scenarioPreviewEvidence,
+  isReviewedOnlyStatus, previewEvidenceFor, previewPublication, scenarioPreviewEvidence,
   type NonScenarioEvidenceInput,
 } from '@platform/governance/publication';
 import { EDITORIAL_BOARD, additionalMaturitySubjects, reviewableItems } from '@platform/governance/records';
@@ -254,14 +254,18 @@ const medicalSurgicalNursingQuality = qualityCatalogs.get('medical-surgical-nurs
       continue;
     }
     if (item.kind !== 'scenario') {
-      const kind = subjectKind(item.kind);
-      const evidence = kind === 'explanation' || kind === 'drug-card' || kind === 'practice-region'
-        ? nonScenarioPreviewEvidence(kind, nonScenarioEvidenceInput(item), evidenceOptions)
-        // A kind with no rule stays fail-closed rather than being waved through.
-        : { passed: [] as const };
-      const verdict = previewPublication(record, evidence);
-      if (verdict.status === 'blocked') {
-        blocking.push(`${item.kind} "${item.id}" ${verdict.reasons.join('; ')}`);
+      // A kind with no rule fails closed AND says so, rather than reporting six
+      // missed gates for a contract nobody ever wrote.
+      const contract = previewEvidenceFor(
+        subjectKind(item.kind), nonScenarioEvidenceInput(item), evidenceOptions,
+      );
+      if (contract.contract === 'none') {
+        blocking.push(`${item.kind} "${item.id}" ${contract.reason}`);
+      } else {
+        const verdict = previewPublication(record, contract.evidence);
+        if (verdict.status === 'blocked') {
+          blocking.push(`${item.kind} "${item.id}" ${verdict.reasons.join('; ')}`);
+        }
       }
     }
     if (channel === 'reviewed' && !isReviewedOnlyStatus(record.status)) {

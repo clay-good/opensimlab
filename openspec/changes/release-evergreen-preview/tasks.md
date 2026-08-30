@@ -5,16 +5,26 @@ preview-channel blockers until it is. Updating the specification does not clear 
 
 ## 1. Close the non-scenario evidence gap
 
-- [ ] Define `previewEvidenceFor(kind, item)` in `src/platform/governance/publication.ts`,
-  covering `scenario`, `explainer`, `drug-card`, `region-profile`, and `debrief-template` per the
-  per-kind table in `design.md`.
-- [ ] Remove the `{ passed: [] }` fallback in `scripts/check-review-gate.ts` and replace it with a
+- [x] Define `previewEvidenceFor(kind, item)` in `src/platform/governance/publication.ts`. It
+  covers `explanation`, `drug-card`, and `practice-region`, and returns a stated absence for every
+  other kind. `scenario` deliberately keeps its own path: its evidence comes from the completion
+  and quality audits, which this signature does not carry. No `debrief-template` kind exists in
+  the maturity vocabulary, so nothing publishes as one.
+- [x] Remove the `{ passed: [] }` fallback in `scripts/check-review-gate.ts` and replace it with a
   named "no evidence rule for kind" blocker, so an undefined contract fails closed and is legible.
-- [ ] Add the per-kind evidence records the rules require: assertion-to-source records for the 10
+  The old fallback failed closed but reported six missed gates, which reads as unfinished authoring
+  rather than an undefined contract — two different problems with two different fixes.
+- [x] Add the per-kind evidence records the rules require: assertion-to-source records for the 10
   explainers, reference-value tests for propofol, remifentanil, and rocuronium, and region-variant
-  tests for the US and GB profiles.
-- [ ] Test that an item whose kind has no rule blocks, and that each kind's rule fails on a
-  missing source locator, a missing declared field, and a missing test.
+  tests for the US and GB profiles. The pharmacology reference values are asserted in
+  `tests/unit/pharmacology.test.ts` (Marsh, Schnider, Eleveld, Minto) and the rocuronium teaching
+  model in `tests/unit/neuromuscular.test.ts`; the region variants in
+  `tests/unit/region-and-units.test.ts`. The explainer records were the gap and are now asserted
+  in `tests/unit/preview-evidence-contract.test.ts`.
+- [x] Test that an item whose kind has no rule blocks, and that each kind's rule fails on a
+  missing source locator, a missing declared field, and a missing test. Writing these found a real
+  hole: the explanation safety-scope rule only matched a dose stated BEFORE the verb, so
+  "Give 2 mg/kg of propofol" — the more natural English — passed. Both orders now.
 
 ## 2. Promote what has earned it, and only that
 

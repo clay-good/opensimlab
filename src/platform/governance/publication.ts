@@ -1,4 +1,4 @@
-import type { ContentMaturity, MaturityRecord } from '../catalog/maturity';
+import type { ContentMaturity, MaturityRecord, MaturitySubjectKind } from '../catalog/maturity';
 import type { ScenarioCompletionAudit } from '../catalog/scenario-completion';
 import type { ScenarioQualityAudit } from '../catalog/scenario-quality';
 
@@ -148,6 +148,22 @@ export function scenarioPreviewEvidence(
  * of those statements is correct. Correctness is what the report path and the
  * corrections log are for, and what the "not clinically reviewed" label discloses.
  */
+const DOSE_QUANTITY = String.raw`\d+(?:\.\d+)?\s*(?:mg|mcg|microgram|micrograms|milligram|milligrams|ml)\b(?:\s*\/\s*kg)?`;
+const DOSING_VERB = String.raw`\b(?:give|giving|administer|administering|inject|injecting|push|pushing)\b`;
+
+/**
+ * An imperative dose addressed to a reader, in either order, within one sentence.
+ *
+ * This used to require the quantity BEFORE the verb, which meant it caught
+ * "2 mg/kg ... push" and waved through "Give 2 mg/kg of propofol" — the more
+ * natural English and the more likely mistake. Both orders now, because a
+ * safety rule that only fires on the rarer phrasing is close to not firing.
+ */
+const INSTRUCTS_A_DOSE = new RegExp(
+  `(?:${DOSING_VERB}[^.]{0,40}${DOSE_QUANTITY})|(?:${DOSE_QUANTITY}[^.]{0,40}${DOSING_VERB})`,
+  'i',
+);
+
 export function nonScenarioPreviewEvidence(
   kind: 'explanation' | 'drug-card' | 'practice-region',
   item: NonScenarioEvidenceInput,
@@ -170,8 +186,7 @@ export function nonScenarioPreviewEvidence(
     // An explanation is in scope while it explains rather than instructs. The
     // check is for an imperative dose addressed to a reader, which is the failure
     // that would matter; prose describing what a drug does is not that.
-    if (!/\b\d+(\.\d+)?\s*(mg|mcg|microgram|milligram|ml)\b\s*(\/\s*kg)?[^.]{0,40}\b(give|administer|inject|push)\b/i
-      .test(item.body ?? '')) passed.push('safety-scope');
+    if (!INSTRUCTS_A_DOSE.test(item.body ?? '')) passed.push('safety-scope');
     return { passed };
   }
 
@@ -190,6 +205,48 @@ export function nonScenarioPreviewEvidence(
   if (stated(item.practiceNote)) passed.push('safety-scope');
   if (item.namesUnavailable) passed.push('limitations');
   return { passed };
+}
+
+/** The kinds a per-kind evidence rule is defined for. */
+const RULED_KINDS = ['explanation', 'drug-card', 'practice-region'] as const;
+type RuledKind = typeof RULED_KINDS[number];
+
+/**
+ * The evidence contract for one non-scenario item, or a statement that there is
+ * none (design.md → the per-kind evidence table).
+ *
+ * The caller used to hand an unknown kind `{ passed: [] }`. That failed closed,
+ * which was right, but it failed ILLEGIBLY: the item came back blocked on six
+ * gates as though it had tried and missed each one, when the truth is that nobody
+ * ever wrote a rule for its kind. Those two states need different fixes — one is
+ * authoring, the other is a contract — and a release blocker that cannot tell you
+ * which is a blocker you will misread. So the absence is now its own answer.
+ */
+export type PreviewEvidenceContract =
+  | { readonly contract: 'rule'; readonly evidence: PreviewEvidence }
+  | { readonly contract: 'none'; readonly reason: string };
+
+/**
+ * Resolve the evidence contract for a subject kind.
+ *
+ * `scenario` is deliberately not handled here: its evidence comes from the
+ * completion and quality audits through `scenarioPreviewEvidence`, which needs
+ * data this signature does not carry. Every other kind either has a rule or
+ * reports that it has none, and there is no third outcome.
+ */
+export function previewEvidenceFor(
+  kind: MaturitySubjectKind,
+  item: NonScenarioEvidenceInput,
+  options: ReleaseEvidenceOptions,
+): PreviewEvidenceContract {
+  if ((RULED_KINDS as readonly string[]).includes(kind)) {
+    return { contract: 'rule', evidence: nonScenarioPreviewEvidence(kind as RuledKind, item, options) };
+  }
+  return {
+    contract: 'none',
+    reason: `has no preview evidence rule for subject kind "${kind}", so it cannot be published. `
+      + 'Define the rule in publication.ts, or leave the item in draft.',
+  };
 }
 
 /** The fields the per-kind rules read. Each kind supplies the ones it has. */
