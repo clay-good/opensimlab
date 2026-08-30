@@ -1,14 +1,18 @@
 import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { InheritedUrgencyAction } from './inherited-urgency';
+import { inheritedUrgencyInlinePrompt } from './inherited-urgency-tutor';
 
-export function InheritedUrgencyTray({ assessment, onAction, demonstrating = false }: {
-  readonly assessment?: InheritedUrgencySnapshot;
+export function InheritedUrgencyTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
+  readonly assessment?: InheritedUrgencySnapshot; readonly scenarioVersion: string;
   readonly onAction: (action: InheritedUrgencyAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = inheritedUrgencyInlinePrompt(guidance, { scenarioVersion, inheritedUrgency: assessment });
   const observations = assessment.observationRecord; const imaging = assessment.imagingRecord;
   const observation = assessment.observation;
   const decision = (action: InheritedUrgencyAction, label: string, accepted = false) => {
@@ -17,6 +21,10 @@ export function InheritedUrgencyTray({ assessment, onAction, demonstrating = fal
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     {/* The grade comes from the findings. The swelling is how this looks at every grade. */}
     <p className="syringe__remaining" role="status">Facial and neck swelling with filled neck veins and chest-wall collaterals. The findings that would make this the grade that cannot wait are {assessment.emergencyFindingsPresent ? 'present' : 'not present'}: no stridor, fully alert, blood pressure unchanged.</p>
     <p className="syringe__remaining">Selected sources: a review of evolving etiologies and treatment strategies for the superior vena cava syndrome, and the proposed classification system it grades against. Open the source view for exact wording and grades.</p>

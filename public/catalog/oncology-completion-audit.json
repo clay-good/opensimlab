@@ -964,9 +964,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary recorded actions. Unassisted mode is silent; declining the offered slot is urgent, so coached carries it. The hard beat in this lesson is a refusal that the scenario puts on the clock, so the example is required to reach it rather than finish first: a test asserts the treatment offer arrives, that the example passes through the holding beat, and that the treat-before-tissue shortcut is never taken. The narration declines the slot without declining the help, because the colleague offering it is being useful and the reason to say no is the missing tissue rather than caution. No prompt quotes a proportion as a reason to treat or not to."
           ]
         },
         {

@@ -2779,6 +2779,7 @@ export interface ActionCockpitProps {
   readonly laboratoryTlsGuidance?: GuidanceLevel;
   readonly rareEarlyMyocarditisGuidance?: GuidanceLevel;
   readonly loweringTheCountGuidance?: GuidanceLevel;
+  readonly inheritedUrgencyGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -5847,6 +5848,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasInheritedUrgencyResponse && (
               <InheritedUrgencyTray assessment={props.inheritedUrgency}
+                guidance={props.inheritedUrgencyGuidance}
+                scenarioVersion={props.scenario.metadata.version}
                 demonstrating={props.inheritedUrgencyDemonstrating}
                 onAction={props.onInheritedUrgencyResponse ?? (() => {})} />
             )}

@@ -2,11 +2,13 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { INHERITED_URGENCY_AN_EMERGENCY_THAT_MOSTLY_IS_NOT_ONE } from './scenarios/inherited-urgency-an-emergency-that-mostly-is-not-one';
 import { INHERITED_URGENCY_FIXTURES } from './inherited-urgency-fixtures';
+import { INHERITED_URGENCY_DEMONSTRATION_VERSION } from './demo/inherited-urgency-demonstration';
 
 export function inheritedUrgencyCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'oncology' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== INHERITED_URGENCY_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
     || INHERITED_URGENCY_FIXTURES.contentVersion !== '0.1.0' || INHERITED_URGENCY_FIXTURES.seed !== 2806
+    || INHERITED_URGENCY_DEMONSTRATION_VERSION !== '0.1.0'
     || JSON.stringify(scenario) !== JSON.stringify(INHERITED_URGENCY_AN_EMERGENCY_THAT_MOSTLY_IS_NOT_ONE)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['inherited-urgency-fixtures.ts binds seed 2806 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No venous, oedema, radiotherapy-response, or tumour-shrinkage model is claimed, and no outcome follows from any choice.'] },
@@ -15,7 +17,7 @@ export function inheritedUrgencyCompletionEvidence(scenario: Scenario, capabilit
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The recorded grading findings, the recorded tissue-decides reasoning, the secured pathway, bounded intent, the boundary review, and a current assessment permit handoff with the diagnosis and the treatment open. Instructor takeover bounds a run with no secured pathway at 180 minutes, longer than this module’s hyperleukocytosis lesson because this presentation does wait, or an unfinished session at eight hours.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Seven event-bound objectives distinguish grading by findings rather than by appearance, the histology as the treatment decision rather than a delay before it, securing a pathway as the active alternative to treating, refusing a sequence rather than a treatment, bounded qualified-team intent, reading a proportion in both directions, and handing off what would change the answer overnight. Refused shortcuts remain visible, and no diagnosis, treatment effect, or outcome is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['inherited-urgency-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine, including the authored treatment offer.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Observed-state guidance and learner-paused example ${INHERITED_URGENCY_DEMONSTRATION_VERSION} use ordinary recorded actions. Unassisted mode is silent; declining the offered slot is urgent, so coached carries it. The hard beat in this lesson is a refusal that the scenario puts on the clock, so the example is required to reach it rather than finish first: a test asserts the treatment offer arrives, that the example passes through the holding beat, and that the treat-before-tissue shortcut is never taken. The narration declines the slot without declining the help, because the colleague offering it is being useful and the reason to say no is the missing tissue rather than caution. No prompt quotes a proportion as a reason to treat or not to.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];
