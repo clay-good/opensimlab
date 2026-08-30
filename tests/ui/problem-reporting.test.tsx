@@ -303,10 +303,35 @@ describe('shared problem report dialog', () => {
     expect(reportingCss).toContain(
       '@media (max-width: 767px), (max-height: 499px) and (orientation: landscape)',
     );
-    expect(reportingCss).toMatch(/\.problem-report\s*\{[^}]*inset-inline-start:\s*var\(--space-3\)/s);
+    // The phone repositioning belongs to the pinned variant. Applying it to the
+    // base class moved the in-flow trigger to the viewport edge as well.
+    expect(reportingCss).toMatch(/\.problem-report--floating\s*\{[^}]*inset-inline-start:\s*var\(--space-3\)/s);
     expect(reportingCss).toMatch(/\.problem-report\s*>\s*\.button\s*\{[^}]*min-block-size:\s*44px/s);
     expect(reportingCss).toContain('@media (max-width: 400px)');
     expect(reportingCss).toContain('.problem-report__label-short { display: inline; }');
+  });
+
+  /**
+   * A pinned trigger sits on top of whatever scrolls beneath it. On a 375px phone
+   * that was nine separate links and buttons on one scenario briefing — the
+   * Nursing navigation link covered by 95% and a draft-status link completely —
+   * which is a navigation defect rather than a cosmetic one. Only the cockpit
+   * pins it now, because only the cockpit reserves a strip for it to live in.
+   */
+  it('does not pin the trigger unless the surface asked for it', () => {
+    const base = /(?:^|\n)\.problem-report \{([^}]*)\}/.exec(reportingCss)?.[1] ?? '';
+    expect(base).not.toContain('position: fixed');
+    expect(base).not.toContain('z-index');
+    expect(reportingCss).toMatch(/\.problem-report--floating\s*\{[^}]*position:\s*fixed/s);
+    expect(reportingCss).toMatch(/\.problem-report--floating\s*\{[^}]*z-index:\s*58/s);
+  });
+
+  it('pins the trigger only when floating is requested', async () => {
+    await act(async () => { root.render(<ScenarioProblemReport context={context} />); });
+    expect(container.querySelector('.problem-report')!.className).toBe('problem-report');
+    await act(async () => { root.render(<ScenarioProblemReport context={context} floating />); });
+    expect(container.querySelector('.problem-report')!.className)
+      .toBe('problem-report problem-report--floating');
   });
 
   it('sends no report when canceled and restores the invoking control', async () => {

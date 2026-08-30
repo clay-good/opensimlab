@@ -836,8 +836,15 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
   ), []);
   const region = (regionId ? getRegion(regionId) : null) ?? guess.profile;
 
-  const reportControl = (
+  /**
+   * `floating` pins the trigger to the viewport corner, and only the cockpit may
+   * ask for it: it is a fixed-height layout whose overlays reserve a strip along
+   * the bottom edge. The briefing and the debrief are scrolling documents, where
+   * a pinned trigger sits on top of whatever scrolls beneath it.
+   */
+  const reportControl = (floating = false) => (
     <ScenarioProblemReport
+      floating={floating}
       context={{
         scenarioId: scenario.metadata.id,
         contentVersion: scenario.metadata.version,
@@ -992,7 +999,7 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
         onReplayDecisionPoint={(point) => session.rehearseFromDecisionPoint(point.id, point.atTick)}
         {...(nextRecommendation ? { nextRecommendation } : {})}
       />
-      {reportControl}
+      <div className="problem-report-dock">{reportControl()}</div>
       </>
     );
   }
@@ -1030,7 +1037,7 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
           </div>
         )}
         <p className="visually-hidden">{path}</p>
-        {reportControl}
+        <div className="problem-report-dock">{reportControl()}</div>
       </>
     );
   }
@@ -1048,7 +1055,7 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
       onReportSource={() => requestReport('source')}
       onSourceVisibilityChange={setSourceOpen}
     />
-    {reportControl}
+    {reportControl(true)}
     </>
   );
 }

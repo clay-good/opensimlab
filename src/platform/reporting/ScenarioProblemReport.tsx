@@ -11,12 +11,23 @@ import {
 } from './client';
 import './reporting.css';
 
-export function ScenarioProblemReport({ context, openRequest, onOpen, onClose }: {
+export function ScenarioProblemReport({ context, openRequest, onOpen, onClose, floating = false }: {
   readonly context: ScenarioReportContext;
   /** A changing request id opens the shared dialog from a nested scenario surface. */
   readonly openRequest?: number;
   readonly onOpen?: () => void;
   readonly onClose?: () => void;
+  /**
+   * Pin the trigger to the viewport corner.
+   *
+   * Only the cockpit may do this. It is a fixed-height layout whose own controls
+   * already reserve a strip along the bottom edge, so a pinned trigger has
+   * somewhere to live that nothing else occupies. Every other surface here is a
+   * scrolling document, and a pinned trigger on a scrolling document sits on top
+   * of whatever happens to scroll under it — which was nine separate links and
+   * buttons on a 375px phone, two of them covered almost completely.
+   */
+  readonly floating?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [category, setCategory] = useState<ReportCategory | ''>('');
@@ -111,7 +122,7 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose }:
   };
 
   return (
-    <div className="problem-report" ref={reportHost}>
+    <div className={floating ? 'problem-report problem-report--floating' : 'problem-report'} ref={reportHost}>
       <Button compact variant="ghost" aria-label="Report a problem"
         onClick={() => { setOpen(true); onOpen?.(); }}>
         <span className="problem-report__label-long">Report a problem</span>

@@ -1,12 +1,40 @@
+/* In the page flow by default, pinned only where a layout has reserved room for it.
+ *
+ * This used to be `position: fixed` everywhere. On a scrolling document that means
+ * the trigger sits on top of whatever scrolls beneath it, and on a 375px phone it
+ * covered nine separate links and buttons — the Nursing nav link by 95% and a
+ * draft-status link completely. A control that obscures other controls is worse
+ * than a control that scrolls with the page, so the default is now the safe one
+ * and the cockpit opts in explicitly. */
+/* Aligns the in-flow trigger with the reading column it follows, so it lands
+   under the page's own text rather than against the viewport edge. Mirrors
+   `.reading`'s 68ch column and gutter. */
+.problem-report-dock {
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 68ch;
+  margin-inline: auto;
+  padding-inline: var(--space-4);
+  padding-block-end: var(--space-6);
+}
 .problem-report {
-  position: fixed;
-  inset-inline-end: var(--space-4);
-  inset-block-end: calc(var(--demo-bar-height, 0px) + var(--space-4));
-  z-index: 58;
+  inline-size: fit-content;
+  margin-block: var(--space-5) 0;
   padding: var(--space-1);
   border: 1px solid var(--line);
   border-radius: var(--radius-control);
   background: color-mix(in srgb, var(--surface-1) 92%, transparent);
+}
+/* The pinned behaviour, unchanged, now opt-in. The cockpit shares this bottom
+   edge with its own Analysis and Actions pills, which sit at the same
+   `--space-4` offset on the opposite side, and the cockpit's overlays reserve a
+   strip of that height so neither lands on their content. */
+.problem-report--floating {
+  position: fixed;
+  inset-inline-end: var(--space-4);
+  inset-block-end: calc(var(--demo-bar-height, 0px) + var(--space-4));
+  z-index: 58;
+  margin-block: 0;
 }
 .problem-report__form { display: grid; gap: var(--space-4); }
 .problem-report__label-short { display: none; }
@@ -47,7 +75,7 @@
    reserved strip, on the opposite side, so neither control intercepts the
    other. */
 @media (max-width: 767px), (max-height: 499px) and (orientation: landscape) {
-  .problem-report {
+  .problem-report--floating {
     inset-inline-start: var(--space-3);
     inset-inline-end: auto;
   }
@@ -63,7 +91,7 @@
 /* Three full labels do not fit side by side at the narrowest phone width. The
    accessible name stays "Report a problem" while the visible label compacts. */
 @media (max-width: 400px) {
-  .problem-report {
+  .problem-report--floating {
     inset-inline-start: var(--space-3);
     inset-inline-end: auto;
   }
