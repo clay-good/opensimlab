@@ -1,14 +1,18 @@
 import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { PrognosisQuestionSnapshot } from '@platform/kernel/protocol';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { PrognosisQuestionAction } from './prognosis-question';
+import { prognosisQuestionInlinePrompt } from './prognosis-question-tutor';
 
-export function PrognosisQuestionTray({ assessment, onAction, demonstrating = false }: {
-  readonly assessment?: PrognosisQuestionSnapshot;
+export function PrognosisQuestionTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
+  readonly assessment?: PrognosisQuestionSnapshot; readonly scenarioVersion: string;
   readonly onAction: (action: PrognosisQuestionAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = prognosisQuestionInlinePrompt(guidance, { scenarioVersion, prognosisQuestion: assessment });
   const observations = assessment.observationRecord; const said = assessment.conversationRecord;
   const observation = assessment.observation;
   const decision = (action: PrognosisQuestionAction, label: string, accepted = false) => {
@@ -17,6 +21,10 @@ export function PrognosisQuestionTray({ assessment, onAction, demonstrating = fa
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     {/* The question leads, because nothing else on this screen is about it. */}
     <p className="syringe__remaining" role="status">He has asked: “how long have I got?” Nothing on the monitor bears on it, and the observations {assessment.observationsAnswerTheQuestion ? 'answer it' : 'will not answer it however often they are taken'}.</p>
     <p className="syringe__remaining">Selected sources: a prospective cohort of doctors’ survival predictions, a study of what patients on incurable chemotherapy believe it will do, and a study of survival scenarios built from an oncologist’s estimate. Open the source view for exact wording and grades.</p>

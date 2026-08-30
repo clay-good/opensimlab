@@ -2,11 +2,13 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { PROGNOSIS_QUESTION_A_NUMBER_HE_ASKED_FOR } from './scenarios/prognosis-question-a-number-he-asked-for';
 import { PROGNOSIS_QUESTION_FIXTURES } from './prognosis-question-fixtures';
+import { PROGNOSIS_QUESTION_DEMONSTRATION_VERSION } from './demo/prognosis-question-demonstration';
 
 export function prognosisQuestionCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'oncology' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== PROGNOSIS_QUESTION_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
     || PROGNOSIS_QUESTION_FIXTURES.contentVersion !== '0.1.0' || PROGNOSIS_QUESTION_FIXTURES.seed !== 4826
+    || PROGNOSIS_QUESTION_DEMONSTRATION_VERSION !== '0.1.0'
     || JSON.stringify(scenario) !== JSON.stringify(PROGNOSIS_QUESTION_A_NUMBER_HE_ASKED_FOR)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['prognosis-question-fixtures.ts binds seed 4826 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No survival, disease, or treatment-response model is claimed, and no prognosis is computed.'] },
@@ -15,7 +17,7 @@ export function prognosisQuestionCompletionEvidence(scenario: Scenario, capabili
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The established purpose, the recorded question, the checked belief, the scenario answer, the stated direction, the boundary review, and a current assessment of what was said permit handoff with the prognosis open. Instructor takeover bounds a run in which no answer was ever given at 180 minutes, or an unfinished session at eight hours.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Seven event-bound objectives distinguish the question behind the question, recording it in his words, the belief the answer would otherwise land on, scenarios rather than a number, the direction of the estimating error, the certainty of the cited cohorts, and handing off what he took from it rather than what was said to him. Refused shortcuts remain visible, and no prognosis or outcome is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['prognosis-question-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine, including the contrast between the two readbacks.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Observed-state guidance and learner-paused example ${PROGNOSIS_QUESTION_DEMONSTRATION_VERSION} use ordinary recorded actions. Unassisted mode is silent and coached withholds the two non-urgent beats. The example is judged by what the fictional patient heard rather than by the words it used: the engine decides the readback from what was actually said, so a test asserts the example leaves him repeating all three scenarios, and a second test runs the same answer without the direction of the error and asserts he is left with the best case alone. Neither the prompts nor the example ever supply a figure, and the tutor names both comfortable failures — a single number as false precision and "nobody can know" as true and useless — rather than avoiding the words.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];

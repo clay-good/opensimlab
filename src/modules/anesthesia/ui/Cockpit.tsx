@@ -54,6 +54,8 @@ import { useRenalHyponatremiaDemonstration } from '../../renal-electrolyte/demo/
 import { useDelayedImmuneEventDemonstration } from '../../oncology/demo/useDelayedImmuneEventDemonstration';
 import { useIncidentalClotDemonstration } from '../../oncology/demo/useIncidentalClotDemonstration';
 import { useNormalTestToxicityDemonstration } from '../../oncology/demo/useNormalTestToxicityDemonstration';
+import { usePrognosisQuestionDemonstration } from '../../oncology/demo/usePrognosisQuestionDemonstration';
+import { supportsPrognosisQuestionDemonstration } from '../../oncology/demo/prognosis-question-demonstration';
 import { supportsNormalTestToxicityDemonstration } from '../../oncology/demo/normal-test-toxicity-demonstration';
 import { supportsIncidentalClotDemonstration } from '../../oncology/demo/incidental-clot-demonstration';
 import { supportsDelayedImmuneEventDemonstration } from '../../oncology/demo/delayed-immune-event-demonstration';
@@ -203,6 +205,7 @@ export function Cockpit({
   const delayedImmuneEventDemoSupported = supportsDelayedImmuneEventDemonstration(scenario);
   const incidentalClotDemoSupported = supportsIncidentalClotDemonstration(scenario);
   const normalTestToxicityDemoSupported = supportsNormalTestToxicityDemonstration(scenario);
+  const prognosisQuestionDemoSupported = supportsPrognosisQuestionDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
   const renalHypocalcemiaDemoSupported = supportsRenalHypocalcemiaDemonstration(scenario);
   const renalHypermagnesemiaDemoSupported = supportsRenalHypermagnesemiaDemonstration(scenario);
@@ -222,7 +225,7 @@ export function Cockpit({
    * four older lessons that only the induction-demonstration guard excluded.
    */
   const observedStateDemoSupported = hypercalcemiaDemoSupported || hypocalcemiaDemoSupported || hyponatremiaCorrectionDemoSupported || avpDeficiencyDemoSupported || refeedingDemoSupported || perioperativeDiabetesDemoSupported || renalHyperkalemiaDemoSupported || renalHypokalemiaDemoSupported || renalHyponatremiaDemoSupported || renalHypernatremiaDemoSupported || renalHypocalcemiaDemoSupported || renalHypermagnesemiaDemoSupported || delayedImmuneEventDemoSupported || incidentalClotDemoSupported
-    || normalTestToxicityDemoSupported;
+    || normalTestToxicityDemoSupported || prognosisQuestionDemoSupported;
   const scenarioDemoSupported = hypoglycemiaDemoSupported || adrenalDemoSupported
     || thyroidDemoSupported || myxedemaDemoSupported || observedStateDemoSupported;
   const inductionDemonstration = useDemonstration({
@@ -306,6 +309,11 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyponatremia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  const prognosisQuestionDemonstration = usePrognosisQuestionDemonstration({
+    active: demonstrating && prognosisQuestionDemoSupported,
+    running: session.transport === 'running', patient: session.equipment?.resuscitation.prognosisQuestion,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const normalTestToxicityDemonstration = useNormalTestToxicityDemonstration({
     active: demonstrating && normalTestToxicityDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.normalTestToxicity,
@@ -336,7 +344,8 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypermagnesemia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = normalTestToxicityDemoSupported ? normalTestToxicityDemonstration
+  const demonstration = prognosisQuestionDemoSupported ? prognosisQuestionDemonstration
+    : normalTestToxicityDemoSupported ? normalTestToxicityDemonstration
     : incidentalClotDemoSupported ? incidentalClotDemonstration
     : delayedImmuneEventDemoSupported ? delayedImmuneEventDemonstration
     : renalHypermagnesemiaDemoSupported ? renalHypermagnesemiaDemonstration
@@ -998,6 +1007,7 @@ export function Cockpit({
           delayedImmuneEventGuidance={session.guidance}
           incidentalClotGuidance={session.guidance}
           normalTestToxicityGuidance={session.guidance}
+          prognosisQuestionGuidance={session.guidance}
           renalHypernatremiaGuidance={session.guidance}
           renalHypocalcemiaGuidance={session.guidance}
           renalHypermagnesemiaGuidance={session.guidance}

@@ -2775,6 +2775,7 @@ export interface ActionCockpitProps {
   readonly delayedImmuneEventGuidance?: GuidanceLevel;
   readonly incidentalClotGuidance?: GuidanceLevel;
   readonly normalTestToxicityGuidance?: GuidanceLevel;
+  readonly prognosisQuestionGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -5863,6 +5864,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasPrognosisQuestionResponse && (
               <PrognosisQuestionTray assessment={props.prognosisQuestion}
+                guidance={props.prognosisQuestionGuidance}
+                scenarioVersion={props.scenario.metadata.version}
                 demonstrating={props.prognosisQuestionDemonstrating}
                 onAction={props.onPrognosisQuestionResponse ?? (() => {})} />
             )}

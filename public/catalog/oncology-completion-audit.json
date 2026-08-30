@@ -460,9 +460,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary recorded actions. Unassisted mode is silent and coached withholds the two non-urgent beats. The example is judged by what the fictional patient heard rather than by the words it used: the engine decides the readback from what was actually said, so a test asserts the example leaves him repeating all three scenarios, and a second test runs the same answer without the direction of the error and asserts he is left with the best case alone. Neither the prompts nor the example ever supply a figure, and the tutor names both comfortable failures — a single number as false precision and \"nobody can know\" as true and useless — rather than avoiding the words."
           ]
         },
         {

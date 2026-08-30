@@ -59,7 +59,8 @@ preview-channel blockers until it is. Updating the specification does not clear 
     demonstration, which the renal and endocrine scenarios do have. Done for
     `delayed-immune-event-a-drug-that-stopped-months-ago` and
     `incidental-clot-a-decision-the-evidence-cannot-make` and
-    `normal-test-toxicity-the-dose-in-his-bag`; 8 of 11 remain. The pattern is an
+    `normal-test-toxicity-the-dose-in-his-bag` and `prognosis-question-a-number-he-asked-for`;
+    7 of 11 remain. The pattern is an
     observed-state tutor reading the learner's own recorded steps, a snapshot-driven worked
     example, tray and cockpit wiring, and a test that drives the example through the real engine
     to handoff rather than asserting it as a script. Each example also has to be held to its own
