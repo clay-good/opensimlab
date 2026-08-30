@@ -1,6 +1,7 @@
 /**
  * The informational routes: the validation report, the governance dashboard, the
- * review-status page, the limitations register, and the privacy statement.
+ * review-status page, the corrections log, the limitations register, and the
+ * privacy statement.
  *
  * They are generated from the same records the build gate and the tests read, so
  * a document cannot claim something the code does not do.
@@ -16,6 +17,9 @@ import { LIMITATIONS } from '@platform/docs/limitations';
 import { SOURCES, formatSource, requireSource } from '@platform/docs/sources';
 import { VERIFIED_CONSTANTS, confirmedCount } from '@platform/docs/verified-constants';
 import { PRIVACY_CLAIMS } from '@platform/docs/privacy-claims';
+import {
+  CORRECTIONS, CORRECTIONS_EMPTY_REASON, CORRECTIONS_POLICY,
+} from '@platform/docs/corrections';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { routeFor } from './routes';
 import {
@@ -46,6 +50,7 @@ const VERDICT_SUMMARY: Record<string, string> = {
  */
 const DOCUMENT_EXTRAS: readonly { href: string; label: string }[] = [
   { href: '/review-status', label: 'Review status' },
+  { href: '/corrections', label: 'Corrections' },
   { href: '/privacy', label: 'Privacy' },
   { href: '/content-review', label: 'Review the content' },
 ];
@@ -63,6 +68,7 @@ export function DocumentRoute({ path }: { path: string }) {
         {path === '/validation' && <ValidationBody />}
         {path === '/governance' && <GovernanceBody />}
         {path === '/review-status' && <ReviewStatusBody />}
+        {path === '/corrections' && <CorrectionsBody />}
         {path === '/limitations' && <LimitationsBody />}
         {path === '/privacy' && <PrivacyBody />}
       </main>
@@ -383,6 +389,66 @@ function ReviewStatusBody() {
         channel. The per-module audits behind those two gates are published as JSON alongside the
         build, and the <a href="/limitations">limitations register</a> names what the simulation
         deliberately does not model.
+      </p>
+    </>
+  );
+}
+
+/**
+ * The permanent record of what was wrong.
+ *
+ * The whole argument for publishing an unsigned corpus is that a reader who finds
+ * an error can tell us and see what happened. That argument is only as good as
+ * this page being reachable from the product rather than living in a file in a
+ * repository, which is not where a learner is.
+ */
+function CorrectionsBody() {
+  return (
+    <>
+      <p>
+        A permanent, public record of every clinical error found in Open Sim Lab and what was done
+        about it.
+      </p>
+      <ul>
+        {CORRECTIONS_POLICY.map((rule) => <li key={rule}>{rule}</li>)}
+      </ul>
+
+      <h2>Entries</h2>
+      <p className="numeric">{CORRECTIONS.length} corrections recorded.</p>
+      {CORRECTIONS.length === 0 ? (
+        <p>
+          {CORRECTIONS_EMPTY_REASON} <a href="/review-status">The review-status page</a> lists
+          every item and the label it is published under, and{' '}
+          <a href="/governance">the governance page</a> names the empty board.
+        </p>
+      ) : (
+        CORRECTIONS.map((entry) => (
+          <section key={`${entry.released}:${entry.title}`} className="document__group">
+            <h3>{entry.released} — {entry.title}</h3>
+            <dl className="document__items">
+              <div><dt>Item</dt><dd><code>{entry.item}</code></dd></div>
+              <div><dt>What was wrong</dt><dd>{entry.wasWrong}</dd></div>
+              <div><dt>Potential educational impact</dt><dd>{entry.educationalImpact}</dd></div>
+              <div><dt>Reported by</dt><dd>{entry.reportedBy}</dd></div>
+              <div><dt>What changed</dt><dd>{entry.whatChanged}</dd></div>
+              <div><dt>Released in</dt><dd><code>{entry.releasedIn}</code></dd></div>
+            </dl>
+          </section>
+        ))
+      )}
+
+      <h2>How to report something</h2>
+      <p>
+        Every playable scenario carries a <strong>Report a problem</strong> control. It sends only
+        the scenario, its version, the public practice context, a category, and an optional
+        160-character note — after showing you a preview of exactly that. Do not include real
+        patient or learner information; there is no field that wants it.
+      </p>
+      <p>
+        Where the separately deployed report service is unavailable, the control says so rather
+        than pretending to queue anything, and invited reviewers can still record notes at{' '}
+        <a href="/content-review">the content-review page</a> and return the exported file through
+        their invitation channel.
       </p>
     </>
   );

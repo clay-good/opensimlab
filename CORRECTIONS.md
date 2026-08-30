@@ -4,6 +4,11 @@ A permanent, public record of every clinical error found in Open Sim Lab and wha
 about it. Entries are appended. **Nothing here is ever deleted or rewritten**, including
 entries that are embarrassing.
 
+This file and the published [corrections log](https://opensimlab.com/corrections) are one
+record. The page renders `src/platform/docs/corrections.ts`, and a test fails the build if the
+two disagree on how many entries exist, so an entry appended here without being appended there
+does not ship.
+
 Each entry states what was wrong, the potential educational impact, who reported it, what
 changed, and which release carried the fix.
 

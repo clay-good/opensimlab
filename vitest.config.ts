@@ -32,7 +32,18 @@ export default defineConfig({
     // durable fix is making the replays cheaper without weakening the
     // frame-by-frame determinism they prove; that is a separate change, and
     // raising this number again instead of making it would be the wrong
-    // instinct.
+    // instinct. It is now measured rather than guessed at. Interleaved
+    // best-of-6 over 1,500 ticks of the renal hyponatremia scenario:
+    //
+    //   engine.step() alone                       1.111 ms/tick
+    //   step + JSON.stringify(frame) + sha256     1.988 ms/tick
+    //
+    // So 44% of a replay is serializing a 16 KB frame every tick — and that
+    // serialization IS the proof, because the hash deliberately covers every
+    // state field and waveform sample rather than a reduced endpoint
+    // projection. The cheap win and the thing being proven are the same object,
+    // so a real fix has to come from the 56% in the solver. Anyone tempted to
+    // hash less should read the run() helper in a *-runs.test.ts file first.
     testTimeout: 600_000,
     // A dozen integration files each step the solver for minutes of CPU. Left
     // unbounded, the pool spawns more workers than this machine has cores, and

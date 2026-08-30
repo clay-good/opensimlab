@@ -403,6 +403,16 @@ export const ROUTES: readonly RouteMetadata[] = [
     heading: 'Review status',
   },
   {
+    path: '/corrections',
+    title: formatTitle('Corrections log'),
+    description:
+      'The permanent public record of every clinical error found in Open Sim Lab, what it could '
+      + 'have taught, what changed, and which build carried the fix.',
+    indexable: true,
+    structuredData: [],
+    heading: 'Corrections log',
+  },
+  {
     path: '/limitations',
     title: formatTitle('Limitations register'),
     description:

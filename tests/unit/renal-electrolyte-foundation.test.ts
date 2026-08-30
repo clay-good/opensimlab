@@ -297,8 +297,8 @@ describe('Renal and Electrolyte Medicine module foundation', () => {
     expect(READY_MODULE_COUNT).toBe(15);
     expect(READY_SCENARIO_COUNT).toBe(240);
     expect(reviewableItems().filter((item) => item.kind === 'scenario')).toHaveLength(240);
-    expect(ROUTES).toHaveLength(269);
-    expect(indexableRoutes()).toHaveLength(266);
+    expect(ROUTES).toHaveLength(270);
+    expect(indexableRoutes()).toHaveLength(267);
     expect(PUBLIC_CATALOG_ARTIFACTS).toHaveLength(56);
     expect(new Set(PUBLIC_CATALOG_ARTIFACTS).size).toBe(56);
     expect(PUBLIC_CATALOG_ARTIFACTS).toEqual(expect.arrayContaining([

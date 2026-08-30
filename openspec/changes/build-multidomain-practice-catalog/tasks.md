@@ -87,6 +87,10 @@ credited toward the catalog until every item in the completion contract passes.
 - [ ] Migrate current anesthesia content to preview without fabricating signatures or source checks.
 - [ ] Add public dashboards for scenario counts and all maturity, overdue, withdrawn, correction,
   limitation, and endorsement records.
+  Maturity, withdrawn, and scenario counts ship at `/review-status`; corrections at
+  `/corrections`, rendered from typed data that a test holds in step with `CORRECTIONS.md`;
+  overdue reviews at `/governance`; limitations at `/limitations`. Endorsement records remain,
+  and will stay empty until there is a board to record one.
 - [x] Test that every status badge resolves offline to the exact machine-readable record.
 
 ## 3. Shared catalog and environment shell

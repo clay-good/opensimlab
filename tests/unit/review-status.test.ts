@@ -71,6 +71,9 @@ describe('Requirement: The Release Stops Without Its Honesty Surface', () => {
   it('blocks when the route is gone', () => {
     const without = ROUTES.filter((route) => route.path !== '/review-status');
     expect(honestySurfaceBlockers(without, report, report.total)[0]).toContain('is missing');
+    const noCorrections = ROUTES.filter((route) => route.path !== '/corrections');
+    expect(honestySurfaceBlockers(noCorrections, report, report.total)[0])
+      .toContain('no permanent record of what was wrong');
   });
 
   it('blocks when the surface exists but nobody can find it', () => {

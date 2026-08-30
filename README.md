@@ -62,7 +62,9 @@ fails immediately.
 
 **Claims are sourced and correctable.** Crisis protocols trace to their issuing bodies,
 physiology is checked against published benchmarks, the limitations register is public,
-and confirmed mistakes stay in a permanent [corrections log](CORRECTIONS.md).
+and confirmed mistakes stay in a permanent [corrections log](CORRECTIONS.md) — published
+in the product at `/corrections`, not only in this repository. The release gate refuses to
+publish without it.
 
 ## Status: public and unreviewed, on purpose
 

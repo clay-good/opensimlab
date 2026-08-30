@@ -270,7 +270,7 @@ function CurrentRoute() {
   if (path === '/content-review') return <Suspense fallback={<Loading />}><ContentReviewRoute /></Suspense>;
   if (path === '/gallery') return <Suspense fallback={<Loading />}><GalleryRoute /></Suspense>;
   if (path === '/frame-budget') return <Suspense fallback={<Loading />}><FrameBudgetRoute /></Suspense>;
-  if (['/validation', '/governance', '/review-status', '/limitations', '/privacy'].includes(path)) {
+  if (['/validation', '/governance', '/review-status', '/corrections', '/limitations', '/privacy'].includes(path)) {
     return <Suspense fallback={<Loading />}><DocumentRoute path={path} /></Suspense>;
   }
 
@@ -297,6 +297,7 @@ function CurrentRoute() {
           <li><a href="/validation">The validation report</a> — how closely the patient matches the evidence</li>
           <li><a href="/governance">Clinical governance</a> — who has reviewed what, and what is outstanding</li>
           <li><a href="/review-status">Review status</a> — every item and the label it is published under</li>
+          <li><a href="/corrections">Corrections</a> — every clinical error found, and what changed</li>
           <li><a href="/limitations">The limitations register</a> — what this deliberately does not model</li>
           <li><a href="/privacy">Privacy</a> — what is stored on your device, which is all of it</li>
         </ul>

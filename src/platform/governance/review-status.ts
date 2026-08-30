@@ -162,11 +162,17 @@ export function honestySurfaceBlockers(
   maturityRecordCount: number,
 ): string[] {
   const blockers: string[] = [];
-  const route = routes.find((candidate) => candidate.path === '/review-status');
-  if (!route) {
-    blockers.push('the review-status route is missing: the published corpus has no honesty surface');
-  } else if (!route.indexable) {
-    blockers.push('the review-status route is not indexable: an honesty surface nobody can find');
+  // Both pages are load-bearing for the same argument. The review-status page is
+  // what is published and under what label; the corrections log is what happens
+  // when a reader says we got it wrong. Publishing an unsigned corpus without
+  // either one is asking for trust with nothing offered back.
+  for (const [path, purpose] of [
+    ['/review-status', 'the published corpus has no honesty surface'],
+    ['/corrections', 'the published corpus has no permanent record of what was wrong'],
+  ] as const) {
+    const route = routes.find((candidate) => candidate.path === path);
+    if (!route) blockers.push(`the ${path} route is missing: ${purpose}`);
+    else if (!route.indexable) blockers.push(`the ${path} route is not indexable: a surface nobody can find`);
   }
   if (report.total !== maturityRecordCount) {
     blockers.push(
