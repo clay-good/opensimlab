@@ -599,7 +599,14 @@ describe('Requirement: One Screen, One Action', () => {
     // and so launching one does not silently relax the one-screen guarantee.
     const directory = markup.match(/<p class="landing__modules">[\s\S]*?<\/p>/)?.[0];
     expect(directory, 'the module directory should render as one element').toBeTruthy();
-    const prose = count(markup.replace(directory!, ' '));
+    // The skip link is the same category: a landmark control for keyboard and
+    // screen-reader visitors, not copy. It was counted as prose, so the budget
+    // was really 76 words of copy plus a fixed accessibility affordance — which
+    // meant an accessibility improvement would have had to be paid for out of
+    // the copy budget. Excluded for the same reason the directory is.
+    const skipLink = markup.match(/<a class="skip-link"[\s\S]*?<\/a>/)?.[0];
+    expect(skipLink, 'the skip link should render as one element').toBeTruthy();
+    const prose = count(markup.replace(directory!, ' ').replace(skipLink!, ' '));
     expect(prose, `the landing page renders ${prose} prose words`).toBeLessThan(80);
     // The directory itself stays one compact line: a link per module, nothing more.
     const entries = [...directory!.matchAll(/<a [^>]*href="\/[^"]*"[^>]*>([^<]+)<\/a>/g)].map((match) => match[1]);

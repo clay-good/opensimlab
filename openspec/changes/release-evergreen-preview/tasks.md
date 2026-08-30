@@ -29,11 +29,17 @@ preview-channel blockers until it is. Updating the specification does not clear 
 
 ## 4. Drop the staged version label
 
-- [ ] Set `package.json` version to an unsuffixed number; generate the release identifier from
-  build date and commit.
-- [ ] Add a lint gate that fails on `alpha`, `beta`, or `rc` used as a product maturity label in
+- [x] Set `package.json` version to an unsuffixed number; generate the release identifier from
+  build date and commit. `vite.config.ts` injects `__RELEASE_ID__` as `<date>+<commit>`, which
+  `APP_VERSION` reports; a source checkout with no injected value reports `unreleased`.
+- [x] Add a lint gate that fails on `alpha`, `beta`, or `rc` used as a product maturity label in
   package metadata, prerendered HTML, manifests, or documentation.
-- [ ] Leave every content item's semantic content version untouched.
+  `scripts/check-maturity-labels.ts`, run by `npm run lint` over the sources and again by
+  `npm run build` over `dist/`. It flags semver prereleases and a fixed list of release phrases,
+  never a bare `alpha` or `beta`, so beta blockade and capnogram alpha angles survive it.
+- [x] Leave every content item's semantic content version untouched. The engine capability
+  version is exempt by exact string: it pins what the solver could do when a transcript was
+  recorded, and ~250 completion contracts compare it literally.
 
 ## 5. Build the release-honesty surfaces
 

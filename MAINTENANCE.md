@@ -5,13 +5,16 @@ is, without softening it.
 
 ## Status
 
-**Alpha. Not clinically reviewed.**
+**Educational use only — not clinically reviewed.**
+
+That is the whole claim, and it is not a stage on the way to a different one. Open Sim Lab
+publishes in a single evergreen state: the catalog grows and gets corrected continuously,
+and every build is identified by its date and commit rather than by a maturity ladder.
 
 No clinician has signed any content. The pharmacology parameters are transcribed from the
 primary literature but have not had the independent second-source check this project
-requires before a model may be called Published. The face-validity review the first
-development change ends at has not been run. The frame budget has not been measured on a
-physical reference device.
+requires before a model may be called Published. The face-validity review has not been run.
+The frame budget has not been measured on a physical reference device.
 
 Use it to see how the simulator works. Do not use it to learn clinical facts from, and do
 not put it in front of students as though it had been checked.

@@ -1,6 +1,6 @@
 {
   "name": "opensimlab",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0",
   "private": true,
   "description": "Open Sim Lab — an open-source, browser-native clinical simulator.",
   "license": "MIT",
@@ -11,7 +11,7 @@
   "packageManager": "npm@11.12.0",
   "scripts": {
     "dev": "vite",
-    "build": "npm run tokens && tsc -p tsconfig.json --noEmit && npm run catalog && npm run og && npm run assets && vite build && npm run prerender && npm run gate",
+    "build": "npm run tokens && tsc -p tsconfig.json --noEmit && npm run catalog && npm run og && npm run assets && vite build && npm run prerender && npm run lint:maturity -- --dist && npm run gate",
     "build:indexable": "SITE_INDEXABLE=true npm run build && npm run check:indexable",
     "preview": "vite preview",
     "tokens": "tsx scripts/build-tokens.ts",
@@ -21,7 +21,8 @@
     "static-host": "tsx scripts/check-static-host.ts",
     "og": "tsx --import ./scripts/register-css-stub.mjs scripts/build-og.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "lint": "eslint . && npm run lint:tokens",
+    "lint": "eslint . && npm run lint:tokens && npm run lint:maturity",
+    "lint:maturity": "tsx scripts/check-maturity-labels.ts",
     "lint:tokens": "tsx scripts/token-lint.ts",
     "test": "vitest run",
     "test:watch": "vitest",

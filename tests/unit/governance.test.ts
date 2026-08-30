@@ -86,11 +86,11 @@ describe('Requirement: Governance Is Auditable From Outside', () => {
   it('reports this build honestly: nothing is signed', () => {
     const report = reportCoverage(reviewableItems(), TODAY);
     expect(report.total).toBeGreaterThan(5);
-    // This is the true state of the alpha and the project says so.
+    // This is the true state of the published corpus and the project says so.
     expect(report.current).toBe(0);
     expect(report.percentCurrent).toBe(0);
     expect(EDITORIAL_BOARD).toHaveLength(0);
-    expect(HONEST_STATUS.headline).toContain('Not clinically reviewed');
+    expect(HONEST_STATUS.headline).toContain('not clinically reviewed');
     expect(HONEST_STATUS.detail).toContain('No clinician has signed');
   });
 
