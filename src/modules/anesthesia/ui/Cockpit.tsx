@@ -203,8 +203,26 @@ export function Cockpit({
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
   const renalHypocalcemiaDemoSupported = supportsRenalHypocalcemiaDemonstration(scenario);
   const renalHypermagnesemiaDemoSupported = supportsRenalHypermagnesemiaDemonstration(scenario);
+
+  /**
+   * The two facts the rest of this component keeps asking about, named once.
+   *
+   * These were fourteen and eighteen flags spelled out inline at five sites, so
+   * every scenario shipping its own tutor and example had to be added to all five
+   * by hand. That is a machine's job done by a person, and it has already gone
+   * wrong twice in this file: once inserting the same clause into a chain twice,
+   * once matching a fourth site that a previous edit had created. `tsc` accepts a
+   * repeated `&& !x && !x` without complaint, so the typechecker is no help here.
+   *
+   * The sets are unchanged. `observedStateDemoSupported` is exactly the fourteen
+   * that four of the sites already shared, and `scenarioDemoSupported` adds the
+   * four older lessons that only the induction-demonstration guard excluded.
+   */
+  const observedStateDemoSupported = hypercalcemiaDemoSupported || hypocalcemiaDemoSupported || hyponatremiaCorrectionDemoSupported || avpDeficiencyDemoSupported || refeedingDemoSupported || perioperativeDiabetesDemoSupported || renalHyperkalemiaDemoSupported || renalHypokalemiaDemoSupported || renalHyponatremiaDemoSupported || renalHypernatremiaDemoSupported || renalHypocalcemiaDemoSupported || renalHypermagnesemiaDemoSupported || delayedImmuneEventDemoSupported || incidentalClotDemoSupported;
+  const scenarioDemoSupported = hypoglycemiaDemoSupported || adrenalDemoSupported
+    || thyroidDemoSupported || myxedemaDemoSupported || observedStateDemoSupported;
   const inductionDemonstration = useDemonstration({
-    active: demonstrating && !hypoglycemiaDemoSupported && !adrenalDemoSupported && !thyroidDemoSupported && !myxedemaDemoSupported && !hypercalcemiaDemoSupported && !hypocalcemiaDemoSupported && !hyponatremiaCorrectionDemoSupported && !avpDeficiencyDemoSupported && !refeedingDemoSupported && !perioperativeDiabetesDemoSupported && !renalHyperkalemiaDemoSupported && !renalHypokalemiaDemoSupported && !renalHyponatremiaDemoSupported && !renalHypernatremiaDemoSupported && !renalHypocalcemiaDemoSupported && !renalHypermagnesemiaDemoSupported && !delayedImmuneEventDemoSupported && !incidentalClotDemoSupported,
+    active: demonstrating && !scenarioDemoSupported,
     tick: session.tick,
     act: session.act,
     onFinished: () => onTakeControls?.(),
@@ -851,7 +869,7 @@ export function Cockpit({
                 spo2Percent: 'Pulse-derived saturation unavailable',
                 etco2MmHg: 'Exhaled carbon dioxide not supplied',
               }
-            : hypercalcemiaDemoSupported || hypocalcemiaDemoSupported || hyponatremiaCorrectionDemoSupported || avpDeficiencyDemoSupported || refeedingDemoSupported || perioperativeDiabetesDemoSupported || renalHyperkalemiaDemoSupported || renalHypokalemiaDemoSupported || renalHyponatremiaDemoSupported || renalHypernatremiaDemoSupported || renalHypocalcemiaDemoSupported || renalHypermagnesemiaDemoSupported || delayedImmuneEventDemoSupported || incidentalClotDemoSupported
+            : observedStateDemoSupported
               ? { etco2MmHg: 'Exhaled carbon dioxide is not supplied in this lesson',
                   fio2: 'Oxygen setting is not modeled' }
             : myxedemaDemoSupported
@@ -1747,12 +1765,12 @@ export function Cockpit({
       </div>
 
       {/* Guidance. Non-blocking, dismissible, and never shown during an alarm. */}
-      {!demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !hypercalcemiaDemoSupported && !hypocalcemiaDemoSupported && !hyponatremiaCorrectionDemoSupported && !avpDeficiencyDemoSupported && !refeedingDemoSupported && !perioperativeDiabetesDemoSupported && !renalHyperkalemiaDemoSupported && !renalHypokalemiaDemoSupported && !renalHyponatremiaDemoSupported && !renalHypernatremiaDemoSupported && !renalHypocalcemiaDemoSupported && !renalHypermagnesemiaDemoSupported && !delayedImmuneEventDemoSupported && !incidentalClotDemoSupported && tutorIntroductionOpen && session.alarms.length === 0 ? (
+      {!demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !observedStateDemoSupported && tutorIntroductionOpen && session.alarms.length === 0 ? (
         <TutorIntroduction onDismissPermanently={() => {
           setTutorIntroductionDismissed(true);
           setTutorIntroductionOpen(false);
         }} />
-      ) : !demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !hypercalcemiaDemoSupported && !hypocalcemiaDemoSupported && !hyponatremiaCorrectionDemoSupported && !avpDeficiencyDemoSupported && !refeedingDemoSupported && !perioperativeDiabetesDemoSupported && !renalHyperkalemiaDemoSupported && !renalHypokalemiaDemoSupported && !renalHyponatremiaDemoSupported && !renalHypernatremiaDemoSupported && !renalHypocalcemiaDemoSupported && !renalHypermagnesemiaDemoSupported && !delayedImmuneEventDemoSupported && !incidentalClotDemoSupported && !tutorIntroductionOpen && prompt ? (
+      ) : !demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !observedStateDemoSupported && !tutorIntroductionOpen && prompt ? (
         <TutorPromptCard
           prompt={prompt}
           collapsed={tutorCollapsed}
@@ -1892,7 +1910,7 @@ export function Cockpit({
             and cue is also shown.
           </p>
         </div>
-        {scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !hypercalcemiaDemoSupported && !hypocalcemiaDemoSupported && !hyponatremiaCorrectionDemoSupported && !avpDeficiencyDemoSupported && !refeedingDemoSupported && !perioperativeDiabetesDemoSupported && !renalHyperkalemiaDemoSupported && !renalHypokalemiaDemoSupported && !renalHyponatremiaDemoSupported && !renalHypernatremiaDemoSupported && !renalHypocalcemiaDemoSupported && !renalHypermagnesemiaDemoSupported && !delayedImmuneEventDemoSupported && !incidentalClotDemoSupported && <Button onClick={() => {
+        {scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !observedStateDemoSupported && <Button onClick={() => {
           setShortcutsOpen(false);
           setTutorIntroductionOpen(true);
         }}>

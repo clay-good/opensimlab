@@ -73,3 +73,44 @@ describe('The product name', () => {
     expect(siteMetadata).toContain("SITE_NAME = 'Open Sim Lab'");
   });
 });
+
+/**
+ * Scenario-specific demonstrations are added in one place, not five.
+ *
+ * The cockpit used to ask "does this scenario ship its own tutor and example?" by
+ * spelling out fourteen or eighteen flags inline at five separate sites, so every
+ * new lesson had to be added to all five by hand. That went wrong twice while the
+ * oncology examples were being written — once inserting a clause into the same
+ * chain twice, once matching a site a previous edit had just created — and the
+ * typechecker cannot help, because a repeated `&& !x && !x` is valid TypeScript
+ * that means exactly what it says.
+ *
+ * The two derived booleans are now the single place. This test exists to stop the
+ * chains growing back one convenient inline addition at a time.
+ */
+describe('Requirement: The Demonstration Guards Have One Definition', () => {
+  const cockpit = readFileSync(join(process.cwd(), 'src/modules/anesthesia/ui/Cockpit.tsx'), 'utf8');
+
+  it('declares each derived guard exactly once', () => {
+    expect(cockpit.match(/const observedStateDemoSupported =/g)).toHaveLength(1);
+    expect(cockpit.match(/const scenarioDemoSupported =/g)).toHaveLength(1);
+  });
+
+  it('asks the question through the named guards rather than inline', () => {
+    // Anything longer than a pair is the chain re-forming. The declaration itself
+    // is the one legitimate long run, and it uses `||` rather than `&& !`.
+    const negatedRuns = cockpit.match(/(?:!\w*DemoSupported\s*&&\s*){3,}/g) ?? [];
+    expect(negatedRuns, negatedRuns.join('\n')).toEqual([]);
+  });
+
+  it('names every flag the guards are built from in one expression', () => {
+    const declaration = /const observedStateDemoSupported = ([^;]+);/.exec(cockpit)?.[1] ?? '';
+    // Every scenario with its own demonstration hook must reach a guard.
+    for (const flag of cockpit.match(/const (\w+)DemoSupported = supports/g) ?? []) {
+      const name = /const (\w+)DemoSupported/.exec(flag)![1]!;
+      const reached = declaration.includes(`${name}DemoSupported`)
+        || ['hypoglycemia', 'adrenal', 'thyroid', 'myxedema'].includes(name);
+      expect(reached, `${name} reaches no demonstration guard`).toBe(true);
+    }
+  });
+});

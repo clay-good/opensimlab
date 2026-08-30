@@ -245,7 +245,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "a1a60635c2afbd29dad5d897f98738c73bfb599a23203c103d6e8af3723db586"
+        "sha256": "f21b4a2ed5e80ab97eebe2b0cf9eaf5f328909acc9d86d5b8f489ad19afd53ca"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
@@ -506,7 +506,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "a1a60635c2afbd29dad5d897f98738c73bfb599a23203c103d6e8af3723db586"
+        "sha256": "f21b4a2ed5e80ab97eebe2b0cf9eaf5f328909acc9d86d5b8f489ad19afd53ca"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
