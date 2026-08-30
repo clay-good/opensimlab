@@ -2781,6 +2781,7 @@ export interface ActionCockpitProps {
   readonly loweringTheCountGuidance?: GuidanceLevel;
   readonly inheritedUrgencyGuidance?: GuidanceLevel;
   readonly trialRuleGuidance?: GuidanceLevel;
+  readonly silentInteractionGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -5839,6 +5840,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasSilentInteractionResponse && (
               <SilentInteractionTray assessment={props.silentInteraction}
+                guidance={props.silentInteractionGuidance}
+                scenarioVersion={props.scenario.metadata.version}
                 demonstrating={props.silentInteractionDemonstrating}
                 onAction={props.onSilentInteractionResponse ?? (() => {})} />
             )}

@@ -2,11 +2,13 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { SILENT_INTERACTION_A_HARM_WITH_NOTHING_TO_FIND } from './scenarios/silent-interaction-a-harm-with-nothing-to-find';
 import { SILENT_INTERACTION_FIXTURES } from './silent-interaction-fixtures';
+import { SILENT_INTERACTION_DEMONSTRATION_VERSION } from './demo/silent-interaction-demonstration';
 
 export function silentInteractionCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'oncology' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== SILENT_INTERACTION_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
     || SILENT_INTERACTION_FIXTURES.contentVersion !== '0.1.0' || SILENT_INTERACTION_FIXTURES.seed !== 2822
+    || SILENT_INTERACTION_DEMONSTRATION_VERSION !== '0.1.0'
     || JSON.stringify(scenario) !== JSON.stringify(SILENT_INTERACTION_A_HARM_WITH_NOTHING_TO_FIND)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['silent-interaction-fixtures.ts binds seed 2822 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No absorption, exposure, or treatment-effect model is claimed, and no outcome follows from any choice.'] },
@@ -15,7 +17,7 @@ export function silentInteractionCompletionEvidence(scenario: Scenario, capabili
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The reconciliation, the recorded direction of harm, the call to the treating team, bounded intent, the boundary review, and a current assessment permit handoff with every prescribing decision open. Instructor takeover bounds a run with no escalation at 240 minutes, the longest in this module because a routine clinic is the one setting here that genuinely does not press.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Seven event-bound objectives distinguish what is swallowed from what was prescribed, a harm whose direction is reduced treatment rather than toxicity, telling a person rather than a record, refusing both dismissal and overstatement of retrospective evidence, bounded qualified-team intent, reading an adjusted hazard ratio without converting it into this patient’s lost benefit, and handing off a finding that contains no abnormality. Refused shortcuts remain visible, and no diagnosis, treatment effect, or outcome is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['silent-interaction-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine, including the authored arrival of the pharmacy list.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Observed-state guidance and learner-paused example ${SILENT_INTERACTION_DEMONSTRATION_VERSION} use ordinary recorded actions. Unassisted mode is silent and coached withholds the two non-urgent beats. Nothing in this lesson ever becomes abnormal, which a worked example is the wrong shape for by default — it wants a moment where the warned-about thing appears and vindicates the beat before it. There is none, so the absence is asserted rather than assumed: one test checks no abnormal finding exists at any tick from the first to handoff, and a second runs the lesson with no actions at all and confirms the same. No prompt tells the learner to stop or change her medication, because instructing her is prescribing and is not the learner's to do.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];

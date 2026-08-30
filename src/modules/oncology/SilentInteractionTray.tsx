@@ -1,14 +1,18 @@
 import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { SilentInteractionSnapshot } from '@platform/kernel/protocol';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { SilentInteractionAction } from './silent-interaction';
+import { silentInteractionInlinePrompt } from './silent-interaction-tutor';
 
-export function SilentInteractionTray({ assessment, onAction, demonstrating = false }: {
-  readonly assessment?: SilentInteractionSnapshot;
+export function SilentInteractionTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
+  readonly assessment?: SilentInteractionSnapshot; readonly scenarioVersion: string;
   readonly onAction: (action: SilentInteractionAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = silentInteractionInlinePrompt(guidance, { scenarioVersion, silentInteraction: assessment });
   const observations = assessment.observationRecord; const records = assessment.recordCheck;
   const observation = assessment.observation;
   const decision = (action: SilentInteractionAction, label: string, accepted = false) => {
@@ -17,6 +21,10 @@ export function SilentInteractionTray({ assessment, onAction, demonstrating = fa
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     {/* The absence is the presentation. Say so first, and keep saying it. */}
     <p className="syringe__remaining" role="status">She feels well and there is {assessment.anyAbnormalFinding ? 'an abnormal finding' : 'no abnormal finding of any kind'}: every observation and every supplied result is normal. The lists are the only place anything is wrong.</p>
     <p className="syringe__remaining">Selected sources: a population cohort of acid suppression alongside two oral targeted tablets, and a review of proton pump inhibitors alongside cancer treatments. Open the source view for exact wording and grades.</p>

@@ -1216,9 +1216,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary recorded actions. Unassisted mode is silent and coached withholds the two non-urgent beats. Nothing in this lesson ever becomes abnormal, which a worked example is the wrong shape for by default — it wants a moment where the warned-about thing appears and vindicates the beat before it. There is none, so the absence is asserted rather than assumed: one test checks no abnormal finding exists at any tick from the first to handoff, and a second runs the lesson with no actions at all and confirms the same. No prompt tells the learner to stop or change her medication, because instructing her is prescribing and is not the learner's to do."
           ]
         },
         {
