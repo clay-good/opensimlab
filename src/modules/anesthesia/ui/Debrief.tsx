@@ -69,6 +69,7 @@ import { supportsLoweringTheCount } from '../../oncology/lowering-the-count';
 import { supportsInheritedUrgency } from '../../oncology/inherited-urgency';
 import { supportsTrialRule } from '../../oncology/trial-rule';
 import { supportsSilentInteraction } from '../../oncology/silent-interaction';
+import { supportsEasyLabel } from '../../oncology/easy-label';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -655,6 +656,46 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-oncology-easy-label-')) {
+      if (!supportsEasyLabel(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The oncology diagnosis-of-exclusion lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^easy-label-${id}-\\d+$`).test(entry.eventId));
+      const exclusion = event('exclusion-recorded'); const outstanding = event('outstanding-recorded');
+      const escalation = event('escalation-requested'); const intent = event('intent-recorded');
+      const boundaries = event('boundary-review'); const handoff = event('handoff');
+      const history = event('history-surfaces');
+      const answered = log.find((entry) => /^easy-label-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedTreat = event('immunosuppression-refused'); const refusedWait = event('wait-refused');
+      const refusedNoFever = event('no-fever-refused'); const refusedFourCycles = event('four-cycles-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'recognize-oncology-easy-label-a-diagnosis-of-exclusion': { met: !!exclusion, tick: exclusion?.tick,
+          finding: (exclusion ? 'That the label is a diagnosis of exclusion was recorded as the definition of it rather than a caution attached to it. ' : 'That the label requires exclusion was never recorded, so a label was carried forward as though it were a diagnosis. ')
+            + (refusedFourCycles ? 'Concluding that four cycles make this the drug was attempted and refused; the exposure makes the label available, not correct. ' : '')
+            + 'The competing causes present indistinguishably from it, which is why the exclusion is the diagnosis rather than a step before it.' },
+        'record-oncology-easy-label-what-remains-open': { met: !!outstanding, tick: outstanding?.tick,
+          finding: (outstanding ? 'What had not been excluded was written down rather than what had been assumed. ' : 'The open questions were never recorded, which is how the next person inherits an answer nobody reached. ')
+            + (refusedNoFever ? 'Excluding infection on an absent fever was attempted and refused; the exclusion here is microbiological rather than clinical. ' : '')
+            + (history ? 'A recent admission and course of antibiotics surfaced from his own record during this run. ' : '') },
+        'activate-oncology-easy-label-both-at-once': { met: !!escalation, tick: escalation?.tick,
+          finding: (escalation ? 'The treating team was called with a request for the samples and the treatment decision together. ' : 'The treating team was never called, so neither half of this started. ')
+            + (refusedWait ? 'Waiting for every result before telling anyone was attempted and refused; the samples and the telephone call do not compete for the same minutes. ' : '')
+            + (answered ? 'They answered with gastroenterology and took ownership of both together. ' : 'They had not answered by the end of this run. ') },
+        'recognize-oncology-easy-label-a-treatment-that-worsens-the-alternative': { met: !!boundaries && !!escalation, tick: boundaries?.tick,
+          finding: (refusedTreat ? 'Starting immunosuppression on the obvious label was attempted and refused. ' : '')
+            + 'The reason is specific rather than general caution: the treatment for the assumed diagnosis is what makes the competing one worse, and these patients are described as being at increased risk of infectious colitis. This is a wrong answer whose treatment removes the chance of being cheaply right.' },
+        'record-oncology-easy-label-bounded-qualified-intent': { met: !!intent, tick: intent?.tick,
+          finding: (intent ? 'The samples, whether and when immunosuppression begins, what is given if a competing cause is found, and whether the checkpoint inhibitor continues were recorded as the treating team’s and gastroenterology’s. ' : 'Bounded qualified-team intent was never recorded. ')
+            + 'Nothing was sampled, started, or withheld here, and no drug, dose, route, grade threshold, or agent was chosen or displayed.' },
+        'review-oncology-easy-label-boundaries-that-pull-apart': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'Both boundaries were held rather than one being dropped. ' : 'The boundary and certainty review is missing. ')
+            + 'Guidelines universally recommend corticosteroids as initial management at grade 2 or above, so delay is not free; and microbiological studies should be performed first to exclude the common infectious causes. They govern different decisions, and only one of the two waits for a result.' },
+        'handoff-oncology-easy-label-an-answer-nobody-reached': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'That the exclusion had not happened, which causes remained open, the recent antibiotics, and the state of both halves all travelled. ' : 'Current findings, the recorded open questions, or continuing-care ownership remains incomplete. ')
+            + 'What was handed over is a question, which is the only honest thing this encounter had produced.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-oncology-silent-interaction-')) {
       if (!supportsSilentInteraction(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The oncology medicines-reconciliation lesson was not active.' } satisfies ObjectiveFinding;

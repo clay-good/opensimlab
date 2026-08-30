@@ -1917,7 +1917,7 @@ credited toward the catalog until every item in the completion contract passes.
     procedure, observation, disposition, prognosis, or outcome control exists.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.
-  The nursing module is registered at 9 of 9. Oncology is open at 10 of 11: a delayed immune-related
+  The nursing module is registered at 9 of 9. Oncology is now registered at 11 of 11: a delayed immune-related
   event after the drug has stopped, an incidentally found pulmonary embolus whose management is
   only conditionally recommended, severe first-cycle oral-fluoropyrimidine toxicity after a
   wild-type pre-treatment panel, a prognosis conversation scored by what the patient repeats back
@@ -1931,7 +1931,12 @@ credited toward the catalog until every item in the completion contract passes.
   attaches a condition the patient does not meet, and an interaction between an oral targeted
   tablet and acid suppression that produces no abnormal finding at all, where the harm runs towards
   less treatment rather than toxicity and the only way to find it is to reconcile three records
-  that each hold a different truth. Surgery/trauma is declared planned and has not started. Every
+  that each hold a different truth, and a diarrhoea during checkpoint treatment where the obvious
+  label is a diagnosis of exclusion and the treatment for it is what makes the competing cause
+  worse, so the answer is neither treating nor waiting but refusing the sequence they are offered
+  in. The last of these is a deliberate counterweight: four of the others teach a learner to hold
+  a position while somebody urges action, and a module that only ever teaches that is teaching a
+  reflex rather than a judgement. Surgery/trauma is declared planned and has not started. Every
   scenario in this wave remains preview: none carries clinical review, a state-space matrix, or
   inclusive-runtime evidence, so the wave's completion count is still zero.
   Two budgets were the binding constraint on the remaining oncology lessons, and both have been

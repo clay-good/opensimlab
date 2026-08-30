@@ -250,4 +250,28 @@ export const ONCOLOGY_LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'The estimate is an association measured across a population from prescribing and registry data, and its own authors say association rather than causation; people prescribed acid suppressants may be sicker, or differ in ways adjustment does not recover, and the study used time to next treatment as a surrogate because progression data were unavailable. What raises it above a database artefact is that the mechanism is understood and points the same way. What it still cannot do is quantify anything about her, which is why this lesson has the learner report the overlap rather than estimate a loss.',
     briefIn: ['silent-interaction-a-harm-with-nothing-to-find'],
   },
+  {
+    id: 'easy-label-presentation-and-the-record-are-authored',
+    headline: 'One presentation, one document that surfaces, and observations that never move.',
+    simplification: 'The case supplies four days of diarrhoea at a fixed frequency, observations that do not change, no microbiology, and a discharge summary that surfaces at twenty minutes reporting an admission and antibiotics. No inflammatory, infective, or treatment-response model runs underneath.',
+    whereItMisleads: 'A learner expects the decisive piece of history to surface on its own, or reads the stable observations as evidence that this presentation does not deteriorate.',
+    correctUnderstanding: 'The summary surfaces whatever the learner does, and it surfaces because the lesson is about what a label is worth before and after somebody opens the record. Nothing produces it in practice unless it is looked for. The fixture holds him still so that the decision is made on the record and the telephone rather than on appearance; a real patient may become severely unwell, and the guideline the lesson cites is the reason delay is not free.',
+    briefIn: ['easy-label-a-label-that-fits-too-easily'],
+  },
+  {
+    id: 'easy-label-controls-are-recording-and-escalation-only',
+    headline: 'Nothing is sampled, started, or withheld here.',
+    simplification: 'The learner records the exclusion requirement, records which competing causes remain open, escalates so both halves start together, records bounded qualified-team intent, and reviews the boundaries. Every result and record is supplied.',
+    whereItMisleads: 'The refusal to start immunosuppression is read as this lesson recommending against corticosteroids for this patient, or as a claim that treatment must always follow a negative microbiological result.',
+    correctUnderstanding: 'The lesson takes no position on whether he should receive immunosuppression, when, or what. It refuses one learner starting it on an unexcluded label, and it refuses the mirror error of holding the telephone call until every result is back. Which samples are taken, whether and when treatment begins, what is given if a competing cause is found, and whether the checkpoint inhibitor continues are decisions for the treating team and gastroenterology, and no drug, dose, route, grade threshold, or agent is chosen or displayed.',
+    briefIn: ['easy-label-a-label-that-fits-too-easily'],
+  },
+  {
+    id: 'easy-label-exclusion-first-is-not-treatment-later',
+    headline: 'Exclude first and treat at grade 2 are both real, and neither survives alone.',
+    simplification: 'The case reports that guidelines universally recommend corticosteroids as initial management at grade 2 or above, and that microbiological studies should be performed first to exclude common infectious causes before immunosuppression.',
+    whereItMisleads: 'A learner converts the exclusion rule into a rule that treatment waits for a negative result, or converts the treatment rule into permission to treat before anything has been sent.',
+    correctUnderstanding: 'The two statements govern different decisions. Sending samples and telling the team who can decide both take minutes and neither waits for the other; only the decision to give immunosuppression depends on a result, and that decision is not the learner\u2019s. The lesson deliberately does not say how long is too long, because that is a judgement made with the treating team on the individual patient, and no timing target is claimed here.',
+    briefIn: ['easy-label-a-label-that-fits-too-easily'],
+  },
 ];

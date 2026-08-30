@@ -3199,6 +3199,23 @@
       "limitationManifestHash": "sha256:e3d07c392083eee300225b62a494caf623a3829067e2d6c512a36a3d682803e2"
     },
     {
+      "scenarioId": "easy-label-a-label-that-fits-too-easily",
+      "contentVersion": "0.1.0",
+      "moduleId": "oncology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:2ee861329ed0feb25287f78feafa50d197e8210deecff88db8b6788a9ee0b3d0",
+      "defaultsHash": "sha256:6fe5803eee763fd45ef12631ee927edc62d05216e6a244e8d6c423eeac568661",
+      "maturityHash": "sha256:10ed567c8f7f8fb83cfc6a4196bf6aa9480a99220ef93d65976bc9e60da8c16e",
+      "sourceManifestHash": "sha256:0149449f41ba34b6e213b2bce9a621e5f433960a067835deda74f99acbdec31c",
+      "limitationManifestHash": "sha256:27faf4a7782103036a52df9e0d111a1dfa208d0139dea1d09b6d0afb52a610ce"
+    },
+    {
       "scenarioId": "incidental-clot-a-decision-the-evidence-cannot-make",
       "contentVersion": "0.1.0",
       "moduleId": "oncology",

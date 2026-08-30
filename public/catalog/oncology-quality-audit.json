@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "oncology",
-  "scenarioCount": 10,
+  "scenarioCount": 11,
   "playableScenarioCount": 0,
   "scenarios": [
     {
@@ -359,6 +359,42 @@
           "status": "missing",
           "evidence": [
             "No version-bound state-space-verification record exists for silent-interaction-a-harm-with-nothing-to-find 0.1.0."
+          ]
+        }
+      ],
+      "playable": false
+    },
+    {
+      "scenarioId": "easy-label-a-label-that-fits-too-easily",
+      "contentVersion": "0.1.0",
+      "completionComplete": false,
+      "qualityRecords": [
+        {
+          "kind": "training-value",
+          "status": "missing",
+          "evidence": [
+            "No version-bound training-value record exists for easy-label-a-label-that-fits-too-easily 0.1.0."
+          ]
+        },
+        {
+          "kind": "authored-defaults",
+          "status": "missing",
+          "evidence": [
+            "No version-bound authored-defaults record exists for easy-label-a-label-that-fits-too-easily 0.1.0."
+          ]
+        },
+        {
+          "kind": "scenario-hazard",
+          "status": "missing",
+          "evidence": [
+            "No version-bound scenario-hazard record exists for easy-label-a-label-that-fits-too-easily 0.1.0."
+          ]
+        },
+        {
+          "kind": "state-space-verification",
+          "status": "missing",
+          "evidence": [
+            "No version-bound state-space-verification record exists for easy-label-a-label-that-fits-too-easily 0.1.0."
           ]
         }
       ],

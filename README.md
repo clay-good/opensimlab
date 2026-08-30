@@ -16,7 +16,7 @@ any device, with or without a network.
 
 ## What it covers
 
-239 bounded labs across 15 specialties:
+240 bounded labs across 15 specialties:
 
 | Module | Labs | Where |
 | --- | --- | --- |
@@ -34,10 +34,11 @@ any device, with or without a network.
 | Infectious disease | 10 | `/infectious-disease` |
 | Nursing | 9 | `/medical-surgical-nursing` |
 | Renal & electrolyte | 6 | `/renal-electrolyte` |
-| Oncology | 10 | `/oncology` |
+| Oncology | 11 | `/oncology` |
 
-Counts are the registered scenarios the build audits, not a roadmap. Oncology has just opened
-and is the module with the most left to build.
+Counts are the registered scenarios the build audits, not a roadmap. Every module above is now
+registered at its full planned count. A sixteenth, surgery and trauma, is declared and has not
+started, so it has no scenarios and no row here.
 
 Each lab is a closed-loop scenario: the physiology keeps running while you decide, and
 what you do changes where the patient goes next.
