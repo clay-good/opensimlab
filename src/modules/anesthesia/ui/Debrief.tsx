@@ -67,6 +67,7 @@ import { supportsLaboratoryTls } from '../../oncology/laboratory-tls';
 import { supportsRareEarlyMyocarditis } from '../../oncology/rare-early-myocarditis';
 import { supportsLoweringTheCount } from '../../oncology/lowering-the-count';
 import { supportsInheritedUrgency } from '../../oncology/inherited-urgency';
+import { supportsTrialRule } from '../../oncology/trial-rule';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -653,6 +654,47 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-oncology-trial-rule-')) {
+      if (!supportsTrialRule(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The oncology response-assessment lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^trial-rule-${id}-\\d+$`).test(entry.eventId));
+      const trajectory = event('trajectory-recorded'); const governance = event('governance-recorded');
+      const escalation = event('escalation-requested'); const intent = event('intent-recorded');
+      const boundaries = event('boundary-review'); const handoff = event('handoff');
+      const document = event('document-arrives');
+      const answered = log.find((entry) => /^trial-rule-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedContinue = event('pseudoprogression-refused'); const refusedStop = event('stop-refused');
+      const refusedScanOnly = event('scan-only-refused'); const refusedWait = event('wait-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'recognize-oncology-trial-rule-the-slope-not-the-moment': { met: !!trajectory, tick: trajectory?.tick,
+          finding: (trajectory ? 'The three-week fall in function, the weight loss, and the breathlessness were recorded as the direction and the rate. ' : 'The trajectory was never recorded, so what was left was a report describing a moment. ')
+            + (refusedScanOnly ? 'Letting the scan alone decide was attempted and refused. ' : '')
+            + 'A report describes a moment; the question was about a slope, and the two things the report cannot distinguish look identical on it.' },
+        'record-oncology-trial-rule-what-the-criteria-govern': { met: !!governance, tick: governance?.tick,
+          finding: (governance ? 'What the criteria govern and what they do not were recorded separately. ' : 'The cited criteria were never separated into what they govern and what they do not, which is how a data-handling convention becomes a management instruction. ')
+            + (document ? 'The criteria themselves arrived during this run and are narrower than they were quoted as being. ' : '')
+            + 'Their working group describes them as recommendations for data handling rather than patient management, and as not validated; the allowance they grant is conditional on clinical stability.' },
+        'activate-oncology-trial-rule-the-team-that-decides': { met: !!escalation, tick: escalation?.tick,
+          finding: (escalation ? 'The treating team was called with the trajectory, the report, and the criterion the decision was being held on. ' : 'The treating team was never called, and they are the people who hold both the record and the decision. ')
+            + (refusedWait ? 'Booking a scan in eight weeks instead was attempted and refused; that interval belongs to a stable patient and a protocol collecting data. ' : '')
+            + (answered ? 'They answered, took ownership, and will review her within days rather than at the eight-week scan. ' : 'They had not answered by the end of this run. ') },
+        'recognize-oncology-trial-rule-both-errors-are-real': { met: !!boundaries && !!escalation, tick: boundaries?.tick,
+          finding: (refusedContinue ? 'Calling it pseudoprogression and continuing was attempted and refused, on the criterion’s own condition rather than on the phenomenon. ' : '')
+            + (refusedStop ? 'Stopping and telling her it had failed was attempted and refused, as the opposite error rather than the safe one. ' : '')
+            + 'The published advice names premature discontinuation of an effective treatment and delay in starting a new line as the two things to avoid together. Waiting was not the cautious option and stopping was not the decisive one; both were ways of deciding without her.' },
+        'record-oncology-trial-rule-bounded-qualified-intent': { met: !!intent, tick: intent?.tick,
+          finding: (intent ? 'Continuing, stopping, a further line, best supportive care, and what she is told were all recorded as the treating team’s. ' : 'Bounded qualified-team intent was never recorded. ')
+            + 'Nothing was continued or withdrawn, and no drug, dose, route, cycle, interval, or line of therapy was chosen or displayed here.' },
+        'review-oncology-trial-rule-boundaries-and-their-certainty': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The boundaries were reviewed in both directions. ' : 'The boundary and certainty review is missing. ')
+            + 'Pseudoprogression rates do not exceed 10 percent and rest on small series; hyperprogression is reported between 4 and 29 percent, including 13.8 against 5.1 percent in one lung-cancer comparison, with nothing established to offer afterwards. The range is wide because the studies disagree about the definition, so neither number is about her.' },
+        'handoff-oncology-trial-rule-the-direction-and-its-rate': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The trajectory and its rate, the supplied report, and what the cited criterion actually governs all travelled. ' : 'Current findings, the recorded trajectory, or continuing-care ownership remains incomplete. ')
+            + 'What was handed over is a direction rather than a report, to the people who could act on it.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-oncology-inherited-urgency-')) {
       if (!supportsInheritedUrgency(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The oncology superior vena caval obstruction lesson was not active.' } satisfies ObjectiveFinding;

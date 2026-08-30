@@ -202,4 +202,28 @@ export const ONCOLOGY_LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'The proportion describes who arrives with the grading findings, not how likely this patient is to develop them, and the lesson refuses sending him home for exactly that reason. It is the argument for making the diagnosis first, and the named findings \u2014 significant cerebral oedema, significant laryngeal oedema, significant haemodynamic compromise \u2014 are what override that default when they appear. Both halves are needed; either alone produces a different wrong answer.',
     briefIn: ['inherited-urgency-an-emergency-that-mostly-is-not-one'],
   },
+  {
+    id: 'trial-rule-presentation-and-the-document-are-authored',
+    headline: 'One report, one arriving document, and a patient who does not change during it.',
+    simplification: 'The case supplies a two-day-old restaging report, a three-week history given as a fixed account, and criteria that arrive on screen at twenty minutes. No tumour-growth, response, or treatment-effect model runs underneath.',
+    whereItMisleads: 'A learner reads the arrival of the document as something they caused, or expects the decisive information in a real version of this to turn up on its own within the hour.',
+    correctUnderstanding: 'The document arrives whatever the learner does, and it arrives because the lesson is about what happens to a decision once the cited rule is actually read. In practice nobody brings it to you. The trajectory is supplied as an account rather than measured, and nothing here models a relationship between any choice and her disease.',
+    briefIn: ['trial-rule-a-rule-written-for-a-database'],
+  },
+  {
+    id: 'trial-rule-controls-are-recording-and-escalation-only',
+    headline: 'No treatment is continued, stopped, or changed here.',
+    simplification: 'The learner records the trajectory, records what the criteria govern, calls the treating team, records bounded qualified-team intent, and reviews the boundaries. The report and every observation are supplied.',
+    whereItMisleads: 'The refusal to continue is read as this lesson recommending that her immunotherapy stop, or the refusal to stop is read as recommending that it continue.',
+    correctUnderstanding: 'Both were refused, and refused as the same error: deciding without her trajectory and without the team that holds her treatment record. Nothing in this lesson selects, continues, or withdraws any treatment, and no drug, dose, route, cycle, interval, or line of therapy is displayed. What the lesson takes a position on is who decides and on what evidence, not on what the answer is.',
+    briefIn: ['trial-rule-a-rule-written-for-a-database'],
+  },
+  {
+    id: 'trial-rule-neither-rate-decides-this-patient',
+    headline: 'A rate under 10 percent and a rate up to 29 percent both describe populations.',
+    simplification: 'The case reports that pseudoprogression rates do not exceed 10 percent and that hyperprogression is reported at between 4 and 29 percent, including 13.8 percent against 5.1 percent in one lung-cancer comparison.',
+    whereItMisleads: 'A learner treats the lower rate as a reason pseudoprogression can be discounted, or treats the higher one as evidence that this patient is hyperprogressing.',
+    correctUnderstanding: 'Neither number is about her. The hyperprogression range is wide because the studies define it differently and study different tumours, and the pseudoprogression series are small; both are contested measurements rather than settled ones. What distinguishes the two possibilities in an individual is the clinical course over time and the judgement of the team that knows her treatment, which is precisely why this lesson makes the escalation rather than the classification.',
+    briefIn: ['trial-rule-a-rule-written-for-a-database'],
+  },
 ];

@@ -3318,6 +3318,23 @@
       "limitationManifestHash": "sha256:aca932b122651610eaa59088467a2b7d7e94ca9de8d5d0e9931e2877214cd0e0"
     },
     {
+      "scenarioId": "trial-rule-a-rule-written-for-a-database",
+      "contentVersion": "0.1.0",
+      "moduleId": "oncology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:44cd019ee36ce77231ada9ed09dacae3879d835b3ce0eaca2eda582482786989",
+      "defaultsHash": "sha256:c7c8a618cb7cb01a6ad768cb45a1cea898cd93188b7aa0829147198202046bf5",
+      "maturityHash": "sha256:0a47894d4704eabe5ee0cf64c9fc8b9cfff9b8d1db6f8a625fd3a1c810b9074a",
+      "sourceManifestHash": "sha256:953ec7bfeda33fabfe76442af99460068c6c5195a6fd2d834557e1ab4c5bf597",
+      "limitationManifestHash": "sha256:396bccde2fa66b2847e8288d6b263b91894452935f0a92d151d3274aec87546c"
+    },
+    {
       "scenarioId": "bronchiolitis",
       "contentVersion": "0.1.0",
       "moduleId": "pediatrics",

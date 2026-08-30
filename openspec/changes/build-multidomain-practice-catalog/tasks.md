@@ -1917,7 +1917,7 @@ credited toward the catalog until every item in the completion contract passes.
     procedure, observation, disposition, prognosis, or outcome control exists.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.
-  The nursing module is registered at 9 of 9. Oncology is open at 8 of 11: a delayed immune-related
+  The nursing module is registered at 9 of 9. Oncology is open at 9 of 11: a delayed immune-related
   event after the drug has stopped, an incidentally found pulmonary embolus whose management is
   only conditionally recommended, severe first-cycle oral-fluoropyrimidine toxicity after a
   wild-type pre-treatment panel, a prognosis conversation scored by what the patient repeats back
@@ -1926,7 +1926,10 @@ credited toward the catalog until every item in the completion contract passes.
   threshold, and a hyperleukocytosis where the intervention that lowers the number has no
   demonstrated mortality benefit, and a superior vena caval obstruction that is taught as an
   emergency and, for about 95 percent of patients, is not one, where the action that looks like
-  waiting is what decides the treatment. Surgery/trauma is declared planned and has not started. Every
+  waiting is what decides the treatment, and a radiological progression on immunotherapy where the
+  criterion cited as permission to continue governs trial data rather than patient management and
+  attaches a condition the patient does not meet. Surgery/trauma is declared planned and has not
+  started. Every
   scenario in this wave remains preview: none carries clinical review, a state-space matrix, or
   inclusive-runtime evidence, so the wave's completion count is still zero.
   Two budgets were the binding constraint on the remaining oncology lessons, and both have been

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "oncology",
-  "recordCount": 8,
+  "recordCount": 9,
   "records": [
     {
       "recordId": "scenario:delayed-immune-event-a-drug-that-stopped-months-ago@0.1.0",
@@ -89,6 +89,17 @@
       "evidence": [
         "/catalog/oncology-completion-audit.json#inherited-urgency-an-emergency-that-mostly-is-not-one@0.1.0",
         "/catalog/oncology-quality-audit.json#inherited-urgency-an-emergency-that-mostly-is-not-one@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:trial-rule-a-rule-written-for-a-database@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "trial-rule-a-rule-written-for-a-database",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/oncology-completion-audit.json#trial-rule-a-rule-written-for-a-database@0.1.0",
+        "/catalog/oncology-quality-audit.json#trial-rule-a-rule-written-for-a-database@0.1.0"
       ]
     }
   ]

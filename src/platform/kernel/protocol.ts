@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 206 adds the authored superior vena caval obstruction snapshot. */
-export const WORKER_PROTOCOL_VERSION = 206;
+/** Version 207 adds the authored response-assessment snapshot. */
+export const WORKER_PROTOCOL_VERSION = 207;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -616,6 +616,49 @@ export interface MeningitisImagingSnapshot {
     readonly cerebrospinalFluidAvailable: boolean;
     readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
     readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
+}
+
+export interface TrialRuleSnapshot {
+  readonly trajectoryRecordedAtTick: number | null;
+  readonly governanceRecordedAtTick: number | null;
+  readonly escalationAtTick: number | null;
+  readonly treatmentIntentAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly pseudoprogressionCeilingPercent: number;
+  readonly clinicallyStable: boolean;
+  readonly documentRead: boolean;
+  readonly teamResponded: boolean;
+  readonly teamObserved: boolean;
+  readonly continueAttempted: boolean;
+  readonly stopAttempted: boolean;
+  readonly scanOnlyAttempted: boolean;
+  readonly waitAttempted: boolean;
+  readonly observationRecord: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+    readonly weightChangeKg: number; readonly trajectoryWeeks: number;
+    readonly functionalAccount: string;
+  } | null;
+  readonly imagingRecord: {
+    readonly atTick: number; readonly weeksOnTreatment: number; readonly reportAgeDays: number;
+    readonly newLesions: boolean; readonly clinicallyStable: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+    readonly weightChangeKg: number; readonly trajectoryWeeks: number;
+    readonly functionalAccount: string; readonly weeksOnTreatment: number;
+    readonly reportAgeDays: number; readonly newLesions: boolean;
+    readonly clinicallyStable: boolean; readonly alertness: string;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -4696,6 +4739,7 @@ export interface EquipmentSnapshot {
     readonly rareEarlyMyocarditis?: RareEarlyMyocarditisSnapshot;
     readonly loweringTheCount?: LoweringTheCountSnapshot;
     readonly inheritedUrgency?: InheritedUrgencySnapshot;
+    readonly trialRule?: TrialRuleSnapshot;
     readonly countedRate?: CountedRateSnapshot;
     readonly pairedReading?: PairedReadingSnapshot;
     readonly afferentLimb?: AfferentLimbSnapshot;

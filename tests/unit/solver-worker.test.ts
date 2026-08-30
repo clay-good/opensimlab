@@ -93,8 +93,8 @@ describe('Requirement: A Counterfactual Runs Where The Engine Already Is', () =>
 });
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: superior vena caval obstruction state has protocol version 206', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(206);
+  it('Scenario: response-assessment state has protocol version 207', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(207);
   });
 
   it('Scenario: init reports ready before any step runs', () => {
