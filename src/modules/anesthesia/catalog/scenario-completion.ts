@@ -72,9 +72,31 @@ export function auditClinicalScenario(
 ): ScenarioCompletionAudit {
   const objectiveIds = new Set(scenario.metadata.objectives.map((objective) => objective.id));
   const rubricIds = new Set(scenario.debrief.rubric.map((item) => item.objectiveId));
+  const unmappedObjectives = [...objectiveIds].filter((id) => !rubricIds.has(id));
   const objectivesObservable = scenario.metadata.objectives.length >= 2
     && scenario.metadata.objectives.length <= 5
-    && [...objectiveIds].every((id) => rubricIds.has(id));
+    && unmappedObjectives.length === 0;
+  /**
+   * Why this one failed, rather than what the rule says.
+   *
+   * The audit used to answer every failure with the rule itself — "requires 2–5
+   * objectives and a rubric mapping for every objective" — which leaves a reader
+   * unable to tell an unmapped objective from a scenario that simply declares
+   * seven. Those need opposite fixes: one is a missing rubric row, the other is a
+   * decision about how much a single debrief should try to teach. Naming the
+   * actual count and the actual unmapped ids makes the audit diagnostic instead
+   * of merely correct.
+   */
+  const objectivesReason = (): string => {
+    const count = scenario.metadata.objectives.length;
+    const reasons: string[] = [];
+    if (count < 2) reasons.push(`declares ${count} objective(s); the contract requires at least 2`);
+    if (count > 5) reasons.push(`declares ${count} objectives; the contract allows at most 5`);
+    if (unmappedObjectives.length > 0) {
+      reasons.push(`${unmappedObjectives.length} objective(s) have no debrief rubric row: ${unmappedObjectives.join(', ')}`);
+    }
+    return `This scenario ${reasons.join(', and ')}.`;
+  };
   const hasProgression = scenario.timeline.some((event) => event.type !== 'narrative');
   const scenarioErrors = validateScenario(scenario);
   const hasSources = scenario.metadata.clinicalReview.sources.length > 0;
@@ -91,7 +113,7 @@ export function auditClinicalScenario(
     requirement('observable-objectives', objectivesObservable ? 'satisfied' : 'missing',
       objectivesObservable
         ? `${scenario.metadata.objectives.length} objectives map to debrief rubric evidence.`
-        : 'The completion contract requires 2–5 objectives and a rubric mapping for every objective.'),
+        : objectivesReason()),
     requirement('deterministic-seed-policy', 'missing',
       'The legacy scenario document does not declare a seed policy.'),
     requirement('meaningful-progression', hasProgression ? 'satisfied' : 'missing',

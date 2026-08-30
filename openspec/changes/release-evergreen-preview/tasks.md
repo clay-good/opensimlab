@@ -41,6 +41,22 @@ preview-channel blockers until it is. Updating the specification does not clear 
 
 - [ ] Author the missing completion contracts and quality records for the 14 oncology scenarios
   the gate names. These stay blocked until then; this is authoring work, not a rule change.
+  Diagnosed. The 11 oncology scenarios each miss four requirements, and they are not one problem:
+  - `inclusive-runtime-verification` and `report-control-coverage` are missing for all 240
+    scenarios in every module, and their own evidence says why — exact-version assistive
+    technology, keyboard, phone, zoom, offline and performance validation, and production
+    Turnstile/D1 verification. That is people, hardware and infrastructure, in the same category
+    as face-validity review. No code makes them true, and marking them satisfied would be the
+    fabrication this project refuses.
+  - `observable-objectives` is a single content-design decision, not authoring. 118 scenarios
+    across anesthesia, cardiology, neurology and oncology fail it, and every one fails only
+    because it declares more objectives than the contract's cap of 5: 107 declare 6, 10 declare 7,
+    1 declares 8. Not one scenario anywhere has an objective without a debrief rubric row. So the
+    choice is to raise the cap or to merge objectives in 118 scenarios, and it belongs to a
+    maintainer rather than to whoever happens to be editing next. The audit now names the cause
+    per scenario instead of restating the rule, so the decision can be made from the data.
+  - `guidance-and-demonstration` is the genuine authoring gap: oncology has no bound expert
+    demonstration, which the renal and endocrine scenarios do have.
 
 ## 4. Drop the staged version label
 

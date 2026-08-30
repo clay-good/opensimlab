@@ -42,7 +42,7 @@
           "id": "observable-objectives",
           "status": "missing",
           "evidence": [
-            "The completion contract requires 2–5 objectives and a rubric mapping for every objective."
+            "This scenario declares 6 objectives; the contract allows at most 5."
           ]
         },
         {
@@ -168,7 +168,7 @@
           "id": "observable-objectives",
           "status": "missing",
           "evidence": [
-            "The completion contract requires 2–5 objectives and a rubric mapping for every objective."
+            "This scenario declares 6 objectives; the contract allows at most 5."
           ]
         },
         {
