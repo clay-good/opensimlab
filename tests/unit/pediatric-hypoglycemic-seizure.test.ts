@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { AnesthesiaEngine } from '@anesthesia/engine';
-import { replay } from '@anesthesia/debrief/replay';
+import { replay } from '@anesthesia/debrief/replay-engine';
 import type { LearnerAction } from '@platform/kernel/protocol';
 import { PEDIATRIC_HYPOGLYCEMIC_SEIZURE as SCENARIO } from '../../src/modules/pediatrics/scenarios/pediatric-hypoglycemic-seizure';
 import { PEDIATRIC_DIABETIC_KETOACIDOSIS } from '../../src/modules/pediatrics/scenarios/pediatric-diabetic-ketoacidosis';

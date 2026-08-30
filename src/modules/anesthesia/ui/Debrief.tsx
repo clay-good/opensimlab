@@ -16,9 +16,10 @@ import type { Scenario } from '@anesthesia/engine';
 import {
   PEARLS_CITATION, PEARLS_DIVISION_OF_LABOUR, PEARLS_PHASES,
   accountIdentifies, findEpisodes, findStacking, safeContainerOpening, secondsBeyond,
-  shiftEarlier, toneFor, type Episode, type ObjectiveFinding, type PearlsPhase,
+  shiftEarlier, toneFor, type CounterfactualResult, type Episode, type ObjectiveFinding,
+  type PearlsPhase,
 } from '@anesthesia/debrief/analysis';
-import { evaluateCounterfactual, type ReplayOptions } from '@anesthesia/debrief/replay';
+import { evaluateCounterfactual, type ReplayOptions, type RunReplay } from '@anesthesia/debrief/replay';
 import { EXPLAINERS } from '@anesthesia/content/explainers';
 import { getFluid, MAX_FLUID_BOLUS_ML } from '@anesthesia/content/fluids';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
@@ -82,6 +83,12 @@ export interface DebriefProps {
   readonly attributionByTick: (tick: number) => readonly Attribution[];
   readonly timeToPeakSeconds: Readonly<Record<string, number>>;
   readonly replayOptions: ReplayOptions;
+  /**
+   * How to re-run the engine for a counterfactual. Optional because the engine
+   * lives in the worker now: a caller that has no worker to give simply gets a
+   * debrief without the counterfactual panel, rather than a bundled engine.
+   */
+  readonly runReplay?: RunReplay;
   readonly preoxygenationSeconds: number;
   readonly onOpenExplainer: (id: string) => void;
   readonly onExportTranscript: () => void;
@@ -139,21 +146,28 @@ export function Debrief(props: DebriefProps) {
     [props.scenario, props.history, stacking.length, props.preoxygenationSeconds, props.actions, props.log],
   );
 
-  const counterfactuals = useMemo(() => {
-    if (phase !== 'analysis') return [];
-    const out = [];
+  // The re-run happens in the worker, so this is asynchronous and the panel
+  // appears when it answers. A failed or slow replay leaves the panel out
+  // entirely rather than showing a claim nothing computed.
+  const [counterfactuals, setCounterfactuals] = useState<readonly CounterfactualResult[]>([]);
+  const runReplay = props.runReplay;
+  useEffect(() => {
+    setCounterfactuals([]);
+    if (phase !== 'analysis' || !runReplay) return;
     const ventilated = props.actions.find((a) => a.type === 'ventilator' && a.payload.delivering === true);
-    if (ventilated && secondsBeyond(props.history, 'spo2Percent', 90, 'below') > 0) {
-      out.push(evaluateCounterfactual({
-        id: 'ventilate-earlier',
-        claim: 'Starting ventilation sixty seconds earlier would have shortened the desaturation.',
-        modify: (actions) => shiftEarlier(actions, (a) => a.type === 'ventilator' && a.payload.delivering === true, 60),
-        measure: (history) => secondsBeyond(history, 'spo2Percent', 90, 'below'),
-        unit: 'seconds below 90%',
-      }, props.history, props.actions, props.replayOptions));
-    }
-    return out;
-  }, [phase, props.actions, props.history, props.replayOptions]);
+    if (!ventilated || secondsBeyond(props.history, 'spo2Percent', 90, 'below') <= 0) return;
+    let cancelled = false;
+    void evaluateCounterfactual({
+      id: 'ventilate-earlier',
+      claim: 'Starting ventilation sixty seconds earlier would have shortened the desaturation.',
+      modify: (actions) => shiftEarlier(actions, (a) => a.type === 'ventilator' && a.payload.delivering === true, 60),
+      measure: (history) => secondsBeyond(history, 'spo2Percent', 90, 'below'),
+      unit: 'seconds below 90%',
+    }, props.history, props.actions, props.replayOptions, runReplay)
+      .then((result) => { if (!cancelled) setCounterfactuals([result]); })
+      .catch(() => { if (!cancelled) setCounterfactuals([]); });
+    return () => { cancelled = true; };
+  }, [phase, props.actions, props.history, props.replayOptions, runReplay]);
 
   const keyIssue = analysisIssue(episodes);
   const identified = accountIdentifies(account, [

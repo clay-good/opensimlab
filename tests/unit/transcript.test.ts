@@ -12,7 +12,7 @@ import { AnesthesiaEngine, ENGINE_VERSION } from '@anesthesia/engine';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { MODEL_SET_REVISION } from '@anesthesia/pharmacology/registry';
 import type { LearnerAction } from '@platform/kernel/protocol';
-import { replay } from '@anesthesia/debrief/replay';
+import { replay } from '@anesthesia/debrief/replay-engine';
 
 const VERSIONS = {
   engine: ENGINE_VERSION,

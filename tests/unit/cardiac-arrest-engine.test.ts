@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { AnesthesiaEngine, type Scenario } from '@anesthesia/engine';
 import { PERSISTENT_VF_CARDIAC_ARREST } from '@anesthesia/scenarios/persistent-vf-cardiac-arrest';
-import { replay } from '@anesthesia/debrief/replay';
+import { replay } from '@anesthesia/debrief/replay-engine';
 import type { LearnerAction } from '@platform/kernel/protocol';
 
 function advance(subject: AnesthesiaEngine, ticks: number) {

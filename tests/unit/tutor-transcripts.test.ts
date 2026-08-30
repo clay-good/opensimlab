@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { replay } from '@anesthesia/debrief/replay';
+import { replay } from '@anesthesia/debrief/replay-engine';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { TUTOR_RULES, type GuidanceInput, type TutorRule } from '@anesthesia/tutor/guidance';
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';

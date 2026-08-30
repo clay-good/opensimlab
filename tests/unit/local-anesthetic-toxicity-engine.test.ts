@@ -5,7 +5,7 @@ import {
 } from '@anesthesia/engine';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { validateScenario } from '@anesthesia/scenarios/schema';
-import { replay } from '@anesthesia/debrief/replay';
+import { replay } from '@anesthesia/debrief/replay-engine';
 import type { LearnerAction } from '@platform/kernel/protocol';
 
 const ONSET = 10;

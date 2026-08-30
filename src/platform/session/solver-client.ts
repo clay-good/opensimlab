@@ -56,7 +56,8 @@ export class SolverClient<TState> {
       }
       if (message.type === 'ready') this.handlers.onReady(message.engineVersion, message.modelSetRevision);
       else if (message.type === 'state') this.handlers.onState(message);
-      else this.handlers.onError(message.code, message.message);
+      // A `history` reply belongs to a one-shot replay worker, never to a session.
+      else if (message.type === 'error') this.handlers.onError(message.code, message.message);
     };
     worker.onerror = () => this.handlers.onDeath();
     this.post({ v: WORKER_PROTOCOL_VERSION, type: 'init', ...init });

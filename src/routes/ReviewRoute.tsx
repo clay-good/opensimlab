@@ -12,13 +12,14 @@
  * recorded inputs. Nothing is read from the file except those inputs.
  */
 
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Badge, Button, SiteBar } from '@platform/ui';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import {
   UnreadableTranscript, analyseTranscript, parseTranscript, summariseCohort,
   type TranscriptAnalysis,
 } from '@anesthesia/debrief/analyse-transcript';
+import { createReplayWorker, workerReplay } from '@anesthesia/debrief/replay-client';
 
 const OUTCOME_LABEL: Record<string, string> = {
   met: 'Met',
@@ -46,6 +47,10 @@ export function ReviewRoute() {
   const [analyses, setAnalyses] = useState<TranscriptAnalysis[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
 
+  // Re-derivation runs in the solver worker, which is the only place in this
+  // build that constructs an engine.
+  const runReplay = useMemo(() => workerReplay(createReplayWorker), []);
+
   const ingest = useCallback(async (files: FileList | null) => {
     if (!files) return;
     const added: TranscriptAnalysis[] = [];
@@ -53,7 +58,7 @@ export function ReviewRoute() {
     for (const file of Array.from(files)) {
       try {
         const text = await file.text();
-        added.push(analyseTranscript(parseTranscript(text, file.name), file.name));
+        added.push(await analyseTranscript(parseTranscript(text, file.name), file.name, runReplay));
       } catch (error) {
         failed.push(error instanceof UnreadableTranscript
           ? error.message
@@ -62,7 +67,7 @@ export function ReviewRoute() {
     }
     setAnalyses((current) => [...current, ...added]);
     setErrors(failed);
-  }, []);
+  }, [runReplay]);
 
   const summary = summariseCohort(analyses);
 

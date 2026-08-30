@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { AnesthesiaEngine } from '@anesthesia/engine';
-import { replay } from '@anesthesia/debrief/replay';
+import { replay } from '@anesthesia/debrief/replay-engine';
 import { RAPID_SEQUENCE_INDUCTION } from '@anesthesia/scenarios/rapid-sequence-induction';
 import type { LearnerAction } from '@platform/kernel/protocol';
 

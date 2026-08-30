@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 204 adds the authored hyperleukocytosis snapshot. */
-export const WORKER_PROTOCOL_VERSION = 204;
+/** Version 205 adds the headless history replay the debrief's counterfactuals run through. */
+export const WORKER_PROTOCOL_VERSION = 205;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -126,13 +126,37 @@ export interface ReplayMessage {
   readonly transcript: unknown;
 }
 
+/**
+ * Run an action list against a FRESH engine and return only the history.
+ *
+ * This is what the debrief's counterfactuals and the instructor review page ask
+ * for. It exists so that the main thread never has to construct an engine of its
+ * own: doing so pulled every lesson model into the session bundle, and the whole
+ * engine — with every scenario's authored prose — then shipped twice in the
+ * offline precache. It does not touch the engine a live session is running in,
+ * so asking for one is safe at any point in a session.
+ */
+export interface HistoryReplayMessage {
+  readonly v: number;
+  readonly type: 'history-replay';
+  /** Correlates the reply, so one worker can serve several requests. */
+  readonly requestId: string;
+  /** The scenario document, validated in the worker before any step runs. */
+  readonly scenario: unknown;
+  readonly seed: number;
+  readonly practiceRegion: string;
+  readonly ticks: number;
+  readonly actions: readonly LearnerAction[];
+}
+
 export interface ResetMessage {
   readonly v: number;
   readonly type: 'reset';
 }
 
 export type ToWorkerMessage =
-  | InitMessage | AdvanceMessage | ActionMessage | ReplayMessage | ResetMessage;
+  | InitMessage | AdvanceMessage | ActionMessage | ReplayMessage
+  | HistoryReplayMessage | ResetMessage;
 
 // --- Messages from the worker ----------------------------------------------
 
@@ -4818,9 +4842,30 @@ export interface ErrorMessage {
   readonly type: 'error';
   readonly code: string;
   readonly message: string;
+  /** Set when the failure belongs to one `history-replay` rather than the session. */
+  readonly requestId?: string;
 }
 
-export type FromWorkerMessage<TState> = ReadyMessage | StateMessage<TState> | ErrorMessage;
+/**
+ * The reply to one `history-replay`: one sample per simulated second, and nothing else.
+ *
+ * Not generic over the module's state, unlike `StateMessage`. What comes back is
+ * a history for measuring, and every consumer of it reads named parameters out
+ * of a record rather than depending on one module's state shape.
+ */
+export interface HistoryMessage {
+  readonly v: number;
+  readonly type: 'history';
+  readonly requestId: string;
+  readonly history: readonly {
+    readonly tick: number;
+    readonly state: Readonly<Record<string, number>>;
+    readonly concentrations: readonly DrugConcentration[];
+  }[];
+}
+
+export type FromWorkerMessage<TState> =
+  ReadyMessage | StateMessage<TState> | HistoryMessage | ErrorMessage;
 
 /** Reject a message from an incompatible protocol version rather than guessing. */
 export function assertProtocolVersion(message: { v: number }): void {

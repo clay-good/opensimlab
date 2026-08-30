@@ -10,7 +10,7 @@ import { evaluateEnvelope } from '@anesthesia/pharmacology/envelope';
 import { parametersFor } from '@anesthesia/pharmacology/registry';
 import { ROCURONIUM_CLINICAL_COURSE_TEACHING } from '@anesthesia/pharmacology/models/rocuronium-clinical-course-teaching';
 import { createRng } from '@platform/kernel/rng';
-import { replay } from '@anesthesia/debrief/replay';
+import { replay } from '@anesthesia/debrief/replay-engine';
 import type { LearnerAction } from '@platform/kernel/protocol';
 
 const ADULT = { ageYears: 35, weightKg: 70, heightCm: 170, sex: 'male' as const };

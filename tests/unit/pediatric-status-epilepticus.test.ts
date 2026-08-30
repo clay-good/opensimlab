@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { AnesthesiaEngine } from '@anesthesia/engine';
-import { replay } from '@anesthesia/debrief/replay';
+import { replay } from '@anesthesia/debrief/replay-engine';
 import { objectiveFindings } from '@anesthesia/ui/Debrief';
 import type { LearnerAction } from '@platform/kernel/protocol';
 import { PEDIATRIC_STATUS_EPILEPTICUS as SCENARIO } from '../../src/modules/pediatrics/scenarios/pediatric-status-epilepticus';

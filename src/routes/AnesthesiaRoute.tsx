@@ -17,6 +17,7 @@ import { guessRegion, getRegion, REGIONS } from '@anesthesia/region/profiles';
 import type { Scenario } from '@anesthesia/engine';
 import { ENGINE_VERSION } from '@anesthesia/engine';
 import { MODEL_SET_REVISION } from '@anesthesia/pharmacology/registry';
+import { createReplayWorker, workerReplay } from '@anesthesia/debrief/replay-client';
 import { Prebrief } from '@anesthesia/ui/Prebrief';
 import { DEMONSTRATION_SCENARIO_ID, demonstrationRequested } from '@anesthesia/demo/demonstration';
 import { supportsHypoglycemiaDemonstration } from '../modules/endocrine-metabolic/demo/hypoglycemia-demonstration';
@@ -765,6 +766,10 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
     [],
   );
   const contentVersion = scenario.metadata.version;
+  // The debrief's counterfactual re-runs the engine, and the only engine in this
+  // build lives in the worker. Handing the debrief a way to reach it is what
+  // keeps the engine out of this bundle.
+  const runReplay = useMemo(() => workerReplay(createReplayWorker), []);
   // The index at /anesthesia lists what there is to do rather than dropping the
   // learner into whichever scenario happened to be first.
   const isIndex = !path.startsWith(`${config.basePath}/scenario/`);
@@ -956,6 +961,7 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
           scenario, seed: assignment.seed,
           practiceRegion: region.id, ticks: session.tick || 1,
         }}
+        runReplay={runReplay}
         preoxygenationSeconds={session.equipment?.preoxygenationSeconds ?? 0}
         moduleId={config.id}
         onOpenExplainer={() => { /* the debrief opens explainers inline */ }}

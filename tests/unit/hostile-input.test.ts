@@ -10,7 +10,8 @@ import { describe, expect, it } from 'vitest';
 import { AnesthesiaEngine, VENTILATOR_BOUNDS } from '@anesthesia/engine';
 import { SCENARIOS } from '@anesthesia/scenarios';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
-import { MAX_REPLAY_TICKS, replay } from '@anesthesia/debrief/replay';
+import { MAX_REPLAY_TICKS } from '@anesthesia/debrief/replay';
+import { replay } from '@anesthesia/debrief/replay-engine';
 import {
   MAX_TRANSCRIPT_ACTIONS, UnreadableTranscript, parseTranscript,
 } from '@anesthesia/debrief/analyse-transcript';

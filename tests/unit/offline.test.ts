@@ -279,26 +279,27 @@ describe('Requirement: Everything The Offline Claim Names Is Actually Precached'
     // is the number of bytes that cross the wire, so the binding budget is the
     // compressed one; every host this deploys to serves these assets encoded.
     //
-    // Raised from 2.00 to 2.25 MiB when the seventh oncology lesson took the graph to 2.001 MiB,
-    // with the measurement recorded rather than adjusted quietly, and with the reason it grew
-    // measured rather than guessed. Each lesson's authored prose ships TWICE in this precache:
-    // once in solver.worker, which runs the simulation, and once in the session bundle, because
-    // debrief/replay.ts imports AnesthesiaEngine as a value to compute counterfactuals on the main
-    // thread, and the engine imports every lesson model. So a lesson costs roughly double its own
-    // size here, and the largest single entries are the two engine copies at 388.0 and 374.6 KB gz.
+    // Back to 2.00 MiB from the 2.25 the seventh oncology lesson forced, because the
+    // reason it grew has been removed rather than accommodated. Every lesson's authored
+    // prose used to ship TWICE here — once in solver.worker, which runs the simulation,
+    // and once in the session bundle, because debrief/replay.ts constructed an
+    // AnesthesiaEngine on the main thread to compute counterfactuals and the engine
+    // imports every lesson model. The engine now exists in exactly one place: the
+    // debrief and the instructor review page ask the worker to re-run an action list
+    // over the `history-replay` message and measure what comes back. That took this
+    // graph from 2.001 to 1.648 MiB, a 361.6 KB compressed saving, and the second
+    // engine copy — 374.6 KB gz on its own — is gone from the build entirely.
     //
-    // Splitting each lesson's support predicate and action list away from its model class was
-    // tried and measured: it changed the built output by zero bytes, because the engine pulls the
-    // models regardless of what the main-thread components import. The durable fix is to stop
-    // shipping the engine twice — running counterfactual replay in the worker that already has it —
-    // and that is a product decision about the debrief, not a bundling tweak. Raising this a second
-    // time instead of doing it would be the wrong instinct.
+    // So a lesson now costs roughly its own size rather than double, and the 0.35 MiB
+    // of headroom under this ceiling is worth about thirty-five of them rather than
+    // the six it would have been. The next thing to measure if this binds again is the
+    // one remaining engine copy, not another raise.
     const files = precache
       .filter((url) => url.startsWith('/assets/') || url.startsWith('/fonts/'))
       .map((url) => readFileSync(join(process.cwd(), 'dist', url)));
     const transferred = files.reduce((sum, body) => sum + gzipSync(body, { level: 9 }).length, 0);
     expect(transferred, `${(transferred / 1024 / 1024).toFixed(2)} MiB compressed`)
-      .toBeLessThan(2.25 * 1024 * 1024);
+      .toBeLessThan(2 * 1024 * 1024);
     // A second, deliberately loose ceiling on the stored bytes. Compression
     // ratios hide a blob that inflates on disk, and Cache Storage holds the
     // decoded response, so an accidental data dump must still trip something.
@@ -307,6 +308,26 @@ describe('Requirement: Everything The Offline Claim Names Is Actually Precached'
       .reduce((sum, url) => sum + statSync(join(process.cwd(), 'dist', url)).size, 0);
     expect(stored, `${(stored / 1024 / 1024).toFixed(2)} MiB stored`)
       .toBeLessThan(16 * 1024 * 1024);
+  });
+
+  it('Scenario: the engine is precached once, not twice', () => {
+    // The budget above is the symptom; this is the cause it was tripping on. Any
+    // main-thread module that constructs an AnesthesiaEngine drags every lesson
+    // model into a second bundle, and both bundles are precached, so every
+    // lesson's authored prose is downloaded twice for offline use. That is what
+    // the debrief used to do, and what pushed this graph past 2.00 MiB.
+    //
+    // The check is on the built output rather than on imports, because an
+    // engine-free import that a bundler still resolves to the engine would pass a
+    // source-level check and fail the learner on a slow connection. The marker is
+    // a string literal that exists only in engine.ts, so it survives minification
+    // and appears once per copy of the engine that ships.
+    const marker = 'A supraglottic airway is in place. Removal or intubation through it is not modeled.';
+    const carrying = precache
+      .filter((url) => url.startsWith('/assets/'))
+      .filter((url) => readFileSync(join(process.cwd(), 'dist', url), 'utf8').includes(marker));
+    expect(carrying, `the engine ships in ${carrying.length} precached assets`).toHaveLength(1);
+    expect(carrying[0]).toContain('solver.worker');
   });
 });
 

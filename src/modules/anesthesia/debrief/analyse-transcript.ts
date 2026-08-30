@@ -12,7 +12,7 @@
 import type { Transcript } from '@platform/transcript/transcript';
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import { getScenario } from '../scenarios';
-import { MAX_REPLAY_TICKS, replay } from './replay';
+import { MAX_REPLAY_TICKS, type RunReplay } from './replay';
 import { findStacking } from './analysis';
 import { objectiveFindings } from '../ui/Debrief';
 import type { ObjectiveFinding } from './analysis';
@@ -100,9 +100,15 @@ function preoxygenationSeconds(
   return ticks / TICKS_PER_SECOND;
 }
 
-export function analyseTranscript(transcript: Transcript, label: string): TranscriptAnalysis {
+/**
+ * The replay runs in the worker, so this is asynchronous. Nothing else about it
+ * changed: every number below is still re-derived from the learner's inputs.
+ */
+export async function analyseTranscript(
+  transcript: Transcript, label: string, runReplay: RunReplay,
+): Promise<TranscriptAnalysis> {
   const scenario = getScenario(transcript.scenarioId)!;
-  const history = replay(transcript.actions, {
+  const history = await runReplay(transcript.actions, {
     scenario,
     seed: transcript.seed,
     practiceRegion: transcript.practiceRegion,

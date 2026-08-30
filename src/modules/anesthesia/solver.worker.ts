@@ -12,6 +12,7 @@ import {
   WORKER_PROTOCOL_VERSION, type FromWorkerMessage, type StateMessage, type ToWorkerMessage,
 } from '@platform/kernel/protocol';
 import { AnesthesiaEngine, ENGINE_VERSION, type Scenario } from './engine';
+import { replay as replayHistory } from './debrief/replay-engine';
 import type { PatientState } from './physiology';
 import { MODEL_SET_REVISION } from './pharmacology/registry';
 import { validateScenario } from './scenarios/schema';
@@ -22,8 +23,8 @@ const post = (message: FromWorkerMessage<PatientState>, transfer: Transferable[]
   (self as unknown as DedicatedWorkerGlobalScope).postMessage(message, transfer);
 };
 
-const fail = (code: string, message: string): void => {
-  post({ v: WORKER_PROTOCOL_VERSION, type: 'error', code, message });
+const fail = (code: string, message: string, requestId?: string): void => {
+  post({ v: WORKER_PROTOCOL_VERSION, type: 'error', code, message, ...(requestId ? { requestId } : {}) });
 };
 
 /**
@@ -148,6 +149,24 @@ self.onmessage = (event: MessageEvent<ToWorkerMessage>) => {
           engine.step();
         }
         advance(1);
+        break;
+      }
+      case 'history-replay': {
+        // Deliberately a FRESH engine and never `engine`: a counterfactual must not
+        // disturb the session the learner is looking at, and the debrief asks for
+        // one while that session is still open.
+        const errors = validateScenario(message.scenario);
+        if (errors.length > 0) {
+          fail('InvalidScenario', errors.map((e) => `${e.pointer}: ${e.message}`).join('\n'), message.requestId);
+          return;
+        }
+        post({
+          v: WORKER_PROTOCOL_VERSION, type: 'history', requestId: message.requestId,
+          history: replayHistory(message.actions, {
+            scenario: message.scenario as Scenario, seed: message.seed,
+            practiceRegion: message.practiceRegion, ticks: message.ticks,
+          }),
+        });
         break;
       }
       case 'reset':

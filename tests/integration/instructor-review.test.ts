@@ -15,6 +15,7 @@ import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import {
   UnreadableTranscript, analyseTranscript, parseTranscript, summariseCohort,
 } from '@anesthesia/debrief/analyse-transcript';
+import { replay } from '@anesthesia/debrief/replay-engine';
 import type { LearnerAction } from '@platform/kernel/protocol';
 
 const VERSIONS = { engine: 'test', content: '0.1.0', modelSet: 'test', scenario: '0.1.0' };
@@ -86,12 +87,20 @@ function rushedSession(seed = 991): Transcript {
   });
 }
 
+/**
+ * The application reaches the engine through the solver worker; these tests run in
+ * Node, where there is none, so they hand `analyseTranscript` the same replay the
+ * worker itself runs. What is under test is the derivation, not the transport.
+ */
+const runReplay = (actions: Parameters<typeof replay>[0], options: Parameters<typeof replay>[1]) =>
+  Promise.resolve(replay(actions, options));
+
 describe('Requirement: Instructor Mode Without Surveillance', () => {
-  it('Scenario: An exported session can be read back and analysed', () => {
+  it('Scenario: An exported session can be read back and analysed', async () => {
     const transcript = competentSession();
     const text = JSON.stringify(transcript);
     const parsed = parseTranscript(text, 'student-a.json');
-    const analysis = analyseTranscript(parsed, 'student-a.json');
+    const analysis = await analyseTranscript(parsed, 'student-a.json', runReplay);
 
     expect(analysis.scenarioTitle).toBe(ROUTINE_INDUCTION.metadata.title);
     expect(analysis.actionCount).toBe(transcript.actions.length);
@@ -101,9 +110,9 @@ describe('Requirement: Instructor Mode Without Surveillance', () => {
       .toEqual(ROUTINE_INDUCTION.metadata.objectives.map((o) => o.id).sort());
   });
 
-  it('Scenario: The findings are DERIVED, so a good session and a rushed one differ', () => {
-    const good = analyseTranscript(competentSession(), 'good.json');
-    const rushed = analyseTranscript(rushedSession(), 'rushed.json');
+  it('Scenario: The findings are DERIVED, so a good session and a rushed one differ', async () => {
+    const good = await analyseTranscript(competentSession(), 'good.json', runReplay);
+    const rushed = await analyseTranscript(rushedSession(), 'rushed.json', runReplay);
 
     const outcome = (a: typeof good, id: string) =>
       a.findings.find((f) => f.objectiveId === id)?.outcome;
@@ -116,22 +125,22 @@ describe('Requirement: Instructor Mode Without Surveillance', () => {
     expect(outcome(good, 'hysteresis')).toBe('met');
   });
 
-  it('Scenario: Nothing in the file is trusted — the numbers come from a replay', () => {
+  it('Scenario: Nothing in the file is trusted — the numbers come from a replay', async () => {
     const transcript = competentSession();
     // A file claiming a different story than its actions tell is analysed on its
     // ACTIONS. Editing the claim changes nothing.
     const doctored = { ...transcript, stateTraceHash: 'claims-everything-was-perfect' };
-    const honest = analyseTranscript(transcript, 'a.json');
-    const tampered = analyseTranscript(doctored as Transcript, 'b.json');
+    const honest = await analyseTranscript(transcript, 'a.json', runReplay);
+    const tampered = await analyseTranscript(doctored as Transcript, 'b.json', runReplay);
     expect(tampered.findings.map((f) => f.outcome)).toEqual(honest.findings.map((f) => f.outcome));
   });
 
-  it('Scenario: An instructor reviews a class and sees where it is weak', () => {
+  it('Scenario: An instructor reviews a class and sees where it is weak', async () => {
     const cohort = [
-      analyseTranscript(competentSession(1), 'a.json'),
-      analyseTranscript(competentSession(2), 'b.json'),
-      analyseTranscript(rushedSession(3), 'c.json'),
-      analyseTranscript(rushedSession(4), 'd.json'),
+      await analyseTranscript(competentSession(1), 'a.json', runReplay),
+      await analyseTranscript(competentSession(2), 'b.json', runReplay),
+      await analyseTranscript(rushedSession(3), 'c.json', runReplay),
+      await analyseTranscript(rushedSession(4), 'd.json', runReplay),
     ];
     const summary = summariseCohort(cohort);
 
@@ -155,14 +164,14 @@ describe('Requirement: Instructor Mode Without Surveillance', () => {
       .toThrow(/different version/);
   });
 
-  it('Scenario: A session from another scenario analyses against ITS objectives', () => {
+  it('Scenario: A session from another scenario analyses against ITS objectives', async () => {
     const transcript = runSession({
       scenario: RAPID_DESATURATION,
       seed: 7,
       seconds: 300,
       actions: [{ atSecond: 5, action: { type: 'ventilator', payload: { fio2: 1 } } }],
     });
-    const analysis = analyseTranscript(parseTranscript(JSON.stringify(transcript), 'x.json'), 'x.json');
+    const analysis = await analyseTranscript(parseTranscript(JSON.stringify(transcript), 'x.json'), 'x.json', runReplay);
     expect(analysis.findings.map((f) => f.objectiveId).sort())
       .toEqual(RAPID_DESATURATION.metadata.objectives.map((o) => o.id).sort());
   });

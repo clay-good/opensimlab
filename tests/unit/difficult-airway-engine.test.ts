@@ -10,7 +10,7 @@ import {
 } from '@anesthesia/physiology';
 import { createRng } from '@platform/kernel/rng';
 import type { LearnerAction } from '@platform/kernel/protocol';
-import { replay } from '@anesthesia/debrief/replay';
+import { replay } from '@anesthesia/debrief/replay-engine';
 
 const COURSE_EVENT = {
   id: 'configured-airway-course',

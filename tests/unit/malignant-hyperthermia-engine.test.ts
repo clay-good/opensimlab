@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { AnesthesiaEngine, DANTROLENE_DOSE_MG_PER_KG, type Scenario } from '@anesthesia/engine';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
-import { replay } from '@anesthesia/debrief/replay';
+import { replay } from '@anesthesia/debrief/replay-engine';
 import type { LearnerAction } from '@platform/kernel/protocol';
 
 const mhScenario = (armed = true): Scenario => ({

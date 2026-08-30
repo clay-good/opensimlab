@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { AnesthesiaEngine } from '@anesthesia/engine';
-import { replay } from '@anesthesia/debrief/replay';
+import { replay } from '@anesthesia/debrief/replay-engine';
 import { validateScenario } from '@anesthesia/scenarios/schema';
 import { objectiveFindings } from '@anesthesia/ui/Debrief';
 import type { LearnerAction } from '@platform/kernel/protocol';

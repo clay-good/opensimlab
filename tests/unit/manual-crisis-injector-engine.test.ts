@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { AnesthesiaEngine } from '@anesthesia/engine';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
-import { replay } from '@anesthesia/debrief/replay';
+import { replay } from '@anesthesia/debrief/replay-engine';
 import type { LearnerAction } from '@platform/kernel/protocol';
 
 function engine(seed = 91) {

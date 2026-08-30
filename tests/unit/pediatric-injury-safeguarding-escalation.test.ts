@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { AnesthesiaEngine } from '@anesthesia/engine';
-import { replay } from '@anesthesia/debrief/replay';
+import { replay } from '@anesthesia/debrief/replay-engine';
 import { validateScenario } from '@anesthesia/scenarios/schema';
 import type { LearnerAction } from '@platform/kernel/protocol';
 import { PEDIATRIC_INJURY_SAFEGUARDING_ESCALATION as SCENARIO } from '../../src/modules/pediatrics/scenarios/pediatric-injury-safeguarding-escalation';

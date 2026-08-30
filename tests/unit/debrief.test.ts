@@ -5,7 +5,8 @@ import {
   accountIdentifies, findEpisodes, findStacking, safeContainerOpening, secondsBeyond,
   shiftEarlier, toneFor,
 } from '@anesthesia/debrief/analysis';
-import { compareRuns, evaluateCounterfactual, replay } from '@anesthesia/debrief/replay';
+import { compareRuns, evaluateCounterfactual } from '@anesthesia/debrief/replay';
+import { replay } from '@anesthesia/debrief/replay-engine';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import type { EngineEvent, LearnerAction } from '@platform/kernel/protocol';
@@ -102,15 +103,15 @@ describe('Requirement: Debrief Follows The PEARLS Framework', () => {
 });
 
 describe('Scenario: Counterfactual is computed, not asserted', () => {
-  it('produces the claim by re-running the engine on the modified transcript', () => {
+  it('produces the claim by re-running the engine on the modified transcript', async () => {
     const actual = replay(NEGLECTFUL, OPTIONS);
-    const result = evaluateCounterfactual({
+    const result = await evaluateCounterfactual({
       id: 'ventilate-earlier',
       claim: 'Starting ventilation two minutes earlier would have shortened the desaturation.',
       modify: (actions) => shiftEarlier(actions, (a) => a.type === 'ventilator' && a.payload.delivering === true, 120),
       measure: (history) => secondsBeyond(history, 'spo2Percent', 90, 'below'),
       unit: 'seconds below 90%',
-    }, actual, NEGLECTFUL, OPTIONS);
+    }, actual, NEGLECTFUL, OPTIONS, (actions, options) => Promise.resolve(replay(actions, options)));
 
     // The claim rests on a real second run, whose modified action list is inspectable.
     expect(result.modifiedActions.length).toBe(NEGLECTFUL.length);
@@ -121,15 +122,15 @@ describe('Scenario: Counterfactual is computed, not asserted', () => {
     expect(result.better).toBe(true);
   });
 
-  it('reports honestly when the alternative would NOT have helped', () => {
+  it('reports honestly when the alternative would NOT have helped', async () => {
     const actual = replay(NEGLECTFUL, OPTIONS);
-    const result = evaluateCounterfactual({
+    const result = await evaluateCounterfactual({
       id: 'ventilate-later',
       claim: 'Starting ventilation a minute later would have made no difference.',
       modify: (actions) => shiftEarlier(actions, (a) => a.type === 'ventilator' && a.payload.delivering === true, -60),
       measure: (history) => secondsBeyond(history, 'spo2Percent', 90, 'below'),
       unit: 'seconds below 90%',
-    }, actual, NEGLECTFUL, OPTIONS);
+    }, actual, NEGLECTFUL, OPTIONS, (actions, options) => Promise.resolve(replay(actions, options)));
     expect(result.better).toBe(false);
     expect(result.counterfactual).toBeGreaterThan(result.actual);
   });

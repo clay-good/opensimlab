@@ -5,11 +5,17 @@
  * that episode" is produced by RE-RUNNING the deterministic engine on the
  * modified action list, and the resulting trace is available to inspect. It is
  * never asserted from a rule.
+ *
+ * The re-run itself lives in `replay-engine.ts` and happens in the solver worker,
+ * reached through the `RunReplay` function this module's callers are handed. That
+ * indirection is not ceremony: constructing an engine drags every lesson model in
+ * with it, and the worker already has one, so keeping this file engine-free is
+ * what stops the whole engine shipping twice in the offline precache.
  */
 
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import type { LearnerAction } from '@platform/kernel/protocol';
-import { AnesthesiaEngine, type Scenario } from '@anesthesia/engine';
+import type { Scenario } from '@anesthesia/engine';
 import type { HistorySample } from '@platform/session/session-store';
 import type { CounterfactualRequest, CounterfactualResult } from './analysis';
 
@@ -19,6 +25,17 @@ export interface ReplayOptions {
   readonly practiceRegion: string;
   readonly ticks: number;
 }
+
+/**
+ * Re-run an action list somewhere and hand back the history.
+ *
+ * The application passes the worker-backed implementation from `replay-client.ts`;
+ * the tests pass the direct one from `replay-engine.ts`. Neither caller of this
+ * type learns which it got, which is the point.
+ */
+export type RunReplay = (
+  actions: readonly LearnerAction[], options: ReplayOptions,
+) => Promise<readonly HistorySample[]>;
 
 /**
  * The longest run a replay will perform, in ticks: eight simulated hours.
@@ -31,41 +48,16 @@ export interface ReplayOptions {
  */
 export const MAX_REPLAY_TICKS = 8 * 60 * 60 * TICKS_PER_SECOND;
 
-/** Run the engine over an action list and return the history it produces. */
-export function replay(actions: readonly LearnerAction[], options: ReplayOptions): HistorySample[] {
-  const engine = new AnesthesiaEngine({
-    scenario: options.scenario, seed: options.seed, practiceRegion: options.practiceRegion,
-  });
-  const ordered = [...actions].sort((a, b) => a.tick - b.tick);
-  const history: HistorySample[] = [];
-  let next = 0;
-  // A non-finite or negative count runs nothing rather than looping forever or
-  // throwing from inside a render.
-  const limit = Number.isFinite(options.ticks)
-    ? Math.min(Math.max(Math.trunc(options.ticks), 0), MAX_REPLAY_TICKS)
-    : 0;
-  for (let tick = 0; tick < limit; tick += 1) {
-    while (next < ordered.length && (ordered[next]?.tick ?? Infinity) <= tick) {
-      engine.apply(ordered[next]!);
-      next += 1;
-    }
-    const result = engine.step();
-    if (tick % TICKS_PER_SECOND === 0) {
-      history.push({ tick: result.tick, state: result.state, concentrations: result.concentrations });
-    }
-  }
-  return history;
-}
-
 /** Evaluate one counterfactual against the actual run. */
-export function evaluateCounterfactual(
+export async function evaluateCounterfactual(
   request: CounterfactualRequest,
   actualHistory: readonly HistorySample[],
   actions: readonly LearnerAction[],
   options: ReplayOptions,
-): CounterfactualResult {
+  runReplay: RunReplay,
+): Promise<CounterfactualResult> {
   const modifiedActions = request.modify(actions);
-  const counterfactualHistory = replay(modifiedActions, options);
+  const counterfactualHistory = await runReplay(modifiedActions, options);
   const actual = request.measure(actualHistory);
   const counterfactual = request.measure(counterfactualHistory);
   return {

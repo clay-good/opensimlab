@@ -44,9 +44,57 @@ const lastState = () => {
   return message;
 };
 
+/**
+ * The debrief's counterfactual and the instructor review page both ask the worker
+ * to re-run an action list, because the worker holds the only engine this build
+ * ships. These tests drive that message on the shipping module.
+ */
+describe('Requirement: A Counterfactual Runs Where The Engine Already Is', () => {
+  const historyReplay = (over: Partial<Record<string, unknown>> = {}) => {
+    emitted.length = 0;
+    deliver({
+      v: WORKER_PROTOCOL_VERSION, type: 'history-replay', requestId: 'r1',
+      scenario: ROUTINE_INDUCTION, seed: 1, practiceRegion: 'US',
+      ticks: 30 * TICKS_PER_SECOND, actions: [], ...over,
+    } as unknown as ToWorkerMessage);
+    return emitted[emitted.length - 1];
+  };
+
+  it('Scenario: a replay returns one history sample per simulated second', () => {
+    init();
+    const message = historyReplay();
+    if (message?.type !== 'history') throw new Error(`expected history, got ${message?.type}`);
+    expect(message.requestId).toBe('r1');
+    expect(message.history.length).toBe(30);
+    expect(message.history[0]?.tick).toBe(0);
+    expect(message.history[1]?.tick).toBe(TICKS_PER_SECOND);
+    expect(typeof message.history[0]?.state.meanArterialMmHg).toBe('number');
+  });
+
+  it('Scenario: a replay leaves the running session untouched', () => {
+    // The learner opens the debrief without ending the session, so the engine the
+    // cockpit is driving must not move because a counterfactual was computed.
+    init();
+    deliver({ v: WORKER_PROTOCOL_VERSION, type: 'advance', ticks: 10 });
+    const before = lastState().tick;
+    historyReplay();
+    emitted.length = 0;
+    deliver({ v: WORKER_PROTOCOL_VERSION, type: 'advance', ticks: 1 });
+    expect(lastState().tick).toBe(before + 1);
+  });
+
+  it('Scenario: an invalid scenario is refused against the request, not the session', () => {
+    init();
+    const message = historyReplay({ scenario: { schemaVersion: 1 } });
+    if (message?.type !== 'error') throw new Error(`expected error, got ${message?.type}`);
+    expect(message.code).toBe('InvalidScenario');
+    expect(message.requestId).toBe('r1');
+  });
+});
+
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: Hyperleukocytosis state has protocol version 204', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(204);
+  it('Scenario: headless history replay has protocol version 205', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(205);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

@@ -15,7 +15,7 @@ import {
 } from '@anesthesia/demo/demonstration';
 import { SCENARIOS } from '@anesthesia/scenarios';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
-import { replay } from '@anesthesia/debrief/replay';
+import { replay } from '@anesthesia/debrief/replay-engine';
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import type { LearnerAction } from '@platform/kernel/protocol';
 

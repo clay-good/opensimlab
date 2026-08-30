@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { AnesthesiaEngine } from '@anesthesia/engine';
-import { replay } from '@anesthesia/debrief/replay';
+import { replay } from '@anesthesia/debrief/replay-engine';
 import { validateScenario } from '@anesthesia/scenarios/schema';
 import type { LearnerAction } from '@platform/kernel/protocol';
 import { FOCAL_MOTOR_STATUS_EPILEPTICUS_ESCALATION as SCENARIO } from '../../src/modules/neurology/scenarios/focal-motor-status-epilepticus-escalation';

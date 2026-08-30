@@ -10,7 +10,7 @@ import {
   CO2_STORE_ML_PER_MMHG, RESPIRATORY_PROFILES, healthyChildRespiratoryProfile,
   initialGasState, stepGas,
 } from '@anesthesia/physiology';
-import { replay } from '@anesthesia/debrief/replay';
+import { replay } from '@anesthesia/debrief/replay-engine';
 import type { LearnerAction } from '@platform/kernel/protocol';
 
 const CHILD = { ageYears: 6, weightKg: 20, heightCm: 115, sex: 'female' as const };

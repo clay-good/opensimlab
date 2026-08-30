@@ -1917,7 +1917,7 @@ credited toward the catalog until every item in the completion contract passes.
     procedure, observation, disposition, prognosis, or outcome control exists.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.
-  The nursing module is registered at 9 of 9. Oncology is open at 4 of 11: a delayed immune-related
+  The nursing module is registered at 9 of 9. Oncology is open at 7 of 11: a delayed immune-related
   event after the drug has stopped, an incidentally found pulmonary embolus whose management is
   only conditionally recommended, severe first-cycle oral-fluoropyrimidine toxicity after a
   wild-type pre-treatment panel, a prognosis conversation scored by what the patient repeats back
@@ -1927,12 +1927,17 @@ credited toward the catalog until every item in the completion contract passes.
   demonstrated mortality benefit. Surgery/trauma is declared planned and has not started. Every
   scenario in this wave remains preview: none carries clinical review, a state-space matrix, or
   inclusive-runtime evidence, so the wave's completion count is still zero.
-  The cockpit budget was the binding constraint on the remaining eight oncology lessons: each adds
-  roughly 10 KiB compressed, and the route stood at 1,597.9 of 1,664.0 KiB. The limitations
-  register is now one file per module, and the drug card carries the three source titles a cockpit
-  prints rather than resolving them through the 381-entry source register. Together those took the
-  route to 1,406.5 KiB and the anesthesia module graph from 1,104.3 to 941.0 KiB, which is roughly
-  25 further lessons of headroom where there had been six.
+  Two budgets were the binding constraint on the remaining oncology lessons, and both have been
+  measured rather than raised. The cockpit route stood at 1,597.9 of 1,664.0 KiB against roughly
+  10 KiB per lesson; splitting the limitations register into one file per module, and giving the
+  drug card the three source titles a cockpit prints rather than resolving them through the
+  381-entry source register, took it to 1,406.5 KiB. The offline precache then bound instead,
+  because the whole engine shipped twice — once in the solver worker and once in the session
+  bundle, where the debrief constructed its own engine to compute counterfactuals — so each
+  lesson's prose cost double. The debrief and the instructor review page now ask the worker to
+  re-run an action list over a `history-replay` message, and the second engine copy is gone: the
+  precache falls from 2.001 to 1.648 MiB and the cockpit route to 1,082.5 KiB. That is roughly
+  35 further lessons of headroom on the precache and 58 on the route, where the first was six.
 - [ ] After every wave, verify the exact cumulative count, distinctness, capability reuse, path and
   competency coverage, sources, maturity labels, domain-pack budget, offline behavior, mobile
   layout, and complete regression fixtures.

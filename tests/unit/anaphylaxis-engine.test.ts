@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { AnesthesiaEngine, EPINEPHRINE_IV_BOUNDS, type Scenario } from '@anesthesia/engine';
-import { replay } from '@anesthesia/debrief/replay';
+import { replay } from '@anesthesia/debrief/replay-engine';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { validateScenario } from '@anesthesia/scenarios/schema';
 import { PERIOPERATIVE_ANAPHYLAXIS_AFTER_ANTIBIOTIC } from '@anesthesia/scenarios/perioperative-anaphylaxis-after-antibiotic';
