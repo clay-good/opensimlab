@@ -57,10 +57,14 @@ preview-channel blockers until it is. Updating the specification does not clear 
     per scenario instead of restating the rule, so the decision can be made from the data.
   - `guidance-and-demonstration` is the genuine authoring gap: oncology had no bound expert
     demonstration, which the renal and endocrine scenarios do have. Done for
-    `delayed-immune-event-a-drug-that-stopped-months-ago`, which establishes the pattern for the
-    remaining 10: an observed-state tutor reading the learner's own recorded steps, a
-    snapshot-driven worked example, tray and cockpit wiring, and a test that drives the example
-    through the real engine to handoff rather than asserting it as a script.
+    `delayed-immune-event-a-drug-that-stopped-months-ago` and
+    `incidental-clot-a-decision-the-evidence-cannot-make`; 9 of 11 remain. The pattern is an
+    observed-state tutor reading the learner's own recorded steps, a snapshot-driven worked
+    example, tray and cockpit wiring, and a test that drives the example through the real engine
+    to handoff rather than asserting it as a script. Each example also has to be held to its own
+    lesson's restraint — the delayed immune event may not supply the diagnosis or the grade, and
+    the incidental clot may not choose to anticoagulate or not to, because the recommendation it
+    rests on is conditional on very low certainty.
 
 ## 4. Drop the staged version label
 

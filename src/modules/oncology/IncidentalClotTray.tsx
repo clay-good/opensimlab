@@ -1,14 +1,18 @@
 import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { IncidentalClotSnapshot } from '@platform/kernel/protocol';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { IncidentalClotAction } from './incidental-clot';
+import { incidentalClotInlinePrompt } from './incidental-clot-tutor';
 
-export function IncidentalClotTray({ assessment, onAction, demonstrating = false }: {
-  readonly assessment?: IncidentalClotSnapshot;
+export function IncidentalClotTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
+  readonly assessment?: IncidentalClotSnapshot; readonly scenarioVersion: string;
   readonly onAction: (action: IncidentalClotAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = incidentalClotInlinePrompt(guidance, { scenarioVersion, incidentalClot: assessment });
   const observations = assessment.observationRecord; const report = assessment.reportRecord;
   const observation = assessment.observation;
   const decision = (action: IncidentalClotAction, label: string, accepted = false) => {
@@ -17,6 +21,10 @@ export function IncidentalClotTray({ assessment, onAction, demonstrating = false
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     {/* Strength and certainty are stated with the recommendation, never underneath it. */}
     <p className="syringe__remaining" role="status">The recommendation here is {assessment.recommendationIsConditional ? 'conditional' : 'strong'}, on {assessment.certaintyOfEvidence} certainty in the evidence of effects. The report has gone {assessment.reportUnacknowledgedDays} days unacknowledged.</p>
     <p className="syringe__remaining">Selected sources: a society guideline on venous thromboembolism in cancer, a pooled analysis of 926 patients with incidentally found pulmonary embolism, and a registry cohort of 715. Open the source view for exact wording and grades.</p>

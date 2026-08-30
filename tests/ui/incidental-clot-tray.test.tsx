@@ -29,7 +29,7 @@ beforeEach(() => { host = document.createElement('div'); document.body.append(ho
 afterEach(() => { act(() => root.unmount()); host.remove(); });
 
 const render = (model: IncidentalClot, tick: number, onAction = vi.fn(), demonstrating = false) => {
-  act(() => root.render(<IncidentalClotTray assessment={model.snapshot(tick)}
+  act(() => root.render(<IncidentalClotTray assessment={model.snapshot(tick)} scenarioVersion="0.1.0"
     onAction={onAction} demonstrating={demonstrating} />));
   return onAction;
 };

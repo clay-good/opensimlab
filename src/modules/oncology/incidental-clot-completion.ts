@@ -2,11 +2,13 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { INCIDENTAL_CLOT_A_DECISION_THE_EVIDENCE_CANNOT_MAKE } from './scenarios/incidental-clot-a-decision-the-evidence-cannot-make';
 import { INCIDENTAL_CLOT_FIXTURES } from './incidental-clot-fixtures';
+import { INCIDENTAL_CLOT_DEMONSTRATION_VERSION } from './demo/incidental-clot-demonstration';
 
 export function incidentalClotCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'oncology' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== INCIDENTAL_CLOT_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
     || INCIDENTAL_CLOT_FIXTURES.contentVersion !== '0.1.0' || INCIDENTAL_CLOT_FIXTURES.seed !== 6403
+    || INCIDENTAL_CLOT_DEMONSTRATION_VERSION !== '0.1.0'
     || JSON.stringify(scenario) !== JSON.stringify(INCIDENTAL_CLOT_A_DECISION_THE_EVIDENCE_CANNOT_MAKE)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['incidental-clot-fixtures.ts binds seed 6403 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No thrombosis, bleeding, or anticoagulation-response model is claimed.'] },
@@ -15,7 +17,7 @@ export function incidentalClotCompletionEvidence(scenario: Scenario, capabilityV
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The recorded finding, the recorded certainty, the paired figures, the bleeding risk, contact with the treating service, the shared-decision record, the boundary review, and a current full assessment permit handoff with the decision open. Instructor takeover bounds a run with no escalation at 180 minutes, or an unfinished session at eight hours.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Eight event-bound objectives distinguish what incidental describes, what a conditional recommendation on very low certainty asks of the reader, holding benefit and harm together, this patient’s own bleeding risk, returning the decision to its owner, recording it as shared, the certainty of the underlying figures, and accountable handoff of an unresolved decision. Refused shortcuts remain visible, and no decision, treatment, or outcome is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['incidental-clot-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Observed-state guidance and learner-paused example ${INCIDENTAL_CLOT_DEMONSTRATION_VERSION} use ordinary recorded actions. Unassisted mode is silent and coached withholds the two non-urgent beats. Neither the prompts nor the example ever choose to anticoagulate or not to: the recommendation they rest on is conditional on very low certainty, the panel found no randomised trial addressing the question, and an example that resolved it would model confidence the evidence does not support. The example is driven through the real engine in tests and ends by handing the decision over open.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];

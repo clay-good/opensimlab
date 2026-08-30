@@ -208,9 +208,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary recorded actions. Unassisted mode is silent and coached withholds the two non-urgent beats. Neither the prompts nor the example ever choose to anticoagulate or not to: the recommendation they rest on is conditional on very low certainty, the panel found no randomised trial addressing the question, and an example that resolved it would model confidence the evidence does not support. The example is driven through the real engine in tests and ends by handing the decision over open."
           ]
         },
         {

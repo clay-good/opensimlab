@@ -2773,6 +2773,7 @@ export interface ActionCockpitProps {
   readonly onEasyLabelResponse?: (action: EasyLabelAction) => void;
   readonly renalHyponatremiaGuidance?: GuidanceLevel;
   readonly delayedImmuneEventGuidance?: GuidanceLevel;
+  readonly incidentalClotGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -5871,7 +5872,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasIncidentalClotResponse && (
               <IncidentalClotTray assessment={props.incidentalClot}
+                guidance={props.incidentalClotGuidance}
                 demonstrating={props.incidentalClotDemonstrating}
+                scenarioVersion={props.scenario.metadata.version}
                 onAction={props.onIncidentalClotResponse ?? (() => {})} />
             )}
             {hasDelayedImmuneEventResponse && (
