@@ -2,11 +2,13 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { TRIAL_RULE_A_RULE_WRITTEN_FOR_A_DATABASE } from './scenarios/trial-rule-a-rule-written-for-a-database';
 import { TRIAL_RULE_FIXTURES } from './trial-rule-fixtures';
+import { TRIAL_RULE_DEMONSTRATION_VERSION } from './demo/trial-rule-demonstration';
 
 export function trialRuleCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'oncology' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== TRIAL_RULE_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
     || TRIAL_RULE_FIXTURES.contentVersion !== '0.1.0' || TRIAL_RULE_FIXTURES.seed !== 2814
+    || TRIAL_RULE_DEMONSTRATION_VERSION !== '0.1.0'
     || JSON.stringify(scenario) !== JSON.stringify(TRIAL_RULE_A_RULE_WRITTEN_FOR_A_DATABASE)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['trial-rule-fixtures.ts binds seed 2814 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No tumour-growth, response, or treatment-effect model is claimed, and no outcome follows from any choice.'] },
@@ -15,7 +17,7 @@ export function trialRuleCompletionEvidence(scenario: Scenario, capabilityVersio
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The recorded trajectory, the recorded scope of the criteria, the call to the treating team, bounded intent, the boundary review, and a current assessment permit handoff with the treatment decision open. Instructor takeover bounds a run with no escalation at 150 minutes, or an unfinished session at eight hours.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Seven event-bound objectives distinguish a slope from a moment, a data-handling criterion from a management instruction, reaching the team that actually decides, refusing continuation and discontinuation as the same error, bounded qualified-team intent, reading two rates neither of which decides this patient, and handing off a direction rather than a report. Refused shortcuts remain visible, and no diagnosis, treatment effect, or outcome is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['trial-rule-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine, including the authored arrival of the document.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Observed-state guidance and learner-paused example ${TRIAL_RULE_DEMONSTRATION_VERSION} use ordinary recorded actions. Unassisted mode is silent; telling her team is urgent, so coached carries it. Both refused shortcuts accept the same framing — that a response category licenses a decision — and differ only in direction, so the example is held to a stronger property than avoiding the two named wrong answers: a test asserts its narration never claims pseudoprogression, progression, or failure at all, and that no prompt tells the learner which category she is in. The example reads the quoted criteria and records that the document says something narrower than it was cited as saying, while stating that this is not a fault in the colleague who cited it.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];

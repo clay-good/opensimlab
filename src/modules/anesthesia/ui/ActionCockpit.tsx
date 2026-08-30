@@ -2780,6 +2780,7 @@ export interface ActionCockpitProps {
   readonly rareEarlyMyocarditisGuidance?: GuidanceLevel;
   readonly loweringTheCountGuidance?: GuidanceLevel;
   readonly inheritedUrgencyGuidance?: GuidanceLevel;
+  readonly trialRuleGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -5843,6 +5844,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasTrialRuleResponse && (
               <TrialRuleTray assessment={props.trialRule}
+                guidance={props.trialRuleGuidance}
+                scenarioVersion={props.scenario.metadata.version}
                 demonstrating={props.trialRuleDemonstrating}
                 onAction={props.onTrialRuleResponse ?? (() => {})} />
             )}

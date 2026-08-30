@@ -59,6 +59,8 @@ import { useLaboratoryTlsDemonstration } from '../../oncology/demo/useLaboratory
 import { useRareEarlyMyocarditisDemonstration } from '../../oncology/demo/useRareEarlyMyocarditisDemonstration';
 import { useLoweringTheCountDemonstration } from '../../oncology/demo/useLoweringTheCountDemonstration';
 import { useInheritedUrgencyDemonstration } from '../../oncology/demo/useInheritedUrgencyDemonstration';
+import { useTrialRuleDemonstration } from '../../oncology/demo/useTrialRuleDemonstration';
+import { supportsTrialRuleDemonstration } from '../../oncology/demo/trial-rule-demonstration';
 import { supportsInheritedUrgencyDemonstration } from '../../oncology/demo/inherited-urgency-demonstration';
 import { supportsLoweringTheCountDemonstration } from '../../oncology/demo/lowering-the-count-demonstration';
 import { supportsRareEarlyMyocarditisDemonstration } from '../../oncology/demo/rare-early-myocarditis-demonstration';
@@ -218,6 +220,7 @@ export function Cockpit({
   const rareEarlyMyocarditisDemoSupported = supportsRareEarlyMyocarditisDemonstration(scenario);
   const loweringTheCountDemoSupported = supportsLoweringTheCountDemonstration(scenario);
   const inheritedUrgencyDemoSupported = supportsInheritedUrgencyDemonstration(scenario);
+  const trialRuleDemoSupported = supportsTrialRuleDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
   const renalHypocalcemiaDemoSupported = supportsRenalHypocalcemiaDemonstration(scenario);
   const renalHypermagnesemiaDemoSupported = supportsRenalHypermagnesemiaDemonstration(scenario);
@@ -239,7 +242,8 @@ export function Cockpit({
   const observedStateDemoSupported = hypercalcemiaDemoSupported || hypocalcemiaDemoSupported || hyponatremiaCorrectionDemoSupported || avpDeficiencyDemoSupported || refeedingDemoSupported || perioperativeDiabetesDemoSupported || renalHyperkalemiaDemoSupported || renalHypokalemiaDemoSupported || renalHyponatremiaDemoSupported || renalHypernatremiaDemoSupported || renalHypocalcemiaDemoSupported || renalHypermagnesemiaDemoSupported || delayedImmuneEventDemoSupported || incidentalClotDemoSupported
     || normalTestToxicityDemoSupported || prognosisQuestionDemoSupported
     || laboratoryTlsDemoSupported || rareEarlyMyocarditisDemoSupported
-    || loweringTheCountDemoSupported || inheritedUrgencyDemoSupported;
+    || loweringTheCountDemoSupported || inheritedUrgencyDemoSupported
+    || trialRuleDemoSupported;
   const scenarioDemoSupported = hypoglycemiaDemoSupported || adrenalDemoSupported
     || thyroidDemoSupported || myxedemaDemoSupported || observedStateDemoSupported;
   const inductionDemonstration = useDemonstration({
@@ -323,6 +327,11 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyponatremia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  const trialRuleDemonstration = useTrialRuleDemonstration({
+    active: demonstrating && trialRuleDemoSupported,
+    running: session.transport === 'running', patient: session.equipment?.resuscitation.trialRule,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const inheritedUrgencyDemonstration = useInheritedUrgencyDemonstration({
     active: demonstrating && inheritedUrgencyDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.inheritedUrgency,
@@ -378,7 +387,8 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypermagnesemia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = inheritedUrgencyDemoSupported ? inheritedUrgencyDemonstration
+  const demonstration = trialRuleDemoSupported ? trialRuleDemonstration
+    : inheritedUrgencyDemoSupported ? inheritedUrgencyDemonstration
     : loweringTheCountDemoSupported ? loweringTheCountDemonstration
     : rareEarlyMyocarditisDemoSupported ? rareEarlyMyocarditisDemonstration
     : laboratoryTlsDemoSupported ? laboratoryTlsDemonstration
@@ -1050,6 +1060,7 @@ export function Cockpit({
           rareEarlyMyocarditisGuidance={session.guidance}
           loweringTheCountGuidance={session.guidance}
           inheritedUrgencyGuidance={session.guidance}
+          trialRuleGuidance={session.guidance}
           renalHypernatremiaGuidance={session.guidance}
           renalHypocalcemiaGuidance={session.guidance}
           renalHypermagnesemiaGuidance={session.guidance}

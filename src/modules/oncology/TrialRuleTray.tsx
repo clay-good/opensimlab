@@ -1,14 +1,18 @@
 import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { TrialRuleAction } from './trial-rule';
+import { trialRuleInlinePrompt } from './trial-rule-tutor';
 
-export function TrialRuleTray({ assessment, onAction, demonstrating = false }: {
-  readonly assessment?: TrialRuleSnapshot;
+export function TrialRuleTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
+  readonly assessment?: TrialRuleSnapshot; readonly scenarioVersion: string;
   readonly onAction: (action: TrialRuleAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = trialRuleInlinePrompt(guidance, { scenarioVersion, trialRule: assessment });
   const observations = assessment.observationRecord; const imaging = assessment.imagingRecord;
   const observation = assessment.observation;
   const decision = (action: TrialRuleAction, label: string, accepted = false) => {
@@ -17,6 +21,10 @@ export function TrialRuleTray({ assessment, onAction, demonstrating = false }: {
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     {/* The condition the cited rule attaches, stated next to the rule, every time. */}
     <p className="syringe__remaining" role="status">Restaging at nine weeks reports new lesions and enlarging disease. The criterion being cited permits treating through that while the patient is clinically stable, and she is {assessment.clinicallyStable ? 'clinically stable' : 'not clinically stable'}.</p>
     <p className="syringe__remaining">Selected sources: the response criteria for trials testing immunotherapeutics, and a review of atypical response patterns. Open the source view for exact wording and grades.</p>

@@ -1090,9 +1090,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary recorded actions. Unassisted mode is silent; telling her team is urgent, so coached carries it. Both refused shortcuts accept the same framing — that a response category licenses a decision — and differ only in direction, so the example is held to a stronger property than avoiding the two named wrong answers: a test asserts its narration never claims pseudoprogression, progression, or failure at all, and that no prompt tells the learner which category she is in. The example reads the quoted criteria and records that the document says something narrower than it was cited as saying, while stating that this is not a fault in the colleague who cited it."
           ]
         },
         {
