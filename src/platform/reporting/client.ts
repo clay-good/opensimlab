@@ -38,9 +38,15 @@ export async function reportConfig(): Promise<ReportServiceConfig> {
     signal: AbortSignal.timeout(REPORT_REQUEST_TIMEOUT_MS),
   });
   if (!response.ok) throw new Error('reporting unavailable');
-  const value = await response.json() as {
-    sitekey?: unknown; action?: unknown; maintainer?: unknown; privacy_url?: unknown;
-  };
+  // A static-only fork has no report Worker, and a host with an SPA fallback
+  // answers this path with 200 and the application's own HTML rather than a 404.
+  // Parsing that rejects, and until now the rejection escaped as a SyntaxError
+  // that the caller happened to catch. Failing closed by accident is not the same
+  // as failing closed: a later refactor that narrowed the caller's catch would
+  // have turned a fork's missing service into an unhandled rejection, silently.
+  let value: { sitekey?: unknown; action?: unknown; maintainer?: unknown; privacy_url?: unknown };
+  try { value = await response.json() as typeof value; }
+  catch { throw new Error('reporting unavailable'); }
   let privacyUrl: URL;
   try { privacyUrl = new URL(String(value.privacy_url)); }
   catch { throw new Error('reporting unavailable'); }

@@ -81,7 +81,12 @@ preview-channel blockers until it is. Updating the specification does not clear 
 
 - [ ] Configure and enable the production report Worker, D1, and Turnstile values; verify the
   accepted, duplicate, invalid, quota, and cleanup paths against the live deployment.
-- [ ] Verify the control truthfully reports unavailability on a static-only fork.
+- [x] Verify the control truthfully reports unavailability on a static-only fork. A fork is not
+  an outage: it has no Worker at all, and the missing endpoint answers differently per host — a
+  404, an SPA fallback serving the application's own HTML with a 200, or a JSON error page. All
+  three are now tested to say so and to contact Cloudflare in none of them. The HTML case used to
+  fail closed only because the parse error escaped `reportConfig` and the caller happened to catch
+  it; it now refuses deliberately.
 - [x] Publish the 5-working-day acknowledgement commitment and the triage path. Both were in
   `GOVERNANCE.md` only, which is the same gap the corrections log had: someone deciding whether
   reporting is worth their time decides it in the product. Now typed in `corrections.ts`, rendered

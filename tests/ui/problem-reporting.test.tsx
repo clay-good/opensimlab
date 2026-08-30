@@ -359,6 +359,48 @@ describe('shared problem report dialog', () => {
     expect(container.textContent).toContain('unavailable on this host');
   });
 
+  /**
+   * A static-only fork is the case the release plan asks about, and it is not the
+   * same as an outage. A fork has no report Worker at all, and how the missing
+   * endpoint answers depends entirely on the host: a 404, an SPA fallback serving
+   * the application's own HTML with a 200, or — on a host that rewrites unknown
+   * paths to a JSON error page — a 200 with JSON that is not a config. All three
+   * must say so and none may contact Cloudflare, because a fork that quietly
+   * reaches a third party is a privacy claim broken by a deployment choice.
+   */
+  it.each([
+    ['a 404 from a host with no fallback', () => new Response('Not found', { status: 404 })],
+    ['an SPA fallback serving the application HTML', () =>
+      new Response('<!doctype html><title>Open Sim Lab</title>', {
+        status: 200, headers: { 'Content-Type': 'text/html' },
+      })],
+    ['a JSON body that is not a report config', () => Response.json({ error: 'no such route' })],
+    ['a config naming an off-origin privacy page', () => Response.json({
+      ...serviceConfig, privacy_url: 'https://example.com/privacy',
+    })],
+  ])('reports unavailability on a static-only fork answering with %s', async (_label, respond) => {
+    delete window.turnstile;
+    fetchMock.mockResolvedValueOnce(respond());
+    await act(async () => { root.render(<ScenarioProblemReport context={context} />); });
+    await act(async () => {
+      (container.querySelector('button') as HTMLButtonElement).click();
+      await Promise.resolve();
+    });
+    expect(container.textContent).toContain('unavailable on this host');
+    expect(container.textContent).toContain('practice session still works normally');
+    expect(document.querySelector('script[src*="challenges.cloudflare.com"]')).toBeNull();
+  });
+
+  it('fails closed deliberately rather than by an escaping parse error', async () => {
+    // The HTML body used to reject inside `response.json()` and escape as a
+    // SyntaxError that the caller happened to catch. The contract is that
+    // `reportConfig` itself refuses, with its own message.
+    fetchMock.mockResolvedValueOnce(new Response('<!doctype html>', {
+      status: 200, headers: { 'Content-Type': 'text/html' },
+    }));
+    await expect(reportConfig()).rejects.toThrow('reporting unavailable');
+  });
+
   it('keeps sibling practice controls usable when report configuration cannot be reached', async () => {
     const practice = vi.fn();
     delete window.turnstile;
