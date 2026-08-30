@@ -2772,6 +2772,7 @@ export interface ActionCockpitProps {
   readonly onSilentInteractionResponse?: (action: SilentInteractionAction) => void;
   readonly onEasyLabelResponse?: (action: EasyLabelAction) => void;
   readonly renalHyponatremiaGuidance?: GuidanceLevel;
+  readonly delayedImmuneEventGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -5875,7 +5876,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasDelayedImmuneEventResponse && (
               <DelayedImmuneEventTray assessment={props.delayedImmuneEvent}
+                guidance={props.delayedImmuneEventGuidance}
                 demonstrating={props.delayedImmuneEventDemonstrating}
+                scenarioVersion={props.scenario.metadata.version}
                 onAction={props.onDelayedImmuneEventResponse ?? (() => {})} />
             )}
             {hasLostContingencyResponse && (

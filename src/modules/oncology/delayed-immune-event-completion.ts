@@ -2,11 +2,13 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { DELAYED_IMMUNE_EVENT_A_DRUG_THAT_STOPPED_MONTHS_AGO } from './scenarios/delayed-immune-event-a-drug-that-stopped-months-ago';
 import { DELAYED_IMMUNE_EVENT_FIXTURES } from './delayed-immune-event-fixtures';
+import { DELAYED_IMMUNE_EVENT_DEMONSTRATION_VERSION } from './demo/delayed-immune-event-demonstration';
 
 export function delayedImmuneEventCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'oncology' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== DELAYED_IMMUNE_EVENT_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
     || DELAYED_IMMUNE_EVENT_FIXTURES.contentVersion !== '0.1.0' || DELAYED_IMMUNE_EVENT_FIXTURES.seed !== 5177
+    || DELAYED_IMMUNE_EVENT_DEMONSTRATION_VERSION !== '0.1.0'
     || JSON.stringify(scenario) !== JSON.stringify(DELAYED_IMMUNE_EVENT_A_DRUG_THAT_STOPPED_MONTHS_AGO)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['delayed-immune-event-fixtures.ts binds seed 5177 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No immune, mucosal, or treatment-response model is claimed.'] },
@@ -15,7 +17,7 @@ export function delayedImmuneEventCompletionEvidence(scenario: Scenario, capabil
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The recorded exposure, the recorded course, concurrent infection evaluation, contact with the treating service, bounded treatment intent, the boundary review, and a current full assessment permit handoff with the diagnosis and grade open. Instructor takeover bounds a run with no escalation at 180 minutes, or an unfinished session at eight hours.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Seven event-bound objectives distinguish recording a completed exposure as current history, refusing an elapsed interval as an exclusion, carrying infection evaluation alongside rather than ahead, returning the problem to the service that gave the drug, bounded qualified-team intent, the certainty of a 23-case series, and accountable handoff. Refused shortcuts remain visible, and no diagnosis, grade, or outcome is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['delayed-immune-event-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Observed-state guidance and learner-paused example ${DELAYED_IMMUNE_EVENT_DEMONSTRATION_VERSION} use ordinary recorded actions. Unassisted mode is silent and coached withholds the two non-urgent beats. The prompts read only the learner’s own recorded steps and never supply a diagnosis, a grade, or a treatment, because those belong to the qualified team and are what this lesson deliberately leaves open. The example is driven through the real engine in tests rather than asserted as a script, and both authored waits are narrated as contrasts rather than as clinical waiting, since the scenario refuses waiting for results before escalating.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];

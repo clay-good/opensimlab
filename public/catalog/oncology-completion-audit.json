@@ -82,9 +82,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary recorded actions. Unassisted mode is silent and coached withholds the two non-urgent beats. The prompts read only the learner’s own recorded steps and never supply a diagnosis, a grade, or a treatment, because those belong to the qualified team and are what this lesson deliberately leaves open. The example is driven through the real engine in tests rather than asserted as a script, and both authored waits are narrated as contrasts rather than as clinical waiting, since the scenario refuses waiting for results before escalating."
           ]
         },
         {

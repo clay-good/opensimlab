@@ -27,9 +27,10 @@ let host: HTMLDivElement; let root: Root;
 beforeEach(() => { host = document.createElement('div'); document.body.append(host); root = createRoot(host); });
 afterEach(() => { act(() => root.unmount()); host.remove(); });
 
-const render = (model: DelayedImmuneEvent, tick: number, onAction = vi.fn(), demonstrating = false) => {
-  act(() => root.render(<DelayedImmuneEventTray assessment={model.snapshot(tick)}
-    onAction={onAction} demonstrating={demonstrating} />));
+const render = (model: DelayedImmuneEvent, tick: number, onAction = vi.fn(), demonstrating = false,
+  guidance: 'unassisted' | 'coached' | 'guided' = 'unassisted') => {
+  act(() => root.render(<DelayedImmuneEventTray assessment={model.snapshot(tick)} scenarioVersion="0.1.0"
+    guidance={guidance} onAction={onAction} demonstrating={demonstrating} />));
   return onAction;
 };
 const button = (label: string) => [...host.querySelectorAll('button')]

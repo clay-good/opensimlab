@@ -55,8 +55,12 @@ preview-channel blockers until it is. Updating the specification does not clear 
     choice is to raise the cap or to merge objectives in 118 scenarios, and it belongs to a
     maintainer rather than to whoever happens to be editing next. The audit now names the cause
     per scenario instead of restating the rule, so the decision can be made from the data.
-  - `guidance-and-demonstration` is the genuine authoring gap: oncology has no bound expert
-    demonstration, which the renal and endocrine scenarios do have.
+  - `guidance-and-demonstration` is the genuine authoring gap: oncology had no bound expert
+    demonstration, which the renal and endocrine scenarios do have. Done for
+    `delayed-immune-event-a-drug-that-stopped-months-ago`, which establishes the pattern for the
+    remaining 10: an observed-state tutor reading the learner's own recorded steps, a
+    snapshot-driven worked example, tray and cockpit wiring, and a test that drives the example
+    through the real engine to handoff rather than asserting it as a script.
 
 ## 4. Drop the staged version label
 

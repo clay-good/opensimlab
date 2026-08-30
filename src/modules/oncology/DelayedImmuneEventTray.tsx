@@ -1,14 +1,18 @@
 import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { DelayedImmuneEventSnapshot } from '@platform/kernel/protocol';
 import type { DelayedImmuneEventAction } from './delayed-immune-event';
+import { delayedImmuneEventInlinePrompt } from './delayed-immune-event-tutor';
 
-export function DelayedImmuneEventTray({ assessment, onAction, demonstrating = false }: {
-  readonly assessment?: DelayedImmuneEventSnapshot;
+export function DelayedImmuneEventTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
+  readonly assessment?: DelayedImmuneEventSnapshot; readonly scenarioVersion: string;
   readonly onAction: (action: DelayedImmuneEventAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = delayedImmuneEventInlinePrompt(guidance, { scenarioVersion, delayedImmuneEvent: assessment });
   const observations = assessment.observationRecord; const exposure = assessment.exposureRecord;
   const observation = assessment.observation;
   const decision = (action: DelayedImmuneEventAction, label: string, accepted = false) => {
@@ -17,6 +21,10 @@ export function DelayedImmuneEventTray({ assessment, onAction, demonstrating = f
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     {/* The exposure is stated plainly and immediately. The lesson is not that it is hidden. */}
     <p className="syringe__remaining" role="status">Completed exposure: {assessment.checkpointInhibitorCycles} cycles of an anti-PD-1 checkpoint inhibitor, last dose {assessment.weeksSinceLastDose} weeks ago. It is not on the current medication list, because it stopped.</p>
     <p className="syringe__remaining">Selected sources: a collected case series of delayed immune-related events, a society clinical practice guideline on checkpoint-inhibitor adverse events, and a pharmacovigilance meta-analysis of fatal checkpoint-inhibitor toxicity. Open the source view for exact wording and grades.</p>

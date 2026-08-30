@@ -51,6 +51,8 @@ import { supportsRenalHypernatremiaDemonstration } from '../../renal-electrolyte
 import { supportsRenalHypocalcemiaDemonstration } from '../../renal-electrolyte/demo/renal-hypocalcemia-demonstration';
 import { supportsRenalHypermagnesemiaDemonstration } from '../../renal-electrolyte/demo/renal-hypermagnesemia-demonstration';
 import { useRenalHyponatremiaDemonstration } from '../../renal-electrolyte/demo/useRenalHyponatremiaDemonstration';
+import { useDelayedImmuneEventDemonstration } from '../../oncology/demo/useDelayedImmuneEventDemonstration';
+import { supportsDelayedImmuneEventDemonstration } from '../../oncology/demo/delayed-immune-event-demonstration';
 import { useRenalHypernatremiaDemonstration } from '../../renal-electrolyte/demo/useRenalHypernatremiaDemonstration';
 import { useRenalHypocalcemiaDemonstration } from '../../renal-electrolyte/demo/useRenalHypocalcemiaDemonstration';
 import { useRenalHypermagnesemiaDemonstration } from '../../renal-electrolyte/demo/useRenalHypermagnesemiaDemonstration';
@@ -194,11 +196,12 @@ export function Cockpit({
   const renalHyperkalemiaDemoSupported = supportsRenalHyperkalemiaDemonstration(scenario);
   const renalHypokalemiaDemoSupported = supportsRenalHypokalemiaDemonstration(scenario);
   const renalHyponatremiaDemoSupported = supportsRenalHyponatremiaDemonstration(scenario);
+  const delayedImmuneEventDemoSupported = supportsDelayedImmuneEventDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
   const renalHypocalcemiaDemoSupported = supportsRenalHypocalcemiaDemonstration(scenario);
   const renalHypermagnesemiaDemoSupported = supportsRenalHypermagnesemiaDemonstration(scenario);
   const inductionDemonstration = useDemonstration({
-    active: demonstrating && !hypoglycemiaDemoSupported && !adrenalDemoSupported && !thyroidDemoSupported && !myxedemaDemoSupported && !hypercalcemiaDemoSupported && !hypocalcemiaDemoSupported && !hyponatremiaCorrectionDemoSupported && !avpDeficiencyDemoSupported && !refeedingDemoSupported && !perioperativeDiabetesDemoSupported && !renalHyperkalemiaDemoSupported && !renalHypokalemiaDemoSupported && !renalHyponatremiaDemoSupported && !renalHypernatremiaDemoSupported && !renalHypocalcemiaDemoSupported && !renalHypermagnesemiaDemoSupported,
+    active: demonstrating && !hypoglycemiaDemoSupported && !adrenalDemoSupported && !thyroidDemoSupported && !myxedemaDemoSupported && !hypercalcemiaDemoSupported && !hypocalcemiaDemoSupported && !hyponatremiaCorrectionDemoSupported && !avpDeficiencyDemoSupported && !refeedingDemoSupported && !perioperativeDiabetesDemoSupported && !renalHyperkalemiaDemoSupported && !renalHypokalemiaDemoSupported && !renalHyponatremiaDemoSupported && !renalHypernatremiaDemoSupported && !renalHypocalcemiaDemoSupported && !renalHypermagnesemiaDemoSupported && !delayedImmuneEventDemoSupported,
     tick: session.tick,
     act: session.act,
     onFinished: () => onTakeControls?.(),
@@ -278,6 +281,11 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyponatremia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  const delayedImmuneEventDemonstration = useDelayedImmuneEventDemonstration({
+    active: demonstrating && delayedImmuneEventDemoSupported,
+    running: session.transport === 'running', patient: session.equipment?.resuscitation.delayedImmuneEvent,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const renalHypernatremiaDemonstration = useRenalHypernatremiaDemonstration({
     active: demonstrating && renalHypernatremiaDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypernatremia,
@@ -293,7 +301,8 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypermagnesemia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = renalHypermagnesemiaDemoSupported ? renalHypermagnesemiaDemonstration
+  const demonstration = delayedImmuneEventDemoSupported ? delayedImmuneEventDemonstration
+    : renalHypermagnesemiaDemoSupported ? renalHypermagnesemiaDemonstration
     : renalHypocalcemiaDemoSupported ? renalHypocalcemiaDemonstration
     : renalHypernatremiaDemoSupported ? renalHypernatremiaDemonstration
     : renalHyponatremiaDemoSupported ? renalHyponatremiaDemonstration
@@ -833,7 +842,7 @@ export function Cockpit({
                 spo2Percent: 'Pulse-derived saturation unavailable',
                 etco2MmHg: 'Exhaled carbon dioxide not supplied',
               }
-            : hypercalcemiaDemoSupported || hypocalcemiaDemoSupported || hyponatremiaCorrectionDemoSupported || avpDeficiencyDemoSupported || refeedingDemoSupported || perioperativeDiabetesDemoSupported || renalHyperkalemiaDemoSupported || renalHypokalemiaDemoSupported || renalHyponatremiaDemoSupported || renalHypernatremiaDemoSupported || renalHypocalcemiaDemoSupported || renalHypermagnesemiaDemoSupported
+            : hypercalcemiaDemoSupported || hypocalcemiaDemoSupported || hyponatremiaCorrectionDemoSupported || avpDeficiencyDemoSupported || refeedingDemoSupported || perioperativeDiabetesDemoSupported || renalHyperkalemiaDemoSupported || renalHypokalemiaDemoSupported || renalHyponatremiaDemoSupported || renalHypernatremiaDemoSupported || renalHypocalcemiaDemoSupported || renalHypermagnesemiaDemoSupported || delayedImmuneEventDemoSupported
               ? { etco2MmHg: 'Exhaled carbon dioxide is not supplied in this lesson',
                   fio2: 'Oxygen setting is not modeled' }
             : myxedemaDemoSupported
@@ -949,6 +958,7 @@ export function Cockpit({
           silentInteraction={equipment?.resuscitation.silentInteraction}
           easyLabel={equipment?.resuscitation.easyLabel}
           renalHyponatremiaGuidance={session.guidance}
+          delayedImmuneEventGuidance={session.guidance}
           renalHypernatremiaGuidance={session.guidance}
           renalHypocalcemiaGuidance={session.guidance}
           renalHypermagnesemiaGuidance={session.guidance}
@@ -1727,12 +1737,12 @@ export function Cockpit({
       </div>
 
       {/* Guidance. Non-blocking, dismissible, and never shown during an alarm. */}
-      {!demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !hypercalcemiaDemoSupported && !hypocalcemiaDemoSupported && !hyponatremiaCorrectionDemoSupported && !avpDeficiencyDemoSupported && !refeedingDemoSupported && !perioperativeDiabetesDemoSupported && !renalHyperkalemiaDemoSupported && !renalHypokalemiaDemoSupported && !renalHyponatremiaDemoSupported && !renalHypernatremiaDemoSupported && !renalHypocalcemiaDemoSupported && !renalHypermagnesemiaDemoSupported && tutorIntroductionOpen && session.alarms.length === 0 ? (
+      {!demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !hypercalcemiaDemoSupported && !hypocalcemiaDemoSupported && !hyponatremiaCorrectionDemoSupported && !avpDeficiencyDemoSupported && !refeedingDemoSupported && !perioperativeDiabetesDemoSupported && !renalHyperkalemiaDemoSupported && !renalHypokalemiaDemoSupported && !renalHyponatremiaDemoSupported && !renalHypernatremiaDemoSupported && !renalHypocalcemiaDemoSupported && !renalHypermagnesemiaDemoSupported && !delayedImmuneEventDemoSupported && tutorIntroductionOpen && session.alarms.length === 0 ? (
         <TutorIntroduction onDismissPermanently={() => {
           setTutorIntroductionDismissed(true);
           setTutorIntroductionOpen(false);
         }} />
-      ) : !demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !hypercalcemiaDemoSupported && !hypocalcemiaDemoSupported && !hyponatremiaCorrectionDemoSupported && !avpDeficiencyDemoSupported && !refeedingDemoSupported && !perioperativeDiabetesDemoSupported && !renalHyperkalemiaDemoSupported && !renalHypokalemiaDemoSupported && !renalHyponatremiaDemoSupported && !renalHypernatremiaDemoSupported && !renalHypocalcemiaDemoSupported && !renalHypermagnesemiaDemoSupported && !tutorIntroductionOpen && prompt ? (
+      ) : !demonstrating && scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !hypercalcemiaDemoSupported && !hypocalcemiaDemoSupported && !hyponatremiaCorrectionDemoSupported && !avpDeficiencyDemoSupported && !refeedingDemoSupported && !perioperativeDiabetesDemoSupported && !renalHyperkalemiaDemoSupported && !renalHypokalemiaDemoSupported && !renalHyponatremiaDemoSupported && !renalHypernatremiaDemoSupported && !renalHypocalcemiaDemoSupported && !renalHypermagnesemiaDemoSupported && !delayedImmuneEventDemoSupported && !tutorIntroductionOpen && prompt ? (
         <TutorPromptCard
           prompt={prompt}
           collapsed={tutorCollapsed}
@@ -1872,7 +1882,7 @@ export function Cockpit({
             and cue is also shown.
           </p>
         </div>
-        {scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !hypercalcemiaDemoSupported && !hypocalcemiaDemoSupported && !hyponatremiaCorrectionDemoSupported && !avpDeficiencyDemoSupported && !refeedingDemoSupported && !perioperativeDiabetesDemoSupported && !renalHyperkalemiaDemoSupported && !renalHypokalemiaDemoSupported && !renalHyponatremiaDemoSupported && !renalHypernatremiaDemoSupported && !renalHypocalcemiaDemoSupported && !renalHypermagnesemiaDemoSupported && <Button onClick={() => {
+        {scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !hypercalcemiaDemoSupported && !hypocalcemiaDemoSupported && !hyponatremiaCorrectionDemoSupported && !avpDeficiencyDemoSupported && !refeedingDemoSupported && !perioperativeDiabetesDemoSupported && !renalHyperkalemiaDemoSupported && !renalHypokalemiaDemoSupported && !renalHyponatremiaDemoSupported && !renalHypernatremiaDemoSupported && !renalHypocalcemiaDemoSupported && !renalHypermagnesemiaDemoSupported && !delayedImmuneEventDemoSupported && <Button onClick={() => {
           setShortcutsOpen(false);
           setTutorIntroductionOpen(true);
         }}>
