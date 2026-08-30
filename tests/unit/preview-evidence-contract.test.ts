@@ -7,7 +7,7 @@
  * are hoping about.
  */
 import { describe, expect, it } from 'vitest';
-import { MATURITY_SUBJECT_KINDS } from '@platform/catalog/maturity';
+import { MATURITY_SUBJECT_KINDS, maturityFor, type MaturityCatalog } from '@platform/catalog/maturity';
 import {
   PREVIEW_BLOCKING_GATES, previewEvidenceFor, previewPublication,
 } from '@platform/governance/publication';
@@ -141,5 +141,48 @@ describe('Requirement: The Shipped Content Carries What Its Rule Reads', () => {
     if (contract.contract !== 'rule') throw new Error('expected a rule');
     for (const gate of PREVIEW_BLOCKING_GATES) expect(contract.evidence.passed).toContain(gate);
     expect(REGIONS.length).toBeGreaterThan(0);
+  });
+});
+
+/**
+ * A `preview` status is a claim that the evidence passed for THIS version of THIS
+ * item. Two things have to hold for that claim to mean anything: the evidence has
+ * to actually pass, and the record has to be the one for the exact version being
+ * published. Marking something `preview` is not what makes it publishable.
+ */
+describe('Requirement: Preview Is Earned Per Exact Version', () => {
+  const catalog: MaturityCatalog = {
+    schemaVersion: 1,
+    moduleId: 'anesthesia',
+    recordCount: 1,
+    records: [{ ...PREVIEW_RECORD, subjectId: 'an-explainer', recordId: 'explanation:an-explainer@1.0.0' }],
+  };
+
+  it('refuses a preview record whose evidence does not pass', () => {
+    const contract = previewEvidenceFor('explanation', { ...COMPLETE_EXPLAINER, reflects: undefined }, OPTIONS);
+    if (contract.contract !== 'rule') throw new Error('expected a rule');
+    const verdict = previewPublication(catalog.records[0]!, contract.evidence);
+    expect(verdict.status).toBe('blocked');
+    if (verdict.status !== 'blocked') throw new Error('unreachable');
+    expect(verdict.reasons).toContain('missing preview gate: sources');
+  });
+
+  it('resolves no record for a version that was never judged', () => {
+    expect(maturityFor(catalog, 'explanation', 'an-explainer', '1.0.0')).toBeDefined();
+    // The content changed; the record for the old version does not carry over.
+    expect(maturityFor(catalog, 'explanation', 'an-explainer', '1.0.1')).toBeUndefined();
+    // Nor does another item's record, however similar the id looks.
+    expect(maturityFor(catalog, 'explanation', 'an-explainer-2', '1.0.0')).toBeUndefined();
+    // Nor the same id under a different kind.
+    expect(maturityFor(catalog, 'drug-card', 'an-explainer', '1.0.0')).toBeUndefined();
+  });
+
+  it('keeps draft and withdrawn unpublishable however good the evidence is', () => {
+    const contract = previewEvidenceFor('explanation', COMPLETE_EXPLAINER, OPTIONS);
+    if (contract.contract !== 'rule') throw new Error('expected a rule');
+    for (const status of ['draft', 'withdrawn'] as const) {
+      const verdict = previewPublication({ ...PREVIEW_RECORD, status }, contract.evidence);
+      expect(verdict.status, status).toBe('blocked');
+    }
   });
 });

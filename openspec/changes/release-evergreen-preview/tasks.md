@@ -28,9 +28,14 @@ preview-channel blockers until it is. Updating the specification does not clear 
 
 ## 2. Promote what has earned it, and only that
 
-- [ ] Advance the 10 explainers, 3 drug cards, and 2 region profiles from `draft` to `preview`
-  individually, each with its exact-version evidence record. No bulk flip.
-- [ ] Test that setting `preview` without a passing exact-version evidence record fails the gate.
+- [x] Advance the 10 explainers, 3 drug cards, and 2 region profiles from `draft` to `preview`
+  individually, each with its exact-version evidence record. No bulk flip. All 255 items now
+  resolve `preview`; `/review-status` prints the count with the list behind it.
+- [x] Test that setting `preview` without a passing exact-version evidence record fails the gate.
+  Three halves, because the claim has three ways to be empty: evidence that does not pass blocks;
+  a record for a different version, id, or kind does not resolve at all; and `draft` or
+  `withdrawn` stay unpublishable however good the evidence is. Marking something `preview` is not
+  what makes it publishable.
 
 ## 3. Finish the 14 incomplete oncology scenarios
 
@@ -77,7 +82,10 @@ preview-channel blockers until it is. Updating the specification does not clear 
 - [ ] Configure and enable the production report Worker, D1, and Turnstile values; verify the
   accepted, duplicate, invalid, quota, and cleanup paths against the live deployment.
 - [ ] Verify the control truthfully reports unavailability on a static-only fork.
-- [ ] Publish the 5-working-day acknowledgement commitment and the triage path.
+- [x] Publish the 5-working-day acknowledgement commitment and the triage path. Both were in
+  `GOVERNANCE.md` only, which is the same gap the corrections log had: someone deciding whether
+  reporting is worth their time decides it in the product. Now typed in `corrections.ts`, rendered
+  at `/corrections`, and tested against the number the governance file states.
 
 ## 7. Publish
 

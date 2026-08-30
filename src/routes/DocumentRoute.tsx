@@ -18,7 +18,7 @@ import { SOURCES, formatSource, requireSource } from '@platform/docs/sources';
 import { VERIFIED_CONSTANTS, confirmedCount } from '@platform/docs/verified-constants';
 import { PRIVACY_CLAIMS } from '@platform/docs/privacy-claims';
 import {
-  CORRECTIONS, CORRECTIONS_EMPTY_REASON, CORRECTIONS_POLICY,
+  CORRECTIONS, CORRECTIONS_EMPTY_REASON, CORRECTIONS_POLICY, CORRECTIONS_TRIAGE,
 } from '@platform/docs/corrections';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { routeFor } from './routes';
@@ -450,6 +450,16 @@ function CorrectionsBody() {
         <a href="/content-review">the content-review page</a> and return the exported file through
         their invitation channel.
       </p>
+
+      <h2>What happens next</h2>
+      <dl className="document__items">
+        {CORRECTIONS_TRIAGE.map((step) => (
+          <div key={step.stage}>
+            <dt>{step.stage}</dt>
+            <dd>{step.commitment}</dd>
+          </div>
+        ))}
+      </dl>
     </>
   );
 }

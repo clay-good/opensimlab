@@ -54,3 +54,49 @@ export const CORRECTIONS_POLICY: readonly string[] = [
   'An error that could teach an unsafe practice is triaged as urgent, and the affected content is '
   + 'disabled in the next build regardless of the release schedule.',
 ];
+
+/** The window a usable report is acknowledged in. Stated as a number so it is testable. */
+export const ACKNOWLEDGEMENT_WORKING_DAYS = 5;
+
+export interface TriageStep {
+  readonly stage: string;
+  readonly commitment: string;
+}
+
+/**
+ * What happens to a report after you send it.
+ *
+ * The commitment and the path existed in `GOVERNANCE.md`, which is a file in a
+ * repository — the same gap the corrections log had. Someone deciding whether it
+ * is worth their time to tell us we are wrong is deciding it in the product, so
+ * the answer belongs there.
+ *
+ * The second step is the one that keeps this honest. A report is DETECTION, not
+ * review: no item's status changes on report volume, only after somebody
+ * reproduces the problem and checks an authoritative source. Saying so means a
+ * flood of reports cannot be mistaken for a signature, and one report from a
+ * clinician who is right is not diluted by nine who are not.
+ */
+export const CORRECTIONS_TRIAGE: readonly TriageStep[] = [
+  {
+    stage: 'Acknowledged',
+    commitment: `A usable report is acknowledged within ${ACKNOWLEDGEMENT_WORKING_DAYS} working `
+      + 'days. Where public intake is unavailable — including on a static-only fork — the control '
+      + 'says so rather than silently sending anywhere.',
+  },
+  {
+    stage: 'Reproduced and source-checked',
+    commitment: 'A report is detection, not review. No item\'s status changes on report volume, '
+      + 'only after the problem is reproduced and checked against an authoritative source.',
+  },
+  {
+    stage: 'Urgent, if it could teach unsafe practice',
+    commitment: 'The affected content is disabled in the next build regardless of the release '
+      + 'schedule, and this log records the timeline.',
+  },
+  {
+    stage: 'Recorded',
+    commitment: 'The correction is appended here permanently, with what was wrong, what a learner '
+      + 'might have concluded, what changed, and which build carried the fix.',
+  },
+];

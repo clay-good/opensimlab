@@ -12,7 +12,8 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
-  CORRECTIONS, CORRECTIONS_EMPTY_REASON, CORRECTIONS_POLICY,
+  ACKNOWLEDGEMENT_WORKING_DAYS, CORRECTIONS, CORRECTIONS_EMPTY_REASON, CORRECTIONS_POLICY,
+  CORRECTIONS_TRIAGE,
 } from '@platform/docs/corrections';
 import { routeFor } from '@routes/routes';
 
@@ -57,5 +58,35 @@ describe('Requirement: The Corrections Log Is One Permanent Record', () => {
         entry.reportedBy, entry.whatChanged, entry.releasedIn,
       ]) expect(field.trim().length).toBeGreaterThan(0);
     }
+  });
+});
+
+/**
+ * The commitment is what a reader weighs before deciding a report is worth their
+ * time, so it belongs in the product rather than only in `GOVERNANCE.md`.
+ */
+describe('Requirement: The Triage Path Is Published, Not Just Promised', () => {
+  it('states the acknowledgement window as the same number the governance file does', () => {
+    expect(ACKNOWLEDGEMENT_WORKING_DAYS).toBe(5);
+    const governance = readFileSync(join(process.cwd(), 'GOVERNANCE.md'), 'utf8');
+    expect(governance).toContain('acknowledged within five working days');
+    expect(CORRECTIONS_TRIAGE[0]!.commitment).toContain('within 5 working days');
+  });
+
+  it('says a report is detection rather than review, so volume changes no status', () => {
+    const path = CORRECTIONS_TRIAGE.map((step) => step.commitment).join(' ');
+    expect(path).toContain('detection, not review');
+    expect(path).toContain('report volume');
+    expect(path).toContain('authoritative source');
+  });
+
+  it('commits to disabling unsafe content off the release schedule', () => {
+    const urgent = CORRECTIONS_TRIAGE.find((step) => step.stage.includes('unsafe'));
+    expect(urgent).toBeDefined();
+    expect(urgent!.commitment).toContain('regardless of the release schedule');
+  });
+
+  it('names an unavailable intake path rather than implying one always works', () => {
+    expect(CORRECTIONS_TRIAGE[0]!.commitment).toContain('static-only fork');
   });
 });
