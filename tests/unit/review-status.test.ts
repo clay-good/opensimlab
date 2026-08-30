@@ -12,8 +12,9 @@ import { MATURITY_STATUSES } from '@platform/catalog/maturity';
 import { MATURITY_LABELS } from '@platform/governance/publication';
 import { EDITORIAL_BOARD } from '@platform/governance/records';
 import {
-  honestySurfaceBlockers, itemKey, reviewStatusItems, reviewStatusReport,
+  exportDisclosureBlockers, honestySurfaceBlockers, itemKey, reviewStatusItems, reviewStatusReport,
 } from '@platform/governance/review-status';
+import { NOT_CLINICALLY_REVIEWED, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { ROUTES, routeFor } from '@routes/routes';
 
 describe('Requirement: Every Item Says What It Is Published As', () => {
@@ -82,5 +83,37 @@ describe('Requirement: The Release Stops Without Its Honesty Surface', () => {
   it('blocks when the surface stops covering the whole corpus', () => {
     const blockers = honestySurfaceBlockers(ROUTES, report, report.total + 1);
     expect(blockers[0]).toContain('does not cover the corpus');
+  });
+});
+
+describe('Requirement: The Release Stops When An Export Drops A Statement', () => {
+  const both = [NOT_FOR_CLINICAL_USE, NOT_CLINICALLY_REVIEWED];
+
+  it('passes plain text carrying both statements', () => {
+    const text = `header\n${NOT_FOR_CLINICAL_USE}\n${NOT_CLINICALLY_REVIEWED}\n`;
+    expect(exportDisclosureBlockers([{ name: 'log', text }], both)).toEqual([]);
+  });
+
+  it('passes JSON, where the statements carry escaped quotes', () => {
+    const text = JSON.stringify({
+      notForClinicalUse: NOT_FOR_CLINICAL_USE, notClinicallyReviewed: NOT_CLINICALLY_REVIEWED,
+    });
+    expect(text).toContain('\\"');
+    expect(exportDisclosureBlockers([{ name: 'transcript', text }], both)).toEqual([]);
+  });
+
+  it('blocks an export that carries only the older statement', () => {
+    const blockers = exportDisclosureBlockers(
+      [{ name: 'practice history', text: NOT_FOR_CLINICAL_USE }], both,
+    );
+    expect(blockers).toHaveLength(1);
+    expect(blockers[0]).toContain('practice history');
+  });
+
+  it('names every export that is missing something, not just the first', () => {
+    const blockers = exportDisclosureBlockers(
+      [{ name: 'a', text: '' }, { name: 'b', text: '' }], both,
+    );
+    expect(blockers).toHaveLength(4);
   });
 });

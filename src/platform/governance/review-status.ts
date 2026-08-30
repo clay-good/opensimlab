@@ -176,3 +176,32 @@ export function honestySurfaceBlockers(
   }
   return blockers;
 }
+
+/**
+ * Why the release should stop, if an export has dropped a required statement.
+ *
+ * An export is an honesty surface like the review-status page is: a file that
+ * leaves the interface still has to say what it is and that nothing in it is
+ * signed. Takes the already-produced text of each export rather than the builders
+ * themselves, so this stays a pure string check and the gate does not have to
+ * import a React component to run it.
+ */
+export function exportDisclosureBlockers(
+  samples: readonly { readonly name: string; readonly text: string }[],
+  statements: readonly string[],
+): string[] {
+  const blockers: string[] = [];
+  for (const sample of samples) {
+    for (const statement of statements) {
+      // A JSON export carries the statement with its inner quotes escaped, which
+      // is what `JSON.stringify` produces without its own outer pair. Checking
+      // both forms means one rule covers the text exports and the JSON ones.
+      const escaped = JSON.stringify(statement).slice(1, -1);
+      const carries = sample.text.includes(statement) || sample.text.includes(escaped);
+      if (!carries) {
+        blockers.push(`the ${sample.name} export does not carry "${statement.slice(0, 48)}..."`);
+      }
+    }
+  }
+  return blockers;
+}

@@ -160,7 +160,7 @@
       },
       {
         "path": "src/platform/governance/review-notes.ts",
-        "sha256": "8c2f789a4fecbaac8b75e3dfd3cec1f7758ef4927db17460bd801154e47a29c0"
+        "sha256": "3836d7fbc789f3e153b6a5d6ebdd3fa3f44aa7e9383a747a0ce6bf39b315249d"
       },
       {
         "path": "src/platform/session/session-store.ts",
@@ -397,7 +397,7 @@
       },
       {
         "path": "src/platform/governance/review-notes.ts",
-        "sha256": "8c2f789a4fecbaac8b75e3dfd3cec1f7758ef4927db17460bd801154e47a29c0"
+        "sha256": "3836d7fbc789f3e153b6a5d6ebdd3fa3f44aa7e9383a747a0ce6bf39b315249d"
       },
       {
         "path": "src/platform/kernel/protocol.ts",
@@ -405,7 +405,7 @@
       },
       {
         "path": "src/platform/log/event-log.ts",
-        "sha256": "ce22d4838b46dc7ddaf9340080dcd39bdda078c6441068f042e0420d28eb7cb4"
+        "sha256": "7d3519293c3125729376b3ae09c819cea6400ef4a31b07c43dad6ea623761b80"
       },
       {
         "path": "src/platform/reporting/contracts.ts",
@@ -425,7 +425,7 @@
       },
       {
         "path": "src/platform/transcript/transcript.ts",
-        "sha256": "b64a41a34381fc5a78aedcd8a00a68b39a37befa471549ae3f454049185367a9"
+        "sha256": "e92df917470e0d3c2bf1d3ef4a2b21a47e4d2e400a4377efad729d430b64b537"
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
@@ -670,7 +670,7 @@
       },
       {
         "path": "src/platform/governance/review-notes.ts",
-        "sha256": "8c2f789a4fecbaac8b75e3dfd3cec1f7758ef4927db17460bd801154e47a29c0"
+        "sha256": "3836d7fbc789f3e153b6a5d6ebdd3fa3f44aa7e9383a747a0ce6bf39b315249d"
       },
       {
         "path": "src/platform/kernel/protocol.ts",

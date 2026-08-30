@@ -48,13 +48,19 @@ preview-channel blockers until it is. Updating the specification does not clear 
   rendered by `DocumentRoute` from `reviewStatusReport()`, which derives every item's status from
   the content rather than a written-down list. The front-page link is the honest-status line
   itself, so the claim carries the route to its own evidence.
-- [ ] Extend the first-load acknowledgement to state that content is not clinically reviewed, and
+- [x] Extend the first-load acknowledgement to state that content is not clinically reviewed, and
   link it to the review-status route.
-- [ ] Add the unreviewed-content statement to every export alongside the existing statement.
-- [ ] Add the release gate check that refuses to publish when any honesty surface is missing.
-  Done for the review-status surface: `honestySurfaceBlockers()` blocks a missing route, a
-  non-indexable one, and a list that has stopped covering the corpus. The acknowledgement and
-  export surfaces above are not yet covered, because they are not yet built.
+- [x] Add the unreviewed-content statement to every export alongside the existing statement.
+  `NOT_CLINICALLY_REVIEWED` sits beside `NOT_FOR_CLINICAL_USE` in the transcript, the event log as
+  text and as JSON, the concentration CSV, the reviewer's notes file, and the practice-history
+  export. The two say different things — one bounds what the simulator is for, the other discloses
+  that nothing is signed — so neither replaces the other.
+- [x] Add the release gate check that refuses to publish when any honesty surface is missing.
+  `honestySurfaceBlockers()` blocks a missing review-status route, a non-indexable one, and a list
+  that has stopped covering the corpus. `exportDisclosureBlockers()` blocks an export that has
+  dropped either statement. Two surfaces are held by their tests rather than the gate — the
+  concentration CSV and the acknowledgement modal are React modules that import CSS, and this
+  script has no loader for it.
 
 ## 6. Turn on public correction intake
 

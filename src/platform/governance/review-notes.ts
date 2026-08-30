@@ -13,6 +13,8 @@
  * content as reviewed. That still requires a named entry in the editorial board.
  */
 
+import { NOT_CLINICALLY_REVIEWED, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
+
 export type NoteSeverity = 'unsafe' | 'wrong' | 'misleading' | 'unclear' | 'minor';
 
 /** Ordered worst first, because that is the order a maintainer should act in. */
@@ -121,6 +123,10 @@ export function notesToMarkdown(
     'These are notes on what appears to be wrong. **This file is not a sign-off.** Nothing in ',
     'it marks any content as clinically reviewed, and recording a note does not make the ',
     'reviewer responsible for anything they did not flag.',
+    '',
+    NOT_FOR_CLINICAL_USE,
+    '',
+    NOT_CLINICALLY_REVIEWED,
     '',
   ];
 

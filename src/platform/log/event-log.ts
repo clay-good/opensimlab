@@ -7,7 +7,7 @@
  */
 
 import type { EngineEvent } from '@platform/kernel/protocol';
-import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
+import { NOT_CLINICALLY_REVIEWED, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 
 export type Severity = EngineEvent['severity'];
@@ -68,6 +68,7 @@ export class EventLog {
     const lines = [
       'Open Sim Lab session log',
       NOT_FOR_CLINICAL_USE,
+      NOT_CLINICALLY_REVIEWED,
       `Scenario: ${header.scenarioId}`,
       `Engine: ${header.engineVersion}   Model set: ${header.modelSetRevision}`,
       '',
@@ -83,6 +84,7 @@ export class EventLog {
     return JSON.stringify({
       format: 'opensimlab.event-log',
       notForClinicalUse: NOT_FOR_CLINICAL_USE,
+      notClinicallyReviewed: NOT_CLINICALLY_REVIEWED,
       ...header,
       entries: this.entries,
     }, null, 2);

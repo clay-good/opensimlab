@@ -1,6 +1,7 @@
 import type { ObjectiveFinding } from '@anesthesia/debrief/analysis';
 import type { PreparationPathId } from './preparation-paths';
 import { PREPARATION_PATH_IDS } from './preparation-paths';
+import { NOT_CLINICALLY_REVIEWED, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 
 export const PRACTICE_HISTORY_SCHEMA_VERSION = 1;
 export const PRACTICE_HISTORY_LIMIT = 50;
@@ -123,7 +124,12 @@ export function objectiveChanges(
 }
 
 export function practiceHistoryExport(history: readonly PracticeAttempt[]): string {
-  return `${JSON.stringify({ schemaVersion: 1, attempts: history }, null, 2)}\n`;
+  return `${JSON.stringify({
+    schemaVersion: 1,
+    notForClinicalUse: NOT_FOR_CLINICAL_USE,
+    notClinicallyReviewed: NOT_CLINICALLY_REVIEWED,
+    attempts: history,
+  }, null, 2)}\n`;
 }
 
 export function importPracticeHistory(text: string, storage?: Storage): PracticeAttempt[] {

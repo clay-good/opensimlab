@@ -12,7 +12,7 @@ import { Badge, Button, EmptyState } from '@platform/ui';
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import type { DrugConcentration } from '@platform/kernel/protocol';
 import type { HistorySample } from '@platform/session/session-store';
-import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
+import { NOT_CLINICALLY_REVIEWED, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { MODELS_BY_ID } from '@anesthesia/pharmacology/registry';
 
 const DRUG_TOKENS: Record<string, string> = {
@@ -227,6 +227,7 @@ function valueAt(points: readonly [number, number][], seconds: number): number |
 export function concentrationCsv(history: readonly HistorySample[]): string {
   const lines = [
     `# ${NOT_FOR_CLINICAL_USE}`,
+    `# ${NOT_CLINICALLY_REVIEWED}`,
     'time_s,drug,model_id,confidence,plasma,effect_site,unit',
   ];
   for (const sample of history) {

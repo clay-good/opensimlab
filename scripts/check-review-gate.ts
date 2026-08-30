@@ -33,7 +33,15 @@ import {
 } from '@platform/governance/publication';
 import { EDITORIAL_BOARD, additionalMaturitySubjects, reviewableItems } from '@platform/governance/records';
 import { gate, reportCoverage, uncoveredDomains } from '@platform/governance/review-gate';
-import { honestySurfaceBlockers, reviewStatusReport } from '@platform/governance/review-status';
+import {
+  exportDisclosureBlockers, honestySurfaceBlockers, reviewStatusReport,
+} from '@platform/governance/review-status';
+import { EventLog } from '@platform/log/event-log';
+import {
+  NOT_CLINICALLY_REVIEWED, NOT_FOR_CLINICAL_USE, TranscriptRecorder,
+} from '@platform/transcript/transcript';
+import { notesToMarkdown } from '@platform/governance/review-notes';
+import { practiceHistoryExport } from '@anesthesia/catalog/practice-history';
 import { ROUTES } from '@routes/routes';
 import { buildValidationReport } from '@platform/docs/validation-report';
 import { EXPLAINERS } from '@anesthesia/content/explainers';
@@ -290,6 +298,33 @@ const medicalSurgicalNursingQuality = qualityCatalogs.get('medical-surgical-nurs
     reviewStatusReport(),
     moduleCatalogs.reduce((sum, catalog) => sum + catalog.maturity.recordCount, 0),
   ));
+
+  // The exports are honesty surfaces too: a file that leaves the interface still
+  // has to say what it is and that nothing in it is signed. The concentration CSV
+  // and the acknowledgement modal are React modules that pull CSS in, which this
+  // script has no loader for, so those two are held by their tests instead.
+  const logHeader = { scenarioId: 'routine-induction', engineVersion: ENGINE_VERSION, modelSetRevision: '1' };
+  const eventLog = new EventLog();
+  blocking.push(...exportDisclosureBlockers([
+    {
+      name: 'transcript',
+      text: JSON.stringify(new TranscriptRecorder({
+        moduleId: 'anesthesia',
+        scenarioId: SCENARIOS[0]!.metadata.id,
+        versions: { engine: ENGINE_VERSION, content: '1.0.0', modelSet: '1', scenario: '1.0.0' },
+        practiceRegion: 'US',
+        seed: 1,
+        guidanceLevel: 'unassisted',
+      }).build('gate')),
+    },
+    { name: 'event log (text)', text: eventLog.toText(logHeader) },
+    { name: 'event log (JSON)', text: eventLog.toJson(logHeader) },
+    {
+      name: 'review notes',
+      text: notesToMarkdown([], { reviewer: '', appVersion: 'gate', generatedOn: '2026-01-01' }),
+    },
+    { name: 'practice history', text: practiceHistoryExport([]) },
+  ], [NOT_FOR_CLINICAL_USE, NOT_CLINICALLY_REVIEWED]));
 
   const failedBenchmarks = validation.benchmarks.filter((benchmark) => !benchmark.passes);
   if (failedBenchmarks.length > 0) {

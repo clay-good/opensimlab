@@ -42,6 +42,16 @@ export function NotForClinicalUseGate({ open, onAcknowledge }: {
         build have not yet had the independent check the project requires before calling them
         published.
       </p>
+      {/* The disclosure the release turns on. Someone acknowledging this once,
+          before anything is interactive, is the moment they are entitled to know
+          that nothing here is signed — and to check it rather than take our word,
+          which is what the link is for. */}
+      <p>
+        <strong>No clinician has reviewed this content.</strong> The editorial board is empty and
+        published as empty, and every item here is labeled &ldquo;Educational use only — not
+        clinically reviewed&rdquo;. <a href="/review-status">The review-status page</a> lists every
+        item and the label it carries.
+      </p>
       <p className="field__hint">
         This is asked once on this device and the answer is stored here. Nothing about it is sent
         anywhere.

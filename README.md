@@ -45,6 +45,11 @@ what you do changes where the patient goes next.
 
 ## How it works
 
+Every file the simulator exports — transcript, event log, concentration CSV, reviewer notes,
+practice history — carries both statements: that this is not for clinical use, and that no
+clinician has reviewed it. A file that leaves the interface leaves the labels behind, so it says
+so itself.
+
 **Your practice stays on your device.** No accounts, no analytics, no telemetry. Progress,
 transcripts, reflections, and debriefs live in your browser. Nothing is sent anywhere
 unless you open the problem-report form, preview exactly what it contains, and submit it

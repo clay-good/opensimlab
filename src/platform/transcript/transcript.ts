@@ -25,6 +25,23 @@ export const NOT_FOR_CLINICAL_USE =
   + 'decision-support tool, not a dosing calculator, and is not validated for any decision affecting '
   + 'a real patient.';
 
+/**
+ * The unreviewed-content statement, carried beside the one above in every export
+ * (platform/safety-and-scope → Exports carry the statement).
+ *
+ * The two say different things and both are needed. The statement above bounds
+ * what the simulator is FOR; this one discloses that nothing in it has been
+ * checked by a clinician. An exported file travels — into an inbox, a course
+ * pack, a shared drive — detached from the interface that labels every item, so
+ * it has to carry the disclosure itself, with the address of the page that lists
+ * the status of every item rather than a summary of it.
+ */
+export const NOT_CLINICALLY_REVIEWED =
+  'No clinician has reviewed this content. Every item in this build is published as '
+  + '"Educational use only — not clinically reviewed", the editorial board is empty and '
+  + 'published as empty, and the status of every item is listed at '
+  + 'https://opensimlab.com/review-status.';
+
 export interface TranscriptVersions {
   readonly engine: string;
   readonly content: string;
@@ -36,6 +53,7 @@ export interface Transcript {
   readonly format: 'opensimlab.transcript';
   readonly formatVersion: number;
   readonly notForClinicalUse: string;
+  readonly notClinicallyReviewed: string;
   readonly moduleId: string;
   readonly scenarioId: string;
   readonly versions: TranscriptVersions;
@@ -87,6 +105,7 @@ export class TranscriptRecorder {
       format: 'opensimlab.transcript',
       formatVersion: TRANSCRIPT_FORMAT_VERSION,
       notForClinicalUse: NOT_FOR_CLINICAL_USE,
+      notClinicallyReviewed: NOT_CLINICALLY_REVIEWED,
       moduleId: this.draft.moduleId,
       scenarioId: this.draft.scenarioId,
       versions: this.draft.versions,
