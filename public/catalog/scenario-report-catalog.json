@@ -3318,6 +3318,23 @@
       "limitationManifestHash": "sha256:aca932b122651610eaa59088467a2b7d7e94ca9de8d5d0e9931e2877214cd0e0"
     },
     {
+      "scenarioId": "silent-interaction-a-harm-with-nothing-to-find",
+      "contentVersion": "0.1.0",
+      "moduleId": "oncology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:47e3d0e9789069343f62d3338af32179e64165175357be71d410017f9e9190cb",
+      "defaultsHash": "sha256:e5c54ac67a29ad7ad1891ecdfa77c65d666f02f22e3445ff84901755409739af",
+      "maturityHash": "sha256:c0eb04c26332bc9f72258581bcb831d588d89603e3b93faa1a9d91ab8ba4f6dd",
+      "sourceManifestHash": "sha256:cb8ddec07d1bcb20df7cdbd4d0698038674907f6751d8406b9af20fc9280c525",
+      "limitationManifestHash": "sha256:f61604a923a128d482273954d7c6fb16fa6e6870659c3f8ea4d60a807630c641"
+    },
+    {
       "scenarioId": "trial-rule-a-rule-written-for-a-database",
       "contentVersion": "0.1.0",
       "moduleId": "oncology",

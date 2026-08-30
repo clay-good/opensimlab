@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 393,
+  "sourceCount": 395,
   "sources": [
     {
       "id": "renal-hypermagnesemia-series-2018",
@@ -5023,6 +5023,32 @@
       "verifiedAgainst": "Open-access full text at PMC12808996, introduction and results read directly, including the presentation table. A retrospective multicentre series of patients already diagnosed at centres that see them, so it describes the diagnosed rather than the exposed and its predictors are associations.",
       "verifiedOn": "2026-08-29",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/40996334/"
+    },
+    {
+      "id": "oncology-ppi-tki-survival-2022",
+      "pmid": "35488047",
+      "authors": "Lee CH, Shen MC, Tsai MJ, et al",
+      "title": "Proton pump inhibitors reduce the survival of advanced lung cancer patients with therapy of gefitinib or erlotinib",
+      "publication": "Scientific Reports",
+      "year": 2022,
+      "locator": "12:7002; doi:10.1038/s41598-022-10938-x; PMC9054789; retrospective cohort from the Taiwan Cancer Registry, National Health Insurance and Death Registry databases, 1 January 2010 to 30 December 2018; 4,340 gefitinib and 1,635 erlotinib users; concurrent proton pump inhibitor use and overall survival, median 14.35 against 21.87 months with gefitinib, adjusted hazard ratio 1.58 (95% CI 1.42-1.76), and 16.97 against 23.92 months with erlotinib, adjusted hazard ratio 1.54 (95% CI 1.30-1.82); time to next treatment used as a surrogate for progression",
+      "usedFor": "That the interaction is more than theoretical, given with the interval and with the study design stated, so that a learner can refuse both dismissal and the overstatement that a particular patient has lost a measurable amount of survival. No drug, dose, substitution, or timing separation is adopted.",
+      "verifiedAgainst": "PubMed PMID 35488047 for the citation and abstract and the open-access full text at PMC9054789 for the design, cohort sizes, hazard ratios and the authors’ own limitations. It is retrospective and database-derived; the authors write association rather than causation, note they could not identify drugs dispensed outside insurance payment, and used time to next treatment because progression data were unavailable. Confounding by indication is not excluded.",
+      "verifiedOn": "2026-08-30",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/35488047/"
+    },
+    {
+      "id": "oncology-ppi-anticancer-review-2024",
+      "pmid": "38968741",
+      "authors": "Raoul JL, Hansten PD",
+      "title": "Proton pump inhibitors and cancer treatments: emerging evidence against coadministration",
+      "publication": "Cancer Treatment Reviews",
+      "year": 2024,
+      "locator": "129:102794; doi:10.1016/j.ctrv.2024.102794; most tyrosine kinase inhibitors depend on gastric acidity for absorption, and retrospective studies indicate concurrent proton pump inhibitor use reduces the survival benefit of drugs including erlotinib, gefitinib and pazopanib; the authors recommend informing patients and clinicians and note antacids or H2 blockers as alternatives for those requiring acid suppression",
+      "usedFor": "The direction the harm runs — reduced absorption and therefore less treatment rather than more toxicity, which is why nothing appears abnormal — and the fact that alternatives exist for a patient who genuinely needs acid suppression, which is why this lesson refuses a bare instruction to stop.",
+      "verifiedAgainst": "PubMed PMID 38968741 bibliographic record and abstract. It is a narrative review summarising retrospective evidence rather than a systematic synthesis, and it is cited here for mechanism and for the existence of alternatives rather than for any effect estimate.",
+      "verifiedOn": "2026-08-30",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/38968741/"
     },
     {
       "id": "oncology-irecist-2017",

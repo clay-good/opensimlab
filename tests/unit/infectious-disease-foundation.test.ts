@@ -41,7 +41,7 @@ describe('Infectious disease module foundation', () => {
     expect(getInfectiousDiseaseScenario('not-a-scenario')).toBeUndefined();
     expect(availableModules().map((entry) => entry.id)).toContain('infectious-disease');
     expect(READY_MODULE_COUNT).toBe(15);
-    expect(READY_SCENARIO_COUNT).toBe(238);
+    expect(READY_SCENARIO_COUNT).toBe(239);
   });
 
   it('validates the authored scenario and declares honest preview evidence', () => {

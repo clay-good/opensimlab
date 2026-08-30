@@ -68,6 +68,7 @@ import { supportsRareEarlyMyocarditis } from '../../oncology/rare-early-myocardi
 import { supportsLoweringTheCount } from '../../oncology/lowering-the-count';
 import { supportsInheritedUrgency } from '../../oncology/inherited-urgency';
 import { supportsTrialRule } from '../../oncology/trial-rule';
+import { supportsSilentInteraction } from '../../oncology/silent-interaction';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -654,6 +655,47 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-oncology-silent-interaction-')) {
+      if (!supportsSilentInteraction(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The oncology medicines-reconciliation lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^silent-interaction-${id}-\\d+$`).test(entry.eventId));
+      const reconciled = event('reconciled'); const direction = event('direction-recorded');
+      const escalation = event('escalation-requested'); const intent = event('intent-recorded');
+      const boundaries = event('boundary-review'); const handoff = event('handoff');
+      const pharmacy = event('pharmacy-record-arrives');
+      const answered = log.find((entry) => /^silent-interaction-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedStop = event('stop-refused'); const refusedNothing = event('nothing-refused');
+      const refusedTheoretical = event('theoretical-refused'); const refusedNotes = event('notes-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'recognize-oncology-silent-interaction-what-she-swallows': { met: !!reconciled, tick: reconciled?.tick,
+          finding: (reconciled ? 'The three supplied lists were compared against each other rather than any one of them being trusted. ' : 'The lists were never reconciled, so the only place anything was wrong went unread. ')
+            + (refusedNothing ? 'Concluding that nothing is wrong and there is nothing to do was attempted and refused. ' : '')
+            + (pharmacy ? 'The pharmacy list arrived during this run holding an item neither other list did, bought rather than prescribed. ' : '')
+            + 'The question that finds this is not what has been prescribed; it is what she swallows.' },
+        'record-oncology-silent-interaction-the-direction-of-harm': { met: !!direction, tick: direction?.tick,
+          finding: (direction ? 'The interaction was recorded together with the direction its harm runs. ' : 'The direction of harm was never recorded, which is what leaves a learner looking at the patient for something to find. ')
+            + 'These tablets need an acid stomach to dissolve, so acid suppression means less drug absorbed: the harm is less treatment, not toxicity, and there was never going to be anything abnormal to see.' },
+        'activate-oncology-silent-interaction-a-route-that-ends-with-a-person': { met: !!escalation, tick: escalation?.tick,
+          finding: (escalation ? 'The treating team was called with the lists and the dates of the overlap. ' : 'The treating team was never told, and they hold both the decision and the prescribing record this fell out of. ')
+            + (refusedNotes ? 'Writing it in the notes and moving on was attempted and refused; the record is where this problem already happened. ' : '')
+            + (answered ? 'They answered, took ownership, and asked for the dates rather than the diagnosis. ' : 'They had not answered by the end of this run. ') },
+        'recognize-oncology-silent-interaction-neither-theory-nor-proof': { met: !!boundaries && !!direction, tick: boundaries?.tick,
+          finding: (refusedTheoretical ? 'Dismissing the interaction as theoretical was attempted and refused. ' : '')
+            + 'Across 4,340 and 1,635 patients, concurrent acid suppression was associated with adjusted hazard ratios for death of 1.58 (95% CI 1.42 to 1.76) and 1.54 (95% CI 1.30 to 1.82), with an understood mechanism pointing the same way. That is more than theory and less than proof, and neither word on its own is the right one to use in front of her.' },
+        'record-oncology-silent-interaction-bounded-qualified-intent': { met: !!intent, tick: intent?.tick,
+          finding: (intent ? 'Continuing the acid suppression, replacing it, changing the targeted treatment, and what she is told were all recorded as the treating team’s and the original prescriber’s. ' : 'Bounded qualified-team intent was never recorded. ')
+            + (refusedStop ? 'Telling her to stop the tablets today was attempted and refused; she was given them for a reason, and an instruction that reaches neither record repeats the original fault. ' : '')
+            + 'Nothing was prescribed, stopped, substituted, or re-timed here.' },
+        'review-oncology-silent-interaction-boundaries-and-their-certainty': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The boundaries were reviewed in both directions. ' : 'The boundary and certainty review is missing. ')
+            + 'The estimates are retrospective and database-derived, their authors write association rather than causation, time to next treatment stood in for progression, and people prescribed acid suppressants may differ in ways adjustment does not recover. The interval does not cross one and it still cannot quantify anything about her.' },
+        'handoff-oncology-silent-interaction-an-absence-that-travels': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'All three lists and how they differ, the item bought rather than prescribed, the weeks of overlap, and the direction of harm all travelled. ' : 'The reconciliation, the recorded direction, or continuing-care ownership remains incomplete. ')
+            + 'What was handed over contained no abnormality at all, which is the only form this particular finding can take.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-oncology-trial-rule-')) {
       if (!supportsTrialRule(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The oncology response-assessment lesson was not active.' } satisfies ObjectiveFinding;

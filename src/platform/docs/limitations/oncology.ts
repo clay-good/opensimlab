@@ -226,4 +226,28 @@ export const ONCOLOGY_LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Neither number is about her. The hyperprogression range is wide because the studies define it differently and study different tumours, and the pseudoprogression series are small; both are contested measurements rather than settled ones. What distinguishes the two possibilities in an individual is the clinical course over time and the judgement of the team that knows her treatment, which is precisely why this lesson makes the escalation rather than the classification.',
     briefIn: ['trial-rule-a-rule-written-for-a-database'],
   },
+  {
+    id: 'silent-interaction-presentation-and-the-records-are-authored',
+    headline: 'Three lists, one arriving late, and a patient who is well throughout.',
+    simplification: 'The case supplies a clinic list, a general practice list, and a community pharmacy list that arrives at twenty minutes holding an item bought rather than prescribed. Every observation and every supplied result is normal and stays normal. No absorption, exposure, or treatment-effect model runs underneath.',
+    whereItMisleads: 'A learner expects the missing item to surface on its own in practice, or reads the tidy three-list structure as how medicines records usually differ.',
+    correctUnderstanding: 'The pharmacy list arrives whatever the learner does, and it arrives because the lesson is about what a reconciliation is worth before and after it. Nothing supplies it in a real clinic unless somebody asks, records may disagree in far messier ways or agree while all being wrong, and the item that matters may be one the patient does not think of as a medicine at all. Nothing here models any relationship between a choice and her disease.',
+    briefIn: ['silent-interaction-a-harm-with-nothing-to-find'],
+  },
+  {
+    id: 'silent-interaction-controls-are-reconciliation-and-escalation-only',
+    headline: 'Nothing is prescribed, stopped, substituted, or re-timed here.',
+    simplification: 'The learner compares the supplied lists, records the interaction and the direction its harm runs, calls the treating team, records bounded qualified-team intent, and reviews the boundaries.',
+    whereItMisleads: 'The refusal to tell her to stop the acid tablets is read as this lesson saying the acid suppression should continue, or the recording of the interaction is read as a recommendation to substitute or separate the doses.',
+    correctUnderstanding: 'The lesson takes no position on what should happen to either medicine. It refuses an instruction issued from a room that reaches neither of the records this fell out of, which repeats the original fault in the other direction, and it leaves stopping, substituting, separating the timing, and continuing to the treating team and the original prescriber. She was given the acid tablet for a reason and may still need it. No drug, dose, route, timing separation, or substitution is chosen or displayed.',
+    briefIn: ['silent-interaction-a-harm-with-nothing-to-find'],
+  },
+  {
+    id: 'silent-interaction-association-is-not-this-patient-s-lost-benefit',
+    headline: 'An adjusted hazard ratio from a database is not a measure of what she has lost.',
+    simplification: 'The case reports adjusted hazard ratios for death of 1.58 and 1.54, with confidence intervals from 1.42 to 1.76 and 1.30 to 1.82, from a retrospective cohort of 4,340 and 1,635 patients.',
+    whereItMisleads: 'A learner converts the estimate into a statement that six weeks of overlap have cost this woman a specific amount of survival, or in the other direction dismisses the whole thing as confounded and therefore ignorable.',
+    correctUnderstanding: 'The estimate is an association measured across a population from prescribing and registry data, and its own authors say association rather than causation; people prescribed acid suppressants may be sicker, or differ in ways adjustment does not recover, and the study used time to next treatment as a surrogate because progression data were unavailable. What raises it above a database artefact is that the mechanism is understood and points the same way. What it still cannot do is quantify anything about her, which is why this lesson has the learner report the overlap rather than estimate a loss.',
+    briefIn: ['silent-interaction-a-harm-with-nothing-to-find'],
+  },
 ];

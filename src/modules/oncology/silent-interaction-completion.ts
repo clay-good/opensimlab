@@ -1,0 +1,22 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
+import { SILENT_INTERACTION_A_HARM_WITH_NOTHING_TO_FIND } from './scenarios/silent-interaction-a-harm-with-nothing-to-find';
+import { SILENT_INTERACTION_FIXTURES } from './silent-interaction-fixtures';
+
+export function silentInteractionCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
+  if (moduleId !== 'oncology' || capabilityVersion !== '0.1.0-alpha.48'
+    || scenario.metadata.id !== SILENT_INTERACTION_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
+    || SILENT_INTERACTION_FIXTURES.contentVersion !== '0.1.0' || SILENT_INTERACTION_FIXTURES.seed !== 2822
+    || JSON.stringify(scenario) !== JSON.stringify(SILENT_INTERACTION_A_HARM_WITH_NOTHING_TO_FIND)) return [];
+  return [
+    { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['silent-interaction-fixtures.ts binds seed 2822 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No absorption, exposure, or treatment-effect model is claimed, and no outcome follows from any choice.'] },
+    { id: 'meaningful-progression', status: 'satisfied', evidence: ['silent-interaction.ts runs two authored transitions, and this is the only lesson in this module with no abnormal finding of any kind. At 20 minutes the community pharmacy list arrives and holds an item neither the clinic nor the general practice list did, bought rather than prescribed, so a reconciliation done before it and one done after it are not the same reconciliation. The treating team answers 40 minutes after it is called, takes ownership of whether acid suppression continues, whether an alternative replaces it, what happens to the targeted treatment and what she is told, and asks for the dates of the overlap. The list arrives whatever the learner did.'] },
+    { id: 'meaningful-actions-and-choices', status: 'satisfied', evidence: ['The learner reconciles the three supplied lists against each other, records the interaction and the direction its harm runs, calls the treating team, records bounded qualified-team treatment intent, and reviews the boundaries in both directions. Telling her to stop the tablets today, concluding that nothing is wrong so there is nothing to do, dismissing the interaction as theoretical, and writing it in the notes and moving on are each refused — the last because the record is where the problem already happened.'] },
+    { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The reconciliation, the recorded direction of harm, the call to the treating team, bounded intent, the boundary review, and a current assessment permit handoff with every prescribing decision open. Instructor takeover bounds a run with no escalation at 240 minutes, the longest in this module because a routine clinic is the one setting here that genuinely does not press.'] },
+    { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Seven event-bound objectives distinguish what is swallowed from what was prescribed, a harm whose direction is reduced treatment rather than toxicity, telling a person rather than a record, refusing both dismissal and overstatement of retrospective evidence, bounded qualified-team intent, reading an adjusted hazard ratio without converting it into this patient’s lost benefit, and handing off a finding that contains no abnormality. Refused shortcuts remain visible, and no diagnosis, treatment effect, or outcome is certified.'] },
+    { id: 'reference-transcripts', status: 'satisfied', evidence: ['silent-interaction-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine, including the authored arrival of the pharmacy list.'] },
+    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
+    { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
+  ];
+}

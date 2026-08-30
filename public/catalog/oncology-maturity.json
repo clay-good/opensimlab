@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "oncology",
-  "recordCount": 9,
+  "recordCount": 10,
   "records": [
     {
       "recordId": "scenario:delayed-immune-event-a-drug-that-stopped-months-ago@0.1.0",
@@ -100,6 +100,17 @@
       "evidence": [
         "/catalog/oncology-completion-audit.json#trial-rule-a-rule-written-for-a-database@0.1.0",
         "/catalog/oncology-quality-audit.json#trial-rule-a-rule-written-for-a-database@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:silent-interaction-a-harm-with-nothing-to-find@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "silent-interaction-a-harm-with-nothing-to-find",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/oncology-completion-audit.json#silent-interaction-a-harm-with-nothing-to-find@0.1.0",
+        "/catalog/oncology-quality-audit.json#silent-interaction-a-harm-with-nothing-to-find@0.1.0"
       ]
     }
   ]

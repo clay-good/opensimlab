@@ -35,6 +35,7 @@ import { rareEarlyMyocarditisCompletionEvidence } from '../../oncology/rare-earl
 import { loweringTheCountCompletionEvidence } from '../../oncology/lowering-the-count-completion';
 import { inheritedUrgencyCompletionEvidence } from '../../oncology/inherited-urgency-completion';
 import { trialRuleCompletionEvidence } from '../../oncology/trial-rule-completion';
+import { silentInteractionCompletionEvidence } from '../../oncology/silent-interaction-completion';
 import { countedRateCompletionEvidence } from '../../medical-surgical-nursing/counted-rate-completion';
 import { pairedReadingCompletionEvidence } from '../../medical-surgical-nursing/paired-reading-completion';
 import { afferentLimbCompletionEvidence } from '../../medical-surgical-nursing/afferent-limb-completion';
@@ -159,6 +160,7 @@ export function auditClinicalScenario(
     ...loweringTheCountCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...inheritedUrgencyCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...trialRuleCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...silentInteractionCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...countedRateCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...pairedReadingCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...afferentLimbCompletionEvidence(scenario, capabilityVersion, moduleId),

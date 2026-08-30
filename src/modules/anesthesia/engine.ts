@@ -92,6 +92,8 @@ import { InheritedUrgency } from '../oncology/inherited-urgency';
 import { supportsInheritedUrgency } from '../oncology/inherited-urgency';
 import { TrialRule } from '../oncology/trial-rule';
 import { supportsTrialRule } from '../oncology/trial-rule';
+import { SilentInteraction } from '../oncology/silent-interaction';
+import { supportsSilentInteraction } from '../oncology/silent-interaction';
 
 /** The engine's own version, recorded in every transcript. */
 export const ENGINE_VERSION = '0.1.0-alpha.48';
@@ -1801,6 +1803,7 @@ export class AnesthesiaEngine {
   private readonly loweringTheCount: LoweringTheCount | null;
   private readonly inheritedUrgency: InheritedUrgency | null;
   private readonly trialRule: TrialRule | null;
+  private readonly silentInteraction: SilentInteraction | null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1984,6 +1987,8 @@ export class AnesthesiaEngine {
     if (this.inheritedUrgency) this.rhythm = 'sinus';
     this.trialRule = supportsTrialRule(options.scenario) ? new TrialRule() : null;
     if (this.trialRule) this.rhythm = 'sinus';
+    this.silentInteraction = supportsSilentInteraction(options.scenario) ? new SilentInteraction() : null;
+    if (this.silentInteraction) this.rhythm = 'sinus';
     this.practiceRegion = options.practiceRegion;
     this.seed = options.seed;
     if (options.scenario.timeline.some((event) => event.type === 'narrative'
@@ -2122,6 +2127,11 @@ export class AnesthesiaEngine {
     if (this.lastKnownWell && action.type !== 'last-known-well-response' && action.type !== 'silence-alarm') {
       this.log('warning', 'assessment', `last-known-well-generic-action-refused-${this.currentTick}`,
         'Only this lesson\u2019s bound-recording, recollection-recording, activation, consequence-recording, boundary-review, observation, and handoff choices are available.');
+      return;
+    }
+    if (this.silentInteraction && action.type !== 'silent-interaction-response' && action.type !== 'silence-alarm') {
+      this.log('warning', 'assessment', `silent-interaction-generic-action-refused-${this.currentTick}`,
+        'Only this lesson\u2019s reconciliation, interaction-direction, escalation, bounded-intent, boundary-review, observation, and handoff choices are available.');
       return;
     }
     if (this.trialRule && action.type !== 'trial-rule-response' && action.type !== 'silence-alarm') {
@@ -3226,6 +3236,19 @@ export class AnesthesiaEngine {
         }
         for (const event of this.possibleSepsis.apply(action.payload.action, this.currentTick)) {
           this.log('warning', 'assessment', `possible-sepsis-${event.id}-${this.currentTick}`, event.message);
+        }
+        break;
+      }
+      case 'silent-interaction-response': {
+        if (!this.silentInteraction || Reflect.ownKeys(action.payload).length !== 1
+          || !Object.hasOwn(action.payload, 'action')
+          || !Object.getOwnPropertyDescriptor(action.payload, 'action')!.enumerable
+          || !Object.hasOwn(Object.getOwnPropertyDescriptor(action.payload, 'action')!, 'value')) {
+          this.log('warning', 'assessment', `silent-interaction-action-refused-${this.currentTick}`, 'Only the declared dose-free medicines-reconciliation choices are available in this lesson.');
+          break;
+        }
+        for (const event of this.silentInteraction.apply(action.payload.action, this.currentTick)) {
+          this.log('warning', 'assessment', `silent-interaction-${event.id}-${this.currentTick}`, event.message);
         }
         break;
       }
@@ -15188,6 +15211,9 @@ export class AnesthesiaEngine {
     for (const event of this.trialRule?.advance(this.currentTick) ?? []) {
       this.log('warning', 'assessment', `trial-rule-${event.id}-${this.currentTick}`, event.message);
     }
+    for (const event of this.silentInteraction?.advance(this.currentTick) ?? []) {
+      this.log('warning', 'assessment', `silent-interaction-${event.id}-${this.currentTick}`, event.message);
+    }
     for (const event of this.rareEarlyMyocarditis?.advance(this.currentTick) ?? []) {
       this.log('warning', 'assessment', `rare-early-myocarditis-${event.id}-${this.currentTick}`, event.message);
     }
@@ -16119,6 +16145,13 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: this.endocrineDkaResolutionReassessmentAtTick !== null ? 16 : 18,
         spo2Percent: 98, systolicMmHg: 118, diastolicMmHg: 70, meanArterialMmHg: 86,
         coreTemperatureC: 36.9 };
+    }
+    if (this.silentInteraction) {
+      const patient = this.silentInteraction.vitals();
+      crisisState = { ...crisisState, heartRateBpm: patient.heartRateBpm,
+        respiratoryRateBpm: patient.respiratoryRateBpm, spo2Percent: patient.spo2Percent,
+        systolicMmHg: patient.systolicMmHg, diastolicMmHg: patient.diastolicMmHg,
+        meanArterialMmHg: patient.meanArterialMmHg, coreTemperatureC: patient.coreTemperatureC };
     }
     if (this.trialRule) {
       const patient = this.trialRule.vitals();
@@ -21156,6 +21189,7 @@ export class AnesthesiaEngine {
         ...(this.loweringTheCount ? { loweringTheCount: this.loweringTheCount.snapshot(this.currentTick) } : {}),
         ...(this.inheritedUrgency ? { inheritedUrgency: this.inheritedUrgency.snapshot(this.currentTick) } : {}),
         ...(this.trialRule ? { trialRule: this.trialRule.snapshot(this.currentTick) } : {}),
+        ...(this.silentInteraction ? { silentInteraction: this.silentInteraction.snapshot(this.currentTick) } : {}),
         ...(this.avpDeficiency ? { avpDeficiency: this.avpDeficiency.snapshot(this.currentTick) } : {}),
         ...(this.hyponatremiaCorrection ? { hyponatremiaCorrection: this.hyponatremiaCorrection.snapshot(this.currentTick) } : {}),
         aspirationRiskAssessment: {
@@ -21352,7 +21386,7 @@ export class AnesthesiaEngine {
   invalidParameters(): Set<string> {
     const invalid = new Set<string>();
     // These lessons do not supply a capnogram or a modeled oxygen setting.
-    if (this.myxedema || this.hypercalcemia || this.hypocalcemia || this.hyponatremiaCorrection || this.avpDeficiency || this.refeeding || this.perioperativeDiabetes || this.renalHyperkalemia || this.renalHypokalemia || this.renalHyponatremia || this.renalHypernatremia || this.renalHypocalcemia || this.renalHypermagnesemia || this.meningococcalSepsis || this.obstructedKidney || this.febrileNeutropenia || this.necrotizingInfection || this.endocarditisHeartFailure || this.severePneumonia || this.toxicShock || this.possibleSepsis || this.septicShockLabel || this.meningitisImaging || this.lowScore || this.countedRate || this.pairedReading || this.afferentLimb || this.quietPatient || this.proxyScale || this.lastKnownWell || this.oxygenTargetScale || this.lostContingency || this.delayedImmuneEvent || this.incidentalClot || this.normalTestToxicity || this.prognosisQuestion || this.laboratoryTls || this.rareEarlyMyocarditis || this.loweringTheCount || this.inheritedUrgency || this.trialRule) {
+    if (this.myxedema || this.hypercalcemia || this.hypocalcemia || this.hyponatremiaCorrection || this.avpDeficiency || this.refeeding || this.perioperativeDiabetes || this.renalHyperkalemia || this.renalHypokalemia || this.renalHyponatremia || this.renalHypernatremia || this.renalHypocalcemia || this.renalHypermagnesemia || this.meningococcalSepsis || this.obstructedKidney || this.febrileNeutropenia || this.necrotizingInfection || this.endocarditisHeartFailure || this.severePneumonia || this.toxicShock || this.possibleSepsis || this.septicShockLabel || this.meningitisImaging || this.lowScore || this.countedRate || this.pairedReading || this.afferentLimb || this.quietPatient || this.proxyScale || this.lastKnownWell || this.oxygenTargetScale || this.lostContingency || this.delayedImmuneEvent || this.incidentalClot || this.normalTestToxicity || this.prognosisQuestion || this.laboratoryTls || this.rareEarlyMyocarditis || this.loweringTheCount || this.inheritedUrgency || this.trialRule || this.silentInteraction) {
       invalid.add('etco2MmHg');
       invalid.add('fio2');
     }
