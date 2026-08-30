@@ -712,9 +712,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary recorded actions. Unassisted mode is silent and coached withholds the two non-urgent observation beats. The scenario only progresses conduction where monitoring was arranged, so the example is proved by counterfactual rather than by checklist: one test asserts it arranges monitoring before escalating and sees the block become intermittent Mobitz type I, and a second runs the same lesson without monitoring and asserts the conduction never moves while the teams still answer, so the run looks equally complete. No prompt quotes an incidence as a reason to act or not to; the tutor argues the exposure interval, which is decidable, rather than the base rate, which is not."
           ]
         },
         {

@@ -2777,6 +2777,7 @@ export interface ActionCockpitProps {
   readonly normalTestToxicityGuidance?: GuidanceLevel;
   readonly prognosisQuestionGuidance?: GuidanceLevel;
   readonly laboratoryTlsGuidance?: GuidanceLevel;
+  readonly rareEarlyMyocarditisGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -5855,6 +5856,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasRareEarlyMyocarditisResponse && (
               <RareEarlyMyocarditisTray assessment={props.rareEarlyMyocarditis}
+                guidance={props.rareEarlyMyocarditisGuidance}
+                scenarioVersion={props.scenario.metadata.version}
                 demonstrating={props.rareEarlyMyocarditisDemonstrating}
                 onAction={props.onRareEarlyMyocarditisResponse ?? (() => {})} />
             )}

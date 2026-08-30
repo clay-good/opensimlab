@@ -1,14 +1,18 @@
 import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { RareEarlyMyocarditisSnapshot } from '@platform/kernel/protocol';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { RareEarlyMyocarditisAction } from './rare-early-myocarditis';
+import { rareEarlyMyocarditisInlinePrompt } from './rare-early-myocarditis-tutor';
 
-export function RareEarlyMyocarditisTray({ assessment, onAction, demonstrating = false }: {
-  readonly assessment?: RareEarlyMyocarditisSnapshot;
+export function RareEarlyMyocarditisTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
+  readonly assessment?: RareEarlyMyocarditisSnapshot; readonly scenarioVersion: string;
   readonly onAction: (action: RareEarlyMyocarditisAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = rareEarlyMyocarditisInlinePrompt(guidance, { scenarioVersion, rareEarlyMyocarditis: assessment });
   const observations = assessment.observationRecord; const results = assessment.resultRecord;
   const observation = assessment.observation;
   const decision = (action: RareEarlyMyocarditisAction, label: string, accepted = false) => {
@@ -17,6 +21,10 @@ export function RareEarlyMyocarditisTray({ assessment, onAction, demonstrating =
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     {/* The interval leads. It is the finding a learner is most likely to file as background. */}
     <p className="syringe__remaining" role="status">{assessment.weeksSinceStart} weeks and {assessment.cyclesGiven} cycles into combination checkpoint therapy. Supplied troponin markedly raised; supplied electrocardiogram shows new first-degree block. He is {assessment.monitored ? 'on a monitor' : 'not on a monitor'}.</p>
     <p className="syringe__remaining">Selected sources: a 161-patient multicentre series of checkpoint-inhibitor myocarditis, and a pharmacovigilance meta-analysis of fatal checkpoint-inhibitor toxicity. Open the source view for exact wording and grades.</p>
