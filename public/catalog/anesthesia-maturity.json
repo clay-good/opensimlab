@@ -437,7 +437,7 @@
       "subjectKind": "explanation",
       "subjectId": "hysteresis-and-effect-site-lag",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "src/modules/anesthesia/content/explainers.ts#hysteresis-and-effect-site-lag"
       ]
@@ -447,7 +447,7 @@
       "subjectKind": "explanation",
       "subjectId": "preoxygenation-and-safe-apnea-time",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "src/modules/anesthesia/content/explainers.ts#preoxygenation-and-safe-apnea-time"
       ]
@@ -457,7 +457,7 @@
       "subjectKind": "explanation",
       "subjectId": "hypnotic-opioid-synergy",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "src/modules/anesthesia/content/explainers.ts#hypnotic-opioid-synergy"
       ]
@@ -467,7 +467,7 @@
       "subjectKind": "explanation",
       "subjectId": "vasodilation-versus-hypovolemia",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "src/modules/anesthesia/content/explainers.ts#vasodilation-versus-hypovolemia"
       ]
@@ -477,7 +477,7 @@
       "subjectKind": "explanation",
       "subjectId": "capnogram-morphology",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "src/modules/anesthesia/content/explainers.ts#capnogram-morphology"
       ]
@@ -487,7 +487,7 @@
       "subjectKind": "explanation",
       "subjectId": "airway-assessment-predicts-poorly",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "src/modules/anesthesia/content/explainers.ts#airway-assessment-predicts-poorly"
       ]
@@ -497,7 +497,7 @@
       "subjectKind": "explanation",
       "subjectId": "depth-monitoring-and-its-limits",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "src/modules/anesthesia/content/explainers.ts#depth-monitoring-and-its-limits"
       ]
@@ -507,7 +507,7 @@
       "subjectKind": "explanation",
       "subjectId": "train-of-four-and-residual-blockade",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "src/modules/anesthesia/content/explainers.ts#train-of-four-and-residual-blockade"
       ]
@@ -517,7 +517,7 @@
       "subjectKind": "explanation",
       "subjectId": "malignant-hyperthermia-early-pattern",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "src/modules/anesthesia/content/explainers.ts#malignant-hyperthermia-early-pattern"
       ]
@@ -527,7 +527,7 @@
       "subjectKind": "explanation",
       "subjectId": "aspiration-risk-is-more-than-fasting-time",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "src/modules/anesthesia/content/explainers.ts#aspiration-risk-is-more-than-fasting-time"
       ]
@@ -537,7 +537,7 @@
       "subjectKind": "drug-card",
       "subjectId": "propofol",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "src/modules/anesthesia/content/drug-cards.ts#propofol",
         "/catalog/evidence-sources.json#propofol-us-label"
@@ -548,7 +548,7 @@
       "subjectKind": "drug-card",
       "subjectId": "remifentanil",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "src/modules/anesthesia/content/drug-cards.ts#remifentanil",
         "/catalog/evidence-sources.json#remifentanil-us-label"
@@ -559,7 +559,7 @@
       "subjectKind": "drug-card",
       "subjectId": "rocuronium",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "src/modules/anesthesia/content/drug-cards.ts#rocuronium",
         "/catalog/evidence-sources.json#rocuronium-us-label"
@@ -570,7 +570,7 @@
       "subjectKind": "practice-region",
       "subjectId": "US",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "src/modules/anesthesia/region/profiles.ts#US"
       ]
@@ -580,7 +580,7 @@
       "subjectKind": "practice-region",
       "subjectId": "GB",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "src/modules/anesthesia/region/profiles.ts#GB"
       ]

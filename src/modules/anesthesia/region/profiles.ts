@@ -52,6 +52,15 @@ export interface RegionProfile {
   };
   readonly airwayGuideline: GuidelineReference;
   readonly formulary: readonly FormularyPresentation[];
+  /**
+   * What this profile does not cover, stated rather than left to be discovered.
+   *
+   * A profile carries units, terminology, one airway guideline, an infusion note
+   * and a short formulary. A reader can easily take it for a description of local
+   * practice in general, which it is not, and the gap is widest exactly where a
+   * learner would lean on it: local protocol, and what a given hospital stocks.
+   */
+  readonly doesNotCover: string;
   /** Agents not available here, with what is used instead. */
   readonly unavailable: readonly { readonly drugId: string; readonly insteadNote: string }[];
   readonly clinicalReview: {
@@ -67,7 +76,7 @@ export interface RegionProfile {
 export const UNITED_STATES: RegionProfile = {
   id: 'US',
   version: '0.1.0',
-  maturity: 'draft',
+  maturity: 'preview',
   name: 'United States',
   localeHints: ['en-US'],
   unitSystem: 'conventional',
@@ -97,6 +106,8 @@ export const UNITED_STATES: RegionProfile = {
     { drugId: 'propofol', inn: 'propofol', atc: 'N01AX10', concentration: 10, concentrationUnit: 'mg/mL', syringeVolumeMl: 20 },
     { drugId: 'remifentanil', inn: 'remifentanil', atc: 'N01AH06', concentration: 50, concentrationUnit: 'µg/mL', syringeVolumeMl: 20 },
   ],
+  doesNotCover:
+    'Covers units, date format, terminology, infusion practice and one airway guideline only. It is not a formulary, not a description of any hospital\u2019s stock or policy, and not a statement of what is approved \u2014 approval and availability vary by institution and change over time.',
   unavailable: [],
   clinicalReview: {
     reviewer: 'UNSIGNED',
@@ -110,7 +121,7 @@ export const UNITED_STATES: RegionProfile = {
 export const UNITED_KINGDOM: RegionProfile = {
   id: 'GB',
   version: '0.1.0',
-  maturity: 'draft',
+  maturity: 'preview',
   name: 'United Kingdom',
   localeHints: ['en-GB', 'en-IE'],
   unitSystem: 'si',
@@ -139,6 +150,8 @@ export const UNITED_KINGDOM: RegionProfile = {
     { drugId: 'propofol', inn: 'propofol', atc: 'N01AX10', concentration: 10, concentrationUnit: 'mg/mL', syringeVolumeMl: 50 },
     { drugId: 'remifentanil', inn: 'remifentanil', atc: 'N01AH06', concentration: 50, concentrationUnit: 'µg/mL', syringeVolumeMl: 50 },
   ],
+  doesNotCover:
+    'Covers units, date format, terminology, infusion practice and one airway guideline only. It is not a formulary, not a description of any trust\u2019s stock or policy, and it does not capture the variation between hospitals or the local protocols that take precedence over any national guideline named here.',
   unavailable: [],
   clinicalReview: {
     reviewer: 'UNSIGNED',

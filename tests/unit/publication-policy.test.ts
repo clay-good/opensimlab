@@ -44,7 +44,11 @@ describe('maturity publication policy', () => {
 
   it('uses plain honest labels for every status', () => {
     expect(Object.keys(MATURITY_LABELS)).toHaveLength(6);
-    expect(MATURITY_LABELS.preview).toBe('Preview — not clinically reviewed');
+    // One published state, carrying both facts: the scope it is for, and that
+    // nothing in it is signed. Dropping the second half would leave the product
+    // described only by its purpose and not by its evidence.
+    expect(MATURITY_LABELS.preview).toBe('Educational use only — not clinically reviewed');
+    expect(MATURITY_LABELS.preview.toLowerCase()).toContain('not clinically reviewed');
     expect(MATURITY_LABELS.source_checked).toContain('clinical behavior not reviewed');
     expect(MATURITY_LABELS.institution_endorsed.toLowerCase()).not.toContain('certified');
   });

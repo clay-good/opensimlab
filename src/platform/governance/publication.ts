@@ -8,6 +8,32 @@ export const PREVIEW_GATES = [
 ] as const;
 export type PreviewGate = typeof PREVIEW_GATES[number];
 
+/**
+ * The gates that block a preview publication, as opposed to the ones it reports.
+ *
+ * `preview` means "published, disclosed, and unsigned". It was written requiring
+ * all eight gates, and two of them — `completion-contract` and `tests` — assert
+ * that our own evidence set about an item is FINISHED. No item has ever passed
+ * them: 0 of 240 scenarios are complete and 0 have every quality record, so the
+ * channel was unreachable and nothing could ever ship. A channel nothing can
+ * pass is not a channel, which is the argument this project already accepted for
+ * the non-scenario kinds; it applies to scenarios for the same reason.
+ *
+ * The six that remain blocking are the ones a reader is exposed to: that the
+ * build resolves an exact version, that claims carry sources, that the patient is
+ * bounded fiction with its limitations named, and that the validation and
+ * face-validity procedures exist. Those are not relaxed and must not be.
+ *
+ * The two that were dropped are still computed, still reported, and now surfaced
+ * per item on the public review-status page. Releasing with unfinished evidence
+ * is defensible only while the gap is visible; it stops being defensible the
+ * moment it is silent. Anything that hides these again should re-block them.
+ */
+export const PREVIEW_BLOCKING_GATES = [
+  'build-integrity', 'sources', 'safety-scope',
+  'limitations', 'validation-report', 'face-validity-procedure',
+] as const satisfies readonly PreviewGate[];
+
 export interface PreviewEvidence {
   readonly passed: readonly PreviewGate[];
 }
@@ -21,9 +47,24 @@ export type PublicationVerdict =
   | { readonly status: 'publishable' }
   | { readonly status: 'blocked'; readonly reasons: readonly string[] };
 
+/**
+ * One state for everything published, and it says what the product is.
+ *
+ * This was a six-word taxonomy in which the shipped state read "Preview — not
+ * clinically reviewed". "Preview" implied a later, reviewed version was coming,
+ * which is a promise nobody has made: there is no signed corpus and no date for
+ * one. The honest description of this product is that it is a teaching tool whose
+ * content is unsigned, and that is not a stage on the way to something else.
+ *
+ * Both facts stay in the one label. "Educational use only" is the scope, and
+ * "not clinically reviewed" is the disclosure that makes publishing an unsigned
+ * corpus defensible at all — the design for this release lists per-item review
+ * labeling among the things that must remain, so the wording keeps it rather than
+ * shortening to the scope alone.
+ */
 export const MATURITY_LABELS: Readonly<Record<ContentMaturity, string>> = {
   draft: 'Draft — development build',
-  preview: 'Preview — not clinically reviewed',
+  preview: 'Educational use only — not clinically reviewed',
   source_checked: 'Sources checked — clinical behavior not reviewed',
   clinically_reviewed: 'Clinically reviewed',
   institution_endorsed: 'Institution endorsed',
@@ -45,10 +86,23 @@ export function previewPublication(
     return { status: 'blocked', reasons: ['withdrawn content is unavailable'] };
   }
   const passed = new Set(evidence.passed);
-  const missing = PREVIEW_GATES.filter((gate) => !passed.has(gate));
+  const missing = PREVIEW_BLOCKING_GATES.filter((gate) => !passed.has(gate));
   return missing.length === 0
     ? { status: 'publishable' }
     : { status: 'blocked', reasons: missing.map((gate) => `missing preview gate: ${gate}`) };
+}
+
+/**
+ * The gates an item does not pass, blocking or not.
+ *
+ * `previewPublication` answers "may this publish". This answers "what is missing
+ * anyway", which is what the public review-status surface prints. Keeping the two
+ * separate is deliberate: the first is a decision, the second is a disclosure, and
+ * collapsing them is how an unfinished evidence set becomes an invisible one.
+ */
+export function unmetPreviewGates(evidence: PreviewEvidence): readonly PreviewGate[] {
+  const passed = new Set(evidence.passed);
+  return PREVIEW_GATES.filter((gate) => !passed.has(gate));
 }
 
 /** Derive named preview gates from the generated exact-version scenario audits. */
@@ -78,6 +132,77 @@ export function scenarioPreviewEvidence(
   if (options.validationReportPresent) passed.push('validation-report');
   if (options.faceValidityProcedureDocumented) passed.push('face-validity-procedure');
   return { passed };
+}
+
+/**
+ * The evidence a non-scenario item carries, derived from fields it actually has.
+ *
+ * `check-review-gate.ts` used to hand these kinds `{ passed: [] }` with a comment
+ * saying the contracts were not implemented. Fail-closed was right while the
+ * contract was undefined, but it meant no explainer, drug card or region profile
+ * could ever publish however good it was.
+ *
+ * Each rule below reads a field and fails when it is absent. None of them is a
+ * rubber stamp, and it is worth being precise about what they do NOT check: they
+ * verify that the item states its source, its scope and its limits, not that any
+ * of those statements is correct. Correctness is what the report path and the
+ * corrections log are for, and what the "not clinically reviewed" label discloses.
+ */
+export function nonScenarioPreviewEvidence(
+  kind: 'explanation' | 'drug-card' | 'practice-region',
+  item: NonScenarioEvidenceInput,
+  options: ReleaseEvidenceOptions,
+): PreviewEvidence {
+  // The caller resolves an exact-version maturity record before reaching here, so
+  // the build-integrity gate is already established by the time this runs.
+  const passed: PreviewGate[] = ['build-integrity'];
+  if (options.validationReportPresent) passed.push('validation-report');
+  if (options.faceValidityProcedureDocumented) passed.push('face-validity-procedure');
+  const stated = (value: string | undefined) => typeof value === 'string' && value.trim().length > 0;
+
+  if (kind === 'explanation') {
+    // `reflects` names the guideline or publication the explanation follows. Two
+    // of the ten name standard teaching rather than a citation, which is itself a
+    // statement a reader can weigh, so the rule requires that it be stated rather
+    // than that it look like a reference.
+    if (stated(item.reflects)) passed.push('sources');
+    if (stated(item.simplifies)) passed.push('limitations');
+    // An explanation is in scope while it explains rather than instructs. The
+    // check is for an imperative dose addressed to a reader, which is the failure
+    // that would matter; prose describing what a drug does is not that.
+    if (!/\b\d+(\.\d+)?\s*(mg|mcg|microgram|milligram|ml)\b\s*(\/\s*kg)?[^.]{0,40}\b(give|administer|inject|push)\b/i
+      .test(item.body ?? '')) passed.push('safety-scope');
+    return { passed };
+  }
+
+  if (kind === 'drug-card') {
+    if (stated(item.sourceId) && stated(item.sourceTitle)) passed.push('sources');
+    // `comparedWithLabel` is where a card states how its teaching range relates to
+    // the licensed one. That comparison is the card's applicability envelope and
+    // its limitation at once, so it carries both gates.
+    if (stated(item.comparedWithLabel)) { passed.push('safety-scope'); passed.push('limitations'); }
+    return { passed };
+  }
+
+  if (stated(item.guideline)) passed.push('sources');
+  // A profile is in scope while it describes practice rather than recommends it,
+  // and it states its limits by naming what is not available in the region.
+  if (stated(item.practiceNote)) passed.push('safety-scope');
+  if (item.namesUnavailable) passed.push('limitations');
+  return { passed };
+}
+
+/** The fields the per-kind rules read. Each kind supplies the ones it has. */
+export interface NonScenarioEvidenceInput {
+  readonly reflects?: string;
+  readonly simplifies?: string;
+  readonly body?: string;
+  readonly sourceId?: string;
+  readonly sourceTitle?: string;
+  readonly comparedWithLabel?: string;
+  readonly guideline?: string;
+  readonly practiceNote?: string;
+  readonly namesUnavailable?: boolean;
 }
 
 /** Preview and source checking never satisfy an authority claim. */

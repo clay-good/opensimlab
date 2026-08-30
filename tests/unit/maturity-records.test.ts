@@ -134,8 +134,12 @@ describe('exact-version maturity records', () => {
     expect(catalog.recordCount).toBe(54);
     expect(catalog.records.filter((record) => record.subjectKind === 'scenario')
       .every((record) => record.status === 'preview')).toBe(true);
+    // One state for everything published. Non-scenario content used to sit in
+    // `draft`, which blocked the release outright rather than merely staying
+    // unpublished, so no explainer, drug card or region profile could ever ship.
     expect(catalog.records.filter((record) => record.subjectKind !== 'scenario')
-      .every((record) => record.status === 'draft')).toBe(true);
+      .every((record) => record.status === 'preview')).toBe(true);
+    expect(new Set(catalog.records.map((record) => record.status))).toEqual(new Set(['preview']));
     expect(maturityFor(catalog, 'explanation', 'hysteresis-and-effect-site-lag', '0.1.0'))
       .toBeDefined();
     expect(maturityFor(catalog, 'drug-card', 'propofol', '0.1.0')).toBeDefined();

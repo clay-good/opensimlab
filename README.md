@@ -63,9 +63,9 @@ and confirmed mistakes stay in a permanent [corrections log](CORRECTIONS.md).
 
 Everything above is what the project is *for*. This is what it currently *is*.
 
-There is no alpha, beta, or 1.0 here. Open Sim Lab is one evergreen product: the catalog grows
-and gets corrected continuously, and the honest signal is the per-item review status, not a
-version word. Every item ships labeled **"Preview — not clinically reviewed."**
+There is no alpha, beta, or 1.0 here, and no staged content vocabulary either. Open Sim Lab is one
+evergreen product in one state: the catalog grows and gets corrected continuously, and every item
+ships labeled **"Educational use only — not clinically reviewed."** That label is the whole claim.
 
 - **No clinician has signed any content.** The editorial board is empty and published as empty.
   Nothing is described anywhere in the interface as reviewed, validated, or endorsed.

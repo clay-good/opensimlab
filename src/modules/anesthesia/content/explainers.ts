@@ -34,6 +34,16 @@ export interface Explainer {
   readonly showMe: { readonly scenarioId: string; readonly atTick?: number };
   /** The guideline or source this reflects, with its year. */
   readonly reflects: string;
+  /**
+   * Where this explanation simplifies, in the reader's own words.
+   *
+   * Every explainer here is under 250 words about something that is not simple,
+   * so each one leaves something out, and which thing it leaves out is the part a
+   * learner is most likely to over-apply. The publication gate requires this
+   * field for the same reason it requires scenario limitations: an explanation
+   * that does not say where it stops reads as though it does not stop.
+   */
+  readonly simplifies: string;
   readonly review: ClinicalReview;
 }
 
@@ -49,7 +59,7 @@ const UNSIGNED: ClinicalReview = {
 export const EXPLAINERS: readonly Explainer[] = [
   {
     id: 'hysteresis-and-effect-site-lag',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Hysteresis and effect-site lag',
     body:
       'When you push a bolus, the concentration in the blood spikes within seconds. The '
@@ -68,11 +78,13 @@ export const EXPLAINERS: readonly Explainer[] = [
     diagram: { kind: 'hysteresis', caption: 'Plasma concentration spikes and falls; effect-site concentration rises later to a lower peak.' },
     showMe: { scenarioId: 'routine-induction' },
     reflects: 'Standard pharmacokinetic principle; the curves are drawn from the active published model.',
+    simplifies:
+      'Treats the effect site as one compartment with one rate constant. Real equilibration differs between drugs, between patients, and with cardiac output, and the curves here are the active model\u2019s rather than a measurement of any individual.',
     review: UNSIGNED,
   },
   {
     id: 'preoxygenation-and-safe-apnea-time',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Preoxygenation and safe apnoea time',
     body:
       'Breathing high-concentration oxygen before you take the airway away replaces the nitrogen '
@@ -95,11 +107,13 @@ export const EXPLAINERS: readonly Explainer[] = [
     diagram: { kind: 'apnea-curve', caption: 'Saturation holds on a plateau, then falls steeply once it passes 90%.' },
     showMe: { scenarioId: 'routine-induction' },
     reflects: 'Benumof JL, Dagg R, Benumof R. Anesthesiology 1997;87:979-82 (PMID 9357902).',
+    simplifies:
+      'The reservoir argument assumes a patent airway and a healthy functional residual capacity. Obesity, pregnancy, small children and lung disease all shorten the time substantially, and no number here should be read as this patient\u2019s margin.',
     review: UNSIGNED,
   },
   {
     id: 'hypnotic-opioid-synergy',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Hypnotic–opioid synergy',
     body:
       'Propofol and remifentanil are not additive. Given together they produce more effect than '
@@ -118,11 +132,13 @@ export const EXPLAINERS: readonly Explainer[] = [
     diagram: { kind: 'synergy-surface', caption: 'The combination reaches a given depth at lower concentrations of both drugs than either alone would need.' },
     showMe: { scenarioId: 'routine-induction', atTick: 3600 },
     reflects: 'Published hypnotic–opioid response-surface models; the interaction coefficient here is an Open Sim Lab calibration, recorded in the limitations register.',
+    simplifies:
+      'Describes the direction and rough size of the interaction, not a dosing rule. The published response surfaces are population models fitted to volunteers, and they say nothing about what any individual in front of you needs.',
     review: UNSIGNED,
   },
   {
     id: 'vasodilation-versus-hypovolemia',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Vasodilation is not hypovolaemia',
     body:
       'Two patients have a mean arterial pressure of 52. One is vasodilated from an induction '
@@ -141,11 +157,13 @@ export const EXPLAINERS: readonly Explainer[] = [
     diagram: { kind: 'hysteresis', caption: 'The same mean pressure reached two ways responds differently to the same drug.' },
     showMe: { scenarioId: 'routine-induction' },
     reflects: 'Standard cardiovascular physiology.',
+    simplifies:
+      'Presents two clean causes of one number. Real hypotension is frequently both at once, plus rhythm, obstruction and pump failure, and the distinction is drawn here to make a teaching point rather than to be a diagnostic algorithm.',
     review: UNSIGNED,
   },
   {
     id: 'capnogram-morphology',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Reading the capnogram shape',
     body:
       'The end-tidal number tells you one thing. The shape tells you several, and it usually tells '
@@ -165,11 +183,13 @@ export const EXPLAINERS: readonly Explainer[] = [
     diagram: { kind: 'capnogram-phases', caption: 'The four phases, with the alpha angle marked between phase II and phase III.' },
     showMe: { scenarioId: 'routine-induction' },
     reflects: 'Standard capnography teaching.',
+    simplifies:
+      'Describes the classical four-phase shape and the obstructive pattern. It does not cover cardiogenic oscillations, rebreathing, sampling artefact or the ways a ventilator can produce a shape that looks like a lung problem and is not.',
     review: UNSIGNED,
   },
   {
     id: 'airway-assessment-predicts-poorly',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Airway assessment predicts poorly, and what to do about it',
     body:
       'Bedside airway tests — the Mallampati classification, thyromental distance, mouth opening, '
@@ -190,11 +210,13 @@ export const EXPLAINERS: readonly Explainer[] = [
     diagram: { kind: 'hysteresis', caption: 'Predicted difficulty against observed difficulty: the overlap is large.' },
     showMe: { scenarioId: 'routine-induction' },
     reflects: '2022 ASA Practice Guidelines for Management of the Difficult Airway (PMID 34762729).',
+    simplifies:
+      'Reports how poorly bedside tests predict, which is not the same as saying they are useless or that any particular test should be abandoned. It gives no threshold and no score, and local guidance on what to assess still applies.',
     review: UNSIGNED,
   },
   {
     id: 'depth-monitoring-and-its-limits',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Depth of anaesthesia and what an index cannot tell you',
     body:
       'The depth value on this screen is a PREDICTION. It is computed from effect-site '
@@ -218,11 +240,13 @@ export const EXPLAINERS: readonly Explainer[] = [
     reflects: 'Published pharmacodynamic models; B-Unaware (Avidan et al., N Engl J Med '
       + '2008;358:1097-108, PMID 18337600) and BAG-RECALL (Avidan et al., N Engl J Med '
       + '2011;365:591-600, PMID 21848460) for the comparison with end-tidal agent guidance.',
+    simplifies:
+      'The index here is computed from a published pharmacodynamic model on a 0\u2013100 scale. It is not the output of any commercial monitor, it is not interchangeable with one, and nothing about its behaviour should be read as how a specific device behaves.',
     review: UNSIGNED,
   },
   {
     id: 'train-of-four-and-residual-blockade',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Train-of-four and residual neuromuscular blockade',
     body:
       'A train-of-four monitor stimulates a peripheral nerve four times and measures the muscle '
@@ -245,11 +269,13 @@ export const EXPLAINERS: readonly Explainer[] = [
     showMe: { scenarioId: 'rapid-sequence-induction' },
     reflects: '2023 ASA Practice Guidelines for Monitoring and Antagonism of Neuromuscular '
       + 'Blockade (PMID 36520073).',
+    simplifies:
+      'Explains the ratio and what fade means. It does not cover the differences between measurement sites, between acceleromyography and other modalities, or the calibration steps that decide whether a ratio from a real monitor means what it appears to mean.',
     review: UNSIGNED,
   },
   {
     id: 'malignant-hyperthermia-early-pattern',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Malignant hyperthermia: carbon dioxide before temperature',
     body:
       'Malignant hyperthermia is a rare hypermetabolic response in a susceptible person exposed '
@@ -272,6 +298,8 @@ export const EXPLAINERS: readonly Explainer[] = [
     showMe: { scenarioId: 'early-malignant-hyperthermia-during-volatile-anesthesia', atTick: 2400 },
     reflects: 'MHAUS Managing a Crisis, current page consulted 2026-08-23; EMHG updated 2024 '
       + 'guideline (PMID 39482150); Larach et al. registry analysis (PMID 20081135).',
+    simplifies:
+      'Names the early pattern rather than a diagnosis. Rising carbon dioxide has many commoner causes, this explanation gives no treatment, dose or protocol, and the crisis references belong to the issuing bodies rather than to this text.',
     review: {
       ...UNSIGNED,
       sources: [
@@ -283,7 +311,7 @@ export const EXPLAINERS: readonly Explainer[] = [
   },
   {
     id: 'aspiration-risk-is-more-than-fasting-time',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Aspiration risk is more than fasting time',
     body:
       'A fasting interval answers what the patient last ate or drank. It does not, by itself, '
@@ -310,6 +338,8 @@ export const EXPLAINERS: readonly Explainer[] = [
     showMe: { scenarioId: 'aspiration-risk-recognition' },
     reflects: 'Kindel et al. multi-society GLP-1 perioperative guidance, published online 2024 '
       + '(PMID 39370500), and the ASA issuing-body summary dated October 29, 2024.',
+    simplifies:
+      'Argues that a fasting interval is not proof of an empty stomach. It does not tell you what to do instead, gives no waiting period for any medicine or condition, and does not replace the local guidance that sets those intervals.',
     review: {
       ...UNSIGNED,
       sources: [

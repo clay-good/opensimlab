@@ -28,11 +28,45 @@ import {
   buildMaturityCatalog, maturityFor, type MaturitySubjectKind,
 } from '@platform/catalog/maturity';
 import {
-  isReviewedOnlyStatus, previewPublication, scenarioPreviewEvidence,
+  isReviewedOnlyStatus, nonScenarioPreviewEvidence, previewPublication, scenarioPreviewEvidence,
+  type NonScenarioEvidenceInput,
 } from '@platform/governance/publication';
 import { EDITORIAL_BOARD, additionalMaturitySubjects, reviewableItems } from '@platform/governance/records';
 import { gate, reportCoverage, uncoveredDomains } from '@platform/governance/review-gate';
 import { buildValidationReport } from '@platform/docs/validation-report';
+import { EXPLAINERS } from '@anesthesia/content/explainers';
+import { DRUG_CARDS } from '@anesthesia/content/drug-cards';
+import { REGIONS } from '@anesthesia/region/profiles';
+
+/**
+ * Pull the fields the per-kind evidence rules read out of the content itself.
+ *
+ * `ReviewableItem` carries review metadata rather than content, so the evidence
+ * has to come from the source collections. An item whose id resolves to nothing
+ * yields an empty input, and every rule then fails it — the same fail-closed
+ * behaviour as an unknown kind.
+ */
+function nonScenarioEvidenceInput(item: { kind: string; id: string }): NonScenarioEvidenceInput {
+  if (item.kind === 'explainer') {
+    const explainer = EXPLAINERS.find((entry) => entry.id === item.id);
+    return explainer
+      ? { reflects: explainer.reflects, simplifies: explainer.simplifies, body: explainer.body }
+      : {};
+  }
+  if (item.kind === 'drug-card') {
+    const card = DRUG_CARDS.find((entry) => entry.drugId === item.id);
+    return card
+      ? { sourceId: card.dosing.sourceId, sourceTitle: card.dosing.sourceTitle,
+        comparedWithLabel: card.dosing.comparedWithLabel }
+      : {};
+  }
+  const region = REGIONS.find((entry) => entry.id === item.id);
+  return region
+    ? { guideline: `${region.airwayGuideline.issuingBody} ${region.airwayGuideline.name}`,
+      practiceNote: region.targetControlledInfusion.note,
+      namesUnavailable: region.doesNotCover.trim().length > 0 }
+    : {};
+}
 
 export type ReleaseChannel = 'preview' | 'reviewed';
 
@@ -210,10 +244,12 @@ const medicalSurgicalNursingQuality = qualityCatalogs.get('medical-surgical-nurs
       continue;
     }
     if (item.kind !== 'scenario') {
-      // Non-scenario completion/source/test contracts are not implemented yet.
-      // Passing no gates makes that absence explicit and fail-closed; draft and
-      // withdrawn status block before those missing gates are considered.
-      const verdict = previewPublication(record, { passed: [] });
+      const kind = subjectKind(item.kind);
+      const evidence = kind === 'explanation' || kind === 'drug-card' || kind === 'practice-region'
+        ? nonScenarioPreviewEvidence(kind, nonScenarioEvidenceInput(item), evidenceOptions)
+        // A kind with no rule stays fail-closed rather than being waved through.
+        : { passed: [] as const };
+      const verdict = previewPublication(record, evidence);
       if (verdict.status === 'blocked') {
         blocking.push(`${item.kind} "${item.id}" ${verdict.reasons.join('; ')}`);
       }

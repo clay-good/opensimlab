@@ -24,7 +24,7 @@
       },
       {
         "path": "src/modules/anesthesia/region/profiles.ts",
-        "sha256": "6f2476883c6ab3f9dbb7e34f8775bceb97914a6d75e3e6aa4ecdb1d161bc36a8"
+        "sha256": "d551d22588427d3a0d4a0b9a96c2416f464e5bfce73ca84e4e1e385dfbe139c9"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
@@ -148,7 +148,7 @@
       },
       {
         "path": "src/platform/governance/publication.ts",
-        "sha256": "b1ab5cb0cbc8d1894b079f842ad40bfad309c9cb1aa212bc1b803f9473fc5a9e"
+        "sha256": "f5bb07a4d89aeb1e6856dfa598e02c49ee2f230e57fca5294431658415168043"
       },
       {
         "path": "src/platform/governance/records.ts",
@@ -233,7 +233,7 @@
       },
       {
         "path": "src/modules/anesthesia/region/profiles.ts",
-        "sha256": "6f2476883c6ab3f9dbb7e34f8775bceb97914a6d75e3e6aa4ecdb1d161bc36a8"
+        "sha256": "d551d22588427d3a0d4a0b9a96c2416f464e5bfce73ca84e4e1e385dfbe139c9"
       },
       {
         "path": "src/modules/anesthesia/solver.worker.ts",
@@ -385,7 +385,7 @@
       },
       {
         "path": "src/platform/governance/publication.ts",
-        "sha256": "b1ab5cb0cbc8d1894b079f842ad40bfad309c9cb1aa212bc1b803f9473fc5a9e"
+        "sha256": "f5bb07a4d89aeb1e6856dfa598e02c49ee2f230e57fca5294431658415168043"
       },
       {
         "path": "src/platform/governance/records.ts",
@@ -498,7 +498,7 @@
       },
       {
         "path": "src/modules/anesthesia/region/profiles.ts",
-        "sha256": "6f2476883c6ab3f9dbb7e34f8775bceb97914a6d75e3e6aa4ecdb1d161bc36a8"
+        "sha256": "d551d22588427d3a0d4a0b9a96c2416f464e5bfce73ca84e4e1e385dfbe139c9"
       },
       {
         "path": "src/modules/anesthesia/ui/ActionCockpit.tsx",
@@ -658,7 +658,7 @@
       },
       {
         "path": "src/platform/governance/publication.ts",
-        "sha256": "b1ab5cb0cbc8d1894b079f842ad40bfad309c9cb1aa212bc1b803f9473fc5a9e"
+        "sha256": "f5bb07a4d89aeb1e6856dfa598e02c49ee2f230e57fca5294431658415168043"
       },
       {
         "path": "src/platform/governance/records.ts",

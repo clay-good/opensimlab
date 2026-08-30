@@ -20,7 +20,7 @@ describe('maturity marker', () => {
       />,
     );
     expect(markup).toContain('◌');
-    expect(markup).toContain('Preview — not clinically reviewed');
+    expect(markup).toContain('Educational use only — not clinically reviewed');
     expect(markup).toContain('/catalog/anesthesia-maturity.json#scenario:routine-induction@1.2.3');
     expect(markup).toContain('data-maturity="preview"');
     expect(markup).toContain('target="_blank"');
