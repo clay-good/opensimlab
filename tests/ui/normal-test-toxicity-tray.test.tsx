@@ -28,7 +28,7 @@ beforeEach(() => { host = document.createElement('div'); document.body.append(ho
 afterEach(() => { act(() => root.unmount()); host.remove(); });
 
 const render = (model: NormalTestToxicity, tick: number, onAction = vi.fn(), demonstrating = false) => {
-  act(() => root.render(<NormalTestToxicityTray assessment={model.snapshot(tick)}
+  act(() => root.render(<NormalTestToxicityTray assessment={model.snapshot(tick)} scenarioVersion="0.1.0"
     onAction={onAction} demonstrating={demonstrating} />));
   return onAction;
 };

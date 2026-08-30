@@ -2,11 +2,13 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { NORMAL_TEST_TOXICITY_THE_DOSE_IN_HIS_BAG } from './scenarios/normal-test-toxicity-the-dose-in-his-bag';
 import { NORMAL_TEST_TOXICITY_FIXTURES } from './normal-test-toxicity-fixtures';
+import { NORMAL_TEST_TOXICITY_DEMONSTRATION_VERSION } from './demo/normal-test-toxicity-demonstration';
 
 export function normalTestToxicityCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'oncology' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== NORMAL_TEST_TOXICITY_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
     || NORMAL_TEST_TOXICITY_FIXTURES.contentVersion !== '0.1.0' || NORMAL_TEST_TOXICITY_FIXTURES.seed !== 7312
+    || NORMAL_TEST_TOXICITY_DEMONSTRATION_VERSION !== '0.1.0'
     || JSON.stringify(scenario) !== JSON.stringify(NORMAL_TEST_TOXICITY_THE_DOSE_IN_HIS_BAG)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['normal-test-toxicity-fixtures.ts binds seed 7312 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No enzyme, absorption, or toxicity-kinetics model is claimed.'] },
@@ -15,7 +17,7 @@ export function normalTestToxicityCompletionEvidence(scenario: Scenario, capabil
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The withheld drug, the recorded exclusions, the recorded toxicity, contact with acute oncology, bounded supportive intent, the boundary review, and a current full assessment permit handoff with the grade and any restart open. Instructor takeover bounds a run with no escalation at 180 minutes, or an unfinished session at eight hours.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Seven event-bound objectives distinguish the action that needs no permission, refusing a risk-stratifying test as a clearance, recording severity against the day of the cycle, contacting the owning service without making that a precondition, bounded qualified-team intent, what a four-variant panel does and does not test, and accountable handoff of a drug that stays stopped. Refused shortcuts remain visible, and no deficiency, grade, or outcome is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['normal-test-toxicity-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine, including the contrast between a withheld and a taken evening dose.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Observed-state guidance and learner-paused example ${NORMAL_TEST_TOXICITY_DEMONSTRATION_VERSION} use ordinary recorded actions. Unassisted mode is silent; withholding is urgent, so coached carries it too. The order is held by test rather than by convention: the example withholds the drug first and before the authored next dose falls due, because the supply is with the patient and an example that documented first would read as thorough while still letting him take it. No prompt suggests changing his dose, which the scenario refuses.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];

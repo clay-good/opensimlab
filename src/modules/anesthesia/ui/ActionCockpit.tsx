@@ -2774,6 +2774,7 @@ export interface ActionCockpitProps {
   readonly renalHyponatremiaGuidance?: GuidanceLevel;
   readonly delayedImmuneEventGuidance?: GuidanceLevel;
   readonly incidentalClotGuidance?: GuidanceLevel;
+  readonly normalTestToxicityGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -5867,7 +5868,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasNormalTestToxicityResponse && (
               <NormalTestToxicityTray assessment={props.normalTestToxicity}
+                guidance={props.normalTestToxicityGuidance}
                 demonstrating={props.normalTestToxicityDemonstrating}
+                scenarioVersion={props.scenario.metadata.version}
                 onAction={props.onNormalTestToxicityResponse ?? (() => {})} />
             )}
             {hasIncidentalClotResponse && (

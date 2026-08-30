@@ -2,12 +2,18 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { DelayedImmuneEventSnapshot } from '@platform/kernel/protocol';
 
 /**
- * The SITC guideline, the source for the two claims this tutor leans on: that an
- * immune-related event can begin after treatment has stopped, and that infection
- * evaluation runs alongside rather than ahead of treatment.
+ * These prompts carry no external link, deliberately.
+ *
+ * The renal and endocrine tutors each link a specific guideline document whose
+ * exact URL somebody checked. For this lesson the scenario declares its sources as
+ * full citations without URLs, and a link constructed from a citation is a guess:
+ * a journal's DOI pattern is not a substitute for having looked the article up.
+ * Shipping an unverified identifier in a project whose whole claim is that every
+ * number traces to a checkable source would be the kind of error its corrections
+ * log exists to record, so the prompts point at nothing rather than at something
+ * plausible. The tray already sends a reader to the source view, which shows the
+ * declared citations in full.
  */
-export const DELAYED_IMMUNE_EVENT_SOURCE_HREF = 'https://doi.org/10.1136/jitc-2021-002435';
-
 /**
  * Observed-state guidance for a drug that stopped months ago.
  *
@@ -28,7 +34,7 @@ export function delayedImmuneEventInlinePrompt(level: GuidanceLevel, input: {
   const patient = input.delayedImmuneEvent;
   if (level === 'unassisted' || input.scenarioVersion !== '0.1.0' || !patient || patient.ended) return null;
   const prompt = (id: string, urgent: boolean, suggestion: string, because: string) =>
-    level === 'coached' && !urgent ? null : { id, suggestion, because, sourceHref: DELAYED_IMMUNE_EVENT_SOURCE_HREF };
+    level === 'coached' && !urgent ? null : { id, suggestion, because };
 
   if (patient.exposureRecordedAtTick === null) return prompt('delayed-immune-event-exposure', true,
     'Take the treatment history back past what the current medication list holds.',

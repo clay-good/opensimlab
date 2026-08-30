@@ -334,9 +334,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary recorded actions. Unassisted mode is silent; withholding is urgent, so coached carries it too. The order is held by test rather than by convention: the example withholds the drug first and before the authored next dose falls due, because the supply is with the patient and an example that documented first would read as thorough while still letting him take it. No prompt suggests changing his dose, which the scenario refuses."
           ]
         },
         {

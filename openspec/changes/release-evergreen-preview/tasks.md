@@ -58,13 +58,20 @@ preview-channel blockers until it is. Updating the specification does not clear 
   - `guidance-and-demonstration` is the genuine authoring gap: oncology had no bound expert
     demonstration, which the renal and endocrine scenarios do have. Done for
     `delayed-immune-event-a-drug-that-stopped-months-ago` and
-    `incidental-clot-a-decision-the-evidence-cannot-make`; 9 of 11 remain. The pattern is an
+    `incidental-clot-a-decision-the-evidence-cannot-make` and
+    `normal-test-toxicity-the-dose-in-his-bag`; 8 of 11 remain. The pattern is an
     observed-state tutor reading the learner's own recorded steps, a snapshot-driven worked
     example, tray and cockpit wiring, and a test that drives the example through the real engine
     to handoff rather than asserting it as a script. Each example also has to be held to its own
     lesson's restraint — the delayed immune event may not supply the diagnosis or the grade, and
     the incidental clot may not choose to anticoagulate or not to, because the recommendation it
-    rests on is conditional on very low certainty.
+    rests on is conditional on very low certainty, and the normal-test lesson has to withhold the
+    drug before it documents anything, because the supply is with the patient and the next dose
+    falls due inside the lesson. Adding a scenario now touches one guard rather than five.
+    The oncology prompts carry no external source link: these scenarios declare their sources as
+    full citations without URLs, and a link built from a citation is a guess rather than a
+    lookup. The architecture boundary caught one such guess and the other two were withdrawn
+    with it.
 
 ## 4. Drop the staged version label
 

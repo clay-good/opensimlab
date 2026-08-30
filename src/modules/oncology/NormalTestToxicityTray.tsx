@@ -1,14 +1,18 @@
 import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { NormalTestToxicitySnapshot } from '@platform/kernel/protocol';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { NormalTestToxicityAction } from './normal-test-toxicity';
+import { normalTestToxicityInlinePrompt } from './normal-test-toxicity-tutor';
 
-export function NormalTestToxicityTray({ assessment, onAction, demonstrating = false }: {
-  readonly assessment?: NormalTestToxicitySnapshot;
+export function NormalTestToxicityTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
+  readonly assessment?: NormalTestToxicitySnapshot; readonly scenarioVersion: string;
   readonly onAction: (action: NormalTestToxicityAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = normalTestToxicityInlinePrompt(guidance, { scenarioVersion, normalTestToxicity: assessment });
   const observations = assessment.observationRecord; const treatment = assessment.treatmentRecord;
   const observation = assessment.observation;
   const decision = (action: NormalTestToxicityAction, label: string, accepted = false) => {
@@ -17,6 +21,10 @@ export function NormalTestToxicityTray({ assessment, onAction, demonstrating = f
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     {/* The drug status leads, because it is the only thing here that changes with the clock. */}
     <p className="syringe__remaining" role="status">Cycle {assessment.cycleNumber}, day {assessment.dayOfCycle}. The drug is {assessment.drugWithheldAtTick === null ? 'NOT withheld' : 'withheld'}. The supply is {assessment.supplyHeldByPatient ? 'in his own bag' : 'held by the service'}.</p>
     <p className="syringe__remaining">Selected sources: a prospective safety analysis of pre-treatment genotype-guided dosing, and a meta-analysis of variant predictors of severe toxicity across 7365 patients. Open the source view for exact wording and grades.</p>

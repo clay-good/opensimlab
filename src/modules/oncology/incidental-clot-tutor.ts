@@ -1,9 +1,19 @@
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { IncidentalClotSnapshot } from '@platform/kernel/protocol';
 
-/** The guideline whose conditional, very-low-certainty recommendation this lesson turns on. */
-export const INCIDENTAL_CLOT_SOURCE_HREF = 'https://doi.org/10.1182/bloodadvances.2020003442';
-
+/**
+ * These prompts carry no external link, deliberately.
+ *
+ * The renal and endocrine tutors each link a specific guideline document whose
+ * exact URL somebody checked. For this lesson the scenario declares its sources as
+ * full citations without URLs, and a link constructed from a citation is a guess:
+ * a journal's DOI pattern is not a substitute for having looked the article up.
+ * Shipping an unverified identifier in a project whose whole claim is that every
+ * number traces to a checkable source would be the kind of error its corrections
+ * log exists to record, so the prompts point at nothing rather than at something
+ * plausible. The tray already sends a reader to the source view, which shows the
+ * declared citations in full.
+ */
 /**
  * Observed-state guidance for a decision the evidence cannot make.
  *
@@ -22,7 +32,7 @@ export function incidentalClotInlinePrompt(level: GuidanceLevel, input: {
   const patient = input.incidentalClot;
   if (level === 'unassisted' || input.scenarioVersion !== '0.1.0' || !patient || patient.ended) return null;
   const prompt = (id: string, urgent: boolean, suggestion: string, because: string) =>
-    level === 'coached' && !urgent ? null : { id, suggestion, because, sourceHref: INCIDENTAL_CLOT_SOURCE_HREF };
+    level === 'coached' && !urgent ? null : { id, suggestion, because };
 
   if (patient.findingRecordedAtTick === null) return prompt('incidental-clot-finding', true,
     'Record the finding and how it came to be found.',
