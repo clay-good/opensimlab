@@ -2,11 +2,13 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { LOWERING_THE_COUNT_A_NUMBER_THAT_CAN_BE_MOVED } from './scenarios/lowering-the-count-a-number-that-can-be-moved';
 import { LOWERING_THE_COUNT_FIXTURES } from './lowering-the-count-fixtures';
+import { LOWERING_THE_COUNT_DEMONSTRATION_VERSION } from './demo/lowering-the-count-demonstration';
 
 export function loweringTheCountCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'oncology' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== LOWERING_THE_COUNT_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
     || LOWERING_THE_COUNT_FIXTURES.contentVersion !== '0.1.0' || LOWERING_THE_COUNT_FIXTURES.seed !== 2790
+    || LOWERING_THE_COUNT_DEMONSTRATION_VERSION !== '0.1.0'
     || JSON.stringify(scenario) !== JSON.stringify(LOWERING_THE_COUNT_A_NUMBER_THAT_CAN_BE_MOVED)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['lowering-the-count-fixtures.ts binds seed 2790 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No leukocyte, viscosity, or cytoreduction-response model is claimed, and no outcome follows from any choice.'] },
@@ -15,7 +17,7 @@ export function loweringTheCountCompletionEvidence(scenario: Scenario, capabilit
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The recorded picture, the recorded licence, the call to haematology, bounded intent, the boundary review, and a current assessment permit handoff with the diagnosis and the strategy open. Instructor takeover bounds a run with no escalation at 120 minutes, shorter than this module’s other lessons because this presentation does not wait, or an unfinished session at eight hours.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Seven event-bound objectives distinguish leukostasis as a clinical designation, urgency licensed without a manoeuvre, the shortest path to definitive treatment, refusing a visibly falling number as proof of benefit, bounded qualified-team intent, reading a confidence interval that crosses one in both directions, and handing off the findings that make it an emergency. Refused shortcuts remain visible, and no diagnosis, treatment effect, or outcome is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['lowering-the-count-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine, including the authored deterioration.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Observed-state guidance and learner-paused example ${LOWERING_THE_COUNT_DEMONSTRATION_VERSION} use ordinary recorded actions. Unassisted mode is silent; escalation is urgent, so coached carries it. The example's own failure mode is a tidy write-up that calls for help last, so a test holds escalation as the second beat, ahead of the licence, intent and boundary records, and asserts it happens before the authored deterioration. A separate test steps the engine with no actions at all and asserts he is clinically worse while the supplied count is unchanged, which is the contrast the lesson turns on. No prompt names a count threshold or a procedure as the thing to do.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];

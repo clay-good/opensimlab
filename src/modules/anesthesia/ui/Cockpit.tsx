@@ -57,6 +57,8 @@ import { useNormalTestToxicityDemonstration } from '../../oncology/demo/useNorma
 import { usePrognosisQuestionDemonstration } from '../../oncology/demo/usePrognosisQuestionDemonstration';
 import { useLaboratoryTlsDemonstration } from '../../oncology/demo/useLaboratoryTlsDemonstration';
 import { useRareEarlyMyocarditisDemonstration } from '../../oncology/demo/useRareEarlyMyocarditisDemonstration';
+import { useLoweringTheCountDemonstration } from '../../oncology/demo/useLoweringTheCountDemonstration';
+import { supportsLoweringTheCountDemonstration } from '../../oncology/demo/lowering-the-count-demonstration';
 import { supportsRareEarlyMyocarditisDemonstration } from '../../oncology/demo/rare-early-myocarditis-demonstration';
 import { supportsLaboratoryTlsDemonstration } from '../../oncology/demo/laboratory-tls-demonstration';
 import { supportsPrognosisQuestionDemonstration } from '../../oncology/demo/prognosis-question-demonstration';
@@ -212,6 +214,7 @@ export function Cockpit({
   const prognosisQuestionDemoSupported = supportsPrognosisQuestionDemonstration(scenario);
   const laboratoryTlsDemoSupported = supportsLaboratoryTlsDemonstration(scenario);
   const rareEarlyMyocarditisDemoSupported = supportsRareEarlyMyocarditisDemonstration(scenario);
+  const loweringTheCountDemoSupported = supportsLoweringTheCountDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
   const renalHypocalcemiaDemoSupported = supportsRenalHypocalcemiaDemonstration(scenario);
   const renalHypermagnesemiaDemoSupported = supportsRenalHypermagnesemiaDemonstration(scenario);
@@ -232,7 +235,8 @@ export function Cockpit({
    */
   const observedStateDemoSupported = hypercalcemiaDemoSupported || hypocalcemiaDemoSupported || hyponatremiaCorrectionDemoSupported || avpDeficiencyDemoSupported || refeedingDemoSupported || perioperativeDiabetesDemoSupported || renalHyperkalemiaDemoSupported || renalHypokalemiaDemoSupported || renalHyponatremiaDemoSupported || renalHypernatremiaDemoSupported || renalHypocalcemiaDemoSupported || renalHypermagnesemiaDemoSupported || delayedImmuneEventDemoSupported || incidentalClotDemoSupported
     || normalTestToxicityDemoSupported || prognosisQuestionDemoSupported
-    || laboratoryTlsDemoSupported || rareEarlyMyocarditisDemoSupported;
+    || laboratoryTlsDemoSupported || rareEarlyMyocarditisDemoSupported
+    || loweringTheCountDemoSupported;
   const scenarioDemoSupported = hypoglycemiaDemoSupported || adrenalDemoSupported
     || thyroidDemoSupported || myxedemaDemoSupported || observedStateDemoSupported;
   const inductionDemonstration = useDemonstration({
@@ -316,6 +320,11 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyponatremia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  const loweringTheCountDemonstration = useLoweringTheCountDemonstration({
+    active: demonstrating && loweringTheCountDemoSupported,
+    running: session.transport === 'running', patient: session.equipment?.resuscitation.loweringTheCount,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const rareEarlyMyocarditisDemonstration = useRareEarlyMyocarditisDemonstration({
     active: demonstrating && rareEarlyMyocarditisDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.rareEarlyMyocarditis,
@@ -361,7 +370,8 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypermagnesemia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = rareEarlyMyocarditisDemoSupported ? rareEarlyMyocarditisDemonstration
+  const demonstration = loweringTheCountDemoSupported ? loweringTheCountDemonstration
+    : rareEarlyMyocarditisDemoSupported ? rareEarlyMyocarditisDemonstration
     : laboratoryTlsDemoSupported ? laboratoryTlsDemonstration
     : prognosisQuestionDemoSupported ? prognosisQuestionDemonstration
     : normalTestToxicityDemoSupported ? normalTestToxicityDemonstration
@@ -1029,6 +1039,7 @@ export function Cockpit({
           prognosisQuestionGuidance={session.guidance}
           laboratoryTlsGuidance={session.guidance}
           rareEarlyMyocarditisGuidance={session.guidance}
+          loweringTheCountGuidance={session.guidance}
           renalHypernatremiaGuidance={session.guidance}
           renalHypocalcemiaGuidance={session.guidance}
           renalHypermagnesemiaGuidance={session.guidance}

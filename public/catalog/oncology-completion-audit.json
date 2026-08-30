@@ -838,9 +838,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary recorded actions. Unassisted mode is silent; escalation is urgent, so coached carries it. The example's own failure mode is a tidy write-up that calls for help last, so a test holds escalation as the second beat, ahead of the licence, intent and boundary records, and asserts it happens before the authored deterioration. A separate test steps the engine with no actions at all and asserts he is clinically worse while the supplied count is unchanged, which is the contrast the lesson turns on. No prompt names a count threshold or a procedure as the thing to do."
           ]
         },
         {

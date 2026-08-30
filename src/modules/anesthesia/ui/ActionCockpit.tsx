@@ -2778,6 +2778,7 @@ export interface ActionCockpitProps {
   readonly prognosisQuestionGuidance?: GuidanceLevel;
   readonly laboratoryTlsGuidance?: GuidanceLevel;
   readonly rareEarlyMyocarditisGuidance?: GuidanceLevel;
+  readonly loweringTheCountGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -5851,6 +5852,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasLoweringTheCountResponse && (
               <LoweringTheCountTray assessment={props.loweringTheCount}
+                guidance={props.loweringTheCountGuidance}
+                scenarioVersion={props.scenario.metadata.version}
                 demonstrating={props.loweringTheCountDemonstrating}
                 onAction={props.onLoweringTheCountResponse ?? (() => {})} />
             )}

@@ -1,14 +1,18 @@
 import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { LoweringTheCountAction } from './lowering-the-count';
+import { loweringTheCountInlinePrompt } from './lowering-the-count-tutor';
 
-export function LoweringTheCountTray({ assessment, onAction, demonstrating = false }: {
-  readonly assessment?: LoweringTheCountSnapshot;
+export function LoweringTheCountTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
+  readonly assessment?: LoweringTheCountSnapshot; readonly scenarioVersion: string;
   readonly onAction: (action: LoweringTheCountAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = loweringTheCountInlinePrompt(guidance, { scenarioVersion, loweringTheCount: assessment });
   const observations = assessment.observationRecord; const results = assessment.resultRecord;
   const observation = assessment.observation;
   const decision = (action: LoweringTheCountAction, label: string, accepted = false) => {
@@ -17,6 +21,10 @@ export function LoweringTheCountTray({ assessment, onAction, demonstrating = fal
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     {/* The count and the findings together. The count alone is the thing being refused. */}
     <p className="syringe__remaining" role="status">Supplied white cell count {assessment.whiteCellCount} × 10⁹/L with blasts on the film, breathless at rest and confused. Leukostasis here is {assessment.leukostasisIsClinical ? 'a clinical designation, not a number' : 'defined by the count'}.</p>
     <p className="syringe__remaining">Selected sources: a systematic review and meta-analysis of leukapheresis in acute myeloid leukaemia, and a narrative review of haematological emergencies. Open the source view for exact wording and grades.</p>
