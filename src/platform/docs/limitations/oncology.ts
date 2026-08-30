@@ -178,4 +178,28 @@ export const ONCOLOGY_LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'The interval contains a substantial possible benefit and a possible harm, so it establishes neither. The studies are retrospective and confounded by indication in a direction their own data show: patients in clinical leukostasis were about twice as likely to receive the intervention, which biases the estimate against it. What can honestly be said is that nobody has demonstrated a short-term mortality benefit, which is why the authors argue against routine rather than against any use.',
     briefIn: ['lowering-the-count-a-number-that-can-be-moved'],
   },
+  {
+    id: 'inherited-urgency-presentation-and-its-stability-are-authored',
+    headline: 'One presentation, one offer, and a patient who does not change.',
+    simplification: 'The case supplies imaging taken four hours before, observations that do not move, a radiation oncology registrar who offers a slot at twenty-five minutes, and an acute oncology team that answers forty minutes after it is called. No venous, oedema, or treatment-response model runs underneath.',
+    whereItMisleads: 'A learner reads the stability as a property of the condition, and expects a real patient with this picture to stay as he is while a biopsy is arranged.',
+    correctUnderstanding: 'The stability is authored, and it is authored deliberately so that the pressure to act comes from a phone call rather than from the patient. A real patient may develop stridor, become confused, or lose blood pressure, in which case the lesson\u2019s own boundary review says that is the group for whom emergent intervention is indicated. Nothing here models a relationship between any choice and his trajectory, and the rehearsal ends the same way whatever is chosen.',
+    briefIn: ['inherited-urgency-an-emergency-that-mostly-is-not-one'],
+  },
+  {
+    id: 'inherited-urgency-controls-are-recording-and-escalation-only',
+    headline: 'No treatment is started here, withheld here, or chosen here.',
+    simplification: 'The learner records the grading findings, records that the tissue decides the treatment, secures the diagnostic pathway, records bounded qualified-team intent, and reviews the boundaries. The imaging and every observation are supplied.',
+    whereItMisleads: 'The refusal of tonight\u2019s radiotherapy is read as this lesson recommending against radiotherapy for this patient, or as a claim that treatment before biopsy is always wrong.',
+    correctUnderstanding: 'What was refused is the order, not the treatment: the cited review says diagnosis and biopsy should precede emergent therapeutic intervention in most cases, and the same review names the cases that are the exception. Radiotherapy, stenting, systemic therapy, steroid and anticoagulation decisions are qualified-team decisions this lesson deliberately does not make, and no drug, dose, route, product, fraction, or procedure is selected or displayed.',
+    briefIn: ['inherited-urgency-an-emergency-that-mostly-is-not-one'],
+  },
+  {
+    id: 'inherited-urgency-a-proportion-is-not-this-patient',
+    headline: 'Five percent is a proportion of a population, not a probability about him.',
+    simplification: 'The case reports that only about 5 percent of patients with this syndrome present with the life-threatening grade, and that death is very rarely caused by the syndrome itself, with one death in a reported series of 1,986 patients.',
+    whereItMisleads: 'A learner converts the proportion into a reason to stop looking, or reads the rarity of death as a reason this patient can be left unobserved; or, in the other direction, treats the same proportion as a reason that urgency is never warranted.',
+    correctUnderstanding: 'The proportion describes who arrives with the grading findings, not how likely this patient is to develop them, and the lesson refuses sending him home for exactly that reason. It is the argument for making the diagnosis first, and the named findings \u2014 significant cerebral oedema, significant laryngeal oedema, significant haemodynamic compromise \u2014 are what override that default when they appear. Both halves are needed; either alone produces a different wrong answer.',
+    briefIn: ['inherited-urgency-an-emergency-that-mostly-is-not-one'],
+  },
 ];

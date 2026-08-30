@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot, DelayedImmuneEventSnapshot, IncidentalClotSnapshot, NormalTestToxicitySnapshot, PrognosisQuestionSnapshot, LaboratoryTlsSnapshot, RareEarlyMyocarditisSnapshot, LoweringTheCountSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot, DelayedImmuneEventSnapshot, IncidentalClotSnapshot, NormalTestToxicitySnapshot, PrognosisQuestionSnapshot, LaboratoryTlsSnapshot, RareEarlyMyocarditisSnapshot, LoweringTheCountSnapshot, InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -136,6 +136,7 @@ export function stateSummary(
     readonly laboratoryTls?: LaboratoryTlsSnapshot;
     readonly rareEarlyMyocarditis?: RareEarlyMyocarditisSnapshot;
     readonly loweringTheCount?: LoweringTheCountSnapshot;
+    readonly inheritedUrgency?: InheritedUrgencySnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -189,7 +190,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale || options.lostContingency || options.delayedImmuneEvent || options.incidentalClot || options.normalTestToxicity || options.prognosisQuestion || options.laboratoryTls || options.rareEarlyMyocarditis || options.loweringTheCount) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale || options.lostContingency || options.delayedImmuneEvent || options.incidentalClot || options.normalTestToxicity || options.prognosisQuestion || options.laboratoryTls || options.rareEarlyMyocarditis || options.loweringTheCount || options.inheritedUrgency) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -213,6 +214,25 @@ export function stateSummary(
           + ' intravenous.');
       }
     }
+  }
+  if (options.inheritedUrgency) {
+    const patient = options.inheritedUrgency;
+    // Findings first, always. The swelling is how this looks at every grade, including the safe ones.
+    lines.push(`Facial and neck swelling with filled neck veins and chest-wall collaterals. The findings that would make this the grade that cannot wait are ${patient.emergencyFindingsPresent ? 'present' : 'not present'}: no stridor, fully alert, blood pressure unchanged.`);
+    lines.push('Supplied starting observations were pulse 88 per minute, blood pressure 128 over 76, respiratory rate 18 per minute, oxygen saturation 96 percent in air, and temperature 36.8 degrees Celsius. These remain historical starting observations.');
+    lines.push(`Current state: ${patient.alertness}. There is no tissue diagnosis, and the biopsy list is tomorrow morning.`);
+    lines.push(`Grading findings recorded: ${patient.findingsRecordedAtTick === null ? 'no' : 'yes'}. The tissue decides the treatment: ${patient.tissueRecordedAtTick === null ? 'not recorded' : 'recorded'}. Diagnostic pathway: ${patient.pathwaySecuredAtTick === null ? 'not secured' : 'secured'}. Bounded intent: ${patient.treatmentIntentAtTick === null ? 'not recorded' : 'recorded as the qualified team\u2019s decision'}. Boundaries: ${patient.boundariesReviewedAtTick === null ? 'not reviewed' : 'reviewed'}.`);
+    if (patient.treatmentOffered) {
+      lines.push('A treatment slot has been offered for tonight. Nothing about the patient has changed: what arrived is an offer, not a deterioration.');
+    }
+    lines.push(`Only about ${patient.lifeThreateningGradePercent} percent of patients with this syndrome present with the life-threatening grade, which is defined by significant cerebral oedema, significant laryngeal oedema, or significant haemodynamic compromise, and any of those is an indication for emergent intervention. Death is very rarely caused by the syndrome itself. A proportion is not this patient's risk and is not a reason to stop looking. Radiotherapy and its timing, stenting, systemic therapy, steroid and anticoagulation decisions belong to the qualified team; no drug, dose, route, product, or procedure is selected here, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.`);
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: respiratory rate ${patient.observation.respiratoryRateBpm} per minute; oxygen saturation ${patient.observation.spo2Percent} percent in air; ${patient.observation.stridor ? 'stridor present' : 'no stridor'}; ${patient.observation.consciousLevel}.`
+      : 'No new full assessment has been requested.');
+    if (patient.teamObserved) {
+      lines.push('Acute oncology has accepted him, the biopsy is booked and flagged for the morning, and they say the histology determines which treatment he gets.');
+    }
+    if (patient.choiceFeedback) lines.push(patient.choiceFeedback);
   }
   if (options.loweringTheCount) {
     const patient = options.loweringTheCount;

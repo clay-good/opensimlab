@@ -34,7 +34,7 @@ describe('Oncology module foundation', () => {
     expect(moduleProse('oncology').plannedScope).toContain('Eleven bounded');
     // The prose must no longer read as an unbuilt module, because the route now runs one.
     expect(moduleProse('oncology').description).not.toBe('Planned.');
-    expect(ONCOLOGY_SCENARIOS).toHaveLength(7);
+    expect(ONCOLOGY_SCENARIOS).toHaveLength(8);
     expect(DEFAULT_ONCOLOGY_SCENARIO_ID).toBe(id);
     expect(getOncologyScenario(id)).toBe(scenario);
     expect(getOncologyScenario('not-a-scenario')).toBeUndefined();
@@ -57,7 +57,7 @@ describe('Oncology module foundation', () => {
     expect(route.indexable).toBe(true);
     expect(route.description.length).toBeGreaterThanOrEqual(110);
     expect(route.description.length).toBeLessThanOrEqual(160);
-    expect(ROUTES.filter((entry) => entry.path.startsWith('/oncology'))).toHaveLength(8);
+    expect(ROUTES.filter((entry) => entry.path.startsWith('/oncology'))).toHaveLength(9);
     const markup = renderToStaticMarkup(createElement(PrerenderedBody, { path }));
     expect(markup).toContain('a drug that stopped months ago');
     const moduleMarkup = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/oncology' }));
@@ -71,7 +71,7 @@ describe('Oncology module foundation', () => {
       expect(PUBLIC_CATALOG_ARTIFACTS).toContain(`/catalog/oncology-${artifact}.json`);
     }
     const completion = json('public/catalog/oncology-completion-audit.json');
-    expect(completion.scenarioCount).toBe(7);
+    expect(completion.scenarioCount).toBe(8);
     expect(completion.scenarios[0].scenarioId).toBe(id);
     expect(completion.scenarios[0].environment).toBe('clinic');
     // The two report catalogs must stay byte-identical, or a report can resolve in one and not the other.

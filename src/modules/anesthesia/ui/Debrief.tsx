@@ -66,6 +66,7 @@ import { supportsPrognosisQuestion } from '../../oncology/prognosis-question';
 import { supportsLaboratoryTls } from '../../oncology/laboratory-tls';
 import { supportsRareEarlyMyocarditis } from '../../oncology/rare-early-myocarditis';
 import { supportsLoweringTheCount } from '../../oncology/lowering-the-count';
+import { supportsInheritedUrgency } from '../../oncology/inherited-urgency';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -652,6 +653,47 @@ export function objectiveFindings(
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if (objective.id.includes('-oncology-inherited-urgency-')) {
+      if (!supportsInheritedUrgency(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The oncology superior vena caval obstruction lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^inherited-urgency-${id}-\\d+$`).test(entry.eventId));
+      const findings = event('findings-recorded'); const tissue = event('tissue-recorded');
+      const pathway = event('pathway-secured'); const intent = event('intent-recorded');
+      const boundaries = event('boundary-review'); const handoff = event('handoff');
+      const offered = event('treatment-offered');
+      const answered = log.find((entry) => /^inherited-urgency-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedTreatFirst = event('treat-first-refused'); const refusedSwelling = event('swelling-only-refused');
+      const refusedSendHome = event('send-home-refused'); const refusedDiuretic = event('diuretic-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'recognize-oncology-inherited-urgency-the-findings-that-grade-it': { met: !!findings, tick: findings?.tick,
+          finding: (findings ? 'The three findings that would make this the grade which cannot wait were each recorded as looked for and absent. ' : 'The grading findings were never recorded, so nobody after you can tell absent from unasked. ')
+            + (refusedSwelling ? 'Grading it by the swelling itself was attempted and refused. ' : '')
+            + (refusedDiuretic ? 'A diuretic for the distended veins was attempted and refused; the veins are full because of an obstruction upstream of the heart. ' : '')
+            + 'Significant cerebral oedema, significant laryngeal oedema, and significant haemodynamic compromise are what separate the grade that cannot wait from the way this looks at every grade.' },
+        'record-oncology-inherited-urgency-the-tissue-decides': { met: !!tissue, tick: tissue?.tick,
+          finding: (tissue ? 'That the histology rather than the swelling decides the treatment was recorded. ' : 'It was never recorded that the tissue decides the treatment, which is what turns a diagnosis into a delay. ')
+            + 'The causes of this picture are treated differently from one another, and an accurate histological diagnosis before radiotherapy is what allows the causative malignancy to be treated optimally.' },
+        'activate-oncology-inherited-urgency-securing-the-pathway': { met: !!pathway, tick: pathway?.tick,
+          finding: (pathway ? 'Acute oncology was called and the biopsy was requested with the imaging finding, the absent grading findings, and their timing. ' : 'The diagnostic pathway was never secured, so nothing was moving toward a treatment decision. ')
+            + (refusedSendHome ? 'Sending him home to await the biopsy was attempted and refused; usually not an emergency is not the same as nothing. ' : '')
+            + (answered ? 'They answered, accepted him, booked and flagged the biopsy, and told the ward which findings to call about. ' : 'They had not answered by the end of this run. ') },
+        'recognize-oncology-inherited-urgency-the-cost-of-hurrying': { met: !!boundaries && !!pathway, tick: boundaries?.tick,
+          finding: (refusedTreatFirst ? 'Starting radiotherapy tonight ahead of the biopsy was attempted and refused, for the sequence rather than for the treatment. ' : '')
+            + (offered ? 'A treatment slot was offered while the patient was unchanged; what arrived was an offer rather than a deterioration. ' : '')
+            + 'Treating first can leave the sample unable to say what this is, and what it is decides what he should be given. The cost of tonight is not paid tonight, and it is not paid by whoever agreed to it.' },
+        'record-oncology-inherited-urgency-bounded-qualified-intent': { met: !!intent, tick: intent?.tick,
+          finding: (intent ? 'Radiotherapy and its timing, stenting, systemic therapy, steroid and anticoagulation decisions, and definitive treatment were recorded as the qualified team’s. ' : 'Bounded qualified-team intent was never recorded. ')
+            + 'Nothing was started, and no drug, dose, route, product, fraction, threshold, or procedure was chosen or displayed here.' },
+        'review-oncology-inherited-urgency-boundaries-and-their-certainty': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The boundaries were reviewed in both directions. ' : 'The boundary and certainty review is missing. ')
+            + 'About 5 percent present with the life-threatening grade and death is very rarely caused by the syndrome itself, with one death in a reported series of 1,986 patients. A proportion is not this patient’s risk, and it is not a reason to stop looking; it is the argument for getting the diagnosis first.' },
+        'handoff-oncology-inherited-urgency-what-would-change-it': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The imaging finding, the grading findings with the time they were last checked, the state of the biopsy booking, and what to call about overnight all travelled. ' : 'Current findings, the recorded reasoning, or continuing-care ownership remains incomplete. ')
+            + 'What was handed over is the difference between this waiting safely and this not waiting, and who decides which it is.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
 
     if (objective.id.includes('-oncology-lowering-the-count-')) {
       if (!supportsLoweringTheCount(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The oncology hyperleukocytosis lesson was not active.' } satisfies ObjectiveFinding;

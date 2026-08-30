@@ -1917,14 +1917,16 @@ credited toward the catalog until every item in the completion contract passes.
     procedure, observation, disposition, prognosis, or outcome control exists.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.
-  The nursing module is registered at 9 of 9. Oncology is open at 7 of 11: a delayed immune-related
+  The nursing module is registered at 9 of 9. Oncology is open at 8 of 11: a delayed immune-related
   event after the drug has stopped, an incidentally found pulmonary embolus whose management is
   only conditionally recommended, severe first-cycle oral-fluoropyrimidine toxicity after a
   wild-type pre-treatment panel, a prognosis conversation scored by what the patient repeats back
   rather than by what was said to him, a laboratory tumour-lysis picture in a patient who does not
   meet the clinical definition, a checkpoint-inhibitor myocarditis whose base rate is not a
   threshold, and a hyperleukocytosis where the intervention that lowers the number has no
-  demonstrated mortality benefit. Surgery/trauma is declared planned and has not started. Every
+  demonstrated mortality benefit, and a superior vena caval obstruction that is taught as an
+  emergency and, for about 95 percent of patients, is not one, where the action that looks like
+  waiting is what decides the treatment. Surgery/trauma is declared planned and has not started. Every
   scenario in this wave remains preview: none carries clinical review, a state-space matrix, or
   inclusive-runtime evidence, so the wave's completion count is still zero.
   Two budgets were the binding constraint on the remaining oncology lessons, and both have been
@@ -1936,8 +1938,11 @@ credited toward the catalog until every item in the completion contract passes.
   bundle, where the debrief constructed its own engine to compute counterfactuals — so each
   lesson's prose cost double. The debrief and the instructor review page now ask the worker to
   re-run an action list over a `history-replay` message, and the second engine copy is gone: the
-  precache falls from 2.001 to 1.648 MiB and the cockpit route to 1,082.5 KiB. That is roughly
-  35 further lessons of headroom on the precache and 58 on the route, where the first was six.
+  precache falls from 2.001 to 1.648 MiB and the cockpit route to 1,082.5 KiB. The eighth oncology
+  lesson then cost 10.2 KiB compressed on the precache rather than the roughly 20 it would have
+  cost before, which is the predicted per-lesson figure paid once instead of twice. That leaves
+  roughly 34 further lessons of headroom on the precache and 57 on the route, where the first
+  measurement here bought six.
 - [ ] After every wave, verify the exact cumulative count, distinctness, capability reuse, path and
   competency coverage, sources, maturity labels, domain-pack budget, offline behavior, mobile
   layout, and complete regression fixtures.

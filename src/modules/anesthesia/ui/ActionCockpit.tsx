@@ -83,6 +83,7 @@ import { PrognosisQuestionTray } from '../../oncology/PrognosisQuestionTray';
 import { LaboratoryTlsTray } from '../../oncology/LaboratoryTlsTray';
 import { RareEarlyMyocarditisTray } from '../../oncology/RareEarlyMyocarditisTray';
 import { LoweringTheCountTray } from '../../oncology/LoweringTheCountTray';
+import { InheritedUrgencyTray } from '../../oncology/InheritedUrgencyTray';
 import { supportsLastKnownWell, type LastKnownWellAction, type LastKnownWellSnapshot } from '../../medical-surgical-nursing/last-known-well';
 import { supportsOxygenTargetScale, type OxygenTargetScaleAction, type OxygenTargetScaleSnapshot } from '../../medical-surgical-nursing/oxygen-target-scale';
 import { supportsLostContingency, type LostContingencyAction, type LostContingencySnapshot } from '../../medical-surgical-nursing/lost-contingency';
@@ -99,7 +100,9 @@ import type { LaboratoryTlsSnapshot } from '@platform/kernel/protocol';
 import { supportsRareEarlyMyocarditis, type RareEarlyMyocarditisAction } from '../../oncology/rare-early-myocarditis';
 import type { RareEarlyMyocarditisSnapshot } from '@platform/kernel/protocol';
 import { supportsLoweringTheCount, type LoweringTheCountAction } from '../../oncology/lowering-the-count';
+import { supportsInheritedUrgency, type InheritedUrgencyAction } from '../../oncology/inherited-urgency';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
+import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import { supportsProxyScale, type ProxyScaleAction, type ProxyScaleSnapshot } from '../../medical-surgical-nursing/proxy-scale';
 import { supportsQuietPatient, type QuietPatientAction, type QuietPatientSnapshot } from '../../medical-surgical-nursing/quiet-patient';
 import { supportsAfferentLimb, type AfferentLimbAction, type AfferentLimbSnapshot } from '../../medical-surgical-nursing/afferent-limb';
@@ -185,6 +188,7 @@ export interface ActionCockpitProps {
   readonly laboratoryTls?: LaboratoryTlsSnapshot;
   readonly rareEarlyMyocarditis?: RareEarlyMyocarditisSnapshot;
   readonly loweringTheCount?: LoweringTheCountSnapshot;
+  readonly inheritedUrgency?: InheritedUrgencySnapshot;
   readonly hypoglycemiaDemonstrating?: boolean;
   readonly scenario: Scenario;
   readonly region: RegionProfile;
@@ -2751,6 +2755,7 @@ export interface ActionCockpitProps {
   readonly onLaboratoryTlsResponse?: (action: LaboratoryTlsAction) => void;
   readonly onRareEarlyMyocarditisResponse?: (action: RareEarlyMyocarditisAction) => void;
   readonly onLoweringTheCountResponse?: (action: LoweringTheCountAction) => void;
+  readonly onInheritedUrgencyResponse?: (action: InheritedUrgencyAction) => void;
   readonly renalHyponatremiaGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
@@ -2785,6 +2790,7 @@ export interface ActionCockpitProps {
   readonly laboratoryTlsDemonstrating?: boolean;
   readonly rareEarlyMyocarditisDemonstrating?: boolean;
   readonly loweringTheCountDemonstrating?: boolean;
+  readonly inheritedUrgencyDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -2997,6 +3003,7 @@ export function crisisResponseAvailability(
   const hasLaboratoryTlsResponse = supportsLaboratoryTls(scenario);
   const hasRareEarlyMyocarditisResponse = supportsRareEarlyMyocarditis(scenario);
   const hasLoweringTheCountResponse = supportsLoweringTheCount(scenario);
+  const hasInheritedUrgencyResponse = supportsInheritedUrgency(scenario);
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -3569,7 +3576,7 @@ export function crisisResponseAvailability(
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
-    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse, hasToxicShockResponse, hasPossibleSepsisResponse, hasSepticShockLabelResponse, hasMeningitisImagingResponse, hasLowScoreResponse, hasCountedRateResponse, hasPairedReadingResponse, hasAfferentLimbResponse, hasQuietPatientResponse, hasProxyScaleResponse, hasLastKnownWellResponse, hasOxygenTargetScaleResponse, hasLostContingencyResponse, hasDelayedImmuneEventResponse, hasIncidentalClotResponse, hasNormalTestToxicityResponse, hasPrognosisQuestionResponse, hasLaboratoryTlsResponse, hasRareEarlyMyocarditisResponse, hasLoweringTheCountResponse,
+    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse, hasToxicShockResponse, hasPossibleSepsisResponse, hasSepticShockLabelResponse, hasMeningitisImagingResponse, hasLowScoreResponse, hasCountedRateResponse, hasPairedReadingResponse, hasAfferentLimbResponse, hasQuietPatientResponse, hasProxyScaleResponse, hasLastKnownWellResponse, hasOxygenTargetScaleResponse, hasLostContingencyResponse, hasDelayedImmuneEventResponse, hasIncidentalClotResponse, hasNormalTestToxicityResponse, hasPrognosisQuestionResponse, hasLaboratoryTlsResponse, hasRareEarlyMyocarditisResponse, hasLoweringTheCountResponse, hasInheritedUrgencyResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3960,7 +3967,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
-    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse, hasToxicShockResponse, hasPossibleSepsisResponse, hasSepticShockLabelResponse, hasMeningitisImagingResponse, hasLowScoreResponse, hasCountedRateResponse, hasPairedReadingResponse, hasAfferentLimbResponse, hasQuietPatientResponse, hasProxyScaleResponse, hasLastKnownWellResponse, hasOxygenTargetScaleResponse, hasLostContingencyResponse, hasDelayedImmuneEventResponse, hasIncidentalClotResponse, hasNormalTestToxicityResponse, hasPrognosisQuestionResponse, hasLaboratoryTlsResponse, hasRareEarlyMyocarditisResponse, hasLoweringTheCountResponse,
+    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse, hasToxicShockResponse, hasPossibleSepsisResponse, hasSepticShockLabelResponse, hasMeningitisImagingResponse, hasLowScoreResponse, hasCountedRateResponse, hasPairedReadingResponse, hasAfferentLimbResponse, hasQuietPatientResponse, hasProxyScaleResponse, hasLastKnownWellResponse, hasOxygenTargetScaleResponse, hasLostContingencyResponse, hasDelayedImmuneEventResponse, hasIncidentalClotResponse, hasNormalTestToxicityResponse, hasPrognosisQuestionResponse, hasLaboratoryTlsResponse, hasRareEarlyMyocarditisResponse, hasLoweringTheCountResponse, hasInheritedUrgencyResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -4160,8 +4167,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasLaboratoryTlsResponse
     || hasRareEarlyMyocarditisResponse
     || hasLoweringTheCountResponse
+    || hasInheritedUrgencyResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasLoweringTheCountResponse
+  const responseTray = hasInheritedUrgencyResponse
+    || hasLoweringTheCountResponse
     ? { id: 'crisis', label: 'Recognise + call + hand over' } as const
     : hasRareEarlyMyocarditisResponse
     ? { id: 'crisis', label: 'Record + watch + hand over' } as const
@@ -5786,6 +5795,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <ProxyScaleTray assessment={props.proxyScale}
                 demonstrating={props.proxyScaleDemonstrating}
                 onAction={props.onProxyScaleResponse ?? (() => {})} />
+            )}
+            {hasInheritedUrgencyResponse && (
+              <InheritedUrgencyTray assessment={props.inheritedUrgency}
+                demonstrating={props.inheritedUrgencyDemonstrating}
+                onAction={props.onInheritedUrgencyResponse ?? (() => {})} />
             )}
             {hasLoweringTheCountResponse && (
               <LoweringTheCountTray assessment={props.loweringTheCount}

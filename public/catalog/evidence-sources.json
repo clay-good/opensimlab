@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 389,
+  "sourceCount": 391,
   "sources": [
     {
       "id": "renal-hypermagnesemia-series-2018",
@@ -5023,6 +5023,32 @@
       "verifiedAgainst": "Open-access full text at PMC12808996, introduction and results read directly, including the presentation table. A retrospective multicentre series of patients already diagnosed at centres that see them, so it describes the diagnosed rather than the exposed and its predictors are associations.",
       "verifiedOn": "2026-08-29",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/40996334/"
+    },
+    {
+      "id": "oncology-svc-syndrome-review-2016",
+      "pmid": "27026923",
+      "authors": "Straka C, Ying J, Kong FM, et al",
+      "title": "Review of evolving etiologies, implications and treatment strategies for the superior vena cava syndrome",
+      "publication": "SpringerPlus",
+      "year": 2016,
+      "locator": "5:229; doi:10.1186/s40064-016-1900-7; PMC4771672; grading, emergent management and diagnosis sections; \"Although only 5 % of SVCS patients present with grade 4 disease, any of the aforementioned complications would be an indication for emergent venogram, stent placement, and thrombolytic therapy if indicated\"; \"Death is very rarely caused by SVCS. In one series of 1986 patients with SVCS, only 1 death was reported\"; \"accumulating evidence has suggested that accurate diagnosis and biopsy should precede emergent therapeutic intervention in most cases\"; \"obtaining an accurate histologic diagnosis prior to starting RT allows for optimum treatment of the causative malignancy\"; \"SVCS is a medical emergency if associated with laryngeal or cerebral edema\"",
+      "usedFor": "That the presentation is usually not the emergency it is taught as, stated with the proportion in both directions; that an accurate histological diagnosis before radiotherapy is what allows the causative malignancy to be treated optimally, which is why the sequence rather than the treatment is what this lesson refuses; and the findings that override that default. No radiotherapy schedule, stent, agent, dose, or threshold is adopted.",
+      "verifiedAgainst": "The open-access full text at PMC4771672, read on the date below, with the quoted sentences taken verbatim from it. It is a narrative review rather than a systematic one, so the 5 percent and the single death in 1,986 patients are figures it reports from the literature rather than a pooled estimate it derives.",
+      "verifiedOn": "2026-08-30",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/27026923/"
+    },
+    {
+      "id": "oncology-svc-syndrome-classification-2008",
+      "pmid": "18670297",
+      "authors": "Yu JB, Wilson LD, Detterbeck FC",
+      "title": "Superior vena cava syndrome — a proposed classification system and algorithm for management",
+      "publication": "Journal of Thoracic Oncology",
+      "year": 2008,
+      "locator": "3(8):811-814; doi:10.1097/JTO.0b013e3181804791; the proposed grading scale, in which grade 4 denotes life-threatening disease from significant cerebral oedema with confusion or obtundation, significant laryngeal oedema with stridor, or significant haemodynamic compromise",
+      "usedFor": "The three findings this lesson has the learner look for and record, and the fact that the scale they come from is proposed on the basis of symptom severity rather than derived from outcomes, which is why the lesson treats it as a way of naming findings rather than as a validated predictor.",
+      "verifiedAgainst": "PubMed PMID 18670297 bibliographic record for the citation, and the grade 4 definition as quoted in the 2016 SpringerPlus review above. The paper’s own title states that the classification is proposed; no outcome validation is claimed here for it.",
+      "verifiedOn": "2026-08-30",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/18670297/"
     },
     {
       "id": "oncology-leukapheresis-meta-analysis-2020",
