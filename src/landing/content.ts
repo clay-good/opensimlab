@@ -8,8 +8,21 @@
  * report and the limitations register do not support.
  */
 
-export const READY_SCENARIO_COUNT = 240;
-export const READY_MODULE_COUNT = 15;
+import { availableModules } from '@platform/modules/registry';
+
+/**
+ * Both counts are derived from the module registry rather than typed here.
+ *
+ * The front door now prints a scenario count on every module tile AND a total in
+ * the one-line description. Two hand-maintained numbers that must agree is one
+ * number too many: a module gaining a scenario used to leave the tagline quietly
+ * under-selling the product until someone noticed. The registry declares the
+ * per-module count, `tests/unit/discoverability.test.ts` holds each declaration
+ * against the real scenario array, and these two totals follow from it.
+ */
+export const READY_MODULE_COUNT = availableModules().length;
+export const READY_SCENARIO_COUNT = availableModules()
+  .reduce((total, module) => total + module.scenarioCount, 0);
 
 export const ONE_LINE_DESCRIPTION =
   `Practice ${READY_SCENARIO_COUNT} clinical scenarios across ${READY_MODULE_COUNT} specialties, free online, `

@@ -27,6 +27,20 @@ export interface ModuleDeclaration {
   readonly route: string;
   readonly displayName: string;
   readonly status: ModuleStatus;
+  /**
+   * How many scenarios the module ships, declared here rather than counted from
+   * the scenario arrays.
+   *
+   * The front door shows this number beside every module name, and the front
+   * door is budgeted separately and forbidden from importing a single scenario
+   * file (`tests/integration/landing-bundle.test.ts`). A declared count is the
+   * only way it can state one. `tests/unit/discoverability.test.ts` asserts each
+   * declaration against the real array length, so a scenario added without
+   * updating this number fails the build rather than under-selling the module.
+   *
+   * A planned module declares zero.
+   */
+  readonly scenarioCount: number;
   readonly timescale: TimescaleDeclaration;
 }
 
@@ -36,6 +50,7 @@ export const MODULES: readonly ModuleDeclaration[] = [
     route: 'anesthesia',
     displayName: 'Anesthesia',
     status: 'available',
+    scenarioCount: 39,
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
@@ -43,6 +58,7 @@ export const MODULES: readonly ModuleDeclaration[] = [
     route: 'emergency-medicine',
     displayName: 'Emergency medicine',
     status: 'available',
+    scenarioCount: 25,
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
@@ -50,6 +66,7 @@ export const MODULES: readonly ModuleDeclaration[] = [
     route: 'cardiology',
     displayName: 'Cardiology',
     status: 'available',
+    scenarioCount: 17,
     timescale: { unit: 'minutes', stepSeconds: 1, speeds: [1, 5, 30, 120] },
   },
   {
@@ -57,6 +74,7 @@ export const MODULES: readonly ModuleDeclaration[] = [
     route: 'respiratory-medicine',
     displayName: 'Respiratory medicine',
     status: 'available',
+    scenarioCount: 15,
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
@@ -64,6 +82,7 @@ export const MODULES: readonly ModuleDeclaration[] = [
     route: 'pediatrics',
     displayName: 'Pediatrics',
     status: 'available',
+    scenarioCount: 16,
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
@@ -71,6 +90,7 @@ export const MODULES: readonly ModuleDeclaration[] = [
     route: 'neurology',
     displayName: 'Neurology',
     status: 'available',
+    scenarioCount: 15,
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
@@ -78,6 +98,7 @@ export const MODULES: readonly ModuleDeclaration[] = [
     route: 'toxicology',
     displayName: 'Toxicology',
     status: 'available',
+    scenarioCount: 15,
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
@@ -85,6 +106,7 @@ export const MODULES: readonly ModuleDeclaration[] = [
     route: 'obstetrics',
     displayName: 'Obstetrics',
     status: 'available',
+    scenarioCount: 15,
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
@@ -92,6 +114,7 @@ export const MODULES: readonly ModuleDeclaration[] = [
     route: 'neonatology',
     displayName: 'Neonatology',
     status: 'available',
+    scenarioCount: 11,
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
@@ -99,6 +122,7 @@ export const MODULES: readonly ModuleDeclaration[] = [
     route: 'endocrine-metabolic',
     displayName: 'Endocrine and metabolic medicine',
     status: 'available',
+    scenarioCount: 12,
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
@@ -106,6 +130,7 @@ export const MODULES: readonly ModuleDeclaration[] = [
     route: 'renal-electrolyte',
     displayName: 'Renal and electrolyte medicine',
     status: 'available',
+    scenarioCount: 6,
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
@@ -113,6 +138,7 @@ export const MODULES: readonly ModuleDeclaration[] = [
     route: 'infectious-disease',
     displayName: 'Infectious disease',
     status: 'available',
+    scenarioCount: 10,
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
@@ -120,6 +146,7 @@ export const MODULES: readonly ModuleDeclaration[] = [
     route: 'medical-surgical-nursing',
     displayName: 'Nursing',
     status: 'available',
+    scenarioCount: 9,
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
@@ -127,6 +154,7 @@ export const MODULES: readonly ModuleDeclaration[] = [
     route: 'oncology',
     displayName: 'Oncology',
     status: 'available',
+    scenarioCount: 11,
     // The planned entry assumed chemotherapy over weeks. The lessons this module actually
     // opens with run in minutes of simulated ward and clinic time, like every other module.
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
@@ -136,6 +164,7 @@ export const MODULES: readonly ModuleDeclaration[] = [
     route: 'surgery-trauma',
     displayName: 'Surgery and trauma',
     status: 'planned',
+    scenarioCount: 0,
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
@@ -143,6 +172,7 @@ export const MODULES: readonly ModuleDeclaration[] = [
     route: 'critical-care',
     displayName: 'Critical care',
     status: 'available',
+    scenarioCount: 24,
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
 ];

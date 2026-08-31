@@ -8,14 +8,28 @@ Defines the front door at `opensimlab.com`. It has two jobs and they pull in opp
 
 ### Requirement: One Screen, Every Door
 
-The landing page SHALL fit its essential content — the name, the one-line description, the hero, and the module choices — within the first viewport at every breakpoint from 360 px wide upward, with no carousel, no modal, no cookie banner, no newsletter capture, and no interstitial of any kind.
+The landing page SHALL fit its essential content, the name, the one-line description, the hero, and the module choices, within one screen at 1440 px wide, with no carousel, no modal, no cookie banner, no newsletter capture, and no interstitial of any kind. At a phone width the name, the description, the hero, and the first row of module choices SHALL be above the fold and the remainder SHALL be reachable by one ordinary scroll.
 
 #### Scenario: Every available module is offered at the same weight
 
 - **WHEN** the page renders at any supported breakpoint
 - **THEN** every module with `available` status is present as its own control linking to its route, all at the same size and visual weight, and no single module is styled as the primary one
 
-Fifteen modules are registered at their full planned count, and a visitor arriving here is not necessarily an anaesthetist. This requirement previously named exactly one primary Button linking to `/anesthesia`, with the other modules listed beneath it as small text; that said the product was an anaesthesia simulator with extras, which is not what it is. The one-screen half of the requirement is unchanged and is what constrains the design: offering every module costs vertical space, so the space comes from the hero and the spacing rather than from the fold.
+Fifteen modules are registered at their full planned count, and a visitor arriving here is not necessarily an anaesthetist. This requirement previously named exactly one primary Button linking to `/anesthesia`, with the other modules listed beneath it as small text; that said the product was an anaesthesia simulator with extras, which is not what it is. The one-screen half of the requirement is what constrains the design: offering every module costs vertical space, so the space comes from the hero and the spacing rather than from the fold.
+
+#### Scenario: A module choice reads as a control
+
+- **WHEN** a visitor looks at the module choices
+- **THEN** each one is a surface with a hairline and a radius whose whole area is the link, at a target size no smaller than the design system's minimum, rather than a run of small text a visitor has to guess is clickable
+
+The choices were 11 px pill chips in a dot-separated line. That is the smallest thing on the page, and it was carrying the one action a stranger came here to take.
+
+#### Scenario: Each module states how much is behind it
+
+- **WHEN** a module choice renders
+- **THEN** it carries the number of scenarios that module ships, and that number is the one the module's own route actually serves
+
+The front door claims a total in its one line. The per-module counts are what make that total checkable at a glance instead of asking to be believed. The count is declared in the module registry rather than counted from the scenario files, because the landing route is budgeted separately and may not import one; an automated test holds every declaration against the real scenario array, and the total in the one-line description is summed from the same declarations rather than typed.
 
 #### Scenario: Nothing interrupts arrival
 
@@ -24,22 +38,22 @@ Fifteen modules are registered at their full planned count, and a visitor arrivi
 
 #### Scenario: The front door is one screen and stays one screen
 
-- **WHEN** the landing page is measured from the top of the document to the bottom of the module line
-- **THEN** it occupies no more than one screen at 1440 px width, contains no prose section, no questions block and no expandable panel, and an automated test fails the build if a section is added to it
+- **WHEN** the landing page is measured from the top of the document to the bottom of the footer
+- **THEN** it occupies no more than one screen at 1440 by 900, contains no prose section, no questions block and no expandable panel, and an automated test fails the build if a section is added to it, budgeting the module directory separately from the copy so that launching a module cannot buy room for new prose
 
 ### Requirement: The Demonstration Is One Click From The Front Door
 
-The front door SHALL offer, beside its single primary action, a quiet secondary link that starts the guided demonstration directly, without a briefing step. It SHALL NOT be a second primary control and SHALL NOT compete with the primary action for attention.
+The front door SHALL offer, under the module choices, a quiet link that starts the guided demonstration directly, without a briefing step. It SHALL NOT be a control and SHALL NOT compete with the module choices for attention.
 
 #### Scenario: A visitor reaches a running demonstration in one click
 
 - **WHEN** a visitor follows the demonstration link from the front door
 - **THEN** the scenario the script was authored against opens already running at demonstration speed with the first narration on screen, and no briefing is interposed, because someone who chose to watch has already answered the question a briefing asks
 
-#### Scenario: It stays a link, not a second button
+#### Scenario: It stays a link, not a button
 
 - **WHEN** the front door renders
-- **THEN** exactly one primary button is present and the demonstration is offered as text beside it
+- **THEN** no primary button is present anywhere on it, and the demonstration is offered as text under the module choices, because it is the fallback for a visitor who has not decided which door is theirs rather than the offer itself
 
 #### Scenario: An ordinary visit is never diverted into it
 

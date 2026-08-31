@@ -1,14 +1,26 @@
 /* The landing page (platform/landing).
  *
  * The front door is one screen and nothing more: a name, a line, the product
- * running, one button, and two quiet lines of links. The hero is the only
- * saturated colour on the page; everything else comes from the neutral ramp.
+ * running, every specialty as a door, and two quiet lines of links. The hero is
+ * the only saturated colour on the page; everything else comes from the neutral
+ * ramp, and nothing here is separated by a shadow.
  * The descriptive prose lives at /about and uses `.landing__content`.
  */
 
 .landing {
   min-block-size: 100dvh;
-  background: var(--surface-0);
+  /* A neutral wash behind the top of the page, so the front door has a centre
+     and the hero sits in light rather than on a flat field. It is one step of
+     the same ramp, not a colour and not an elevation: the design system
+     separates surfaces with a step and a hairline, and this is the step drawn
+     softly instead of at an edge. */
+  background:
+    radial-gradient(
+      120% 62% at 50% 20%,
+      color-mix(in srgb, var(--surface-1) 82%, transparent) 0%,
+      transparent 72%
+    ),
+    var(--surface-0);
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;
 }
@@ -22,11 +34,16 @@
  * as a fragment of a longer document rather than as a front door. Centring the
  * short block and giving the hero real width makes the page look like the one
  * screen it is. */
-/* The gap and the block padding are one notch tighter than they were, and the
-   hero is shorter, because fifteen chips take five rows where a single button
-   took one. The one-screen guarantee is the constraint that pays for the change:
-   offering every module costs vertical space, so the space comes from the
-   generous parts rather than from the fold. */
+/* Wider than the 68ch it held while the choices were a line of chips.
+   The directory is fifteen tiles, and this measure is what buys the row count.
+   Minus the 24px of side padding it leaves 952px, in which `auto-fit` lays five
+   188px columns and their four 8px gaps, so fifteen modules fill exactly three
+   rows. 188px is also just wide enough to set `Endocrine and metabolic medicine`
+   and `Renal and electrolyte medicine` on two lines rather than three, and since
+   every row is as tall as the tallest tile, that second fact is worth 75px of
+   page height on its own. Narrowing this measure costs a row of tile height
+   before it costs a column. The tagline keeps its own measure below, so the
+   sentence does not stretch to the full width with the grid. */
 .landing__front {
   display: grid;
   gap: var(--space-3);
@@ -34,9 +51,9 @@
   justify-items: center;
   text-align: center;
   inline-size: 100%;
-  max-inline-size: 68ch;
+  max-inline-size: 1000px;
   margin-inline: auto;
-  padding: var(--space-6) var(--space-5);
+  padding: var(--space-5);
 }
 
 /* The wordmark scales with the window rather than holding 56px everywhere. At a
@@ -50,27 +67,53 @@
   letter-spacing: var(--type-vital-xl-tracking);
   /* Three short words that must never break two-and-one. */
   text-wrap: balance;
+  /* A vertical falloff across the letterforms, the way a lit sign reads: full
+     --text-primary at the cap line, a few percent of the page mixed in by the
+     baseline. Both stops are the same token, so this is one hue and no new
+     colour has entered the palette. */
+  background: linear-gradient(
+    to bottom,
+    var(--text-primary) 30%,
+    color-mix(in srgb, var(--text-primary) 78%, var(--surface-0)) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
 }
-
-/* The front door is meant to be one screen. On a phone the 48px band above and
- * below it was what pushed the footer under the fold, so at that width it comes
- * back to the same 24px as the sides. */
-@media (max-width: 767px) {
-  .landing__front { padding-block: var(--space-5); }
+/* A forced-colours visitor has asked the operating system to choose the
+   contrast. Give the text back its own colour so it is not painted in nothing. */
+@media (forced-colors: active) {
+  .landing__name { background: none; color: var(--text-primary); }
 }
 
 /* The front door settles in rather than appearing. One short, single-shot
- * movement — nothing loops, nothing bounces, and the whole thing is off under
+ * movement: nothing loops, nothing bounces, and the whole thing is off under
  * reduced motion via the global rule. */
 @media (prefers-reduced-motion: no-preference) {
   .landing__front > * {
     animation: landing-settle var(--motion-deliberate) var(--ease) both;
   }
+  /* Name, line, hero. */
   .landing__front > *:nth-child(2) { animation-delay: 40ms; }
   .landing__front > *:nth-child(3) { animation-delay: 80ms; }
-  .landing__front > *:nth-child(4) { animation-delay: 120ms; }
-  .landing__front > *:nth-child(5) { animation-delay: 160ms; }
-  .landing__front > *:nth-child(6) { animation-delay: 200ms; }
+  /* The directory does not settle as a block; its tiles settle one by one, so
+     the container itself sits out and lets the children carry it. Fifteen doors
+     arriving together is a page loading; fifteen doors arriving in order is the
+     page showing you what it has. */
+  .landing__modules { animation: none; }
+  .landing__modules .landing__module-live {
+    animation: landing-settle var(--motion-deliberate) var(--ease) both;
+    /* 8ms apart, so the last of the fifteen is 112ms behind the first. Every
+       delay on this page stays inside the same 280ms ceiling the motion tokens
+       put on a duration, which is what `npm run lint:tokens` checks: a front door
+       that is still assembling itself half a second in is not delightful, it is
+       slow. */
+    animation-delay: calc(100ms + var(--tile-index) * 8ms);
+  }
+  /* Then the quiet tail, after the last door and in reading order. */
+  .landing__front > *:nth-child(5) { animation-delay: 230ms; }
+  .landing__front > *:nth-child(6) { animation-delay: 255ms; }
+  .landing__front > *:nth-child(7) { animation-delay: 275ms; }
 }
 @keyframes landing-settle {
   from { opacity: 0; transform: translateY(6px); }
@@ -80,7 +123,9 @@
 .landing__tagline {
   font: var(--type-subtitle);
   color: var(--text-secondary);
-  max-inline-size: 46ch;
+  /* Two lines, not three. The measure was 46ch while the front door was 68ch
+     wide; the door is wider now and the sentence should use it. */
+  max-inline-size: 58ch;
   text-wrap: balance;
   line-height: 1.45;
 }
@@ -96,9 +141,11 @@
 .landing__hero {
   position: relative;
   inline-size: 100%;
-  /* The hero is the argument the page makes, so it gets the room to make it —
-     but not at the cost of pushing the choices it is arguing for off the screen. */
-  block-size: clamp(176px, 24dvh, 280px);
+  /* The hero is the argument the page makes, so it gets the room to make it,
+     but not at the cost of pushing the choices it is arguing for off the screen.
+     Three rows of tiles cost more than five rows of chips did, and this is where
+     the difference is paid from. */
+  block-size: clamp(144px, 20dvh, 240px);
   margin-block: var(--space-3);
   background: var(--void);
   border: 1px solid var(--line);
@@ -114,13 +161,30 @@
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(120% 140% at 50% 50%, transparent 55%, color-mix(in srgb, var(--void) 65%, transparent) 100%),
+    /* The edge fade and the corner vignette sit on top, so they fall across the
+       graticule as well as the trace and the glass reads as one surface. */
     linear-gradient(
       to right,
       var(--void) 0%,
       transparent 6%,
       transparent 94%,
       var(--void) 100%
+    ),
+    radial-gradient(120% 140% at 50% 50%, transparent 55%, color-mix(in srgb, var(--void) 65%, transparent) 100%),
+    /* The graticule a real monitor rules its screen with. It is drawn OVER the
+       canvas rather than under it, because the sweep fills each column it paints
+       with an opaque --void and would bury anything behind it. At this alpha the
+       difference is not visible, and keeping it in CSS means it costs the
+       landing budget nothing at all. */
+    repeating-linear-gradient(
+      to right,
+      color-mix(in srgb, var(--line) 34%, transparent) 0 1px,
+      transparent 1px var(--space-6)
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--line) 34%, transparent) 0 1px,
+      transparent 1px var(--space-6)
     );
 }
 /* One hairline of light along the top inside edge. A real bezel catches the
@@ -162,11 +226,12 @@
   block-size: 100%;
 }
 
-/* One primary action and one quiet one beside it. The demonstration is a way
-   IN, not a competitor: it is a text link, so nothing on the page competes with
-   the button for the eye. */
+/* The demonstration is a way in for the visitor who has not decided which door
+   is theirs, so it is a text link under the doors rather than a control beside
+   them. Nothing on this page competes with the tiles for the eye. */
 .landing__action {
-  margin-block-start: var(--space-2);
+  /* Pushed away from the directory, because the tail below belongs to itself. */
+  margin-block-start: var(--space-3);
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -179,71 +244,142 @@
   font: var(--type-body);
   color: var(--text-secondary);
 }
+/* A play mark, so the one link on the page that starts something moving looks
+   like it. Generated content and therefore not in the accessible name, which
+   already says `Watch`. */
+.landing__watch::before {
+  content: '\25B8';
+  margin-inline-end: var(--space-2);
+  color: var(--text-tertiary);
+  transition: color var(--motion-micro) var(--ease);
+}
+.landing__watch:hover::before { color: var(--ecg); }
 
-/* The three facts and the module directory: two quiet lines, not two panels.
- *
- * They belong to each other and not to the button, so they are pulled together
- * as a pair and pushed away from the action above. Before this they sat on the
- * same uniform gap as everything else and read as two more unrelated rows. */
-.landing__facts,
-.landing__modules {
+/* The three facts: one quiet line under the demonstration link, not a panel and
+   not an icon row. They are the last thing on the front door because they answer
+   objections, and an objection is only worth answering after the offer. */
+.landing__facts {
+  margin-block-start: calc(var(--space-1) - var(--space-3));
   font: var(--type-micro);
   letter-spacing: var(--type-micro-tracking);
   color: var(--text-tertiary);
 }
-.landing__facts { margin-block-start: var(--space-2); }
 
-/* Fifteen equal choices, not one choice and fourteen footnotes.
+/* Fifteen doors, all the same size, with the size of each one written on it.
  *
- * These were dot-separated grey text under a single anaesthesia button, which
- * said the product was an anaesthesia simulator with extras. They are chips now,
- * all the same size and weight, wrapping into a block that reads as a set of
- * doors. Chips also give each one a real tap target on a phone, which fifteen
- * 11px links in a running line never did. */
+ * These were 11px pill chips in a dot-separated run under a single anaesthesia
+ * button, which said two wrong things at once: that the product is an anaesthesia
+ * simulator with extras, and that picking a specialty is a footnote rather than
+ * the thing you came here to do. They are tiles now, directly under the hero,
+ * every one the same weight, and each carries its scenario count so a visitor can
+ * see that the 240 in the tagline is a real number with real places behind it.
+ *
+ * `auto-fit` rather than a fixed column count: the grid finds five columns on a
+ * laptop, three on a tablet and two on a phone with no breakpoint of its own, and
+ * fifteen modules land on a clean row boundary at all three.
+ */
 .landing__modules {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(176px, 1fr));
+  /* Every row the height of the tallest tile in the directory. Without this the
+     row holding `Renal and electrolyte medicine` is half again as tall as the
+     row above it, and fifteen equal choices stop looking equal. */
+  grid-auto-rows: 1fr;
   gap: var(--space-2);
-  max-inline-size: 60ch;
-  font: var(--type-micro);
-  letter-spacing: var(--type-micro-tracking);
+  inline-size: 100%;
+  margin-block-start: var(--space-1);
 }
+
+/* A real control: a surface, a hairline, a radius, and a tap target well over
+   the 44px minimum on every one of them. The whole tile is the link, so there is
+   no small text to hit and nothing ambiguous about what is clickable. */
 .landing__modules .landing__module-live {
-  display: inline-flex;
-  align-items: center;
-  min-block-size: 32px;
-  padding-inline: var(--space-3);
+  display: grid;
+  /* The name at the top of the tile and the count at the bottom, so across a row
+     of five every name starts on the same line and every count ends on it,
+     however many lines the name itself takes. */
+  align-content: space-between;
+  gap: var(--space-1);
+  min-block-size: 62px;
+  padding: var(--space-2) var(--space-3);
   border: 1px solid var(--line);
-  border-radius: var(--radius-pill);
-  background: var(--surface-1);
-  color: var(--text-secondary);
+  border-radius: var(--radius-control);
+  /* One step of the ramp at the top edge falling to the next by the bottom. A
+     tile lit from above reads as an object; a flat fill reads as a table cell. */
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--surface-2) 45%, var(--surface-1)) 0%,
+    var(--surface-1) 100%
+  );
+  text-align: start;
   text-decoration: none;
   transition:
     background var(--motion-micro) var(--ease),
     border-color var(--motion-micro) var(--ease),
-    color var(--motion-micro) var(--ease);
+    transform var(--motion-micro) var(--ease);
 }
-.landing__modules .landing__module-live:hover {
-  background: var(--surface-2);
-  border-color: var(--line-strong);
+.landing__module-title {
+  font: var(--type-subtitle);
+  letter-spacing: var(--type-subtitle-tracking);
   color: var(--text-primary);
+  /* Greedy wrapping, NOT `text-wrap: balance`.
+     Balance evens the line lengths, and to even them it will happily add a line:
+     `Renal and electrolyte medicine` set as three balanced lines rather than the
+     two it fits in, and because every row is the height of the tallest tile,
+     that one word cost the directory 75px. */
+  text-wrap: initial;
 }
-.landing__modules .landing__module-live:active { background: var(--surface-1); }
+.landing__module-count {
+  font: var(--type-micro);
+  letter-spacing: var(--type-micro-tracking);
+  color: var(--text-tertiary);
+  /* Fifteen counts in three rows are a column of figures, so they are set as
+     one: `9` takes the same width as `39` and the numbers stack. */
+  font-variant-numeric: tabular-nums;
+  transition: color var(--motion-micro) var(--ease);
+}
 
-/* The one that is not built yet is a sentence, not a door. It sits on its own
-   line under the chips and keeps saying there is no date. */
+/* The tile lifts one pixel and its hairline brightens. One pixel is the whole
+   effect: the design system separates surfaces with a step and a hairline and
+   forbids shadows outright, so the lift has to be carried by the border. */
+.landing__modules .landing__module-live:hover {
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--surface-3) 55%, var(--surface-2)) 0%,
+    var(--surface-2) 100%
+  );
+  border-color: var(--line-strong);
+  transform: translateY(-1px);
+}
+.landing__modules .landing__module-live:hover .landing__module-count {
+  color: var(--text-secondary);
+}
+.landing__modules .landing__module-live:active {
+  background: var(--surface-1);
+  transform: translateY(0);
+}
+/* Under reduced motion the lift is off and the hairline does the whole job. */
+@media (prefers-reduced-motion: reduce) {
+  .landing__modules .landing__module-live { transition: none; }
+  .landing__modules .landing__module-live:hover { transform: none; }
+}
+
+/* The one that is not built yet is a sentence, not a door. Its own element now
+   rather than a wrapped item inside the directory, sitting under the tiles and
+   still saying there is no date. */
 .landing__module-planned {
-  flex-basis: 100%;
+  /* Pulled up against the tiles. It is a caption on the directory, not another
+     row in the page's rhythm, and on the uniform 12px gap it read as one. */
+  margin-block-start: calc(var(--space-1) - var(--space-3));
+  font: var(--type-micro);
+  letter-spacing: var(--type-micro-tracking);
   text-align: center;
   color: var(--text-tertiary);
-  margin-block-start: var(--space-1);
 }
 
 /* The names carry the line; the separators only keep them apart. Giving both the
    same weight is what made this read as pasted data rather than a directory. */
-.landing__facts a,
-.landing__module-live { color: var(--text-secondary); }
+.landing__facts a { color: var(--text-secondary); }
 /* Descendant, not child: each fact is wrapped in its own span, so the separators
    sit a level deeper than a child selector reaches. */
 .landing__facts span[aria-hidden='true'] {
@@ -268,8 +404,10 @@
 .landing__facts a:hover,
 .landing__module-planned a:hover,
 .landing__watch:hover { color: var(--text-primary); }
-.landing__facts a:focus-visible,
-.landing__modules a:focus-visible { outline-offset: 3px; border-radius: var(--radius-pill); }
+.landing__facts a:focus-visible { outline-offset: 3px; border-radius: var(--radius-pill); }
+/* The tile already has a radius, and the ring has to trace it rather than a
+   pill, or a 62px-tall control gets a lozenge drawn around it. */
+.landing__modules a:focus-visible { outline-offset: 3px; border-radius: var(--radius-control); }
 
 /* Selection picks up the interface accent rather than the browser default,
    which on this palette arrives as an unrelated blue block. */
@@ -324,7 +462,11 @@
   border-block-start: 1px solid var(--line);
   padding: var(--space-4) var(--space-5);
   inline-size: 100%;
-  max-inline-size: 68ch;
+  /* The same measure as the front door above it. While this was 68ch and the
+     front door was 1000px, the rule across the top of the footer started and
+     stopped inside the tile grid's edges, which reads as a mistake rather than
+     as a narrower column. */
+  max-inline-size: 1000px;
   margin-inline: auto;
   display: grid;
   justify-items: center;
@@ -358,10 +500,32 @@
  * while changing nothing. The computed height was still the desktop value. Any
  * phone override for this file belongs below the rule it overrides. */
 @media (max-width: 767px) {
-  /* Fifteen chips wrap to seven rows on a phone, which put the last of them
-     under the fold. The hero gives the room back: it is still the largest thing
-     on the screen and still the argument, and a visitor who cannot see the
-     choices it is arguing for has been sold nothing. */
-  .landing__hero { block-size: clamp(150px, 20dvh, 220px); }
-  .landing__modules { gap: var(--space-1); }
+  /* A phone is where the directory costs the most: fifteen tiles are two columns
+     and eight rows, against three rows on a laptop. Everything below is the same
+     tile made as dense as it can be while staying a comfortable target, so the
+     front door still ends at the fold.
+
+     The hero gives up the most, and should: it is the largest thing on the
+     screen and still reads as a running monitor at this height, whereas a
+     visitor who cannot see the choices it is arguing for has been sold nothing. */
+  .landing__hero { block-size: clamp(104px, 13dvh, 150px); }
+  .landing__modules {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* Natural row heights, not the desktop's uniform ones. `1fr` makes every one
+       of the eight rows as tall as `Endocrine and metabolic medicine` wrapped to
+       three lines, which is 300 px of pure air on a screen that has none. The
+       even grid is worth paying for at five columns and three rows; it is not
+       worth paying for at two and eight. */
+    grid-auto-rows: auto;
+    gap: var(--space-1);
+  }
+  /* The name drops to the body size so the longer specialties take two lines
+     rather than three, and the count sits straight under it instead of being
+     pushed to the bottom of a stretched tile. */
+  .landing__modules .landing__module-live {
+    align-content: start;
+    min-block-size: 44px;
+    padding: var(--space-2);
+  }
+  .landing__module-title { font: var(--type-body); }
 }

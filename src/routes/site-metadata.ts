@@ -1,5 +1,7 @@
 /** Lightweight site and document-head metadata shared by the app shell and route catalog. */
 
+import { MODULES } from '@platform/modules/registry';
+
 export const SITE_ORIGIN = 'https://opensimlab.com';
 export const SITE_NAME = 'Open Sim Lab';
 
@@ -27,12 +29,28 @@ export function socialImageUrl(path: string): string {
   return `${SITE_ORIGIN}/og/${name}.svg`;
 }
 
+/**
+ * The root description, with both of its numbers derived rather than typed.
+ *
+ * It read `211 free clinical simulation scenarios` for as long as it took nobody
+ * to notice that 29 more had shipped, which is the failure mode of writing a
+ * count into a string. It also set an em-dash, which the front door does not.
+ *
+ * It names three specialties and stops. Fifteen will not fit inside the 160
+ * characters a search result shows, and they do not need to: every module has its
+ * own indexable route with its own description, and so does every one of the
+ * scenarios beneath it. The root page's job is the total and the breadth.
+ */
+const READY_MODULES = MODULES.filter((module) => module.status === 'available');
+const READY_SCENARIOS = READY_MODULES.reduce((total, module) => total + module.scenarioCount, 0);
+
 export const ROOT_ROUTE: RouteMetadata = {
   path: '/',
   title: formatTitle('Free clinical simulation practice'),
   description:
-    'Practice 211 free clinical simulation scenarios across anesthesia, emergency medicine, '
-    + 'cardiology, infectious disease, and more—no account required.',
+    `Practice ${READY_SCENARIOS} free clinical simulation scenarios across `
+    + `${READY_MODULES.length} specialties, from anesthesia and emergency medicine to oncology. `
+    + 'No account, and it works offline.',
   indexable: true,
   structuredData: ['WebSite', 'Organization'],
   heading: 'Open Sim Lab',

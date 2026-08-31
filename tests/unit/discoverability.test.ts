@@ -559,6 +559,16 @@ describe('Requirement: One Screen, One Action', () => {
   // test that stops a section creeping back onto it.
   const landing = readFileSync(join(process.cwd(), 'src/landing/Landing.tsx'), 'utf8');
   const about = readFileSync(join(process.cwd(), 'src/landing/About.tsx'), 'utf8');
+  /**
+   * The module directory as one element.
+   *
+   * It is a `nav` now rather than a paragraph: fifteen tiles that are the primary
+   * way into the product are a navigation landmark, and a screen reader should be
+   * able to jump to them. Both budget assertions below key off this one match, so
+   * the shape is named once here.
+   */
+  const MODULE_DIRECTORY = /<nav class="landing__modules"[^>]*>[\s\S]*?<\/nav>/;
+  const moduleDirectory = (markup: string) => markup.match(MODULE_DIRECTORY)?.[0] ?? '';
 
   it('Scenario: the landing page renders no prose section and no questions block', () => {
     expect(landing).not.toContain('CONTENT_SECTIONS');
@@ -594,14 +604,72 @@ describe('Requirement: One Screen, One Action', () => {
     const markup = renderToStaticMarkup(createElement(Landing));
     for (const module of MODULES) expect(markup).toContain(module.displayName);
     expect(markup).toContain('planned. No dates.');
-    const directory = /<p class="landing__modules">([\s\S]*?)<\/p>/.exec(markup)?.[1] ?? '';
+    const directory = moduleDirectory(markup);
     const availableCount = MODULES.filter((module) => module.status === 'available').length;
     // Each available module is its own control rather than an item in a
     // dot-separated run, so the separators the old directory needed are gone.
     expect(directory.match(/landing__module-live/g)).toHaveLength(availableCount);
     expect(directory).not.toContain('aria-hidden="true"> · </span>');
     // No date, no quarter, no countdown anywhere in what a visitor actually sees.
+    // The scenario counts on the tiles are two-digit numbers, which this pattern
+    // deliberately does not match: it is looking for a year.
     expect(markup).not.toMatch(/\bQ[1-4]\s*20\d\d|coming soon|\b20[2-9]\d\b/i);
+  });
+
+  /**
+   * The number on a tile is the number of scenarios behind it.
+   *
+   * The count is DECLARED in the module registry rather than counted from the
+   * scenario arrays, because the landing route is budgeted separately and
+   * `tests/integration/landing-bundle.test.ts` forbids it from importing a single
+   * scenario file. This test is the other half of that trade: it holds every
+   * declaration against the real array, so a scenario added without updating the
+   * registry fails here instead of quietly under-selling the module on the front
+   * door and in the tagline total.
+   */
+  it('Scenario: every count on the front door is the number that ships', () => {
+    const actual = new Map<string, number>([
+      ['anesthesia', SCENARIOS.length],
+      ['emergency-medicine', EMERGENCY_MEDICINE_SCENARIOS.length],
+      ['critical-care', CRITICAL_CARE_SCENARIOS.length],
+      ['cardiology', CARDIOLOGY_SCENARIOS.length],
+      ['respiratory-medicine', RESPIRATORY_MEDICINE_SCENARIOS.length],
+      ['pediatrics', PEDIATRICS_SCENARIOS.length],
+      ['neurology', NEUROLOGY_SCENARIOS.length],
+      ['toxicology', TOXICOLOGY_SCENARIOS.length],
+      ['obstetrics', OBSTETRICS_SCENARIOS.length],
+      ['neonatology', NEONATOLOGY_SCENARIOS.length],
+      ['endocrine-metabolic', ENDOCRINE_METABOLIC_SCENARIOS.length],
+      ['renal-electrolyte', RENAL_ELECTROLYTE_SCENARIOS.length],
+      ['infectious-disease', INFECTIOUS_DISEASE_SCENARIOS.length],
+      ['medical-surgical-nursing', MEDICAL_SURGICAL_NURSING_SCENARIOS.length],
+      ['oncology', ONCOLOGY_SCENARIOS.length],
+    ]);
+    for (const module of availableModules()) {
+      expect(actual.get(module.id), `${module.id} needs a scenario array here`).toBeDefined();
+      expect(module.scenarioCount, `${module.id} declares the wrong scenario count`)
+        .toBe(actual.get(module.id));
+    }
+    // A module that is not built yet claims nothing.
+    for (const module of plannedModules()) expect(module.scenarioCount).toBe(0);
+
+    // And the number a visitor reads on each tile is that declaration.
+    const markup = renderToStaticMarkup(createElement(Landing));
+    for (const module of availableModules()) {
+      expect(markup).toContain(`${module.scenarioCount} scenarios`);
+    }
+    // In the page that actually ships, as ONE text node. `renderToString`, which
+    // the prerender uses and this test does not, separates two adjacent children
+    // with a `<!-- -->` hydration marker: writing the tile as `{count} scenarios`
+    // put `39<!-- --> scenarios` into all 267 prerendered pages. It reads the same
+    // either way, which is exactly why nothing would have caught it.
+    const built = readFileSync(join(process.cwd(), 'dist/index.html'), 'utf8');
+    for (const module of availableModules()) {
+      expect(built)
+        .toContain(`<span class="landing__module-count">${module.scenarioCount} scenarios</span>`);
+    }
+    expect(READY_SCENARIO_COUNT)
+      .toBe(availableModules().reduce((total, module) => total + module.scenarioCount, 0));
   });
 
   /**
@@ -625,7 +693,7 @@ describe('Requirement: One Screen, One Action', () => {
     // The module directory is navigation, and it grows by one entry per module.
     // Budget the prose separately so a new module cannot buy room for new copy,
     // and so launching one does not silently relax the one-screen guarantee.
-    const directory = markup.match(/<p class="landing__modules">[\s\S]*?<\/p>/)?.[0];
+    const directory = markup.match(MODULE_DIRECTORY)?.[0];
     expect(directory, 'the module directory should render as one element').toBeTruthy();
     // The skip link is the same category: a landmark control for keyboard and
     // screen-reader visitors, not copy. It was counted as prose, so the budget
@@ -634,13 +702,31 @@ describe('Requirement: One Screen, One Action', () => {
     // the copy budget. Excluded for the same reason the directory is.
     const skipLink = markup.match(/<a class="skip-link"[\s\S]*?<\/a>/)?.[0];
     expect(skipLink, 'the skip link should render as one element').toBeTruthy();
-    const prose = count(markup.replace(directory!, ' ').replace(skipLink!, ' '));
+    // The planned module's line is the same category too. It is the sixteenth
+    // entry in the directory, named and linked; it only sits in its own element
+    // because it is a sentence rather than a door, and it used to be excluded
+    // here by virtue of being wrapped INSIDE the directory paragraph. Moving it
+    // out of the tile grid must not quietly spend six words of the copy budget.
+    const plannedLine = markup.match(/<p class="landing__module-planned">[\s\S]*?<\/p>/)?.[0];
+    expect(plannedLine, 'the planned module should render as one element').toBeTruthy();
+    const prose = count(
+      markup.replace(directory!, ' ').replace(skipLink!, ' ').replace(plannedLine!, ' '),
+    );
     expect(prose, `the landing page renders ${prose} prose words`).toBeLessThan(80);
     // The directory itself stays one compact line: a link per module, nothing more.
-    const entries = [...directory!.matchAll(/<a [^>]*href="\/[^"]*"[^>]*>([^<]+)<\/a>/g)].map((match) => match[1]);
-    expect(entries).toEqual([...availableModules(), ...MODULES.filter((entry) => entry.status === 'planned')]
-      .map((entry) => entry.displayName));
-    expect(count(directory!)).toBeLessThan(60);
+    // Each entry is a name and the size of what is behind it, and nothing else.
+    // The planned module is no longer inside this element: it is a sentence under
+    // the tiles rather than a door among them, so it is budgeted as prose above.
+    const entries = [...directory!.matchAll(
+      /<span class="landing__module-title">([^<]+)<\/span><span class="landing__module-count">([^<]+)<\/span>/g,
+    )].map((match) => [match[1] ?? '', (match[2] ?? '').trim()] as const);
+    expect(entries.map(([name]) => name)).toEqual(availableModules().map((entry) => entry.displayName));
+    expect(entries.map(([, size]) => size))
+      .toEqual(availableModules().map((entry) => `${entry.scenarioCount} scenarios`));
+    // Fifteen names plus fifteen two-word counts. The old budget was 60 words for
+    // names alone; a count is two words per module and the ceiling moves with it,
+    // which is the only thing that may ever be added to a tile.
+    expect(count(directory!)).toBeLessThan(2 * availableModules().length + 60);
   });
 
   it('Scenario: the front door links to the substantive page', () => {
