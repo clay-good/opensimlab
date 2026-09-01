@@ -91,6 +91,8 @@ import { useSepticShockLabelDemonstration } from '../../infectious-disease/demo/
 import { supportsSepticShockLabelDemonstration } from '../../infectious-disease/demo/septic-shock-label-demonstration';
 import { useMeningitisImagingDemonstration } from '../../infectious-disease/demo/useMeningitisImagingDemonstration';
 import { supportsMeningitisImagingDemonstration } from '../../infectious-disease/demo/meningitis-imaging-demonstration';
+import { useThermoregulationDemonstration } from '../../neonatology/demo/useThermoregulationDemonstration';
+import { supportsThermoregulationDemonstration } from '../../neonatology/demo/thermoregulation-failure-demonstration';
 import { useNeonatalSepsisDemonstration } from '../../neonatology/demo/useNeonatalSepsisDemonstration';
 import { supportsNeonatalSepsisDemonstration } from '../../neonatology/demo/neonatal-sepsis-demonstration';
 import { useNeonatalHypoglycemiaDemonstration } from '../../neonatology/demo/useNeonatalHypoglycemiaDemonstration';
@@ -306,6 +308,7 @@ export function Cockpit({
   const possibleSepsisDemoSupported = supportsPossibleSepsisDemonstration(scenario);
   const septicShockLabelDemoSupported = supportsSepticShockLabelDemonstration(scenario);
   const meningitisImagingDemoSupported = supportsMeningitisImagingDemonstration(scenario);
+  const thermoregulationDemoSupported = supportsThermoregulationDemonstration(scenario);
   const neonatalSepsisDemoSupported = supportsNeonatalSepsisDemonstration(scenario);
   const neonatalHypoglycemiaDemoSupported = supportsNeonatalHypoglycemiaDemonstration(scenario);
   const pretermRespiratoryDemoSupported = supportsPretermRespiratoryDistressDemonstration(scenario);
@@ -358,7 +361,8 @@ export function Cockpit({
     || meconiumTransitionDemoSupported
     || pretermRespiratoryDemoSupported
     || neonatalHypoglycemiaDemoSupported
-    || neonatalSepsisDemoSupported;
+    || neonatalSepsisDemoSupported
+    || thermoregulationDemoSupported;
   const scenarioDemoSupported = hypoglycemiaDemoSupported || adrenalDemoSupported
     || thyroidDemoSupported || myxedemaDemoSupported || observedStateDemoSupported;
   const inductionDemonstration = useDemonstration({
@@ -440,6 +444,12 @@ export function Cockpit({
   const renalHyponatremiaDemonstration = useRenalHyponatremiaDemonstration({
     active: demonstrating && renalHyponatremiaDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyponatremia,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const thermoregulationDemonstration = useThermoregulationDemonstration({
+    active: demonstrating && thermoregulationDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.neonatologyThermoregulationAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const neonatalSepsisDemonstration = useNeonatalSepsisDemonstration({
@@ -673,7 +683,8 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypermagnesemia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = neonatalSepsisDemoSupported ? neonatalSepsisDemonstration
+  const demonstration = thermoregulationDemoSupported ? thermoregulationDemonstration
+    : neonatalSepsisDemoSupported ? neonatalSepsisDemonstration
     : neonatalHypoglycemiaDemoSupported ? neonatalHypoglycemiaDemonstration
     : pretermRespiratoryDemoSupported ? pretermRespiratoryDemonstration
     : meconiumTransitionDemoSupported ? meconiumTransitionDemonstration
@@ -1387,6 +1398,8 @@ export function Cockpit({
           septicShockLabelDemonstrating={demonstrating && septicShockLabelDemoSupported}
           meningitisImagingGuidance={session.guidance}
           meningitisImagingDemonstrating={demonstrating && meningitisImagingDemoSupported}
+          neonatologyThermoregulationGuidance={session.guidance}
+          neonatologyThermoregulationDemonstrating={demonstrating && thermoregulationDemoSupported}
           neonatologySepsisGuidance={session.guidance}
           neonatologySepsisDemonstrating={demonstrating && neonatalSepsisDemoSupported}
           neonatologyHypoglycemiaGuidance={session.guidance}
