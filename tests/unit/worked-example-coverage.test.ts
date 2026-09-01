@@ -8,6 +8,12 @@
  * held the sentence back until they did. Both now do, so the stronger claim is
  * allowed — and it stays allowed only while the audit agrees. Neonatology joined
  * the sentence the same way: eleven of eleven, checked here rather than assumed.
+ *
+ * Toxicology is the first module the README describes part-finished, which is a
+ * number rather than a list and therefore rots faster. It is spelled out in
+ * words on the front page, so the count is derived from the audit here and the
+ * English word is matched against it: the sentence cannot survive the eleventh
+ * lesson landing without being rewritten.
  */
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
@@ -20,6 +26,7 @@ import { ENDOCRINE_METABOLIC_SCENARIOS } from '../../src/modules/endocrine-metab
 import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../../src/modules/medical-surgical-nursing/scenarios';
 import { INFECTIOUS_DISEASE_SCENARIOS } from '../../src/modules/infectious-disease/scenarios';
 import { NEONATOLOGY_SCENARIOS } from '../../src/modules/neonatology/scenarios';
+import { TOXICOLOGY_SCENARIOS } from '../../src/modules/toxicology/scenarios';
 
 function uncovered(scenarios: Parameters<typeof buildModuleCompletionCatalog>[0], moduleId: string) {
   const catalog = buildModuleCompletionCatalog(scenarios, ENGINE_VERSION, moduleId, 'ward');
@@ -29,6 +36,17 @@ function uncovered(scenarios: Parameters<typeof buildModuleCompletionCatalog>[0]
     ))
     .map((scenario) => scenario.scenarioId);
 }
+
+/** How many of a module's labs the audit says are finished, not how many exist. */
+function coveredCount(scenarios: Parameters<typeof buildModuleCompletionCatalog>[0], moduleId: string) {
+  const catalog = buildModuleCompletionCatalog(scenarios, ENGINE_VERSION, moduleId, 'ward');
+  return catalog.scenarios.filter((scenario) => scenario.requirements.some(
+    (entry) => entry.id === 'guidance-and-demonstration' && entry.status === 'satisfied',
+  )).length;
+}
+
+const COUNT_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven',
+  'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen'] as const;
 
 describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
   it('covers every oncology lab', () => {
@@ -59,6 +77,17 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
   it('covers every neonatology lab', () => {
     expect(NEONATOLOGY_SCENARIOS).toHaveLength(11);
     expect(uncovered(NEONATOLOGY_SCENARIOS, 'neonatology')).toEqual([]);
+  });
+
+  it('spells the part-finished toxicology count the way the audit counts it', () => {
+    const covered = coveredCount(TOXICOLOGY_SCENARIOS, 'toxicology');
+    // A part-finished module is a number on the front page rather than a list,
+    // so both halves of it are derived: how many are done, and how many exist.
+    expect(covered).toBeGreaterThan(0);
+    expect(covered).toBeLessThan(TOXICOLOGY_SCENARIOS.length);
+    const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');
+    expect(readme).toContain(`Toxicology has started — ${COUNT_WORDS[covered]} of its `
+      + `${COUNT_WORDS[TOXICOLOGY_SCENARIOS.length]} are`);
   });
 
   it('claims only what those six modules support', () => {
