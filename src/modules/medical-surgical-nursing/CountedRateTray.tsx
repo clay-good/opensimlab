@@ -1,14 +1,19 @@
 import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { CountedRateSnapshot } from '@platform/kernel/protocol';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { CountedRateAction } from './counted-rate';
+import { countedRateInlinePrompt } from './counted-rate-tutor';
 
-export function CountedRateTray({ assessment, onAction, demonstrating = false }: {
+export function CountedRateTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: CountedRateSnapshot;
+  readonly scenarioVersion: string;
   readonly onAction: (action: CountedRateAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = countedRateInlinePrompt(guidance, { scenarioVersion, countedRate: assessment });
   const chart = assessment.chartRecord; const patient = assessment.patientRecord;
   const observation = assessment.observation;
   const decision = (action: CountedRateAction, label: string, accepted = false) => {
@@ -17,6 +22,10 @@ export function CountedRateTray({ assessment, onAction, demonstrating = false }:
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     {/* Both numbers are shown together from the moment the second one exists, because the
         discrepancy is the finding and reconciling it would erase the lesson. */}
     <p className="syringe__remaining" role="status">Charted respiratory rates: {assessment.chartedEntries.join(', ')}. {assessment.countedRate === null

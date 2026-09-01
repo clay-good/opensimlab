@@ -9,6 +9,8 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { Prebrief } from '@anesthesia/ui/Prebrief';
+import { ENGINE_VERSION } from '@anesthesia/engine';
+import { buildModuleCompletionCatalog } from '@anesthesia/catalog/scenario-completion';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { LIMITATIONS } from '@platform/docs/limitations';
 import { ONCOLOGY_SCENARIOS } from '../../src/modules/oncology/scenarios';
@@ -40,16 +42,19 @@ describe('The worked-example control on the briefing', () => {
   it('offers it for the nursing lessons that have one, and not the others', () => {
     // This module is still being written toward the standard, so the briefing has
     // to tell the two apart rather than offering a control that starts nothing.
-    const withExample = MEDICAL_SURGICAL_NURSING_SCENARIOS
-      .filter((scenario) => scenario.metadata.id === 'low-score-what-the-threshold-does-not-exclude');
-    const without = MEDICAL_SURGICAL_NURSING_SCENARIOS
-      .filter((scenario) => scenario.metadata.id !== 'low-score-what-the-threshold-does-not-exclude');
-    expect(withExample).toHaveLength(1);
-    for (const scenario of withExample) {
-      expect(briefing(scenario, 'medical-surgical-nursing')).toContain('Watch a worked example');
-    }
-    for (const scenario of without) {
-      expect(briefing(scenario, 'medical-surgical-nursing')).not.toContain('Watch a worked example');
+    // Which is which comes from the completion audit, not from a list kept here.
+    const audited = buildModuleCompletionCatalog(
+      MEDICAL_SURGICAL_NURSING_SCENARIOS, ENGINE_VERSION, 'medical-surgical-nursing', 'ward',
+    ).scenarios;
+    const claims = new Set(audited.filter((scenario) => scenario.requirements.some(
+      (entry) => entry.id === 'guidance-and-demonstration' && entry.status === 'satisfied',
+    )).map((scenario) => scenario.scenarioId));
+    expect(claims.size).toBeGreaterThan(0);
+    expect(claims.size).toBeLessThan(MEDICAL_SURGICAL_NURSING_SCENARIOS.length);
+    for (const scenario of MEDICAL_SURGICAL_NURSING_SCENARIOS) {
+      const html = briefing(scenario, 'medical-surgical-nursing');
+      expect(html.includes('Watch a worked example'), scenario.metadata.id)
+        .toBe(claims.has(scenario.metadata.id));
     }
   });
 

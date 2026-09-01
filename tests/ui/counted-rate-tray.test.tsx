@@ -27,9 +27,10 @@ let host: HTMLDivElement; let root: Root;
 beforeEach(() => { host = document.createElement('div'); document.body.append(host); root = createRoot(host); });
 afterEach(() => { act(() => root.unmount()); host.remove(); });
 
-const render = (model: CountedRate, tick: number, onAction = vi.fn(), demonstrating = false) => {
-  act(() => root.render(<CountedRateTray assessment={model.snapshot(tick)}
-    onAction={onAction} demonstrating={demonstrating} />));
+const render = (model: CountedRate, tick: number, onAction = vi.fn(), demonstrating = false,
+  guidance: 'unassisted' | 'coached' | 'guided' = 'unassisted') => {
+  act(() => root.render(<CountedRateTray assessment={model.snapshot(tick)} scenarioVersion="0.1.0"
+    onAction={onAction} guidance={guidance} demonstrating={demonstrating} />));
   return onAction;
 };
 const button = (label: string) => [...host.querySelectorAll('button')]
@@ -113,5 +114,30 @@ describe('Counted respiratory rate tray', () => {
     for (const entry of host.querySelectorAll('button')) {
       expect(entry.getAttribute('aria-disabled')).toBe('true');
     }
+  });
+});
+
+describe('Counted-rate tutor', () => {
+  it('says nothing at all on the unassisted setting', () => {
+    render(new CountedRate(), 0);
+    expect(host.textContent).not.toContain('A moment to think');
+  });
+
+  it('reads the recorded steps when guidance is on', () => {
+    const model = new CountedRate();
+    render(model, 0, vi.fn(), false, 'guided');
+    expect(host.textContent).toContain('Read the charted column as a distribution');
+    model.apply('review-the-charted-trend', 0);
+    render(model, 1, vi.fn(), false, 'guided');
+    expect(host.textContent).toContain('Count the rate yourself');
+  });
+
+  it('never asks for the earlier entries to be corrected', () => {
+    const model = new CountedRate();
+    model.apply('review-the-charted-trend', 0);
+    model.apply('count-for-a-full-minute', 1);
+    render(model, 2, vi.fn(), false, 'guided');
+    expect(host.textContent).toContain('do not reconcile them');
+    expect(host.textContent).not.toContain('correct the earlier');
   });
 });

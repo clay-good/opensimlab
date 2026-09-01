@@ -208,9 +208,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Nine observed-state prompts at version 0.1.0 read the learner's own recorded steps. Unassisted is silent and coached withholds the waiting beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both refuse the tidy ending this lesson invites: neither corrects the earlier entries, because they belong to whoever wrote them and are the only evidence that the trend was unreliable, and neither explains the rate, because no cause exists here. Tests assert the chart is unchanged at handoff, that the discrepancy is recorded rather than reconciled, and that no prompt or narration supplies a cause. tests/unit/counted-rate-demonstration.test.ts and tests/ui/counted-rate-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
