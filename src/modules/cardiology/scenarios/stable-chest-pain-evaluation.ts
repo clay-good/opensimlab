@@ -17,7 +17,7 @@ export const STABLE_CHEST_PAIN_EVALUATION: Scenario = {
     clinicalReview: { reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED',
       competingInterests: 'None declared', reviewedOn: '1970-01-01', reviewBy: '1970-01-01',
       contentVersion: '0.1.0', sources: [
-        'Gulati M, Levy PD, Mukherjee D, et al. 2021 AHA/ACC/ASE/CHEST/SAEM/SCCT/SCMR Guideline for the Evaluation and Diagnosis of Chest Pain. Circulation. 2021;144:e368-e454. PMID:34756653.',
+        'Gulati M, Levy PD, Mukherjee D, et al. 2021 AHA/ACC/ASE/CHEST/SAEM/SCCT/SCMR Guideline for the Evaluation and Diagnosis of Chest Pain. Circulation. 2021;144:e368-e454. PMID:34709928.',
         'Vrints C, Andreotti F, Koskinas KC, et al. 2024 ESC Guidelines for the management of chronic coronary syndromes. Eur Heart J. 2024;45:3415-3537. PMID:39210710.',
       ] },
     limitations: ['stable-chest-pain-history-likelihood-and-plan-are-authored',

@@ -519,7 +519,7 @@ export const SOURCES: readonly Source[] = [
   {
     id: 'mccoy-rocuronium-1993',
     pmid: '8460753',
-    authors: 'McCoy EP, Mirakhur RK, Maddineni VR, Wierda JMKH, Proost JH',
+    authors: 'Cooper RA, Mirakhur RK, Maddineni VR',
     title: 'Neuromuscular effects of rocuronium bromide (Org 9426) during fentanyl and halothane anaesthesia',
     publication: 'Anaesthesia',
     year: 1993,
@@ -947,7 +947,7 @@ export const SOURCES: readonly Source[] = [
     id: 'nap6-management-2018',
     pmid: '29935569',
     authors: 'Harper NJN, Cook TM, Garcez T, Lucas DN, Thomas M, Kemp H, et al.',
-    title: 'Anaesthesia, surgery, and life-threatening allergic reactions: management and outcomes of perioperative anaphylaxis in the 6th National Audit Project (NAP6)',
+    title: 'Anaesthesia, surgery, and life-threatening allergic reactions: management and outcomes in the 6th National Audit Project (NAP6)',
     publication: 'Br J Anaesth', year: 2018, locator: '121:172-88',
     usedFor: 'The case emphasis on prompt epinephrine and volume support, while explicitly '
       + 'excluding the complete refractory pathway and post-event investigation.',
@@ -956,7 +956,7 @@ export const SOURCES: readonly Source[] = [
   {
     id: 'rcuk-perioperative-anaphylaxis-2024',
     pmid: '38205901',
-    authors: 'Soar J, Savic L, Baretto R, Dewachter P, Harper NJN, Light K, et al.',
+    authors: 'Dodd A, Turner PJ, Soar J, Savic L',
     title: 'Emergency treatment of peri-operative anaphylaxis: Resuscitation Council UK algorithm for anaesthetists',
     publication: 'Anaesthesia', year: 2024, locator: '79:535-41',
     usedFor: 'The modeled adult initial 50 microgram intravenous epinephrine action, 100% oxygen, '
@@ -1403,9 +1403,9 @@ export const SOURCES: readonly Source[] = [
   {
     id: 'welborn-pediatric-sevoflurane-1996',
     pmid: '7669316',
-    authors: 'Welborn LG, Hannallah RS, Norden JM, Ruttimann UE, Callan CM',
+    authors: 'Epstein RH, Mendel HG, Guarnieri KM, Staudt SR, Bailey PD, Bolton PS',
     title: 'Sevoflurane versus halothane for general anesthesia in pediatric patients: a comparative study of vital signs, induction, and emergence',
-    publication: 'J Clin Anesth', year: 1996, locator: '8:283-92',
+    publication: 'J Clin Anesth', year: 1995, locator: '7:237-44',
     usedFor: 'Clinical context for the bounded pediatric inhalational-induction lesson: the '
       + 'randomized comparison used incremental sevoflurane from 1% to at most 7% and recorded '
       + 'vital signs and end-tidal agent. Its behavioral, airway, timing, and emergence endpoints '
@@ -1818,7 +1818,7 @@ export const SOURCES: readonly Source[] = [
   },
   {
     id: 'endocrine-society-inpatient-hyperglycemia-2022',
-    pmid: '35709363',
+    pmid: '35690958',
     authors: 'Korytkowski MT, Muniyappa R, Antinori-Lent K, et al',
     title: 'Management of Hyperglycemia in Hospitalized Adult Patients in Non-Critical Care Settings: An Endocrine Society Clinical Practice Guideline',
     publication: 'J Clin Endocrinol Metab',
@@ -2060,7 +2060,7 @@ export const SOURCES: readonly Source[] = [
   },
   {
     id: 'jacobs-stemi-systems-of-care-2021',
-    pmid: '34601908',
+    pmid: '34641735',
     authors: 'Jacobs AK, Ali MJ, Best PJ, et al',
     title: 'Systems of Care for ST-Segment-Elevation Myocardial Infarction: A Policy Statement From the American Heart Association',
     publication: 'Circulation',
@@ -2101,7 +2101,7 @@ export const SOURCES: readonly Source[] = [
   },
   {
     id: 'gulati-chest-pain-guideline-2021',
-    pmid: '34756653',
+    pmid: '34709928',
     authors: 'Gulati M, Levy PD, Mukherjee D, et al',
     title: '2021 AHA/ACC/ASE/CHEST/SAEM/SCCT/SCMR Guideline for the Evaluation and Diagnosis of Chest Pain',
     publication: 'Circulation',
@@ -2642,14 +2642,14 @@ export const SOURCES: readonly Source[] = [
   },
   {
     id: 'bts-emergency-oxygen-guideline-2017',
-    pmid: '28507176',
+    pmid: '28883921',
     authors: 'O\u2019Driscoll BR, Howard LS, Earis J, Mak V',
     title: 'BTS guideline for oxygen use in adults in healthcare and emergency settings',
     publication: 'BMJ Open Respiratory Research',
     year: 2017,
     locator: '4:e000170; doi:10.1136/bmjresp-2016-000170; section T, falling saturation',
     usedFor: 'The person-and-delivery response boundary: monitor the patient, act on a saturation below the prescribed range, and check the oxygen delivery system and oximeter for faults or errors.',
-    verifiedAgainst: 'https://pubmed.ncbi.nlm.nih.gov/28507176/',
+    verifiedAgainst: 'https://pubmed.ncbi.nlm.nih.gov/28883921/',
     verifiedOn: '2026-08-25',
   },
   {
@@ -3315,7 +3315,7 @@ export const SOURCES: readonly Source[] = [
     authors: 'Smith MD, Sampson CS, Wall SP, et al',
     title: 'Clinical Policy: Critical Issues in the Management of Adult Patients Presenting to the Emergency Department With Seizures',
     publication: 'Annals of Emergency Medicine', year: 2024,
-    locator: '84:e1-e6; doi:10.1016/j.annemergmed.2024.02.018; scope, recommendation, and visually apparent focal-or-generalized seizure-activity definition',
+    locator: '84:e1-e12; doi:10.1016/j.annemergmed.2024.02.018; scope, recommendation, and visually apparent focal-or-generalized seizure-activity definition',
     usedFor: 'The adult seizure-care context and boundary that continuing clinically apparent focal movement remains seizure activity, while preserving the policy’s generalized-convulsive treatment scope and exposing no learner medication choice.',
     verifiedAgainst: 'https://pubmed.ncbi.nlm.nih.gov/38906639/',
     verifiedOn: '2026-08-26',
@@ -3506,7 +3506,10 @@ export const SOURCES: readonly Source[] = [
   },
   {
     id: 'consortium-autonomic-dysreflexia-2021', pmid: '34270391',
-    authors: 'Consortium for Spinal Cord Medicine',
+    // The named authors PubMed indexes, with the corporate author kept after
+    // them: a reader following this citation searches the surname, and
+    // "Consortium for Spinal Cord Medicine" alone matches no author field.
+    authors: 'Krassioukov A, Linsenmeyer TA, Beck LA, Elliott S; Consortium for Spinal Cord Medicine',
     title: 'Evaluation and Management of Autonomic Dysreflexia and Other Autonomic Dysfunctions: Preventing the Highs and Lows',
     publication: 'Journal of Spinal Cord Medicine', year: 2021,
     locator: '44(4):631-683; doi:10.1080/10790268.2021.1925058; recommendations 2.1-2.33',
@@ -3891,8 +3894,8 @@ export const SOURCES: readonly Source[] = [
   },
   {
     id: 'glimaker-prompt-lumbar-puncture-2018', pmid: '29020334',
-    authors: 'Glimåker M, Johansson B, Grindborg Ö, et al',
-    title: 'Adult bacterial meningitis: earlier treatment and improved outcome following guideline revision promoting prompt lumbar puncture',
+    authors: 'Glimåker M, Sjölin J, Åkesson S, Naucler P',
+    title: 'Lumbar Puncture Performed Promptly or After Neuroimaging in Acute Bacterial Meningitis in Adults: A Prospective National Cohort Study Evaluating Different Guidelines',
     publication: 'Clinical Infectious Diseases', year: 2018,
     locator: '66(3):321-328; doi:10.1093/cid/cix806. Indications for neuroimaging before lumbar puncture existed in 7%, 32%, and 65% of the same 815-patient cohort under Swedish, ESCMID, and IDSA criteria respectively. Lumbar puncture without previous computed tomography was associated with mortality of 14 of 323 (4%) versus 37 of 378 (10%), and with more patients treated within one hour. Observational; confounding by indication is not excluded.',
     usedFor: 'The size of the disagreement between criteria sets, and the measured association between imaging-preceded puncture and both mortality and treatment delay, reported with its observational limitation stated.',
@@ -3910,8 +3913,8 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-28',
   },
   {
-    id: 'occult-hypoxemia-systematic-review-2024', pmid: '38831257',
-    authors: 'Parr B, Beech A, Young M, Valley TS',
+    id: 'occult-hypoxemia-systematic-review-2024', pmid: '39020232',
+    authors: 'Parr NJ, Beech EH, Young S, Valley TS',
     title: 'Racial and Ethnic Disparities in Occult Hypoxemia Prevalence and Clinical Outcomes Among Hospitalized Patients: a Systematic Review and Meta-analysis',
     publication: 'Journal of General Internal Medicine', year: 2024,
     locator: '39(13):2543-2553; doi:10.1007/s11606-024-08852-1. Moderate certainty. Across 732,505 paired measurements, the prevalence ratio for occult hypoxaemia was 1.67 (95% CI 1.47-1.90) in Black compared with white patients and 1.39 (95% CI 1.19-1.64) for other groups.',
@@ -4031,18 +4034,18 @@ export const SOURCES: readonly Source[] = [
   },
   {
     id: 'lactate-adrenergic-aerobic-glycolysis-2006', pmid: '18323749',
-    authors: 'Levy B',
-    title: 'Lactate and shock state: the metabolic view',
-    publication: 'Current Opinion in Critical Care', year: 2006,
+    authors: 'Levy B, Desebbe O, Montemont C, Gibot S',
+    title: 'Increased aerobic glycolysis through beta2 stimulation is a common mechanism involved in lactate formation during shock states',
+    publication: 'Shock', year: 2008,
     locator: 'Reviewed context for hyperlactatemia in sepsis: epinephrine-stimulated aerobic glycolysis through skeletal-muscle beta-2 adrenergic receptors is a substantial contributor, alongside reduced hepatic clearance, so lactate is not a direct measure of tissue oxygen debt.',
     usedFor: 'The refused shortcut that reads the lactate as a hypoxia measurement, and the debrief statement that an elevated lactate marks illness severity through several mechanisms rather than reading oxygen debt.',
     verifiedAgainst: 'https://pubmed.ncbi.nlm.nih.gov/18323749/',
     verifiedOn: '2026-08-28',
   },
   {
-    id: 'sepsis-2-shock-failing-sepsis-3-2021', pmid: '34739619',
-    authors: 'Prospective cohort reported in Annals of Intensive Care',
-    title: 'Comparison of Sepsis-2 and Sepsis-3 septic shock criteria and their association with mortality',
+    id: 'sepsis-2-shock-failing-sepsis-3-2021', pmid: '34718879',
+    authors: 'Vermassen J, Decruyenaere J, De Bus L, Depuydt P',
+    title: 'Characteristics of Sepsis-2 septic shock patients failing to satisfy the Sepsis-3 septic shock definition: an analysis of real-world data',
     publication: 'Annals of Intensive Care', year: 2021,
     locator: '233 of 1198 (19.4%) patients meeting Sepsis-2 septic shock criteria did not meet the Sepsis-3 criteria, almost all by failing the lactate threshold while receiving vasopressors; hospital mortality was 31.6% in that group versus 55.3% in those meeting both.',
     usedFor: 'The limitation stating that roughly one in five patients meeting older septic shock criteria fail the current ones, almost all on the lactate threshold, which is why the authored trial response is one of several possible ones.',
@@ -4304,7 +4307,7 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-29',
   },
   {
-    id: 'tirkkonen-news-spo2-scale-two-2019', pmid: '31881904',
+    id: 'tirkkonen-news-spo2-scale-two-2019', pmid: '31842961',
     authors: 'Tirkkonen J, Karlsson S, Skrifvars MB',
     title: 'National early warning score (NEWS) and the new alternative SpO2 scale during rapid response team reviews: a prospective observational study',
     publication: 'Scandinavian Journal of Trauma, Resuscitation and Emergency Medicine', year: 2019,

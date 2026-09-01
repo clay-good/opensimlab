@@ -19,7 +19,7 @@ export const OXYGEN_DEVICE_FAILURE: Scenario = {
       competingInterests: 'None declared', reviewedOn: '1970-01-01', reviewBy: '1970-01-01',
       contentVersion: '0.1.0', sources: [
         'NHS England. Use of oxygen cylinders where patients do not have access to medical gas pipeline systems. National Patient Safety Alert NatPSA/2023/001/NHSPS. 2023.',
-        'O\u2019Driscoll BR, Howard LS, Earis J, Mak V. BTS guideline for oxygen use in adults in healthcare and emergency settings. BMJ Open Respir Res. 2017;4:e000170. PMID 28507176. doi:10.1136/bmjresp-2016-000170.',
+        'O\u2019Driscoll BR, Howard LS, Earis J, Mak V. BTS guideline for oxygen use in adults in healthcare and emergency settings. BMJ Open Respir Res. 2017;4:e000170. PMID 28883921. doi:10.1136/bmjresp-2016-000170.',
         'World Health Organization. Technical specifications for health facility based medical oxygen systems. 2024. ISBN 978-92-4-010161-6.',
       ] },
     limitations: ['oxygen-device-failure-presentation-path-and-response-are-authored',

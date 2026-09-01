@@ -30,7 +30,7 @@ export const PERIOPERATIVE_HYPERGLYCEMIA: Scenario = {
       competingInterests: 'None declared', reviewedOn: '1970-01-01', reviewBy: '1970-01-01',
       contentVersion: '0.1.0', sources: [
         'American Diabetes Association Professional Practice Committee. Diabetes Care in the Hospital: Standards of Care in Diabetes—2026. Diabetes Care. 2026;49(Suppl 1):S339-S355.',
-        'Korytkowski MT, et al. Management of Hyperglycemia in Hospitalized Adult Patients in Non-Critical Care Settings: An Endocrine Society Clinical Practice Guideline. J Clin Endocrinol Metab. 2022;107:2101-2128. PMID 35709363.',
+        'Korytkowski MT, et al. Management of Hyperglycemia in Hospitalized Adult Patients in Non-Critical Care Settings: An Endocrine Society Clinical Practice Guideline. J Clin Endocrinol Metab. 2022;107:2101-2128. PMID 35690958.',
       ],
     },
     limitations: [

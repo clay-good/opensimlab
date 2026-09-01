@@ -2,7 +2,7 @@
   "name": "opensimlab",
   "version": "0.1.0",
   "private": true,
-  "description": "Open Sim Lab — an open-source, browser-native clinical simulator.",
+  "description": "Open Sim Lab \u2014 an open-source, browser-native clinical simulator.",
   "license": "MIT",
   "type": "module",
   "engines": {
@@ -45,7 +45,8 @@
     "triage:artifact": "tsx scripts/report-maintenance/private-artifact.ts",
     "deploy:reports": "wrangler deploy --config workers/reports/wrangler.toml",
     "deploy": "npm run build:indexable && npm run release:preview && wrangler deploy",
-    "deploy:reviewed": "npm run build:indexable && npm run release:reviewed && wrangler deploy"
+    "deploy:reviewed": "npm run build:indexable && npm run release:reviewed && wrangler deploy",
+    "verify:citations": "tsx --import ./scripts/register-css-stub.mjs scripts/check-citations.ts"
   },
   "dependencies": {
     "react": "19.2.8",
