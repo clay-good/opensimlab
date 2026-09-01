@@ -27,6 +27,7 @@ import { carbonMonoxideCompletionEvidence } from '../../toxicology/carbon-monoxi
 import { acetaminophenCompletionEvidence } from '../../toxicology/acetaminophen-clock-and-nomogram-completion';
 import { salicylateCompletionEvidence } from '../../toxicology/salicylate-falling-number-completion';
 import { tricyclicCompletionEvidence } from '../../toxicology/tricyclic-sodium-channel-cardiotoxicity-completion';
+import { betaBlockerCompletionEvidence } from '../../toxicology/beta-blocker-cardiogenic-shock-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -193,6 +194,7 @@ export function auditClinicalScenario(
     ...acetaminophenCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...salicylateCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...tricyclicCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...betaBlockerCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),
