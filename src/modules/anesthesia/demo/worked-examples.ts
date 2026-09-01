@@ -69,6 +69,7 @@ import { supportsDigoxinDemonstration } from '../../toxicology/demo/digoxin-rhyt
 import { supportsCholinergicDemonstration } from '../../toxicology/demo/cholinergic-pesticide-respiratory-failure-demonstration';
 import { supportsAnticholinergicDemonstration } from '../../toxicology/demo/anticholinergic-hyperthermia-delirium-demonstration';
 import { supportsSerotoninDemonstration } from '../../toxicology/demo/serotonin-toxicity-hyperthermia-clonus-demonstration';
+import { supportsSympathomimeticDemonstration } from '../../toxicology/demo/sympathomimetic-hyperadrenergic-hyperthermia-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -167,6 +168,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsCholinergicDemonstration,
     supportsAnticholinergicDemonstration,
     supportsSerotoninDemonstration,
+    supportsSympathomimeticDemonstration,
   ],
 };
 
