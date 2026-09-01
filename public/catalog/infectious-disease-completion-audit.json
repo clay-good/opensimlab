@@ -460,9 +460,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Nine observed-state prompts at version 0.1.0 read the learner's own recorded steps. Unassisted is silent and coached withholds the waiting beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Three of this lesson's refused shortcuts are the same error carried by different instruments — a laboratory score, an absent physical sign, an image — and both answer each with its own sensitivity rather than with alarm, because the sensitivities are the argument. Neither asserts the diagnosis, since nothing here confirms one and exploration is what would, and neither lets the antimicrobial intent stand in for the surgical review. The example requests that review before the limb has progressed, which is the only point at which the decision is hard; a test asserts it through the snapshot flag rather than by reading the narration. tests/unit/necrotizing-infection-demonstration.test.ts and tests/ui/necrotizing-infection-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {

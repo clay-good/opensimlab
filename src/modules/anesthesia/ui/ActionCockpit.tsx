@@ -2800,6 +2800,7 @@ export interface ActionCockpitProps {
   readonly obstructedKidneyDemonstrating?: boolean;
   readonly febrileNeutropeniaGuidance?: GuidanceLevel;
   readonly febrileNeutropeniaDemonstrating?: boolean;
+  readonly necrotizingInfectionGuidance?: GuidanceLevel;
   readonly necrotizingInfectionDemonstrating?: boolean;
   readonly endocarditisHeartFailureDemonstrating?: boolean;
   readonly severePneumoniaDemonstrating?: boolean;
@@ -5985,6 +5986,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasNecrotizingInfectionResponse && (
               <NecrotizingInfectionTray assessment={props.necrotizingInfection}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.necrotizingInfectionGuidance}
                 demonstrating={props.necrotizingInfectionDemonstrating}
                 onAction={props.onNecrotizingInfectionResponse ?? (() => {})} />
             )}

@@ -27,9 +27,10 @@ let host: HTMLDivElement; let root: Root;
 beforeEach(() => { host = document.createElement('div'); document.body.append(host); root = createRoot(host); });
 afterEach(() => { act(() => root.unmount()); host.remove(); });
 
-const render = (model: NecrotizingInfection, tick: number, onAction = vi.fn(), demonstrating = false) => {
-  act(() => root.render(<NecrotizingInfectionTray assessment={model.snapshot(tick)}
-    onAction={onAction} demonstrating={demonstrating} />));
+const render = (model: NecrotizingInfection, tick: number, onAction = vi.fn(), demonstrating = false,
+  guidance: 'unassisted' | 'coached' | 'guided' = 'unassisted') => {
+  act(() => root.render(<NecrotizingInfectionTray assessment={model.snapshot(tick)} scenarioVersion="0.1.0"
+    onAction={onAction} guidance={guidance} demonstrating={demonstrating} />));
   return onAction;
 };
 const button = (label: string) => [...host.querySelectorAll('button')]
@@ -97,5 +98,31 @@ describe('Necrotizing infection tray', () => {
     for (const entry of host.querySelectorAll('button')) {
       expect(entry.getAttribute('aria-disabled')).toBe('true');
     }
+  });
+});
+
+describe('Necrotizing infection tutor', () => {
+  it('says nothing at all on the unassisted setting', () => {
+    render(new NecrotizingInfection(), 0);
+    expect(host.textContent).not.toContain('A moment to think');
+  });
+
+  it('asks for the border to be marked with a time', () => {
+    const model = new NecrotizingInfection();
+    model.apply('recognize-disproportionate-pain', 0);
+    render(model, 1, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('write the time on the skin');
+    expect(text).toContain('converts a static impression into a rate');
+  });
+
+  it('answers each instrument with its sensitivity rather than alarm', () => {
+    const model = new NecrotizingInfection();
+    for (const action of ['recognize-disproportionate-pain', 'mark-the-margin', 'call-surgery',
+      'record-antimicrobial-intent'] as const) model.apply(action, 0);
+    render(model, 1, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('two-thirds sensitive');
+    expect(text).toContain('rule in and rule out nothing');
   });
 });

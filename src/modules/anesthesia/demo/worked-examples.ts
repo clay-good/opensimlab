@@ -40,6 +40,7 @@ import { supportsLostContingencyDemonstration } from '../../medical-surgical-nur
 import { supportsMeningococcalSepsisDemonstration } from '../../infectious-disease/demo/meningococcal-sepsis-demonstration';
 import { supportsObstructedKidneyDemonstration } from '../../infectious-disease/demo/obstructed-kidney-demonstration';
 import { supportsFebrileNeutropeniaDemonstration } from '../../infectious-disease/demo/febrile-neutropenia-demonstration';
+import { supportsNecrotizingInfectionDemonstration } from '../../infectious-disease/demo/necrotizing-infection-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -105,6 +106,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsMeningococcalSepsisDemonstration,
     supportsObstructedKidneyDemonstration,
     supportsFebrileNeutropeniaDemonstration,
+    supportsNecrotizingInfectionDemonstration,
   ],
 };
 

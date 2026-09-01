@@ -2,13 +2,18 @@ import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { NecrotizingInfectionSnapshot } from '@platform/kernel/protocol';
 import type { NecrotizingInfectionAction } from './necrotizing-infection';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
+import { necrotizingInfectionInlinePrompt } from './necrotizing-infection-tutor';
 
-export function NecrotizingInfectionTray({ assessment, onAction, demonstrating = false }: {
+export function NecrotizingInfectionTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: NecrotizingInfectionSnapshot;
+  readonly scenarioVersion: string;
   readonly onAction: (action: NecrotizingInfectionAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = necrotizingInfectionInlinePrompt(guidance, { scenarioVersion, necrotizingInfection: assessment });
   const labs = assessment.labObservation; const limb = assessment.limbObservation;
   const observation = assessment.observation;
   const decision = (action: NecrotizingInfectionAction, label: string, accepted = false) => {
@@ -17,6 +22,10 @@ export function NecrotizingInfectionTray({ assessment, onAction, demonstrating =
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <p className="syringe__remaining">Selected sources: a 2019 diagnostic-accuracy meta-analysis, 2022 international surgical pathways, and a 2020 timing meta-analysis. Open the source view for exact locators. The score, the signs, and the clock in this case are all reported with their measured limits.</p>
     <section className="syringe necrotizing-infection__section" aria-labelledby="necrotizing-infection-recognition-title">
       <div id="necrotizing-infection-recognition-title" className="syringe__name">The number is reassuring. The patient is not.</div>
