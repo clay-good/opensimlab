@@ -39,10 +39,9 @@ describe('The worked-example control on the briefing', () => {
     expect(briefing(ENDOCRINE_METABOLIC_SCENARIOS[0]!, 'endocrine-metabolic')).toContain('Watch a worked example');
   });
 
-  it('offers it for the nursing lessons that have one, and not the others', () => {
-    // This module is still being written toward the standard, so the briefing has
-    // to tell the two apart rather than offering a control that starts nothing.
-    // Which is which comes from the completion audit, not from a list kept here.
+  it('offers it for exactly the nursing lessons the audit claims', () => {
+    // Which is which comes from the completion audit, not from a list kept here,
+    // so this keeps holding as the modules that are still part-way along land.
     const audited = buildModuleCompletionCatalog(
       MEDICAL_SURGICAL_NURSING_SCENARIOS, ENGINE_VERSION, 'medical-surgical-nursing', 'ward',
     ).scenarios;
@@ -50,7 +49,6 @@ describe('The worked-example control on the briefing', () => {
       (entry) => entry.id === 'guidance-and-demonstration' && entry.status === 'satisfied',
     )).map((scenario) => scenario.scenarioId));
     expect(claims.size).toBeGreaterThan(0);
-    expect(claims.size).toBeLessThan(MEDICAL_SURGICAL_NURSING_SCENARIOS.length);
     for (const scenario of MEDICAL_SURGICAL_NURSING_SCENARIOS) {
       const html = briefing(scenario, 'medical-surgical-nursing');
       expect(html.includes('Watch a worked example'), scenario.metadata.id)

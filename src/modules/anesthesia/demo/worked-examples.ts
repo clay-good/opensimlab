@@ -35,6 +35,8 @@ import { supportsAfferentLimbDemonstration } from '../../medical-surgical-nursin
 import { supportsQuietPatientDemonstration } from '../../medical-surgical-nursing/demo/quiet-patient-demonstration';
 import { supportsProxyScaleDemonstration } from '../../medical-surgical-nursing/demo/proxy-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
+import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
+import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -93,6 +95,8 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsQuietPatientDemonstration,
     supportsProxyScaleDemonstration,
     supportsLastKnownWellDemonstration,
+    supportsOxygenTargetScaleDemonstration,
+    supportsLostContingencyDemonstration,
   ],
 };
 

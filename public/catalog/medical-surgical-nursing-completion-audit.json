@@ -964,9 +964,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Eleven observed-state prompts at version 0.1.0 read the learner's own recorded steps. Unassisted is silent and coached withholds the waiting beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. The harm this lesson names arrives as a helpful offer — a colleague reads the old score and suggests putting some oxygen on her — and neither the prompts nor the beats ever touch the oxygen or name a flow; both answer with the prescribed range instead. A test forbids any flow language across every prompt and narration and asserts the four refused shortcuts stay untaken. The corrected score is refused as evidence of improvement in the same breath as it is recorded, because nothing about the patient changed in that minute. tests/unit/oxygen-target-scale-demonstration.test.ts and tests/ui/oxygen-target-scale-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
@@ -1090,9 +1090,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Eleven observed-state prompts at version 0.1.0 read the learner's own recorded steps. Unassisted is silent and coached withholds the waiting beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Nothing in this lesson is missing, so the example is built to end without anything having been rescued: the contingency was written yesterday, every part of it is recoverable, and what the gap changed was who knew rather than what the plan was. Neither the prompts nor the beats ask anyone to remember what was said or write a plan of their own, because either replaces a recoverable record with a reconstruction from memory. A test asserts the reconstruction comes from the record in the surgical team's words, that no memory was asked for, and that the closing narration says nothing was ever lost. tests/unit/lost-contingency-demonstration.test.ts and tests/ui/lost-contingency-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {

@@ -28,9 +28,10 @@ let host: HTMLDivElement; let root: Root;
 beforeEach(() => { host = document.createElement('div'); document.body.append(host); root = createRoot(host); });
 afterEach(() => { act(() => root.unmount()); host.remove(); });
 
-const render = (model: LostContingency, tick: number, onAction = vi.fn(), demonstrating = false) => {
-  act(() => root.render(<LostContingencyTray assessment={model.snapshot(tick)}
-    onAction={onAction} demonstrating={demonstrating} />));
+const render = (model: LostContingency, tick: number, onAction = vi.fn(), demonstrating = false,
+  guidance: 'unassisted' | 'coached' | 'guided' = 'unassisted') => {
+  act(() => root.render(<LostContingencyTray assessment={model.snapshot(tick)} scenarioVersion="0.1.0"
+    onAction={onAction} guidance={guidance} demonstrating={demonstrating} />));
   return onAction;
 };
 const button = (label: string) => [...host.querySelectorAll('button')]
@@ -132,5 +133,31 @@ describe('Handover-loss tray', () => {
     for (const entry of host.querySelectorAll('button')) {
       expect(entry.getAttribute('aria-disabled')).toBe('true');
     }
+  });
+});
+
+describe('Lost-contingency tutor', () => {
+  it('says nothing at all on the unassisted setting', () => {
+    render(new LostContingency(), 0);
+    expect(host.textContent).not.toContain('A moment to think');
+  });
+
+  it('asks for what was said to be written down first', () => {
+    render(new LostContingency(), 0, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('Write down what was actually said');
+    expect(text).toContain('no record of its own');
+  });
+
+  it('never asks anyone to remember, and never invites a plan of your own', () => {
+    const model = new LostContingency();
+    model.apply('record-what-was-said', 0);
+    model.apply('check-the-notes', 1);
+    model.apply('record-the-gap-as-a-transmission-gap', 2);
+    render(model, 3, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('in the surgical team’s words');
+    expect(text).not.toContain('ask the day nurse');
+    expect(text).not.toContain('write your own');
   });
 });

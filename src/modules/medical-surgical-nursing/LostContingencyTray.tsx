@@ -2,13 +2,18 @@ import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { LostContingencySnapshot } from '@platform/kernel/protocol';
 import type { LostContingencyAction } from './lost-contingency';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
+import { lostContingencyInlinePrompt } from './lost-contingency-tutor';
 
-export function LostContingencyTray({ assessment, onAction, demonstrating = false }: {
+export function LostContingencyTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: LostContingencySnapshot;
+  readonly scenarioVersion: string;
   readonly onAction: (action: LostContingencyAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = lostContingencyInlinePrompt(guidance, { scenarioVersion, lostContingency: assessment });
   const spoken = assessment.spokenRecord; const notes = assessment.notesRecord;
   const observation = assessment.observation;
   const decision = (action: LostContingencyAction, label: string, accepted = false) => {
@@ -17,6 +22,10 @@ export function LostContingencyTray({ assessment, onAction, demonstrating = fals
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     {/* The counts are shown side by side and never as a single total. The whole lesson is the
         difference between two numbers that describe the same patient. */}
     <p className="syringe__remaining" role="status">Said at handover: {assessment.spokenElements.length} elements. Written in the notes: {assessment.recordedElements.length}. The contingency is {assessment.contingencyWasSpoken ? 'in both' : 'in the notes and was not said'}.</p>

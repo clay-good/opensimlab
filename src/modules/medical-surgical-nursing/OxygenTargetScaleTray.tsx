@@ -2,13 +2,18 @@ import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { OxygenTargetScaleSnapshot } from '@platform/kernel/protocol';
 import { OXYGEN_TARGET_SCALE_ONE, OXYGEN_TARGET_SCALE_TWO, type OxygenTargetScaleAction } from './oxygen-target-scale';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
+import { oxygenTargetScaleInlinePrompt } from './oxygen-target-scale-tutor';
 
-export function OxygenTargetScaleTray({ assessment, onAction, demonstrating = false }: {
+export function OxygenTargetScaleTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: OxygenTargetScaleSnapshot;
+  readonly scenarioVersion: string;
   readonly onAction: (action: OxygenTargetScaleAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = oxygenTargetScaleInlinePrompt(guidance, { scenarioVersion, oxygenTargetScale: assessment });
   const prescription = assessment.prescriptionRecord; const chart = assessment.chartRecord;
   const observation = assessment.observation;
   const decision = (action: OxygenTargetScaleAction, label: string, accepted = false) => {
@@ -17,6 +22,10 @@ export function OxygenTargetScaleTray({ assessment, onAction, demonstrating = fa
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     {/* The score is never shown without the scale it was computed on. A bare 3 is the error. */}
     <p className="syringe__remaining" role="status">Saturation {assessment.saturationPercent}% {assessment.onSupplementalOxygen ? 'on oxygen' : 'breathing air'}, scored {assessment.chartedScore} on scale {assessment.chartedScale}. Prescribed target {assessment.prescribedTargetRange} on scale {assessment.prescribedScale}.</p>
     <p className="syringe__remaining">Selected sources: the national early warning score specification that publishes both saturation scales, a national oxygen guideline, one randomised trial of titrated versus high-flow oxygen, and one comparison of the two scales. Open the source view for exact figures.</p>

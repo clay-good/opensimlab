@@ -2,11 +2,14 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { OXYGEN_TARGET_SCALE_A_SCORE_THAT_SHOULD_BE_LOWER } from './scenarios/oxygen-target-scale-a-score-that-should-be-lower';
 import { OXYGEN_TARGET_SCALE_FIXTURES } from './oxygen-target-scale-fixtures';
+import { OXYGEN_TARGET_SCALE_TUTOR_VERSION } from './oxygen-target-scale-tutor';
+import { OXYGEN_TARGET_SCALE_DEMONSTRATION_VERSION } from './demo/oxygen-target-scale-demonstration';
 
 export function oxygenTargetScaleCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'medical-surgical-nursing' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== OXYGEN_TARGET_SCALE_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
-    || OXYGEN_TARGET_SCALE_FIXTURES.contentVersion !== '0.1.0' || OXYGEN_TARGET_SCALE_FIXTURES.seed !== 5307
+    || OXYGEN_TARGET_SCALE_FIXTURES.contentVersion !== '0.1.0'
+    || OXYGEN_TARGET_SCALE_TUTOR_VERSION !== '0.1.0' || OXYGEN_TARGET_SCALE_DEMONSTRATION_VERSION !== '0.1.0' || OXYGEN_TARGET_SCALE_FIXTURES.seed !== 5307
     || JSON.stringify(scenario) !== JSON.stringify(OXYGEN_TARGET_SCALE_A_SCORE_THAT_SHOULD_BE_LOWER)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['oxygen-target-scale-fixtures.ts binds seed 5307 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No respiratory, gas-exchange, or oxygen-delivery model is claimed; the observation, the prescription, and the chart are authored.'] },
@@ -15,7 +18,7 @@ export function oxygenTargetScaleCompletionEvidence(scenario: Scenario, capabili
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['Both documents read, a recorded mismatch, a rescore on the prescribed scale, the stated consequences, a confirmation request, the boundary review, observation on the corrected chart, and a current full assessment permit handoff. Instructor takeover bounds a run with no confirmation request at 90 minutes, or an unfinished session at eight hours.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Six event-bound objectives distinguish reading both documents before calling them mismatched, recalculating against the prescribed range, stating that only the score changed, routing the scale decision to a competent decision maker, the guideline and trial evidence with its stated limits, and handing over a corrected score as a corrected score. Refused shortcuts remain visible, and no cause, trajectory, or outcome is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['oxygen-target-scale-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Eleven observed-state prompts at version ${OXYGEN_TARGET_SCALE_TUTOR_VERSION} read the learner's own recorded steps. Unassisted is silent and coached withholds the waiting beat. Worked example ${OXYGEN_TARGET_SCALE_DEMONSTRATION_VERSION} drives the ordinary controls through the real engine to handoff. The harm this lesson names arrives as a helpful offer — a colleague reads the old score and suggests putting some oxygen on her — and neither the prompts nor the beats ever touch the oxygen or name a flow; both answer with the prescribed range instead. A test forbids any flow language across every prompt and narration and asserts the four refused shortcuts stay untaken. The corrected score is refused as evidence of improvement in the same breath as it is recorded, because nothing about the patient changed in that minute. tests/unit/oxygen-target-scale-demonstration.test.ts and tests/ui/oxygen-target-scale-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];

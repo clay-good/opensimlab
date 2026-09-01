@@ -28,9 +28,10 @@ let host: HTMLDivElement; let root: Root;
 beforeEach(() => { host = document.createElement('div'); document.body.append(host); root = createRoot(host); });
 afterEach(() => { act(() => root.unmount()); host.remove(); });
 
-const render = (model: OxygenTargetScale, tick: number, onAction = vi.fn(), demonstrating = false) => {
-  act(() => root.render(<OxygenTargetScaleTray assessment={model.snapshot(tick)}
-    onAction={onAction} demonstrating={demonstrating} />));
+const render = (model: OxygenTargetScale, tick: number, onAction = vi.fn(), demonstrating = false,
+  guidance: 'unassisted' | 'coached' | 'guided' = 'unassisted') => {
+  act(() => root.render(<OxygenTargetScaleTray assessment={model.snapshot(tick)} scenarioVersion="0.1.0"
+    onAction={onAction} guidance={guidance} demonstrating={demonstrating} />));
   return onAction;
 };
 const button = (label: string) => [...host.querySelectorAll('button')]
@@ -128,5 +129,30 @@ describe('Oxygen-target scoring tray', () => {
     for (const entry of host.querySelectorAll('button')) {
       expect(entry.getAttribute('aria-disabled')).toBe('true');
     }
+  });
+});
+
+describe('Oxygen target scale tutor', () => {
+  it('says nothing at all on the unassisted setting', () => {
+    render(new OxygenTargetScale(), 0);
+    expect(host.textContent).not.toContain('A moment to think');
+  });
+
+  it('sends the reader to the prescription before the chart', () => {
+    render(new OxygenTargetScale(), 0, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('Read the prescription before the chart');
+    expect(text).toContain('which range she is being compared with');
+  });
+
+  it('never suggests touching the oxygen', () => {
+    const model = new OxygenTargetScale();
+    model.apply('check-the-prescription', 0);
+    model.apply('check-the-chart', 1);
+    render(model, 2, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('before changing anything');
+    expect(text).not.toContain('Raise the oxygen');
+    expect(text).not.toContain('litres');
   });
 });

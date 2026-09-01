@@ -93,7 +93,19 @@ preview-channel blockers until it is. Updating the specification does not clear 
     `tests/unit/worked-example-offer.test.ts` compares it against the audit in
     both directions, which is the only check that can catch a half that is
     individually correct.
-    The pattern, now used by every scenario in three modules, is an
+    Medical-surgical nursing followed: all nine of its lessons now carry an
+    observed-state tutor and a worked example, each held to its own lesson's
+    restraint. The low-score example makes the call while the score is still 2 and
+    nothing is confirmed; the counted-rate one leaves the charted column exactly as
+    written, because rewriting it destroys the evidence that the trend was
+    unreliable; the paired-reading one never touches the probe, since the error is
+    optical; the afferent-limb one records the reasons not to call rather than
+    dismissing them; the quiet-patient one stops at a positive screen without
+    naming a condition; the proxy-scale one never converts a behaviour count into
+    an intensity; the last-known-well one ends with the onset field still empty;
+    the oxygen-target one never reaches for the oxygen; and the lost-contingency
+    one ends without anything having been rescued, because nothing was ever lost.
+    The pattern, now used by every scenario in four modules, is an
     observed-state tutor reading the learner's own recorded steps, a snapshot-driven worked
     example, tray and cockpit wiring, and a test that drives the example through the real engine
     to handoff rather than asserting it as a script. Each example also has to be held to its own

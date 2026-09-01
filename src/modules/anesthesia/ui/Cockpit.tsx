@@ -69,6 +69,10 @@ import { useAfferentLimbDemonstration } from '../../medical-surgical-nursing/dem
 import { useQuietPatientDemonstration } from '../../medical-surgical-nursing/demo/useQuietPatientDemonstration';
 import { useProxyScaleDemonstration } from '../../medical-surgical-nursing/demo/useProxyScaleDemonstration';
 import { useLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/useLastKnownWellDemonstration';
+import { useOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/useOxygenTargetScaleDemonstration';
+import { useLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/useLostContingencyDemonstration';
+import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
+import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
 import { supportsProxyScaleDemonstration } from '../../medical-surgical-nursing/demo/proxy-scale-demonstration';
 import { supportsQuietPatientDemonstration } from '../../medical-surgical-nursing/demo/quiet-patient-demonstration';
@@ -252,6 +256,8 @@ export function Cockpit({
   const quietPatientDemoSupported = supportsQuietPatientDemonstration(scenario);
   const proxyScaleDemoSupported = supportsProxyScaleDemonstration(scenario);
   const lastKnownWellDemoSupported = supportsLastKnownWellDemonstration(scenario);
+  const oxygenTargetScaleDemoSupported = supportsOxygenTargetScaleDemonstration(scenario);
+  const lostContingencyDemoSupported = supportsLostContingencyDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -277,7 +283,7 @@ export function Cockpit({
     || laboratoryTlsDemoSupported || rareEarlyMyocarditisDemoSupported
     || loweringTheCountDemoSupported || inheritedUrgencyDemoSupported
     || trialRuleDemoSupported || silentInteractionDemoSupported || easyLabelDemoSupported
-    || dkaResolutionDemoSupported || hhsOsmolalityDemoSupported || lowScoreDemoSupported || countedRateDemoSupported || pairedReadingDemoSupported || afferentLimbDemoSupported || quietPatientDemoSupported || proxyScaleDemoSupported || lastKnownWellDemoSupported;
+    || dkaResolutionDemoSupported || hhsOsmolalityDemoSupported || lowScoreDemoSupported || countedRateDemoSupported || pairedReadingDemoSupported || afferentLimbDemoSupported || quietPatientDemoSupported || proxyScaleDemoSupported || lastKnownWellDemoSupported || oxygenTargetScaleDemoSupported || lostContingencyDemoSupported;
   const scenarioDemoSupported = hypoglycemiaDemoSupported || adrenalDemoSupported
     || thyroidDemoSupported || myxedemaDemoSupported || observedStateDemoSupported;
   const inductionDemonstration = useDemonstration({
@@ -359,6 +365,16 @@ export function Cockpit({
   const renalHyponatremiaDemonstration = useRenalHyponatremiaDemonstration({
     active: demonstrating && renalHyponatremiaDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyponatremia,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const lostContingencyDemonstration = useLostContingencyDemonstration({
+    active: demonstrating && lostContingencyDemoSupported,
+    running: session.transport === 'running', patient: session.equipment?.resuscitation.lostContingency,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const oxygenTargetScaleDemonstration = useOxygenTargetScaleDemonstration({
+    active: demonstrating && oxygenTargetScaleDemoSupported,
+    running: session.transport === 'running', patient: session.equipment?.resuscitation.oxygenTargetScale,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const lastKnownWellDemonstration = useLastKnownWellDemonstration({
@@ -478,7 +494,9 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypermagnesemia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = lastKnownWellDemoSupported ? lastKnownWellDemonstration
+  const demonstration = lostContingencyDemoSupported ? lostContingencyDemonstration
+    : oxygenTargetScaleDemoSupported ? oxygenTargetScaleDemonstration
+    : lastKnownWellDemoSupported ? lastKnownWellDemonstration
     : proxyScaleDemoSupported ? proxyScaleDemonstration
     : quietPatientDemoSupported ? quietPatientDemonstration
     : afferentLimbDemoSupported ? afferentLimbDemonstration
@@ -1149,6 +1167,10 @@ export function Cockpit({
           quietPatientGuidance={session.guidance}
           proxyScaleGuidance={session.guidance}
           lastKnownWellGuidance={session.guidance}
+          oxygenTargetScaleGuidance={session.guidance}
+          lostContingencyGuidance={session.guidance}
+          lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
+          oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
           proxyScaleDemonstrating={demonstrating && proxyScaleDemoSupported}
           quietPatientDemonstrating={demonstrating && quietPatientDemoSupported}

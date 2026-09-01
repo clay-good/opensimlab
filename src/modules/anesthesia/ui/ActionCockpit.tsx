@@ -2818,7 +2818,9 @@ export interface ActionCockpitProps {
   readonly proxyScaleDemonstrating?: boolean;
   readonly lastKnownWellGuidance?: GuidanceLevel;
   readonly lastKnownWellDemonstrating?: boolean;
+  readonly oxygenTargetScaleGuidance?: GuidanceLevel;
   readonly oxygenTargetScaleDemonstrating?: boolean;
+  readonly lostContingencyGuidance?: GuidanceLevel;
   readonly lostContingencyDemonstrating?: boolean;
   readonly delayedImmuneEventDemonstrating?: boolean;
   readonly incidentalClotDemonstrating?: boolean;
@@ -5944,11 +5946,15 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasLostContingencyResponse && (
               <LostContingencyTray assessment={props.lostContingency}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.lostContingencyGuidance}
                 demonstrating={props.lostContingencyDemonstrating}
                 onAction={props.onLostContingencyResponse ?? (() => {})} />
             )}
             {hasOxygenTargetScaleResponse && (
               <OxygenTargetScaleTray assessment={props.oxygenTargetScale}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.oxygenTargetScaleGuidance}
                 demonstrating={props.oxygenTargetScaleDemonstrating}
                 onAction={props.onOxygenTargetScaleResponse ?? (() => {})} />
             )}
