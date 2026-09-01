@@ -115,6 +115,8 @@ import { useTensionPneumothoraxDemonstration } from '../../neonatology/demo/useT
 import { supportsTensionPneumothoraxDemonstration } from '../../neonatology/demo/neonatal-tension-pneumothorax-demonstration';
 import { useMethemoglobinemiaDemonstration } from '../../toxicology/demo/useMethemoglobinemiaDemonstration';
 import { supportsMethemoglobinemiaDemonstration } from '../../toxicology/demo/methemoglobinemia-saturation-gap-demonstration';
+import { useCarbonMonoxideDemonstration } from '../../toxicology/demo/useCarbonMonoxideDemonstration';
+import { supportsCarbonMonoxideDemonstration } from '../../toxicology/demo/carbon-monoxide-reassuring-monitor-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -324,6 +326,7 @@ export function Cockpit({
   const termTransitionDemoSupported = supportsTermTransitionDemonstration(scenario);
   const tensionPneumothoraxDemoSupported = supportsTensionPneumothoraxDemonstration(scenario);
   const methemoglobinemiaDemoSupported = supportsMethemoglobinemiaDemonstration(scenario);
+  const carbonMonoxideDemoSupported = supportsCarbonMonoxideDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -361,6 +364,7 @@ export function Cockpit({
     || meningitisImagingDemoSupported
     || tensionPneumothoraxDemoSupported
     || methemoglobinemiaDemoSupported
+    || carbonMonoxideDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -512,6 +516,12 @@ export function Cockpit({
     active: demonstrating && termTransitionDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.neonatologyTermTransitionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const carbonMonoxideDemonstration = useCarbonMonoxideDemonstration({
+    active: demonstrating && carbonMonoxideDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.toxicologyCarbonMonoxideAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const methemoglobinemiaDemonstration = useMethemoglobinemiaDemonstration({
@@ -713,6 +723,7 @@ export function Cockpit({
     : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
+    : carbonMonoxideDemoSupported ? carbonMonoxideDemonstration
     : methemoglobinemiaDemoSupported ? methemoglobinemiaDemonstration
     : tensionPneumothoraxDemoSupported ? tensionPneumothoraxDemonstration
     : meningitisImagingDemoSupported ? meningitisImagingDemonstration
@@ -1444,6 +1455,8 @@ export function Cockpit({
           neonatologyTensionPneumothoraxDemonstrating={demonstrating && tensionPneumothoraxDemoSupported}
           toxicologyMethemoglobinemiaGuidance={session.guidance}
           toxicologyMethemoglobinemiaDemonstrating={demonstrating && methemoglobinemiaDemoSupported}
+          toxicologyCarbonMonoxideGuidance={session.guidance}
+          toxicologyCarbonMonoxideDemonstrating={demonstrating && carbonMonoxideDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

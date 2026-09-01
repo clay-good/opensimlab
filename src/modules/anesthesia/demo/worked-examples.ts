@@ -59,6 +59,7 @@ import { supportsNeonatalApneaDemonstration } from '../../neonatology/demo/neona
 import { supportsTermTransitionDemonstration } from '../../neonatology/demo/term-newborn-transition-demonstration';
 import { supportsTensionPneumothoraxDemonstration } from '../../neonatology/demo/neonatal-tension-pneumothorax-demonstration';
 import { supportsMethemoglobinemiaDemonstration } from '../../toxicology/demo/methemoglobinemia-saturation-gap-demonstration';
+import { supportsCarbonMonoxideDemonstration } from '../../toxicology/demo/carbon-monoxide-reassuring-monitor-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -147,6 +148,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
   ],
   toxicology: [
     supportsMethemoglobinemiaDemonstration,
+    supportsCarbonMonoxideDemonstration,
   ],
 };
 

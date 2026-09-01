@@ -23,6 +23,7 @@ import { neonatalApneaCompletionEvidence } from '../../neonatology/neonatal-apne
 import { termTransitionCompletionEvidence } from '../../neonatology/term-newborn-transition-completion';
 import { tensionPneumothoraxCompletionEvidence } from '../../neonatology/neonatal-tension-pneumothorax-completion';
 import { methemoglobinemiaCompletionEvidence } from '../../toxicology/methemoglobinemia-saturation-gap-completion';
+import { carbonMonoxideCompletionEvidence } from '../../toxicology/carbon-monoxide-reassuring-monitor-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -185,6 +186,7 @@ export function auditClinicalScenario(
     ...nicuHandoffCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...tensionPneumothoraxCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...methemoglobinemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...carbonMonoxideCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

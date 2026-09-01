@@ -121,6 +121,7 @@ import { neonatalApneaInlinePrompt } from '../../neonatology/tutor/neonatal-apne
 import { termTransitionInlinePrompt } from '../../neonatology/tutor/term-newborn-transition-guidance';
 import { tensionPneumothoraxInlinePrompt } from '../../neonatology/tutor/neonatal-tension-pneumothorax-guidance';
 import { methemoglobinemiaInlinePrompt } from '../../toxicology/tutor/methemoglobinemia-saturation-gap-guidance';
+import { carbonMonoxideInlinePrompt } from '../../toxicology/tutor/carbon-monoxide-reassuring-monitor-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2811,6 +2812,7 @@ export interface ActionCockpitProps {
   readonly neonatologyTermTransitionGuidance?: GuidanceLevel;
   readonly neonatologyTensionPneumothoraxGuidance?: GuidanceLevel;
   readonly toxicologyMethemoglobinemiaGuidance?: GuidanceLevel;
+  readonly toxicologyCarbonMonoxideGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2881,6 +2883,7 @@ export interface ActionCockpitProps {
   readonly neonatologyTermTransitionDemonstrating?: boolean;
   readonly neonatologyTensionPneumothoraxDemonstrating?: boolean;
   readonly toxicologyMethemoglobinemiaDemonstrating?: boolean;
+  readonly toxicologyCarbonMonoxideDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5660,6 +5663,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasToxicologyCarbonMonoxideResponse && (
               <ToxicologyCarbonMonoxideTray
                 assessment={props.resuscitation.toxicologyCarbonMonoxideAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.toxicologyCarbonMonoxideGuidance}
+                demonstrating={props.toxicologyCarbonMonoxideDemonstrating}
                 onAction={props.onToxicologyCarbonMonoxideResponse ?? (() => {})} />
             )}
             {hasToxicologyAcetaminophenResponse && (
@@ -12536,10 +12542,15 @@ function ToxicologyMethemoglobinemiaTray({ assessment, scenarioVersion, onAction
   </>;
 }
 
-function ToxicologyCarbonMonoxideTray({ assessment, onAction }: {
+function ToxicologyCarbonMonoxideTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyCarbonMonoxideAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onToxicologyCarbonMonoxideResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = carbonMonoxideInlinePrompt(guidance, { scenarioVersion, carbonMonoxide: assessment });
+  const act = demonstrating ? undefined : onAction;
   const trajectory = assessment?.trajectoryAtTick != null;
   const recognition = assessment?.recognitionAtTick != null;
   const support = assessment?.supportAtTick != null;
@@ -12547,22 +12558,27 @@ function ToxicologyCarbonMonoxideTray({ assessment, onAction }: {
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="toxicology-carbon-monoxide-early-title">
       <div id="toxicology-carbon-monoxide-early-title" className="syringe__name">A calm monitor can still hide a poisoned patient.</div>
       <p className="syringe__remaining">Begin with the shared exposure, clock, syncope, symptoms, conventional pulse oximetry, and whole person.</p>
       <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-toxicology-carbon-monoxide-shared-exposure-clock-syncope-symptoms-pulse-ox-and-whole-patient')}>Connect exposure + patient</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-toxicology-carbon-monoxide-pattern-despite-reassuring-pulse-ox-without-single-value-closure')}>See past the pulse ox</Button>}
-        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-toxicology-carbon-monoxide-source-safety-qualified-oxygen-monitoring-poison-center-and-emergency-ownership')}>Make the scene + patient safe</Button>}
-        {support && !severity && <Button className="crisis-drug__action" onClick={() => onAction('review-toxicology-carbon-monoxide-supplied-cooximetry-neurologic-cardiac-and-severity-boundary')}>Read severity in context</Button>}
+        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-toxicology-carbon-monoxide-shared-exposure-clock-syncope-symptoms-pulse-ox-and-whole-patient') : undefined}>Connect exposure + patient</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-toxicology-carbon-monoxide-pattern-despite-reassuring-pulse-ox-without-single-value-closure') : undefined}>See past the pulse ox</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-toxicology-carbon-monoxide-source-safety-qualified-oxygen-monitoring-poison-center-and-emergency-ownership') : undefined}>Make the scene + patient safe</Button>}
+        {support && !severity && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-toxicology-carbon-monoxide-supplied-cooximetry-neurologic-cardiac-and-severity-boundary') : undefined}>Read severity in context</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="toxicology-carbon-monoxide-later-title">
       <div id="toxicology-carbon-monoxide-later-title" className="syringe__name">A lower number is progress, not permission to forget.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Exposure, serial neurologic and cardiac findings, delayed risk, follow-up, and outcome uncertainty handed off.' : reassessment ? 'Symptoms and COHb improved in the fixed report. Delayed neurologic and cardiac risk remain open.' : severity ? 'The COHb is contextual evidence, not a severity score. Record selected-patient consultation after time passes.' : support ? 'Source safety, oxygen, monitoring, and qualified ownership are active. Review the supplied severity evidence.' : 'Complete recognition and immediate support before consultation review.'}</p>
       <div className="crisis-drug__actions">
-        {severity && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-carbon-monoxide-selected-patient-hyperbaric-consultation-and-strict-reassessment')}>Consult + reassess</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-carbon-monoxide-delayed-neurologic-cardiac-exposure-followup-and-active-risk')}>Hand off what can emerge</Button>}
+        {severity && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-toxicology-carbon-monoxide-selected-patient-hyperbaric-consultation-and-strict-reassessment') : undefined}>Consult + reassess</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-toxicology-carbon-monoxide-delayed-neurologic-cardiac-exposure-followup-and-active-risk') : undefined}>Hand off what can emerge</Button>}
       </div>
     </section>
   </>;
