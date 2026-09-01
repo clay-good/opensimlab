@@ -1307,23 +1307,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "neonatal-tension-pneumothorax-fixtures.ts binds seed 4931 and content 0.1.0 to expert, ordering-error, recovery, and no-action paths. The presentation and the fixed 2-minute postdecompression report are authored constants; no air-leak, decompression-response, or oxygenation model is claimed, and no outcome follows from any choice. tests/integration/neonatal-tension-pneumothorax-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the fixed report refuses until simulated time has passed since the boundary review, and the handoff refuses until time has passed since the report. What moves is not the diagnosis, which never closes, but what the record can support about a response that is real and incomplete."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions confirm a decompression-capable team, connect the running support to the clocked deterioration, recognize the suspected pattern without waiting for imaging, review what the guidance settles and what stays local-protocol work, read the fixed report, and hand off active risk. Order is enforced rather than suggested, and refusal names the missing step. The lesson selects no device, size, site, analgesia, ventilation change, drain, or imaging."
           ]
         },
         {
@@ -1335,23 +1335,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at active-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no confirmed diagnosis, no excluded alternative, no resolved air leak, no durable oxygenation or circulation, no disposition, and no outcome for the newborn or the parents."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both hold two statements together that sound contradictory and are not: emergency decompression should not wait for radiography, and this remains a suspicion with obstruction, displacement, equipment failure, atelectasis, hemorrhage and infection open. Neither is softened to make the other easier, and a test asserts no prompt or narration confirms the diagnosis or excludes an alternative. Neither selects a device, size, site, or analgesia, and the example finishes on a response described as improvement without resolution rather than on a rescue. tests/unit/neonatal-tension-pneumothorax-demonstration.test.ts and tests/ui/neonatology-tension-pneumothorax.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that recognized before reconciling can still reach a correct handoff."
           ]
         },
         {
@@ -1370,23 +1370,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "neonatal-tension-pneumothorax-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 4931 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

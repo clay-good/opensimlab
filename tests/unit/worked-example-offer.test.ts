@@ -16,6 +16,7 @@ import { RENAL_ELECTROLYTE_SCENARIOS } from '../../src/modules/renal-electrolyte
 import { ONCOLOGY_SCENARIOS } from '../../src/modules/oncology/scenarios';
 import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../../src/modules/medical-surgical-nursing/scenarios';
 import { INFECTIOUS_DISEASE_SCENARIOS } from '../../src/modules/infectious-disease/scenarios';
+import { NEONATOLOGY_SCENARIOS } from '../../src/modules/neonatology/scenarios';
 import { SCENARIOS as ANESTHESIA_SCENARIOS } from '@anesthesia/scenarios';
 
 const MODULES = [
@@ -24,6 +25,7 @@ const MODULES = [
   ['oncology', ONCOLOGY_SCENARIOS],
   ['medical-surgical-nursing', MEDICAL_SURGICAL_NURSING_SCENARIOS],
   ['infectious-disease', INFECTIOUS_DISEASE_SCENARIOS],
+  ['neonatology', NEONATOLOGY_SCENARIOS],
 ] as const;
 
 const claimed = (scenarios: typeof MODULES[number][1], moduleId: string) =>
@@ -46,7 +48,7 @@ describe('Requirement: Every Audited Example Is Offered', () => {
   it('names the modules that ship examples and no others', () => {
     expect(WORKED_EXAMPLE_MODULE_IDS.slice().sort())
       .toEqual(['endocrine-metabolic', 'infectious-disease', 'medical-surgical-nursing',
-        'oncology', 'renal-electrolyte']);
+        'neonatology', 'oncology', 'renal-electrolyte']);
   });
 
   it('offers nothing for a module that has no worked example', () => {
