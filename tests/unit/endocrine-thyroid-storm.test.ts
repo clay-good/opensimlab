@@ -162,7 +162,7 @@ describe('Thyroid storm: urgent care, sequence, circulation, and observed respon
       responseObserved: completed, waitForLabsChosen: choseErrors,
       blanketBetaBlockadeChosen: choseErrors, earlyIodineAttempted: choseErrors,
       urgentCoverageDelayed: path !== 'expert', durableRecoveryProven: false });
-  }, 120_000);
+  });
 
   it('freezes ended branches and refuses unknown values without reflecting their contents', () => {
     const model = new ThyroidStorm();

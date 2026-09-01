@@ -131,7 +131,7 @@ describe('Myxedema: real engine support, sequence, and replay', () => {
     for (const action of ['ventilate', 'hydrocortisone', 'levothyroxine', 'reassess'] as const) guided.engine.apply(choice(999999, action));
     guided.engine.step(); expect(guided.engine.equipment().resuscitation.myxedema).toEqual(ended);
   // Full solver replays share CI resources; the hash still includes every tick.
-  }, 120_000);
+  });
 
   it('does not confuse oxygen-only saturation with ventilation or erase a prior observation', () => {
     const ventilationAt = MYXEDEMA_RESPIRATORY_DELAY_TICKS + 1;
@@ -168,7 +168,7 @@ describe('Myxedema: real engine support, sequence, and replay', () => {
     for (const event of ['ventilation-response', 'response', 'instructor-takeover']) {
       expect(result.events.filter(({ eventId }) => eventId.startsWith(`myxedema-${event}-`))).toHaveLength(1);
     }
-  }, 120_000);
+  });
 
   it('retains an oxygen-only bridge in the debrief while crediting prompt ventilation', () => {
     const result = run([[0, 'oxygen-only'], ...PACKAGE, [MYXEDEMA_VENTILATION_TICKS, 'reassess'],

@@ -93,7 +93,7 @@ describe('Renal hypokalemia through the real engine and event-bound debrief', ()
     const snapshot = first.patient;
     first.engine.apply(choice(999999, 'reassess')); first.engine.step();
     expect(first.engine.equipment().resuscitation.renalHypokalemia).toEqual(snapshot);
-  }, 120000);
+  });
 
   it.each(['potassium', 'magnesium'] as const)('allows independent %s care and partial response without support or review clicks', (action) => {
     const result = run([[0, action], [PARTIAL, 'reassess']], PARTIAL);
@@ -101,7 +101,7 @@ describe('Renal hypokalemia through the real engine and event-bound debrief', ()
       observation: { potassiumMmolL: action === 'potassium' ? 2.7 : 2.3, magnesiumMmolL: action === 'magnesium' ? 0.58 : 0.40 },
       responseObserved: false });
     expect(result.frames.get(PARTIAL)?.equipment.rhythmId).toBe('hypokalemic-repolarization');
-  }, 120000);
+  });
 
   it('changes the qualitative ECG after combined care and recurrence without exposing unrequested electrolytes', () => {
     const result = run([[0, 'potassium'], [0, 'magnesium'], [PARTIAL, 'reassess']], RECURRENCE,
@@ -117,7 +117,7 @@ describe('Renal hypokalemia through the real engine and event-bound debrief', ()
     result.engine.apply(choice(RECURRENCE + 1, 'reassess'));
     expect(result.engine.equipment().resuscitation.renalHypokalemia).toMatchObject({ recurrenceObserved: true,
       observation: { atTick: RECURRENCE + 1, potassiumMmolL: 2.5, magnesiumMmolL: 0.46 } });
-  }, 120000);
+  });
 
   it('preserves older magnesium and full-assessment age after newer potassium-only and ECG-only checks', () => {
     const result = run([[0, 'reassess'], [0, 'potassium'], [0, 'magnesium'], [0, 'manage-losses'],
@@ -126,7 +126,7 @@ describe('Renal hypokalemia through the real engine and event-bound debrief', ()
       potassiumObservation: { atTick: RESPONSE, potassiumMmolL: 3.1 },
       ecgObservation: { atTick: RESPONSE, rhythm: 'sinus' }, responseObserved: false });
     expect(findings(result.events).find(({ objectiveId }) => objectiveId === 'renal-hypokalemia-reassessment')?.outcome).toBe('not-met');
-  }, 120000);
+  });
 
   it.each(['potassium', 'magnesium'] as const)('requires %s before full observation in event order even at one tick', (care) => {
     for (const careFirst of [false, true]) {
@@ -137,7 +137,7 @@ describe('Renal hypokalemia through the real engine and event-bound debrief', ()
       expect(findings(result.events).slice(0, 2).map(({ outcome }) => outcome))
         .toEqual(careFirst ? ['met', 'met'] : care === 'potassium' ? ['not-met', 'met'] : ['met', 'not-met']);
     }
-  }, 120000);
+  });
 
   it('rejects malformed, accessor, symbol, inherited, and generic payloads without invoking getters', () => {
     const engine = create(); engine.step(); const before = engine.equipment().resuscitation.renalHypokalemia!;

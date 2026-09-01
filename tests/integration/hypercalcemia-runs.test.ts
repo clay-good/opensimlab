@@ -94,7 +94,7 @@ describe('Hypercalcemia: real engine volume support, bridge, and replay', () => 
     for (const action of ['tailored-fluids', 'calcitonin', 'antiresorptive', 'reassess'] as const) guided.engine.apply(choice(999999, action));
     guided.engine.step(); expect(guided.engine.equipment().resuscitation.hypercalcemia).toEqual(ended);
   // More than four simulated hours per successful fixture, with no compressed clock.
-  }, 120_000);
+  });
 
   it('separates early circulation from fresh calcium, preserves historical results, and stops an unfinished lesson at six hours', () => {
     const responseAt = HYPERCALCEMIA_BRIDGE_RESPONSE_TICKS;
@@ -116,7 +116,7 @@ describe('Hypercalcemia: real engine volume support, bridge, and replay', () => 
       observation: { atTick: responseAt + 1, adjustedCalciumMgDl: 14.8 }, durableRecoveryProven: false });
     expect(result.events.some(({ eventId }) => eventId.startsWith('hypercalcemia-handoff-refused-'))).toBe(true);
     expect(patientAt(HYPERCALCEMIA_SESSION_TICKS - 1).ended).toBeNull(); expect(result.patient.ended).toBe('instructor-takeover');
-  }, 120_000);
+  });
 
   it('does not promote timer events or an unpaired reassessment label to observed response evidence', () => {
     const event = (id: string, tick: number): EngineEvent => ({ tick, eventId: `hypercalcemia-${id}-${tick}`, severity: 'warning', category: 'assessment', message: id });

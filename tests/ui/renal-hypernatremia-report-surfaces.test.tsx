@@ -260,7 +260,7 @@ describe('Renal hypernatremia reports through the shared centered form and exact
     expect(field('recurrenceObserved')).toBe(true);
     expect(field('waterAccessAtTick')).toBeNull();
     expect(JSON.stringify(project())).not.toMatch(/alertness|choiceFeedback|DueInSeconds|phase|osmolality|creatinine/);
-  }, 120_000);
+  });
 
   it.each([false, true])('attributes observation, volume care, and refused shortcuts independently at one paused tick (reversed: %s)', async (reversed) => {
     const choices = ['check-sodium', 'normalize-now', 'restore-volume', 'empiric-desmopressin'];

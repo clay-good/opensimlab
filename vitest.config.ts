@@ -45,6 +45,15 @@ export default defineConfig({
     // so a real fix has to come from the 56% in the solver. Anyone tempted to
     // hash less should read the run() helper in a *-runs.test.ts file first.
     testTimeout: 600_000,
+    // This is the only timeout in the suite, deliberately. Seventy-seven tests
+    // used to carry their own 120s override, plus one at 240s and one at 420s,
+    // all of them below this number and therefore the binding constraint under
+    // load — which is the same "measured on the wrong file" mistake described
+    // above, repeated per test instead of per config. They were removed rather
+    // than raised: a run that fails here now fails against a figure derived from
+    // the slowest measured replay and its observed 4.6x contention factor, not
+    // against a leftover guess. If a specific test genuinely needs a tighter
+    // bound as an assertion about its own speed, say that in the test's name.
     // A dozen integration files each step the solver for minutes of CPU. Left
     // unbounded, the pool spawns more workers than this machine has cores, and
     // those files miss their own timeouts through contention rather than any

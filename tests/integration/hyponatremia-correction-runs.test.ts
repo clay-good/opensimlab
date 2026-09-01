@@ -87,7 +87,7 @@ describe('Post-rescue sodium correction through the real engine and causal debri
     expect(guided.frames.get(until)!.state).toMatchObject(supplied);
     const ended = guided.patient; guided.engine.apply(choice(999999, 'reassess')); guided.engine.step();
     expect(guided.engine.equipment().resuscitation.hyponatremiaCorrection).toEqual(ended);
-  }, 120_000);
+  });
 
   it('keeps hidden branch values and peak out of live snapshots and automatic engine events until requested', () => {
     const result = run([[0, 'monitor'], [0, 'reassess'], [BREACH + 1, 'reassess']], BREACH + 1, 'guided', [AQUARESIS, BREACH]);
@@ -115,7 +115,7 @@ describe('Post-rescue sodium correction through the real engine and causal debri
     expect(findings.map(({ outcome }) => outcome)).toEqual(['met', 'met', 'not-met', 'not-met', 'not-met']);
     expect(findings.find(({ objectiveId }) => objectiveId === 'sodium-correction-response')?.finding)
       .not.toMatch(/successful prevention/i);
-  }, 120_000);
+  });
 
   it('uses the same declared high-risk pathway in GB without claiming region-specific prescribing', () => {
     const result = run(FIXTURES.expert, FIXTURES.expert.at(-1)![0], 'unassisted', [], 'GB');

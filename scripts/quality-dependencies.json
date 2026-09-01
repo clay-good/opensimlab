@@ -176,11 +176,11 @@
       },
       {
         "path": "tests/integration/demonstration-runs.test.tsx",
-        "sha256": "68ee8d4b33c06c903c6fd1018e9fece766d4401773d9093308d08047c29d92f0"
+        "sha256": "286182df58c249cfcf02d9543c5a265195e8e9d456514771711c809e2b568e0e"
       },
       {
         "path": "tests/integration/hypocalcemia-runs.test.ts",
-        "sha256": "fce546a33a81caa2449a99a91b5c12c26946d394215760adc7328063c2ed9449"
+        "sha256": "fe6d5125ad6298b6b868b6e47f5661ea8563f86a3fa3b4c534bd35791e42db60"
       },
       {
         "path": "tests/ui/endocrine-hypocalcemia.test.tsx",
@@ -433,11 +433,11 @@
       },
       {
         "path": "tests/integration/hyponatremia-correction-runs.test.ts",
-        "sha256": "caed14b8388f6a8ec84a5f0706da4fff11d64b52eaae0595f3df017ef1b1c8a9"
+        "sha256": "62194957de980e9392fb4e739397626ba2696c9afa306121542a9cb52e8b21b1"
       },
       {
         "path": "tests/integration/hyponatremia-demonstration-session.test.tsx",
-        "sha256": "72b15cfe8a967493a44edd8533d326ef10ad83c1f21a753c88bc3346a5553083"
+        "sha256": "dbc5b5ed2ff7341c73cf7130923ac062943f7ea0ff5237dbc81c6d14e9a1f814"
       },
       {
         "path": "tests/ui/endocrine-hyponatremia-correction.test.tsx",
@@ -698,7 +698,7 @@
       },
       {
         "path": "tests/integration/avp-deficiency-demonstration-session.test.tsx",
-        "sha256": "afdfe36471d0e55ef3b2f6128e95bb883310dfff55b087b2835be84861c97aa4"
+        "sha256": "5a49c122fca9955f5a0ff0fbfafc1ed3aaf36723dd35df47d7c356eeb2d267d0"
       },
       {
         "path": "tests/integration/avp-deficiency-runs.test.ts",

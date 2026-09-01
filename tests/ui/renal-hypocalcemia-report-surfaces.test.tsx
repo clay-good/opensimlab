@@ -258,7 +258,7 @@ describe('Renal hypocalcemia reports through the shared centered form and exact-
     expect(field('recurrenceObserved')).toBe(true);
     expect(field('mineralCareAtTick')).toBeNull(); expect(field('followUpAtTick')).toBeNull();
     expect(JSON.stringify(project())).not.toMatch(/alertness|choiceFeedback|DueInSeconds|phase|totalCalcium|albumin|adjustedCalcium|samplePh|phosphate|magnesium|qtcMs|creatinine/);
-  }, 120_000);
+  });
 
   it.each([false, true])('attributes observation, calcium rescue, and refused shortcuts independently at one paused tick (reversed: %s)', async (reversed) => {
     const choices = ['check-ionized', 'trust-adjusted-total', 'rescue-calcium', 'oral-only', 'stop-after-relief'];

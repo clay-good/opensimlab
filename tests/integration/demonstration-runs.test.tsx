@@ -369,7 +369,7 @@ describe('the demonstration, run for its full length', () => {
       act(() => { exampleRoot.render(createElement(HypoglycemiaHarness)); useSession.getState().frame(100); });
       expect(finishes).toBe(1); expect(worker.applied).toHaveLength(10);
     } finally { act(() => exampleRoot.unmount()); container.remove(); }
-  }, 120_000);
+  });
 
   it('runs the adrenal example through combined rescue, the timed reassessment, and a replayable handoff', () => {
     const exampleContainer = document.createElement('div'); document.body.appendChild(exampleContainer);
@@ -434,7 +434,7 @@ describe('the demonstration, run for its full length', () => {
       act(() => { exampleRoot.render(createElement(AdrenalHarness)); useSession.getState().frame(100); });
       expect(finishes).toBe(1); expect(worker.applied).toHaveLength(7);
     } finally { act(() => exampleRoot.unmount()); exampleContainer.remove(); }
-  }, 120_000);
+  });
 
   it('runs the thyroid example through both distinct waits and replays its real session transcript', () => {
     const exampleContainer = document.createElement('div'); document.body.appendChild(exampleContainer);
@@ -511,7 +511,7 @@ describe('the demonstration, run for its full length', () => {
       expect(finishes).toBe(1); expect(worker.applied).toHaveLength(9);
     } finally { act(() => exampleRoot.unmount()); exampleContainer.remove(); }
   // Two complete three-hour, whole-tick runs include session recording and replay.
-  }, 120_000);
+  });
 
   it('runs the myxedema example through distinct respiratory and partial-support waits and replays its real transcript', () => {
     // This test must also run alone without the induction fixture owning the store.
@@ -693,7 +693,7 @@ describe('the demonstration, run for its full length', () => {
       expect(advance.current).toBeUndefined(); expect(useSession.getState().tick).toBe(endedTick);
     } finally { act(() => exampleRoot.unmount()); exampleContainer.remove(); }
   // The authored four hours is run once through the real session and once as replay.
-  }, 120_000);
+  });
 
   it('runs the hypocalcemia example through distinct rescue and continuing-care waits and replays its real transcript', () => {
     // This test must also run alone without the induction fixture owning the store.
@@ -786,7 +786,7 @@ describe('the demonstration, run for its full length', () => {
       expect(advance.current).toBeUndefined(); expect(useSession.getState().tick).toBe(endedTick);
     } finally { act(() => exampleRoot.unmount()); exampleContainer.remove(); }
   // The authored complete-care hour is run once through the real session and once as replay.
-  }, 120_000);
+  });
 
   it('invalidates a pending adrenal decision when the learner takes over the session', () => {
     const exampleContainer = document.createElement('div'); document.body.appendChild(exampleContainer);
@@ -839,5 +839,5 @@ describe('the demonstration, run for its full length', () => {
         responseDueInSeconds: null, responseObserved: false, preventionPlanned: false, ended: null,
       });
     } finally { act(() => exampleRoot.unmount()); exampleContainer.remove(); }
-  }, 120_000);
+  });
 });

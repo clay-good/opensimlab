@@ -178,7 +178,7 @@ describe('RenalHyperkalemia worked example through the real session pipeline', (
       durableRecoveryProven: false, observation: { potassiumMmolL: 5.1, glucoseMgDl: 100 } });
     readWithoutAdvancing(); replayWholeTrace(); render(); frames();
     expect(finishes).toBe(1); expect(recorded()).toHaveLength(10); expect(advance).toBeUndefined();
-  }, 120_000);
+  });
 
   it('preserves accepted calcium and a paused clock after takeover while invalidating callbacks across reactivation', () => {
     begin(); confirmDecision(); frames();
@@ -251,5 +251,5 @@ describe('RenalHyperkalemia worked example through the real session pipeline', (
       reboundObserved: true, ecgResolvedAttempted: true, glucoseMonitoringStopAttempted: true,
       durableRecoveryProven: false, observation: { potassiumMmolL: 5.1, glucoseMgDl: 100 } });
     readWithoutAdvancing(); replayWholeTrace();
-  }, 120_000);
+  });
 });

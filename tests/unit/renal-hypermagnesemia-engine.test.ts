@@ -97,7 +97,7 @@ describe('Renal hypermagnesemia full-engine replay and phase-aware debrief', () 
     const snapshot = first.patient;
     first.engine.apply(choice(999999, 'reassess')); first.engine.step();
     expect(first.engine.equipment().resuscitation.renalHypermagnesemia).toEqual(snapshot);
-  }, 120000);
+  });
 
   it('separates independent calcium circulation support, supported breathing, and unchanged magnesium through recurrence', () => {
     const result = run([[0, 'calcium'], [0, 'reassess'], [1, 'support-breathing'], [1, 'stop-magnesium'],
@@ -134,7 +134,7 @@ describe('Renal hypermagnesemia full-engine replay and phase-aware debrief', () 
       'diastolicMmHg', 'heartRateBpm', 'magnesiumMmolL', 'meanArterialMmHg', 'reflexesPresent',
       'respiratoryRateBpm', 'severeWeakness', 'spo2Percent', 'systolicMmHg'].sort());
     expect(JSON.stringify(SCENARIO)).toBe(originalScenario);
-  }, 120000);
+  });
 
   it('does not combine partial magnesium and neuromuscular results into current full response or handoff', () => {
     const result = run([...ownership, [0, 'support-breathing'], [0, 'calcium'], [0, 'deliver-removal'], [0, 'reassess'],
@@ -147,7 +147,7 @@ describe('Renal hypermagnesemia full-engine replay and phase-aware debrief', () 
     result.engine.apply(choice(999999, 'reassess')); result.engine.apply(choice(999999, 'handoff'));
     expect(result.engine.equipment().resuscitation.renalHypermagnesemia).toMatchObject({ ended: 'handoff',
       removalResponseObserved: true, observation: { magnesiumMmolL: 2.4 } });
-  }, 120000);
+  });
 
   it('can hand off current recurrent toxicity with newly delivered removal pending without crediting elimination', () => {
     const result = run([...ownership, [0, 'support-breathing'], [0, 'calcium'], [0, 'reassess'],
@@ -181,7 +181,7 @@ describe('Renal hypermagnesemia full-engine replay and phase-aware debrief', () 
       expect(findings([event('removal-care'), event('monitoring'), wrongPhase])
         .find(({ objectiveId }) => objectiveId === 'renal-hypermagnesemia-removal')?.outcome).toBe('not-met');
     }
-  }, 120000);
+  });
 
   it('rejects malformed and generic actions without invoking accessors or trusting caller ticks', () => {
     const engine = create(); engine.step(); const before = engine.equipment().resuscitation.renalHypermagnesemia!;

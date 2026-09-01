@@ -94,7 +94,7 @@ describe('Renal hyperkalemia through the real engine and event-bound debrief', (
     const snapshot = first.patient;
     first.engine.apply(choice(999999, 'reassess')); first.engine.step();
     expect(first.engine.equipment().resuscitation.renalHyperkalemia).toEqual(snapshot);
-  }, 120000);
+  });
 
   it('renders temporary calcium protection in the live rhythm without inventing potassium lowering', () => {
     const result = run([[0, 'calcium'], [0, 'reassess'], [CALCIUM, 'check-ecg']], CALCIUM,
@@ -108,7 +108,7 @@ describe('Renal hyperkalemia through the real engine and event-bound debrief', (
     expect(result.engine.equipment().rhythmId).toBe('sinus');
     expect(result.engine.equipment().resuscitation.renalHyperkalemia).toMatchObject({ calciumRequests: 2,
       lastCalciumAtTick: CALCIUM + 1, observation: result.patient.observation });
-  }, 120000);
+  });
 
   it('keeps partial observations historical and planning separate from actual elimination through rebound', () => {
     const result = run([[0, 'calcium'], [0, 'shift'], [0, 'plan-removal'], [0, 'monitor'],
@@ -122,7 +122,7 @@ describe('Renal hyperkalemia through the real engine and event-bound debrief', (
     result.engine.apply(choice(REBOUND + 1, 'reassess'));
     expect(result.engine.equipment().resuscitation.renalHyperkalemia).toMatchObject({ reboundObserved: true,
       observation: { atTick: REBOUND + 1, potassiumMmolL: 6.6 } });
-  }, 120000);
+  });
 
   it('accepts qualified delivered removal independently of administrative acknowledgments and shifting', () => {
     const result = run([[0, 'deliver-removal'], [REMOVAL, 'reassess']], REMOVAL);
@@ -130,7 +130,7 @@ describe('Renal hyperkalemia through the real engine and event-bound debrief', (
       calciumAtTick: null, shiftAtTick: null, removalAtTick: 0, removalResponseObserved: true,
       observation: { potassiumMmolL: 5.1, glucoseMgDl: 100 } });
     expect(findings(result.events).map(({ outcome }) => outcome)).toEqual(['not-met', 'not-met', 'not-met', 'met', 'not-met']);
-  }, 120000);
+  });
 
   it('requires assessment after care in event order even when both actions share one engine tick', () => {
     const result = run([[0, 'deliver-removal'], [0, 'monitor'], [REMOVAL, 'reassess'],
@@ -145,7 +145,7 @@ describe('Renal hyperkalemia through the real engine and event-bound debrief', (
     for (const action of ['calcium', 'shift', 'reassess'] as const) engine.apply(choice(REMOVAL, action));
     events.push(...engine.step().events);
     expect(findings(events).slice(0, 2).map(({ outcome }) => outcome)).toEqual(['met', 'met']);
-  }, 120000);
+  });
 
   it('rejects generic, adjacent, extra-field, symbol, and accessor payloads without invoking getters', () => {
     const engine = create(); engine.step(); const before = engine.equipment().resuscitation.renalHyperkalemia;
@@ -184,5 +184,5 @@ describe('Renal hyperkalemia through the real engine and event-bound debrief', (
 
   it('runs the declared GB pathway without claiming completion of a regional validation matrix', () => {
     expect(run(FIXTURES.expert, FIXTURES.expert.at(-1)![0], { region: 'GB' }).patient.ended).toBe('handoff');
-  }, 120000);
+  });
 });

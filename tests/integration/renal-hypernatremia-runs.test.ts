@@ -95,7 +95,7 @@ describe('Renal hypernatremia through the real engine and event-bound debrief', 
     const snapshot = first.patient;
     first.engine.apply(choice(999999, 'reassess')); first.engine.step();
     expect(first.engine.equipment().resuscitation.renalHypernatremia).toEqual(snapshot);
-  }, 240000);
+  });
 
   it('allows delivered water and loss care after visible circulation without access, support, or new laboratory gates', () => {
     const result = run([[0, 'restore-volume'], [VOLUME, 'replace-water'], [VOLUME, 'manage-losses'],
@@ -117,7 +117,7 @@ describe('Renal hypernatremia through the real engine and event-bound debrief', 
     result.engine.apply(choice(999999, 'assist-water-access')); result.engine.apply(choice(999999, 'handoff'));
     expect(result.engine.equipment().resuscitation.renalHypernatremia).toMatchObject({ ended: 'handoff',
       combinedResponseObserved: true, observation: { sodiumMmolL: 162 } });
-  }, 120000);
+  });
 
   it('does not credit newer separate sodium and fluid-balance checks as observed combined replacement or current handoff', () => {
     const final = VOLUME + COMBINED;
@@ -131,7 +131,7 @@ describe('Renal hypernatremia through the real engine and event-bound debrief', 
     result.engine.apply(choice(final + 3, 'reassess')); result.engine.apply(choice(final + 3, 'handoff'));
     expect(result.engine.equipment().resuscitation.renalHypernatremia).toMatchObject({ ended: 'handoff',
       combinedResponseObserved: true, observation: { sodiumMmolL: 162, ongoingDiarrhea: true } });
-  }, 120000);
+  });
 
   it('preserves historical water response and transfers current recurrence while combined replacement remains pending', () => {
     const recur = VOLUME + RECURRENCE;
@@ -151,7 +151,7 @@ describe('Renal hypernatremia through the real engine and event-bound debrief', 
     expect(findings(result.events).map(({ outcome }) => outcome)).toEqual(['met', 'met', 'not-met', 'met', 'met']);
     expect(findings(result.events).find(({ objectiveId }) => objectiveId === 'renal-hypernatremia-replacement')?.finding)
       .toContain('incomplete or pending');
-  }, 120000);
+  });
 
   it('requires care-before-assessment log order and matching response type even at the same tick', () => {
     const events = run(FIXTURES.expert, FIXTURES.expert.at(-1)![0]).events;
@@ -170,7 +170,7 @@ describe('Renal hypernatremia through the real engine and event-bound debrief', 
       expect(findings([...prerequisites, { ...care, tick: full.tick + 1 }, full])
         .find((finding) => finding.objectiveId === objectiveId)?.outcome).toBe('not-met');
     }
-  }, 120000);
+  });
 
   it('rejects malformed and generic actions without invoking getters or trusting caller ticks', () => {
     const engine = create(); engine.step(); const before = engine.equipment().resuscitation.renalHypernatremia!;

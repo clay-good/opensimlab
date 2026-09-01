@@ -257,7 +257,7 @@ describe('Renal hypermagnesemia reports through the shared centered form and exa
     expect(field('removalResponseObserved')).toBe(true); expect(field('recurrenceObserved')).toBe(true);
     expect(field('contextReviewedAtTick')).toBeNull(); expect(field('monitoringAtTick')).toBeNull();
     expect(JSON.stringify(project())).not.toMatch(/alertness|choiceFeedback|DueInSeconds|phase|calciumMmolL|potassiumMmolL|egfr|qtcMs|creatinine/);
-  }, 120_000);
+  });
 
   it.each([false, true])('attributes observation, calcium antagonism, and refused shortcuts independently at one paused tick (reversed: %s)', async (reversed) => {
     const choices = ['check-magnesium', 'calcium-means-clearance', 'calcium', 'routine-diuresis'];

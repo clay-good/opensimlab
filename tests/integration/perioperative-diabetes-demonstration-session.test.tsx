@@ -176,7 +176,7 @@ describe('PerioperativeDiabetes worked example through the real session pipeline
       durableRecoveryProven: false, observation: { glucoseMgDl: 144, ketonesMmolL: 0.3 } });
     readWithoutAdvancing(); replayWholeTrace(); render(); frames();
     expect(finishes).toBe(1); expect(recorded()).toHaveLength(8); expect(advance).toBeUndefined();
-  }, 120_000);
+  });
 
   it('preserves accepted insulin and a paused clock after takeover while invalidating callbacks across reactivation', () => {
     begin(); confirmDecision(); frames();
@@ -260,6 +260,6 @@ describe('PerioperativeDiabetes worked example through the real session pipeline
       deteriorationObserved: true, omitInsulinAttempted: true, cgmOnlyAttempted: true, clearanceAttempted: true,
       durableRecoveryProven: false, observation: { glucoseMgDl: 162, ketonesMmolL: 0.4 } });
     readWithoutAdvancing(); replayWholeTrace();
-  }, 120_000);
+  });
 });
 

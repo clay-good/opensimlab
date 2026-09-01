@@ -97,7 +97,7 @@ describe('Renal hypocalcemia through the real engine and event-bound debrief', (
     const snapshot = first.patient;
     first.engine.apply(choice(999999, 'reassess')); first.engine.step();
     expect(first.engine.equipment().resuscitation.renalHypocalcemia).toEqual(snapshot);
-  }, 120000);
+  });
 
   it('permits same-tick rescue and continuing calcium without administration, mineral, or follow-up gates', () => {
     const originalScenario = JSON.stringify(SCENARIO);
@@ -122,7 +122,7 @@ describe('Renal hypocalcemia through the real engine and event-bound debrief', (
     for (const [, action] of ownership) result.engine.apply(choice(999999, action));
     result.engine.apply(choice(999999, 'handoff'));
     expect(result.engine.equipment().resuscitation.renalHypocalcemia?.ended).toBe('handoff');
-  }, 120000);
+  });
 
   it('does not combine partial ionized and symptom checks into fresh full response or handoff evidence', () => {
     const result = run([...ownership, [0, 'rescue-calcium'], [0, 'continue-calcium'], [0, 'reassess'],
@@ -135,7 +135,7 @@ describe('Renal hypocalcemia through the real engine and event-bound debrief', (
     result.engine.apply(choice(999999, 'reassess')); result.engine.apply(choice(999999, 'handoff'));
     expect(result.engine.equipment().resuscitation.renalHypocalcemia).toMatchObject({ ended: 'handoff',
       continuingResponseObserved: true, observation: { ionizedCalciumMmolL: 1.03 } });
-  }, 120000);
+  });
 
   it('allows unresolved recurrence handoff while the delivered continuing-calcium response remains pending', () => {
     const result = run([...ownership, [0, 'rescue-calcium'], [RESCUE, 'reassess'],
@@ -151,7 +151,7 @@ describe('Renal hypocalcemia through the real engine and event-bound debrief', (
     expect(result.patient).toMatchObject({ ended: 'handoff', recurrenceObserved: true, continuingResponseObserved: false,
       observation: { atTick: RECURRENCE + 4, ionizedCalciumMmolL: 0.88, carpopedalSpasm: true, perioralTingling: true } });
     expect(findings(result.events).map(({ outcome }) => outcome)).toEqual(['met', 'met', 'not-met', 'met', 'met']);
-  }, 120000);
+  });
 
   it('requires care-before-full log order and a continuing-specific response even at the same tick', () => {
     const events = run(FIXTURES.expert, FIXTURES.expert.at(-1)![0]).events;
@@ -173,7 +173,7 @@ describe('Renal hypocalcemia through the real engine and event-bound debrief', (
       expect(findings([event('calcium-continuation'), event('mineral-care'), event('follow-up'), wrongPhase])
         .find(({ objectiveId }) => objectiveId === 'renal-hypocalcemia-continuity')?.outcome).toBe('not-met');
     }
-  }, 120000);
+  });
 
   it('rejects malformed and generic actions without invoking getters or trusting caller ticks', () => {
     const engine = create(); engine.step(); const before = engine.equipment().resuscitation.renalHypocalcemia!;

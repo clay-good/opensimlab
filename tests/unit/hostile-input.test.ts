@@ -110,7 +110,7 @@ describe('Requirement: A Bad Number Cannot Destroy The Patient', () => {
       const nonFinite = Object.entries(last.state).filter(([, value]) => !Number.isFinite(value));
       expect(nonFinite, `${scenario.metadata.id} produced non-finite state`).toEqual([]);
     }
-  }, 420_000);
+  });
 });
 
 describe('Requirement: A Submitted File Cannot Lock Up The Reviewer', () => {

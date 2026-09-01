@@ -180,7 +180,7 @@ describe('RenalHypermagnesemia worked example through the real session pipeline'
         alertness: 'awake with residual weakness', respiratoryRateBpm: 14, spo2Percent: 96 } });
     readWithoutAdvancing(); replayWholeTrace(); render(); frames();
     expect(finishes).toBe(1); expect(recorded()).toHaveLength(12); expect(advance).toBeUndefined();
-  }, 120_000);
+  });
 
   it('preserves accepted rescue and a paused clock after takeover while invalidating callbacks across reactivation', () => {
     begin(); confirmDecision(); frames();
@@ -262,7 +262,7 @@ describe('RenalHypermagnesemia worked example through the real session pipeline'
         alertness: 'awake with residual weakness', respiratoryRateBpm: 14 } });
     expect(recorded().filter((action) => action.payload.action === 'handoff')).toHaveLength(2);
     readWithoutAdvancing(); replayWholeTrace();
-  }, 120_000);
+  });
 
   it('omits unnecessary calcium after observed removal and refreshes full findings after late breathing support', () => {
     begin(false);
@@ -284,5 +284,5 @@ describe('RenalHypermagnesemia worked example through the real session pipeline'
     expect(patient()).toMatchObject({ ended: 'handoff', calciumRequests: 0, calciumResponseObserved: false,
       removalResponseObserved: true, observation: { magnesiumMmolL: 2.4, respiratoryRateBpm: 14, spo2Percent: 96 } });
     readWithoutAdvancing(); replayWholeTrace();
-  }, 120_000);
+  });
 });

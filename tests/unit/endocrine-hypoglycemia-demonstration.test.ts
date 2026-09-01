@@ -34,7 +34,7 @@ describe('Hypoglycemia worked example', () => {
       replayTrace.update(JSON.stringify(replay.step().state));
     }
     expect(replayTrace.digest('hex')).toBe(trace.digest('hex'));
-  }, 120_000);
+  });
   it('does not invent a missed first recheck or send actions after takeover', () => {
     const model = new SevereHypoglycemia();
     model.apply('check-glucose', 0); model.apply('call-support', 0); model.apply('iv-rescue', 0);

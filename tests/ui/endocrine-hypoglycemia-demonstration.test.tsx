@@ -157,5 +157,5 @@ describe('Live worked-example controls', () => {
     expect([...container.querySelectorAll('button')].find((entry) => entry.textContent === 'Continue example')?.getAttribute('aria-disabled')).toBe('true');
     expect(container.textContent).toContain('not the real-world recurrence risk');
     expect(container.querySelector('[role="progressbar"]')?.getAttribute('aria-valuenow')).toBe('100');
-  }, 120_000);
+  });
 });

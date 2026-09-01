@@ -164,7 +164,7 @@ describe('AVP-deficiency worked example through the real session pipeline', () =
       observation: { sodiumMmolL: 162, urineOutputMlPerHour: 80, urineOsmolalityMosmPerKg: 500 } });
     readWithoutAdvancing(); replayWholeTrace(); render(); frames();
     expect(finishes).toBe(1); expect(recorded()).toHaveLength(9); expect(advance).toBeUndefined();
-  }, 120_000);
+  });
 
   it('rejects retained decisions after takeover, real reset, and disposal without late transcript or worker actions', () => {
     begin(); const beforeTakeover = advance!; const initialTick = session().tick;
@@ -217,5 +217,5 @@ describe('AVP-deficiency worked example through the real session pipeline', () =
     expect(patient()).toMatchObject({ ended: 'handoff', responseObserved: true, peakObservedSodiumMmolL: 165,
       durableRecoveryProven: false, observation: { sodiumMmolL: 164, urineOutputMlPerHour: 80, urineOsmolalityMosmPerKg: 500 } });
     readWithoutAdvancing(); replayWholeTrace();
-  }, 120_000);
+  });
 });

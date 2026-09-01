@@ -178,7 +178,7 @@ describe('RenalHypokalemia worked example through the real session pipeline', ()
       durableRecoveryProven: false, observation: { potassiumMmolL: 3.1, magnesiumMmolL: 0.62 } });
     readWithoutAdvancing(); replayWholeTrace(); render(); frames();
     expect(finishes).toBe(1); expect(recorded()).toHaveLength(9); expect(advance).toBeUndefined();
-  }, 120_000);
+  });
 
   it('preserves accepted potassium and a paused clock after takeover while invalidating callbacks across reactivation', () => {
     begin(); confirmDecision(); frames();
@@ -258,5 +258,5 @@ describe('RenalHypokalemia worked example through the real session pipeline', ()
       observation: { potassiumMmolL: 3.1, magnesiumMmolL: 0.62 } });
     expect(recorded().filter((action) => action.payload.action === 'handoff')).toHaveLength(1);
     readWithoutAdvancing(); replayWholeTrace();
-  }, 120_000);
+  });
 });

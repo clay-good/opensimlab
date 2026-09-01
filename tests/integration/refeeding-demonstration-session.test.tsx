@@ -177,7 +177,7 @@ describe('Refeeding worked example through the real session pipeline', () => {
       durableRecoveryProven: false, observation: { phosphateMmolL: 0.55, potassiumMmolL: 3.3, magnesiumMmolL: 0.65 } });
     readWithoutAdvancing(); replayWholeTrace(); render(); frames();
     expect(finishes).toBe(1); expect(recorded()).toHaveLength(9); expect(advance).toBeUndefined();
-  }, 120_000);
+  });
 
   it('preserves accepted care and the paused clock after takeover without reviving a retained callback on restart', () => {
     begin(); confirmDecision(); frames();
@@ -263,5 +263,5 @@ describe('Refeeding worked example through the real session pipeline', () => {
       feedingAdvanceAttempted: true, monitoringStopAttempted: true, durableRecoveryProven: false,
       observation: { phosphateMmolL: 0.55, potassiumMmolL: 3.3, magnesiumMmolL: 0.65 } });
     readWithoutAdvancing(); replayWholeTrace();
-  }, 120_000);
+  });
 });

@@ -76,7 +76,7 @@ describe('Adult severe hypoglycemia decisions and clock', () => {
       expect(subject.equipment().resuscitation.severeHypoglycemia?.ended).toBe('handoff');
       expect(objectiveFindings(SCENARIO, [], 0, 0, [], events).map(({ outcome }) => outcome)).toEqual(Array(5).fill('met'));
     }
-  }, 120_000);
+  });
   it('fails closed for tampered scenarios, arbitrary payloads, and generic care controls', () => {
     for (const scenario of [DKA_RESOLUTION_TRANSITION, { ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }, { ...SCENARIO, timeline: [...SCENARIO.timeline, SCENARIO.timeline[0]!] }]) expect(supportsSevereHypoglycemia(scenario)).toBe(false);
     const hostile = new AnesthesiaEngine({ scenario: SCENARIO, seed: 1, practiceRegion: 'US' });

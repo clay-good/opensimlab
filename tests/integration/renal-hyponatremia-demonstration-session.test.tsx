@@ -178,7 +178,7 @@ describe('RenalHyponatremia worked example through the real session pipeline', (
       durableRecoveryProven: false, observation: { sodiumMmolL: 124, changeFromBaselineMmolL: 6, alertness: 'awake but confused', headache: true, nausea: true } });
     readWithoutAdvancing(); replayWholeTrace(); render(); frames();
     expect(finishes).toBe(1); expect(recorded()).toHaveLength(9); expect(advance).toBeUndefined();
-  }, 120_000);
+  });
 
   it('preserves accepted rescue and a paused clock after takeover while invalidating callbacks across reactivation', () => {
     begin(); confirmDecision(); frames();
@@ -259,5 +259,5 @@ describe('RenalHyponatremia worked example through the real session pipeline', (
     expect(recorded().filter((action) => action.payload.action === 'additional-rescue')).toHaveLength(2);
     expect(recorded().filter((action) => action.payload.action === 'handoff')).toHaveLength(1);
     readWithoutAdvancing(); replayWholeTrace();
-  }, 120_000);
+  });
 });

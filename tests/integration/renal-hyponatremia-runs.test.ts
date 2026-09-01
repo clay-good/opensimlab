@@ -97,7 +97,7 @@ describe('Renal hyponatremia through the real engine and event-bound debrief', (
     const snapshot = first.patient;
     first.engine.apply(choice(999999, 'reassess')); first.engine.step();
     expect(first.engine.equipment().resuscitation.renalHyponatremia).toEqual(snapshot);
-  }, 120000);
+  });
 
   it('allows rescue and neurologic investigation independently while not inventing observations or new baseline labs', () => {
     const result = run([[0, 'rescue'], [0, 'evaluate-neurology']], RESPONSE,
@@ -111,7 +111,7 @@ describe('Renal hyponatremia through the real engine and event-bound debrief', (
     expect(JSON.stringify(result.patient)).not.toMatch(/sodiumMmolL|osmolality|potassiumMmolL|glucoseMgDl|123|124/);
     expect(result.events.filter(({ tick }) => tick > 0).map(({ message }) => message).join(' ')).not.toMatch(/123|124|460|250/);
     expect(findings(result.events).find(({ objectiveId }) => objectiveId === 'renal-hyponatremia-reassessment')?.outcome).toBe('not-met');
-  }, 120000);
+  });
 
   it('does not combine newer sodium-only and neurologic-only checks into a full response or additional-rescue permission', () => {
     const result = run([[0, 'reassess'], [0, 'rescue'], [RESPONSE, 'check-sodium'],
@@ -122,7 +122,7 @@ describe('Renal hyponatremia through the real engine and event-bound debrief', (
       additionalRescueAtTick: null, initialResponseObserved: false, persistentSymptomsObserved: false });
     expect(findings(result.events).find(({ objectiveId }) => objectiveId === 'renal-hyponatremia-reassessment')?.outcome).toBe('not-met');
     expect(result.events.some(({ eventId }) => eventId === `renal-hyponatremia-additional-rescue-refused-${RESPONSE + 2}`)).toBe(true);
-  }, 120000);
+  });
 
   it('requires fresh full later findings rather than a newer sodium or neurologic panel for unresolved handoff', () => {
     const final = RESPONSE + ADDITIONAL;
@@ -140,7 +140,7 @@ describe('Renal hyponatremia through the real engine and event-bound debrief', (
     result.engine.apply(choice(final + 1, 'reassess')); result.engine.apply(choice(final + 1, 'handoff'));
     expect(result.engine.equipment().resuscitation.renalHyponatremia).toMatchObject({ ended: 'handoff',
       additionalResponseObserved: true, observation: { sodiumMmolL: 124, headache: true, nausea: true }, durableRecoveryProven: false });
-  }, 120000);
+  });
 
   it('uses actual care then full-assessment log order even when both events share a tick', () => {
     const events = run(FIXTURES.expert, FIXTURES.expert.at(-1)![0]).events;
@@ -161,7 +161,7 @@ describe('Renal hyponatremia through the real engine and event-bound debrief', (
       expect(findings([...prerequisites, { ...care, tick: full.tick + 1 }, full])
         .find((finding) => finding.objectiveId === objectiveId)?.outcome).toBe('not-met');
     }
-  }, 120000);
+  });
 
   it('does not credit additional rescue from a full reassessment while its response is still pending', () => {
     const early = RESPONSE + 3; const late = RESPONSE + 1 + ADDITIONAL;
@@ -177,7 +177,7 @@ describe('Renal hyponatremia through the real engine and event-bound debrief', (
     expect(result.patient).toMatchObject({ observation: { atTick: late, sodiumMmolL: 124 },
       additionalResponseObserved: true, additionalRescueDueInSeconds: null });
     expect(findings(result.events).find(({ objectiveId }) => objectiveId === 'renal-hyponatremia-persistent')?.outcome).toBe('met');
-  }, 120000);
+  });
 
   it('rejects malformed and generic actions without invoking payload getters or trusting caller ticks', () => {
     const engine = create(); engine.step(); const before = engine.equipment().resuscitation.renalHyponatremia!;

@@ -159,7 +159,7 @@ describe('Sodium worked example through the real session pipeline', () => {
       observation: { sodiumMmolL: 112, urineOutputMlPerHour: 100 } });
     readWithoutAdvancing(); replayWholeTrace(); render(); frames();
     expect(finishes).toBe(1); expect(recorded()).toHaveLength(7); expect(advance).toBeUndefined();
-  }, 120_000);
+  });
 
   it('rejects retained decisions after takeover, real reset, and unmount without late transcript or worker actions', () => {
     begin(); const beforeTakeover = advance!; const initialTick = session().tick;
@@ -216,5 +216,5 @@ describe('Sodium worked example through the real session pipeline', () => {
     expect(patient()).toMatchObject({ ended: 'handoff', overcorrectionObserved: true, peakObservedSodiumMmolL: 115,
       responseObserved: true, durableRecoveryProven: false, observation: { sodiumMmolL: 112, urineOutputMlPerHour: 100 } });
     replayWholeTrace();
-  }, 120_000);
+  });
 });

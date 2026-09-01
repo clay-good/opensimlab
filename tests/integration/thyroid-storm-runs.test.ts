@@ -144,7 +144,7 @@ describe('Thyroid storm: real engine decisions, time, and replay', () => {
     expect(guided.engine.equipment().resuscitation.thyroidStorm).toEqual(ended);
   // Two complete three-hour solver replays can exceed a minute under full-suite
   // contention. Keep every tick in the digest; this is not a performance budget.
-  }, 120_000);
+  });
 
   it('enforces the hour interval, preserves stale observations at the two-hour checkpoint, and stops unfinished care at four hours', () => {
     const iodineAt = THYROID_IODINE_WAIT_TICKS;
@@ -166,7 +166,7 @@ describe('Thyroid storm: real engine decisions, time, and replay', () => {
     expect(result.events.filter(({ eventId }) => eventId.startsWith('thyroid-storm-response-'))).toHaveLength(1);
     expect(result.events.filter(({ eventId }) => eventId.startsWith('thyroid-storm-instructor-takeover-'))).toHaveLength(1);
   // Four hours of whole-tick evidence shares CI workers with other long replays.
-  }, 120_000);
+  });
 
   it('rejects generic, malformed, and injected payloads and never lets a forged tick advance care', () => {
     const engine = newEngine(); const control = newEngine();

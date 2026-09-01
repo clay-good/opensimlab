@@ -87,7 +87,7 @@ describe('Hypocalcemia: real engine rescue, recurrence, continuing care, and rep
     const ended = guided.patient;
     guided.engine.apply(choice(999999, 'reassess')); guided.engine.apply(choice(-1, 'calcium-rescue'));
     guided.engine.step(); expect(guided.engine.equipment().resuscitation.hypocalcemia).toEqual(ended);
-  }, 120_000);
+  });
 
   it('requires fresh observations after authored checkpoints and bounds an unfinished fully treated lesson at three hours', () => {
     const early = HYPOCALCEMIA_CALCIUM_RESPONSE_TICKS; const later = HYPOCALCEMIA_RESPONSE_TICKS;
@@ -107,7 +107,7 @@ describe('Hypocalcemia: real engine rescue, recurrence, continuing care, and rep
     expect(at(HYPOCALCEMIA_SESSION_TICKS - 1).ended).toBeNull();
     expect(result.patient.ended).toBe('instructor-takeover');
     expect(objectiveFindings(SCENARIO, [], 0, 0, [], result.events).find(({ objectiveId }) => objectiveId === 'hypocalcemia-reassessment')?.outcome).toBe('not-met');
-  }, 120_000);
+  });
 
   it('allows ongoing-care handoff after a late fresh assessment without fabricating the missed early observation', () => {
     const later = HYPOCALCEMIA_RESPONSE_TICKS;
