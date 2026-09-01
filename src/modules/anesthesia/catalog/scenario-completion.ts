@@ -11,6 +11,7 @@ import { refeedingCompletionEvidence } from '../../endocrine-metabolic/refeeding
 import { perioperativeDiabetesCompletionEvidence } from '../../endocrine-metabolic/perioperative-diabetes-completion';
 import { dkaResolutionCompletionEvidence } from '../../endocrine-metabolic/dka-resolution-completion';
 import { hhsOsmolalityCompletionEvidence } from '../../endocrine-metabolic/hhs-osmolality-completion';
+import { neonatalSepsisCompletionEvidence } from '../../neonatology/neonatal-sepsis-completion';
 import { neonatalHypoglycemiaCompletionEvidence } from '../../neonatology/neonatal-hypoglycemia-completion';
 import { pretermRespiratoryDistressCompletionEvidence } from '../../neonatology/preterm-respiratory-distress-completion';
 import { meconiumTransitionCompletionEvidence } from '../../neonatology/meconium-stained-transition-completion';
@@ -176,6 +177,7 @@ export function auditClinicalScenario(
     ...meconiumTransitionCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...pretermRespiratoryDistressCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...neonatalHypoglycemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...neonatalSepsisCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...tensionPneumothoraxCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
