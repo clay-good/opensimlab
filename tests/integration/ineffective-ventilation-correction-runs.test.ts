@@ -1,12 +1,12 @@
 /**
- * Reference transcripts for the neonatal apnea lesson, replayed
+ * Reference transcripts for the ineffective newborn ventilation lesson, replayed
  * through the real engine.
  *
- * The error path starts from the number, which is what this lesson is about. A
- * heart rate of 92 is the figure everyone in the room is looking at, and naming
- * the threshold from it before the team is activated and the birth clock
- * connected is the shape the lesson refuses. The recovery path starts from
- * exactly that refusal.
+ * The error path is the escalation this lesson exists to delay. A newborn who is
+ * not responding invites the next intervention, and the shape refused here is
+ * reaching for what comes after correction before the team, the clock and the
+ * interface have been established. The recovery path starts from exactly that
+ * refusal.
  */
 import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
@@ -15,15 +15,15 @@ import { auditClinicalScenario } from '@anesthesia/catalog/scenario-completion';
 import { objectiveFindings } from '@anesthesia/ui/Debrief';
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { EngineEvent, LearnerAction } from '@platform/kernel/protocol';
-import { NEONATAL_APNEA as SCENARIO } from '../../src/modules/neonatology/scenarios/neonatal-apnea';
-import { NEONATAL_APNEA_FIXTURES as FIXTURES } from '../../src/modules/neonatology/neonatal-apnea-fixtures';
-import type { NeonatalApneaAction } from '../../src/modules/neonatology/neonatal-apnea';
-import { neonatalApneaCompletionEvidence } from '../../src/modules/neonatology/neonatal-apnea-completion';
-import { neonatalApneaInlinePrompt } from '../../src/modules/neonatology/tutor/neonatal-apnea-guidance';
+import { INEFFECTIVE_VENTILATION_CORRECTION as SCENARIO } from '../../src/modules/neonatology/scenarios/ineffective-ventilation-correction';
+import { INEFFECTIVE_VENTILATION_FIXTURES as FIXTURES } from '../../src/modules/neonatology/ineffective-ventilation-correction-fixtures';
+import type { IneffectiveVentilationAction } from '../../src/modules/neonatology/ineffective-ventilation-correction';
+import { ineffectiveVentilationCompletionEvidence } from '../../src/modules/neonatology/ineffective-ventilation-correction-completion';
+import { ineffectiveVentilationInlinePrompt } from '../../src/modules/neonatology/tutor/ineffective-ventilation-correction-guidance';
 
-type Choices = readonly (readonly [number, NeonatalApneaAction])[];
+type Choices = readonly (readonly [number, IneffectiveVentilationAction])[];
 const create = (region: 'US' | 'GB' = 'US') => new AnesthesiaEngine({ scenario: SCENARIO, seed: FIXTURES.seed, practiceRegion: region });
-const choice = (tick: number, action: NeonatalApneaAction): LearnerAction => ({ tick, type: 'neonatal-apnea-response', payload: { action } });
+const choice = (tick: number, action: IneffectiveVentilationAction): LearnerAction => ({ tick, type: 'ineffective-ventilation-correction-response', payload: { action } });
 const findings = (events: readonly EngineEvent[]) => objectiveFindings(SCENARIO, [], 0, 0, [], events);
 
 function run(actions: Choices, until: number, level: GuidanceLevel = 'unassisted', region: 'US' | 'GB' = 'US') {
@@ -34,17 +34,17 @@ function run(actions: Choices, until: number, level: GuidanceLevel = 'unassisted
     const frame = engine.step(); events.push(...frame.events);
     hash.update(JSON.stringify(frame));
     // Reading the tutor must never move the lesson forward.
-    const before = JSON.stringify(frame.equipment.resuscitation.neonatologyApneaAssessment);
-    const prompt = neonatalApneaInlinePrompt(level, { scenarioVersion: SCENARIO.metadata.version,
-      neonatalApnea: frame.equipment.resuscitation.neonatologyApneaAssessment });
+    const before = JSON.stringify(frame.equipment.resuscitation.neonatologyIneffectiveVentilationAssessment);
+    const prompt = ineffectiveVentilationInlinePrompt(level, { scenarioVersion: SCENARIO.metadata.version,
+      ineffectiveVentilation: frame.equipment.resuscitation.neonatologyIneffectiveVentilationAssessment });
     if (level === 'unassisted') expect(prompt).toBeNull();
-    expect(JSON.stringify(frame.equipment.resuscitation.neonatologyApneaAssessment)).toBe(before);
+    expect(JSON.stringify(frame.equipment.resuscitation.neonatologyIneffectiveVentilationAssessment)).toBe(before);
   }
   expect(next).toBe(actions.length);
-  return { events, hash: hash.digest('hex'), patient: engine.equipment().resuscitation.neonatologyApneaAssessment! };
+  return { events, hash: hash.digest('hex'), patient: engine.equipment().resuscitation.neonatologyIneffectiveVentilationAssessment! };
 }
 
-describe('Neonatal apnea transcripts through the real engine and debrief', () => {
+describe('Ineffective newborn ventilation transcripts through the real engine and debrief', () => {
   it('binds exact content and observed state without upgrading pending clinical evidence', () => {
     expect(SCENARIO.metadata).toMatchObject({ version: '0.1.0', maturity: 'preview' });
     expect(SCENARIO.metadata.clinicalReview.reviewer).toBe('UNSIGNED');
@@ -55,10 +55,10 @@ describe('Neonatal apnea transcripts through the real engine and debrief', () =>
     // the two runtime requirements need people and hardware. Nothing else remains.
     expect(audit.requirements.filter(({ status }) => status === 'missing').map(({ id }) => id))
       .toEqual(['observable-objectives', 'inclusive-runtime-verification', 'report-control-coverage']);
-    expect(neonatalApneaCompletionEvidence(SCENARIO, ENGINE_VERSION, 'neonatology')).toHaveLength(9);
-    expect(neonatalApneaCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toEqual([]);
-    expect(neonatalApneaCompletionEvidence(SCENARIO, 'changed', 'neonatology')).toEqual([]);
-    expect(neonatalApneaCompletionEvidence({ ...SCENARIO, patient: { ...SCENARIO.patient, weightKg: 9 } }, ENGINE_VERSION, 'neonatology')).toEqual([]);
+    expect(ineffectiveVentilationCompletionEvidence(SCENARIO, ENGINE_VERSION, 'neonatology')).toHaveLength(9);
+    expect(ineffectiveVentilationCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toEqual([]);
+    expect(ineffectiveVentilationCompletionEvidence(SCENARIO, 'changed', 'neonatology')).toEqual([]);
+    expect(ineffectiveVentilationCompletionEvidence({ ...SCENARIO, patient: { ...SCENARIO.patient, weightKg: 9 } }, ENGINE_VERSION, 'neonatology')).toEqual([]);
   });
 
   it.each(['expert', 'commonError', 'recovery', 'noAction'] as const)('replays every %s frame identically across guidance levels and regions', (path) => {
@@ -82,7 +82,7 @@ describe('Neonatal apnea transcripts through the real engine and debrief', () =>
     expect(idle.patient.supportAtTick).toBeNull();
   });
 
-  it('refuses a threshold named from the number before the team and the clock are connected', () => {
+  it('refuses a pattern named before the team, the clock and the interface are connected', () => {
     const errored = run(FIXTURES.commonError, FIXTURES.commonError.at(-1)![0] + 2);
     expect(errored.patient).toMatchObject({
       supportAtTick: null, recognitionAtTick: null, reassessmentAtTick: null, handoffAtTick: null,
@@ -100,6 +100,7 @@ describe('Neonatal apnea transcripts through the real engine and debrief', () =>
     expect(JSON.stringify(recovered.events)).toContain('support-order-refused');
     expect(recovered.patient.durableBreathingProven).toBe(false);
     expect(recovered.patient.stableTransitionProven).toBe(false);
+    expect(recovered.patient.airwayOrLungDiseaseExcluded).toBe(false);
     expect(recovered.patient.neurologicSafetyProven).toBe(false);
     expect(recovered.patient.causeDetermined).toBe(false);
     expect(recovered.patient.newbornOutcomePredicted).toBe(false);
