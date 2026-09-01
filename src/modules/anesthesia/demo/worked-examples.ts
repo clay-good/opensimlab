@@ -61,6 +61,7 @@ import { supportsTensionPneumothoraxDemonstration } from '../../neonatology/demo
 import { supportsMethemoglobinemiaDemonstration } from '../../toxicology/demo/methemoglobinemia-saturation-gap-demonstration';
 import { supportsCarbonMonoxideDemonstration } from '../../toxicology/demo/carbon-monoxide-reassuring-monitor-demonstration';
 import { supportsAcetaminophenDemonstration } from '../../toxicology/demo/acetaminophen-clock-and-nomogram-demonstration';
+import { supportsSalicylateDemonstration } from '../../toxicology/demo/salicylate-falling-number-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -151,6 +152,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsMethemoglobinemiaDemonstration,
     supportsCarbonMonoxideDemonstration,
     supportsAcetaminophenDemonstration,
+    supportsSalicylateDemonstration,
   ],
 };
 

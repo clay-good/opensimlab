@@ -25,6 +25,7 @@ import { tensionPneumothoraxCompletionEvidence } from '../../neonatology/neonata
 import { methemoglobinemiaCompletionEvidence } from '../../toxicology/methemoglobinemia-saturation-gap-completion';
 import { carbonMonoxideCompletionEvidence } from '../../toxicology/carbon-monoxide-reassuring-monitor-completion';
 import { acetaminophenCompletionEvidence } from '../../toxicology/acetaminophen-clock-and-nomogram-completion';
+import { salicylateCompletionEvidence } from '../../toxicology/salicylate-falling-number-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -189,6 +190,7 @@ export function auditClinicalScenario(
     ...methemoglobinemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...carbonMonoxideCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...acetaminophenCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...salicylateCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),
