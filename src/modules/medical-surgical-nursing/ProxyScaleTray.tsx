@@ -2,13 +2,18 @@ import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { ProxyScaleSnapshot } from '@platform/kernel/protocol';
 import { PROXY_SCALE_ITEMS, type ProxyScaleAction } from './proxy-scale';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
+import { proxyScaleInlinePrompt } from './proxy-scale-tutor';
 
-export function ProxyScaleTray({ assessment, onAction, demonstrating = false }: {
+export function ProxyScaleTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: ProxyScaleSnapshot;
+  readonly scenarioVersion: string;
   readonly onAction: (action: ProxyScaleAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = proxyScaleInlinePrompt(guidance, { scenarioVersion, proxyScale: assessment });
   const behaviours = assessment.behaviourRecord; const context = assessment.contextRecord;
   const observation = assessment.observation;
   const decision = (action: ProxyScaleAction, label: string, accepted = false) => {
@@ -17,6 +22,10 @@ export function ProxyScaleTray({ assessment, onAction, demonstrating = false }: 
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     {/* The total is shown with what it counts, never alone: a bare number invites being read
         as an intensity, which is the error this lesson exists to refuse. */}
     <p className="syringe__remaining" role="status">Behavioural total {assessment.behaviouralTotal}, the sum of {assessment.itemCount} observed items. Self-report {assessment.selfReportAvailable ? 'available' : 'unavailable'}.</p>

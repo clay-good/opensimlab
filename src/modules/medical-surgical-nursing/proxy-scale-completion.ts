@@ -2,11 +2,14 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { PROXY_SCALE_A_NUMBER_WITHOUT_A_STANDARD } from './scenarios/proxy-scale-a-number-without-a-standard';
 import { PROXY_SCALE_FIXTURES } from './proxy-scale-fixtures';
+import { PROXY_SCALE_TUTOR_VERSION } from './proxy-scale-tutor';
+import { PROXY_SCALE_DEMONSTRATION_VERSION } from './demo/proxy-scale-demonstration';
 
 export function proxyScaleCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'medical-surgical-nursing' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== PROXY_SCALE_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
-    || PROXY_SCALE_FIXTURES.contentVersion !== '0.1.0' || PROXY_SCALE_FIXTURES.seed !== 6482
+    || PROXY_SCALE_FIXTURES.contentVersion !== '0.1.0'
+    || PROXY_SCALE_TUTOR_VERSION !== '0.1.0' || PROXY_SCALE_DEMONSTRATION_VERSION !== '0.1.0' || PROXY_SCALE_FIXTURES.seed !== 6482
     || JSON.stringify(scenario) !== JSON.stringify(PROXY_SCALE_A_NUMBER_WITHOUT_A_STANDARD)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['proxy-scale-fixtures.ts binds seed 6482 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No pain, analgesic, or physiological model is claimed; the behavioural items and their total are authored.'] },
@@ -15,7 +18,7 @@ export function proxyScaleCompletionEvidence(scenario: Scenario, capabilityVersi
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['An attempted self-report, recorded behaviours, recorded limits, a proxy history, bounded analgesic intent, the boundary review, a reassessment schedule, and a current full assessment permit handoff with the intensity open. Instructor takeover bounds a run with no recorded intent at 150 minutes, or an unfinished session at eight hours.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Six event-bound objectives distinguish attempting self-report first, recognising that a total is not an intensity, stating what a low total cannot license, obtaining a proxy who knows the person, the hierarchy and its certainty, and handing the number over as what it is. Refused shortcuts remain visible, and no intensity, cause, or outcome is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['proxy-scale-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Ten observed-state prompts at version ${PROXY_SCALE_TUTOR_VERSION} read the learner's own recorded steps. Unassisted is silent and coached withholds the waiting beat. Worked example ${PROXY_SCALE_DEMONSTRATION_VERSION} drives the ordinary controls through the real engine to handoff. Both attempt self-report first, knowing there will be no answer, because the attempt is the reference standard rather than a formality — a test asserts it precedes the behaviour record. Neither converts the behavioural total into an intensity, compares it with a self-reported number, or states how much pain he is in: that quantity does not exist here and supplying it is the failure being taught, so the tests forbid it across every prompt and narration. The daughter is treated as the source of a baseline nobody else has rather than as a form field. tests/unit/proxy-scale-demonstration.test.ts and tests/ui/proxy-scale-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];

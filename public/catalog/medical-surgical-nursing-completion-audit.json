@@ -712,9 +712,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Ten observed-state prompts at version 0.1.0 read the learner's own recorded steps. Unassisted is silent and coached withholds the waiting beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both attempt self-report first, knowing there will be no answer, because the attempt is the reference standard rather than a formality — a test asserts it precedes the behaviour record. Neither converts the behavioural total into an intensity, compares it with a self-reported number, or states how much pain he is in: that quantity does not exist here and supplying it is the failure being taught, so the tests forbid it across every prompt and narration. The daughter is treated as the source of a baseline nobody else has rather than as a form field. tests/unit/proxy-scale-demonstration.test.ts and tests/ui/proxy-scale-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {

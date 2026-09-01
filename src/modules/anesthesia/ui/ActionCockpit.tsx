@@ -2814,6 +2814,7 @@ export interface ActionCockpitProps {
   readonly afferentLimbDemonstrating?: boolean;
   readonly quietPatientGuidance?: GuidanceLevel;
   readonly quietPatientDemonstrating?: boolean;
+  readonly proxyScaleGuidance?: GuidanceLevel;
   readonly proxyScaleDemonstrating?: boolean;
   readonly lastKnownWellDemonstrating?: boolean;
   readonly oxygenTargetScaleDemonstrating?: boolean;
@@ -5858,6 +5859,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasProxyScaleResponse && (
               <ProxyScaleTray assessment={props.proxyScale}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.proxyScaleGuidance}
                 demonstrating={props.proxyScaleDemonstrating}
                 onAction={props.onProxyScaleResponse ?? (() => {})} />
             )}
