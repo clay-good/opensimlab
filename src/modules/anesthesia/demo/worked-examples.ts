@@ -66,6 +66,7 @@ import { supportsTricyclicDemonstration } from '../../toxicology/demo/tricyclic-
 import { supportsBetaBlockerDemonstration } from '../../toxicology/demo/beta-blocker-cardiogenic-shock-demonstration';
 import { supportsCalciumChannelBlockerDemonstration } from '../../toxicology/demo/calcium-channel-blocker-shock-demonstration';
 import { supportsDigoxinDemonstration } from '../../toxicology/demo/digoxin-rhythm-potassium-demonstration';
+import { supportsCholinergicDemonstration } from '../../toxicology/demo/cholinergic-pesticide-respiratory-failure-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -161,6 +162,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsBetaBlockerDemonstration,
     supportsCalciumChannelBlockerDemonstration,
     supportsDigoxinDemonstration,
+    supportsCholinergicDemonstration,
   ],
 };
 
