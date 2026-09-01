@@ -17,6 +17,7 @@ import { ONCOLOGY_SCENARIOS } from '../../src/modules/oncology/scenarios';
 import { RENAL_ELECTROLYTE_SCENARIOS } from '../../src/modules/renal-electrolyte/scenarios';
 import { ENDOCRINE_METABOLIC_SCENARIOS } from '../../src/modules/endocrine-metabolic/scenarios';
 import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../../src/modules/medical-surgical-nursing/scenarios';
+import { INFECTIOUS_DISEASE_SCENARIOS } from '../../src/modules/infectious-disease/scenarios';
 
 function uncovered(scenarios: Parameters<typeof buildModuleCompletionCatalog>[0], moduleId: string) {
   const catalog = buildModuleCompletionCatalog(scenarios, ENGINE_VERSION, moduleId, 'ward');
@@ -48,9 +49,15 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
     expect(uncovered(MEDICAL_SURGICAL_NURSING_SCENARIOS, 'medical-surgical-nursing')).toEqual([]);
   });
 
-  it('claims only what those four modules support', () => {
+  it('covers every infectious-disease lab', () => {
+    expect(INFECTIOUS_DISEASE_SCENARIOS).toHaveLength(10);
+    expect(uncovered(INFECTIOUS_DISEASE_SCENARIOS, 'infectious-disease')).toEqual([]);
+  });
+
+  it('claims only what those five modules support', () => {
     const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');
-    expect(readme).toContain('Every renal, oncology, endocrine, and nursing lab has');
+    expect(readme).toContain('Every renal, oncology, endocrine, nursing, and');
+    expect(readme).toContain('infectious-disease lab has');
     // The hedge this sentence used to carry belongs to a state the audit has
     // left behind. If it comes back, one of the three tests above is failing too.
     expect(readme).not.toContain('and most\nendocrine ones');

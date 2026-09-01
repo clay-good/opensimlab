@@ -2,11 +2,14 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { MENINGITIS_IMAGING_A_RULE_THAT_DOES_NOT_AGREE } from './scenarios/meningitis-imaging-a-rule-that-does-not-agree';
 import { MENINGITIS_IMAGING_FIXTURES } from './meningitis-imaging-fixtures';
+import { MENINGITIS_IMAGING_TUTOR_VERSION } from './meningitis-imaging-tutor';
+import { MENINGITIS_IMAGING_DEMONSTRATION_VERSION } from './demo/meningitis-imaging-demonstration';
 
 export function meningitisImagingCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'infectious-disease' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== MENINGITIS_IMAGING_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
-    || MENINGITIS_IMAGING_FIXTURES.contentVersion !== '0.1.0' || MENINGITIS_IMAGING_FIXTURES.seed !== 7314
+    || MENINGITIS_IMAGING_FIXTURES.contentVersion !== '0.1.0'
+    || MENINGITIS_IMAGING_TUTOR_VERSION !== '0.1.0' || MENINGITIS_IMAGING_DEMONSTRATION_VERSION !== '0.1.0' || MENINGITIS_IMAGING_FIXTURES.seed !== 7314
     || JSON.stringify(scenario) !== JSON.stringify(MENINGITIS_IMAGING_A_RULE_THAT_DOES_NOT_AGREE)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['meningitis-imaging-fixtures.ts binds seed 7314 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No infection, host-response, imaging, or antimicrobial model is claimed.'] },
@@ -15,7 +18,7 @@ export function meningitisImagingCompletionEvidence(scenario: Scenario, capabili
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['Recorded features, activated ownership, bounded antimicrobial intent, the criteria comparison, the boundary review, monitoring, and a current full assessment permit handoff with the imaging question reported as a property of the local rule set. Instructor takeover bounds a run with no recorded intent at 150 minutes, or an unfinished session at eight hours.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Six event-bound objectives distinguish recording the features and their absences, comparing the criteria sets rather than applying one, activating without waiting on the imaging question, the boundaries and their certainty, bounded intent inside the hour, and accountable handoff of what the pathway cost. Refused shortcuts remain visible, and no organism, treatment effect, or outcome is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['meningitis-imaging-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Ten observed-state prompts at version ${MENINGITIS_IMAGING_TUTOR_VERSION} read the learner's own recorded steps. Unassisted is silent and coached withholds the two waiting beats. Worked example ${MENINGITIS_IMAGING_DEMONSTRATION_VERSION} drives the ordinary controls through the real engine to handoff. Five published criteria sets disagree on these same three features — two say image before puncture and three do not — and neither the prompts nor the beats pick a winner, because choosing would invent a consensus the literature does not have. What both do instead is put the antimicrobial decision outside the argument: every set that recommends imaging also says treatment must not wait for it, and a test asserts the recorded intent precedes the criteria comparison and falls inside the ceiling. The two refused exclusions each get their own number rather than a general warning about tests, and the scan is reported as changing no management, which is the common result rather than a surprise. tests/unit/meningitis-imaging-demonstration.test.ts and tests/ui/meningitis-imaging-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];

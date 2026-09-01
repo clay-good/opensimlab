@@ -2812,6 +2812,7 @@ export interface ActionCockpitProps {
   readonly possibleSepsisDemonstrating?: boolean;
   readonly septicShockLabelGuidance?: GuidanceLevel;
   readonly septicShockLabelDemonstrating?: boolean;
+  readonly meningitisImagingGuidance?: GuidanceLevel;
   readonly meningitisImagingDemonstrating?: boolean;
   readonly lowScoreGuidance?: GuidanceLevel;
   readonly lowScoreDemonstrating?: boolean;
@@ -5835,6 +5836,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasMeningitisImagingResponse && (
               <MeningitisImagingTray assessment={props.meningitisImaging}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.meningitisImagingGuidance}
                 demonstrating={props.meningitisImagingDemonstrating}
                 onAction={props.onMeningitisImagingResponse ?? (() => {})} />
             )}

@@ -1216,9 +1216,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Ten observed-state prompts at version 0.1.0 read the learner's own recorded steps. Unassisted is silent and coached withholds the two waiting beats. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Five published criteria sets disagree on these same three features — two say image before puncture and three do not — and neither the prompts nor the beats pick a winner, because choosing would invent a consensus the literature does not have. What both do instead is put the antimicrobial decision outside the argument: every set that recommends imaging also says treatment must not wait for it, and a test asserts the recorded intent precedes the criteria comparison and falls inside the ceiling. The two refused exclusions each get their own number rather than a general warning about tests, and the scan is reported as changing no management, which is the common result rather than a surprise. tests/unit/meningitis-imaging-demonstration.test.ts and tests/ui/meningitis-imaging-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {

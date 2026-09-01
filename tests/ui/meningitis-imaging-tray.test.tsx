@@ -28,9 +28,10 @@ let host: HTMLDivElement; let root: Root;
 beforeEach(() => { host = document.createElement('div'); document.body.append(host); root = createRoot(host); });
 afterEach(() => { act(() => root.unmount()); host.remove(); });
 
-const render = (model: MeningitisImaging, tick: number, onAction = vi.fn(), demonstrating = false) => {
-  act(() => root.render(<MeningitisImagingTray assessment={model.snapshot(tick)}
-    onAction={onAction} demonstrating={demonstrating} />));
+const render = (model: MeningitisImaging, tick: number, onAction = vi.fn(), demonstrating = false,
+  guidance: 'unassisted' | 'coached' | 'guided' = 'unassisted') => {
+  act(() => root.render(<MeningitisImagingTray assessment={model.snapshot(tick)} scenarioVersion="0.1.0"
+    onAction={onAction} guidance={guidance} demonstrating={demonstrating} />));
   return onAction;
 };
 const button = (label: string) => [...host.querySelectorAll('button')]
@@ -128,5 +129,28 @@ describe('Meningitis imaging tray', () => {
     for (const entry of host.querySelectorAll('button')) {
       expect(entry.getAttribute('aria-disabled')).toBe('true');
     }
+  });
+});
+
+describe('Meningitis imaging tutor', () => {
+  it('says nothing at all on the unassisted setting', () => {
+    render(new MeningitisImaging(), 0);
+    expect(host.textContent).not.toContain('A moment to think');
+  });
+
+  it('asks for the features before any rule is consulted', () => {
+    render(new MeningitisImaging(), 0, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('before any rule is consulted');
+  });
+
+  it('separates the treatment from the imaging question', () => {
+    const model = new MeningitisImaging();
+    model.apply('record-triggering-features', 0);
+    model.apply('activate-time-critical-owners', 1);
+    render(model, 2, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('treatment must not wait for it');
+    expect(text).not.toContain('scan first');
   });
 });

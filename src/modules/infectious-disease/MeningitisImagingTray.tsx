@@ -2,13 +2,18 @@ import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { MeningitisImagingSnapshot } from '@platform/kernel/protocol';
 import { MENINGITIS_IMAGING_CRITERIA, type MeningitisImagingAction } from './meningitis-imaging';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
+import { meningitisImagingInlinePrompt } from './meningitis-imaging-tutor';
 
-export function MeningitisImagingTray({ assessment, onAction, demonstrating = false }: {
+export function MeningitisImagingTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: MeningitisImagingSnapshot;
+  readonly scenarioVersion: string;
   readonly onAction: (action: MeningitisImagingAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = meningitisImagingInlinePrompt(guidance, { scenarioVersion, meningitisImaging: assessment });
   const features = assessment.featureObservation; const labs = assessment.labObservation;
   const observation = assessment.observation;
   const decision = (action: MeningitisImagingAction, label: string, accepted = false) => {
@@ -17,6 +22,10 @@ export function MeningitisImagingTray({ assessment, onAction, demonstrating = fa
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     {/* The recorded fact is tested before the countdown, so a passed ceiling never reads as
         "nothing recorded" on a screen that also shows what was recorded. */}
     <p className="syringe__remaining" role="status">{assessment.antimicrobialIntentAtTick !== null

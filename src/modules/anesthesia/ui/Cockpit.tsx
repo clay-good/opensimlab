@@ -89,6 +89,8 @@ import { usePossibleSepsisDemonstration } from '../../infectious-disease/demo/us
 import { supportsPossibleSepsisDemonstration } from '../../infectious-disease/demo/possible-sepsis-demonstration';
 import { useSepticShockLabelDemonstration } from '../../infectious-disease/demo/useSepticShockLabelDemonstration';
 import { supportsSepticShockLabelDemonstration } from '../../infectious-disease/demo/septic-shock-label-demonstration';
+import { useMeningitisImagingDemonstration } from '../../infectious-disease/demo/useMeningitisImagingDemonstration';
+import { supportsMeningitisImagingDemonstration } from '../../infectious-disease/demo/meningitis-imaging-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -285,6 +287,7 @@ export function Cockpit({
   const toxicShockDemoSupported = supportsToxicShockDemonstration(scenario);
   const possibleSepsisDemoSupported = supportsPossibleSepsisDemonstration(scenario);
   const septicShockLabelDemoSupported = supportsSepticShockLabelDemonstration(scenario);
+  const meningitisImagingDemoSupported = supportsMeningitisImagingDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -318,7 +321,8 @@ export function Cockpit({
     || severePneumoniaDemoSupported
     || toxicShockDemoSupported
     || possibleSepsisDemoSupported
-    || septicShockLabelDemoSupported;
+    || septicShockLabelDemoSupported
+    || meningitisImagingDemoSupported;
   const scenarioDemoSupported = hypoglycemiaDemoSupported || adrenalDemoSupported
     || thyroidDemoSupported || myxedemaDemoSupported || observedStateDemoSupported;
   const inductionDemonstration = useDemonstration({
@@ -400,6 +404,11 @@ export function Cockpit({
   const renalHyponatremiaDemonstration = useRenalHyponatremiaDemonstration({
     active: demonstrating && renalHyponatremiaDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyponatremia,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const meningitisImagingDemonstration = useMeningitisImagingDemonstration({
+    active: demonstrating && meningitisImagingDemoSupported,
+    running: session.transport === 'running', patient: session.equipment?.resuscitation.meningitisImaging,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const septicShockLabelDemonstration = useSepticShockLabelDemonstration({
@@ -574,7 +583,8 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypermagnesemia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = septicShockLabelDemoSupported ? septicShockLabelDemonstration
+  const demonstration = meningitisImagingDemoSupported ? meningitisImagingDemonstration
+    : septicShockLabelDemoSupported ? septicShockLabelDemonstration
     : possibleSepsisDemoSupported ? possibleSepsisDemonstration
     : toxicShockDemoSupported ? toxicShockDemonstration
     : severePneumoniaDemoSupported ? severePneumoniaDemonstration
@@ -1276,6 +1286,8 @@ export function Cockpit({
           possibleSepsisDemonstrating={demonstrating && possibleSepsisDemoSupported}
           septicShockLabelGuidance={session.guidance}
           septicShockLabelDemonstrating={demonstrating && septicShockLabelDemoSupported}
+          meningitisImagingGuidance={session.guidance}
+          meningitisImagingDemonstrating={demonstrating && meningitisImagingDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

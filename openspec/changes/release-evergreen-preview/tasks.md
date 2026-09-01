@@ -105,7 +105,15 @@ preview-channel blockers until it is. Updating the specification does not clear 
     an intensity; the last-known-well one ends with the onset field still empty;
     the oxygen-target one never reaches for the oxygen; and the lost-contingency
     one ends without anything having been rescued, because nothing was ever lost.
-    The pattern, now used by every scenario in four modules, is an
+    Infectious disease followed, all ten of them. Several of that module's lessons
+    turn on an instrument being read past what it was validated for, and each
+    tutor answers with the specific number rather than with urgency: a
+    necrotizing-infection score near two-thirds sensitive, crepitus and bullae
+    near a quarter and a fifth, a Gram stain roughly half. Two lessons end without
+    the thing the form wants — a toxic-shock definition that cannot close inside
+    the rehearsal, and five meningitis criteria sets left disagreeing, because
+    picking a winner would invent a consensus the literature does not have.
+    The pattern, now used by every scenario in five modules, is an
     observed-state tutor reading the learner's own recorded steps, a snapshot-driven worked
     example, tray and cockpit wiring, and a test that drives the example through the real engine
     to handoff rather than asserting it as a script. Each example also has to be held to its own
