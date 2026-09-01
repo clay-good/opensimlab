@@ -1,14 +1,19 @@
 import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { PairedReadingSnapshot } from '@platform/kernel/protocol';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { PairedReadingAction } from './paired-reading';
+import { pairedReadingInlinePrompt } from './paired-reading-tutor';
 
-export function PairedReadingTray({ assessment, onAction, demonstrating = false }: {
+export function PairedReadingTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: PairedReadingSnapshot;
+  readonly scenarioVersion: string;
   readonly onAction: (action: PairedReadingAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = pairedReadingInlinePrompt(guidance, { scenarioVersion, pairedReading: assessment });
   const device = assessment.oximeterRecord; const patient = assessment.patientRecord;
   const observation = assessment.observation;
   const decision = (action: PairedReadingAction, label: string, accepted = false) => {
@@ -17,6 +22,10 @@ export function PairedReadingTray({ assessment, onAction, demonstrating = false 
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     {/* Both numbers appear together the moment the second one exists, and the first is never
         amended: it is a true record of what the device displayed. */}
     <p className="syringe__remaining" role="status">Oximeter: {assessment.oximeterPercent}% on air, good trace. {assessment.arterialPercent === null

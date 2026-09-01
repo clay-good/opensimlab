@@ -30,6 +30,7 @@ import { supportsSilentInteractionDemonstration } from '../../oncology/demo/sile
 import { supportsEasyLabelDemonstration } from '../../oncology/demo/easy-label-demonstration';
 import { supportsLowScoreDemonstration } from '../../medical-surgical-nursing/demo/low-score-demonstration';
 import { supportsCountedRateDemonstration } from '../../medical-surgical-nursing/demo/counted-rate-demonstration';
+import { supportsPairedReadingDemonstration } from '../../medical-surgical-nursing/demo/paired-reading-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -83,6 +84,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
   'medical-surgical-nursing': [
     supportsLowScoreDemonstration,
     supportsCountedRateDemonstration,
+    supportsPairedReadingDemonstration,
   ],
 };
 

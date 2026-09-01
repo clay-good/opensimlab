@@ -64,6 +64,8 @@ import { useSilentInteractionDemonstration } from '../../oncology/demo/useSilent
 import { useEasyLabelDemonstration } from '../../oncology/demo/useEasyLabelDemonstration';
 import { useLowScoreDemonstration } from '../../medical-surgical-nursing/demo/useLowScoreDemonstration';
 import { useCountedRateDemonstration } from '../../medical-surgical-nursing/demo/useCountedRateDemonstration';
+import { usePairedReadingDemonstration } from '../../medical-surgical-nursing/demo/usePairedReadingDemonstration';
+import { supportsPairedReadingDemonstration } from '../../medical-surgical-nursing/demo/paired-reading-demonstration';
 import { supportsCountedRateDemonstration } from '../../medical-surgical-nursing/demo/counted-rate-demonstration';
 import { supportsLowScoreDemonstration } from '../../medical-surgical-nursing/demo/low-score-demonstration';
 import { useDkaResolutionDemonstration } from '../../endocrine-metabolic/demo/useDkaResolutionDemonstration';
@@ -237,6 +239,7 @@ export function Cockpit({
   const easyLabelDemoSupported = supportsEasyLabelDemonstration(scenario);
   const lowScoreDemoSupported = supportsLowScoreDemonstration(scenario);
   const countedRateDemoSupported = supportsCountedRateDemonstration(scenario);
+  const pairedReadingDemoSupported = supportsPairedReadingDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -262,7 +265,7 @@ export function Cockpit({
     || laboratoryTlsDemoSupported || rareEarlyMyocarditisDemoSupported
     || loweringTheCountDemoSupported || inheritedUrgencyDemoSupported
     || trialRuleDemoSupported || silentInteractionDemoSupported || easyLabelDemoSupported
-    || dkaResolutionDemoSupported || hhsOsmolalityDemoSupported || lowScoreDemoSupported || countedRateDemoSupported;
+    || dkaResolutionDemoSupported || hhsOsmolalityDemoSupported || lowScoreDemoSupported || countedRateDemoSupported || pairedReadingDemoSupported;
   const scenarioDemoSupported = hypoglycemiaDemoSupported || adrenalDemoSupported
     || thyroidDemoSupported || myxedemaDemoSupported || observedStateDemoSupported;
   const inductionDemonstration = useDemonstration({
@@ -344,6 +347,11 @@ export function Cockpit({
   const renalHyponatremiaDemonstration = useRenalHyponatremiaDemonstration({
     active: demonstrating && renalHyponatremiaDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyponatremia,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const pairedReadingDemonstration = usePairedReadingDemonstration({
+    active: demonstrating && pairedReadingDemoSupported,
+    running: session.transport === 'running', patient: session.equipment?.resuscitation.pairedReading,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const countedRateDemonstration = useCountedRateDemonstration({
@@ -438,7 +446,8 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypermagnesemia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = countedRateDemoSupported ? countedRateDemonstration
+  const demonstration = pairedReadingDemoSupported ? pairedReadingDemonstration
+    : countedRateDemoSupported ? countedRateDemonstration
     : lowScoreDemoSupported ? lowScoreDemonstration
     : hhsOsmolalityDemoSupported ? hhsOsmolalityDemonstration
     : dkaResolutionDemoSupported ? dkaResolutionDemonstration
@@ -1099,6 +1108,8 @@ export function Cockpit({
           lowScore={equipment?.resuscitation.lowScore}
           lowScoreGuidance={session.guidance}
           countedRateGuidance={session.guidance}
+          pairedReadingGuidance={session.guidance}
+          pairedReadingDemonstrating={demonstrating && pairedReadingDemoSupported}
           countedRateDemonstrating={demonstrating && countedRateDemoSupported}
           lowScoreDemonstrating={demonstrating && lowScoreDemoSupported}
           countedRate={equipment?.resuscitation.countedRate}

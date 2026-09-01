@@ -28,9 +28,10 @@ let host: HTMLDivElement; let root: Root;
 beforeEach(() => { host = document.createElement('div'); document.body.append(host); root = createRoot(host); });
 afterEach(() => { act(() => root.unmount()); host.remove(); });
 
-const render = (model: PairedReading, tick: number, onAction = vi.fn(), demonstrating = false) => {
-  act(() => root.render(<PairedReadingTray assessment={model.snapshot(tick)}
-    onAction={onAction} demonstrating={demonstrating} />));
+const render = (model: PairedReading, tick: number, onAction = vi.fn(), demonstrating = false,
+  guidance: 'unassisted' | 'coached' | 'guided' = 'unassisted') => {
+  act(() => root.render(<PairedReadingTray assessment={model.snapshot(tick)} scenarioVersion="0.1.0"
+    onAction={onAction} guidance={guidance} demonstrating={demonstrating} />));
   return onAction;
 };
 const button = (label: string) => [...host.querySelectorAll('button')]
@@ -119,5 +120,31 @@ describe('Paired oximetry reading tray', () => {
     for (const entry of host.querySelectorAll('button')) {
       expect(entry.getAttribute('aria-disabled')).toBe('true');
     }
+  });
+});
+
+describe('Paired-reading tutor', () => {
+  it('says nothing at all on the unassisted setting', () => {
+    render(new PairedReading(), 0);
+    expect(host.textContent).not.toContain('A moment to think');
+  });
+
+  it('reads the recorded steps when guidance is on', () => {
+    const model = new PairedReading();
+    render(model, 0, vi.fn(), false, 'guided');
+    expect(host.textContent).toContain('Record it as an oximeter reading');
+    model.apply('record-the-oximeter-reading', 0);
+    render(model, 1, vi.fn(), false, 'guided');
+    expect(host.textContent).toContain('Review what this measurement can and cannot do');
+  });
+
+  it('never sends the learner to the probe', () => {
+    const model = new PairedReading();
+    model.apply('record-the-oximeter-reading', 0);
+    render(model, 1, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('does not correct it');
+    expect(text).not.toContain('Reposition the probe.');
+    expect(text).not.toContain('Warm the hand.');
   });
 });

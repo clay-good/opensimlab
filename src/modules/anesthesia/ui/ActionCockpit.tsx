@@ -2808,6 +2808,7 @@ export interface ActionCockpitProps {
   readonly lowScoreDemonstrating?: boolean;
   readonly countedRateGuidance?: GuidanceLevel;
   readonly countedRateDemonstrating?: boolean;
+  readonly pairedReadingGuidance?: GuidanceLevel;
   readonly pairedReadingDemonstrating?: boolean;
   readonly afferentLimbDemonstrating?: boolean;
   readonly quietPatientDemonstrating?: boolean;
@@ -5834,6 +5835,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasPairedReadingResponse && (
               <PairedReadingTray assessment={props.pairedReading}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.pairedReadingGuidance}
                 demonstrating={props.pairedReadingDemonstrating}
                 onAction={props.onPairedReadingResponse ?? (() => {})} />
             )}

@@ -334,9 +334,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Ten observed-state prompts at version 0.1.0 read the learner's own recorded steps. Unassisted is silent and coached withholds the two waiting beats. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both refuse the perfusion instinct this bedside invites: the discrepancy is optical, so no prompt or beat repositions the probe, warms the hand, or moves to another digit, and the example waits for the arterial result rather than filling the time at the device. Neither calls the oximeter faulty nor names a diagnosis, because the lesson establishes neither. Tests assert the four refused shortcuts are untaken, that pairing precedes escalation, and that the escalation is made on the arterial value. tests/unit/paired-reading-demonstration.test.ts and tests/ui/paired-reading-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {

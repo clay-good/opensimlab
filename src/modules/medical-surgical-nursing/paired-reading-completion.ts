@@ -2,11 +2,14 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { PAIRED_READING_A_NUMBER_WRONG_IN_ONE_DIRECTION } from './scenarios/paired-reading-a-number-wrong-in-one-direction';
 import { PAIRED_READING_FIXTURES } from './paired-reading-fixtures';
+import { PAIRED_READING_TUTOR_VERSION } from './paired-reading-tutor';
+import { PAIRED_READING_DEMONSTRATION_VERSION } from './demo/paired-reading-demonstration';
 
 export function pairedReadingCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'medical-surgical-nursing' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== PAIRED_READING_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
-    || PAIRED_READING_FIXTURES.contentVersion !== '0.1.0' || PAIRED_READING_FIXTURES.seed !== 4726
+    || PAIRED_READING_FIXTURES.contentVersion !== '0.1.0'
+    || PAIRED_READING_TUTOR_VERSION !== '0.1.0' || PAIRED_READING_DEMONSTRATION_VERSION !== '0.1.0' || PAIRED_READING_FIXTURES.seed !== 4726
     || JSON.stringify(scenario) !== JSON.stringify(PAIRED_READING_A_NUMBER_WRONG_IN_ONE_DIRECTION)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['paired-reading-fixtures.ts binds seed 4726 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No respiratory, oximetry, or gas-exchange model is claimed; both values are authored.'] },
@@ -15,7 +18,7 @@ export function pairedReadingCompletionEvidence(scenario: Scenario, capabilityVe
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['A recorded reading, recorded paired values, a characterised gap, escalation on the arterial value, the boundary review, oximeter-independent observation, and a current full assessment permit handoff with the cause open. Instructor takeover bounds a run with no escalation at 150 minutes, or an unfinished session at eight hours.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Six event-bound objectives distinguish recording a reading as a reading, recognising an error with a direction, characterising the gap honestly, escalating on the arterial value, the boundaries and their certainty, and accountable handoff of a chart that continues to read reassuringly. Refused shortcuts remain visible, and no cause or outcome is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['paired-reading-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Ten observed-state prompts at version ${PAIRED_READING_TUTOR_VERSION} read the learner's own recorded steps. Unassisted is silent and coached withholds the two waiting beats. Worked example ${PAIRED_READING_DEMONSTRATION_VERSION} drives the ordinary controls through the real engine to handoff. Both refuse the perfusion instinct this bedside invites: the discrepancy is optical, so no prompt or beat repositions the probe, warms the hand, or moves to another digit, and the example waits for the arterial result rather than filling the time at the device. Neither calls the oximeter faulty nor names a diagnosis, because the lesson establishes neither. Tests assert the four refused shortcuts are untaken, that pairing precedes escalation, and that the escalation is made on the arterial value. tests/unit/paired-reading-demonstration.test.ts and tests/ui/paired-reading-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];
