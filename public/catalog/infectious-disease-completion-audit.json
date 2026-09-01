@@ -964,9 +964,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Ten observed-state prompts at version 0.1.0 read the learner's own recorded steps. Unassisted is silent and coached withholds the waiting beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. The guidance here is tiered and the deferral tier is conditional on close monitoring, which makes an unbounded deferral a different thing from the one it permits — so neither the prompts nor the beats ever offer waiting, only a time-limited course against a recorded ceiling. Neither assigns the likelihood tier, because the operational definitions separating possible from probable are not supplied here and the classification belongs to the qualified team, and neither rules infection in or out on a single result. The example records the intent inside the ceiling rather than after it, which the snapshot flags assert directly. tests/unit/possible-sepsis-demonstration.test.ts and tests/ui/possible-sepsis-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {

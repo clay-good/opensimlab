@@ -2,11 +2,14 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { POSSIBLE_SEPSIS_A_CLOCK_THAT_RUNS_EITHER_WAY } from './scenarios/possible-sepsis-a-clock-that-runs-either-way';
 import { POSSIBLE_SEPSIS_FIXTURES } from './possible-sepsis-fixtures';
+import { POSSIBLE_SEPSIS_TUTOR_VERSION } from './possible-sepsis-tutor';
+import { POSSIBLE_SEPSIS_DEMONSTRATION_VERSION } from './demo/possible-sepsis-demonstration';
 
 export function possibleSepsisCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'infectious-disease' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== POSSIBLE_SEPSIS_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
-    || POSSIBLE_SEPSIS_FIXTURES.contentVersion !== '0.1.0' || POSSIBLE_SEPSIS_FIXTURES.seed !== 5843
+    || POSSIBLE_SEPSIS_FIXTURES.contentVersion !== '0.1.0'
+    || POSSIBLE_SEPSIS_TUTOR_VERSION !== '0.1.0' || POSSIBLE_SEPSIS_DEMONSTRATION_VERSION !== '0.1.0' || POSSIBLE_SEPSIS_FIXTURES.seed !== 5843
     || JSON.stringify(scenario) !== JSON.stringify(POSSIBLE_SEPSIS_A_CLOCK_THAT_RUNS_EITHER_WAY)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['possible-sepsis-fixtures.ts binds seed 5843 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No infection, host-response, or antimicrobial model is claimed.'] },
@@ -15,7 +18,7 @@ export function possibleSepsisCompletionEvidence(scenario: Scenario, capabilityV
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The recorded time zero, recorded uncertainty, time-limited assessment, bounded antimicrobial intent, boundary review, close monitoring, and a current full assessment permit handoff with the classification open and the clock travelling with the patient. Instructor takeover bounds a run with no assessment or intent at 225 minutes, or an unfinished session at eight hours.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Six event-bound objectives distinguish placing the patient outside the immediate path, starting and displaying the clock, requesting a bounded assessment rather than observing, the tiered guidance and its certainty, bounded intent inside the ceiling, and accountable handoff. Refused shortcuts remain visible, and no tier, organism, or outcome is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['possible-sepsis-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Ten observed-state prompts at version ${POSSIBLE_SEPSIS_TUTOR_VERSION} read the learner's own recorded steps. Unassisted is silent and coached withholds the waiting beat. Worked example ${POSSIBLE_SEPSIS_DEMONSTRATION_VERSION} drives the ordinary controls through the real engine to handoff. The guidance here is tiered and the deferral tier is conditional on close monitoring, which makes an unbounded deferral a different thing from the one it permits — so neither the prompts nor the beats ever offer waiting, only a time-limited course against a recorded ceiling. Neither assigns the likelihood tier, because the operational definitions separating possible from probable are not supplied here and the classification belongs to the qualified team, and neither rules infection in or out on a single result. The example records the intent inside the ceiling rather than after it, which the snapshot flags assert directly. tests/unit/possible-sepsis-demonstration.test.ts and tests/ui/possible-sepsis-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];

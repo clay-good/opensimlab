@@ -28,9 +28,10 @@ let host: HTMLDivElement; let root: Root;
 beforeEach(() => { host = document.createElement('div'); document.body.append(host); root = createRoot(host); });
 afterEach(() => { act(() => root.unmount()); host.remove(); });
 
-const render = (model: PossibleSepsis, tick: number, onAction = vi.fn(), demonstrating = false) => {
-  act(() => root.render(<PossibleSepsisTray assessment={model.snapshot(tick)}
-    onAction={onAction} demonstrating={demonstrating} />));
+const render = (model: PossibleSepsis, tick: number, onAction = vi.fn(), demonstrating = false,
+  guidance: 'unassisted' | 'coached' | 'guided' = 'unassisted') => {
+  act(() => root.render(<PossibleSepsisTray assessment={model.snapshot(tick)} scenarioVersion="0.1.0"
+    onAction={onAction} guidance={guidance} demonstrating={demonstrating} />));
   return onAction;
 };
 const button = (label: string) => [...host.querySelectorAll('button')]
@@ -145,5 +146,28 @@ describe('Possible sepsis tray', () => {
     for (const entry of host.querySelectorAll('button')) {
       expect(entry.getAttribute('aria-disabled')).toBe('true');
     }
+  });
+});
+
+describe('Possible sepsis tutor', () => {
+  it('says nothing at all on the unassisted setting', () => {
+    render(new PossibleSepsis(), 0);
+    expect(host.textContent).not.toContain('A moment to think');
+  });
+
+  it('opens on recording the time of first suspicion', () => {
+    render(new PossibleSepsis(), 0, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('Record the time infection was first suspected');
+    expect(text).toContain('whether or not anyone writes it down');
+  });
+
+  it('never assigns the likelihood tier', () => {
+    const model = new PossibleSepsis();
+    model.apply('record-time-zero', 0);
+    render(model, 1, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('a likelihood tier would be a different and less honest one');
+    expect(text).not.toContain('this is probable sepsis');
   });
 });
