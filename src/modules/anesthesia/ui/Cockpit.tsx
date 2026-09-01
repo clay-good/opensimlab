@@ -87,6 +87,8 @@ import { useToxicShockDemonstration } from '../../infectious-disease/demo/useTox
 import { supportsToxicShockDemonstration } from '../../infectious-disease/demo/toxic-shock-demonstration';
 import { usePossibleSepsisDemonstration } from '../../infectious-disease/demo/usePossibleSepsisDemonstration';
 import { supportsPossibleSepsisDemonstration } from '../../infectious-disease/demo/possible-sepsis-demonstration';
+import { useSepticShockLabelDemonstration } from '../../infectious-disease/demo/useSepticShockLabelDemonstration';
+import { supportsSepticShockLabelDemonstration } from '../../infectious-disease/demo/septic-shock-label-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -282,6 +284,7 @@ export function Cockpit({
   const severePneumoniaDemoSupported = supportsSeverePneumoniaDemonstration(scenario);
   const toxicShockDemoSupported = supportsToxicShockDemonstration(scenario);
   const possibleSepsisDemoSupported = supportsPossibleSepsisDemonstration(scenario);
+  const septicShockLabelDemoSupported = supportsSepticShockLabelDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -314,7 +317,8 @@ export function Cockpit({
     || endocarditisHeartFailureDemoSupported
     || severePneumoniaDemoSupported
     || toxicShockDemoSupported
-    || possibleSepsisDemoSupported;
+    || possibleSepsisDemoSupported
+    || septicShockLabelDemoSupported;
   const scenarioDemoSupported = hypoglycemiaDemoSupported || adrenalDemoSupported
     || thyroidDemoSupported || myxedemaDemoSupported || observedStateDemoSupported;
   const inductionDemonstration = useDemonstration({
@@ -396,6 +400,11 @@ export function Cockpit({
   const renalHyponatremiaDemonstration = useRenalHyponatremiaDemonstration({
     active: demonstrating && renalHyponatremiaDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyponatremia,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const septicShockLabelDemonstration = useSepticShockLabelDemonstration({
+    active: demonstrating && septicShockLabelDemoSupported,
+    running: session.transport === 'running', patient: session.equipment?.resuscitation.septicShockLabel,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const possibleSepsisDemonstration = usePossibleSepsisDemonstration({
@@ -565,7 +574,8 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypermagnesemia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = possibleSepsisDemoSupported ? possibleSepsisDemonstration
+  const demonstration = septicShockLabelDemoSupported ? septicShockLabelDemonstration
+    : possibleSepsisDemoSupported ? possibleSepsisDemonstration
     : toxicShockDemoSupported ? toxicShockDemonstration
     : severePneumoniaDemoSupported ? severePneumoniaDemonstration
     : endocarditisHeartFailureDemoSupported ? endocarditisHeartFailureDemonstration
@@ -1264,6 +1274,8 @@ export function Cockpit({
           toxicShockDemonstrating={demonstrating && toxicShockDemoSupported}
           possibleSepsisGuidance={session.guidance}
           possibleSepsisDemonstrating={demonstrating && possibleSepsisDemoSupported}
+          septicShockLabelGuidance={session.guidance}
+          septicShockLabelDemonstrating={demonstrating && septicShockLabelDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

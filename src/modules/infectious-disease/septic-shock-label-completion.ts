@@ -2,11 +2,14 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { SEPTIC_SHOCK_A_LABEL_THE_TREATMENT_CREATES } from './scenarios/septic-shock-a-label-the-treatment-creates';
 import { SEPTIC_SHOCK_LABEL_FIXTURES } from './septic-shock-label-fixtures';
+import { SEPTIC_SHOCK_LABEL_TUTOR_VERSION } from './septic-shock-label-tutor';
+import { SEPTIC_SHOCK_LABEL_DEMONSTRATION_VERSION } from './demo/septic-shock-label-demonstration';
 
 export function septicShockLabelCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'infectious-disease' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== SEPTIC_SHOCK_LABEL_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.1'
-    || SEPTIC_SHOCK_LABEL_FIXTURES.contentVersion !== '0.1.1' || SEPTIC_SHOCK_LABEL_FIXTURES.seed !== 6127
+    || SEPTIC_SHOCK_LABEL_FIXTURES.contentVersion !== '0.1.1'
+    || SEPTIC_SHOCK_LABEL_TUTOR_VERSION !== '0.1.0' || SEPTIC_SHOCK_LABEL_DEMONSTRATION_VERSION !== '0.1.0' || SEPTIC_SHOCK_LABEL_FIXTURES.seed !== 6127
     || JSON.stringify(scenario) !== JSON.stringify(SEPTIC_SHOCK_A_LABEL_THE_TREATMENT_CREATES)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['septic-shock-label-fixtures.ts binds seed 6127 and content 0.1.1 to expert, incomplete-care, recovery, and no-action contrasts. No infection, host-response, fluid, or vasoactive model is claimed.'] },
@@ -15,7 +18,7 @@ export function septicShockLabelCompletionEvidence(scenario: Scenario, capabilit
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['Recorded hypoperfusion, critical care activation, an open classification, bounded resuscitation intent, the boundary review, monitoring, and a current full assessment permit handoff with the label reported as a product of the trial. Instructor takeover bounds a run with no recorded intent at 150 minutes, or an unfinished session at eight hours.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Six event-bound objectives distinguish recording measurable hypoperfusion, recognizing that two criteria have no truth value before the trial, activating on the pattern rather than the name, the targets and their grades, bounded intent that is simultaneously the measurement, and accountable handoff of a label that reflects a treatment. Refused shortcuts remain visible, and no organism, treatment effect, or outcome is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['septic-shock-label-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Nine observed-state prompts at version ${SEPTIC_SHOCK_LABEL_TUTOR_VERSION} read the learner's own recorded steps. Unassisted is silent and coached withholds the waiting beat. Worked example ${SEPTIC_SHOCK_LABEL_DEMONSTRATION_VERSION} drives the ordinary controls through the real engine to handoff. The definition needs vasopressors running and a lactate above threshold despite adequate resuscitation, so the classification is downstream of the treatment rather than upstream of it: neither the prompts nor the beats apply the label before the trial completes, and neither withholds care while waiting for it — critical care is activated on the perfusion, which a test asserts precedes the classification record. Two further corrections carry their grades rather than being stripped of them: an elevated lactate in sepsis is not a measure of tissue hypoxia, and the 65 mmHg recommendation is comparative against higher targets rather than a floor to raise. tests/unit/septic-shock-label-demonstration.test.ts and tests/ui/septic-shock-label-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];

@@ -2,13 +2,18 @@ import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { SepticShockLabelSnapshot } from '@platform/kernel/protocol';
 import type { SepticShockLabelAction } from './septic-shock-label';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
+import { septicShockLabelInlinePrompt } from './septic-shock-label-tutor';
 
-export function SepticShockLabelTray({ assessment, onAction, demonstrating = false }: {
+export function SepticShockLabelTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: SepticShockLabelSnapshot;
+  readonly scenarioVersion: string;
   readonly onAction: (action: SepticShockLabelAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = septicShockLabelInlinePrompt(guidance, { scenarioVersion, septicShockLabel: assessment });
   const labs = assessment.labObservation; const perfusion = assessment.perfusionObservation;
   const observation = assessment.observation;
   const decision = (action: SepticShockLabelAction, label: string, accepted = false) => {
@@ -23,6 +28,10 @@ export function SepticShockLabelTray({ assessment, onAction, demonstrating = fal
     <li>{readable ? 'Met' : 'Not yet decidable'}: {text}</li>;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <p className="syringe__remaining" role="status">{assessment.resuscitationIntentAtTick !== null
       ? `Resuscitation intent recorded ${assessment.resuscitationIntentInsideCeiling ? 'inside the hour' : 'after the hour had passed'}.`
       : assessment.ceilingPassed

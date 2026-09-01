@@ -1090,9 +1090,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Nine observed-state prompts at version 0.1.0 read the learner's own recorded steps. Unassisted is silent and coached withholds the waiting beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. The definition needs vasopressors running and a lactate above threshold despite adequate resuscitation, so the classification is downstream of the treatment rather than upstream of it: neither the prompts nor the beats apply the label before the trial completes, and neither withholds care while waiting for it — critical care is activated on the perfusion, which a test asserts precedes the classification record. Two further corrections carry their grades rather than being stripped of them: an elevated lactate in sepsis is not a measure of tissue hypoxia, and the 65 mmHg recommendation is comparative against higher targets rather than a floor to raise. tests/unit/septic-shock-label-demonstration.test.ts and tests/ui/septic-shock-label-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {

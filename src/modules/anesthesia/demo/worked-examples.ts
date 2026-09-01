@@ -45,6 +45,7 @@ import { supportsEndocarditisHeartFailureDemonstration } from '../../infectious-
 import { supportsSeverePneumoniaDemonstration } from '../../infectious-disease/demo/severe-pneumonia-demonstration';
 import { supportsToxicShockDemonstration } from '../../infectious-disease/demo/toxic-shock-demonstration';
 import { supportsPossibleSepsisDemonstration } from '../../infectious-disease/demo/possible-sepsis-demonstration';
+import { supportsSepticShockLabelDemonstration } from '../../infectious-disease/demo/septic-shock-label-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -115,6 +116,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsSeverePneumoniaDemonstration,
     supportsToxicShockDemonstration,
     supportsPossibleSepsisDemonstration,
+    supportsSepticShockLabelDemonstration,
   ],
 };
 

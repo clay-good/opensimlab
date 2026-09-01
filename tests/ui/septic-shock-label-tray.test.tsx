@@ -28,9 +28,10 @@ let host: HTMLDivElement; let root: Root;
 beforeEach(() => { host = document.createElement('div'); document.body.append(host); root = createRoot(host); });
 afterEach(() => { act(() => root.unmount()); host.remove(); });
 
-const render = (model: SepticShockLabel, tick: number, onAction = vi.fn(), demonstrating = false) => {
-  act(() => root.render(<SepticShockLabelTray assessment={model.snapshot(tick)}
-    onAction={onAction} demonstrating={demonstrating} />));
+const render = (model: SepticShockLabel, tick: number, onAction = vi.fn(), demonstrating = false,
+  guidance: 'unassisted' | 'coached' | 'guided' = 'unassisted') => {
+  act(() => root.render(<SepticShockLabelTray assessment={model.snapshot(tick)} scenarioVersion="0.1.1"
+    onAction={onAction} guidance={guidance} demonstrating={demonstrating} />));
   return onAction;
 };
 const button = (label: string) => [...host.querySelectorAll('button')]
@@ -133,5 +134,28 @@ describe('Septic shock label tray', () => {
     for (const entry of host.querySelectorAll('button')) {
       expect(entry.getAttribute('aria-disabled')).toBe('true');
     }
+  });
+});
+
+describe('Septic shock label tutor', () => {
+  it('says nothing at all on the unassisted setting', () => {
+    render(new SepticShockLabel(), 0);
+    expect(host.textContent).not.toContain('A moment to think');
+  });
+
+  it('describes the perfusion without naming it', () => {
+    render(new SepticShockLabel(), 0, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('a description rather than a classification');
+  });
+
+  it('says why the criteria cannot be evaluated yet', () => {
+    const model = new SepticShockLabel();
+    model.apply('record-hypoperfusion', 0);
+    model.apply('activate-critical-care', 1);
+    render(model, 2, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('not because the patient is well');
+    expect(text).not.toContain('this is septic shock');
   });
 });
