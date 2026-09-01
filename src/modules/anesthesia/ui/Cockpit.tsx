@@ -113,6 +113,8 @@ import { useTermTransitionDemonstration } from '../../neonatology/demo/useTermTr
 import { supportsTermTransitionDemonstration } from '../../neonatology/demo/term-newborn-transition-demonstration';
 import { useTensionPneumothoraxDemonstration } from '../../neonatology/demo/useTensionPneumothoraxDemonstration';
 import { supportsTensionPneumothoraxDemonstration } from '../../neonatology/demo/neonatal-tension-pneumothorax-demonstration';
+import { useMethemoglobinemiaDemonstration } from '../../toxicology/demo/useMethemoglobinemiaDemonstration';
+import { supportsMethemoglobinemiaDemonstration } from '../../toxicology/demo/methemoglobinemia-saturation-gap-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -321,6 +323,7 @@ export function Cockpit({
   const neonatalApneaDemoSupported = supportsNeonatalApneaDemonstration(scenario);
   const termTransitionDemoSupported = supportsTermTransitionDemonstration(scenario);
   const tensionPneumothoraxDemoSupported = supportsTensionPneumothoraxDemonstration(scenario);
+  const methemoglobinemiaDemoSupported = supportsMethemoglobinemiaDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -357,6 +360,7 @@ export function Cockpit({
     || septicShockLabelDemoSupported
     || meningitisImagingDemoSupported
     || tensionPneumothoraxDemoSupported
+    || methemoglobinemiaDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -508,6 +512,12 @@ export function Cockpit({
     active: demonstrating && termTransitionDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.neonatologyTermTransitionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const methemoglobinemiaDemonstration = useMethemoglobinemiaDemonstration({
+    active: demonstrating && methemoglobinemiaDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.toxicologyMethemoglobinemiaAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const tensionPneumothoraxDemonstration = useTensionPneumothoraxDemonstration({
@@ -703,6 +713,7 @@ export function Cockpit({
     : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
+    : methemoglobinemiaDemoSupported ? methemoglobinemiaDemonstration
     : tensionPneumothoraxDemoSupported ? tensionPneumothoraxDemonstration
     : meningitisImagingDemoSupported ? meningitisImagingDemonstration
     : septicShockLabelDemoSupported ? septicShockLabelDemonstration
@@ -1431,6 +1442,8 @@ export function Cockpit({
           neonatologyTermTransitionDemonstrating={demonstrating && termTransitionDemoSupported}
           neonatologyTensionPneumothoraxGuidance={session.guidance}
           neonatologyTensionPneumothoraxDemonstrating={demonstrating && tensionPneumothoraxDemoSupported}
+          toxicologyMethemoglobinemiaGuidance={session.guidance}
+          toxicologyMethemoglobinemiaDemonstrating={demonstrating && methemoglobinemiaDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

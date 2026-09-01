@@ -58,6 +58,7 @@ import { supportsIneffectiveVentilationDemonstration } from '../../neonatology/d
 import { supportsNeonatalApneaDemonstration } from '../../neonatology/demo/neonatal-apnea-demonstration';
 import { supportsTermTransitionDemonstration } from '../../neonatology/demo/term-newborn-transition-demonstration';
 import { supportsTensionPneumothoraxDemonstration } from '../../neonatology/demo/neonatal-tension-pneumothorax-demonstration';
+import { supportsMethemoglobinemiaDemonstration } from '../../toxicology/demo/methemoglobinemia-saturation-gap-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -143,6 +144,9 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsThermoregulationDemonstration,
     supportsNicuHandoffDemonstration,
     supportsTensionPneumothoraxDemonstration,
+  ],
+  toxicology: [
+    supportsMethemoglobinemiaDemonstration,
   ],
 };
 
