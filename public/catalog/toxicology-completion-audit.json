@@ -1559,23 +1559,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "methanol-visual-acidosis-gaps-fixtures.ts binds seed 5786 and content 0.1.0 to expert, waiting-for-the-level error, recovery, and no-action paths. The presentation, the supplied ECG, the blood-gas and chemistry set, the two authored gaps, and the fixed 45-minute report are authored constants; no metabolism, antidote, buffer, or extracorporeal-clearance model is claimed, no gap is calculated, and no outcome follows from any choice. tests/integration/methanol-visual-acidosis-gaps-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
           "status": "satisfied",
           "evidence": [
-            "The timeline contains at least one non-narrative state event."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the bounded source, antidote, cofactor, acid-base, extracorporeal, surveillance and airway intent refuses until simulated time has passed since the evidence review, and the handoff refuses until time has passed since that. What moves is the pH rather than the diagnosis, and the vision that dated the whole presentation is unchanged when it has moved."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions date the visual injury by the clock, read the two gaps as a pair that moves in opposite directions while refusing source-, vision-, anion-gap-, osmolar-gap- and concentration-only closure, find the antidote, extracorporeal, airway and ophthalmic owners before any level arrives, notice that an anion gap of 31 beside a lactate of 2.4 names an acid nobody is measuring, record bounded qualified intents, and hand off active risk. Order is enforced rather than suggested, and refusal names the missing step. The lesson takes no history, calculates no gap, interprets no laboratory value, excludes nothing, and selects no product, dose, route, buffer, electrolyte, airway, ventilation, or extracorporeal modality."
           ]
         },
         {
@@ -1587,23 +1587,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at active-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no confirmed diagnosis, no excluded alternative, no proven treatment effect, no toxin clearance, no durable acid-base control, no visual or neurologic recovery, no renal or electrolyte safety, no proven exposure completeness, no determined antidote or extracorporeal eligibility, safety or disposition, and no outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both treat the gaps as the most satisfying and least conclusive thing at this bedside: they are a pair on a clock — the osmolar gap the parent alcohol, falling as it is metabolized, the anion gap what it becomes, rising — so both being wide at fourteen hours is worth saying and a narrow osmolar gap later would exclude nothing. What is not a clue is the vision, because snowfield blurring at this point in the clock is injury already underway, and neither the tutor nor the example lets the concentration become the next step: blocking further metabolism and removing what has already been made are different jobs with different owners, and waiting on a number spends the interval in which the acid is still being produced. Both refuse all five early closures and keep ketoacidosis, uremia, lactic acidosis, salicylate, ethylene glycol, isopropanol and coingestion open. Antidote and extracorporeal eligibility stay questions neither determines. The ending gives back a better pH beside an eye that has not changed. A test asserts nothing anywhere calculates a gap, excludes an alternative, determines eligibility, or calls the toxin cleared. tests/unit/methanol-visual-acidosis-gaps-demonstration.test.ts and tests/ui/toxicology-methanol-visual-acidosis-gaps.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that sent the concentration and waited for it can still reach a correct handoff."
           ]
         },
         {
@@ -1622,23 +1622,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "methanol-visual-acidosis-gaps-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 5786 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

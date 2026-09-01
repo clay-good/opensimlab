@@ -70,6 +70,7 @@ import { supportsCholinergicDemonstration } from '../../toxicology/demo/choliner
 import { supportsAnticholinergicDemonstration } from '../../toxicology/demo/anticholinergic-hyperthermia-delirium-demonstration';
 import { supportsSerotoninDemonstration } from '../../toxicology/demo/serotonin-toxicity-hyperthermia-clonus-demonstration';
 import { supportsSympathomimeticDemonstration } from '../../toxicology/demo/sympathomimetic-hyperadrenergic-hyperthermia-demonstration';
+import { supportsMethanolDemonstration } from '../../toxicology/demo/methanol-visual-acidosis-gaps-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -169,6 +170,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsAnticholinergicDemonstration,
     supportsSerotoninDemonstration,
     supportsSympathomimeticDemonstration,
+    supportsMethanolDemonstration,
   ],
 };
 
