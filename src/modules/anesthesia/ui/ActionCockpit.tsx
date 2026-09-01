@@ -109,6 +109,7 @@ import { supportsSilentInteraction, type SilentInteractionAction } from '../../o
 import { supportsEasyLabel, type EasyLabelAction } from '../../oncology/easy-label';
 import { dkaResolutionInlinePrompt } from '../../endocrine-metabolic/tutor/dka-resolution-guidance';
 import { hhsOsmolalityInlinePrompt } from '../../endocrine-metabolic/tutor/hhs-osmolality-guidance';
+import { meconiumTransitionInlinePrompt } from '../../neonatology/tutor/meconium-stained-transition-guidance';
 import { neonatalBradycardiaInlinePrompt } from '../../neonatology/tutor/neonatal-bradycardia-guidance';
 import { ineffectiveVentilationInlinePrompt } from '../../neonatology/tutor/ineffective-ventilation-correction-guidance';
 import { neonatalApneaInlinePrompt } from '../../neonatology/tutor/neonatal-apnea-guidance';
@@ -2792,6 +2793,7 @@ export interface ActionCockpitProps {
   readonly easyLabelGuidance?: GuidanceLevel;
   readonly endocrineDkaResolutionGuidance?: GuidanceLevel;
   readonly endocrineHhsGuidance?: GuidanceLevel;
+  readonly neonatologyMeconiumGuidance?: GuidanceLevel;
   readonly neonatologyBradycardiaGuidance?: GuidanceLevel;
   readonly neonatologyIneffectiveVentilationGuidance?: GuidanceLevel;
   readonly neonatologyApneaGuidance?: GuidanceLevel;
@@ -2855,6 +2857,7 @@ export interface ActionCockpitProps {
   readonly easyLabelDemonstrating?: boolean;
   readonly endocrineDkaResolutionDemonstrating?: boolean;
   readonly endocrineHhsDemonstrating?: boolean;
+  readonly neonatologyMeconiumDemonstrating?: boolean;
   readonly neonatologyBradycardiaDemonstrating?: boolean;
   readonly neonatologyIneffectiveVentilationDemonstrating?: boolean;
   readonly neonatologyApneaDemonstrating?: boolean;
@@ -5782,6 +5785,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasNeonatologyMeconiumTransitionResponse && (
               <NeonatologyMeconiumTransitionTray assessment={props.resuscitation.neonatologyMeconiumTransitionAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.neonatologyMeconiumGuidance}
+                demonstrating={props.neonatologyMeconiumDemonstrating}
                 onAction={props.onNeonatologyMeconiumTransitionResponse ?? (() => {})} />
             )}
             {hasNeonatologyPretermRespiratoryDistressResponse && (
@@ -13580,10 +13586,15 @@ function NeonatologyBradycardiaTray({ assessment, scenarioVersion, onAction, gui
   </>;
 }
 
-function NeonatologyMeconiumTransitionTray({ assessment, onAction }: {
+function NeonatologyMeconiumTransitionTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['neonatologyMeconiumTransitionAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onNeonatologyMeconiumTransitionResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = meconiumTransitionInlinePrompt(guidance, { scenarioVersion, meconiumTransition: assessment });
+  const act = demonstrating ? undefined : onAction;
   const support = assessment?.supportAtTick != null;
   const context = assessment?.contextAtTick != null;
   const recognition = assessment?.recognitionAtTick != null;
@@ -13591,22 +13602,27 @@ function NeonatologyMeconiumTransitionTray({ assessment, onAction }: {
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="neonatology-meconium-now-title">
       <div id="neonatology-meconium-now-title" className="syringe__name">See the newborn, not just the fluid.</div>
       <p className="syringe__remaining">Connect breathing, tone, heart rate, airway visibility, warmth, parent, and whole dyad. Meconium alone does not decide the next step; every physical care step stays with the qualified team.</p>
       <div className="crisis-drug__actions">
-        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-meconium-stained-transition-prepared-newborn-airway-and-dyad-support')}>Confirm prepared support</Button>}
-        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-meconium-stained-transition-fluid-breathing-tone-heart-rate-airway-and-whole-dyad')}>Connect newborn + whole dyad</Button>}
-        {context && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-vigorous-meconium-stained-transition-without-routine-suction')}>Recognize the transition</Button>}
-        {recognition && !readiness && <Button className="crisis-drug__action" onClick={() => onAction('review-qualified-selective-airway-clearing-observation-and-escalation-boundaries')}>Review selective boundaries</Button>}
+        {!support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-meconium-stained-transition-prepared-newborn-airway-and-dyad-support') : undefined}>Confirm prepared support</Button>}
+        {support && !context && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-meconium-stained-transition-fluid-breathing-tone-heart-rate-airway-and-whole-dyad') : undefined}>Connect newborn + whole dyad</Button>}
+        {context && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-vigorous-meconium-stained-transition-without-routine-suction') : undefined}>Recognize the transition</Button>}
+        {recognition && !readiness && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-qualified-selective-airway-clearing-observation-and-escalation-boundaries') : undefined}>Review selective boundaries</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="neonatology-meconium-later-title">
       <div id="neonatology-meconium-later-title" className="syringe__name">Quiet observation protects more than a reflex procedure.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Respiratory, thermal, feeding, parent, disposition, and outcome risks handed off.' : reassessment ? 'The supplied transition remains calm. Evolving respiratory disease, durable safety, and outcomes remain open.' : readiness ? 'Qualified protective care and respiratory observation continue. Review the fixed report after time passes.' : support ? 'Prepared support is present. Connect the whole newborn and dyad before naming the pattern.' : 'Begin with calm shared ownership. You can pause or leave this practice at any time.'}</p>
       <div className="crisis-drug__actions">
-        {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-meconium-stained-transition-fixed-thirty-minute-qualified-report')}>Review the fixed 30-minute report</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-meconium-stained-transition-respiratory-thermal-feeding-parent-and-outcome-risk')}>Hand off active transition risk</Button>}
+        {readiness && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-meconium-stained-transition-fixed-thirty-minute-qualified-report') : undefined}>Review the fixed 30-minute report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-meconium-stained-transition-respiratory-thermal-feeding-parent-and-outcome-risk') : undefined}>Hand off active transition risk</Button>}
       </div>
     </section>
   </>;

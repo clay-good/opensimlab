@@ -91,6 +91,8 @@ import { useSepticShockLabelDemonstration } from '../../infectious-disease/demo/
 import { supportsSepticShockLabelDemonstration } from '../../infectious-disease/demo/septic-shock-label-demonstration';
 import { useMeningitisImagingDemonstration } from '../../infectious-disease/demo/useMeningitisImagingDemonstration';
 import { supportsMeningitisImagingDemonstration } from '../../infectious-disease/demo/meningitis-imaging-demonstration';
+import { useMeconiumTransitionDemonstration } from '../../neonatology/demo/useMeconiumTransitionDemonstration';
+import { supportsMeconiumTransitionDemonstration } from '../../neonatology/demo/meconium-stained-transition-demonstration';
 import { useNeonatalBradycardiaDemonstration } from '../../neonatology/demo/useNeonatalBradycardiaDemonstration';
 import { supportsNeonatalBradycardiaDemonstration } from '../../neonatology/demo/neonatal-bradycardia-demonstration';
 import { useIneffectiveVentilationDemonstration } from '../../neonatology/demo/useIneffectiveVentilationDemonstration';
@@ -298,6 +300,7 @@ export function Cockpit({
   const possibleSepsisDemoSupported = supportsPossibleSepsisDemonstration(scenario);
   const septicShockLabelDemoSupported = supportsSepticShockLabelDemonstration(scenario);
   const meningitisImagingDemoSupported = supportsMeningitisImagingDemonstration(scenario);
+  const meconiumTransitionDemoSupported = supportsMeconiumTransitionDemonstration(scenario);
   const neonatalBradycardiaDemoSupported = supportsNeonatalBradycardiaDemonstration(scenario);
   const ineffectiveVentilationDemoSupported = supportsIneffectiveVentilationDemonstration(scenario);
   const neonatalApneaDemoSupported = supportsNeonatalApneaDemonstration(scenario);
@@ -342,7 +345,8 @@ export function Cockpit({
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
-    || neonatalBradycardiaDemoSupported;
+    || neonatalBradycardiaDemoSupported
+    || meconiumTransitionDemoSupported;
   const scenarioDemoSupported = hypoglycemiaDemoSupported || adrenalDemoSupported
     || thyroidDemoSupported || myxedemaDemoSupported || observedStateDemoSupported;
   const inductionDemonstration = useDemonstration({
@@ -424,6 +428,12 @@ export function Cockpit({
   const renalHyponatremiaDemonstration = useRenalHyponatremiaDemonstration({
     active: demonstrating && renalHyponatremiaDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyponatremia,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const meconiumTransitionDemonstration = useMeconiumTransitionDemonstration({
+    active: demonstrating && meconiumTransitionDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.neonatologyMeconiumTransitionAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const neonatalBradycardiaDemonstration = useNeonatalBradycardiaDemonstration({
@@ -633,7 +643,8 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypermagnesemia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = neonatalBradycardiaDemoSupported ? neonatalBradycardiaDemonstration
+  const demonstration = meconiumTransitionDemoSupported ? meconiumTransitionDemonstration
+    : neonatalBradycardiaDemoSupported ? neonatalBradycardiaDemonstration
     : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
@@ -1343,6 +1354,8 @@ export function Cockpit({
           septicShockLabelDemonstrating={demonstrating && septicShockLabelDemoSupported}
           meningitisImagingGuidance={session.guidance}
           meningitisImagingDemonstrating={demonstrating && meningitisImagingDemoSupported}
+          neonatologyMeconiumGuidance={session.guidance}
+          neonatologyMeconiumDemonstrating={demonstrating && meconiumTransitionDemoSupported}
           neonatologyBradycardiaGuidance={session.guidance}
           neonatologyBradycardiaDemonstrating={demonstrating && neonatalBradycardiaDemoSupported}
           neonatologyIneffectiveVentilationGuidance={session.guidance}
