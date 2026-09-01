@@ -130,7 +130,15 @@ describe('respiratory medicine module foundation', () => {
         scenarioId,
         contentVersion: '0.1.0',
       }));
-      expect(catalog.scenarios.filter((entry) => entry.moduleId === moduleId)).toHaveLength(15);
+      // One entry per scenario PLUS any superseded version still published.
+      //
+      // The report catalog is append-only by design: an old version stays listed
+      // so a report filed against it still resolves to the evidence it was filed
+      // against. Correcting a citation is a content change, so four scenarios
+      // moved to 0.1.1 and their 0.1.0 rows remain. Counting distinct scenario
+      // ids rather than rows is what this assertion always meant.
+      expect(new Set(catalog.scenarios.filter((entry) => entry.moduleId === moduleId)
+        .map((entry) => entry.scenarioId)).size).toBe(15);
       expect(catalog.scenarios).toContainEqual(expect.objectContaining({
         moduleId, scenarioId: transitionScenarioId, contentVersion: '0.1.0',
       }));

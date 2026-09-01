@@ -396,10 +396,29 @@ describe('Renal and electrolyte medicine module foundation', () => {
       expect(reports.scenarios).toContainEqual(expect.objectContaining({ moduleId: 'renal-electrolyte', scenarioId: metadata.id,
         contentVersion: metadata.version, maturity: 'preview' }));
     }
-    expect(reports.scenarios).toHaveLength(250);
+    // Rows, not scenarios: 240 scenarios ship, and the report catalog is
+    // append-only so a superseded version stays listed and a report filed
+    // against it still resolves to the evidence it was filed against. It held
+    // 250 rows; correcting a citation is a content change, so four scenarios
+    // moved to 0.1.1 and their 0.1.0 rows remain beside them.
+    expect(reports.scenarios).toHaveLength(254);
     // Every earlier module's published evidence must survive a later module launch byte for byte.
-    const prior218 = reports.scenarios.filter((entry: { moduleId: string }) => entry.moduleId !== 'infectious-disease'
-      && entry.moduleId !== 'medical-surgical-nursing' && entry.moduleId !== 'oncology');
+    // The four rows added by the citation correction are excluded here, not
+    // because they do not count, but because this assertion is about the rows
+    // that were ALREADY published staying byte for byte identical. Appending a
+    // 0.1.1 row beside a 0.1.0 row does not disturb the 0.1.0 row, and the hash
+    // below is what proves it; including the new rows would only prove they are
+    // new. Their own presence is asserted by the length check above.
+    const corrected = new Set([
+      'anesthesia:perioperative-hyperglycemia',
+      'cardiology:stable-chest-pain-evaluation',
+      'cardiology:stemi-recognition-and-first-actions',
+      'respiratory-medicine:oxygen-device-failure',
+    ]);
+    const prior218 = reports.scenarios.filter((entry: { moduleId: string; scenarioId: string; contentVersion: string }) =>
+      entry.moduleId !== 'infectious-disease'
+      && entry.moduleId !== 'medical-surgical-nursing' && entry.moduleId !== 'oncology'
+      && !(corrected.has(`${entry.moduleId}:${entry.scenarioId}`) && entry.contentVersion === '0.1.1'));
     expect(prior218).toHaveLength(218);
     const prior217 = prior218.filter((entry: { moduleId: string; scenarioId: string }) =>
       !(entry.moduleId === 'renal-electrolyte' && entry.scenarioId === 'hypermagnesemia-antagonism-and-removal'));

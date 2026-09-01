@@ -114,6 +114,10 @@ describe('Requirement: A Prose Page Primary Action Is Easy To Tap', () => {
   it('keeps the primary link at the comfortable touch-target minimum', () => {
     expect(componentsCss).toMatch(/\.button--primary \{[^}]*min-block-size: 44px/s);
     expect(componentsCss).toMatch(/\.button \{[^}]*min-block-size: 44px/s);
-    expect(componentsCss).toMatch(/\.button--compact \{[^}]*min-block-size: 40px/s);
+    // Compact is a NARROWER button, not a shorter one. This asserted 40px, which
+    // is under the minimum the rest of this test enforces, and it is the size of
+    // the Silence control on the alarm rail and the confirm/cancel pairs in the
+    // tray: the controls a learner reaches for while something is going wrong.
+    expect(componentsCss).toMatch(/\.button--compact \{[^}]*min-block-size: 44px/s);
   });
 });

@@ -35,8 +35,16 @@ describe('Report-safe briefing and endocrine reading layout', () => {
   ])('wraps the full %s section headings instead of truncating the instruction', (id, file) => {
     const tray = readFileSync(join(root, 'src/modules/endocrine-metabolic', file!), 'utf8');
     expect(tray.match(new RegExp(`className="syringe ${id}__section"`, 'g'))).toHaveLength(3);
-    expect(cockpitCss).toContain('.thyroid-storm__section .syringe__name, .myxedema__section .syringe__name, .hypercalcemia__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }');
-    expect(cockpitCss).toContain('.thyroid-storm__section .crisis-drug__actions, .myxedema__section .crisis-drug__actions, .hypercalcemia__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }');
+    // Wrapping is the DEFAULT now, not a per-module override.
+    //
+    // Thirteen modules had each added their own copy of these two rules as the
+    // truncating default bit them in turn. That is the codebase saying the
+    // default was wrong, so it was inverted and the thirteen copies deleted.
+    // Asserted on the base selector, which covers every module including any
+    // written after this.
+    expect(cockpitCss).toMatch(/\.syringe__name \{[^}]*white-space: normal/);
+    expect(cockpitCss).toMatch(/\.syringe__name \{[^}]*overflow-wrap: anywhere/);
+    expect(cockpitCss).toContain('.crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }');
     expect(cockpitCss).toContain(`.${id}__section .button[aria-disabled='true']`);
   });
 });
@@ -201,7 +209,13 @@ describe('Requirement: Sacrifice Order Is Explicit', () => {
     const landscape = cockpitCss.slice(
       cockpitCss.indexOf('@media (max-height: 499px) and (orientation: landscape)'),
     );
-    expect(landscape).toContain('.monitor__tiles .vital-tile__limits,');
+    // The LIMITS are sacrificed. The reason is not, and used to be: the same
+    // rule hid `.vital-tile__reason`, which is the only place the interface ever
+    // says why a vital reads `--`. Limits are numbers with another route through
+    // the Patient tab; the reason has no route at any width, so a learner on a
+    // landscape phone saw a dash and nothing that explained it.
+    expect(landscape).toContain('.monitor__tiles .vital-tile__limits { display: none; }');
+    expect(landscape).not.toMatch(/\.monitor__tiles \.vital-tile__reason[^}]*display: none/);
   });
 });
 
@@ -268,9 +282,24 @@ describe('Requirement: No Layout Shift During Simulation', () => {
     expect(componentsCss).toMatch(/@keyframes alarm-flash-high \{[^}]*opacity/);
   });
 
-  it('Scenario: Long text does not reflow a tray', () => {
-    expect(cockpitCss).toContain('text-overflow: ellipsis');
-    expect(cockpitCss).toMatch(/\.syringe__name \{[^}]*white-space: nowrap/);
+  /**
+   * A tray card grows downward for long text; it does not reflow the tray.
+   *
+   * This used to assert the opposite: that `.syringe__name` was `nowrap` with an
+   * ellipsis. That kept the card one line tall and cut 223 teaching sentences to
+   * about their first 25 characters, at every viewport width, because the tray
+   * column is capped by the grid's auto-fit minimum rather than by the window.
+   * A card is allowed to be taller than its neighbours; it is not allowed to
+   * hide the sentence that is the point of it.
+   *
+   * The no-reflow guarantee that matters is still asserted, one row down: the
+   * tray's own geometry comes from the grid template and not from its contents.
+   */
+  it('Scenario: Long text grows a card rather than being cut off', () => {
+    expect(cockpitCss).toMatch(/\.syringe__name \{[^}]*white-space: normal/);
+    expect(cockpitCss).not.toMatch(/\.syringe__name \{[^}]*text-overflow: ellipsis/);
+    // The tray keeps sizing from its template, so a taller card does not move it.
+    expect(cockpitCss).toContain('grid-template-columns: repeat(auto-fit, minmax(240px, 1fr))');
   });
 });
 
@@ -342,7 +371,10 @@ describe('Requirement: Cockpit Is Fully Operable Without A Mouse', () => {
     expect(componentsCss).toMatch(/\.icon-button \{[^}]*inline-size: 44px[^}]*block-size: 44px/s);
     // The vital value doubles as the "explain why" control. A `--` reading is
     // two characters wide, so the control needs a floor of its own.
-    expect(componentsCss).toMatch(/button\.vital-tile__value \{[^}]*min-inline-size: 44px[^}]*min-block-size: 40px/s);
+    // Both axes at 44px. The width was already right and the height was 40px,
+    // directly under a comment in the stylesheet citing the target-size
+    // requirement it did not meet.
+    expect(componentsCss).toMatch(/button\.vital-tile__value \{[^}]*min-inline-size: 44px[^}]*min-block-size: 44px/s);
     // Control height steps between the two densities using scale values only.
     expect(CONTROL_HEIGHT.comfortable).toBe(40);
     expect(CONTROL_HEIGHT.compact).toBe(32);

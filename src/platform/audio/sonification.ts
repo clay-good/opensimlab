@@ -70,6 +70,19 @@ export interface BurstPattern {
   readonly burstsPerCycle: number;
 }
 
+/**
+ * How long one complete cycle of a pattern occupies, including its pause.
+ *
+ * `burstIntervalSeconds` is the intended gap between the START of one cycle and
+ * the next, so a pattern with more than one burst per cycle needs the bursts
+ * themselves counted before the gap can mean what it says.
+ */
+export function cycleSeconds(pattern: BurstPattern): number {
+  const burst = burstDurationSeconds(pattern);
+  const spacing = burst + pattern.gapSeconds * 2;
+  return Math.max((pattern.burstsPerCycle - 1) * spacing + burst, pattern.burstIntervalSeconds);
+}
+
 export const ALARM_BURSTS: Record<'high' | 'medium' | 'low', BurstPattern> = {
   // High priority: ten pulses, as two bursts of five, repeating quickly.
   high: {
@@ -235,7 +248,15 @@ export class SonificationEngine {
     if (!context || !this.settings.enabled || !this.alarmGain) return;
     const pattern = ALARM_BURSTS[priority];
     const now = context.currentTime;
-    if (now - this.lastAlarmBurstAt < pattern.burstIntervalSeconds) return;
+    // Gate on the whole CYCLE, not on `burstIntervalSeconds` alone.
+    //
+    // High priority is two bursts of five: one burst runs 0.84s, the second
+    // starts at 0.96s and ends at 1.80s, and the gate re-fired at 1.2s. Two
+    // oscillator trains therefore overlapped every cycle and high priority was
+    // not the 5-then-5-then-pause pattern the comment above describes; it was a
+    // continuous tone. That is the single loudest thing in the product, and it
+    // was a rounding error rather than a decision.
+    if (now - this.lastAlarmBurstAt < cycleSeconds(pattern)) return;
     this.lastAlarmBurstAt = now;
 
     for (let burst = 0; burst < pattern.burstsPerCycle; burst += 1) {

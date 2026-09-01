@@ -394,6 +394,23 @@
       "limitationManifestHash": "sha256:06cf46693d70ed8981d9c9cc234300b75793b5fc9c4135755c443d275fa18c7c"
     },
     {
+      "scenarioId": "perioperative-hyperglycemia",
+      "contentVersion": "0.1.1",
+      "moduleId": "anesthesia",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:d90646fc04a3df8126bd4652aa454ea2396b81d4807c6b20f9053222947d8416",
+      "defaultsHash": "sha256:61303d82fe83ee8f735dbf2bb487ac2cd4de90c562980b25761a0bf020121874",
+      "maturityHash": "sha256:d28dadf0ce341f9f9e342a79ca5e7ae8f704b20d794db90dbb784d9b4d5b4f2f",
+      "sourceManifestHash": "sha256:9bd2ae5dfa5b8edf636c33032685ddf80fb501475bf4223b89754ff31aaa1f0c",
+      "limitationManifestHash": "sha256:06cf46693d70ed8981d9c9cc234300b75793b5fc9c4135755c443d275fa18c7c"
+    },
+    {
       "scenarioId": "persistent-vf-cardiac-arrest",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
@@ -870,6 +887,23 @@
       "limitationManifestHash": "sha256:a99a1c9212cdafe6d940f0efded882041a4c38b0f6126f5bb7fd0b743899a059"
     },
     {
+      "scenarioId": "stable-chest-pain-evaluation",
+      "contentVersion": "0.1.1",
+      "moduleId": "cardiology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:5dddce6da8aaaa82964a44454441c4ffaa8113d4fdb6258fee4b6feccc84020f",
+      "defaultsHash": "sha256:18cd5a3cb62d27d2cb972b222dadcccc8f327af6a2ba39bf9386ba9996d6d954",
+      "maturityHash": "sha256:11948c55c1a110a8d4d31b1571e5ad53c6a744e65d9c52b6e9ed0cb1c45790b1",
+      "sourceManifestHash": "sha256:7315f109adad210fcea64439245a607a249f3ecafd5b9e115d9da910488ebcd2",
+      "limitationManifestHash": "sha256:a99a1c9212cdafe6d940f0efded882041a4c38b0f6126f5bb7fd0b743899a059"
+    },
+    {
       "scenarioId": "stemi-recognition-and-first-actions",
       "contentVersion": "0.1.0",
       "moduleId": "cardiology",
@@ -884,6 +918,23 @@
       "defaultsHash": "sha256:e0d74d15c952676f975e78acaa694d89202523c22cafe0e12699e7907ca0ff39",
       "maturityHash": "sha256:f4154184c38404a6e3a2b38c87944c541b6d80b1139fbdb457e7b72d9efefc5c",
       "sourceManifestHash": "sha256:93b5827182791d9174742a0255e4c63ed56be5326eb50650d916e228777b6873",
+      "limitationManifestHash": "sha256:4e0d07f09820a555d943a7c7f4b64c225361d7dea5988cddeb8b783e8dc4fc88"
+    },
+    {
+      "scenarioId": "stemi-recognition-and-first-actions",
+      "contentVersion": "0.1.1",
+      "moduleId": "cardiology",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:8b4647fce9fa7ddba239ca388f07e306f898e95707caaa23ab516c4ea7b398f3",
+      "defaultsHash": "sha256:e0d74d15c952676f975e78acaa694d89202523c22cafe0e12699e7907ca0ff39",
+      "maturityHash": "sha256:62e38491ba7e125875d7f4dc8f6ded098bbc106f67e9775980e39bbd3b7ec955",
+      "sourceManifestHash": "sha256:3b62b010994021a08e51055c13c7393afe7a93b8d34a053ac7136bcb2f5b94ac",
       "limitationManifestHash": "sha256:4e0d07f09820a555d943a7c7f4b64c225361d7dea5988cddeb8b783e8dc4fc88"
     },
     {
@@ -3961,6 +4012,23 @@
       "defaultsHash": "sha256:b5ba3f5fb584b27b70f71627117f47f8601909b898f79ea68cd11cd692c2774f",
       "maturityHash": "sha256:3724fcbd0266cf50eb8d13b98ca5e0d75797f6acfd77cec124f0cb690aec0b48",
       "sourceManifestHash": "sha256:96f264a252d54b3c000950637ef70771ddb1c626091c8e90dc525d6eeef3ebfa",
+      "limitationManifestHash": "sha256:abf3561f62a722302129df07c9721ddaa01dfc0781c8cec2f030727ca7aa0bf2"
+    },
+    {
+      "scenarioId": "oxygen-device-failure",
+      "contentVersion": "0.1.1",
+      "moduleId": "respiratory-medicine",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:b3f65f721822e016c3fbcf7d5f7b3d46a04f62f596ef49fb58c0d0b0128f1817",
+      "defaultsHash": "sha256:b5ba3f5fb584b27b70f71627117f47f8601909b898f79ea68cd11cd692c2774f",
+      "maturityHash": "sha256:a81f92703fc70dd5498e8bfa678e1569287ea683bab9fca6238632939dc65451",
+      "sourceManifestHash": "sha256:d1c8d43d6e19afcd043b19344a06792389c08629394068608c9f3ee4f54fc401",
       "limitationManifestHash": "sha256:abf3561f62a722302129df07c9721ddaa01dfc0781c8cec2f030727ca7aa0bf2"
     },
     {

@@ -147,14 +147,14 @@
       ]
     },
     {
-      "recordId": "scenario:oxygen-device-failure@0.1.0",
+      "recordId": "scenario:oxygen-device-failure@0.1.1",
       "subjectKind": "scenario",
       "subjectId": "oxygen-device-failure",
-      "contentVersion": "0.1.0",
+      "contentVersion": "0.1.1",
       "status": "preview",
       "evidence": [
-        "/catalog/respiratory-medicine-completion-audit.json#oxygen-device-failure@0.1.0",
-        "/catalog/respiratory-medicine-quality-audit.json#oxygen-device-failure@0.1.0"
+        "/catalog/respiratory-medicine-completion-audit.json#oxygen-device-failure@0.1.1",
+        "/catalog/respiratory-medicine-quality-audit.json#oxygen-device-failure@0.1.1"
       ]
     },
     {

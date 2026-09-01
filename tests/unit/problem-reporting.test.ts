@@ -170,9 +170,14 @@ describe('scenario report contract', () => {
     expect(catalog.evidenceAlgorithm).toBe('scenario-evidence-v1');
     // 229, not 228: septic shock carries records for both 0.1.0 and 0.1.1, so a report filed
     // against the published version still resolves after a content-version bump.
-    expect(catalog.scenarios).toHaveLength(250);
+    // Rows, not scenarios: 240 scenarios ship, and the report catalog is
+    // append-only so a superseded version stays listed and a report filed
+    // against it still resolves to the evidence it was filed against. It held
+    // 250 rows; correcting a citation is a content change, so four scenarios
+    // moved to 0.1.1 and their 0.1.0 rows remain beside them.
+    expect(catalog.scenarios).toHaveLength(254);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(250);
+      .toBe(254);
     for (const contentVersion of ['0.1.0', '0.1.1', '0.1.2']) {
       expect(catalog.scenarios).toContainEqual(expect.objectContaining({
         moduleId: 'endocrine-metabolic', scenarioId: 'adrenal-crisis-treatment-before-tests', contentVersion,

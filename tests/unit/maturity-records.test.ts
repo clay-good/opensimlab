@@ -153,8 +153,11 @@ describe('exact-version maturity records', () => {
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'escalating-hypoxemia', '0.1.0',
     )?.status).toBe('preview');
+    // 0.1.1: this scenario cited the JACC printing of the 2021 chest-pain
+    // guideline under the Circulation volume and pages. Correcting the citation
+    // is a content change, so the maturity record follows the version.
     expect(maturityFor(
-      cardiologyCatalog, 'scenario', 'stable-chest-pain-evaluation', '0.1.0',
+      cardiologyCatalog, 'scenario', 'stable-chest-pain-evaluation', '0.1.1',
     )?.status).toBe('preview');
     expect(maturityFor(
       pediatricsCatalog, 'scenario', 'pediatric-respiratory-distress', '0.1.0',

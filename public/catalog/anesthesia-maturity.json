@@ -400,14 +400,14 @@
       ]
     },
     {
-      "recordId": "scenario:perioperative-hyperglycemia@0.1.0",
+      "recordId": "scenario:perioperative-hyperglycemia@0.1.1",
       "subjectKind": "scenario",
       "subjectId": "perioperative-hyperglycemia",
-      "contentVersion": "0.1.0",
+      "contentVersion": "0.1.1",
       "status": "preview",
       "evidence": [
-        "/catalog/anesthesia-completion-audit.json#perioperative-hyperglycemia@0.1.0",
-        "/catalog/anesthesia-quality-audit.json#perioperative-hyperglycemia@0.1.0"
+        "/catalog/anesthesia-completion-audit.json#perioperative-hyperglycemia@0.1.1",
+        "/catalog/anesthesia-quality-audit.json#perioperative-hyperglycemia@0.1.1"
       ]
     },
     {

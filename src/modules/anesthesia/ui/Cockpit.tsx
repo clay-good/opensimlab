@@ -623,9 +623,17 @@ export function Cockpit({
   }, [session.tick, audio, session.state, session.waveformBlocks.length]);
 
   useEffect(() => {
-    const highest = session.alarms[0];
+    // The highest-priority alarm that is NOT silenced.
+    //
+    // This took `session.alarms[0]` and sounded it regardless. A silenced alarm
+    // stays in `active` by design, carrying a countdown, so pressing Silence (or
+    // the `a` hotkey) changed the chip text and nothing else: the tone kept
+    // playing for the full two minutes. The learner's only mitigation control
+    // did nothing to the thing they were trying to mitigate.
+    const highest = session.alarms.find((alarm) => alarm.silencedUntilTick === null
+      || alarm.silencedUntilTick <= session.tick);
     if (soundOn && highest) audio.alarm(highest.priority);
-  }, [session.alarms, audio]);
+  }, [session.alarms, session.tick, audio, soundOn]);
 
   // Guidance is presentational. It reads state the engine produced anyway and
   // never feeds anything back, which is what makes the trajectory identical at
@@ -2036,6 +2044,30 @@ export function Cockpit({
           onInject={(crisisId) => session.act({ type: 'inject-crisis', payload: { crisisId } })}
         />
       </Drawer>
+
+      {/* An engine error the worker reported.
+          Nothing read `session.error`. The worker sends one for every
+          `EngineError`, `InvalidScenario`, `NotInitialized` and
+          `ProtocolMismatch`, and the store dutifully recorded it into state that
+          no component consumed. The visible result was worse than a crash: the
+          worker stops emitting, the traces and vitals freeze, and the main-thread
+          clock keeps counting up, so the screen reads as a working simulator
+          showing a stable patient. A learner would draw a clinical conclusion
+          from a picture that had stopped being computed.
+
+          Hard worker death already had a surface; this is the soft path, and it
+          says the same true thing: the patient on screen is no longer live. */}
+      {session.error && session.phase !== 'worker-lost' && (
+        <Modal open title="The simulation stopped computing" dismissible={false}
+          footer={<Button variant="primary" onClick={session.resetSession}>Start this scenario again</Button>}>
+          <p>
+            The physiology engine reported an error and has stopped advancing.{' '}
+            <strong>The patient on screen is frozen, not stable.</strong> Nothing shown after this
+            point reflects a running simulation, so please do not read a clinical conclusion from it.
+          </p>
+          <p className="field__hint">Reported as: {session.error.code}. {session.error.message}</p>
+        </Modal>
+      )}
 
       {session.phase === 'worker-lost' && (
         <Modal open title="The simulation engine stopped" dismissible={false}

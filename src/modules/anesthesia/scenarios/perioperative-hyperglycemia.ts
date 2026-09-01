@@ -5,7 +5,7 @@ import type { Scenario } from './types';
 export const PERIOPERATIVE_HYPERGLYCEMIA: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'perioperative-hyperglycemia', version: '0.1.0', maturity: 'preview',
+    id: 'perioperative-hyperglycemia', version: '0.1.1', maturity: 'preview',
     title: 'Perioperative hyperglycemia', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'introductory',
     objectives: [
@@ -28,7 +28,7 @@ export const PERIOPERATIVE_HYPERGLYCEMIA: Scenario = {
     clinicalReview: {
       reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED',
       competingInterests: 'None declared', reviewedOn: '1970-01-01', reviewBy: '1970-01-01',
-      contentVersion: '0.1.0', sources: [
+      contentVersion: '0.1.1', sources: [
         'American Diabetes Association Professional Practice Committee. Diabetes Care in the Hospital: Standards of Care in Diabetes—2026. Diabetes Care. 2026;49(Suppl 1):S339-S355.',
         'Korytkowski MT, et al. Management of Hyperglycemia in Hospitalized Adult Patients in Non-Critical Care Settings: An Endocrine Society Clinical Practice Guideline. J Clin Endocrinol Metab. 2022;107:2101-2128. PMID 35690958.',
       ],

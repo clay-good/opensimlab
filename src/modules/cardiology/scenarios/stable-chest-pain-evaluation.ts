@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const STABLE_CHEST_PAIN_EVALUATION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'stable-chest-pain-evaluation', version: '0.1.0', maturity: 'preview',
+    id: 'stable-chest-pain-evaluation', version: '0.1.1', maturity: 'preview',
     title: 'Stable chest-pain evaluation', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 7, difficulty: 'introductory', objectives: [
       { id: 'verify-stable-chest-pain-trajectory', statement: 'Verify stability and screen the fixed history for acute or changing features.', measure: 'Duration, trigger, relief, recent change, rest symptoms, associated features, and acute escalation triggers were reviewed.' },
@@ -16,7 +16,7 @@ export const STABLE_CHEST_PAIN_EVALUATION: Scenario = {
     ],
     clinicalReview: { reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED',
       competingInterests: 'None declared', reviewedOn: '1970-01-01', reviewBy: '1970-01-01',
-      contentVersion: '0.1.0', sources: [
+      contentVersion: '0.1.1', sources: [
         'Gulati M, Levy PD, Mukherjee D, et al. 2021 AHA/ACC/ASE/CHEST/SAEM/SCCT/SCMR Guideline for the Evaluation and Diagnosis of Chest Pain. Circulation. 2021;144:e368-e454. PMID:34709928.',
         'Vrints C, Andreotti F, Koskinas KC, et al. 2024 ESC Guidelines for the management of chronic coronary syndromes. Eur Heart J. 2024;45:3415-3537. PMID:39210710.',
       ] },

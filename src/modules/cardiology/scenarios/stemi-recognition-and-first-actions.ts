@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const STEMI_RECOGNITION_AND_FIRST_ACTIONS: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'stemi-recognition-and-first-actions', version: '0.1.0', maturity: 'preview',
+    id: 'stemi-recognition-and-first-actions', version: '0.1.1', maturity: 'preview',
     title: 'STEMI recognition and first actions', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 7, difficulty: 'introductory', objectives: [
       { id: 'reconcile-clinic-stemi-pattern', statement: 'Reconcile the ongoing symptom trajectory with the fixed diagnostic 12-lead report.', measure: 'Onset, persistence, associated symptoms, ECG report, and current physiology were reviewed together.' },
@@ -16,7 +16,7 @@ export const STEMI_RECOGNITION_AND_FIRST_ACTIONS: Scenario = {
     ],
     clinicalReview: { reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED',
       competingInterests: 'None declared', reviewedOn: '1970-01-01', reviewBy: '1970-01-01',
-      contentVersion: '0.1.0', sources: [
+      contentVersion: '0.1.1', sources: [
         'Rao SV, O’Donoghue ML, Ruel M, et al. 2025 ACC/AHA/ACEP/NAEMSP/SCAI Guideline for the Management of Patients With Acute Coronary Syndromes. Circulation. 2025;151:e771-e862. PMID:40014670. doi:10.1161/CIR.0000000000001309.',
         'Jacobs AK, Ali MJ, Best PJ, et al. Systems of Care for ST-Segment-Elevation Myocardial Infarction: A Policy Statement From the American Heart Association. Circulation. 2021;144:e310-e327. PMID:34641735. doi:10.1161/CIR.0000000000001025.',
         'Hewett Brumberg EK, Douma MJ, Alibertis K, et al. 2024 American Heart Association and American Red Cross Guidelines for First Aid. Circulation. 2024;150:e519-e579. PMID:39540278. doi:10.1161/CIR.0000000000001281.',

@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   ALARM_BURSTS, DEFAULT_AUDIO_SETTINGS, EXTENDED_CUES, MAX_SIMULTANEOUS_CUES, PULSE_TONE,
-  burstDurationSeconds, pulseToneFrequency,
+  burstDurationSeconds, cycleSeconds, pulseToneFrequency,
 } from '@platform/audio/sonification';
 import { AUDIO_EVENTS, AUDIO_VISUAL_PAIRS } from '@platform/audio/audio-visual-pairs';
 
@@ -54,6 +54,16 @@ describe('Requirement: Alarm Tones Follow The Clinical Standard', () => {
       expect(pattern.frequencyHz).toBeGreaterThanOrEqual(150);
       expect(pattern.frequencyHz).toBeLessThanOrEqual(1000);
       expect(burstDurationSeconds(pattern)).toBeLessThan(pattern.burstIntervalSeconds);
+      // And the whole CYCLE finishes before the next one starts. The line above
+      // measures one burst, so a pattern with two bursts per cycle passed it
+      // while overlapping itself: high priority occupies 1.80s and its gate
+      // re-fired at 1.2s, which turned five-then-five-then-pause into a
+      // continuous tone. The loudest thing in the product was a rounding error
+      // that looked like a design decision.
+      const spacing = burstDurationSeconds(pattern) + pattern.gapSeconds * 2;
+      const occupied = (pattern.burstsPerCycle - 1) * spacing + burstDurationSeconds(pattern);
+      expect(cycleSeconds(pattern), 'a cycle re-fires while still sounding')
+        .toBeGreaterThanOrEqual(occupied);
     }
   });
 });

@@ -4,25 +4,25 @@
   "recordCount": 17,
   "records": [
     {
-      "recordId": "scenario:stable-chest-pain-evaluation@0.1.0",
+      "recordId": "scenario:stable-chest-pain-evaluation@0.1.1",
       "subjectKind": "scenario",
       "subjectId": "stable-chest-pain-evaluation",
-      "contentVersion": "0.1.0",
+      "contentVersion": "0.1.1",
       "status": "preview",
       "evidence": [
-        "/catalog/cardiology-completion-audit.json#stable-chest-pain-evaluation@0.1.0",
-        "/catalog/cardiology-quality-audit.json#stable-chest-pain-evaluation@0.1.0"
+        "/catalog/cardiology-completion-audit.json#stable-chest-pain-evaluation@0.1.1",
+        "/catalog/cardiology-quality-audit.json#stable-chest-pain-evaluation@0.1.1"
       ]
     },
     {
-      "recordId": "scenario:stemi-recognition-and-first-actions@0.1.0",
+      "recordId": "scenario:stemi-recognition-and-first-actions@0.1.1",
       "subjectKind": "scenario",
       "subjectId": "stemi-recognition-and-first-actions",
-      "contentVersion": "0.1.0",
+      "contentVersion": "0.1.1",
       "status": "preview",
       "evidence": [
-        "/catalog/cardiology-completion-audit.json#stemi-recognition-and-first-actions@0.1.0",
-        "/catalog/cardiology-quality-audit.json#stemi-recognition-and-first-actions@0.1.0"
+        "/catalog/cardiology-completion-audit.json#stemi-recognition-and-first-actions@0.1.1",
+        "/catalog/cardiology-quality-audit.json#stemi-recognition-and-first-actions@0.1.1"
       ]
     },
     {

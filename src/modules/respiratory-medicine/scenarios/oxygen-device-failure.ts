@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const OXYGEN_DEVICE_FAILURE: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'oxygen-device-failure', version: '0.1.0', maturity: 'preview',
+    id: 'oxygen-device-failure', version: '0.1.1', maturity: 'preview',
     title: 'Portable oxygen source failure', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 7, difficulty: 'intermediate', objectives: [
       { id: 'reconcile-oxygen-device-failure-patient-signal-and-delivery', statement: 'Reconcile the authored person, pulse-coherent saturation trend, spontaneous breathing, circulation, and expected oxygen delivery.', measure: 'True deterioration was recognized without treating an attached cannula or selected flow as proof that oxygen reached the patient.' },
@@ -17,7 +17,7 @@ export const OXYGEN_DEVICE_FAILURE: Scenario = {
     ],
     clinicalReview: { reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED',
       competingInterests: 'None declared', reviewedOn: '1970-01-01', reviewBy: '1970-01-01',
-      contentVersion: '0.1.0', sources: [
+      contentVersion: '0.1.1', sources: [
         'NHS England. Use of oxygen cylinders where patients do not have access to medical gas pipeline systems. National Patient Safety Alert NatPSA/2023/001/NHSPS. 2023.',
         'O\u2019Driscoll BR, Howard LS, Earis J, Mak V. BTS guideline for oxygen use in adults in healthcare and emergency settings. BMJ Open Respir Res. 2017;4:e000170. PMID 28883921. doi:10.1136/bmjresp-2016-000170.',
         'World Health Organization. Technical specifications for health facility based medical oxygen systems. 2024. ISBN 978-92-4-010161-6.',

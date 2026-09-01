@@ -51,7 +51,9 @@
 .button--ghost:hover:not(:disabled) { background: var(--surface-2); }
 .button--danger { border-color: var(--alarm-critical); color: var(--alarm-critical-text); }
 .button--danger:hover:not(:disabled) { background: var(--alarm-critical-bg); }
-.button--compact { min-block-size: 40px; padding: 0 var(--space-3); }
+/* Compact is a narrower button, not a shorter one. 44px, because this is the
+   Silence control on the alarm rail and the confirm/cancel pairs in the tray. */
+.button--compact { min-block-size: 44px; padding: 0 var(--space-3); }
 
 /* --- IconButton --------------------------------------------------------- */
 .icon-button {
@@ -133,7 +135,9 @@
   border-radius: var(--radius-control);
 }
 .segmented__option {
-  min-block-size: 40px;
+  /* Both floors at 44px. The width was already right; the height was not, and
+     this is the speed selector and the curriculum framework picker. */
+  min-block-size: 44px;
   min-inline-size: 44px;
   padding: 0 var(--space-3);
   border: 1px solid transparent;
@@ -185,7 +189,10 @@ textarea.field__input {
   resize: vertical;
 }
 .field__input, .select {
-  min-block-size: var(--control-height);
+  /* 44px, not `--control-height`. That token is 40px and drops to 32px under
+     compact density, and these are the fields a learner has to hit to type. The
+     token still drives the cockpit's own dense controls; a form field opts out. */
+  min-block-size: max(var(--control-height), 44px);
   padding: 0 var(--space-3);
   background: var(--surface-input);
   border: 1px solid var(--line-strong);
@@ -399,36 +406,88 @@ textarea.field__input {
 .banner--warning { background: var(--alarm-warning-bg); border-color: var(--alarm-warning); }
 .banner--advisory { background: var(--alarm-advisory-bg); border-color: var(--alarm-advisory); }
 
+/* The alarm rail.
+ *
+ * It collapses to nothing and opens to one row. `min-block-size`, not
+ * `block-size`: at a fixed 48px with `overflow: hidden` the rail CROPPED its own
+ * contents. A composed message runs to about 66 characters
+ * (`alarms.ts` builds `message: label value unit`), and on a phone, where the
+ * monitor is the only region rendered, that wrapped to four lines inside a 48px
+ * box and half the alarm text was painted outside it. Past two or three
+ * concurrent alarms the remainder were invisible entirely, including their
+ * Silence buttons, and the burden condition the engine models is precisely the
+ * case where more than five are active at once.
+ *
+ * So the rail keeps its 48px resting height, and grows when the alarm it is
+ * carrying needs the room. It is an `auto` row in the monitor grid, so growing
+ * costs the traces height and displaces nothing.
+ */
 .alarm-rail {
   display: flex;
+  flex-wrap: wrap;
   align-items: stretch;
+  align-content: start;
   gap: var(--space-2);
-  overflow: hidden;
   block-size: 0;
+  overflow: hidden;
   transition: block-size var(--motion-standard) var(--ease);
 }
 .alarm-rail[data-active='true'] { block-size: var(--alarm-rail-height); }
+/* The growth the fixed height cannot give. Declared after, so it wins, and left
+   as a separate rule so the collapse transition above stays exactly as it was. */
+.alarm-rail[data-active='true'] { block-size: auto; min-block-size: var(--alarm-rail-height); overflow: visible; }
 .alarm-rail__item {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: 0 var(--space-3);
+  /* Was `0 var(--space-3)`, which gave a wrapped message no room to breathe. */
+  padding: var(--space-2) var(--space-3);
+  /* Grow into the row, shrink no further than something readable, and wrap the
+     message rather than letting it be clipped. */
+  flex: 1 1 22rem;
+  min-inline-size: 0;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-control);
   font: var(--type-label);
   letter-spacing: var(--type-label-tracking);
 }
+.alarm-rail__message { flex: 1; min-inline-size: 0; overflow-wrap: anywhere; }
+
+/* The marker that carries the flash.
+ *
+ * The whole chip used to flash: border, tint, text, priority word, and the
+ * Silence button inside it, on a hard square wave at 50% duty. That is a
+ * strobing panel roughly 58% of the viewport wide, and reading the message meant
+ * reading through it. Real monitors do the opposite: the message sits still in a
+ * coloured status area and a small dedicated lamp does the flashing.
+ *
+ * So does this. The rate is unchanged and still comes from the same token, the
+ * flashing AREA is about two orders of magnitude smaller, and the text beside it
+ * is now continuously legible. */
+.alarm-rail__pulse {
+  flex: none;
+  inline-size: 10px;
+  block-size: 10px;
+  border-radius: var(--radius-pill);
+  background: currentcolor;
+}
 .alarm-rail__item[data-priority='high'] {
   border-color: var(--alarm-critical);
   background: var(--alarm-critical-bg);
   color: var(--alarm-critical-text);
-  animation: alarm-flash-high var(--alarm-flash-high-period) steps(1, end) infinite;
+  border-inline-start-width: 3px;
+}
+.alarm-rail__item[data-priority='high'] .alarm-rail__pulse {
+  animation: alarm-flash-high var(--alarm-flash-high-period) var(--ease) infinite;
 }
 .alarm-rail__item[data-priority='medium'] {
   border-color: var(--alarm-warning);
   background: var(--alarm-warning-bg);
   color: var(--alarm-warning);
-  animation: alarm-flash-medium var(--alarm-flash-medium-period) steps(1, end) infinite;
+  border-inline-start-width: 2px;
+}
+.alarm-rail__item[data-priority='medium'] .alarm-rail__pulse {
+  animation: alarm-flash-medium var(--alarm-flash-medium-period) var(--ease) infinite;
 }
 .alarm-rail__item[data-priority='low'] {
   border-color: var(--alarm-advisory);
@@ -440,21 +499,27 @@ textarea.field__input {
   letter-spacing: var(--type-micro-tracking);
   text-transform: uppercase;
   opacity: 0.9;
+  flex: none;
 }
 
 /* 2 Hz for high priority and 0.6 Hz for medium, both inside the IEC 60601-1-8
  * bands. The animation only toggles opacity, so no layout moves. */
-@keyframes alarm-flash-high { 0% { opacity: 1; } 50% { opacity: 0.45; } }
-@keyframes alarm-flash-medium { 0% { opacity: 1; } 50% { opacity: 0.6; } }
+/* Eased, and a shallower swing than the 1 -> 0.45 square wave this replaced.
+   A hard 55% luminance step across a large area is what reads as a strobe; the
+   same period as a smooth 35% swing on a 10px dot still reads as urgent and
+   alive. The period is untouched and still comes from the token. */
+@keyframes alarm-flash-high { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+@keyframes alarm-flash-medium { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-/* Reduced motion replaces flashing with a static treatment that still
- * distinguishes the three priorities by fill, border weight, and the priority
- * word, which is always present in the markup. */
+/* Reduced motion holds the marker still and changes nothing else.
+ *
+ * Priority is already coded three ways without motion: the fill, the leading
+ * border weight, and the priority word, all present by default rather than
+ * substituted in here. That is what makes this fork small: turning the pulse off
+ * costs a visitor nothing they needed, instead of removing the only channel and
+ * having to replace it. */
 @media (prefers-reduced-motion: reduce) {
-  .alarm-rail__item { animation: none !important; }
-  .alarm-rail__item[data-priority='high'] { border-width: 3px; }
-  .alarm-rail__item[data-priority='medium'] { border-width: 2px; }
-  .alarm-rail__item[data-priority='low'] { border-width: 1px; }
+  .alarm-rail__pulse { animation: none !important; }
 }
 
 /* --- VitalTile ------------------------------------------------------------ */
@@ -496,7 +561,9 @@ textarea.field__input {
    target narrower than anyone can hit (platform/accessibility → target size). */
 button.vital-tile__value {
   min-inline-size: 44px;
-  min-block-size: 40px;
+  /* The comment directly above cites the target-size requirement and the height
+     did not meet it. Both axes now do. */
+  min-block-size: 44px;
   text-align: start;
 }
 .vital-tile__value[data-invalid='true'] { color: var(--text-tertiary); }
@@ -773,5 +840,7 @@ button.vital-tile__value {
   font: var(--type-body);
   color: var(--text-secondary);
   padding: var(--space-2) var(--space-3);
+  /* 707 of these are the whole navigation of the limitations register. */
+  min-block-size: 44px;
 }
 .disclosure--group .disclosure .disclosure__summary:hover { color: var(--text-primary); }

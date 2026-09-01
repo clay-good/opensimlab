@@ -39,7 +39,7 @@
 .problem-report__form { display: grid; gap: var(--space-4); }
 .problem-report__label-short { display: none; }
 .problem-report__count { justify-self: end; }
-.problem-report__warning { color: var(--critical-text); }
+.problem-report__warning { color: var(--alarm-critical-text); }
 .problem-report__context-choice { display: flex; gap: var(--space-2); align-items: flex-start; }
 .problem-report__context-choice input { inline-size: 1.25rem; block-size: 1.25rem; flex: 0 0 auto; }
 .problem-report__preview {
@@ -59,7 +59,7 @@
   padding: var(--space-2);
   border-radius: var(--radius-control);
   background: var(--surface-1);
-  font: var(--type-code);
+  font: var(--type-micro); font-family: var(--font-mono);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }

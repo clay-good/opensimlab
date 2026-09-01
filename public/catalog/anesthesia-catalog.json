@@ -800,7 +800,7 @@
       "id": "perioperative-hyperglycemia",
       "path": "/anesthesia/scenario/perioperative-hyperglycemia",
       "title": "Perioperative hyperglycemia",
-      "contentVersion": "0.1.0",
+      "contentVersion": "0.1.1",
       "estimatedMinutes": 8,
       "difficulty": "introductory",
       "maturity": "preview",

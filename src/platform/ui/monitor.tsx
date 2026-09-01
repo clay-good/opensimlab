@@ -140,7 +140,22 @@ export function WaveformCanvas({
   useLayoutEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return undefined;
-    const renderer = new SweepRenderer(canvas, rendererColors());
+    // A 2D context can genuinely be unavailable: a canvas-blocking privacy
+    // extension, Firefox's resistFingerprinting, or simply exhausting the
+    // browser's context limit, and the cockpit mounts several canvases. The
+    // constructor throws in that case, and a throw inside a layout effect
+    // propagates to the nearest ErrorBoundary, which replaces the ENTIRE
+    // simulator with an error page because one trace could not paint.
+    //
+    // The two sibling call sites in this file and in the landing hero both
+    // already return quietly instead. This one now matches them: no traces, and
+    // a cockpit that still works.
+    let renderer: SweepRenderer;
+    try {
+      renderer = new SweepRenderer(canvas, rendererColors());
+    } catch {
+      return undefined;
+    }
     rendererRef.current = renderer;
 
     const loop = (time: number) => {
@@ -356,10 +371,14 @@ export function AlarmRail({ alarms, tick, onSilence }: {
           : null;
         return (
           <div key={alarm.id} className="alarm-rail__item" data-priority={alarm.priority}>
+            {/* The only thing on the rail that moves. Decorative: the priority is
+                already stated in the word beside it, so a screen reader that
+                ignored this would lose nothing. */}
+            <span className="alarm-rail__pulse" aria-hidden="true" />
             <span className="alarm-rail__priority-word">
               {alarm.priority === 'high' ? 'High' : alarm.priority === 'medium' ? 'Medium' : 'Low'}
             </span>
-            <span>{alarm.message}</span>
+            <span className="alarm-rail__message">{alarm.message}</span>
             {remaining !== null
               ? <span className="alarm-rail__priority-word">silenced {remaining}s</span>
               : (

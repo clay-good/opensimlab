@@ -18,7 +18,7 @@
         "GB"
       ],
       "fidelityClass": "state_transition",
-      "contentVersion": "0.1.0",
+      "contentVersion": "0.1.1",
       "capabilityVersion": "0.1.0-alpha.48",
       "maturity": "preview",
       "complete": false,
@@ -27,7 +27,7 @@
           "id": "identity-and-versions",
           "status": "satisfied",
           "evidence": [
-            "Scenario stable-chest-pain-evaluation carries stable content version 0.1.0.",
+            "Scenario stable-chest-pain-evaluation carries stable content version 0.1.1.",
             "Capability version 0.1.0-alpha.48 is bound by this audit."
           ]
         },
@@ -144,7 +144,7 @@
         "GB"
       ],
       "fidelityClass": "state_transition",
-      "contentVersion": "0.1.0",
+      "contentVersion": "0.1.1",
       "capabilityVersion": "0.1.0-alpha.48",
       "maturity": "preview",
       "complete": false,
@@ -153,7 +153,7 @@
           "id": "identity-and-versions",
           "status": "satisfied",
           "evidence": [
-            "Scenario stemi-recognition-and-first-actions carries stable content version 0.1.0.",
+            "Scenario stemi-recognition-and-first-actions carries stable content version 0.1.1.",
             "Capability version 0.1.0-alpha.48 is bound by this audit."
           ]
         },

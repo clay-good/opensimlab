@@ -7,7 +7,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Button, Select, SiteBar, useLocalPreference } from '@platform/ui';
+import { Button, SiteBar, useLocalPreference } from '@platform/ui';
 import {
   useSession, sessionInternals, type GuidanceLevel, type SessionState,
 } from '@platform/session/session-store';
@@ -122,20 +122,12 @@ import { Debrief } from '@anesthesia/ui/Debrief';
 import { assertTranscriptIsAnonymous, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
 import { MaturityMarker } from '@platform/governance/MaturityMarker';
-import {
-  EMPTY_CATALOG_QUERY,
-  catalogQueryString,
-  filterCatalog,
-  hasCatalogFilters,
-  readCatalogQuery,
-  type CatalogQuery,
-} from '@anesthesia/catalog/query';
-import {
-  PREPARATION_PATHS,
-  pathMinutes,
-  preparationPath,
-  recommendNextScenario,
-} from '@anesthesia/catalog/preparation-paths';
+// Only the goal parameter survives from the catalogue query module. The rest of
+// it drove the `Find a scenario` panel, which was removed so that every module's
+// index reads the same; the module itself is still used by the assignment-link
+// path, which carries `?goal=` from an educator.
+import { readCatalogQuery } from '@anesthesia/catalog/query';
+import { preparationPath, recommendNextScenario } from '@anesthesia/catalog/preparation-paths';
 import { completedScenarioIds, loadPracticeHistory } from '@anesthesia/catalog/practice-history';
 // The goal-path and catalog features below are anesthesia-only; the other twelve
 // modules no longer reach this file, so their catalogues stay in their own chunks.
@@ -1145,188 +1137,56 @@ function EmergencyMedicineScenarioIndex({ config }: { config: ClinicalModuleConf
   );
 }
 
+/**
+ * The anaesthesia catalogue, rendered exactly like the other fourteen.
+ *
+ * It used to carry a `Find a scenario` panel that no other module had: a
+ * preparation-path picker, a search box, and difficulty, duration and maturity
+ * selects. Three problems with it. The selects overflowed their container, so it
+ * looked broken. Every filter but one was a no-op in practice, because all 255
+ * items in this build carry the same maturity. And it made anaesthesia the
+ * module with the special catalogue, which is the same thing the front door was
+ * changed to stop saying: a visitor arriving at anaesthesia and then at oncology
+ * met two different products.
+ *
+ * Fifteen scenarios is a list you read, not a corpus you query. The shared index
+ * below is what every other module shows, and it is what this shows now.
+ */
 export function ScenarioIndex() {
-  const [query, setQuery] = useState<CatalogQuery>(() => readCatalogQuery(
-    typeof location === 'undefined' ? '' : location.search,
-  ));
-  const scenarios = filterCatalog(scenariosByDifficulty(), query);
-  const selectedPath = query.goal === 'all' ? null : preparationPath(query.goal);
-  const recommendation = selectedPath
-    ? recommendNextScenario(selectedPath, scenariosByDifficulty())
-    : null;
-  const updateQuery = (next: CatalogQuery) => {
-    setQuery(next);
-    if (typeof history !== 'undefined') {
-      history.replaceState(null, '', `/anesthesia${catalogQueryString(next)}`);
-    }
-  };
-  const scenarioHref = (id: string) => `/anesthesia/scenario/${id}${
-    query.goal === 'all' ? '' : `?goal=${query.goal}`
-  }`;
   return (
     <>
       <SiteBar current="/anesthesia" />
       <main className="reading" id="main">
-      <h1>Anesthesia simulator</h1>
-      <p>
-        Each scenario is a patient and a problem. Find the one that matches what you want to
-        practise, or start at the top if this is your first one.
-      </p>
-      <section className="catalog-controls" aria-labelledby="catalog-controls-title">
-        <h2 id="catalog-controls-title" className="catalog-controls__title">Find a scenario</h2>
-        <Select
-          label="What are you preparing for?"
-          value={query.goal}
-          onChange={(event) => updateQuery({
-            ...query, goal: event.target.value as CatalogQuery['goal'],
-          })}
-          options={[
-            { value: 'all', label: 'Show me everything' },
-            ...PREPARATION_PATHS.map((path) => ({ value: path.id, label: path.title })),
-          ]}
-        />
-        {selectedPath && recommendation && (
-          <div className="catalog-path">
-            <div>
-              <p className="catalog-path__eyebrow">Your private practice path</p>
-              <h3>{selectedPath.title}</h3>
-              <p>{selectedPath.description}</p>
-            </div>
-            <dl className="catalog-path__facts">
-              <div><dt>Plan</dt><dd>{selectedPath.scenarioIds.length} scenarios · {pathMinutes(selectedPath, scenariosByDifficulty())} minutes</dd></div>
-              <div>
-                <dt>Start here</dt>
-                <dd>
-                  <a href={scenarioHref(recommendation.scenario.metadata.id)}>
-                    {recommendation.scenario.metadata.title}
-                  </a>
-                  <MaturityMarker
-                    compact
-                    status={recommendation.scenario.metadata.maturity}
-                    subjectKind="scenario"
-                    subjectId={recommendation.scenario.metadata.id}
-                    contentVersion={recommendation.scenario.metadata.version}
-                  />
-                </dd>
-              </div>
-              <div><dt>Why</dt><dd>{recommendation.reason}</dd></div>
-            </dl>
-            <div className="catalog-path__competencies" aria-label="Path goals">
-              {selectedPath.targetCompetencies.map((competency) => (
-                <span className="chip" key={competency}>{competency}</span>
-              ))}
-            </div>
-            <p className="field__hint">Assumes: {selectedPath.prerequisites.join(' ')}</p>
-            <p className="reading__aside">{selectedPath.limitations}</p>
-            <p className="field__hint">Nothing is locked. Choose “Show me everything” at any time.</p>
-          </div>
-        )}
-        <div className="catalog-controls__grid">
-          <div className="field catalog-controls__search">
-            <label className="field__label" htmlFor="scenario-search">Patient, problem, or skill</label>
-            <input
-              id="scenario-search"
-              className="field__input"
-              type="search"
-              maxLength={80}
-              value={query.q}
-              placeholder="Try airway, child, hemorrhage…"
-              onChange={(event) => updateQuery({ ...query, q: event.target.value.slice(0, 80) })}
-            />
-          </div>
-          <Select
-            label="Difficulty"
-            value={query.difficulty}
-            onChange={(event) => updateQuery({
-              ...query, difficulty: event.target.value as CatalogQuery['difficulty'],
-            })}
-            options={[
-              { value: 'all', label: 'Any difficulty' },
-              { value: 'introductory', label: 'Introductory' },
-              { value: 'intermediate', label: 'Intermediate' },
-              { value: 'advanced', label: 'Advanced' },
-            ]}
-          />
-          <Select
-            label="Duration"
-            value={query.duration}
-            onChange={(event) => updateQuery({
-              ...query, duration: event.target.value as CatalogQuery['duration'],
-            })}
-            options={[
-              { value: 'all', label: 'Any duration' },
-              { value: 'under-10', label: 'Under 10 minutes' },
-              { value: '10-plus', label: '10 minutes or more' },
-            ]}
-          />
-          <Select
-            label="Maturity"
-            value={query.maturity}
-            onChange={(event) => updateQuery({
-              ...query, maturity: event.target.value as CatalogQuery['maturity'],
-            })}
-            options={[
-              { value: 'all', label: 'Any maturity' },
-              { value: 'draft', label: 'Draft' },
-              { value: 'preview', label: 'Preview' },
-              { value: 'source_checked', label: 'Sources checked' },
-              { value: 'clinically_reviewed', label: 'Clinically reviewed' },
-              { value: 'institution_endorsed', label: 'Institution endorsed' },
-              { value: 'withdrawn', label: 'Withdrawn' },
-            ]}
-          />
-        </div>
-        <div className="catalog-controls__summary">
-          <span role="status" aria-live="polite">
-            <strong>{scenarios.length}</strong> {scenarios.length === 1 ? 'scenario' : 'scenarios'}
-          </span>
-          {hasCatalogFilters(query) && (
-            <Button compact variant="ghost" onClick={() => updateQuery(EMPTY_CATALOG_QUERY)}>
-              Clear filters
-            </Button>
-          )}
-        </div>
-        <noscript>
-          <p className="field__hint">
-            Filtering needs JavaScript. Every scenario is still listed below and each briefing
-            works as a standalone page.
-          </p>
-        </noscript>
-      </section>
-      {scenarios.length > 0 && (
+        <p className="catalog-path__eyebrow">Your private practice lab</p>
+        <h1>Anesthesia simulator</h1>
+        <p>
+          Each scenario is a patient and a problem. Start at the top if this is your first one.
+        </p>
         <ul className="scenario-index">
-          {scenarios.map((entry) => (
-          <li key={entry.metadata.id} className="scenario-index__item">
-            <a className="scenario-index__title" href={scenarioHref(entry.metadata.id)}>
-              {entry.metadata.title}
-            </a>
-            <p className="scenario-index__patient">
-              {entry.patient.ageYears}-year-old {patientPersonNoun(entry.patient)},
-              {' '}ASA {entry.patient.asaClass}, for {entry.patient.procedure.toLowerCase()}.
-              {' '}About {entry.metadata.estimatedMinutes} simulated minutes.
-            </p>
-            <p className="scenario-index__teaches">
-              {entry.metadata.objectives[0]?.statement}
-            </p>
-            <span className="badge">{entry.metadata.difficulty}</span>
-            <MaturityMarker
-              status={entry.metadata.maturity}
-              subjectKind="scenario"
-              subjectId={entry.metadata.id}
-              contentVersion={entry.metadata.version}
-            />
-          </li>
+          {scenariosByDifficulty().map((entry) => (
+            <li key={entry.metadata.id} className="scenario-index__item">
+              <a className="scenario-index__title" href={`/anesthesia/scenario/${entry.metadata.id}`}>
+                {entry.metadata.title}
+              </a>
+              <p className="scenario-index__patient">
+                {entry.patient.ageYears}-year-old {patientPersonNoun(entry.patient)},
+                {' '}ASA {entry.patient.asaClass}, for {entry.patient.procedure.toLowerCase()}.
+                {' '}About {entry.metadata.estimatedMinutes} simulated minutes.
+              </p>
+              <p className="scenario-index__teaches">
+                {entry.metadata.objectives[0]?.statement}
+              </p>
+              <span className="badge">{entry.metadata.difficulty}</span>
+              <MaturityMarker
+                status={entry.metadata.maturity}
+                subjectKind="scenario"
+                subjectId={entry.metadata.id}
+                contentVersion={entry.metadata.version}
+              />
+            </li>
           ))}
         </ul>
-      )}
-      {scenarios.length === 0 && (
-        <div className="catalog-empty">
-          <h2>No scenarios match yet</h2>
-          <p>Try a broader word or clear a filter. Nothing has been hidden from the catalog.</p>
-          <Button onClick={() => updateQuery(EMPTY_CATALOG_QUERY)}>Show all scenarios</Button>
-        </div>
-      )}
-      <p className="reading__aside">{NOT_FOR_CLINICAL_USE}</p>
+        <p className="reading__aside">{NOT_FOR_CLINICAL_USE}</p>
       </main>
     </>
   );

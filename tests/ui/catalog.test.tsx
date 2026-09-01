@@ -3,48 +3,69 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it } from 'vitest';
 import { SCENARIOS } from '@anesthesia/scenarios';
 import { ScenarioIndex } from '@routes/AnesthesiaRoute';
+import { OncologyRoute } from '@routes/modules/oncology';
 
 afterEach(() => history.replaceState(null, '', '/'));
 
+/**
+ * Anaesthesia's index is the same index every other module has.
+ *
+ * It used to carry a `Find a scenario` panel that no other module had: a
+ * preparation-path picker, a search box, and difficulty, duration and maturity
+ * selects, with URL state behind them. The selects overflowed their container so
+ * it looked broken; every filter but one was a no-op because all 255 items in
+ * this build carry the same maturity; and it made anaesthesia the module with
+ * the special catalogue, so a visitor arriving at anaesthesia and then at
+ * oncology met two different products.
+ *
+ * These tests used to assert that panel existed. They now assert it does not,
+ * and that the two indexes agree, which is the property that was actually
+ * wanted: a learner should not have to relearn the page per specialty.
+ */
 describe('scenario catalog', () => {
-  it('prerenders every scenario and its discovery controls for search and no-script readers', () => {
+  it('prerenders every scenario for search and no-script readers', () => {
     history.replaceState(null, '', '/anesthesia');
     const markup = renderToStaticMarkup(<ScenarioIndex />);
-    expect(markup).toContain('Find a scenario');
-    expect(markup).toContain('Patient, problem, or skill');
-    expect(markup).toContain('Filtering needs JavaScript');
     expect(markup.match(/class="scenario-index__item"/g)).toHaveLength(SCENARIOS.length);
     for (const scenario of SCENARIOS) {
       expect(markup).toContain(`/anesthesia/scenario/${scenario.metadata.id}`);
+      expect(markup).toContain(scenario.metadata.title);
     }
   });
 
-  it('restores a shared filtered URL without hiding the way back to all scenarios', () => {
-    history.replaceState(null, '', '/anesthesia?q=pediatric&difficulty=introductory');
+  it('carries no filter panel, so every module index reads the same', () => {
+    history.replaceState(null, '', '/anesthesia');
     const markup = renderToStaticMarkup(<ScenarioIndex />);
-    expect(markup).toContain('routine-pediatric-iv-induction');
-    expect(markup).not.toContain('/anesthesia/scenario/routine-induction"');
-    expect(markup).toContain('Clear filters');
+    for (const removed of [
+      'Find a scenario', 'Patient, problem, or skill', 'Clear filters',
+      'catalog-controls', 'Any difficulty', 'Any duration', 'Any maturity',
+      'Filtering needs JavaScript',
+    ]) {
+      expect(markup, `${removed} is back on the anaesthesia index`).not.toContain(removed);
+    }
   });
 
-  it('turns a chosen goal into a finite, honest, non-locking plan', () => {
-    history.replaceState(null, '', '/anesthesia?goal=first-lab');
+  it('shows the whole list whatever query string it is given', () => {
+    // The filter state used to live in the URL, so a stale shared link could
+    // hide most of the catalogue. Nothing is hidden from anyone now.
+    history.replaceState(null, '', '/anesthesia?q=not-a-clinical-concept&difficulty=advanced');
     const markup = renderToStaticMarkup(<ScenarioIndex />);
-    expect(markup).toContain('Your private practice path');
-    expect(markup).toContain('My first simulation lab');
-    expect(markup).toContain('5 scenarios · 52 minutes');
-    expect(markup).toContain('Recommended because you chose');
-    expect(markup).toContain('does not assess psychomotor technique');
-    expect(markup).toContain('Nothing is locked');
-    expect(markup).toContain('#scenario:routine-induction@0.1.0');
-    expect(markup).toContain('/anesthesia/scenario/routine-induction?goal=first-lab');
+    expect(markup.match(/class="scenario-index__item"/g)).toHaveLength(SCENARIOS.length);
+    expect(markup).not.toContain('No scenarios match yet');
   });
 
-  it('offers a calm recovery when no scenario matches', () => {
-    history.replaceState(null, '', '/anesthesia?q=not-a-clinical-concept');
-    const markup = renderToStaticMarkup(<ScenarioIndex />);
-    expect(markup).toContain('No scenarios match yet');
-    expect(markup).toContain('Show all scenarios');
-    expect(markup).not.toContain('class="scenario-index"');
+  it('renders the same structure as a peer module', () => {
+    history.replaceState(null, '', '/anesthesia');
+    const anesthesia = renderToStaticMarkup(<ScenarioIndex />);
+    history.replaceState(null, '', '/oncology');
+    const oncology = renderToStaticMarkup(<OncologyRoute path="/oncology" />);
+    for (const shared of [
+      'class="reading"', 'catalog-path__eyebrow', 'class="scenario-index"',
+      'class="scenario-index__item"', 'class="scenario-index__title"',
+      'class="scenario-index__patient"', 'class="scenario-index__teaches"',
+    ]) {
+      expect(anesthesia, `anaesthesia is missing ${shared}`).toContain(shared);
+      expect(oncology, `oncology is missing ${shared}`).toContain(shared);
+    }
   });
 });

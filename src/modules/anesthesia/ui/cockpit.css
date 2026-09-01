@@ -276,37 +276,28 @@
   border-radius: var(--radius-control);
   min-inline-size: 0;
 }
+/* The card's title wraps. It is not always a drug name.
+ *
+ * This was `nowrap` + `ellipsis`, written for short drug names, and then used
+ * 343 times, 223 of them for a full sentence that IS the teaching point of the
+ * card: `A calmer trace is a new snapshot, not permission to close.` The tray
+ * grid's column floors at 240px and the card's padding leaves about 216px, which
+ * holds roughly 25 characters at this size, so those sentences were cut at the
+ * first quarter with an ellipsis. Not a phone bug: it truncated identically at
+ * 360px and on a 2560px desktop, because the column width is capped by the
+ * auto-fit minimum rather than by the viewport.
+ *
+ * Thirteen modules had already overridden it one at a time as it bit each of
+ * them in turn. That is the codebase saying the default is wrong. */
 .syringe__name {
   font: var(--type-subtitle);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 .syringe__meta { font: var(--type-micro); color: var(--text-tertiary); }
-.thyroid-storm__section .syringe__name, .myxedema__section .syringe__name, .hypercalcemia__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
-.thyroid-storm__section .crisis-drug__actions, .myxedema__section .crisis-drug__actions, .hypercalcemia__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.hypocalcemia__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
-.hypocalcemia__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.sodium-correction__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
-.sodium-correction__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.avp-deficiency__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
-.avp-deficiency__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.refeeding__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
-.refeeding__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.perioperative-diabetes__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
-.perioperative-diabetes__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.renal-hyperkalemia__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
-.renal-hyperkalemia__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.renal-hypokalemia__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
-.renal-hypokalemia__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.renal-hypermagnesemia__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
-.renal-hypermagnesemia__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.renal-hypocalcemia__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
-.renal-hypocalcemia__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.renal-hypernatremia__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
-.renal-hypernatremia__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.renal-hyponatremia__section .syringe__name { white-space: normal; overflow-wrap: anywhere; }
-.renal-hyponatremia__section .crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+/* Confirm/Cancel pairs wrap rather than overflowing their card. Thirteen modules
+   declared this for themselves; it is the default now. */
+.crisis-drug__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .renal-hypermagnesemia__section .button[aria-disabled='true'],
 .renal-hypocalcemia__section .button[aria-disabled='true'],
 .renal-hypernatremia__section .button[aria-disabled='true'],
@@ -489,7 +480,23 @@
   .status-bar .segmented { display: none; }
   /* The simulator marker never leaves — it is a safety requirement, not chrome —
    * but it can shrink to its short form and give up its chip border. */
-  .status-bar__marker-long { display: none; }
+  /* CLIPPED, not `display: none`.
+     The short form beside it is `aria-hidden`, so hiding the long one with
+     `display: none` removed the marker from the accessibility tree completely
+     and a screen-reader user below 768px got nothing at all where a safety
+     marker belongs. The comment in StatusBar.tsx claims the full sentence stays
+     in the tree at every width; this is what makes that true. */
+  .status-bar__marker-long {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
   .status-bar__marker-short { display: inline; }
   .status-bar__clock { font: var(--type-title); letter-spacing: var(--type-title-tracking); flex: 0 0 auto; }
   .status-bar__reset { display: none; }
@@ -559,8 +566,12 @@
     padding-block: var(--space-2);
   }
   .monitor__tiles .vital-tile__value-row > .badge { flex-basis: auto; }
-  .monitor__tiles .vital-tile__limits,
-  .monitor__tiles .vital-tile__reason { display: none; }
+  /* The alarm LIMITS go; the reason stays.
+     The justification above argues for dropping the limits, which are numbers
+     with another route to them through the Patient tab. It never mentioned the
+     reason, and the reason has no other route at any width: a learner on a
+     landscape phone saw `--` where a vital should be and nothing said why. */
+  .monitor__tiles .vital-tile__limits { display: none; }
 }
 
 /* A lecture display uses the extra space for data rather than whitespace: the

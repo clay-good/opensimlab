@@ -356,7 +356,10 @@ body:has([aria-modal='true']) .update-notice--page { visibility: hidden; }
   text-transform: uppercase;
   color: var(--text-secondary);
   border-block-end: 1px solid var(--line);
-  white-space: nowrap;
+  /* Header text WRAPS. `white-space: nowrap` here set each column's minimum width
+     from a multi-word header, which forced horizontal scroll on tables that would
+     otherwise have fitted a 360px screen. It stays on `.numeric` below, where a
+     broken number really is worse than a narrow column. */
 }
 .reading td { color: var(--text-secondary); }
 /* A numeric column is as narrow as its digits; prose takes what is left. */
