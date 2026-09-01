@@ -107,6 +107,8 @@ import { supportsInheritedUrgency, type InheritedUrgencyAction } from '../../onc
 import { supportsTrialRule, type TrialRuleAction } from '../../oncology/trial-rule';
 import { supportsSilentInteraction, type SilentInteractionAction } from '../../oncology/silent-interaction';
 import { supportsEasyLabel, type EasyLabelAction } from '../../oncology/easy-label';
+import { dkaResolutionInlinePrompt } from '../../endocrine-metabolic/tutor/dka-resolution-guidance';
+import { hhsOsmolalityInlinePrompt } from '../../endocrine-metabolic/tutor/hhs-osmolality-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2783,6 +2785,8 @@ export interface ActionCockpitProps {
   readonly trialRuleGuidance?: GuidanceLevel;
   readonly silentInteractionGuidance?: GuidanceLevel;
   readonly easyLabelGuidance?: GuidanceLevel;
+  readonly endocrineDkaResolutionGuidance?: GuidanceLevel;
+  readonly endocrineHhsGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2820,6 +2824,8 @@ export interface ActionCockpitProps {
   readonly trialRuleDemonstrating?: boolean;
   readonly silentInteractionDemonstrating?: boolean;
   readonly easyLabelDemonstrating?: boolean;
+  readonly endocrineDkaResolutionDemonstrating?: boolean;
+  readonly endocrineHhsDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5758,10 +5764,16 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasEndocrineDkaResolutionResponse && (
               <EndocrineDkaResolutionTray assessment={props.resuscitation.endocrineDkaResolutionAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.endocrineDkaResolutionGuidance}
+                demonstrating={props.endocrineDkaResolutionDemonstrating}
                 onAction={props.onEndocrineDkaResolutionResponse ?? (() => {})} />
             )}
             {hasEndocrineHhsResponse && (
               <EndocrineHhsTray assessment={props.resuscitation.endocrineHhsAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.endocrineHhsGuidance}
+                demonstrating={props.endocrineHhsDemonstrating}
                 onAction={props.onEndocrineHhsResponse ?? (() => {})} />
             )}
             {hasAdrenalCrisisResponse && (
@@ -13665,10 +13677,15 @@ function NeonatologyTensionPneumothoraxTray({ assessment, onAction }: {
   </>;
 }
 
-function EndocrineDkaResolutionTray({ assessment, onAction }: {
+function EndocrineDkaResolutionTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['endocrineDkaResolutionAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onEndocrineDkaResolutionResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = dkaResolutionInlinePrompt(guidance, { scenarioVersion, dkaResolution: assessment });
+  const act = demonstrating ? undefined : onAction;
   const support = assessment?.supportAtTick != null;
   const context = assessment?.contextAtTick != null;
   const recognition = assessment?.recognitionAtTick != null;
@@ -13676,32 +13693,42 @@ function EndocrineDkaResolutionTray({ assessment, onAction }: {
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="endocrine-dka-resolution-now-title">
       <div id="endocrine-dka-resolution-now-title" className="syringe__name">Glucose is not the finish line.</div>
       <p className="syringe__remaining">{reassessment ? 'Supplied 4-hour report: glucose 162 mg/dL, ketones 0.4 mmol/L, pH 7.34, bicarbonate 19 mmol/L, potassium 3.8 mmol/L. Basal insulin was reported 2 hours earlier.' : 'Supplied after 8 hours of treatment: glucose 184 mg/dL, ketones 1.2 mmol/L, pH 7.32, bicarbonate 17 mmol/L, potassium 3.6 mmol/L, anion gap 10.'}</p>
       <p className="syringe__remaining">Read ketones and acid-base recovery alongside potassium, kidney function, intake, treatment continuity, access, preferences, and the whole person.</p>
       <div className="crisis-drug__actions">
-        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-dka-resolution-endocrine-nursing-pharmacy-electrolyte-nutrition-and-transition-support')}>Confirm prepared support</Button>}
-        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-dka-resolution-initial-triad-treatment-clock-current-ketone-acid-base-potassium-glucose-and-whole-person')}>Connect the whole trajectory</Button>}
-        {context && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-persistent-dka-despite-lower-glucose-and-closed-anion-gap')}>Recognize what remains open</Button>}
-        {recognition && !readiness && <Button className="crisis-drug__action" onClick={() => onAction('review-qualified-dka-insulin-dextrose-potassium-monitoring-resolution-and-bridged-transition-boundaries')}>Review qualified boundaries</Button>}
+        {!support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-dka-resolution-endocrine-nursing-pharmacy-electrolyte-nutrition-and-transition-support') : undefined}>Confirm prepared support</Button>}
+        {support && !context && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-dka-resolution-initial-triad-treatment-clock-current-ketone-acid-base-potassium-glucose-and-whole-person') : undefined}>Connect the whole trajectory</Button>}
+        {context && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-persistent-dka-despite-lower-glucose-and-closed-anion-gap') : undefined}>Recognize what remains open</Button>}
+        {recognition && !readiness && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-qualified-dka-insulin-dextrose-potassium-monitoring-resolution-and-bridged-transition-boundaries') : undefined}>Review qualified boundaries</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="endocrine-dka-resolution-later-title">
       <div id="endocrine-dka-resolution-later-title" className="syringe__name">Resolution needs a bridge, not a gap.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Recurrence, glucose, potassium, fluid, kidney, nutrition, access, education, follow-up, disposition, and outcome risks handed off.' : reassessment ? 'The supplied panel meets biochemical resolution criteria and the basal-overlap record is present. Durable safety, transition success, discharge, and outcomes remain open.' : readiness ? 'Qualified continuity and serial reassessment continue. Review the fixed report after time passes.' : support ? 'Prepared support is present. Connect the whole trajectory before deciding what has resolved.' : 'Begin with calm shared ownership. You can pause or leave this practice at any time.'}</p>
       <div className="crisis-drug__actions">
-        {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-dka-resolution-fixed-four-hour-qualified-report')}>Review the fixed 4-hour report</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-dka-recurrence-insulin-potassium-nutrition-precipitant-education-follow-up-and-outcome-risk')}>Hand off active recurrence risk</Button>}
+        {readiness && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-dka-resolution-fixed-four-hour-qualified-report') : undefined}>Review the fixed 4-hour report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-dka-recurrence-insulin-potassium-nutrition-precipitant-education-follow-up-and-outcome-risk') : undefined}>Hand off active recurrence risk</Button>}
       </div>
     </section>
   </>;
 }
 
-function EndocrineHhsTray({ assessment, onAction }: {
+function EndocrineHhsTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['endocrineHhsAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onEndocrineHhsResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = hhsOsmolalityInlinePrompt(guidance, { scenarioVersion, hhsOsmolality: assessment });
+  const act = demonstrating ? undefined : onAction;
   const support = assessment?.supportAtTick != null;
   const context = assessment?.contextAtTick != null;
   const recognition = assessment?.recognitionAtTick != null;
@@ -13709,22 +13736,27 @@ function EndocrineHhsTray({ assessment, onAction }: {
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="endocrine-hhs-now-title">
       <div id="endocrine-hhs-now-title" className="syringe__name">Follow the whole trajectory.</div>
       <p className="syringe__remaining">{reassessment ? 'Supplied 4-hour report: glucose 540 mg/dL, sodium 149 mmol/L, total osmolality 343 mOsm/kg, potassium 3.8 mmol/L. Urine output 0.4 mL/kg/h; cognition still below baseline.' : 'Supplied presentation: glucose 900 mg/dL, sodium 146 mmol/L, total osmolality 362 mOsm/kg, ketones 1.1 mmol/L, pH 7.36. Dehydration and cognitive change matter together.'}</p>
       <div className="crisis-drug__actions">
-        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-hhs-endocrine-resuscitation-nursing-renal-cardiac-and-monitoring-support')}>Confirm prepared support</Button>}
-        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-hhs-glucose-sodium-osmolality-ketone-perfusion-cognition-and-whole-person')}>Connect the whole trajectory</Button>}
-        {context && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-hhs-hyperosmolality-without-glucose-sodium-or-ketone-only-closure')}>Recognize the coupled pattern</Button>}
-        {recognition && !readiness && <Button className="crisis-drug__action" onClick={() => onAction('review-qualified-hhs-cautious-correction-osmolality-potassium-monitoring-and-harm-prevention')}>Review qualified boundaries</Button>}
+        {!support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-hhs-endocrine-resuscitation-nursing-renal-cardiac-and-monitoring-support') : undefined}>Confirm prepared support</Button>}
+        {support && !context && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-hhs-glucose-sodium-osmolality-ketone-perfusion-cognition-and-whole-person') : undefined}>Connect the whole trajectory</Button>}
+        {context && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-hhs-hyperosmolality-without-glucose-sodium-or-ketone-only-closure') : undefined}>Recognize the coupled pattern</Button>}
+        {recognition && !readiness && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-qualified-hhs-cautious-correction-osmolality-potassium-monitoring-and-harm-prevention') : undefined}>Review qualified boundaries</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="endocrine-hhs-later-title">
       <div id="endocrine-hhs-later-title" className="syringe__name">A falling number is not recovery.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Osmolality, cognition, urine output, fluid tolerance, electrolyte, precipitant, access, and outcome risks handed off.' : reassessment ? 'Glucose and osmolality fell while sodium rose. Persistent hyperosmolality, reduced urine output, and cognitive change keep resolution open.' : readiness ? 'Qualified cautious correction and surveillance continue. Review the fixed report after time passes.' : support ? 'Connect heart and kidney tolerance, cognition, intake, access, and the biochemical pattern.' : 'Begin with calm shared ownership. Pause or leave whenever you need.'}</p>
       <div className="crisis-drug__actions">
-        {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-hhs-fixed-four-hour-qualified-report')}>Review the fixed 4-hour report</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-hhs-osmolality-cognition-fluid-electrolyte-precipitant-and-outcome-risk')}>Hand off active risks</Button>}
+        {readiness && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-hhs-fixed-four-hour-qualified-report') : undefined}>Review the fixed 4-hour report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-hhs-osmolality-cognition-fluid-electrolyte-precipitant-and-outcome-risk') : undefined}>Hand off active risks</Button>}
       </div>
     </section>
   </>;

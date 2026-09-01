@@ -69,12 +69,23 @@ preview-channel blockers until it is. Updating the specification does not clear 
     `easy-label-a-label-that-fits-too-easily`. All 11 done. Every oncology scenario now carries an
     observed-state tutor and a worked example, leaving only the objectives cap and the two
     people-and-hardware requirements outstanding for the module.
-    Renal-electrolyte was already complete on this requirement. Endocrine-metabolic has it on ten
-    of twelve: `dka-resolution-transition` and `hhs-osmolality-trajectory` are an earlier
-    construction with action types and blocked-action guards but no snapshot in
-    `platform/kernel/protocol.ts`, so there is no observed state for a tutor or example to read.
-    Giving them one means adding engine state to two shipped scenarios, which is a larger change
-    than the pattern above and deserves its own. The pattern is an
+    Renal-electrolyte was already complete on this requirement. Endocrine-metabolic now has it on
+    all twelve. `dka-resolution-transition` and `hhs-osmolality-trajectory` were the two
+    outstanding, and the reason recorded here had gone stale: both already publish an assessment
+    snapshot through `platform/kernel/protocol.ts`, so no engine state was added to a shipped
+    scenario. What was missing was everything downstream of it. Each now has an observed-state
+    tutor, a worked example driven through the real engine to handoff, tray and cockpit wiring,
+    expert, ordering-error, recovery and no-action fixtures, and an exact-version completion
+    record. Both are held to their own lesson's restraint. The DKA pair never say whether this
+    patient has resolved before the learner's recognition step records it, and they point at the
+    ketone and the bicarbonate rather than the glucose that has already moved. The HHS pair refuse
+    the reassurance at both places that lesson offers it — the low ketones at presentation and the
+    three improved values in the later report — and neither says whether she is getting better.
+    Their prompts carry no external link for the same reason the oncology ones do not: these
+    scenarios declare full citations, and a URL built from one is a construction rather than a
+    lookup. Each of the two now fails only `observable-objectives` and the two
+    people-and-hardware requirements.
+    The pattern, now used by every scenario in both modules, is an
     observed-state tutor reading the learner's own recorded steps, a snapshot-driven worked
     example, tray and cockpit wiring, and a test that drives the example through the real engine
     to handoff rather than asserting it as a script. Each example also has to be held to its own

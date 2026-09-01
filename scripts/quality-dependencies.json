@@ -16,7 +16,7 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "260ed157473fd96b8868bffd62ec1912c12342c0f0fa473f60de678d95219034"
+        "sha256": "ba124e300f5c56288b41d1eddb350640716622d627f0c00b2cc31e172457a1c8"
       },
       {
         "path": "src/modules/anesthesia/engine.ts",
@@ -172,7 +172,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "c65202c11711558969efe963935992591ed85f2126ed3e2f304e00e989e34dee"
+        "sha256": "6d69856a4465f15167580717c6d9345c7cf0afeda19ada18af97c482e02e58f8"
       },
       {
         "path": "tests/integration/demonstration-runs.test.tsx",
@@ -221,7 +221,7 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "260ed157473fd96b8868bffd62ec1912c12342c0f0fa473f60de678d95219034"
+        "sha256": "ba124e300f5c56288b41d1eddb350640716622d627f0c00b2cc31e172457a1c8"
       },
       {
         "path": "src/modules/anesthesia/demo/useObservedDemonstration.ts",
@@ -241,11 +241,11 @@
       },
       {
         "path": "src/modules/anesthesia/ui/ActionCockpit.tsx",
-        "sha256": "1d1138a4a3854f08afe0ebb898cade4abdd66323dc33496829120b29c50f6ecc"
+        "sha256": "8cc4d0e6f9c3fd98281f9ced2149abd11d1e31d57d8847b43b3f91590c4c3d62"
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "e78829133878325c637b3765d12fb6dca3093bca05cc2b2415d1538d779a1377"
+        "sha256": "21e737b6148b6acab6a21714a5e862c843bf7ccb3a015dfe300723d21f28d68d"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
@@ -253,7 +253,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
-        "sha256": "7124f344cd54fcaa447d9b448d2b9a110194e3b118da33b988ed723095798d90"
+        "sha256": "827b678578522b70fea90800e404d6bd4798083ffec63318430b78b84f092243"
       },
       {
         "path": "src/modules/endocrine-metabolic/HyponatremiaCorrectionTray.tsx",
@@ -429,7 +429,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "c65202c11711558969efe963935992591ed85f2126ed3e2f304e00e989e34dee"
+        "sha256": "6d69856a4465f15167580717c6d9345c7cf0afeda19ada18af97c482e02e58f8"
       },
       {
         "path": "tests/integration/hyponatremia-correction-runs.test.ts",
@@ -482,7 +482,7 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "260ed157473fd96b8868bffd62ec1912c12342c0f0fa473f60de678d95219034"
+        "sha256": "ba124e300f5c56288b41d1eddb350640716622d627f0c00b2cc31e172457a1c8"
       },
       {
         "path": "src/modules/anesthesia/demo/useDemonstration.ts",
@@ -502,11 +502,11 @@
       },
       {
         "path": "src/modules/anesthesia/ui/ActionCockpit.tsx",
-        "sha256": "1d1138a4a3854f08afe0ebb898cade4abdd66323dc33496829120b29c50f6ecc"
+        "sha256": "8cc4d0e6f9c3fd98281f9ced2149abd11d1e31d57d8847b43b3f91590c4c3d62"
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "e78829133878325c637b3765d12fb6dca3093bca05cc2b2415d1538d779a1377"
+        "sha256": "21e737b6148b6acab6a21714a5e862c843bf7ccb3a015dfe300723d21f28d68d"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
@@ -518,7 +518,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
-        "sha256": "7124f344cd54fcaa447d9b448d2b9a110194e3b118da33b988ed723095798d90"
+        "sha256": "827b678578522b70fea90800e404d6bd4798083ffec63318430b78b84f092243"
       },
       {
         "path": "src/modules/anesthesia/ui/accessibility.ts",
@@ -694,7 +694,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "c65202c11711558969efe963935992591ed85f2126ed3e2f304e00e989e34dee"
+        "sha256": "6d69856a4465f15167580717c6d9345c7cf0afeda19ada18af97c482e02e58f8"
       },
       {
         "path": "tests/integration/avp-deficiency-demonstration-session.test.tsx",

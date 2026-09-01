@@ -47,23 +47,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "dka-resolution-fixtures.ts binds seed 4911 and content 0.1.0 to expert, ordering-error, recovery, and no-action paths. Both supplied panels and the 4-hour report are authored constants; no ketone, acid-base, or insulin-response model is claimed and no outcome follows from any choice. tests/integration/dka-resolution-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, and two of them are time-gated: the fixed report refuses until simulated time has passed since the continuity review, and the handoff refuses until time has passed since the report. What moves here is not the patient but which claim the record can support — the observations settle while the biochemical case does not."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions confirm qualified ownership, connect the first panel to the current one across the treatment clock, recognize what the resolution criteria are written in, review continuity and bridged-transition boundaries, read the fixed report, and hand off active risk. Order is enforced rather than suggested: recognizing before reconciling, or handing off before the report, is refused with the reason named. The lesson selects no drug, dose, rate, fluid, or nutrition."
           ]
         },
         {
@@ -75,23 +75,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at active-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no treatment effect, no independent insulin safety, no durable glucose or potassium stability, no resolved precipitant, no discharge readiness, and no outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both are held to the lesson's own restraint: neither states whether this patient has resolved before the learner's recognition step records it, and the example ends with the criteria met and the case open — a test asserts the closing narration withholds discharge readiness, durable stability, and outcome. tests/unit/endocrine-dka-resolution-demonstration.test.ts and tests/ui/endocrine-dka-resolution.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none of them and the expert path meets all six. Refused out-of-order attempts remain visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that closed on the glucose can still reach a correct handoff."
           ]
         },
         {
@@ -110,23 +110,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "dka-resolution-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 4911 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
@@ -173,23 +173,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "hhs-osmolality-fixtures.ts binds seed 4912 and content 0.1.0 to expert, ordering-error, recovery, and no-action paths. The presenting panel, the osmolality values and the 4-hour report are authored constants; no fluid, insulin or osmolality-response model is claimed, and the quoted average rates describe this authored contrast rather than a target. tests/integration/hhs-osmolality-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the fixed report refuses until simulated time has passed since the correction review, and the handoff refuses until time has passed since the report. What moves between them is which claim the record can support — three values improve while hyperosmolality, urine output and cognition do not."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions confirm qualified ownership, connect four days of symptoms to the panel, recognize hyperosmolar illness without closing on glucose, sodium or ketones alone, review what cautious correction must be followed by, read the fixed report, and hand off active risk. Order is enforced rather than suggested: recognizing before reconciling, or handing off before the report, is refused with the reason named. The lesson selects no fluid, insulin, dose, rate, or route."
           ]
         },
         {
@@ -201,23 +201,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at active-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no HHS resolution, no correction-safety claim between the two reports, no durable stability, no safe disposition, and no outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both are held to the lesson's own restraint: neither says whether she is improving, because this lesson can be failed twice with the same error — low ketones read as a mild illness, and three improved values read as recovery. A test asserts the closing narration names what is still moving and withholds resolution, durable stability, and outcome. tests/unit/endocrine-hhs-demonstration.test.ts and tests/ui/endocrine-hhs.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that read the low ketones as reassurance can still reach a correct handoff."
           ]
         },
         {
@@ -236,23 +236,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "hhs-osmolality-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 4912 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

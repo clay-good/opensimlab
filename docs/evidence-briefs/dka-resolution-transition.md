@@ -12,6 +12,24 @@ This Endocrine and Metabolic Medicine preview lesson owns the late-treatment que
 
 The sources differ in how they phrase the overlap window. This lesson authors basal insulin 2 hours before a later transition-readiness report, which sits inside both cited windows. It does not teach a universal product, dose, route, fluid, electrolyte-replacement plan, glucose target, nutrition plan, or disposition threshold.
 
+## Guidance and worked example
+
+Six observed-state prompts read the learner's own recorded steps and nothing else. They never
+announce whether this patient has resolved: that reading is what the recognition control records,
+and a tutor that supplied it would remove the lesson. Instead they name which two measurements the
+criteria are written in — the ketone and the bicarbonate — and keep the hyperchloremic explanation
+open, which the chloride of 112 mmol/L makes available. Unassisted is silent. Coached withholds the
+single non-urgent beat, the authored four-hour interval.
+
+The optional worked example (controller 0.1.0) performs the same six ordinary decisions through the
+real engine, pausing between each so the reading can happen at a stopped clock, and finishes at
+handoff. It reaches the resolution criteria only after the recognition step has recorded them. Its
+closing beat is deliberately not an arrival: the panel meets the criteria and one basal dose has
+overlapped one infusion, which is not proven insulin access, durable glucose or potassium
+stability, a resolved precipitant, or discharge readiness. A test asserts that closing narration
+withholds all four. The prompts carry no external link, because these sources are declared as full
+citations and a URL built from a citation is a construction rather than a lookup.
+
 ## Sources
 
 1. Umpierrez GE, Davis GM, ElSayed NA, et al. Hyperglycemic Crises in Adults With Diabetes: A Consensus Report. *Diabetes Care*. 2024;47(8):1257–1275. https://doi.org/10.2337/dci24-0032

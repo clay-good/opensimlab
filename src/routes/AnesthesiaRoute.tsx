@@ -117,6 +117,8 @@ import { supportsRenalHyponatremiaDemonstration } from '../modules/renal-electro
 import { renalHypokalemiaReportActions } from '../modules/renal-electrolyte/hypokalemia-reporting';
 import { supportsRenalHypokalemiaDemonstration } from '../modules/renal-electrolyte/demo/renal-hypokalemia-demonstration';
 import { supportsPerioperativeDiabetesDemonstration } from '../modules/endocrine-metabolic/demo/perioperative-diabetes-demonstration';
+import { supportsDkaResolutionDemonstration } from '../modules/endocrine-metabolic/demo/dka-resolution-demonstration';
+import { supportsHhsOsmolalityDemonstration } from '../modules/endocrine-metabolic/demo/hhs-osmolality-demonstration';
 import { Cockpit } from '@anesthesia/ui/Cockpit';
 import { Debrief } from '@anesthesia/ui/Debrief';
 import { assertTranscriptIsAnonymous, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
@@ -900,6 +902,18 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
     );
   }, [acknowledged, session, region.id, config.id, isIndex]);
 
+  /**
+   * Whether this lesson has a worked example to offer, asked once.
+   *
+   * The same long expression used to be written out at two sites, so every
+   * lesson shipping an example had to be added to both by hand. Naming it once
+   * is what makes adding the next one a single edit.
+   */
+  const workedExampleSupported = (config.id === 'endocrine-metabolic'
+      && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario) || supportsRefeedingDemonstration(scenario) || supportsPerioperativeDiabetesDemonstration(scenario)
+        || supportsDkaResolutionDemonstration(scenario) || supportsHhsOsmolalityDemonstration(scenario)))
+      || (config.id === 'renal-electrolyte' && (supportsRenalHyperkalemiaDemonstration(scenario) || supportsRenalHypokalemiaDemonstration(scenario) || supportsRenalHyponatremiaDemonstration(scenario) || supportsRenalHypernatremiaDemonstration(scenario) || supportsRenalHypocalcemiaDemonstration(scenario) || supportsRenalHypermagnesemiaDemonstration(scenario)));
+
   // `?demo=1`: skip the briefing and start watching. Fires once, only for the
   // scenario the script was authored against, and only once the session is
   // actually ready to run.
@@ -907,9 +921,10 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
     if (!autoDemo.current) return;
     if (session.phase !== 'briefing' && session.phase !== 'idle') return;
     if (!session.ready) return;
-    const endocrineDemo = (config.id === 'endocrine-metabolic'
-      && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario) || supportsRefeedingDemonstration(scenario) || supportsPerioperativeDiabetesDemonstration(scenario)))
-      || (config.id === 'renal-electrolyte' && (supportsRenalHyperkalemiaDemonstration(scenario) || supportsRenalHypokalemiaDemonstration(scenario) || supportsRenalHyponatremiaDemonstration(scenario) || supportsRenalHypernatremiaDemonstration(scenario) || supportsRenalHypocalcemiaDemonstration(scenario) || supportsRenalHypermagnesemiaDemonstration(scenario)));
+    // Named locally because two authored quality records quote this line as
+    // evidence of the shared transport default. Renaming it would rewrite their
+    // proof rather than their claim.
+    const endocrineDemo = workedExampleSupported;
     if (!endocrineDemo && (config.id !== 'anesthesia' || scenario.metadata.id !== DEMONSTRATION_SCENARIO_ID)) return;
     autoDemo.current = false;
     setDemonstrating(true);
@@ -1014,8 +1029,7 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
           }}
           {...(config.id === 'anesthesia' && scenario.metadata.id === DEMONSTRATION_SCENARIO_ID
             ? { onWatch: () => { setDemonstrating(true); session.setSpeed(5); session.play(); } }
-            : (config.id === 'endocrine-metabolic' && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario) || supportsRefeedingDemonstration(scenario) || supportsPerioperativeDiabetesDemonstration(scenario)))
-              || (config.id === 'renal-electrolyte' && (supportsRenalHyperkalemiaDemonstration(scenario) || supportsRenalHypokalemiaDemonstration(scenario) || supportsRenalHyponatremiaDemonstration(scenario) || supportsRenalHypernatremiaDemonstration(scenario) || supportsRenalHypocalcemiaDemonstration(scenario) || supportsRenalHypermagnesemiaDemonstration(scenario)))
+            : workedExampleSupported
             ? { onWatch: () => { setDemonstrating(true); session.setSpeed(60); session.play(); } }
             : {})}
           {...(assignment.label ? { assignmentLabel: assignment.label } : {})}

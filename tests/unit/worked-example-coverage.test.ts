@@ -3,8 +3,10 @@
  *
  * A claim about the product in the front-page documentation is exactly the kind
  * that rots quietly, so it is derived here from the same audit the build uses
- * rather than trusted. I got it wrong once already: the first draft of that
- * sentence said every endocrine lab had both, and two of the twelve do not.
+ * rather than trusted. It was wrong once already: an early draft said every
+ * endocrine lab had both while two of the twelve did not, and this test is what
+ * held the sentence back until they did. Both now do, so the stronger claim is
+ * allowed — and it stays allowed only while the audit agrees.
  */
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
@@ -13,6 +15,7 @@ import { ENGINE_VERSION } from '@anesthesia/engine';
 import { buildModuleCompletionCatalog } from '@anesthesia/catalog/scenario-completion';
 import { ONCOLOGY_SCENARIOS } from '../../src/modules/oncology/scenarios';
 import { RENAL_ELECTROLYTE_SCENARIOS } from '../../src/modules/renal-electrolyte/scenarios';
+import { ENDOCRINE_METABOLIC_SCENARIOS } from '../../src/modules/endocrine-metabolic/scenarios';
 
 function uncovered(scenarios: Parameters<typeof buildModuleCompletionCatalog>[0], moduleId: string) {
   const catalog = buildModuleCompletionCatalog(scenarios, ENGINE_VERSION, moduleId, 'ward');
@@ -34,11 +37,16 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
     expect(uncovered(RENAL_ELECTROLYTE_SCENARIOS, 'renal-electrolyte')).toEqual([]);
   });
 
-  it('claims only what those two modules support', () => {
+  it('covers every endocrine and metabolic lab', () => {
+    expect(ENDOCRINE_METABOLIC_SCENARIOS).toHaveLength(12);
+    expect(uncovered(ENDOCRINE_METABOLIC_SCENARIOS, 'endocrine-metabolic')).toEqual([]);
+  });
+
+  it('claims only what those three modules support', () => {
     const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');
-    expect(readme).toContain('Every renal and oncology lab has both, and most');
-    // The stronger claim is the one that was wrong, so it must not come back
-    // without the two endocrine lessons being given observed state first.
-    expect(readme).not.toContain('Every renal, endocrine and oncology lab has both');
+    expect(readme).toContain('Every renal, oncology, and endocrine lab has both');
+    // The hedge this sentence used to carry belongs to a state the audit has
+    // left behind. If it comes back, one of the three tests above is failing too.
+    expect(readme).not.toContain('and most\nendocrine ones');
   });
 });

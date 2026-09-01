@@ -62,6 +62,10 @@ import { useInheritedUrgencyDemonstration } from '../../oncology/demo/useInherit
 import { useTrialRuleDemonstration } from '../../oncology/demo/useTrialRuleDemonstration';
 import { useSilentInteractionDemonstration } from '../../oncology/demo/useSilentInteractionDemonstration';
 import { useEasyLabelDemonstration } from '../../oncology/demo/useEasyLabelDemonstration';
+import { useDkaResolutionDemonstration } from '../../endocrine-metabolic/demo/useDkaResolutionDemonstration';
+import { supportsDkaResolutionDemonstration } from '../../endocrine-metabolic/demo/dka-resolution-demonstration';
+import { useHhsOsmolalityDemonstration } from '../../endocrine-metabolic/demo/useHhsOsmolalityDemonstration';
+import { supportsHhsOsmolalityDemonstration } from '../../endocrine-metabolic/demo/hhs-osmolality-demonstration';
 import { supportsEasyLabelDemonstration } from '../../oncology/demo/easy-label-demonstration';
 import { supportsSilentInteractionDemonstration } from '../../oncology/demo/silent-interaction-demonstration';
 import { supportsTrialRuleDemonstration } from '../../oncology/demo/trial-rule-demonstration';
@@ -227,6 +231,8 @@ export function Cockpit({
   const trialRuleDemoSupported = supportsTrialRuleDemonstration(scenario);
   const silentInteractionDemoSupported = supportsSilentInteractionDemonstration(scenario);
   const easyLabelDemoSupported = supportsEasyLabelDemonstration(scenario);
+  const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
+  const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
   const renalHypocalcemiaDemoSupported = supportsRenalHypocalcemiaDemonstration(scenario);
   const renalHypermagnesemiaDemoSupported = supportsRenalHypermagnesemiaDemonstration(scenario);
@@ -249,7 +255,8 @@ export function Cockpit({
     || normalTestToxicityDemoSupported || prognosisQuestionDemoSupported
     || laboratoryTlsDemoSupported || rareEarlyMyocarditisDemoSupported
     || loweringTheCountDemoSupported || inheritedUrgencyDemoSupported
-    || trialRuleDemoSupported || silentInteractionDemoSupported || easyLabelDemoSupported;
+    || trialRuleDemoSupported || silentInteractionDemoSupported || easyLabelDemoSupported
+    || dkaResolutionDemoSupported || hhsOsmolalityDemoSupported;
   const scenarioDemoSupported = hypoglycemiaDemoSupported || adrenalDemoSupported
     || thyroidDemoSupported || myxedemaDemoSupported || observedStateDemoSupported;
   const inductionDemonstration = useDemonstration({
@@ -333,6 +340,18 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyponatremia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  const hhsOsmolalityDemonstration = useHhsOsmolalityDemonstration({
+    active: demonstrating && hhsOsmolalityDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.endocrineHhsAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const dkaResolutionDemonstration = useDkaResolutionDemonstration({
+    active: demonstrating && dkaResolutionDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.endocrineDkaResolutionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const easyLabelDemonstration = useEasyLabelDemonstration({
     active: demonstrating && easyLabelDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.easyLabel,
@@ -403,7 +422,9 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypermagnesemia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = easyLabelDemoSupported ? easyLabelDemonstration
+  const demonstration = hhsOsmolalityDemoSupported ? hhsOsmolalityDemonstration
+    : dkaResolutionDemoSupported ? dkaResolutionDemonstration
+    : easyLabelDemoSupported ? easyLabelDemonstration
     : silentInteractionDemoSupported ? silentInteractionDemonstration
     : trialRuleDemoSupported ? trialRuleDemonstration
     : inheritedUrgencyDemoSupported ? inheritedUrgencyDemonstration
@@ -1089,6 +1110,10 @@ export function Cockpit({
           trialRuleGuidance={session.guidance}
           silentInteractionGuidance={session.guidance}
           easyLabelGuidance={session.guidance}
+          endocrineDkaResolutionGuidance={session.guidance}
+          endocrineDkaResolutionDemonstrating={demonstrating && dkaResolutionDemoSupported}
+          endocrineHhsGuidance={session.guidance}
+          endocrineHhsDemonstrating={demonstrating && hhsOsmolalityDemoSupported}
           renalHypernatremiaGuidance={session.guidance}
           renalHypocalcemiaGuidance={session.guidance}
           renalHypermagnesemiaGuidance={session.guidance}
