@@ -47,6 +47,7 @@ import { supportsToxicShockDemonstration } from '../../infectious-disease/demo/t
 import { supportsPossibleSepsisDemonstration } from '../../infectious-disease/demo/possible-sepsis-demonstration';
 import { supportsSepticShockLabelDemonstration } from '../../infectious-disease/demo/septic-shock-label-demonstration';
 import { supportsMeningitisImagingDemonstration } from '../../infectious-disease/demo/meningitis-imaging-demonstration';
+import { supportsNeonatalApneaDemonstration } from '../../neonatology/demo/neonatal-apnea-demonstration';
 import { supportsTermTransitionDemonstration } from '../../neonatology/demo/term-newborn-transition-demonstration';
 import { supportsTensionPneumothoraxDemonstration } from '../../neonatology/demo/neonatal-tension-pneumothorax-demonstration';
 
@@ -124,6 +125,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
   ],
   neonatology: [
     supportsTermTransitionDemonstration,
+    supportsNeonatalApneaDemonstration,
     supportsTensionPneumothoraxDemonstration,
   ],
 };
