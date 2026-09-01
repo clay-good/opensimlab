@@ -125,6 +125,8 @@ import { useTricyclicDemonstration } from '../../toxicology/demo/useTricyclicDem
 import { supportsTricyclicDemonstration } from '../../toxicology/demo/tricyclic-sodium-channel-cardiotoxicity-demonstration';
 import { useBetaBlockerDemonstration } from '../../toxicology/demo/useBetaBlockerDemonstration';
 import { supportsBetaBlockerDemonstration } from '../../toxicology/demo/beta-blocker-cardiogenic-shock-demonstration';
+import { useCalciumChannelBlockerDemonstration } from '../../toxicology/demo/useCalciumChannelBlockerDemonstration';
+import { supportsCalciumChannelBlockerDemonstration } from '../../toxicology/demo/calcium-channel-blocker-shock-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -339,6 +341,7 @@ export function Cockpit({
   const salicylateDemoSupported = supportsSalicylateDemonstration(scenario);
   const tricyclicDemoSupported = supportsTricyclicDemonstration(scenario);
   const betaBlockerDemoSupported = supportsBetaBlockerDemonstration(scenario);
+  const calciumChannelBlockerDemoSupported = supportsCalciumChannelBlockerDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -381,6 +384,7 @@ export function Cockpit({
     || salicylateDemoSupported
     || tricyclicDemoSupported
     || betaBlockerDemoSupported
+    || calciumChannelBlockerDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -532,6 +536,12 @@ export function Cockpit({
     active: demonstrating && termTransitionDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.neonatologyTermTransitionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const calciumChannelBlockerDemonstration = useCalciumChannelBlockerDemonstration({
+    active: demonstrating && calciumChannelBlockerDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.toxicologyCalciumChannelBlockerAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const betaBlockerDemonstration = useBetaBlockerDemonstration({
@@ -763,6 +773,7 @@ export function Cockpit({
     : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
+    : calciumChannelBlockerDemoSupported ? calciumChannelBlockerDemonstration
     : betaBlockerDemoSupported ? betaBlockerDemonstration
     : tricyclicDemoSupported ? tricyclicDemonstration
     : salicylateDemoSupported ? salicylateDemonstration
@@ -1509,6 +1520,8 @@ export function Cockpit({
           toxicologyTricyclicDemonstrating={demonstrating && tricyclicDemoSupported}
           toxicologyBetaBlockerGuidance={session.guidance}
           toxicologyBetaBlockerDemonstrating={demonstrating && betaBlockerDemoSupported}
+          toxicologyCalciumChannelBlockerGuidance={session.guidance}
+          toxicologyCalciumChannelBlockerDemonstrating={demonstrating && calciumChannelBlockerDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

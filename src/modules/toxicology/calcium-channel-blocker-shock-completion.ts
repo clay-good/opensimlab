@@ -1,0 +1,34 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
+import { CALCIUM_CHANNEL_BLOCKER_SHOCK } from './scenarios/calcium-channel-blocker-shock';
+import { CALCIUM_CHANNEL_BLOCKER_FIXTURES } from './calcium-channel-blocker-shock-fixtures';
+import { CALCIUM_CHANNEL_BLOCKER_TUTOR_VERSION } from './tutor/calcium-channel-blocker-shock-guidance';
+import { CALCIUM_CHANNEL_BLOCKER_DEMONSTRATION_VERSION } from './demo/calcium-channel-blocker-shock-demonstration';
+
+/**
+ * Exact-version evidence for one lesson, and no claim about any other.
+ *
+ * `observable-objectives` is deliberately not answered here. This scenario
+ * declares six objectives against a cap of five, which is a content-design
+ * decision affecting scenarios across several modules rather than something
+ * this file may settle on its own. The shared audit keeps naming it.
+ */
+export function calciumChannelBlockerCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
+  if (moduleId !== 'toxicology' || capabilityVersion !== '0.1.0-alpha.48'
+    || scenario.metadata.id !== CALCIUM_CHANNEL_BLOCKER_FIXTURES.scenarioId
+    || scenario.metadata.version !== '0.1.0' || CALCIUM_CHANNEL_BLOCKER_FIXTURES.contentVersion !== '0.1.0'
+    || CALCIUM_CHANNEL_BLOCKER_FIXTURES.seed !== 5546
+    || CALCIUM_CHANNEL_BLOCKER_TUTOR_VERSION !== '0.1.0' || CALCIUM_CHANNEL_BLOCKER_DEMONSTRATION_VERSION !== '0.1.0'
+    || JSON.stringify(scenario) !== JSON.stringify(CALCIUM_CHANNEL_BLOCKER_SHOCK)) return [];
+  return [
+    { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['calcium-channel-blocker-shock-fixtures.ts binds seed 5546 and content 0.1.0 to expert, read-before-naming error, recovery, and no-action paths. The presentation, the supplied ECG and focused cardiac assessment, the metabolic set, the treating team’s failed prior care, and the fixed 45-minute report are authored constants; no channel, contractility, vascular-tone, absorption, or rescue model is claimed, and no outcome follows from any choice. tests/integration/calcium-channel-blocker-shock-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions.'] },
+    { id: 'meaningful-progression', status: 'satisfied', evidence: ['The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the bounded vasopressor, calcium, insulin-euglycemia and rescue intent refuses until simulated time has passed since the evidence review, and the handoff refuses until time has passed since that. What moves is not the diagnosis, which never closes, but what the record can support in the middle of an extended-release ingestion whose absorption is not finished.'] },
+    { id: 'meaningful-actions-and-choices', status: 'satisfied', evidence: ['Six declared decisions put the formulation and the clock ahead of the numbers, name the presentation as two simultaneous problems rather than one, build a room for a long night, read the contractility and the vascular tone as separate findings with the absorption clock beside both, record bounded qualified intents, and hand off active risk. Order is enforced rather than suggested, and refusal names the missing step. The lesson takes no history, acquires or interprets no ECG or imaging, and selects no decontamination, glucose, electrolyte, fluid, product, dose, rate, target, route, access, airway, ventilation, pacing, lipid, methylene blue, or extracorporeal support.'] },
+    { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The branch ends at active-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no confirmed diagnosis, no proven treatment effect, no durable perfusion, glucose or electrolyte stability, no completed absorption, no excluded coingestion, no determined rescue eligibility, safety or disposition, and no outcome.'] },
+    { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that started reading the numbers before naming the shock can still reach a correct handoff.'] },
+    { id: 'reference-transcripts', status: 'satisfied', evidence: ['calcium-channel-blocker-shock-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 5546 for deterministic replay through the shared engine, including the two time-gated checkpoints.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Six observed-state prompts at version ${CALCIUM_CHANNEL_BLOCKER_TUTOR_VERSION} read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example ${CALCIUM_CHANNEL_BLOCKER_DEMONSTRATION_VERSION} drives the ordinary controls through the real engine to handoff. Three numbers here are dramatic enough to be answered on their own — a complete block at 34, a glucose of 238, a MAP of 47 — and both refuse all three closures in the same beat, because poor global contraction and low systemic vascular tone are separate problems, answering either half alone leaves the other, and pacing the block would capture the rhythm while leaving both. The hyperglycemia is kept as a finding that supports the pattern rather than one that grades him. The detail both keep returning to is the one that decides how the night goes: the product is extended release and the ingestion was five hours ago, so the dose is still arriving and the 45-minute improvement is a checkpoint inside an ongoing absorption rather than a resolution — with the glucose of 176 and potassium of 3.4 described as the therapy showing up in the chart. A test asserts nothing anywhere calls him stable, calls the absorption over, or selects pacing, lipid, methylene blue, or extracorporeal support. tests/unit/calcium-channel-blocker-shock-demonstration.test.ts and tests/ui/toxicology-calcium-channel-blocker-shock.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding.`] },
+    { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending.'] },
+    { id: 'report-control-coverage', status: 'missing', evidence: ['The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound.'] },
+  ];
+}

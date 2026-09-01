@@ -803,23 +803,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "calcium-channel-blocker-shock-fixtures.ts binds seed 5546 and content 0.1.0 to expert, read-before-naming error, recovery, and no-action paths. The presentation, the supplied ECG and focused cardiac assessment, the metabolic set, the treating team’s failed prior care, and the fixed 45-minute report are authored constants; no channel, contractility, vascular-tone, absorption, or rescue model is claimed, and no outcome follows from any choice. tests/integration/calcium-channel-blocker-shock-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
           "status": "satisfied",
           "evidence": [
-            "The timeline contains at least one non-narrative state event."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the bounded vasopressor, calcium, insulin-euglycemia and rescue intent refuses until simulated time has passed since the evidence review, and the handoff refuses until time has passed since that. What moves is not the diagnosis, which never closes, but what the record can support in the middle of an extended-release ingestion whose absorption is not finished."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions put the formulation and the clock ahead of the numbers, name the presentation as two simultaneous problems rather than one, build a room for a long night, read the contractility and the vascular tone as separate findings with the absorption clock beside both, record bounded qualified intents, and hand off active risk. Order is enforced rather than suggested, and refusal names the missing step. The lesson takes no history, acquires or interprets no ECG or imaging, and selects no decontamination, glucose, electrolyte, fluid, product, dose, rate, target, route, access, airway, ventilation, pacing, lipid, methylene blue, or extracorporeal support."
           ]
         },
         {
@@ -831,23 +831,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at active-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no confirmed diagnosis, no proven treatment effect, no durable perfusion, glucose or electrolyte stability, no completed absorption, no excluded coingestion, no determined rescue eligibility, safety or disposition, and no outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Three numbers here are dramatic enough to be answered on their own — a complete block at 34, a glucose of 238, a MAP of 47 — and both refuse all three closures in the same beat, because poor global contraction and low systemic vascular tone are separate problems, answering either half alone leaves the other, and pacing the block would capture the rhythm while leaving both. The hyperglycemia is kept as a finding that supports the pattern rather than one that grades him. The detail both keep returning to is the one that decides how the night goes: the product is extended release and the ingestion was five hours ago, so the dose is still arriving and the 45-minute improvement is a checkpoint inside an ongoing absorption rather than a resolution — with the glucose of 176 and potassium of 3.4 described as the therapy showing up in the chart. A test asserts nothing anywhere calls him stable, calls the absorption over, or selects pacing, lipid, methylene blue, or extracorporeal support. tests/unit/calcium-channel-blocker-shock-demonstration.test.ts and tests/ui/toxicology-calcium-channel-blocker-shock.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that started reading the numbers before naming the shock can still reach a correct handoff."
           ]
         },
         {
@@ -866,23 +866,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "calcium-channel-blocker-shock-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 5546 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

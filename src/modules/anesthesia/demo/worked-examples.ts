@@ -64,6 +64,7 @@ import { supportsAcetaminophenDemonstration } from '../../toxicology/demo/acetam
 import { supportsSalicylateDemonstration } from '../../toxicology/demo/salicylate-falling-number-demonstration';
 import { supportsTricyclicDemonstration } from '../../toxicology/demo/tricyclic-sodium-channel-cardiotoxicity-demonstration';
 import { supportsBetaBlockerDemonstration } from '../../toxicology/demo/beta-blocker-cardiogenic-shock-demonstration';
+import { supportsCalciumChannelBlockerDemonstration } from '../../toxicology/demo/calcium-channel-blocker-shock-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -157,6 +158,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsSalicylateDemonstration,
     supportsTricyclicDemonstration,
     supportsBetaBlockerDemonstration,
+    supportsCalciumChannelBlockerDemonstration,
   ],
 };
 
