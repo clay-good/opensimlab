@@ -5,8 +5,58 @@ import { PrerenderedBody } from '@routes/Prerendered';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { PRETERM_RESPIRATORY_DISTRESS as SCENARIO } from '../../src/modules/neonatology/scenarios/preterm-respiratory-distress';
-const markup = (assessment: NonNullable<ActionCockpitProps['resuscitation']['neonatologyPretermRespiratoryDistressAssessment']>) => renderToStaticMarkup(createElement(ActionCockpit, { scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, neonatologyPretermRespiratoryDistressAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 8, respiratoryRateBpm: 40, fio2: 0.3, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 5 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onNeonatologyPretermRespiratoryDistressResponse: () => {} } satisfies ActionCockpitProps));
+const markup = (assessment: NonNullable<ActionCockpitProps['resuscitation']['neonatologyPretermRespiratoryDistressAssessment']>, extra: {
+  neonatologyPretermRespiratoryGuidance?: ActionCockpitProps['neonatologyPretermRespiratoryGuidance'];
+  neonatologyPretermRespiratoryDemonstrating?: boolean;
+} = {}) => renderToStaticMarkup(createElement(ActionCockpit, { scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, neonatologyPretermRespiratoryDistressAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 8, respiratoryRateBpm: 40, fio2: 0.3, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 5 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onNeonatologyPretermRespiratoryDistressResponse: () => {}, ...extra } satisfies ActionCockpitProps));
 describe('Neonatology preterm-respiratory-distress experience', () => {
   it('is discoverable at its exact calm route', () => { const index = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/neonatology' })); expect(index).toContain('href="/neonatology/scenario/preterm-respiratory-distress"'); expect(index).toContain('Preterm respiratory distress: support spontaneous breathing'); const route = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/neonatology/scenario/preterm-respiratory-distress' })); expect(route).toContain('<h1>Preterm respiratory distress: support spontaneous breathing</h1>'); });
-  it('fails closed and exposes one calm cognitive action at a time', () => { expect(crisisResponseAvailability(SCENARIO).hasNeonatologyPretermRespiratoryDistressResponse).toBe(true); expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasNeonatologyPretermRespiratoryDistressResponse).toBe(false); const states = [{ supportAtTick: null, contextAtTick: null, recognitionAtTick: null, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: null, recognitionAtTick: null, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, recognitionAtTick: null, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, recognitionAtTick: 1, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, recognitionAtTick: 1, readinessAtTick: 1, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, recognitionAtTick: 1, readinessAtTick: 1, reassessmentAtTick: 2, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, recognitionAtTick: 1, readinessAtTick: 1, reassessmentAtTick: 2, handoffAtTick: 3 }]; expect(states.map((state) => (markup(state).match(/<button/g) ?? []).length)).toEqual([1,1,1,1,1,1,0]); expect(markup(states[0]!)).toContain('Support the breaths already there.'); const later = markup(states[4]!); expect(later).toContain('Gentle support still needs close watching.'); expect(later).toContain('Review the fixed 10-minute report'); expect((later.match(/role="status"/g) ?? [])).toHaveLength(1); for (const html of states.map(markup)) { const buttons = [...html.matchAll(/<button[^>]*>(.*?)<\/button>/g)].map((match) => match[1]); expect(buttons.join(' ')).not.toMatch(/examin|score|monitor|position|dry|stimulat|wrap|warm|cool|cpap|oxygen|device|setting|suction|ventilat|airway|compress|access|fluid|glucose|surfactant|drug|dose|feed|resuscitat|transport|procedure|diagnos|disposition/iu); } });
+  it('fails closed and exposes one calm cognitive action at a time', () => { expect(crisisResponseAvailability(SCENARIO).hasNeonatologyPretermRespiratoryDistressResponse).toBe(true); expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasNeonatologyPretermRespiratoryDistressResponse).toBe(false); const states = [{ supportAtTick: null, contextAtTick: null, recognitionAtTick: null, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: null, recognitionAtTick: null, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, recognitionAtTick: null, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, recognitionAtTick: 1, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, recognitionAtTick: 1, readinessAtTick: 1, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, recognitionAtTick: 1, readinessAtTick: 1, reassessmentAtTick: 2, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, recognitionAtTick: 1, readinessAtTick: 1, reassessmentAtTick: 2, handoffAtTick: 3 }]; expect(states.map((state) => (markup(state).match(/<button/g) ?? []).length)).toEqual([1,1,1,1,1,1,0]); expect(markup(states[0]!)).toContain('Support the breaths already there.'); const later = markup(states[4]!); expect(later).toContain('Gentle support still needs close watching.'); expect(later).toContain('Review the fixed 10-minute report'); expect((later.match(/role="status"/g) ?? [])).toHaveLength(1); for (const html of states.map((state) => markup(state))) { const buttons = [...html.matchAll(/<button[^>]*>(.*?)<\/button>/g)].map((match) => match[1]); expect(buttons.join(' ')).not.toMatch(/examin|score|monitor|position|dry|stimulat|wrap|warm|cool|cpap|oxygen|device|setting|suction|ventilat|airway|compress|access|fluid|glucose|surfactant|drug|dose|feed|resuscitat|transport|procedure|diagnos|disposition/iu); } });
+});
+
+describe('Preterm respiratory distress tutor and worked example', () => {
+  const start = { supportAtTick: null, contextAtTick: null, recognitionAtTick: null, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null };
+  const connected = { ...start, supportAtTick: 0, contextAtTick: 1 };
+  const recognized = { ...connected, recognitionAtTick: 2 };
+
+  it('says nothing at all on the unassisted setting', () => {
+    expect(markup(start)).not.toContain('A moment to think');
+    expect(markup(start, { neonatologyPretermRespiratoryGuidance: 'unassisted' })).not.toContain('A moment to think');
+  });
+
+  it('reads the learner\u2019s own recorded steps when guidance is on', () => {
+    const opening = markup(start, { neonatologyPretermRespiratoryGuidance: 'guided' });
+    expect(opening).toContain('A moment to think');
+    expect(opening).toContain('Confirm the CPAP-capable team');
+    const next = markup(connected, { neonatologyPretermRespiratoryGuidance: 'guided' });
+    expect(next).toContain('Choose the branch on the breathing');
+    expect(next).not.toContain('Confirm the CPAP-capable team');
+  });
+
+  it('keeps the gestation out of the decision', () => {
+    const html = markup(connected, { neonatologyPretermRespiratoryGuidance: 'guided' });
+    expect(html).toContain('not that he is 29 weeks');
+    expect(html).not.toContain('he is stable now');
+  });
+
+  it('refuses to send the 30% start travelling', () => {
+    const html = markup(recognized, { neonatologyPretermRespiratoryGuidance: 'guided' });
+    expect(html).toContain('rather than a prescription to carry elsewhere');
+    expect(html).toContain('positive-pressure branch');
+  });
+
+  it('goes quiet once the handoff is recorded', () => {
+    const ended = { ...recognized, readinessAtTick: 3, reassessmentAtTick: 4, handoffAtTick: 5 };
+    expect(markup(ended, { neonatologyPretermRespiratoryGuidance: 'guided' })).not.toContain('A moment to think');
+  });
+
+  it('leaves the controls visible but inert while the example runs', () => {
+    const label = 'Confirm prepared support';
+    expect(markup(start)).toContain(label);
+    const watching = markup(start, { neonatologyPretermRespiratoryGuidance: 'guided', neonatologyPretermRespiratoryDemonstrating: true });
+    expect(watching).toContain(label);
+    expect(watching).toContain('aria-disabled="true"');
+    expect(watching).toContain('Watching the worked example');
+    expect(watching).not.toContain('A moment to think');
+  });
 });
