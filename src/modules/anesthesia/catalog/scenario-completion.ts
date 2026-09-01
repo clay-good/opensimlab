@@ -32,6 +32,7 @@ import { calciumChannelBlockerCompletionEvidence } from '../../toxicology/calciu
 import { digoxinCompletionEvidence } from '../../toxicology/digoxin-rhythm-potassium-completion';
 import { cholinergicCompletionEvidence } from '../../toxicology/cholinergic-pesticide-respiratory-failure-completion';
 import { anticholinergicCompletionEvidence } from '../../toxicology/anticholinergic-hyperthermia-delirium-completion';
+import { serotoninCompletionEvidence } from '../../toxicology/serotonin-toxicity-hyperthermia-clonus-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -203,6 +204,7 @@ export function auditClinicalScenario(
     ...digoxinCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...cholinergicCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...anticholinergicCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...serotoninCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

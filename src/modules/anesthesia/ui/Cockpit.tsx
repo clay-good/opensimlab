@@ -133,6 +133,8 @@ import { useCholinergicDemonstration } from '../../toxicology/demo/useCholinergi
 import { supportsCholinergicDemonstration } from '../../toxicology/demo/cholinergic-pesticide-respiratory-failure-demonstration';
 import { useAnticholinergicDemonstration } from '../../toxicology/demo/useAnticholinergicDemonstration';
 import { supportsAnticholinergicDemonstration } from '../../toxicology/demo/anticholinergic-hyperthermia-delirium-demonstration';
+import { useSerotoninDemonstration } from '../../toxicology/demo/useSerotoninDemonstration';
+import { supportsSerotoninDemonstration } from '../../toxicology/demo/serotonin-toxicity-hyperthermia-clonus-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -351,6 +353,7 @@ export function Cockpit({
   const digoxinDemoSupported = supportsDigoxinDemonstration(scenario);
   const cholinergicDemoSupported = supportsCholinergicDemonstration(scenario);
   const anticholinergicDemoSupported = supportsAnticholinergicDemonstration(scenario);
+  const serotoninDemoSupported = supportsSerotoninDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -397,6 +400,7 @@ export function Cockpit({
     || digoxinDemoSupported
     || cholinergicDemoSupported
     || anticholinergicDemoSupported
+    || serotoninDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -548,6 +552,12 @@ export function Cockpit({
     active: demonstrating && termTransitionDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.neonatologyTermTransitionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const serotoninDemonstration = useSerotoninDemonstration({
+    active: demonstrating && serotoninDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.toxicologySerotoninAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const anticholinergicDemonstration = useAnticholinergicDemonstration({
@@ -803,6 +813,7 @@ export function Cockpit({
     : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
+    : serotoninDemoSupported ? serotoninDemonstration
     : anticholinergicDemoSupported ? anticholinergicDemonstration
     : cholinergicDemoSupported ? cholinergicDemonstration
     : digoxinDemoSupported ? digoxinDemonstration
@@ -1561,6 +1572,8 @@ export function Cockpit({
           toxicologyCholinergicDemonstrating={demonstrating && cholinergicDemoSupported}
           toxicologyAnticholinergicGuidance={session.guidance}
           toxicologyAnticholinergicDemonstrating={demonstrating && anticholinergicDemoSupported}
+          toxicologySerotoninGuidance={session.guidance}
+          toxicologySerotoninDemonstrating={demonstrating && serotoninDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

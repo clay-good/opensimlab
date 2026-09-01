@@ -1307,23 +1307,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "serotonin-toxicity-hyperthermia-clonus-fixtures.ts binds seed 5703 and content 0.1.0 to expert, antagonist-before-cooling error, recovery, and no-action paths. The presentation, the supplied ECG, the laboratory set, and the fixed 30-minute report are authored constants; no thermoregulation, cooling, sedation, or antagonist model is claimed, and no outcome follows from any choice. tests/integration/serotonin-toxicity-hyperthermia-clonus-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
           "status": "satisfied",
           "evidence": [
-            "The timeline contains at least one non-narrative state event."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the bounded cessation, cooling, sedation, surveillance, airway and rescue intent refuses until simulated time has passed since the evidence review, and the handoff refuses until time has passed since that. What moves is the temperature rather than the diagnosis, and the neuromuscular findings that were making the heat are still there when it has moved."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions name an interaction whose second agent is an antibiotic, recognize the mental, autonomic and neuromuscular pattern together while refusing Hunter-, clonus-, temperature- and medication-list-only closure, give cooling and sedation an owner before the antagonist gets a thought, read the CK, lactate and bicarbonate as muscle work with rescue eligibility left specialist-led, record bounded qualified intents, and hand off active risk. Order is enforced rather than suggested, and refusal names the missing step. The lesson takes no history, measures nothing, excludes nothing, and selects no cooling method, fluid, sedative, restraint, cyproheptadine product, dose, route, airway, ventilation, or neuromuscular blocker."
           ]
         },
         {
@@ -1335,23 +1335,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at active-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no confirmed diagnosis, no excluded alternative, no proven treatment effect, no durable temperature control, no neuromuscular recovery, no renal safety, no excluded rhabdomyolysis or seizure, no proven exposure completeness, no determined rescue eligibility, safety or disposition, and no outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both name the interaction first, because the second serotonergic agent here is an antibiotic and linezolid's monoamine-oxidase inhibition is the history nobody reads; both then give cooling and sedation an owner before the antagonist gets a thought, because the clonus, hyperreflexia and rising tone are generating the heat rather than only reporting it. Both refuse all four early closures and keep the lower-limb predominance and the hyperactive gut as discriminators that separate this from the dry, quiet anticholinergic lesson next door without excluding neuroleptic malignant syndrome, infection, withdrawal, environmental exposure or coingestion. Serotonin-antagonist rescue stays specialist-led and adjunct to cooling and sedation rather than a substitute for either, and neither the tutor nor the example determines eligibility. The ending gives back a lower temperature attached to a clonus that is still inducible. A test asserts nothing anywhere excludes an alternative, determines eligibility, or calls the temperature controlled. tests/unit/serotonin-toxicity-hyperthermia-clonus-demonstration.test.ts and tests/ui/toxicology-serotonin-toxicity-hyperthermia-clonus.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that reached for the antagonist before the cooling had an owner can still reach a correct handoff."
           ]
         },
         {
@@ -1370,23 +1370,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "serotonin-toxicity-hyperthermia-clonus-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 5703 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
