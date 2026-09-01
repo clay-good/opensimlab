@@ -43,6 +43,7 @@ import { supportsFebrileNeutropeniaDemonstration } from '../../infectious-diseas
 import { supportsNecrotizingInfectionDemonstration } from '../../infectious-disease/demo/necrotizing-infection-demonstration';
 import { supportsEndocarditisHeartFailureDemonstration } from '../../infectious-disease/demo/endocarditis-heart-failure-demonstration';
 import { supportsSeverePneumoniaDemonstration } from '../../infectious-disease/demo/severe-pneumonia-demonstration';
+import { supportsToxicShockDemonstration } from '../../infectious-disease/demo/toxic-shock-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -111,6 +112,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsNecrotizingInfectionDemonstration,
     supportsEndocarditisHeartFailureDemonstration,
     supportsSeverePneumoniaDemonstration,
+    supportsToxicShockDemonstration,
   ],
 };
 

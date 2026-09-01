@@ -28,9 +28,10 @@ let host: HTMLDivElement; let root: Root;
 beforeEach(() => { host = document.createElement('div'); document.body.append(host); root = createRoot(host); });
 afterEach(() => { act(() => root.unmount()); host.remove(); });
 
-const render = (model: ToxicShock, tick: number, onAction = vi.fn(), demonstrating = false) => {
-  act(() => root.render(<ToxicShockTray assessment={model.snapshot(tick)}
-    onAction={onAction} demonstrating={demonstrating} />));
+const render = (model: ToxicShock, tick: number, onAction = vi.fn(), demonstrating = false,
+  guidance: 'unassisted' | 'coached' | 'guided' = 'unassisted') => {
+  act(() => root.render(<ToxicShockTray assessment={model.snapshot(tick)} scenarioVersion="0.1.0"
+    onAction={onAction} guidance={guidance} demonstrating={demonstrating} />));
   return onAction;
 };
 const button = (label: string) => [...host.querySelectorAll('button')]
@@ -99,5 +100,28 @@ describe('Toxic shock tray', () => {
     for (const entry of host.querySelectorAll('button')) {
       expect(entry.getAttribute('aria-disabled')).toBe('true');
     }
+  });
+});
+
+describe('Toxic shock tutor', () => {
+  it('says nothing at all on the unassisted setting', () => {
+    render(new ToxicShock(), 0);
+    expect(host.textContent).not.toContain('A moment to think');
+  });
+
+  it('separates recognizing a pattern from naming a case', () => {
+    render(new ToxicShock(), 0, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('not the same as naming a case');
+  });
+
+  it('never lets an unmet definition read as an exclusion', () => {
+    const model = new ToxicShock();
+    for (const action of ['recognize-toxin-pattern', 'activate-critical-care', 'request-cultures',
+      'record-treatment-intent', 'record-definition-status'] as const) model.apply(action, 0);
+    render(model, 1, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('A criteria count is not a probability');
+    expect(text).not.toContain('this is not toxic shock');
   });
 });

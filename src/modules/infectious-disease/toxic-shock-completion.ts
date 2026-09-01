@@ -2,11 +2,14 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { TOXIC_SHOCK_A_DEFINITION_THAT_CANNOT_CLOSE } from './scenarios/toxic-shock-a-definition-that-cannot-close';
 import { TOXIC_SHOCK_FIXTURES } from './toxic-shock-fixtures';
+import { TOXIC_SHOCK_TUTOR_VERSION } from './toxic-shock-tutor';
+import { TOXIC_SHOCK_DEMONSTRATION_VERSION } from './demo/toxic-shock-demonstration';
 
 export function toxicShockCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'infectious-disease' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== TOXIC_SHOCK_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
-    || TOXIC_SHOCK_FIXTURES.contentVersion !== '0.1.0' || TOXIC_SHOCK_FIXTURES.seed !== 5731
+    || TOXIC_SHOCK_FIXTURES.contentVersion !== '0.1.0'
+    || TOXIC_SHOCK_TUTOR_VERSION !== '0.1.0' || TOXIC_SHOCK_DEMONSTRATION_VERSION !== '0.1.0' || TOXIC_SHOCK_FIXTURES.seed !== 5731
     || JSON.stringify(scenario) !== JSON.stringify(TOXIC_SHOCK_A_DEFINITION_THAT_CANNOT_CLOSE)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['toxic-shock-fixtures.ts binds seed 5731 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No toxin, host-response, or antimicrobial model is claimed.'] },
@@ -15,7 +18,7 @@ export function toxicShockCompletionEvidence(scenario: Scenario, capabilityVersi
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['Recognition, activation, cultures, bounded treatment intent, the recorded definition status, the boundary review, surveillance, and a current full assessment permit handoff with the diagnosis explicitly open. Instructor takeover bounds a run with no activation or treatment intent at six hours, or an unfinished session at twelve.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Six event-bound objectives distinguish reconciliation, recognition without a closable definition, activation on the pattern, what a surveillance definition is for, recording the status openly with a named re-check, and accountable handoff. Refused shortcuts remain visible, and no classification, organism, or outcome is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['toxic-shock-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Ten observed-state prompts at version ${TOXIC_SHOCK_TUTOR_VERSION} read the learner's own recorded steps. Unassisted is silent and coached withholds the waiting beat. Worked example ${TOXIC_SHOCK_DEMONSTRATION_VERSION} drives the ordinary controls through the real engine to handoff. Neither surveillance definition can be met inside this rehearsal by construction — one waits on desquamation one to two weeks away, the other on an organism from a sterile site — so the example ends with both still open, which is the hardest thing the demonstration form can be asked to do here: resolving would mean declaring a case that cannot be declared, or reading an unmet definition as an answer. Tests assert both definition flags stay false, that nothing was declared or excluded, and that the treatment intent precedes the definition record. The prompts keep naming what these definitions are for, counting cases consistently across populations rather than deciding treatment at a bedside. tests/unit/toxic-shock-demonstration.test.ts and tests/ui/toxic-shock-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];

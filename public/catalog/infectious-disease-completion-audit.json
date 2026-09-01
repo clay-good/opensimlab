@@ -838,9 +838,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Ten observed-state prompts at version 0.1.0 read the learner's own recorded steps. Unassisted is silent and coached withholds the waiting beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Neither surveillance definition can be met inside this rehearsal by construction — one waits on desquamation one to two weeks away, the other on an organism from a sterile site — so the example ends with both still open, which is the hardest thing the demonstration form can be asked to do here: resolving would mean declaring a case that cannot be declared, or reading an unmet definition as an answer. Tests assert both definition flags stay false, that nothing was declared or excluded, and that the treatment intent precedes the definition record. The prompts keep naming what these definitions are for, counting cases consistently across populations rather than deciding treatment at a bedside. tests/unit/toxic-shock-demonstration.test.ts and tests/ui/toxic-shock-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {

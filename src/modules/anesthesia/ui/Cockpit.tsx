@@ -83,6 +83,8 @@ import { useEndocarditisHeartFailureDemonstration } from '../../infectious-disea
 import { supportsEndocarditisHeartFailureDemonstration } from '../../infectious-disease/demo/endocarditis-heart-failure-demonstration';
 import { useSeverePneumoniaDemonstration } from '../../infectious-disease/demo/useSeverePneumoniaDemonstration';
 import { supportsSeverePneumoniaDemonstration } from '../../infectious-disease/demo/severe-pneumonia-demonstration';
+import { useToxicShockDemonstration } from '../../infectious-disease/demo/useToxicShockDemonstration';
+import { supportsToxicShockDemonstration } from '../../infectious-disease/demo/toxic-shock-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -276,6 +278,7 @@ export function Cockpit({
   const necrotizingInfectionDemoSupported = supportsNecrotizingInfectionDemonstration(scenario);
   const endocarditisHeartFailureDemoSupported = supportsEndocarditisHeartFailureDemonstration(scenario);
   const severePneumoniaDemoSupported = supportsSeverePneumoniaDemonstration(scenario);
+  const toxicShockDemoSupported = supportsToxicShockDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -306,7 +309,8 @@ export function Cockpit({
     || febrileNeutropeniaDemoSupported
     || necrotizingInfectionDemoSupported
     || endocarditisHeartFailureDemoSupported
-    || severePneumoniaDemoSupported;
+    || severePneumoniaDemoSupported
+    || toxicShockDemoSupported;
   const scenarioDemoSupported = hypoglycemiaDemoSupported || adrenalDemoSupported
     || thyroidDemoSupported || myxedemaDemoSupported || observedStateDemoSupported;
   const inductionDemonstration = useDemonstration({
@@ -388,6 +392,11 @@ export function Cockpit({
   const renalHyponatremiaDemonstration = useRenalHyponatremiaDemonstration({
     active: demonstrating && renalHyponatremiaDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyponatremia,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const toxicShockDemonstration = useToxicShockDemonstration({
+    active: demonstrating && toxicShockDemoSupported,
+    running: session.transport === 'running', patient: session.equipment?.resuscitation.toxicShock,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const severePneumoniaDemonstration = useSeverePneumoniaDemonstration({
@@ -547,7 +556,8 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypermagnesemia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = severePneumoniaDemoSupported ? severePneumoniaDemonstration
+  const demonstration = toxicShockDemoSupported ? toxicShockDemonstration
+    : severePneumoniaDemoSupported ? severePneumoniaDemonstration
     : endocarditisHeartFailureDemoSupported ? endocarditisHeartFailureDemonstration
     : necrotizingInfectionDemoSupported ? necrotizingInfectionDemonstration
     : febrileNeutropeniaDemoSupported ? febrileNeutropeniaDemonstration
@@ -1240,6 +1250,8 @@ export function Cockpit({
           endocarditisHeartFailureDemonstrating={demonstrating && endocarditisHeartFailureDemoSupported}
           severePneumoniaGuidance={session.guidance}
           severePneumoniaDemonstrating={demonstrating && severePneumoniaDemoSupported}
+          toxicShockGuidance={session.guidance}
+          toxicShockDemonstrating={demonstrating && toxicShockDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

@@ -2,13 +2,18 @@ import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { ToxicShockSnapshot } from '@platform/kernel/protocol';
 import type { ToxicShockAction } from './toxic-shock';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
+import { toxicShockInlinePrompt } from './toxic-shock-tutor';
 
-export function ToxicShockTray({ assessment, onAction, demonstrating = false }: {
+export function ToxicShockTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: ToxicShockSnapshot;
+  readonly scenarioVersion: string;
   readonly onAction: (action: ToxicShockAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = toxicShockInlinePrompt(guidance, { scenarioVersion, toxicShock: assessment });
   const labs = assessment.labObservation; const perfusion = assessment.perfusionObservation;
   const observation = assessment.observation;
   const decision = (action: ToxicShockAction, label: string, accepted = false) => {
@@ -17,6 +22,10 @@ export function ToxicShockTray({ assessment, onAction, demonstrating = false }: 
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <p className="syringe__remaining">Selected sources: the 2011 and 2010 surveillance case definitions, and a 2022 international outbreak notice. Open the source view for exact criteria lists. These are instruments for counting cases consistently, not for deciding treatment at a bedside.</p>
     <section className="syringe toxic-shock__section" aria-labelledby="toxic-shock-recognition-title">
       <div id="toxic-shock-recognition-title" className="syringe__name">Act on the pattern. The definition cannot close.</div>

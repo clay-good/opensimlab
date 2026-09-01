@@ -2806,6 +2806,7 @@ export interface ActionCockpitProps {
   readonly endocarditisHeartFailureDemonstrating?: boolean;
   readonly severePneumoniaGuidance?: GuidanceLevel;
   readonly severePneumoniaDemonstrating?: boolean;
+  readonly toxicShockGuidance?: GuidanceLevel;
   readonly toxicShockDemonstrating?: boolean;
   readonly possibleSepsisDemonstrating?: boolean;
   readonly septicShockLabelDemonstrating?: boolean;
@@ -5973,6 +5974,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasToxicShockResponse && (
               <ToxicShockTray assessment={props.toxicShock}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.toxicShockGuidance}
                 demonstrating={props.toxicShockDemonstrating}
                 onAction={props.onToxicShockResponse ?? (() => {})} />
             )}
