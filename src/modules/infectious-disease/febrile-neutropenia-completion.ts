@@ -2,11 +2,14 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { FEBRILE_NEUTROPENIA_BLIND_EXAMINATION } from './scenarios/febrile-neutropenia-blind-examination';
 import { FEBRILE_NEUTROPENIA_FIXTURES } from './febrile-neutropenia-fixtures';
+import { FEBRILE_NEUTROPENIA_TUTOR_VERSION } from './febrile-neutropenia-tutor';
+import { FEBRILE_NEUTROPENIA_DEMONSTRATION_VERSION } from './demo/febrile-neutropenia-demonstration';
 
 export function febrileNeutropeniaCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'infectious-disease' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== FEBRILE_NEUTROPENIA_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
-    || FEBRILE_NEUTROPENIA_FIXTURES.contentVersion !== '0.1.0' || FEBRILE_NEUTROPENIA_FIXTURES.seed !== 5307
+    || FEBRILE_NEUTROPENIA_FIXTURES.contentVersion !== '0.1.0'
+    || FEBRILE_NEUTROPENIA_TUTOR_VERSION !== '0.1.0' || FEBRILE_NEUTROPENIA_DEMONSTRATION_VERSION !== '0.1.0' || FEBRILE_NEUTROPENIA_FIXTURES.seed !== 5307
     || JSON.stringify(scenario) !== JSON.stringify(FEBRILE_NEUTROPENIA_BLIND_EXAMINATION)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['febrile-neutropenia-fixtures.ts binds seed 5307 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No marrow, host-response, or antimicrobial model is claimed.'] },
@@ -15,7 +18,7 @@ export function febrileNeutropeniaCompletionEvidence(scenario: Scenario, capabil
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['Recognition, activation, cultures, bounded intent, boundary review, surveillance, and a current full assessment permit handoff with neutropenia continuing and no source identified. Instructor takeover bounds a run with no pathway activation or intent at 300 minutes, or an unfinished session at 12 hours.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Six event-bound objectives distinguish reconciliation, recognition despite a blind examination, pathway and culture activation, the timing and risk-score boundary, bounded intent with strict reassessment, and accountable handoff. Refused shortcuts remain visible after later care, and neither a source nor marrow recovery is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['febrile-neutropenia-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Nine observed-state prompts at version ${FEBRILE_NEUTROPENIA_TUTOR_VERSION} read the learner's own recorded steps. Unassisted is silent and coached withholds the waiting beat. Worked example ${FEBRILE_NEUTROPENIA_DEMONSTRATION_VERSION} drives the ordinary controls through the real engine to handoff. Every refused shortcut in this lesson is a missing signal read as a reassuring one, and both answer them with mechanism rather than with urgency: there are no neutrophils with which to raise a count, localize a sign, or move a marker, which is why the examination is blinded rather than merely unhelpful. The one-hour figure is stated as the system-design safety margin its sources call it, not as a physiological threshold. The example ends with no source found and no culture returned, because a source at the end would teach that the decision was right because it turned out to be, and a test forbids one across every narration. tests/unit/febrile-neutropenia-demonstration.test.ts and tests/ui/febrile-neutropenia-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];

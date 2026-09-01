@@ -2,13 +2,18 @@ import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { FebrileNeutropeniaSnapshot } from '@platform/kernel/protocol';
 import type { FebrileNeutropeniaAction } from './febrile-neutropenia';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
+import { febrileNeutropeniaInlinePrompt } from './febrile-neutropenia-tutor';
 
-export function FebrileNeutropeniaTray({ assessment, onAction, demonstrating = false }: {
+export function FebrileNeutropeniaTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: FebrileNeutropeniaSnapshot;
+  readonly scenarioVersion: string;
   readonly onAction: (action: FebrileNeutropeniaAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = febrileNeutropeniaInlinePrompt(guidance, { scenarioVersion, febrileNeutropenia: assessment });
   const labs = assessment.labObservation; const observations = assessment.observationsOnly;
   const observation = assessment.observation;
   const decision = (action: FebrileNeutropeniaAction, label: string, accepted = false) => {
@@ -17,6 +22,10 @@ export function FebrileNeutropeniaTray({ assessment, onAction, demonstrating = f
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <p className="syringe__remaining">Selected sources: NICE CG151 (2012, still current), the IDSA 2010 neutropenia guideline, and the ASCO/IDSA 2018 outpatient update. Open the source view for exact locators. This field still runs on guidance published between 2010 and 2018, which is itself part of the lesson.</p>
     <section className="syringe febrile-neutropenia__section" aria-labelledby="febrile-neutropenia-recognition-title">
       <div id="febrile-neutropenia-recognition-title" className="syringe__name">He looks well. That is not the reassurance it seems.</div>

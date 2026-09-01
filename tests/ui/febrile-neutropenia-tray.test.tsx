@@ -27,9 +27,10 @@ let host: HTMLDivElement; let root: Root;
 beforeEach(() => { host = document.createElement('div'); document.body.append(host); root = createRoot(host); });
 afterEach(() => { act(() => root.unmount()); host.remove(); });
 
-const render = (model: FebrileNeutropenia, tick: number, onAction = vi.fn(), demonstrating = false) => {
-  act(() => root.render(<FebrileNeutropeniaTray assessment={model.snapshot(tick)}
-    onAction={onAction} demonstrating={demonstrating} />));
+const render = (model: FebrileNeutropenia, tick: number, onAction = vi.fn(), demonstrating = false,
+  guidance: 'unassisted' | 'coached' | 'guided' = 'unassisted') => {
+  act(() => root.render(<FebrileNeutropeniaTray assessment={model.snapshot(tick)} scenarioVersion="0.1.0"
+    onAction={onAction} guidance={guidance} demonstrating={demonstrating} />));
   return onAction;
 };
 const button = (label: string) => [...host.querySelectorAll('button')]
@@ -97,5 +98,28 @@ describe('Febrile neutropenia tray', () => {
     for (const entry of host.querySelectorAll('button')) {
       expect(entry.getAttribute('aria-disabled')).toBe('true');
     }
+  });
+});
+
+describe('Febrile neutropenia tutor', () => {
+  it('says nothing at all on the unassisted setting', () => {
+    render(new FebrileNeutropenia(), 0);
+    expect(host.textContent).not.toContain('A moment to think');
+  });
+
+  it('refuses looking well as evidence', () => {
+    render(new FebrileNeutropenia(), 0, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('How well he looks is not additional evidence');
+  });
+
+  it('treats the hour as a system margin rather than a threshold', () => {
+    const model = new FebrileNeutropenia();
+    for (const action of ['recognize-neutropenic-fever', 'activate-pathway', 'request-cultures',
+      'record-antimicrobial-intent'] as const) model.apply(action, 0);
+    render(model, 1, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('system-design safety margin');
+    expect(text).not.toContain('must be given within one hour');
   });
 });
