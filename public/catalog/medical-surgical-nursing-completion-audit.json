@@ -82,9 +82,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Ten observed-state prompts at version 0.1.0 read the learner's own recorded steps. Unassisted is silent and coached withholds the two waiting beats. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both are held to the lesson's own restraint: neither says the score is wrong, because it is right, and neither mentions this patient's culture result before the call is made — a test asserts the escalation beat happens while the score is still 2 with nothing confirmed, and that the organism appears only in the beat after the review. The cohort sensitivity statistic is cited before the call because it is about a population rather than about her. tests/unit/low-score-demonstration.test.ts and tests/ui/low-score-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {

@@ -14,12 +14,14 @@ import { offersWorkedExample, WORKED_EXAMPLE_MODULE_IDS } from '@anesthesia/demo
 import { ENDOCRINE_METABOLIC_SCENARIOS } from '../../src/modules/endocrine-metabolic/scenarios';
 import { RENAL_ELECTROLYTE_SCENARIOS } from '../../src/modules/renal-electrolyte/scenarios';
 import { ONCOLOGY_SCENARIOS } from '../../src/modules/oncology/scenarios';
+import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../../src/modules/medical-surgical-nursing/scenarios';
 import { SCENARIOS as ANESTHESIA_SCENARIOS } from '@anesthesia/scenarios';
 
 const MODULES = [
   ['endocrine-metabolic', ENDOCRINE_METABOLIC_SCENARIOS],
   ['renal-electrolyte', RENAL_ELECTROLYTE_SCENARIOS],
   ['oncology', ONCOLOGY_SCENARIOS],
+  ['medical-surgical-nursing', MEDICAL_SURGICAL_NURSING_SCENARIOS],
 ] as const;
 
 const claimed = (scenarios: typeof MODULES[number][1], moduleId: string) =>
@@ -33,13 +35,15 @@ describe('Requirement: Every Audited Example Is Offered', () => {
   it.each(MODULES)('offers exactly the %s lessons whose audit claims one', (moduleId, scenarios) => {
     const offered = scenarios.filter((scenario) => offersWorkedExample(scenario, moduleId))
       .map((scenario) => scenario.metadata.id);
+    // Not "every scenario in the module" — nursing is still being written toward
+    // the standard. The invariant is that the two lists cannot drift apart.
     expect(offered.slice().sort()).toEqual(claimed(scenarios, moduleId).slice().sort());
-    expect(offered).toHaveLength(scenarios.length);
+    expect(offered.length).toBeGreaterThan(0);
   });
 
-  it('names the three modules that ship examples and no others', () => {
+  it('names the modules that ship examples and no others', () => {
     expect(WORKED_EXAMPLE_MODULE_IDS.slice().sort())
-      .toEqual(['endocrine-metabolic', 'oncology', 'renal-electrolyte']);
+      .toEqual(['endocrine-metabolic', 'medical-surgical-nursing', 'oncology', 'renal-electrolyte']);
   });
 
   it('offers nothing for a module that has no worked example', () => {

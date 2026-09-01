@@ -14,10 +14,11 @@ import { LIMITATIONS } from '@platform/docs/limitations';
 import { ONCOLOGY_SCENARIOS } from '../../src/modules/oncology/scenarios';
 import { RENAL_ELECTROLYTE_SCENARIOS } from '../../src/modules/renal-electrolyte/scenarios';
 import { ENDOCRINE_METABOLIC_SCENARIOS } from '../../src/modules/endocrine-metabolic/scenarios';
+import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../../src/modules/medical-surgical-nursing/scenarios';
 import { SCENARIOS as ANESTHESIA_SCENARIOS } from '@anesthesia/scenarios';
 import type { Scenario } from '@anesthesia/scenarios/types';
 
-const briefing = (scenario: Scenario, environment: 'oncology' | 'renal-electrolyte' | 'endocrine-metabolic' | 'anesthesia') =>
+const briefing = (scenario: Scenario, environment: 'oncology' | 'renal-electrolyte' | 'endocrine-metabolic' | 'medical-surgical-nursing' | 'anesthesia') =>
   renderToStaticMarkup(createElement(Prebrief, {
     limitations: LIMITATIONS, scenario, region: UNITED_STATES, environment,
     guidance: 'coached', onGuidance: () => {}, onStart: () => {}, onWatch: () => {},
@@ -34,6 +35,22 @@ describe('The worked-example control on the briefing', () => {
   it('offers it for a renal and an endocrine lesson too', () => {
     expect(briefing(RENAL_ELECTROLYTE_SCENARIOS[0]!, 'renal-electrolyte')).toContain('Watch a worked example');
     expect(briefing(ENDOCRINE_METABOLIC_SCENARIOS[0]!, 'endocrine-metabolic')).toContain('Watch a worked example');
+  });
+
+  it('offers it for the nursing lessons that have one, and not the others', () => {
+    // This module is still being written toward the standard, so the briefing has
+    // to tell the two apart rather than offering a control that starts nothing.
+    const withExample = MEDICAL_SURGICAL_NURSING_SCENARIOS
+      .filter((scenario) => scenario.metadata.id === 'low-score-what-the-threshold-does-not-exclude');
+    const without = MEDICAL_SURGICAL_NURSING_SCENARIOS
+      .filter((scenario) => scenario.metadata.id !== 'low-score-what-the-threshold-does-not-exclude');
+    expect(withExample).toHaveLength(1);
+    for (const scenario of withExample) {
+      expect(briefing(scenario, 'medical-surgical-nursing')).toContain('Watch a worked example');
+    }
+    for (const scenario of without) {
+      expect(briefing(scenario, 'medical-surgical-nursing')).not.toContain('Watch a worked example');
+    }
   });
 
   it('keeps the scripted label for the anesthesia demonstration', () => {

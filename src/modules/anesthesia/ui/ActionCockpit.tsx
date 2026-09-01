@@ -2804,6 +2804,7 @@ export interface ActionCockpitProps {
   readonly possibleSepsisDemonstrating?: boolean;
   readonly septicShockLabelDemonstrating?: boolean;
   readonly meningitisImagingDemonstrating?: boolean;
+  readonly lowScoreGuidance?: GuidanceLevel;
   readonly lowScoreDemonstrating?: boolean;
   readonly countedRateDemonstrating?: boolean;
   readonly pairedReadingDemonstrating?: boolean;
@@ -5818,6 +5819,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasLowScoreResponse && (
               <LowScoreTray assessment={props.lowScore}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.lowScoreGuidance}
                 demonstrating={props.lowScoreDemonstrating}
                 onAction={props.onLowScoreResponse ?? (() => {})} />
             )}

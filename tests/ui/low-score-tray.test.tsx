@@ -28,9 +28,10 @@ let host: HTMLDivElement; let root: Root;
 beforeEach(() => { host = document.createElement('div'); document.body.append(host); root = createRoot(host); });
 afterEach(() => { act(() => root.unmount()); host.remove(); });
 
-const render = (model: LowScore, tick: number, onAction = vi.fn(), demonstrating = false) => {
-  act(() => root.render(<LowScoreTray assessment={model.snapshot(tick)}
-    onAction={onAction} demonstrating={demonstrating} />));
+const render = (model: LowScore, tick: number, onAction = vi.fn(), demonstrating = false,
+  guidance: 'unassisted' | 'coached' | 'guided' = 'unassisted') => {
+  act(() => root.render(<LowScoreTray assessment={model.snapshot(tick)} scenarioVersion="0.1.0"
+    onAction={onAction} guidance={guidance} demonstrating={demonstrating} />));
   return onAction;
 };
 const button = (label: string) => [...host.querySelectorAll('button')]
@@ -115,5 +116,34 @@ describe('Low early-warning score tray', () => {
     for (const entry of host.querySelectorAll('button')) {
       expect(entry.getAttribute('aria-disabled')).toBe('true');
     }
+  });
+});
+
+describe('Low early-warning score tutor', () => {
+  it('says nothing at all on the unassisted setting', () => {
+    render(new LowScore(), 0);
+    expect(host.textContent).not.toContain('A moment to think');
+  });
+
+  it('reads the recorded steps when guidance is on', () => {
+    const model = new LowScore();
+    render(model, 0, vi.fn(), false, 'guided');
+    expect(host.textContent).toContain('A moment to think');
+    expect(host.textContent).toContain('Record the observations and the score exactly as they are');
+    model.apply('record-observations-and-score', 0);
+    render(model, 1, vi.fn(), false, 'guided');
+    expect(host.textContent).toContain('Record what this score does not exclude');
+  });
+
+  it('never tells the learner the score is wrong', () => {
+    render(new LowScore(), 0, vi.fn(), false, 'guided');
+    expect(host.textContent).not.toContain('the score is wrong');
+    expect(host.textContent).toContain('it is 2 correctly');
+  });
+
+  it('replaces the tutor with the way back to the controls while the example runs', () => {
+    render(new LowScore(), 0, vi.fn(), true, 'guided');
+    expect(host.textContent).toContain('Watching the worked example');
+    expect(host.textContent).not.toContain('A moment to think');
   });
 });

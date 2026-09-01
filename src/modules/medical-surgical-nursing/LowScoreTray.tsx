@@ -1,14 +1,19 @@
 import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { LowScoreSnapshot } from '@platform/kernel/protocol';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { LowScoreAction } from './low-score';
+import { lowScoreInlinePrompt } from './low-score-tutor';
 
-export function LowScoreTray({ assessment, onAction, demonstrating = false }: {
+export function LowScoreTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: LowScoreSnapshot;
+  readonly scenarioVersion: string;
   readonly onAction: (action: LowScoreAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = lowScoreInlinePrompt(guidance, { scenarioVersion, lowScore: assessment });
   const observations = assessment.observationRecord; const context = assessment.contextRecord;
   const observation = assessment.observation;
   const decision = (action: LowScoreAction, label: string, accepted = false) => {
@@ -17,6 +22,10 @@ export function LowScoreTray({ assessment, onAction, demonstrating = false }: {
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     {/* The score is stated plainly and immediately, because the lesson is not that it is wrong. */}
     <p className="syringe__remaining" role="status">Aggregate early-warning score: {assessment.aggregateScore}. That is below the local escalation threshold, and it is calculated correctly.</p>
     <p className="syringe__remaining">Selected sources: a cohort study of early-warning-score accuracy in bacteraemia, the 2021 international sepsis guidelines, and a systematic review of rapid-response afferent-limb failure. Open the source view for exact wording and grades.</p>
