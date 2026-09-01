@@ -591,28 +591,11 @@
 .why-panel__bar { block-size: 4px; background: var(--line-strong); border-radius: var(--radius-pill); }
 
 /* --- Prebrief and debrief -------------------------------------------------- */
-.reading {
-  max-inline-size: 68ch;
-  margin-inline: auto;
-  display: grid;
-  /* One column, bounded by the region rather than by its content. Left implicit
-   * the track is `auto`, which floors at its widest child's min-content — and a
-   * child sized in percent inside an indefinite track resolves that floor wider
-   * than the viewport, which is what made the educator and review pages scroll
-   * sideways on a phone. */
-  grid-template-columns: minmax(0, 1fr);
-  /* Items size to their content rather than stretching across the column. A
-   * grid item defaults to `stretch`, which turned every button in a prose page
-   * into a full-width slab. */
-  justify-items: start;
-  /* Rows sized to their content, packed at the top. Without this a short page in
-   * a full-height container spreads its handful of rows across the whole screen
-   * and reads as though something failed to load. */
-  align-content: start;
-  gap: var(--space-4);
-  padding: var(--space-6) var(--space-4);
-  inline-size: 100%;
-}
+/* The prebrief's own spacing. The `.reading` surface these sit on is a platform
+   surface now and lives in `src/platform/ui/components.css`: it was declared
+   here, in the anaesthesia module's stylesheet, which no document route loads,
+   so every trust page rendered its markup with `max-inline-size: none` at the
+   full width of the viewport. */
 /* Everything that IS meant to span the column says so. */
 .prebrief { padding-block-end: calc(64px + var(--space-6)); }
 .prebrief__objective { margin-block-end: var(--space-4); }
@@ -627,30 +610,6 @@
   line-height: 1.6;
   color: var(--text-tertiary);
   max-inline-size: 62ch;
-}
-.reading > p,
-.reading > ul,
-.reading > ol,
-.reading > dl,
-.reading > table,
-.reading > section,
-.reading > h1,
-.reading > h2,
-.reading > h3,
-.reading > .panel,
-.reading > .reading__aside,
-.reading > .document__note,
-.reading > .document__group { justify-self: stretch; }
-.reading h1 { font: var(--type-vital-m); letter-spacing: var(--type-vital-m-tracking); }
-.reading h2 { font: var(--type-title); letter-spacing: var(--type-title-tracking); }
-.reading h3 { font: var(--type-subtitle); }
-.reading p, .reading li { color: var(--text-secondary); }
-.reading ul, .reading ol { padding-inline-start: var(--space-5); display: grid; gap: var(--space-2); }
-.reading__aside {
-  border-inline-start: 2px solid var(--line-strong);
-  padding-inline-start: var(--space-4);
-  color: var(--text-tertiary);
-  font: var(--type-micro);
 }
 .phase-nav { display: flex; gap: var(--space-2); flex-wrap: wrap; }
 

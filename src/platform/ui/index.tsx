@@ -320,6 +320,59 @@ export function Panel({ title, actions, children, className }: {
   );
 }
 
+/**
+ * A block of detail the reader opens if they want it.
+ *
+ * A native `details`/`summary`, deliberately: it renders closed in the
+ * prerendered HTML, works with scripting off, is searchable by the browser's own
+ * find-in-page in Chrome, and its contents are still indexed. Nothing here
+ * depends on React having run.
+ *
+ * The rule this exists to enforce: a trust page states its conclusion in a line
+ * and keeps the evidence one click below it. The register had 707 entries set as
+ * 707 headings with three paragraphs each, which is not a register a person can
+ * read; it is a file printed at someone. The conclusion belongs on the page and
+ * the paragraphs belong in here.
+ */
+export function Disclosure({ summary, meta, children, className, open }: {
+  summary: ReactNode;
+  /** A count, a date, a status: the one fact worth seeing while it is closed. */
+  meta?: ReactNode;
+  children: ReactNode;
+  className?: string;
+  open?: boolean;
+}) {
+  return (
+    <details className={['disclosure', className].filter(Boolean).join(' ')} open={open}>
+      <summary className="disclosure__summary">
+        <span className="disclosure__label">{summary}</span>
+        {meta !== undefined && <span className="disclosure__meta">{meta}</span>}
+      </summary>
+      <div className="disclosure__body">{children}</div>
+    </details>
+  );
+}
+
+/**
+ * The one number a trust page leads with, with its label under it.
+ *
+ * Every one of these pages opens by burying its headline fact in a paragraph.
+ * A reader who wants to know whether anything here is reviewed should get that
+ * answer before they get the explanation of it.
+ */
+export function KeyFigure({ value, label, tone = 'neutral' }: {
+  value: ReactNode;
+  label: ReactNode;
+  tone?: 'neutral' | 'warning';
+}) {
+  return (
+    <div className="figure" data-tone={tone}>
+      <span className="figure__value">{value}</span>
+      <span className="figure__label">{label}</span>
+    </div>
+  );
+}
+
 export function Card({ children, className }: { children: ReactNode; className?: string }) {
   return <div className={`card ${className ?? ''}`}>{children}</div>;
 }

@@ -139,6 +139,22 @@ The project SHALL maintain a public register of what the simulator does not mode
 - **WHEN** a learner enters a scenario whose teaching points sit near a known limitation
 - **THEN** the briefing names that limitation in one sentence before the session starts
 
+### Requirement: A Trust Document States Its Finding Before Its Evidence
+
+Every page whose job is to disclose something (the validation report, the governance dashboard, the review-status page, the limitations register, the privacy statement) SHALL open with the finding it is reporting, as a figure a reader takes in at a glance, and SHALL keep the evidence for that finding on the same page behind a control the reader operates. No evidence may be removed, summarised away, or moved off the page to achieve this.
+
+#### Scenario: The number a reader came for is the first thing they see
+
+- **WHEN** a trust document renders
+- **THEN** its headline counts are shown as figures above the prose that qualifies them, and a count that is zero is shown as zero rather than left to be inferred from a paragraph
+
+#### Scenario: The evidence is present, and it is not in the way
+
+- **WHEN** a register or a roll runs to more entries than a person will read in order
+- **THEN** it is grouped, each group states its own count, and each entry states its one-line summary with its full text behind a disclosure that is rendered closed but present in the served HTML, so a crawler and a reader with scripting disabled still receive every word
+
+The limitations register printed all 707 entries as 707 headings with three paragraphs each: a 125,000-pixel page with no grouping and no summary. The bibliography printed 397 sources the same way. Nothing was hidden, and nothing was read either. Disclosure is what makes "no count without its list" survivable at this size; the alternative in practice is a list nobody opens.
+
 ### Requirement: Governance Is Auditable From Outside
 
 All governance records — the board, the review sign-offs, the currency register, the corrections log, and the limitations register — SHALL live in the public repository in machine-readable form, and a governance dashboard SHALL render their current state.

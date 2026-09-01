@@ -95,7 +95,7 @@ export const CONTENT_SECTIONS: readonly ContentSection[] = [
       + 'residents in their first year, nurse anaesthetist students, and the faculty who teach '
       + 'all three.',
       'It assumes basic cardiovascular and respiratory physiology and no anaesthesia experience at '
-      + 'all. It is not built for practising anaesthetists — but it needs them, because no clinician '
+      + 'all. It is not built for practising anaesthetists, but it needs them, because no clinician '
       + 'has yet checked whether this patient behaves the way a real one does. If that is you, the '
       + 'governance page says exactly what is unreviewed and there is a control on every clinical '
       + 'claim for telling us it is wrong.',
@@ -103,53 +103,23 @@ export const CONTENT_SECTIONS: readonly ContentSection[] = [
   },
   {
     id: 'inside-the-module',
-    heading: 'What is inside the anesthesia module',
+    heading: 'What is actually in it',
     paragraphs: [
-      'This is an early build. It contains thirty-nine scenarios — a routine induction on a healthy '
-      + 'adult, rapid desaturation in an obese patient, hypotension after induction, and '
-      + 'bronchospasm after intubation with a region-aware inhaled bronchodilator response, plus unexpected intraoperative hemorrhage with crystalloid '
-      + 'temporization, bounded adult packed-red-cell support, and a dilution-only coagulation panel with plasma support, rapid-sequence induction with modeled rocuronium onset, and silent TIVA-line '
-      + 'disconnection under paralysis, initial laryngospasm response after airway stimulation, '
-      + 'initial perioperative anaphylaxis response after antibiotic exposure, and early '
-      + 'malignant-hyperthermia response during volatile anesthesia, plus a bounded routine '
-      + 'pediatric intravenous induction for a healthy 6-year-old, an unanticipated difficult-airway case '
-      + 'limited to help escalation and supraglottic rescue oxygenation, and a known difficult-airway case '
-      + 'about using the prior record and stopping repeated laryngoscopy attempts '
-      + 'and initial local-anesthetic systemic-toxicity response with weight-banded 20% lipid '
-      + 'and a bounded third-cycle persistent ventricular-fibrillation arrest response through initial modeled ROSC '
-      + 'and high spinal after an epidural top-up with bounded help, oxygen, ventilation, fluid, and ephedrine actions '
-      + 'and venous air embolism during central-line removal with escalation, source-control intent, and oxygen support '
-      + 'and a stable-ventilation capnography sampling-line obstruction that separates monitor failure from patient change '
-      + 'and a dedicated dilutional-coagulopathy handoff that rehearses panel-guided plasma and repeat testing '
-      + 'and an arterial-pressure transducer artifact that separates hydrostatic offset, waveform damping, cuff verification, and patient physiology '
-      + 'and circle-system rebreathing from exhausted absorbent with a raised inspiratory carbon-dioxide baseline, fresh-gas bridge, and confirmed washout '
-      + 'and routine inhalational maintenance that connects end-tidal agent, changing surgical stimulus, analgesic planning, and quiet-phase reassessment '
-      + 'and a dedicated blood-bank handoff that makes ordered release, fixed-unit red-cell support, and reassessment inspectable without imitating a compatibility workflow '
-      + 'and a routine geriatric intravenous induction that makes oxygen reserve, small spaced propofol increments, effect-site delay, pressure, and early ventilation visible together '
-      + 'and quantitative neuromuscular reversal during established anesthesia that separates onset from recovery, matches reversal to measured block depth, and confirms the resulting ratio '
-      + 'and a pediatric inhalational-induction wash-in lesson that separates circuit preparation, vaporizer delivery, end-tidal agent, and bounded response trends '
-      + 'and an obstetric general-anesthesia sequence that connects maternal oxygen reserve, induction order, modeled tube placement, and confirmed ventilation '
-      + 'and a focused preeclampsia response that connects confirmed severe-range pressure, labetalol, magnesium seizure prophylaxis, and observed reassessment '
-      + 'and pneumothorax under positive pressure that connects a bilateral ventilation check, early escalation, 100% oxygen, decompression intent, and live recovery '
-      + 'and an aspiration-risk recognition vignette that joins GLP-1 dose escalation, active symptoms, fasting, and elective urgency without a blanket medication rule '
-      + 'and an emergence vignette that lets a quantitative ratio below 0.9 override four twitches, no detectable fade, and reassuring clinical signs while the airway stays protected '
-      + 'and a delayed-emergence differential that escalates a new focal neurologic pattern after common recorded causes are reviewed '
-      + 'and extubation readiness that integrates quantitative recovery, awake airway protection, gas exchange, airway risk, and rescue planning '
-      + 'and post-extubation soft-tissue obstruction that connects urgent help, a held jaw thrust, continuous positive pressure, oxygen, and visible gas-flow recovery '
-      + 'and opioid-induced ventilatory impairment that connects advancing sedation, ventilation trends, active support, an opioid hold, dose-free naloxone intent, and spontaneous reassessment '
-      + 'and hypothermia and rewarming that connects a falling core-temperature trend, active surface warming, bulk-fluid warming intent, and visible recovery '
-      + 'and perioperative hyperglycemia that connects point-of-care confirmation, institutional insulin-protocol intent, a timed recheck, and a dual-unit target '
-      + 'and pacemaker and cautery planning that joins device identity, pacing dependence, procedure interference, coordinated pacing strategy, backup, and restoration '
-      + 'and postoperative handoff that joins receiver readiness, critical content, unresolved-risk ownership, receiver synthesis, and acknowledged transfer '
-      + '— with three drugs: population PK/PD for propofol and remifentanil, pediatric Paedfusor PK, '
-      + 'a clearly labeled rocuronium teaching model, scripted cefazolin exposure, and dedicated '
-      + 'epinephrine, dantrolene, benzodiazepine-class, lipid-emulsion, compression, and defibrillation crisis actions, the real monitor, the real design system, '
-      + 'and the real debrief.',
-      'That narrowness is deliberate. The riskiest things in a project like this are whether the '
-      + 'waveforms convince a clinician, whether it holds its frame rate on a modest phone, and '
-      + 'whether the physiology is plausible to someone who does this for a living. None of those '
-      + 'are answered by many mediocre scenarios, and all of them are answered by a few good '
-      + 'ones that each teach a different failure.',
+      'Every module is a set of short cases, each built around one thing going wrong and one '
+      + 'decision worth rehearsing. An anaesthesia induction where the pressure falls and the '
+      + 'reason determines the fix. A ward patient whose early-warning score stays reassuring '
+      + 'while they deteriorate. A cancer-treatment complication that arrives weeks after the '
+      + 'exposure that caused it. None of them takes longer than a coffee break.',
+      'The catalogue is not printed here, because a list of 240 titles is not writing and it goes '
+      + 'stale the moment a scenario is added. Every module has its own page listing its cases '
+      + 'with what each one teaches, and every case has a page of its own, both generated from '
+      + 'the same registry the simulator runs from. Those cannot drift from what ships; a '
+      + 'paragraph on this page could, and once did, for as long as it took someone to notice.',
+      'What is common to all of them is the machinery: a sweeping monitor driven by the real '
+      + 'waveform engine, population pharmacokinetics for the drugs that have published models, '
+      + 'a clearly labelled teaching model for the ones that do not, and a structured debrief '
+      + 'that re-runs your own decisions with one thing changed so you can see what the '
+      + 'alternative would have produced.',
     ],
     list: [
       'A sweeping monitor with electrocardiogram, arterial pressure, capnography and plethysmography, all phase-coherent.',
@@ -161,6 +131,7 @@ export const CONTENT_SECTIONS: readonly ContentSection[] = [
       'Laryngoscopy with a Cormack-Lehane grade, where repeated attempts make things worse.',
       'A PEARLS debrief with computed counterfactuals.',
     ],
+    link: { label: 'See every module and what it covers', href: '/#modules' },
   },
   {
     id: 'where-the-pharmacology-comes-from',
@@ -172,7 +143,7 @@ export const CONTENT_SECTIONS: readonly ContentSection[] = [
       + 'range of patients it was derived in.',
       'Applying a model outside that range does not silently produce a number. It marks the model '
       + 'out of range, names which covariate is out of bounds and by how much, and offers one that '
-      + 'is not — and it still runs, so you can see what going out of range actually does.',
+      + 'is not, and it still runs, so you can see what going out of range actually does.',
       'The project requires that every parameter be independently checked by a second person '
       + 'against a second source before a model may be called published. That check has not been '
       + 'done for this build, so no model here carries that label, and the interface says so '
@@ -282,6 +253,28 @@ export const QUESTIONS: readonly QuestionAnswer[] = [
       + 'the purpose.',
   },
 ];
+
+/**
+ * The one thing this project is asking anyone for.
+ *
+ * It sits under the honest-status line in the footer, because that line says
+ * nothing here is clinically reviewed and this is the sentence that says what
+ * would change it. It asks for a reviewer and nothing else: no donation, no
+ * newsletter, no address collected in either direction. The visitor's own mail
+ * client opens with a subject already written, so a clinician who is willing
+ * has to compose nothing to say so.
+ *
+ * Short on purpose. A long appeal on a front door reads as a campaign, and the
+ * people who can actually answer this need one sentence, not a case.
+ */
+export const REVIEWER_INVITATION = {
+  /** Read as the continuation of `HONEST_STATUS.headline` directly above it. */
+  text: 'If you are a clinician, your review would change that.',
+  href:
+    'mailto:hi@claygood.com'
+    + '?subject='
+    + encodeURIComponent('I am a certified US clinician who can help review Open Sim Lab'),
+} as const;
 
 /** The footer trust block. Each link names its destination. */
 export const FOOTER_LINKS: readonly { readonly label: string; readonly href: string }[] = [

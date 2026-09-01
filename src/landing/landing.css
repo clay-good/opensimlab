@@ -488,6 +488,17 @@
    above it. It keeps the tertiary colour and carries the underline that says it
    is a link at all. */
 .landing__status a { color: inherit; text-decoration: underline; }
+/* The ask. It is quieter than the status line it answers, not louder: a visitor
+   who is not a clinician should be able to read past it without being addressed,
+   and the one who is will find it exactly where the claim it answers is made. */
+.landing__invitation {
+  margin-block-start: calc(-1 * var(--space-1));
+  font: var(--type-micro);
+  letter-spacing: var(--type-micro-tracking);
+  color: var(--text-tertiary);
+}
+.landing__invitation a { color: inherit; }
+.landing__invitation a:hover { color: var(--text-secondary); }
 .landing__disclaimer { font: var(--type-micro); color: var(--text-secondary); }
 
 /* --- Phone overrides ------------------------------------------------------ */

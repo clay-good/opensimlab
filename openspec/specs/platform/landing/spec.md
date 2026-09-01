@@ -136,6 +136,27 @@ The landing page SHALL name every module with an unambiguous status — Anesthes
 - **WHEN** a visitor wants to be told when cardiology ships
 - **THEN** they are pointed to the public repository's releases or its feed, and no email address is requested, because collecting one would breach the privacy architecture
 
+### Requirement: The Front Door Asks For A Reviewer, And Nothing Else
+
+The landing page SHALL carry exactly one request, directly beneath the honest-status line: an invitation to a credentialed clinician to review the clinical content, offered as a mail link that opens the visitor's own client with a subject already written. It SHALL NOT ask for money, a subscription, an address, or an account, and it SHALL NOT exceed one sentence.
+
+#### Scenario: The ask sits where the claim it answers is made
+
+- **WHEN** the footer renders
+- **THEN** the line stating that nothing here is clinically reviewed is immediately followed by the sentence saying what would change that, styled no louder than the status line itself, so a visitor who is not a clinician reads past it without being addressed
+
+#### Scenario: It asks for a reviewer, not for support
+
+- **WHEN** the invitation is read
+- **THEN** it requests clinical review and names no donation, sponsorship, subscription or mailing list, and it collects nothing: the project publishes its own address rather than asking for the visitor's, which is the only direction the privacy architecture permits
+
+#### Scenario: It stays one sentence
+
+- **WHEN** the front door's word budget is measured
+- **THEN** the invitation is counted as copy rather than exempted as navigation, and the budget leaves only a few words of slack, because a front door that begins making a case has stopped being a front door
+
+This project cannot pay for the review it needs, and the alternative to asking is shipping an unsigned corpus indefinitely while the footer says so and offers no way to help. One sentence is the whole of the ask.
+
 ### Requirement: Substantive Content Lives On The Root Domain
 
 The root domain SHALL carry genuine prose explaining the project, written for a human reader who wanted to know more, at a dedicated `/about` route linked from the landing page and from the footer of every page. Keeping it off the landing page is what lets the front door be one screen; keeping it on the root domain is what stops the simulator ever having to carry marketing copy.

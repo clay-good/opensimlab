@@ -72,7 +72,7 @@
       },
       {
         "path": "src/platform/docs/limitations.ts",
-        "sha256": "f4818a4974d9b76747216918d9cb4834104e4435f459df71e152bd2be9aee318"
+        "sha256": "caa3bc96e1d2751487ec1a223b70786f6e7caa65effdc06ea56665b7d207b88a"
       },
       {
         "path": "src/platform/docs/limitations/anesthesia.ts",
@@ -148,7 +148,7 @@
       },
       {
         "path": "src/platform/governance/publication.ts",
-        "sha256": "a64b18c1e1d3c245db8969f24f1a5cfe39b297c6ce2e4dcf2caac0507861f2c4"
+        "sha256": "7423214f6a8d5dc31795833422b840649e05832bd458ed74cf3151fc393963cf"
       },
       {
         "path": "src/platform/governance/records.ts",
@@ -309,7 +309,7 @@
       },
       {
         "path": "src/platform/docs/limitations.ts",
-        "sha256": "f4818a4974d9b76747216918d9cb4834104e4435f459df71e152bd2be9aee318"
+        "sha256": "caa3bc96e1d2751487ec1a223b70786f6e7caa65effdc06ea56665b7d207b88a"
       },
       {
         "path": "src/platform/docs/limitations/anesthesia.ts",
@@ -385,7 +385,7 @@
       },
       {
         "path": "src/platform/governance/publication.ts",
-        "sha256": "a64b18c1e1d3c245db8969f24f1a5cfe39b297c6ce2e4dcf2caac0507861f2c4"
+        "sha256": "7423214f6a8d5dc31795833422b840649e05832bd458ed74cf3151fc393963cf"
       },
       {
         "path": "src/platform/governance/records.ts",
@@ -526,7 +526,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/cockpit.css",
-        "sha256": "769516ad51d05593680e21207387e21aafa3e6d9ca8757062ac1ef4b70abe2e7"
+        "sha256": "08315c653acc38a1dabb22adfeb27e7bd155d7d19d395a626d4e4f8071c46e38"
       },
       {
         "path": "src/modules/endocrine-metabolic/AvpDeficiencyTray.tsx",
@@ -582,7 +582,7 @@
       },
       {
         "path": "src/platform/docs/limitations.ts",
-        "sha256": "f4818a4974d9b76747216918d9cb4834104e4435f459df71e152bd2be9aee318"
+        "sha256": "caa3bc96e1d2751487ec1a223b70786f6e7caa65effdc06ea56665b7d207b88a"
       },
       {
         "path": "src/platform/docs/limitations/anesthesia.ts",
@@ -658,7 +658,7 @@
       },
       {
         "path": "src/platform/governance/publication.ts",
-        "sha256": "a64b18c1e1d3c245db8969f24f1a5cfe39b297c6ce2e4dcf2caac0507861f2c4"
+        "sha256": "7423214f6a8d5dc31795833422b840649e05832bd458ed74cf3151fc393963cf"
       },
       {
         "path": "src/platform/governance/records.ts",

@@ -565,3 +565,199 @@ button.vital-tile__value {
 }
 .timeline__mark[data-severity='critical'] { background: var(--alarm-critical); block-size: 20px; }
 .timeline__mark[data-severity='warning'] { background: var(--alarm-warning); block-size: 16px; }
+
+/* ---------------------------------------------------------------------------
+   The reading surface.
+
+   Every page made of prose rather than controls: the trust documents, the About
+   page, the educator and curriculum pages, and the cockpit's own prebrief and
+   debrief. One measure, one heading scale, one rhythm.
+
+   These rules used to live in `src/modules/anesthesia/ui/cockpit.css`. A document
+   route imports `@platform/ui` and never imports a module stylesheet, so on every
+   one of those pages `.reading` resolved to `max-inline-size: none` and the whole
+   document set rendered as raw markup across the full width of the window. The
+   limitations register was 707 headings ruled edge to edge at 1425px.
+   --------------------------------------------------------------------------- */
+
+.reading {
+  max-inline-size: 68ch;
+  margin-inline: auto;
+  display: grid;
+  /* One column, bounded by the region rather than by its content. Left implicit
+   * the track is `auto`, which floors at its widest child's min-content — and a
+   * child sized in percent inside an indefinite track resolves that floor wider
+   * than the viewport, which is what made the educator and review pages scroll
+   * sideways on a phone. */
+  grid-template-columns: minmax(0, 1fr);
+  /* Items size to their content rather than stretching across the column. A
+   * grid item defaults to `stretch`, which turned every button in a prose page
+   * into a full-width slab. */
+  justify-items: start;
+  /* Rows sized to their content, packed at the top. Without this a short page in
+   * a full-height container spreads its handful of rows across the whole screen
+   * and reads as though something failed to load. */
+  align-content: start;
+  gap: var(--space-4);
+  padding: var(--space-6) var(--space-4);
+  inline-size: 100%;
+}
+.reading > p,
+.reading > ul,
+.reading > ol,
+.reading > dl,
+.reading > table,
+.reading > section,
+.reading > h1,
+.reading > h2,
+.reading > h3,
+.reading > .panel,
+.reading > .reading__aside,
+.reading > .document__note,
+.reading > .document__group { justify-self: stretch; }
+.reading h1 { font: var(--type-vital-m); letter-spacing: var(--type-vital-m-tracking); }
+.reading h2 { font: var(--type-title); letter-spacing: var(--type-title-tracking); }
+.reading h3 { font: var(--type-subtitle); }
+.reading p, .reading li { color: var(--text-secondary); }
+.reading ul, .reading ol { padding-inline-start: var(--space-5); display: grid; gap: var(--space-2); }
+.reading__aside {
+  border-inline-start: 2px solid var(--line-strong);
+  padding-inline-start: var(--space-4);
+  color: var(--text-tertiary);
+  font: var(--type-micro);
+}
+
+/* ---------------------------------------------------------------------------
+   Disclosure and key figure.
+
+   The two pieces the trust documents are built from. A page states what is true
+   in a line, shows the one number that matters, and puts the evidence behind a
+   control the reader operates rather than in front of one they did not ask for.
+   --------------------------------------------------------------------------- */
+
+.disclosure {
+  inline-size: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--surface-1);
+}
+/* Adjacent disclosures read as one list rather than as a stack of cards. */
+.disclosure + .disclosure { margin-block-start: var(--space-2); }
+
+.disclosure__summary {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  cursor: pointer;
+  color: var(--text-primary);
+  font: var(--type-subtitle);
+  list-style: none;
+  transition: background var(--motion-micro) var(--ease);
+  border-radius: var(--radius-control);
+}
+/* Safari draws its own triangle through `::-webkit-details-marker`, and every
+   other engine through `::marker`. Both are removed; the chevron below is the
+   one affordance, and it points the same way in all of them. */
+.disclosure__summary::-webkit-details-marker { display: none; }
+.disclosure__summary::marker { content: ''; }
+.disclosure__summary:hover { background: var(--surface-2); }
+
+.disclosure__label { flex: 1; min-inline-size: 0; }
+.disclosure__meta {
+  flex: none;
+  font: var(--type-micro);
+  letter-spacing: var(--type-micro-tracking);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-tertiary);
+}
+
+/* The chevron, drawn from two borders rather than a glyph so it inherits the
+   text colour and needs no font to be present. */
+.disclosure__summary::after {
+  content: '';
+  flex: none;
+  align-self: center;
+  inline-size: 7px;
+  block-size: 7px;
+  border-inline-end: 1.5px solid var(--text-tertiary);
+  border-block-end: 1.5px solid var(--text-tertiary);
+  transform: rotate(45deg) translate(-2px, -2px);
+  transition: transform var(--motion-micro) var(--ease);
+}
+.disclosure[open] > .disclosure__summary::after {
+  transform: rotate(225deg) translate(-2px, -2px);
+}
+.disclosure[open] > .disclosure__summary {
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+}
+
+.disclosure__body {
+  display: grid;
+  gap: var(--space-3);
+  padding: 0 var(--space-3) var(--space-3);
+  border-block-start: 1px solid var(--line-subtle);
+  padding-block-start: var(--space-3);
+}
+.disclosure__body > p,
+.disclosure__body > ul,
+.disclosure__body > ol { color: var(--text-secondary); margin: 0; }
+/* A term-and-detail pair inside a disclosure: the label in micro caps above the
+   sentence it introduces, rather than bolded inline where it competes with it. */
+.disclosure__body dt {
+  font: var(--type-micro);
+  letter-spacing: var(--type-micro-tracking);
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+.disclosure__body dd { margin-inline-start: 0; color: var(--text-secondary); }
+.disclosure__body dd + dt { margin-block-start: var(--space-3); }
+
+/* A disclosure holding other disclosures: the group. Its own body loses the
+   inner padding so the children align with the group's edge. */
+.disclosure--group > .disclosure__body { padding-inline: var(--space-2); }
+
+/* The one number a page leads with. */
+.figure {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--surface-1);
+  inline-size: 100%;
+}
+.figure__value {
+  font: var(--type-vital-m);
+  letter-spacing: var(--type-vital-m-tracking);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+.figure__label {
+  font: var(--type-micro);
+  letter-spacing: var(--type-micro-tracking);
+  color: var(--text-tertiary);
+}
+/* A figure that is reporting a shortfall says so with its edge, which is the
+   one place the design system allows an alarm colour outside a trace. */
+.figure[data-tone='warning'] { border-color: var(--alarm-warning); }
+.figure[data-tone='warning'] .figure__value { color: var(--alarm-warning); }
+
+/* A row of figures on a wide screen, a stack on a phone. */
+.figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-2);
+  inline-size: 100%;
+}
+
+/* An entry inside a group is a line of prose, not a heading. At subtitle weight
+   707 of them read as 707 titles, which is the visual problem the grouping was
+   meant to solve rather than restate one level down. */
+.disclosure--group .disclosure .disclosure__summary {
+  font: var(--type-body);
+  color: var(--text-secondary);
+  padding: var(--space-2) var(--space-3);
+}
+.disclosure--group .disclosure .disclosure__summary:hover { color: var(--text-primary); }

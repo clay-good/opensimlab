@@ -21,7 +21,7 @@ import { usePrefersReducedMotion } from '@platform/ui';
 import { MODULES } from '@platform/modules/registry';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { HONEST_STATUS } from '@platform/governance/status';
-import { FOOTER_LINKS, ONE_LINE_DESCRIPTION, THREE_FACTS } from './content';
+import { FOOTER_LINKS, ONE_LINE_DESCRIPTION, REVIEWER_INVITATION, THREE_FACTS } from './content';
 import { heroStaticSvg, startLiveHero } from './hero';
 import { DEMONSTRATION_HREF } from '@anesthesia/demo/demonstration';
 
@@ -97,7 +97,7 @@ export function Landing() {
             number of scenarios behind it. The count is the honest version of the
             claim the tagline makes: 240 scenarios is a real number only if a
             visitor can see where they are. */}
-        <nav className="landing__modules" aria-label="Specialty modules">
+        <nav className="landing__modules" id="modules" aria-label="Specialty modules">
           {available.map((module, index) => (
             <a
               key={module.id}
@@ -159,6 +159,12 @@ export function Landing() {
             another line of copy beside it. */}
         <p className="landing__status">
           <a href="/review-status">{HONEST_STATUS.headline}</a>
+        </p>
+        {/* Directly under the line that says nothing here is reviewed, because
+            this is the sentence that says what would change it. It is the only
+            thing the project asks anyone for. */}
+        <p className="landing__invitation">
+          <a href={REVIEWER_INVITATION.href}>{REVIEWER_INVITATION.text}</a>
         </p>
         <ul className="landing__footer-links">
           <li><a href="/about">About</a></li>

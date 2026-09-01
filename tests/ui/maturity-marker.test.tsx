@@ -30,7 +30,7 @@ describe('maturity marker', () => {
     const markup = renderToStaticMarkup(
       <MaturityMarker status="draft" subjectKind="scenario" subjectId="test" contentVersion="1.0.0" />,
     );
-    expect(markup).toContain('Draft — development build');
+    expect(markup).toContain('Draft: development build');
     expect(markup).not.toContain('Clinically reviewed');
     expect(markup).not.toContain('endorsed');
   });
@@ -48,7 +48,7 @@ describe('maturity marker', () => {
     expect(markup).toContain('◇');
     expect(markup).toContain('>Draft<');
     expect(markup).toContain('/catalog/anesthesia-maturity.json#practice-region:us@0.1.0');
-    expect(markup).toContain('aria-label="Draft — development build. View exact maturity record in a new tab."');
+    expect(markup).toContain('aria-label="Draft: development build. View exact maturity record in a new tab."');
   });
 
   it('links a scenario to its owning module catalog', () => {

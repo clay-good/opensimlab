@@ -64,8 +64,35 @@ describe('Requirement: A Prose Page Is As Wide As The Window', () => {
   });
 
   it('bounds the reading column for the same reason', () => {
-    const reading = cockpitCss.slice(cockpitCss.indexOf('.reading {'), cockpitCss.indexOf('.reading > p'));
+    const reading = componentsCss.slice(
+      componentsCss.indexOf('.reading {'), componentsCss.indexOf('.reading > p'),
+    );
     expect(reading).toContain('grid-template-columns: minmax(0, 1fr);');
+  });
+
+  /**
+   * And it is declared somewhere a document route actually loads.
+   *
+   * `.reading` lived in the anaesthesia module's stylesheet. A document route
+   * imports `@platform/ui` and never imports a module stylesheet, so on every
+   * trust page the selector matched an element and applied nothing: the measure
+   * resolved to `none` and the whole document set rendered as raw markup across
+   * the full width of the window. The rule being correct is not the same as the
+   * rule being present, and only the second one is what a reader gets.
+   */
+  it('declares the reading surface in a stylesheet the prose pages load', () => {
+    expect(componentsCss, 'the platform must own the reading surface')
+      .toContain('.reading {');
+    expect(cockpitCss, 'a module stylesheet must not own it again')
+      .not.toContain('.reading {');
+    // `@platform/ui` is what pulls components.css in, and it is what every prose
+    // route imports. This is the link that was missing.
+    const ui = readFileSync(join(process.cwd(), 'src/platform/ui/index.tsx'), 'utf8');
+    expect(ui).toContain("import './components.css'");
+    for (const file of ['DocumentRoute.tsx', 'CurriculumRoute.tsx', 'EducatorsRoute.tsx']) {
+      expect(readFileSync(join(process.cwd(), 'src/routes', file), 'utf8'), file)
+        .toMatch(/from '@platform\/ui'/);
+    }
   });
 });
 

@@ -8,12 +8,12 @@
  */
 
 import { useState } from 'react';
-import { Badge, Button, CitationLink, Panel, SiteBar } from '@platform/ui';
+import { Badge, Button, CitationLink, Disclosure, KeyFigure, Panel, SiteBar } from '@platform/ui';
 import { buildValidationReport } from '@platform/docs/validation-report';
 import { EDITORIAL_BOARD, HONEST_STATUS, reviewableItems } from '@platform/governance/records';
 import { reportCoverage } from '@platform/governance/review-gate';
 import { itemKey, reviewStatusReport } from '@platform/governance/review-status';
-import { LIMITATIONS } from '@platform/docs/limitations';
+import { LIMITATIONS, LIMITATION_GROUPS } from '@platform/docs/limitations';
 import { SOURCES, formatSource, requireSource } from '@platform/docs/sources';
 import { VERIFIED_CONSTANTS, confirmedCount } from '@platform/docs/verified-constants';
 import { PRIVACY_CLAIMS } from '@platform/docs/privacy-claims';
@@ -84,15 +84,35 @@ export function DocumentRoute({ path }: { path: string }) {
 
 function ValidationBody() {
   const report = buildValidationReport();
+  const passing = report.benchmarks.filter((benchmark) => benchmark.passes).length;
   return (
     <>
       <p className="field__hint">
         Engine {report.engineVersion} · model set {report.modelSetRevision}
       </p>
 
+      {/* The four numbers a reader came for, before the four sections that
+          explain them. Two of them are zero, and a zero stated plainly at the top
+          of a validation report is worth more than a page that makes someone read
+          to the end to find it. */}
+      <div className="figures">
+        <KeyFigure
+          value={`0 / ${report.varvel.length}`}
+          label="Models validated against observed data"
+          tone="warning"
+        />
+        <KeyFigure
+          value={`${report.faceValidity.reviewers} / ${report.faceValidity.required}`}
+          label="Clinician face-validity reviewers"
+          tone="warning"
+        />
+        <KeyFigure value={`${passing} / ${report.benchmarks.length}`} label="Physiological benchmarks passing" />
+        <KeyFigure value={SOURCES.length} label="Sources cited, each checked" />
+      </div>
+
       <h2>Predictive performance</h2>
       <p>
-        Pharmacokinetic accuracy is quantified using the Varvel framework — bias, inaccuracy,
+        Pharmacokinetic accuracy is quantified using the Varvel framework: bias, inaccuracy,
         intra-individual variability, and drift of error over time.
       </p>
       <table>
@@ -190,28 +210,61 @@ function ValidationBody() {
       <p>
         Each entry names what this simulator actually takes from that paper, so you can check the
         specific claim rather than the general topic. Every citation was confirmed field by field
-        against the source&apos;s own record — an audit found the age-related MAC relation
+        against the source&apos;s own record: an audit found the age-related MAC relation
         attributed to the wrong paper of the same authors, which is exactly the kind of error a
         citation nobody checks will carry indefinitely.
       </p>
       <p className="field__hint">
         A test refuses the build if any citation appears in the code without an entry here.
+        Nothing below is hidden; it is filed by author so a bibliography of this size can be
+        walked rather than scrolled.
       </p>
-      <ul>
-        {SOURCES.map((source) => (
-          <li key={source.id} className="document__source">
-            <p><strong>{formatSource(source)}</strong></p>
-            <p>{source.usedFor}</p>
-            {source.pmid && (
-              <CitationLink href={`https://pubmed.ncbi.nlm.nih.gov/${source.pmid}/`}>
-                Look this up on PubMed
-              </CitationLink>
-            )}
-          </li>
-        ))}
-      </ul>
+      {sourcesByInitial().map((group) => (
+        <Disclosure
+          key={group.initial}
+          className="disclosure--group"
+          summary={group.initial}
+          meta={`${group.sources.length} ${group.sources.length === 1 ? 'source' : 'sources'}`}
+        >
+          {group.sources.map((source) => (
+            <Disclosure key={source.id} summary={formatSource(source)}>
+              <p>{source.usedFor}</p>
+              {source.pmid && (
+                <CitationLink href={`https://pubmed.ncbi.nlm.nih.gov/${source.pmid}/`}>
+                  Look this up on PubMed
+                </CitationLink>
+              )}
+            </Disclosure>
+          ))}
+        </Disclosure>
+      ))}
     </>
   );
+}
+
+/**
+ * The bibliography, filed by the first author's surname.
+ *
+ * 397 sources rendered as a flat list of three-element blocks was most of an
+ * 84,000-pixel page, and a reader who wanted one paper had no way to reach it.
+ * The citation is the summary and what this project took from the paper is the
+ * detail behind it, which is the same shape the limitations register uses.
+ */
+function sourcesByInitial(): { initial: string; sources: readonly (typeof SOURCES)[number][] }[] {
+  const groups = new Map<string, (typeof SOURCES)[number][]>();
+  for (const source of [...SOURCES].sort((a, b) => a.authors.localeCompare(b.authors))) {
+    // The field is `Surname A, Surname B, et al`, so the first character is the
+    // first author's initial letter. A non-letter is filed under `#` rather than
+    // silently creating a group named after a bracket.
+    const first = source.authors.trim().charAt(0).toUpperCase();
+    const initial = /[A-Z]/.test(first) ? first : '#';
+    const bucket = groups.get(initial) ?? [];
+    bucket.push(source);
+    groups.set(initial, bucket);
+  }
+  return [...groups.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([initial, sources]) => ({ initial, sources }));
 }
 
 function GovernanceBody() {
@@ -242,30 +295,42 @@ function GovernanceBody() {
       )}
 
       <p>
-        This page is about signatures. What each item is actually published as — the maturity
-        status the interface labels it with — is on <a href="/review-status">the review-status
-        page</a>, item by item.
+        This page is about signatures. What each item is actually published as, meaning the
+        maturity status the interface labels it with, is on <a href="/review-status">the
+        review-status page</a>, item by item.
       </p>
 
       <h2>Review coverage</h2>
-      <p className="numeric">
-        {coverage.percentCurrent.toFixed(0)}% of {coverage.total} clinical content items are under
-        current review.
-      </p>
+      <div className="figures">
+        <KeyFigure
+          value={`${coverage.percentCurrent.toFixed(0)}%`}
+          label={`Of ${coverage.total} items under current review`}
+          tone={coverage.percentCurrent > 0 ? 'neutral' : 'warning'}
+        />
+        <KeyFigure
+          value={coverage.outstanding.length}
+          label="Items outstanding, every one named below"
+          tone="warning"
+        />
+      </div>
       <p className="field__hint">
         Every outstanding item is named below. No aggregate figure is reported without its list.
       </p>
       {/* Grouped by VERDICT, then by kind.
           Every one of these items is outstanding for the same reason, and the
-          reason string carries the item's own id inside it — so grouping on the
+          reason string carries the item's own id inside it, so grouping on the
           sentence grouped nothing, and printing it once per item, fourteen
           times, buried the only thing the list is for: which items they are. */}
       {[...new Set(coverage.outstanding.map((entry) => entry.verdict.status))].map((status) => {
         const matching = coverage.outstanding.filter((entry) => entry.verdict.status === status);
         const kinds = [...new Set(matching.map((entry) => entry.item.kind))];
         return (
-          <section key={status} className="document__group">
-            <p><strong>{VERDICT_SUMMARY[status] ?? status}</strong> — {matching.length} items.</p>
+          <Disclosure
+            key={status}
+            className="disclosure--group"
+            summary={VERDICT_SUMMARY[status] ?? status}
+            meta={`${matching.length} items`}
+          >
             <dl className="document__items">
               {kinds.map((kind) => (
                 <div key={kind}>
@@ -279,7 +344,7 @@ function GovernanceBody() {
                 </div>
               ))}
             </dl>
-          </section>
+          </Disclosure>
         );
       })}
 
@@ -304,7 +369,7 @@ function GovernanceBody() {
  * The governance page answers who has signed what. This answers the other half:
  * which maturity status each item carries, which is the label a reader sees beside
  * it in the interface. Two of the eight preview gates report rather than block,
- * and that trade is only defensible while the gap is visible — so every count here
+ * and that trade is only defensible while the gap is visible, so every count here
  * is printed with the list behind it, and every status in the vocabulary gets a
  * row even when nothing is in it.
  */
@@ -321,11 +386,19 @@ function ReviewStatusBody() {
         interface says.
       </p>
 
+      {/* The two numbers this page exists to report, before the four sections
+          that qualify them. Both are zero, and both should be legible in a
+          glance rather than recovered from a sentence. */}
+      <div className="figures">
+        <KeyFigure
+          value={`${report.signedItems} / ${report.total}`}
+          label="Items signed by a clinician"
+          tone="warning"
+        />
+        <KeyFigure value={report.boardSize} label="Clinicians on the editorial board" tone="warning" />
+      </div>
+
       <h2>The board</h2>
-      <p className="numeric">
-        {report.boardSize} clinician{report.boardSize === 1 ? '' : 's'} on the editorial board.{' '}
-        {report.signedItems} of {report.total} items signed.
-      </p>
       <p>
         {report.boardSize === 0
           ? 'The board is empty and published as empty. Nothing here has been signed by a '
@@ -344,47 +417,51 @@ function ReviewStatusBody() {
       <ul>
         {report.groups.map((group) => (
           <li key={group.status} className="numeric">
-            <code>{group.status}</code> — {group.count}. {group.label}.
+            <code>{group.status}</code>: {group.count}. {group.label}.
           </li>
         ))}
       </ul>
 
       <h2>Every item</h2>
+      <p className="field__hint">
+        The complete roll, by status and then by kind. It is behind a control rather than printed
+        because it is {report.total} rows long and its content is one repeated fact; the counts
+        above are the finding, and this is the evidence for them.
+      </p>
       {populated.map((group) => (
-        <section key={group.status} className="document__group">
-          <h3>{group.label} — {group.count} items</h3>
-          <dl className="document__items">
-            {[...new Set(group.items.map((item) => item.kind))].map((kind) => {
-              const matching = group.items.filter((item) => item.kind === kind);
-              return (
-                <div key={kind}>
-                  <dt><code>{kind}</code> — {matching.length}</dt>
-                  <dd>
-                    <ul>
-                      {matching.map((item) => (
-                        <li key={itemKey(item)}>
-                          {item.route === null
-                            ? item.title
-                            : (
-                              <a href={`/${item.route}/scenario/${item.id}`}>{item.title}</a>
-                            )}{' '}
-                          <code>{item.id}</code> <span className="numeric">v{item.contentVersion}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </dd>
-                </div>
-              );
-            })}
-          </dl>
-        </section>
+        <Disclosure
+          key={group.status}
+          className="disclosure--group"
+          summary={group.label}
+          meta={`${group.count} items`}
+        >
+          {[...new Set(group.items.map((item) => item.kind))].map((kind) => {
+            const matching = group.items.filter((item) => item.kind === kind);
+            return (
+              <Disclosure key={kind} summary={kind} meta={`${matching.length}`}>
+                <ul>
+                  {matching.map((item) => (
+                    <li key={itemKey(item)}>
+                      {item.route === null
+                        ? item.title
+                        : (
+                          <a href={`/${item.route}/scenario/${item.id}`}>{item.title}</a>
+                        )}{' '}
+                      <code>{item.id}</code> <span className="numeric">v{item.contentVersion}</span>
+                    </li>
+                  ))}
+                </ul>
+              </Disclosure>
+            );
+          })}
+        </Disclosure>
       ))}
 
       <h2>What this page does not tell you</h2>
       <p>
         A maturity status records that an item passed the gates the build can check. It does not
-        record that a clinician agrees with it. Two of the eight preview gates — the completion
-        contract and the full quality-record set — are computed and reported but do not block
+        record that a clinician agrees with it. Two of the eight preview gates, the completion
+        contract and the full quality-record set, are computed and reported but do not block
         publication, because no item has ever passed them and a channel nothing can pass is not a
         channel. The per-module audits behind those two gates are published as JSON alongside the
         build, and the <a href="/limitations">limitations register</a> names what the simulation
@@ -424,7 +501,7 @@ function CorrectionsBody() {
       ) : (
         CORRECTIONS.map((entry) => (
           <section key={`${entry.released}:${entry.title}`} className="document__group">
-            <h3>{entry.released} — {entry.title}</h3>
+            <h3>{entry.released}: {entry.title}</h3>
             <dl className="document__items">
               <div><dt>Item</dt><dd><code>{entry.item}</code></dd></div>
               <div><dt>What was wrong</dt><dd>{entry.wasWrong}</dd></div>
@@ -441,7 +518,7 @@ function CorrectionsBody() {
       <p>
         Every playable scenario carries a <strong>Report a problem</strong> control. It sends only
         the scenario, its version, the public practice context, a category, and an optional
-        160-character note — after showing you a preview of exactly that. Do not include real
+        160-character note, after showing you a preview of exactly that. Do not include real
         patient or learner information; there is no field that wants it.
       </p>
       <p>
@@ -464,24 +541,59 @@ function CorrectionsBody() {
   );
 }
 
+/**
+ * The limitations register.
+ *
+ * Every entry carries a one-line `headline` and three paragraphs, and this page
+ * used to print all four parts of all 707 of them as a flat run of 707 `h2`s: a
+ * 125,000-pixel scroll with no grouping, no summary, and no way to reach the
+ * entries for one specialty. A register that cannot be navigated is a file
+ * printed at a reader, and the honest effect of it was that nobody read the one
+ * document on this site whose whole job is to say what the simulator gets wrong.
+ *
+ * The headline is the summary and the three paragraphs are the detail, which is
+ * the shape the data already had. Modules group it, `The simulator itself` opens
+ * first because it applies everywhere, and the count is on every group so the
+ * page never reports a total without the list behind it.
+ */
 function LimitationsBody() {
   return (
     <>
       <p>
-        Each entry names the specific simplification, the clinical situation where it would mislead
-        you, and the correct clinical understanding. This is a register, not a disclaimer.
+        Every entry names one simplification, where it would mislead you, and the correct clinical
+        understanding. This is a register, not a disclaimer: nothing here is hidden behind a
+        summary figure.
       </p>
-      <ul>
-        {LIMITATIONS.map((limitation) => (
-          <li key={limitation.id}>
-            {/* h2, not h3: this page's only preceding heading is the h1, and a
-                jump from h1 to h3 is a heading-order violation. */}
-            <h2>{limitation.simplification}</h2>
-            <p><strong>Where it would mislead you:</strong> {limitation.whereItMisleads}</p>
-            <p><strong>The correct understanding:</strong> {limitation.correctUnderstanding}</p>
-          </li>
-        ))}
-      </ul>
+      <div className="figures">
+        <KeyFigure value={LIMITATIONS.length} label="Simplifications on record" />
+        <KeyFigure value={LIMITATION_GROUPS.length} label="Groups, by module" />
+      </div>
+      {LIMITATION_GROUPS.map((group, index) => (
+        <Disclosure
+          key={group.label}
+          className="disclosure--group"
+          summary={group.label}
+          meta={`${group.entries.length} ${group.entries.length === 1 ? 'entry' : 'entries'}`}
+          /* The engine-wide group is open on arrival, because it is true of every
+             scenario a reader might go on to open and it is eleven lines long. The
+             specialty groups stay closed; opening 103 anaesthesia entries at
+             someone is the behaviour this page is being rescued from. */
+          open={index === 0}
+        >
+          {group.entries.map((limitation) => (
+            <Disclosure key={limitation.id} summary={limitation.headline}>
+              <dl>
+                <dt>The simplification</dt>
+                <dd>{limitation.simplification}</dd>
+                <dt>Where it would mislead you</dt>
+                <dd>{limitation.whereItMisleads}</dd>
+                <dt>The correct understanding</dt>
+                <dd>{limitation.correctUnderstanding}</dd>
+              </dl>
+            </Disclosure>
+          ))}
+        </Disclosure>
+      ))}
     </>
   );
 }
@@ -501,6 +613,14 @@ function PrivacyBody() {
   };
   return (
     <>
+      {/* The three facts a privacy page is read for. They are all in the prose
+          below and always were, which is exactly the problem: a reader deciding
+          whether to send their students here should not have to find them. */}
+      <div className="figures">
+        <KeyFigure value="0" label="Accounts, trackers, and analytics" />
+        <KeyFigure value="0 bytes" label="Practice data that leaves your device" />
+        <KeyFigure value="30 days" label="Maximum retention, and only for a report you choose to send" />
+      </div>
       <p>
         Practicing in Open Sim Lab is unobservable. There is no login, account, analytics, learner
         telemetry, or remote practice history. The one deliberate exception is an anonymous

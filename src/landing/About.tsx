@@ -11,6 +11,7 @@
  */
 
 import './landing.css';
+import { Disclosure } from '@platform/ui';
 import { MODULES, RELEASE_FEED_URL } from '@platform/modules/registry';
 import { moduleProse } from '@platform/modules/module-prose';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
@@ -75,16 +76,17 @@ export function About() {
           </p>
         </section>
 
+        {/* Nine questions and nine answers were eighteen stacked blocks of text
+            that a reader had to walk past to reach the end of the page. The
+            question is the thing worth showing; the answer is what someone asks
+            for. */}
         <section aria-labelledby="questions-heading" className="landing__questions">
           <h2 id="questions-heading">Questions</h2>
-          <dl>
-            {QUESTIONS.map((entry) => (
-              <div key={entry.question}>
-                <dt>{entry.question}</dt>
-                <dd>{entry.answer}</dd>
-              </div>
-            ))}
-          </dl>
+          {QUESTIONS.map((entry) => (
+            <Disclosure key={entry.question} summary={entry.question}>
+              <p>{entry.answer}</p>
+            </Disclosure>
+          ))}
         </section>
 
         <p className="landing__status">{HONEST_STATUS.headline} {HONEST_STATUS.detail}</p>

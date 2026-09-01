@@ -63,12 +63,12 @@ export type PublicationVerdict =
  * shortening to the scope alone.
  */
 export const MATURITY_LABELS: Readonly<Record<ContentMaturity, string>> = {
-  draft: 'Draft — development build',
+  draft: 'Draft: development build',
   preview: 'Educational use only. Not clinically reviewed',
-  source_checked: 'Sources checked — clinical behavior not reviewed',
+  source_checked: 'Sources checked: clinical behavior not reviewed',
   clinically_reviewed: 'Clinically reviewed',
   institution_endorsed: 'Institution endorsed',
-  withdrawn: 'Withdrawn — unavailable',
+  withdrawn: 'Withdrawn: unavailable',
 };
 
 /**

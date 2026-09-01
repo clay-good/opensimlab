@@ -34,7 +34,7 @@ function AssignmentBuilder() {
       <h3>Build an assignment link</h3>
       <p className="field__hint">
         Everyone who opens it gets the same scenario, the same guidance level and the same
-        patient. No accounts, and nothing tells you who opened it — if you need to know who did
+        patient. No accounts, and nothing tells you who opened it. If you need to know who did
         the work, ask them to export the session and hand it in.
       </p>
 
@@ -52,9 +52,9 @@ function AssignmentBuilder() {
       <label className="field">
         <span className="field__label">Guidance</span>
         <select className="select" value={guidance} onChange={(e) => setGuidance(e.target.value)}>
-          <option value="guided">Guided — prompt them</option>
-          <option value="coached">Coached — prompt rarely</option>
-          <option value="unassisted">Unassisted — say nothing</option>
+          <option value="guided">Guided: prompt them</option>
+          <option value="coached">Coached: prompt rarely</option>
+          <option value="unassisted">Unassisted: say nothing</option>
         </select>
       </label>
 
@@ -63,7 +63,7 @@ function AssignmentBuilder() {
         <input
           className="field__input"
           value={label}
-          placeholder="Week 3 — induction"
+          placeholder="Week 3, induction"
           onChange={(e) => setLabel(e.target.value)}
         />
       </label>
@@ -190,7 +190,7 @@ export function EducatorsRoute() {
         <h2>Running it on your own infrastructure</h2>
         <p>
           The build output is static files. Copy them to any web server, including one inside your
-          network with no route to the internet, and everything works — install, offline use and
+          network with no route to the internet, and everything works: install, offline use and
           every bundled scenario. There is no licence to buy, no procurement, no integration, and
           no dependency on this project staying online.
         </p>
@@ -219,10 +219,10 @@ export function EducatorsRoute() {
 
         <h2>The documents</h2>
         <ul>
-          <li><a href="/validation">Validation report</a> — every benchmark, with what is not validated stated explicitly</li>
-          <li><a href="/governance">Clinical governance</a> — who has reviewed what, and every outstanding item</li>
-          <li><a href="/limitations">Limitations register</a> — what this deliberately does not model</li>
-          <li><a href="/privacy">Privacy</a> — what is stored, which is only on the learner&rsquo;s own device</li>
+          <li><a href="/validation">Validation report</a>: every benchmark, with what is not validated stated explicitly</li>
+          <li><a href="/governance">Clinical governance</a>: who has reviewed what, and every outstanding item</li>
+          <li><a href="/limitations">Limitations register</a>: what this deliberately does not model</li>
+          <li><a href="/privacy">Privacy</a>: what is stored, which is only on the learner&rsquo;s own device</li>
         </ul>
 
         <p className="reading__aside">{NOT_FOR_CLINICAL_USE}</p>

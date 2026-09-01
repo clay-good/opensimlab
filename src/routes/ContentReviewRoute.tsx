@@ -4,7 +4,7 @@
  *
  * The single most useful thing anyone can do with this project is tell the
  * maintainer which parts are wrong, and the thing that stops people is not
- * unwillingness — it is not knowing where the work ends. So this page's job is
+ * unwillingness, it is not knowing where the work ends. So this page's job is
  * to make the review BOUNDED: here is everything, here is what you have looked
  * at, here is what is left.
  */
@@ -116,7 +116,7 @@ export function ContentReviewRoute() {
         <p className="reading__aside">
           Nothing you write here leaves this device. You export it as one file at the end and
           decide whether to send it. Recording notes does <strong>not</strong> mark anything as
-          reviewed or make you responsible for what you did not flag — signing off content is a
+          reviewed or make you responsible for what you did not flag. Signing off content is a
           separate, named act.
         </p>
 

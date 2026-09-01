@@ -34,24 +34,66 @@ import { SHARED_LIMITATIONS } from './limitations/shared';
 
 export type { Limitation } from './limitations/types';
 
-const REGISTERS: readonly (readonly Limitation[])[] = [
-  RENAL_ELECTROLYTE_LIMITATIONS, ENDOCRINE_METABOLIC_LIMITATIONS, CRITICAL_CARE_LIMITATIONS,
-  ANESTHESIA_LIMITATIONS, EMERGENCY_MEDICINE_LIMITATIONS, CARDIOLOGY_LIMITATIONS,
-  RESPIRATORY_MEDICINE_LIMITATIONS, PEDIATRICS_LIMITATIONS, NEUROLOGY_LIMITATIONS,
-  TOXICOLOGY_LIMITATIONS, OBSTETRICS_LIMITATIONS, NEONATOLOGY_LIMITATIONS,
-  INFECTIOUS_DISEASE_LIMITATIONS, MEDICAL_SURGICAL_NURSING_LIMITATIONS, ONCOLOGY_LIMITATIONS,
-  SHARED_LIMITATIONS,
+/**
+ * The registers, each with the name of what it is a register OF.
+ *
+ * The label is the reason this is not a bare array any more. The limitations page
+ * printed all 707 entries as one undifferentiated run, and a reader looking for
+ * what is simplified about, say, obstetrics had no way to get there. Grouping is
+ * the whole navigation of that page, so the group name has to be data.
+ */
+export interface LimitationGroup {
+  readonly label: string;
+  readonly entries: readonly Limitation[];
+}
+
+const REGISTERS: readonly LimitationGroup[] = [
+  /* First, and deliberately.
+     These eleven are properties of the engine rather than of a specialty: the
+     respiratory dose-response is a calibration, there is no shunt model, no PEEP,
+     no coagulopathy, acid-base is approximate. Five of them are ALSO listed in
+     `anesthesia.ts`, and while that file came first they were filed as anaesthesia
+     quirks, which is the wrong thing to tell a reader about a limit that applies
+     to every scenario in every module. Claiming them here files them once, in the
+     one group whose name is true of them. */
+  { label: 'The simulator itself', entries: SHARED_LIMITATIONS },
+  { label: 'Anesthesia', entries: ANESTHESIA_LIMITATIONS },
+  { label: 'Emergency medicine', entries: EMERGENCY_MEDICINE_LIMITATIONS },
+  { label: 'Critical care', entries: CRITICAL_CARE_LIMITATIONS },
+  { label: 'Cardiology', entries: CARDIOLOGY_LIMITATIONS },
+  { label: 'Respiratory medicine', entries: RESPIRATORY_MEDICINE_LIMITATIONS },
+  { label: 'Pediatrics', entries: PEDIATRICS_LIMITATIONS },
+  { label: 'Neurology', entries: NEUROLOGY_LIMITATIONS },
+  { label: 'Toxicology', entries: TOXICOLOGY_LIMITATIONS },
+  { label: 'Obstetrics', entries: OBSTETRICS_LIMITATIONS },
+  { label: 'Neonatology', entries: NEONATOLOGY_LIMITATIONS },
+  { label: 'Endocrine and metabolic medicine', entries: ENDOCRINE_METABOLIC_LIMITATIONS },
+  { label: 'Renal and electrolyte medicine', entries: RENAL_ELECTROLYTE_LIMITATIONS },
+  { label: 'Infectious disease', entries: INFECTIOUS_DISEASE_LIMITATIONS },
+  { label: 'Nursing', entries: MEDICAL_SURGICAL_NURSING_LIMITATIONS },
+  { label: 'Oncology', entries: ONCOLOGY_LIMITATIONS },
 ];
 
-/** Every entry, each appearing once, in module order. */
-export const LIMITATIONS: readonly Limitation[] = (() => {
+/**
+ * The same entries, grouped, each appearing under the FIRST register that claims
+ * it. Two entries brief scenarios in more than one module and would otherwise be
+ * listed twice, and a register that counts a thing twice is not a register.
+ */
+export const LIMITATION_GROUPS: readonly LimitationGroup[] = (() => {
   const seen = new Set<string>();
-  return REGISTERS.flat().filter((limitation) => {
-    if (seen.has(limitation.id)) return false;
-    seen.add(limitation.id);
-    return true;
-  });
+  return REGISTERS.map((group) => ({
+    label: group.label,
+    entries: group.entries.filter((limitation) => {
+      if (seen.has(limitation.id)) return false;
+      seen.add(limitation.id);
+      return true;
+    }),
+  })).filter((group) => group.entries.length > 0);
 })();
+
+/** Every entry, each appearing once, in module order. */
+export const LIMITATIONS: readonly Limitation[] =
+  LIMITATION_GROUPS.flatMap((group) => group.entries);
 
 export function limitationsFor(scenarioId: string): Limitation[] {
   return LIMITATIONS.filter((limitation) => limitation.briefIn.includes(scenarioId));
