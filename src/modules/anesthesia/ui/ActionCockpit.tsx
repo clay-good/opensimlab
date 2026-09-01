@@ -109,6 +109,7 @@ import { supportsSilentInteraction, type SilentInteractionAction } from '../../o
 import { supportsEasyLabel, type EasyLabelAction } from '../../oncology/easy-label';
 import { dkaResolutionInlinePrompt } from '../../endocrine-metabolic/tutor/dka-resolution-guidance';
 import { hhsOsmolalityInlinePrompt } from '../../endocrine-metabolic/tutor/hhs-osmolality-guidance';
+import { neonatalBradycardiaInlinePrompt } from '../../neonatology/tutor/neonatal-bradycardia-guidance';
 import { ineffectiveVentilationInlinePrompt } from '../../neonatology/tutor/ineffective-ventilation-correction-guidance';
 import { neonatalApneaInlinePrompt } from '../../neonatology/tutor/neonatal-apnea-guidance';
 import { termTransitionInlinePrompt } from '../../neonatology/tutor/term-newborn-transition-guidance';
@@ -2791,6 +2792,7 @@ export interface ActionCockpitProps {
   readonly easyLabelGuidance?: GuidanceLevel;
   readonly endocrineDkaResolutionGuidance?: GuidanceLevel;
   readonly endocrineHhsGuidance?: GuidanceLevel;
+  readonly neonatologyBradycardiaGuidance?: GuidanceLevel;
   readonly neonatologyIneffectiveVentilationGuidance?: GuidanceLevel;
   readonly neonatologyApneaGuidance?: GuidanceLevel;
   readonly neonatologyTermTransitionGuidance?: GuidanceLevel;
@@ -2853,6 +2855,7 @@ export interface ActionCockpitProps {
   readonly easyLabelDemonstrating?: boolean;
   readonly endocrineDkaResolutionDemonstrating?: boolean;
   readonly endocrineHhsDemonstrating?: boolean;
+  readonly neonatologyBradycardiaDemonstrating?: boolean;
   readonly neonatologyIneffectiveVentilationDemonstrating?: boolean;
   readonly neonatologyApneaDemonstrating?: boolean;
   readonly neonatologyTermTransitionDemonstrating?: boolean;
@@ -5772,6 +5775,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasNeonatologyBradycardiaResponse && (
               <NeonatologyBradycardiaTray assessment={props.resuscitation.neonatologyBradycardiaAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.neonatologyBradycardiaGuidance}
+                demonstrating={props.neonatologyBradycardiaDemonstrating}
                 onAction={props.onNeonatologyBradycardiaResponse ?? (() => {})} />
             )}
             {hasNeonatologyMeconiumTransitionResponse && (
@@ -13532,10 +13538,15 @@ function NeonatologyIneffectiveVentilationTray({ assessment, scenarioVersion, on
   </>;
 }
 
-function NeonatologyBradycardiaTray({ assessment, onAction }: {
+function NeonatologyBradycardiaTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['neonatologyBradycardiaAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onNeonatologyBradycardiaResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = neonatalBradycardiaInlinePrompt(guidance, { scenarioVersion, neonatalBradycardia: assessment });
+  const act = demonstrating ? undefined : onAction;
   const support = assessment?.supportAtTick != null;
   const context = assessment?.contextAtTick != null;
   const recognition = assessment?.recognitionAtTick != null;
@@ -13543,22 +13554,27 @@ function NeonatologyBradycardiaTray({ assessment, onAction }: {
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="neonatology-bradycardia-now-title">
       <div id="neonatology-bradycardia-now-title" className="syringe__name">Verify the lungs first. Then support the heart together.</div>
       <p className="syringe__remaining">Connect effective lung inflation, the heart-rate trajectory, airway, oxygenation, warmth, parent, and whole dyad. Every physical resuscitation step stays with the qualified team.</p>
       <div className="crisis-drug__actions">
-        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-neonatal-bradycardia-qualified-compression-ventilation-clock-and-dyad-response')}>Activate qualified response</Button>}
-        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neonatal-bradycardia-adequate-ventilation-heart-rate-airway-oxygenation-and-whole-dyad')}>Connect trajectory + whole dyad</Button>}
-        {context && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-neonatal-bradycardia-compression-threshold-after-adequate-ventilation')}>Recognize the threshold</Button>}
-        {recognition && !readiness && <Button className="crisis-drug__action" onClick={() => onAction('review-qualified-neonatal-compression-ventilation-coordination-and-epinephrine-boundary')}>Review later-branch boundaries</Button>}
+        {!support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-neonatal-bradycardia-qualified-compression-ventilation-clock-and-dyad-response') : undefined}>Activate qualified response</Button>}
+        {support && !context && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-neonatal-bradycardia-adequate-ventilation-heart-rate-airway-oxygenation-and-whole-dyad') : undefined}>Connect trajectory + whole dyad</Button>}
+        {context && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-neonatal-bradycardia-compression-threshold-after-adequate-ventilation') : undefined}>Recognize the threshold</Button>}
+        {recognition && !readiness && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-qualified-neonatal-compression-ventilation-coordination-and-epinephrine-boundary') : undefined}>Review later-branch boundaries</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="neonatology-bradycardia-later-title">
       <div id="neonatology-bradycardia-later-title" className="syringe__name">A heart-rate rise changes the branch. It does not close the case.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Respiratory, circulatory, neurologic, parent, disposition, and outcome risks handed off.' : reassessment ? 'Heart rate rises above 60/min. Durable circulation, breathing, cause, and outcomes remain open.' : readiness ? 'Qualified coordinated support continues. Review the fixed report after time passes.' : support ? 'The team is ready. Connect the supplied evidence of effective lung inflation before naming the threshold.' : 'Begin with calm shared ownership. You can pause or leave this practice at any time.'}</p>
       <div className="crisis-drug__actions">
-        {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-neonatal-bradycardia-fixed-three-minute-qualified-response-report')}>Review the fixed 3-minute report</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neonatal-bradycardia-respiratory-circulatory-neurologic-parent-and-outcome-risk')}>Hand off active newborn risk</Button>}
+        {readiness && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-neonatal-bradycardia-fixed-three-minute-qualified-response-report') : undefined}>Review the fixed 3-minute report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-neonatal-bradycardia-respiratory-circulatory-neurologic-parent-and-outcome-risk') : undefined}>Hand off active newborn risk</Button>}
       </div>
     </section>
   </>;

@@ -91,6 +91,8 @@ import { useSepticShockLabelDemonstration } from '../../infectious-disease/demo/
 import { supportsSepticShockLabelDemonstration } from '../../infectious-disease/demo/septic-shock-label-demonstration';
 import { useMeningitisImagingDemonstration } from '../../infectious-disease/demo/useMeningitisImagingDemonstration';
 import { supportsMeningitisImagingDemonstration } from '../../infectious-disease/demo/meningitis-imaging-demonstration';
+import { useNeonatalBradycardiaDemonstration } from '../../neonatology/demo/useNeonatalBradycardiaDemonstration';
+import { supportsNeonatalBradycardiaDemonstration } from '../../neonatology/demo/neonatal-bradycardia-demonstration';
 import { useIneffectiveVentilationDemonstration } from '../../neonatology/demo/useIneffectiveVentilationDemonstration';
 import { supportsIneffectiveVentilationDemonstration } from '../../neonatology/demo/ineffective-ventilation-correction-demonstration';
 import { useNeonatalApneaDemonstration } from '../../neonatology/demo/useNeonatalApneaDemonstration';
@@ -296,6 +298,7 @@ export function Cockpit({
   const possibleSepsisDemoSupported = supportsPossibleSepsisDemonstration(scenario);
   const septicShockLabelDemoSupported = supportsSepticShockLabelDemonstration(scenario);
   const meningitisImagingDemoSupported = supportsMeningitisImagingDemonstration(scenario);
+  const neonatalBradycardiaDemoSupported = supportsNeonatalBradycardiaDemonstration(scenario);
   const ineffectiveVentilationDemoSupported = supportsIneffectiveVentilationDemonstration(scenario);
   const neonatalApneaDemoSupported = supportsNeonatalApneaDemonstration(scenario);
   const termTransitionDemoSupported = supportsTermTransitionDemonstration(scenario);
@@ -338,7 +341,8 @@ export function Cockpit({
     || tensionPneumothoraxDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
-    || ineffectiveVentilationDemoSupported;
+    || ineffectiveVentilationDemoSupported
+    || neonatalBradycardiaDemoSupported;
   const scenarioDemoSupported = hypoglycemiaDemoSupported || adrenalDemoSupported
     || thyroidDemoSupported || myxedemaDemoSupported || observedStateDemoSupported;
   const inductionDemonstration = useDemonstration({
@@ -420,6 +424,12 @@ export function Cockpit({
   const renalHyponatremiaDemonstration = useRenalHyponatremiaDemonstration({
     active: demonstrating && renalHyponatremiaDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyponatremia,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const neonatalBradycardiaDemonstration = useNeonatalBradycardiaDemonstration({
+    active: demonstrating && neonatalBradycardiaDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.neonatologyBradycardiaAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const ineffectiveVentilationDemonstration = useIneffectiveVentilationDemonstration({
@@ -623,7 +633,8 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypermagnesemia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
+  const demonstration = neonatalBradycardiaDemoSupported ? neonatalBradycardiaDemonstration
+    : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
     : tensionPneumothoraxDemoSupported ? tensionPneumothoraxDemonstration
@@ -1332,6 +1343,8 @@ export function Cockpit({
           septicShockLabelDemonstrating={demonstrating && septicShockLabelDemoSupported}
           meningitisImagingGuidance={session.guidance}
           meningitisImagingDemonstrating={demonstrating && meningitisImagingDemoSupported}
+          neonatologyBradycardiaGuidance={session.guidance}
+          neonatologyBradycardiaDemonstrating={demonstrating && neonatalBradycardiaDemoSupported}
           neonatologyIneffectiveVentilationGuidance={session.guidance}
           neonatologyIneffectiveVentilationDemonstrating={demonstrating && ineffectiveVentilationDemoSupported}
           neonatologyApneaGuidance={session.guidance}
