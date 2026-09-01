@@ -91,6 +91,8 @@ import { useSepticShockLabelDemonstration } from '../../infectious-disease/demo/
 import { supportsSepticShockLabelDemonstration } from '../../infectious-disease/demo/septic-shock-label-demonstration';
 import { useMeningitisImagingDemonstration } from '../../infectious-disease/demo/useMeningitisImagingDemonstration';
 import { supportsMeningitisImagingDemonstration } from '../../infectious-disease/demo/meningitis-imaging-demonstration';
+import { useTermTransitionDemonstration } from '../../neonatology/demo/useTermTransitionDemonstration';
+import { supportsTermTransitionDemonstration } from '../../neonatology/demo/term-newborn-transition-demonstration';
 import { useTensionPneumothoraxDemonstration } from '../../neonatology/demo/useTensionPneumothoraxDemonstration';
 import { supportsTensionPneumothoraxDemonstration } from '../../neonatology/demo/neonatal-tension-pneumothorax-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
@@ -290,6 +292,7 @@ export function Cockpit({
   const possibleSepsisDemoSupported = supportsPossibleSepsisDemonstration(scenario);
   const septicShockLabelDemoSupported = supportsSepticShockLabelDemonstration(scenario);
   const meningitisImagingDemoSupported = supportsMeningitisImagingDemonstration(scenario);
+  const termTransitionDemoSupported = supportsTermTransitionDemonstration(scenario);
   const tensionPneumothoraxDemoSupported = supportsTensionPneumothoraxDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
@@ -326,7 +329,8 @@ export function Cockpit({
     || possibleSepsisDemoSupported
     || septicShockLabelDemoSupported
     || meningitisImagingDemoSupported
-    || tensionPneumothoraxDemoSupported;
+    || tensionPneumothoraxDemoSupported
+    || termTransitionDemoSupported;
   const scenarioDemoSupported = hypoglycemiaDemoSupported || adrenalDemoSupported
     || thyroidDemoSupported || myxedemaDemoSupported || observedStateDemoSupported;
   const inductionDemonstration = useDemonstration({
@@ -408,6 +412,12 @@ export function Cockpit({
   const renalHyponatremiaDemonstration = useRenalHyponatremiaDemonstration({
     active: demonstrating && renalHyponatremiaDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyponatremia,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const termTransitionDemonstration = useTermTransitionDemonstration({
+    active: demonstrating && termTransitionDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.neonatologyTermTransitionAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const tensionPneumothoraxDemonstration = useTensionPneumothoraxDemonstration({
@@ -593,7 +603,8 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypermagnesemia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = tensionPneumothoraxDemoSupported ? tensionPneumothoraxDemonstration
+  const demonstration = termTransitionDemoSupported ? termTransitionDemonstration
+    : tensionPneumothoraxDemoSupported ? tensionPneumothoraxDemonstration
     : meningitisImagingDemoSupported ? meningitisImagingDemonstration
     : septicShockLabelDemoSupported ? septicShockLabelDemonstration
     : possibleSepsisDemoSupported ? possibleSepsisDemonstration
@@ -1299,6 +1310,8 @@ export function Cockpit({
           septicShockLabelDemonstrating={demonstrating && septicShockLabelDemoSupported}
           meningitisImagingGuidance={session.guidance}
           meningitisImagingDemonstrating={demonstrating && meningitisImagingDemoSupported}
+          neonatologyTermTransitionGuidance={session.guidance}
+          neonatologyTermTransitionDemonstrating={demonstrating && termTransitionDemoSupported}
           neonatologyTensionPneumothoraxGuidance={session.guidance}
           neonatologyTensionPneumothoraxDemonstrating={demonstrating && tensionPneumothoraxDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
