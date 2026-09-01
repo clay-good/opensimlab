@@ -241,11 +241,11 @@
       },
       {
         "path": "src/modules/anesthesia/ui/ActionCockpit.tsx",
-        "sha256": "1dd8eeb879746a4ffb752462c305f0d0803f2ae0842f611396ddd5a472d69936"
+        "sha256": "5b7b55908ed13cbfe198f6477bd0be2aa8eca8e1dc5af806d937f79a013563ea"
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "cef555b23185f95453c7582188741e5eeee60c03036031333aa465c7fbaa2a2d"
+        "sha256": "3ac4df092d24c8ad03142419b9dd9458a4ea61058299419e78a00da9c48529a8"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
@@ -502,11 +502,11 @@
       },
       {
         "path": "src/modules/anesthesia/ui/ActionCockpit.tsx",
-        "sha256": "1dd8eeb879746a4ffb752462c305f0d0803f2ae0842f611396ddd5a472d69936"
+        "sha256": "5b7b55908ed13cbfe198f6477bd0be2aa8eca8e1dc5af806d937f79a013563ea"
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "cef555b23185f95453c7582188741e5eeee60c03036031333aa465c7fbaa2a2d"
+        "sha256": "3ac4df092d24c8ad03142419b9dd9458a4ea61058299419e78a00da9c48529a8"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",

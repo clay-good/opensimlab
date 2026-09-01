@@ -68,6 +68,8 @@ import { usePairedReadingDemonstration } from '../../medical-surgical-nursing/de
 import { useAfferentLimbDemonstration } from '../../medical-surgical-nursing/demo/useAfferentLimbDemonstration';
 import { useQuietPatientDemonstration } from '../../medical-surgical-nursing/demo/useQuietPatientDemonstration';
 import { useProxyScaleDemonstration } from '../../medical-surgical-nursing/demo/useProxyScaleDemonstration';
+import { useLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/useLastKnownWellDemonstration';
+import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
 import { supportsProxyScaleDemonstration } from '../../medical-surgical-nursing/demo/proxy-scale-demonstration';
 import { supportsQuietPatientDemonstration } from '../../medical-surgical-nursing/demo/quiet-patient-demonstration';
 import { supportsAfferentLimbDemonstration } from '../../medical-surgical-nursing/demo/afferent-limb-demonstration';
@@ -249,6 +251,7 @@ export function Cockpit({
   const afferentLimbDemoSupported = supportsAfferentLimbDemonstration(scenario);
   const quietPatientDemoSupported = supportsQuietPatientDemonstration(scenario);
   const proxyScaleDemoSupported = supportsProxyScaleDemonstration(scenario);
+  const lastKnownWellDemoSupported = supportsLastKnownWellDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -274,7 +277,7 @@ export function Cockpit({
     || laboratoryTlsDemoSupported || rareEarlyMyocarditisDemoSupported
     || loweringTheCountDemoSupported || inheritedUrgencyDemoSupported
     || trialRuleDemoSupported || silentInteractionDemoSupported || easyLabelDemoSupported
-    || dkaResolutionDemoSupported || hhsOsmolalityDemoSupported || lowScoreDemoSupported || countedRateDemoSupported || pairedReadingDemoSupported || afferentLimbDemoSupported || quietPatientDemoSupported || proxyScaleDemoSupported;
+    || dkaResolutionDemoSupported || hhsOsmolalityDemoSupported || lowScoreDemoSupported || countedRateDemoSupported || pairedReadingDemoSupported || afferentLimbDemoSupported || quietPatientDemoSupported || proxyScaleDemoSupported || lastKnownWellDemoSupported;
   const scenarioDemoSupported = hypoglycemiaDemoSupported || adrenalDemoSupported
     || thyroidDemoSupported || myxedemaDemoSupported || observedStateDemoSupported;
   const inductionDemonstration = useDemonstration({
@@ -356,6 +359,11 @@ export function Cockpit({
   const renalHyponatremiaDemonstration = useRenalHyponatremiaDemonstration({
     active: demonstrating && renalHyponatremiaDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyponatremia,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const lastKnownWellDemonstration = useLastKnownWellDemonstration({
+    active: demonstrating && lastKnownWellDemoSupported,
+    running: session.transport === 'running', patient: session.equipment?.resuscitation.lastKnownWell,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const proxyScaleDemonstration = useProxyScaleDemonstration({
@@ -470,7 +478,8 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypermagnesemia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = proxyScaleDemoSupported ? proxyScaleDemonstration
+  const demonstration = lastKnownWellDemoSupported ? lastKnownWellDemonstration
+    : proxyScaleDemoSupported ? proxyScaleDemonstration
     : quietPatientDemoSupported ? quietPatientDemonstration
     : afferentLimbDemoSupported ? afferentLimbDemonstration
     : pairedReadingDemoSupported ? pairedReadingDemonstration
@@ -1139,6 +1148,8 @@ export function Cockpit({
           afferentLimbGuidance={session.guidance}
           quietPatientGuidance={session.guidance}
           proxyScaleGuidance={session.guidance}
+          lastKnownWellGuidance={session.guidance}
+          lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
           proxyScaleDemonstrating={demonstrating && proxyScaleDemoSupported}
           quietPatientDemonstrating={demonstrating && quietPatientDemoSupported}
           afferentLimbDemonstrating={demonstrating && afferentLimbDemoSupported}

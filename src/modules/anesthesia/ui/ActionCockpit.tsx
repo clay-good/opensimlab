@@ -2816,6 +2816,7 @@ export interface ActionCockpitProps {
   readonly quietPatientDemonstrating?: boolean;
   readonly proxyScaleGuidance?: GuidanceLevel;
   readonly proxyScaleDemonstrating?: boolean;
+  readonly lastKnownWellGuidance?: GuidanceLevel;
   readonly lastKnownWellDemonstrating?: boolean;
   readonly oxygenTargetScaleDemonstrating?: boolean;
   readonly lostContingencyDemonstrating?: boolean;
@@ -5953,6 +5954,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasLastKnownWellResponse && (
               <LastKnownWellTray assessment={props.lastKnownWell}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.lastKnownWellGuidance}
                 demonstrating={props.lastKnownWellDemonstrating}
                 onAction={props.onLastKnownWellResponse ?? (() => {})} />
             )}

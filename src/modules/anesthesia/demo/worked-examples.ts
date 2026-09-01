@@ -34,6 +34,7 @@ import { supportsPairedReadingDemonstration } from '../../medical-surgical-nursi
 import { supportsAfferentLimbDemonstration } from '../../medical-surgical-nursing/demo/afferent-limb-demonstration';
 import { supportsQuietPatientDemonstration } from '../../medical-surgical-nursing/demo/quiet-patient-demonstration';
 import { supportsProxyScaleDemonstration } from '../../medical-surgical-nursing/demo/proxy-scale-demonstration';
+import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -91,6 +92,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsAfferentLimbDemonstration,
     supportsQuietPatientDemonstration,
     supportsProxyScaleDemonstration,
+    supportsLastKnownWellDemonstration,
   ],
 };
 

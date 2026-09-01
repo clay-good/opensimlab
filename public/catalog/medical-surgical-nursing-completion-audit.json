@@ -838,9 +838,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Nine observed-state prompts at version 0.1.0 read the learner's own recorded steps. Unassisted is silent and coached withholds the two waiting beats. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. The example never produces the missing time, which is the hardest thing for the form to do: both ways of closing the gap are charting errors, and a test asserts the onset field is still empty at handoff and that neither refused charting action was attempted. Neither prompt nor beat asks for the recollection to be firmed up, and when someone presses the care assistant anyway the example gives that its own beat and holds her account as she first gave it. Activation is made on the deficit rather than on the clock, and what follows from the unknown is left to the team being called. tests/unit/last-known-well-demonstration.test.ts and tests/ui/last-known-well-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {

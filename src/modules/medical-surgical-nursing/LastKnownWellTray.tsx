@@ -2,13 +2,18 @@ import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { LastKnownWellSnapshot } from '@platform/kernel/protocol';
 import { LAST_KNOWN_WELL_TIMELINE, type LastKnownWellAction } from './last-known-well';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
+import { lastKnownWellInlinePrompt } from './last-known-well-tutor';
 
-export function LastKnownWellTray({ assessment, onAction, demonstrating = false }: {
+export function LastKnownWellTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: LastKnownWellSnapshot;
+  readonly scenarioVersion: string;
   readonly onAction: (action: LastKnownWellAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = lastKnownWellInlinePrompt(guidance, { scenarioVersion, lastKnownWell: assessment });
   const timeline = assessment.timelineRecord; const patient = assessment.patientRecord;
   const observation = assessment.observation;
   const decision = (action: LastKnownWellAction, label: string, accepted = false) => {
@@ -17,6 +22,10 @@ export function LastKnownWellTray({ assessment, onAction, demonstrating = false 
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     {/* The onset field is shown as empty and stays empty. An empty field is the honest entry,
         and displaying it as such is what stops it being filled to look complete. */}
     <p className="syringe__remaining" role="status">Onset time: {assessment.onsetTimeRecorded ?? 'not known'}. Last known well {assessment.lastKnownWellClock}, found {assessment.foundClock}: an unwitnessed interval {assessment.unwitnessedHours} hours wide.</p>

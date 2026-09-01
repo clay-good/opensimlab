@@ -28,9 +28,10 @@ let host: HTMLDivElement; let root: Root;
 beforeEach(() => { host = document.createElement('div'); document.body.append(host); root = createRoot(host); });
 afterEach(() => { act(() => root.unmount()); host.remove(); });
 
-const render = (model: LastKnownWell, tick: number, onAction = vi.fn(), demonstrating = false) => {
-  act(() => root.render(<LastKnownWellTray assessment={model.snapshot(tick)}
-    onAction={onAction} demonstrating={demonstrating} />));
+const render = (model: LastKnownWell, tick: number, onAction = vi.fn(), demonstrating = false,
+  guidance: 'unassisted' | 'coached' | 'guided' = 'unassisted') => {
+  act(() => root.render(<LastKnownWellTray assessment={model.snapshot(tick)} scenarioVersion="0.1.1"
+    onAction={onAction} guidance={guidance} demonstrating={demonstrating} />));
   return onAction;
 };
 const button = (label: string) => [...host.querySelectorAll('button')]
@@ -112,5 +113,28 @@ describe('Unwitnessed-onset tray', () => {
     for (const entry of host.querySelectorAll('button')) {
       expect(entry.getAttribute('aria-disabled')).toBe('true');
     }
+  });
+});
+
+describe('Last-known-well tutor', () => {
+  it('says nothing at all on the unassisted setting', () => {
+    render(new LastKnownWell(), 0);
+    expect(host.textContent).not.toContain('A moment to think');
+  });
+
+  it('asks for the bound to be labelled as a bound', () => {
+    render(new LastKnownWell(), 0, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('as a bound');
+    expect(text).toContain('a claim nobody can support');
+  });
+
+  it('never asks for the recollection to be firmed up', () => {
+    const model = new LastKnownWell();
+    model.apply('record-last-known-well', 0);
+    render(model, 1, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('in her own words');
+    expect(text).not.toContain('pin the time down');
   });
 });

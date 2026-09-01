@@ -2,11 +2,14 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { LAST_KNOWN_WELL_A_TIME_NOBODY_CAN_SUPPLY } from './scenarios/last-known-well-a-time-nobody-can-supply';
 import { LAST_KNOWN_WELL_FIXTURES } from './last-known-well-fixtures';
+import { LAST_KNOWN_WELL_TUTOR_VERSION } from './last-known-well-tutor';
+import { LAST_KNOWN_WELL_DEMONSTRATION_VERSION } from './demo/last-known-well-demonstration';
 
 export function lastKnownWellCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'medical-surgical-nursing' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== LAST_KNOWN_WELL_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.1'
-    || LAST_KNOWN_WELL_FIXTURES.contentVersion !== '0.1.1' || LAST_KNOWN_WELL_FIXTURES.seed !== 7845
+    || LAST_KNOWN_WELL_FIXTURES.contentVersion !== '0.1.1'
+    || LAST_KNOWN_WELL_TUTOR_VERSION !== '0.1.0' || LAST_KNOWN_WELL_DEMONSTRATION_VERSION !== '0.1.0' || LAST_KNOWN_WELL_FIXTURES.seed !== 7845
     || JSON.stringify(scenario) !== JSON.stringify(LAST_KNOWN_WELL_A_TIME_NOBODY_CAN_SUPPLY)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['last-known-well-fixtures.ts binds seed 7845 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No stroke, perfusion, or treatment model is claimed; the timeline and the deficit are authored.'] },
@@ -15,7 +18,7 @@ export function lastKnownWellCompletionEvidence(scenario: Scenario, capabilityVe
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['A recorded bound, a preserved uncertain recollection, activation on the deficit, the stated consequences, the boundary review, timed observation, and a current full assessment permit handoff with the onset field empty. Instructor takeover bounds a run with no activation at 90 minutes, or an unfinished session at eight hours.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Six event-bound objectives distinguish recording a bound rather than an onset, keeping an uncertain account uncertain, activating on the deficit rather than the clock, stating what the unknown changes, the trial evidence and its population-level scope, and handing over an empty field as empty. Refused shortcuts remain visible, and no onset, eligibility, or outcome is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['last-known-well-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Nine observed-state prompts at version ${LAST_KNOWN_WELL_TUTOR_VERSION} read the learner's own recorded steps. Unassisted is silent and coached withholds the two waiting beats. Worked example ${LAST_KNOWN_WELL_DEMONSTRATION_VERSION} drives the ordinary controls through the real engine to handoff. The example never produces the missing time, which is the hardest thing for the form to do: both ways of closing the gap are charting errors, and a test asserts the onset field is still empty at handoff and that neither refused charting action was attempted. Neither prompt nor beat asks for the recollection to be firmed up, and when someone presses the care assistant anyway the example gives that its own beat and holds her account as she first gave it. Activation is made on the deficit rather than on the clock, and what follows from the unknown is left to the team being called. tests/unit/last-known-well-demonstration.test.ts and tests/ui/last-known-well-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];
