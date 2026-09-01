@@ -85,7 +85,15 @@ preview-channel blockers until it is. Updating the specification does not clear 
     scenarios declare full citations, and a URL built from one is a construction rather than a
     lookup. Each of the two now fails only `observable-objectives` and the two
     people-and-hardware requirements.
-    The pattern, now used by every scenario in both modules, is an
+    Offering them was a second gap, found while wiring these two. The control
+    that starts a worked example was decided by a long `||` chain written out at
+    four sites, and all eleven oncology examples had been added to none of them:
+    built, tested, audited as satisfying this requirement, and unreachable from
+    the product. The list lives in `anesthesia/demo/worked-examples.ts` now, and
+    `tests/unit/worked-example-offer.test.ts` compares it against the audit in
+    both directions, which is the only check that can catch a half that is
+    individually correct.
+    The pattern, now used by every scenario in three modules, is an
     observed-state tutor reading the learner's own recorded steps, a snapshot-driven worked
     example, tray and cockpit wiring, and a test that drives the example through the real engine
     to handoff rather than asserting it as a script. Each example also has to be held to its own

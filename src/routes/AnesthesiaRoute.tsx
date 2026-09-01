@@ -20,35 +20,23 @@ import { MODEL_SET_REVISION } from '@anesthesia/pharmacology/registry';
 import { createReplayWorker, workerReplay } from '@anesthesia/debrief/replay-client';
 import { Prebrief } from '@anesthesia/ui/Prebrief';
 import { DEMONSTRATION_SCENARIO_ID, demonstrationRequested } from '@anesthesia/demo/demonstration';
-import { supportsHypoglycemiaDemonstration } from '../modules/endocrine-metabolic/demo/hypoglycemia-demonstration';
-import { supportsAdrenalDemonstration } from '../modules/endocrine-metabolic/demo/adrenal-demonstration';
-import { supportsThyroidDemonstration } from '../modules/endocrine-metabolic/demo/thyroid-demonstration';
-import { supportsMyxedemaDemonstration } from '../modules/endocrine-metabolic/demo/myxedema-demonstration';
-import { supportsHypercalcemiaDemonstration } from '../modules/endocrine-metabolic/demo/hypercalcemia-demonstration';
-import { supportsHypocalcemiaDemonstration } from '../modules/endocrine-metabolic/demo/hypocalcemia-demonstration';
 import { HYPOCALCEMIA_ACTIONS } from '../modules/endocrine-metabolic/hypocalcemia';
-import { supportsHyponatremiaCorrectionDemonstration } from '../modules/endocrine-metabolic/demo/hyponatremia-correction-demonstration';
 import { HYPONATREMIA_CORRECTION_ACTIONS, supportsHyponatremiaCorrection } from '../modules/endocrine-metabolic/hyponatremia-correction';
 import { hyponatremiaCorrectionReportActions } from '../modules/endocrine-metabolic/hyponatremia-correction-reporting';
 import { AVP_DEFICIENCY_ACTIONS, supportsAvpDeficiency } from '../modules/endocrine-metabolic/avp-deficiency';
 import { avpDeficiencyReportActions } from '../modules/endocrine-metabolic/avp-deficiency-reporting';
-import { supportsAvpDeficiencyDemonstration } from '../modules/endocrine-metabolic/demo/avp-deficiency-demonstration';
 import { REFEEDING_ACTIONS, supportsRefeeding } from '../modules/endocrine-metabolic/refeeding';
 import { refeedingReportActions } from '../modules/endocrine-metabolic/refeeding-reporting';
-import { supportsRefeedingDemonstration } from '../modules/endocrine-metabolic/demo/refeeding-demonstration';
 import { PERIOPERATIVE_DIABETES_ACTIONS, supportsPerioperativeDiabetes } from '../modules/endocrine-metabolic/perioperative-diabetes';
 import { perioperativeDiabetesReportActions } from '../modules/endocrine-metabolic/perioperative-diabetes-reporting';
 import { RENAL_HYPERKALEMIA_ACTIONS, supportsRenalHyperkalemia } from '../modules/renal-electrolyte/hyperkalemia';
 import { renalHyperkalemiaReportActions } from '../modules/renal-electrolyte/hyperkalemia-reporting';
-import { supportsRenalHyperkalemiaDemonstration } from '../modules/renal-electrolyte/demo/renal-hyperkalemia-demonstration';
 import { RENAL_HYPOKALEMIA_ACTIONS, supportsRenalHypokalemia } from '../modules/renal-electrolyte/hypokalemia';
 import { RENAL_HYPONATREMIA_ACTIONS, supportsRenalHyponatremia } from '../modules/renal-electrolyte/hyponatremia';
 import { RENAL_HYPERNATREMIA_ACTIONS, supportsRenalHypernatremia } from '../modules/renal-electrolyte/hypernatremia';
 import { renalHypernatremiaReportActions } from '../modules/renal-electrolyte/hypernatremia-reporting';
-import { supportsRenalHypernatremiaDemonstration } from '../modules/renal-electrolyte/demo/renal-hypernatremia-demonstration';
 import { RENAL_HYPOCALCEMIA_ACTIONS, supportsRenalHypocalcemia } from '../modules/renal-electrolyte/hypocalcemia';
 import { renalHypocalcemiaReportActions } from '../modules/renal-electrolyte/hypocalcemia-reporting';
-import { supportsRenalHypocalcemiaDemonstration } from '../modules/renal-electrolyte/demo/renal-hypocalcemia-demonstration';
 import { RENAL_HYPERMAGNESEMIA_ACTIONS, supportsRenalHypermagnesemia } from '../modules/renal-electrolyte/hypermagnesemia';
 import { renalHypermagnesemiaReportActions } from '../modules/renal-electrolyte/hypermagnesemia-reporting';
 import { MENINGOCOCCAL_SEPSIS_ACTIONS, supportsMeningococcalSepsis } from '../modules/infectious-disease/meningococcal-sepsis';
@@ -111,14 +99,9 @@ import { trialRuleReportActions } from '../modules/oncology/trial-rule-reporting
 import { silentInteractionReportActions } from '../modules/oncology/silent-interaction-reporting';
 import { easyLabelReportActions } from '../modules/oncology/easy-label-reporting';
 import { possibleSepsisReportActions } from '../modules/infectious-disease/possible-sepsis-reporting';
-import { supportsRenalHypermagnesemiaDemonstration } from '../modules/renal-electrolyte/demo/renal-hypermagnesemia-demonstration';
 import { renalHyponatremiaReportActions } from '../modules/renal-electrolyte/hyponatremia-reporting';
-import { supportsRenalHyponatremiaDemonstration } from '../modules/renal-electrolyte/demo/renal-hyponatremia-demonstration';
 import { renalHypokalemiaReportActions } from '../modules/renal-electrolyte/hypokalemia-reporting';
-import { supportsRenalHypokalemiaDemonstration } from '../modules/renal-electrolyte/demo/renal-hypokalemia-demonstration';
-import { supportsPerioperativeDiabetesDemonstration } from '../modules/endocrine-metabolic/demo/perioperative-diabetes-demonstration';
-import { supportsDkaResolutionDemonstration } from '../modules/endocrine-metabolic/demo/dka-resolution-demonstration';
-import { supportsHhsOsmolalityDemonstration } from '../modules/endocrine-metabolic/demo/hhs-osmolality-demonstration';
+import { offersWorkedExample } from '@anesthesia/demo/worked-examples';
 import { Cockpit } from '@anesthesia/ui/Cockpit';
 import { Debrief } from '@anesthesia/ui/Debrief';
 import { assertTranscriptIsAnonymous, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
@@ -903,16 +886,13 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
   }, [acknowledged, session, region.id, config.id, isIndex]);
 
   /**
-   * Whether this lesson has a worked example to offer, asked once.
+   * Whether this lesson has a worked example to offer.
    *
-   * The same long expression used to be written out at two sites, so every
-   * lesson shipping an example had to be added to both by hand. Naming it once
-   * is what makes adding the next one a single edit.
+   * The list lives in one place now. It used to be a long `||` chain written out
+   * here and again in the briefing, and a lesson added to one and not the other
+   * was built, tested, and unreachable.
    */
-  const workedExampleSupported = (config.id === 'endocrine-metabolic'
-      && (supportsHypoglycemiaDemonstration(scenario) || supportsAdrenalDemonstration(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario) || supportsRefeedingDemonstration(scenario) || supportsPerioperativeDiabetesDemonstration(scenario)
-        || supportsDkaResolutionDemonstration(scenario) || supportsHhsOsmolalityDemonstration(scenario)))
-      || (config.id === 'renal-electrolyte' && (supportsRenalHyperkalemiaDemonstration(scenario) || supportsRenalHypokalemiaDemonstration(scenario) || supportsRenalHyponatremiaDemonstration(scenario) || supportsRenalHypernatremiaDemonstration(scenario) || supportsRenalHypocalcemiaDemonstration(scenario) || supportsRenalHypermagnesemiaDemonstration(scenario)));
+  const workedExampleSupported = offersWorkedExample(scenario, config.id);
 
   // `?demo=1`: skip the briefing and start watching. Fires once, only for the
   // scenario the script was authored against, and only once the session is

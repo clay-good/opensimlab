@@ -22,22 +22,7 @@ import type { RegionProfile } from '@anesthesia/region/profiles';
 import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
 import { supportsSevereHypoglycemia } from '../../endocrine-metabolic/severe-hypoglycemia';
 import { supportsAdrenalCrisis } from '../../endocrine-metabolic/adrenal-crisis';
-import { supportsThyroidDemonstration } from '../../endocrine-metabolic/demo/thyroid-demonstration';
-import { supportsMyxedemaDemonstration } from '../../endocrine-metabolic/demo/myxedema-demonstration';
-import { supportsHypercalcemiaDemonstration } from '../../endocrine-metabolic/demo/hypercalcemia-demonstration';
-import { supportsHypocalcemiaDemonstration } from '../../endocrine-metabolic/demo/hypocalcemia-demonstration';
-import { supportsHyponatremiaCorrectionDemonstration } from '../../endocrine-metabolic/demo/hyponatremia-correction-demonstration';
-import { supportsAvpDeficiencyDemonstration } from '../../endocrine-metabolic/demo/avp-deficiency-demonstration';
-import { supportsRefeedingDemonstration } from '../../endocrine-metabolic/demo/refeeding-demonstration';
-import { supportsPerioperativeDiabetesDemonstration } from '../../endocrine-metabolic/demo/perioperative-diabetes-demonstration';
-import { supportsDkaResolutionDemonstration } from '../../endocrine-metabolic/demo/dka-resolution-demonstration';
-import { supportsHhsOsmolalityDemonstration } from '../../endocrine-metabolic/demo/hhs-osmolality-demonstration';
-import { supportsRenalHyperkalemiaDemonstration } from '../../renal-electrolyte/demo/renal-hyperkalemia-demonstration';
-import { supportsRenalHypokalemiaDemonstration } from '../../renal-electrolyte/demo/renal-hypokalemia-demonstration';
-import { supportsRenalHyponatremiaDemonstration } from '../../renal-electrolyte/demo/renal-hyponatremia-demonstration';
-import { supportsRenalHypernatremiaDemonstration } from '../../renal-electrolyte/demo/renal-hypernatremia-demonstration';
-import { supportsRenalHypocalcemiaDemonstration } from '../../renal-electrolyte/demo/renal-hypocalcemia-demonstration';
-import { supportsRenalHypermagnesemiaDemonstration } from '../../renal-electrolyte/demo/renal-hypermagnesemia-demonstration';
+import { offersWorkedExample } from '@anesthesia/demo/worked-examples';
 
 export const FICTION_CONTRACT =
   'This is a simulation. The patient is not real, nothing you do here reaches anyone, and an '
@@ -75,10 +60,10 @@ export function Prebrief({
   const patient = scenario.patient;
   const hypoglycemia = supportsSevereHypoglycemia(scenario);
   /**
-   * Whether this lesson has a worked example rather than the scripted
-   * 90-second demonstration, asked once instead of at both label sites.
+   * Whether this lesson has a worked example rather than the scripted 90-second
+   * demonstration. One list, shared with the route that offers the control.
    */
-  const workedExample = hypoglycemia || supportsAdrenalCrisis(scenario) || supportsThyroidDemonstration(scenario) || supportsMyxedemaDemonstration(scenario) || supportsHypercalcemiaDemonstration(scenario) || supportsHypocalcemiaDemonstration(scenario) || supportsHyponatremiaCorrectionDemonstration(scenario) || supportsAvpDeficiencyDemonstration(scenario) || supportsRefeedingDemonstration(scenario) || supportsPerioperativeDiabetesDemonstration(scenario) || supportsRenalHyperkalemiaDemonstration(scenario) || supportsRenalHypokalemiaDemonstration(scenario) || supportsRenalHyponatremiaDemonstration(scenario) || supportsRenalHypernatremiaDemonstration(scenario) || supportsRenalHypocalcemiaDemonstration(scenario) || supportsRenalHypermagnesemiaDemonstration(scenario) || supportsDkaResolutionDemonstration(scenario) || supportsHhsOsmolalityDemonstration(scenario);
+  const workedExample = offersWorkedExample(scenario, environment);
 
   return (
     <>
