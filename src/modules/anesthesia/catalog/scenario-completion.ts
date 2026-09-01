@@ -29,6 +29,7 @@ import { salicylateCompletionEvidence } from '../../toxicology/salicylate-fallin
 import { tricyclicCompletionEvidence } from '../../toxicology/tricyclic-sodium-channel-cardiotoxicity-completion';
 import { betaBlockerCompletionEvidence } from '../../toxicology/beta-blocker-cardiogenic-shock-completion';
 import { calciumChannelBlockerCompletionEvidence } from '../../toxicology/calcium-channel-blocker-shock-completion';
+import { digoxinCompletionEvidence } from '../../toxicology/digoxin-rhythm-potassium-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -197,6 +198,7 @@ export function auditClinicalScenario(
     ...tricyclicCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...betaBlockerCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...calciumChannelBlockerCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...digoxinCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

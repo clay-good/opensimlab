@@ -127,6 +127,7 @@ import { salicylateInlinePrompt } from '../../toxicology/tutor/salicylate-fallin
 import { tricyclicInlinePrompt } from '../../toxicology/tutor/tricyclic-sodium-channel-cardiotoxicity-guidance';
 import { betaBlockerInlinePrompt } from '../../toxicology/tutor/beta-blocker-cardiogenic-shock-guidance';
 import { calciumChannelBlockerInlinePrompt } from '../../toxicology/tutor/calcium-channel-blocker-shock-guidance';
+import { digoxinInlinePrompt } from '../../toxicology/tutor/digoxin-rhythm-potassium-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2823,6 +2824,7 @@ export interface ActionCockpitProps {
   readonly toxicologyTricyclicGuidance?: GuidanceLevel;
   readonly toxicologyBetaBlockerGuidance?: GuidanceLevel;
   readonly toxicologyCalciumChannelBlockerGuidance?: GuidanceLevel;
+  readonly toxicologyDigoxinGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2899,6 +2901,7 @@ export interface ActionCockpitProps {
   readonly toxicologyTricyclicDemonstrating?: boolean;
   readonly toxicologyBetaBlockerDemonstrating?: boolean;
   readonly toxicologyCalciumChannelBlockerDemonstrating?: boolean;
+  readonly toxicologyDigoxinDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5722,6 +5725,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasToxicologyDigoxinResponse && (
               <ToxicologyDigoxinTray assessment={props.resuscitation.toxicologyDigoxinAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.toxicologyDigoxinGuidance}
+                demonstrating={props.toxicologyDigoxinDemonstrating}
                 onAction={props.onToxicologyDigoxinResponse ?? (() => {})} />
             )}
             {hasToxicologyCholinergicResponse && (
@@ -12824,10 +12830,15 @@ function ToxicologyCalciumChannelBlockerTray({ assessment, scenarioVersion, onAc
   </>;
 }
 
-function ToxicologyDigoxinTray({ assessment, onAction }: {
+function ToxicologyDigoxinTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyDigoxinAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onToxicologyDigoxinResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = digoxinInlinePrompt(guidance, { scenarioVersion, digoxin: assessment });
+  const act = demonstrating ? undefined : onAction;
   const trajectory = assessment?.trajectoryAtTick != null;
   const recognition = assessment?.recognitionAtTick != null;
   const support = assessment?.supportAtTick != null;
@@ -12835,22 +12846,27 @@ function ToxicologyDigoxinTray({ assessment, onAction }: {
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="toxicology-digoxin-early-title">
       <div id="toxicology-digoxin-early-title" className="syringe__name">The rhythm and potassium tell one story.</div>
       <p className="syringe__remaining">Begin with product, clock, GI and visual clues, perfusion, rhythm, potassium, and whole person.</p>
       <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-toxicology-digoxin-product-clock-gi-visual-perfusion-rhythm-potassium-and-whole-patient')}>Connect rhythm + potassium</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-toxicology-digoxin-life-threatening-pattern-without-level-rhythm-or-potassium-only-closure')}>Recognize the whole pattern</Button>}
-        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-toxicology-digoxin-poison-center-resuscitation-cardiac-electrolyte-airway-and-safety-ownership')}>Build the rescue circle</Button>}
-        {support && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-toxicology-digoxin-supplied-ecg-level-timing-potassium-renal-coingestion-and-antidote-boundary')}>Review timing + antidote</Button>}
+        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-toxicology-digoxin-product-clock-gi-visual-perfusion-rhythm-potassium-and-whole-patient') : undefined}>Connect rhythm + potassium</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-toxicology-digoxin-life-threatening-pattern-without-level-rhythm-or-potassium-only-closure') : undefined}>Recognize the whole pattern</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-toxicology-digoxin-poison-center-resuscitation-cardiac-electrolyte-airway-and-safety-ownership') : undefined}>Build the rescue circle</Button>}
+        {support && !evidence && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-toxicology-digoxin-supplied-ecg-level-timing-potassium-renal-coingestion-and-antidote-boundary') : undefined}>Review timing + antidote</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="toxicology-digoxin-later-title">
       <div id="toxicology-digoxin-later-title" className="syringe__name">After Fab, follow the patient, not a misleading total level.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Rhythm, potassium, assay interference, renal state, recurrence, rescue, safety, and outcome uncertainty handed off.' : reassessment ? 'The fixed perfusion, rhythm, mental-state, and potassium report improved. Durable stability and treatment effect remain unproven.' : evidence ? 'Perfusion, conduction, timed pre-Fab level, potassium, renal state, prior care, and antidote readiness stay coupled. Record qualified intent after time passes.' : support ? 'Qualified toxicology, resuscitation, cardiac, electrolyte, airway, and safety ownership are active. Review the supplied evidence.' : 'Complete whole-pattern recognition and rescue ownership before antidote-boundary review.'}</p>
       <div className="crisis-drug__actions">
-        {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-digoxin-bounded-qualified-immune-fab-surveillance-and-rescue-intent-with-strict-later-review')}>Record Fab intent + reassess</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-digoxin-recurrent-arrhythmia-potassium-shift-level-interference-renal-rescue-and-active-risk')}>Hand off what can recur</Button>}
+        {evidence && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-toxicology-digoxin-bounded-qualified-immune-fab-surveillance-and-rescue-intent-with-strict-later-review') : undefined}>Record Fab intent + reassess</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-toxicology-digoxin-recurrent-arrhythmia-potassium-shift-level-interference-renal-rescue-and-active-risk') : undefined}>Hand off what can recur</Button>}
       </div>
     </section>
   </>;

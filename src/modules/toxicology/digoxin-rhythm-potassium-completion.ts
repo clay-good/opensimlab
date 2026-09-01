@@ -1,0 +1,34 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
+import { DIGOXIN_RHYTHM_POTASSIUM } from './scenarios/digoxin-rhythm-potassium';
+import { DIGOXIN_FIXTURES } from './digoxin-rhythm-potassium-fixtures';
+import { DIGOXIN_TUTOR_VERSION } from './tutor/digoxin-rhythm-potassium-guidance';
+import { DIGOXIN_DEMONSTRATION_VERSION } from './demo/digoxin-rhythm-potassium-demonstration';
+
+/**
+ * Exact-version evidence for one lesson, and no claim about any other.
+ *
+ * `observable-objectives` is deliberately not answered here. This scenario
+ * declares six objectives against a cap of five, which is a content-design
+ * decision affecting scenarios across several modules rather than something
+ * this file may settle on its own. The shared audit keeps naming it.
+ */
+export function digoxinCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
+  if (moduleId !== 'toxicology' || capabilityVersion !== '0.1.0-alpha.48'
+    || scenario.metadata.id !== DIGOXIN_FIXTURES.scenarioId
+    || scenario.metadata.version !== '0.1.0' || DIGOXIN_FIXTURES.contentVersion !== '0.1.0'
+    || DIGOXIN_FIXTURES.seed !== 5587
+    || DIGOXIN_TUTOR_VERSION !== '0.1.0' || DIGOXIN_DEMONSTRATION_VERSION !== '0.1.0'
+    || JSON.stringify(scenario) !== JSON.stringify(DIGOXIN_RHYTHM_POTASSIUM)) return [];
+  return [
+    { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['digoxin-rhythm-potassium-fixtures.ts binds seed 5587 and content 0.1.0 to expert, antidote-before-evidence error, recovery, and no-action paths. The presentation, the supplied ECG, the pre-antidote level with its sampling time, the electrolyte and renal set, the treating team’s failed prior care, and the fixed 60-minute report are authored constants; no binding, redistribution, potassium-shift, or antidote-response model is claimed, and no outcome follows from any choice. tests/integration/digoxin-rhythm-potassium-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions.'] },
+    { id: 'meaningful-progression', status: 'satisfied', evidence: ['The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the bounded immune-Fab, surveillance and rescue intent refuses until simulated time has passed since the evidence review, and the handoff refuses until time has passed since that. What moves is not the diagnosis, which never closes, but what the record can support about a rhythm that has returned and a potassium now heading the other way.'] },
+    { id: 'meaningful-actions-and-choices', status: 'satisfied', evidence: ['Six declared decisions put the gastrointestinal and visual findings inside the poisoning, name the pattern as life-threatening while refusing level-only, rhythm-only, potassium-only and pacing-only closure, assemble owners for an arrhythmia that has not happened yet, read the pre-antidote level with its sampling clock and the potassium as a trajectory, record bounded qualified intents, and hand off active risk. Order is enforced rather than suggested, and refusal names the missing step. The lesson takes no history, acquires or interprets no ECG or level, and selects no charcoal, glucose, electrolyte, fluid, product, vial count, dose, rate, route, access, airway, ventilation, pacing, dialysis, cardioversion, or antiarrhythmic.'] },
+    { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The branch ends at active-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no confirmed diagnosis, no proven treatment effect, no durable perfusion or potassium stability, no resolved assay interference, no excluded coingestion, no determined antidote or rescue eligibility, safety or disposition, and no outcome.'] },
+    { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that reached for the antidote on the level alone can still reach a correct handoff.'] },
+    { id: 'reference-transcripts', status: 'satisfied', evidence: ['digoxin-rhythm-potassium-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 5587 for deterministic replay through the shared engine, including the two time-gated checkpoints.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Six observed-state prompts at version ${DIGOXIN_TUTOR_VERSION} read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example ${DIGOXIN_DEMONSTRATION_VERSION} drives the ordinary controls through the real engine to handoff. Four numbers here each look like the headline — a level of 8.6, a potassium of 6.1, a complete block and an escape rate of 36 — and both refuse all four closures in the same beat, naming that pacing the block would capture a rhythm in a poisoned myocardium and leave the poisoning. The potassium is treated as the one that misleads hardest: in acute digoxin toxicity it is a marker of how poisoned she is rather than an electrolyte problem standing on its own, and immune Fab will drive it the other way fast enough that hypokalemia becomes the next risk. The level is read with the sampling clock that makes it interpretable — seven hours after the last dose and before any antidote. The lesson ends on a number that is deliberately absent: a standard total digoxin assay after Fab measures bound drug and would be clinically misleading, so the 60-minute report carries no level and both hand that absence over as a finding rather than a gap. A test asserts nothing anywhere calls her stable, corrects the potassium, or reports a post-Fab concentration. tests/unit/digoxin-rhythm-potassium-demonstration.test.ts and tests/ui/toxicology-digoxin-rhythm-potassium.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding.`] },
+    { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending.'] },
+    { id: 'report-control-coverage', status: 'missing', evidence: ['The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound.'] },
+  ];
+}
