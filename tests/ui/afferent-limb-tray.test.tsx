@@ -28,9 +28,10 @@ let host: HTMLDivElement; let root: Root;
 beforeEach(() => { host = document.createElement('div'); document.body.append(host); root = createRoot(host); });
 afterEach(() => { act(() => root.unmount()); host.remove(); });
 
-const render = (model: AfferentLimb, tick: number, onAction = vi.fn(), demonstrating = false) => {
-  act(() => root.render(<AfferentLimbTray assessment={model.snapshot(tick)}
-    onAction={onAction} demonstrating={demonstrating} />));
+const render = (model: AfferentLimb, tick: number, onAction = vi.fn(), demonstrating = false,
+  guidance: 'unassisted' | 'coached' | 'guided' = 'unassisted') => {
+  act(() => root.render(<AfferentLimbTray assessment={model.snapshot(tick)} scenarioVersion="0.1.0"
+    onAction={onAction} guidance={guidance} demonstrating={demonstrating} />));
   return onAction;
 };
 const button = (label: string) => [...host.querySelectorAll('button')]
@@ -116,5 +117,31 @@ describe('Escalation threshold tray', () => {
     for (const entry of host.querySelectorAll('button')) {
       expect(entry.getAttribute('aria-disabled')).toBe('true');
     }
+  });
+});
+
+describe('Afferent-limb tutor', () => {
+  it('says nothing at all on the unassisted setting', () => {
+    render(new AfferentLimb(), 0);
+    expect(host.textContent).not.toContain('A moment to think');
+  });
+
+  it('names the obstacles rather than dismissing them', () => {
+    const model = new AfferentLimb();
+    model.apply('record-the-met-criteria', 0);
+    render(model, 1, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('Write down the reasons not to call');
+    expect(text).toContain('not the same as agreeing with them');
+  });
+
+  it('never softens the call into asking permission', () => {
+    const model = new AfferentLimb();
+    model.apply('record-the-met-criteria', 0);
+    model.apply('record-the-obstacles', 1);
+    render(model, 2, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('The criteria are the authorisation');
+    expect(text).not.toContain('Ask whether it is alright');
   });
 });

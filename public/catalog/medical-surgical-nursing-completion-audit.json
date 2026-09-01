@@ -460,9 +460,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Nine observed-state prompts at version 0.1.0 read the learner's own recorded steps. Unassisted is silent and coached withholds the waiting beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Neither dismisses the reasons not to call, because they are real and dismissing them would argue with the thing that actually stops people; both ask for them to be recorded instead. Neither softens the call into asking permission, and neither offers closer observation as a substitute for it. The example calls early enough that the authored second conversation never arrives, which a test asserts through the unset pressure flag, and the closing assessment finds nothing about the patient changed — the call is correct when it is made rather than because of what followed. tests/unit/afferent-limb-demonstration.test.ts and tests/ui/afferent-limb-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {

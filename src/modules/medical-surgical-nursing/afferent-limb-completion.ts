@@ -2,11 +2,14 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { AFFERENT_LIMB_A_THRESHOLD_MET_AND_A_CALL_NOT_MADE } from './scenarios/afferent-limb-a-threshold-met-and-a-call-not-made';
 import { AFFERENT_LIMB_FIXTURES } from './afferent-limb-fixtures';
+import { AFFERENT_LIMB_TUTOR_VERSION } from './afferent-limb-tutor';
+import { AFFERENT_LIMB_DEMONSTRATION_VERSION } from './demo/afferent-limb-demonstration';
 
 export function afferentLimbCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'medical-surgical-nursing' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== AFFERENT_LIMB_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
-    || AFFERENT_LIMB_FIXTURES.contentVersion !== '0.1.0' || AFFERENT_LIMB_FIXTURES.seed !== 3608
+    || AFFERENT_LIMB_FIXTURES.contentVersion !== '0.1.0'
+    || AFFERENT_LIMB_TUTOR_VERSION !== '0.1.0' || AFFERENT_LIMB_DEMONSTRATION_VERSION !== '0.1.0' || AFFERENT_LIMB_FIXTURES.seed !== 3608
     || JSON.stringify(scenario) !== JSON.stringify(AFFERENT_LIMB_A_THRESHOLD_MET_AND_A_CALL_NOT_MADE)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['afferent-limb-fixtures.ts binds seed 3608 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No physiological model is claimed; the patient is fixed and the criteria are met before the rehearsal begins.'] },
@@ -15,7 +18,7 @@ export function afferentLimbCompletionEvidence(scenario: Scenario, capabilityVer
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['Recorded criteria, recorded obstacles, a call on the threshold, a concern stated to a person, the boundary review, increased observation, and a current full assessment permit handoff with the outcome open. Instructor takeover bounds a run with no call at 120 minutes, or an unfinished session at eight hours, and is explicitly not evidence that the delay caused harm.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Six event-bound objectives distinguish recording criteria already met, naming obstacles as non-clinical, calling on a threshold rather than on permission, stating a concern to a person, the system findings and their observational limits, and accountable handoff. Refused shortcuts remain visible, and whether the call proves necessary is stated to be beside the point.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['afferent-limb-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Nine observed-state prompts at version ${AFFERENT_LIMB_TUTOR_VERSION} read the learner's own recorded steps. Unassisted is silent and coached withholds the waiting beat. Worked example ${AFFERENT_LIMB_DEMONSTRATION_VERSION} drives the ordinary controls through the real engine to handoff. Neither dismisses the reasons not to call, because they are real and dismissing them would argue with the thing that actually stops people; both ask for them to be recorded instead. Neither softens the call into asking permission, and neither offers closer observation as a substitute for it. The example calls early enough that the authored second conversation never arrives, which a test asserts through the unset pressure flag, and the closing assessment finds nothing about the patient changed — the call is correct when it is made rather than because of what followed. tests/unit/afferent-limb-demonstration.test.ts and tests/ui/afferent-limb-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];

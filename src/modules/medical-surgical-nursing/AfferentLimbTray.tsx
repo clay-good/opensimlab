@@ -1,14 +1,19 @@
 import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { AfferentLimbSnapshot } from '@platform/kernel/protocol';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import { AFFERENT_LIMB_CRITERIA, type AfferentLimbAction } from './afferent-limb';
+import { afferentLimbInlinePrompt } from './afferent-limb-tutor';
 
-export function AfferentLimbTray({ assessment, onAction, demonstrating = false }: {
+export function AfferentLimbTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: AfferentLimbSnapshot;
+  readonly scenarioVersion: string;
   readonly onAction: (action: AfferentLimbAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = afferentLimbInlinePrompt(guidance, { scenarioVersion, afferentLimb: assessment });
   const criteria = assessment.criteriaRecord; const availability = assessment.availabilityRecord;
   const observation = assessment.observation;
   const decision = (action: AfferentLimbAction, label: string, accepted = false) => {
@@ -17,6 +22,10 @@ export function AfferentLimbTray({ assessment, onAction, demonstrating = false }
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     {/* The threshold state is stated first and never softened: it was met before this began. */}
     <p className="syringe__remaining" role="status">{assessment.metCriteriaCount} of {assessment.totalCriteriaCount} activation criteria met. The local policy requires {assessment.policyThreshold}. {assessment.calledAtTick === null
       ? 'The call has not been made.'

@@ -2810,6 +2810,7 @@ export interface ActionCockpitProps {
   readonly countedRateDemonstrating?: boolean;
   readonly pairedReadingGuidance?: GuidanceLevel;
   readonly pairedReadingDemonstrating?: boolean;
+  readonly afferentLimbGuidance?: GuidanceLevel;
   readonly afferentLimbDemonstrating?: boolean;
   readonly quietPatientDemonstrating?: boolean;
   readonly proxyScaleDemonstrating?: boolean;
@@ -5842,6 +5843,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasAfferentLimbResponse && (
               <AfferentLimbTray assessment={props.afferentLimb}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.afferentLimbGuidance}
                 demonstrating={props.afferentLimbDemonstrating}
                 onAction={props.onAfferentLimbResponse ?? (() => {})} />
             )}
