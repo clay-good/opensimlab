@@ -28,9 +28,10 @@ let host: HTMLDivElement; let root: Root;
 beforeEach(() => { host = document.createElement('div'); document.body.append(host); root = createRoot(host); });
 afterEach(() => { act(() => root.unmount()); host.remove(); });
 
-const render = (model: ObstructedKidney, tick: number, onAction = vi.fn(), demonstrating = false) => {
-  act(() => root.render(<ObstructedKidneyTray assessment={model.snapshot(tick)}
-    onAction={onAction} demonstrating={demonstrating} />));
+const render = (model: ObstructedKidney, tick: number, onAction = vi.fn(), demonstrating = false,
+  guidance: 'unassisted' | 'coached' | 'guided' = 'unassisted') => {
+  act(() => root.render(<ObstructedKidneyTray assessment={model.snapshot(tick)} scenarioVersion="0.1.0"
+    onAction={onAction} guidance={guidance} demonstrating={demonstrating} />));
   return onAction;
 };
 const button = (label: string) => [...host.querySelectorAll('button')]
@@ -96,5 +97,28 @@ describe('Obstructed kidney tray', () => {
     for (const entry of host.querySelectorAll('button')) {
       expect(entry.getAttribute('aria-disabled')).toBe('true');
     }
+  });
+});
+
+describe('Obstructed kidney tutor', () => {
+  it('says nothing at all on the unassisted setting', () => {
+    render(new ObstructedKidney(), 0);
+    expect(host.textContent).not.toContain('A moment to think');
+  });
+
+  it('reads the fever and the obstruction as one thing', () => {
+    render(new ObstructedKidney(), 0, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('describe one thing rather than two');
+  });
+
+  it('picks no drainage route and names no hour threshold', () => {
+    const model = new ObstructedKidney();
+    for (const action of ['recognize-obstruction', 'call-urology', 'request-cultures',
+      'record-decompression-intent', 'defer-stone-treatment'] as const) model.apply(action, 0);
+    render(model, 1, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('has not separated nephrostomy from stenting');
+    expect(text).not.toContain('within one hour');
   });
 });

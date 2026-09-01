@@ -38,6 +38,7 @@ import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursi
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsMeningococcalSepsisDemonstration } from '../../infectious-disease/demo/meningococcal-sepsis-demonstration';
+import { supportsObstructedKidneyDemonstration } from '../../infectious-disease/demo/obstructed-kidney-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -101,6 +102,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
   ],
   'infectious-disease': [
     supportsMeningococcalSepsisDemonstration,
+    supportsObstructedKidneyDemonstration,
   ],
 };
 

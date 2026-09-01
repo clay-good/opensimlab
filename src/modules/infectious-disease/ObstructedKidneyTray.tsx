@@ -2,13 +2,18 @@ import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { ObstructedKidneySnapshot } from '@platform/kernel/protocol';
 import type { ObstructedKidneyAction } from './obstructed-kidney';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
+import { obstructedKidneyInlinePrompt } from './obstructed-kidney-tutor';
 
-export function ObstructedKidneyTray({ assessment, onAction, demonstrating = false }: {
+export function ObstructedKidneyTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: ObstructedKidneySnapshot;
+  readonly scenarioVersion: string;
   readonly onAction: (action: ObstructedKidneyAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = obstructedKidneyInlinePrompt(guidance, { scenarioVersion, obstructedKidney: assessment });
   const labs = assessment.labObservation; const observations = assessment.observationsOnly;
   const observation = assessment.observation;
   const decision = (action: ObstructedKidneyAction, label: string, accepted = false) => {
@@ -17,6 +22,10 @@ export function ObstructedKidneyTray({ assessment, onAction, demonstrating = fal
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <p className="syringe__remaining">Selected sources: AUA (2026) and EAU Urolithiasis (2026) on urgent decompression, with NICE NG253 (2025) on finding and controlling the source. Open the source view for exact statement numbers and their evidence grades. These guidelines are not a treatment protocol for this fictional patient, and the presentation and response contrasts are authored.</p>
     <section className="syringe obstructed-kidney__section" aria-labelledby="obstructed-kidney-recognition-title">
       <div id="obstructed-kidney-recognition-title" className="syringe__name">Antimicrobials are already running. She is still unwell.</div>

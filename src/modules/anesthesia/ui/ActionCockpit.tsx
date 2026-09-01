@@ -2796,6 +2796,7 @@ export interface ActionCockpitProps {
   readonly renalHypermagnesemiaDemonstrating?: boolean;
   readonly meningococcalSepsisGuidance?: GuidanceLevel;
   readonly meningococcalSepsisDemonstrating?: boolean;
+  readonly obstructedKidneyGuidance?: GuidanceLevel;
   readonly obstructedKidneyDemonstrating?: boolean;
   readonly febrileNeutropeniaDemonstrating?: boolean;
   readonly necrotizingInfectionDemonstrating?: boolean;
@@ -5993,6 +5994,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasObstructedKidneyResponse && (
               <ObstructedKidneyTray assessment={props.obstructedKidney}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.obstructedKidneyGuidance}
                 demonstrating={props.obstructedKidneyDemonstrating}
                 onAction={props.onObstructedKidneyResponse ?? (() => {})} />
             )}

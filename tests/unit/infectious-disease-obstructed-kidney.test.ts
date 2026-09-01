@@ -32,7 +32,9 @@ describe('Infectious disease obstructed kidney contract', () => {
     const audit = auditClinicalScenario(SCENARIO, '0.1.0-alpha.48', 'infectious-disease', 'emergency-department', 'state_transition');
     const missing = audit.requirements.filter((entry) => entry.status === 'missing').map((entry) => entry.id);
     expect(missing).toContain('inclusive-runtime-verification');
-    expect(missing).toContain('guidance-and-demonstration');
+    // The tutor and the worked example landed, so this one is no longer honest as
+    // an absence. What is left needs people, hardware, or the objectives decision.
+    expect(missing).not.toContain('guidance-and-demonstration');
   });
 
   it('deteriorates on appropriate antimicrobials while the kidney stays obstructed', () => {

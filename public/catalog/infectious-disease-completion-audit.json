@@ -208,9 +208,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Ten observed-state prompts at version 0.1.0 read the learner's own recorded steps. Unassisted is silent and coached withholds the waiting beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Two of the refused shortcuts here are delays dressed as diligence and two are decisions belonging elsewhere, so neither the prompts nor the beats pick a drainage modality — the randomised evidence has not separated nephrostomy from stenting on clinical outcomes — and neither states an hour threshold, because no guideline does. Urgency is asserted the way the sources support it: by naming what an obstructed collecting system does to an antimicrobial, rather than by inventing a number. A test forbids both a modality and a deadline across every prompt and narration, and asserts the stone deferral is recorded so the drainage and the definitive treatment stay two decisions. tests/unit/obstructed-kidney-demonstration.test.ts and tests/ui/obstructed-kidney-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {

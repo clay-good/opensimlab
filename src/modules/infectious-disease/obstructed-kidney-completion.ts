@@ -2,11 +2,14 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { OBSTRUCTED_INFECTED_KIDNEY_DECOMPRESSION } from './scenarios/obstructed-infected-kidney-decompression';
 import { OBSTRUCTED_KIDNEY_FIXTURES } from './obstructed-kidney-fixtures';
+import { OBSTRUCTED_KIDNEY_TUTOR_VERSION } from './obstructed-kidney-tutor';
+import { OBSTRUCTED_KIDNEY_DEMONSTRATION_VERSION } from './demo/obstructed-kidney-demonstration';
 
 export function obstructedKidneyCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'infectious-disease' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== OBSTRUCTED_KIDNEY_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
-    || OBSTRUCTED_KIDNEY_FIXTURES.contentVersion !== '0.1.0' || OBSTRUCTED_KIDNEY_FIXTURES.seed !== 5203
+    || OBSTRUCTED_KIDNEY_FIXTURES.contentVersion !== '0.1.0'
+    || OBSTRUCTED_KIDNEY_TUTOR_VERSION !== '0.1.0' || OBSTRUCTED_KIDNEY_DEMONSTRATION_VERSION !== '0.1.0' || OBSTRUCTED_KIDNEY_FIXTURES.seed !== 5203
     || JSON.stringify(scenario) !== JSON.stringify(OBSTRUCTED_INFECTED_KIDNEY_DECOMPRESSION)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['obstructed-kidney-fixtures.ts binds seed 5203 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No infection, drainage, or kidney-recovery model is claimed.'] },
@@ -15,7 +18,7 @@ export function obstructedKidneyCompletionEvidence(scenario: Scenario, capabilit
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['Recognition, activation, cultures, bounded decompression intent, stone deferral, boundary review, surveillance, and a current full assessment permit unresolved-infection handoff. No modality, drain time, or organism is required. Instructor takeover bounds a run with no urology activation or decompression intent at eight hours, which is deliberately after the six-hour untreated contrast, or an unfinished session at 24 hours.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Six event-bound objectives distinguish reconciliation, recognition of an undrained source, activation with timing owned by the receiving team, the timing and modality evidence boundary, bounded intent with a deferred stone decision, and accountable handoff. Refused shortcuts remain visible after later care, and neither cure nor kidney recovery is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['obstructed-kidney-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Ten observed-state prompts at version ${OBSTRUCTED_KIDNEY_TUTOR_VERSION} read the learner's own recorded steps. Unassisted is silent and coached withholds the waiting beat. Worked example ${OBSTRUCTED_KIDNEY_DEMONSTRATION_VERSION} drives the ordinary controls through the real engine to handoff. Two of the refused shortcuts here are delays dressed as diligence and two are decisions belonging elsewhere, so neither the prompts nor the beats pick a drainage modality — the randomised evidence has not separated nephrostomy from stenting on clinical outcomes — and neither states an hour threshold, because no guideline does. Urgency is asserted the way the sources support it: by naming what an obstructed collecting system does to an antimicrobial, rather than by inventing a number. A test forbids both a modality and a deadline across every prompt and narration, and asserts the stone deferral is recorded so the drainage and the definitive treatment stay two decisions. tests/unit/obstructed-kidney-demonstration.test.ts and tests/ui/obstructed-kidney-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];
