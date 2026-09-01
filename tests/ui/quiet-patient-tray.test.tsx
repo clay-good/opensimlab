@@ -28,9 +28,10 @@ let host: HTMLDivElement; let root: Root;
 beforeEach(() => { host = document.createElement('div'); document.body.append(host); root = createRoot(host); });
 afterEach(() => { act(() => root.unmount()); host.remove(); });
 
-const render = (model: QuietPatient, tick: number, onAction = vi.fn(), demonstrating = false) => {
-  act(() => root.render(<QuietPatientTray assessment={model.snapshot(tick)}
-    onAction={onAction} demonstrating={demonstrating} />));
+const render = (model: QuietPatient, tick: number, onAction = vi.fn(), demonstrating = false,
+  guidance: 'unassisted' | 'coached' | 'guided' = 'unassisted') => {
+  act(() => root.render(<QuietPatientTray assessment={model.snapshot(tick)} scenarioVersion="0.1.0"
+    onAction={onAction} guidance={guidance} demonstrating={demonstrating} />));
   return onAction;
 };
 const button = (label: string) => [...host.querySelectorAll('button')]
@@ -118,5 +119,31 @@ describe('Delirium screening tray', () => {
     for (const entry of host.querySelectorAll('button')) {
       expect(entry.getAttribute('aria-disabled')).toBe('true');
     }
+  });
+});
+
+describe('Quiet-patient tutor', () => {
+  it('says nothing at all on the unassisted setting', () => {
+    render(new QuietPatient(), 0);
+    expect(host.textContent).not.toContain('A moment to think');
+  });
+
+  it('asks for the screen rather than a better impression', () => {
+    const model = new QuietPatient();
+    model.apply('review-the-charted-impression', 0);
+    render(model, 1, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('Do the screen now');
+    expect(text).toContain('scoreable component');
+  });
+
+  it('never turns a positive screen into a diagnosis', () => {
+    const model = new QuietPatient();
+    model.apply('review-the-charted-impression', 0);
+    model.apply('screen-for-arousal', 1);
+    render(model, 2, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('screening result');
+    expect(text).not.toContain('He has delirium');
   });
 });

@@ -1,14 +1,19 @@
 import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { QuietPatientSnapshot } from '@platform/kernel/protocol';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { QuietPatientAction } from './quiet-patient';
+import { quietPatientInlinePrompt } from './quiet-patient-tutor';
 
-export function QuietPatientTray({ assessment, onAction, demonstrating = false }: {
+export function QuietPatientTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: QuietPatientSnapshot;
+  readonly scenarioVersion: string;
   readonly onAction: (action: QuietPatientAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = quietPatientInlinePrompt(guidance, { scenarioVersion, quietPatient: assessment });
   const chart = assessment.chartRecord; const patient = assessment.patientRecord;
   const observation = assessment.observation;
   const decision = (action: QuietPatientAction, label: string, accepted = false) => {
@@ -17,6 +22,10 @@ export function QuietPatientTray({ assessment, onAction, demonstrating = false }
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     {/* The count of screening results leads, because zero is the finding and it is easy to miss
         underneath three shifts of confident-sounding prose. */}
     <p className="syringe__remaining" role="status">Screening results in the record: {assessment.recordedScreenResults}. {assessment.screenPositive

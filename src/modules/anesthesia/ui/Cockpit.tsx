@@ -66,6 +66,8 @@ import { useLowScoreDemonstration } from '../../medical-surgical-nursing/demo/us
 import { useCountedRateDemonstration } from '../../medical-surgical-nursing/demo/useCountedRateDemonstration';
 import { usePairedReadingDemonstration } from '../../medical-surgical-nursing/demo/usePairedReadingDemonstration';
 import { useAfferentLimbDemonstration } from '../../medical-surgical-nursing/demo/useAfferentLimbDemonstration';
+import { useQuietPatientDemonstration } from '../../medical-surgical-nursing/demo/useQuietPatientDemonstration';
+import { supportsQuietPatientDemonstration } from '../../medical-surgical-nursing/demo/quiet-patient-demonstration';
 import { supportsAfferentLimbDemonstration } from '../../medical-surgical-nursing/demo/afferent-limb-demonstration';
 import { supportsPairedReadingDemonstration } from '../../medical-surgical-nursing/demo/paired-reading-demonstration';
 import { supportsCountedRateDemonstration } from '../../medical-surgical-nursing/demo/counted-rate-demonstration';
@@ -243,6 +245,7 @@ export function Cockpit({
   const countedRateDemoSupported = supportsCountedRateDemonstration(scenario);
   const pairedReadingDemoSupported = supportsPairedReadingDemonstration(scenario);
   const afferentLimbDemoSupported = supportsAfferentLimbDemonstration(scenario);
+  const quietPatientDemoSupported = supportsQuietPatientDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -268,7 +271,7 @@ export function Cockpit({
     || laboratoryTlsDemoSupported || rareEarlyMyocarditisDemoSupported
     || loweringTheCountDemoSupported || inheritedUrgencyDemoSupported
     || trialRuleDemoSupported || silentInteractionDemoSupported || easyLabelDemoSupported
-    || dkaResolutionDemoSupported || hhsOsmolalityDemoSupported || lowScoreDemoSupported || countedRateDemoSupported || pairedReadingDemoSupported || afferentLimbDemoSupported;
+    || dkaResolutionDemoSupported || hhsOsmolalityDemoSupported || lowScoreDemoSupported || countedRateDemoSupported || pairedReadingDemoSupported || afferentLimbDemoSupported || quietPatientDemoSupported;
   const scenarioDemoSupported = hypoglycemiaDemoSupported || adrenalDemoSupported
     || thyroidDemoSupported || myxedemaDemoSupported || observedStateDemoSupported;
   const inductionDemonstration = useDemonstration({
@@ -350,6 +353,11 @@ export function Cockpit({
   const renalHyponatremiaDemonstration = useRenalHyponatremiaDemonstration({
     active: demonstrating && renalHyponatremiaDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyponatremia,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const quietPatientDemonstration = useQuietPatientDemonstration({
+    active: demonstrating && quietPatientDemoSupported,
+    running: session.transport === 'running', patient: session.equipment?.resuscitation.quietPatient,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const afferentLimbDemonstration = useAfferentLimbDemonstration({
@@ -454,7 +462,8 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypermagnesemia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = afferentLimbDemoSupported ? afferentLimbDemonstration
+  const demonstration = quietPatientDemoSupported ? quietPatientDemonstration
+    : afferentLimbDemoSupported ? afferentLimbDemonstration
     : pairedReadingDemoSupported ? pairedReadingDemonstration
     : countedRateDemoSupported ? countedRateDemonstration
     : lowScoreDemoSupported ? lowScoreDemonstration
@@ -1119,6 +1128,8 @@ export function Cockpit({
           countedRateGuidance={session.guidance}
           pairedReadingGuidance={session.guidance}
           afferentLimbGuidance={session.guidance}
+          quietPatientGuidance={session.guidance}
+          quietPatientDemonstrating={demonstrating && quietPatientDemoSupported}
           afferentLimbDemonstrating={demonstrating && afferentLimbDemoSupported}
           pairedReadingDemonstrating={demonstrating && pairedReadingDemoSupported}
           countedRateDemonstrating={demonstrating && countedRateDemoSupported}

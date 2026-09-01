@@ -2,11 +2,14 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { QUIET_PATIENT_A_SCREEN_THAT_WAS_NEVER_DONE } from './scenarios/quiet-patient-a-screen-that-was-never-done';
 import { QUIET_PATIENT_FIXTURES } from './quiet-patient-fixtures';
+import { QUIET_PATIENT_TUTOR_VERSION } from './quiet-patient-tutor';
+import { QUIET_PATIENT_DEMONSTRATION_VERSION } from './demo/quiet-patient-demonstration';
 
 export function quietPatientCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'medical-surgical-nursing' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== QUIET_PATIENT_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
-    || QUIET_PATIENT_FIXTURES.contentVersion !== '0.1.0' || QUIET_PATIENT_FIXTURES.seed !== 5291
+    || QUIET_PATIENT_FIXTURES.contentVersion !== '0.1.0'
+    || QUIET_PATIENT_TUTOR_VERSION !== '0.1.0' || QUIET_PATIENT_DEMONSTRATION_VERSION !== '0.1.0' || QUIET_PATIENT_FIXTURES.seed !== 5291
     || JSON.stringify(scenario) !== JSON.stringify(QUIET_PATIENT_A_SCREEN_THAT_WAS_NEVER_DONE)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['quiet-patient-fixtures.ts binds seed 5291 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No delirium, cognitive, or physiological model is claimed; the screen result is authored.'] },
@@ -15,7 +18,7 @@ export function quietPatientCompletionEvidence(scenario: Scenario, capabilityVer
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['Reviewed impressions, a performed screen, a recorded result, escalation on it, the boundary review, a repeat schedule, and a current full assessment permit handoff with the cause open. Instructor takeover bounds a run with no escalation at 150 minutes, or an unfinished session at eight hours.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Six event-bound objectives distinguish an impression from a screening result, recognising that performing the screen is what changed, recording a result as a result, escalating on a result rather than a worry, the boundaries and their certainty, and accountable handoff of a record with a specific gap. Refused shortcuts remain visible, and a positive screen is stated to be a screening result rather than a diagnosis.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['quiet-patient-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Nine observed-state prompts at version ${QUIET_PATIENT_TUTOR_VERSION} read the learner's own recorded steps. Unassisted is silent and coached withholds the waiting beat. Worked example ${QUIET_PATIENT_DEMONSTRATION_VERSION} drives the ordinary controls through the real engine to handoff. The example screens him while he is asleep, which is the move the lesson turns on: impaired arousal is a scoreable component rather than a reason to come back later, and deferral is what produced three shifts without a result. Both stop at a positive screen and neither names the condition, because a screen identifies who needs assessing rather than making the diagnosis; a test asserts no narration or prompt states one, and that the closing beat says nothing was diagnosed. Neither substitutes a second impression for the first. tests/unit/quiet-patient-demonstration.test.ts and tests/ui/quiet-patient-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];
