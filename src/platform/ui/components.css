@@ -347,6 +347,20 @@ textarea.field__input {
    thing a learner reads, and two dense paragraphs with no seam between them is the least
    welcoming shape the product can open with. */
 .modal > p + p { margin-block-start: var(--space-3); }
+/* The title row: the heading takes the width, the close sits in the corner.
+   `start` rather than `center`, so a title that wraps to two lines keeps the
+   control level with its first line instead of drifting down the box. */
+.modal__header {
+  display: flex;
+  align-items: start;
+  gap: var(--space-3);
+  margin-block-end: var(--space-4);
+}
+.modal__header .panel__title { flex: 1; min-inline-size: 0; }
+/* Pulled up and out by its own padding so the glyph sits on the dialog's corner
+   rather than one control-width inside it. */
+.modal__close { flex: none; margin-block-start: calc(-1 * var(--space-2)); margin-inline-end: calc(-1 * var(--space-2)); }
+
 .drawer {
   position: fixed;
   inset-block: 0;

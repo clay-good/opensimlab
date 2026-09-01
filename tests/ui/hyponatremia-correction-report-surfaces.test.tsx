@@ -108,7 +108,7 @@ describe('exact-version hyponatremia correction reporting through shared route s
   const button = (label: string) => [...container.querySelectorAll('button')].find((entry) => entry.textContent === label)!;
   const click = async (target: HTMLElement) => { expect(target).toBeTruthy(); await act(async () => { target.click(); }); };
   const openReport = async () => {
-    await click(container.querySelector<HTMLButtonElement>('button[aria-label="Report a problem"]')!);
+    await click(container.querySelector<HTMLButtonElement>('button[aria-label="Help us improve this"]')!);
     const dialog = container.querySelector<HTMLElement>('[role="dialog"][aria-modal="true"]')!;
     expect(dialog).not.toBeNull(); expect(dialog.querySelector('textarea')?.maxLength).toBe(160);
     expect(dialog.querySelector<HTMLInputElement>('input[type="checkbox"]')?.checked).toBe(false);

@@ -441,8 +441,19 @@ function dialogControls(node: HTMLElement) {
       && getComputedStyle(item).display !== 'none' && getComputedStyle(item).visibility !== 'hidden');
 }
 
+/**
+ * Open a dialog with the caret on the first thing worth doing in it.
+ *
+ * Not simply the first control: a corner dismiss is first in the markup because
+ * that is where a reader looks for it, and landing a keyboard or screen-reader
+ * visitor on `Close` announces the way out of a dialog before the dialog. The
+ * dismiss stays in the Tab cycle, and Escape still works; it is only passed over
+ * when choosing where to START. A dialog whose only control IS the dismiss falls
+ * through to the container, which is the same behaviour an empty one always had.
+ */
 function focusDialog(layer: DialogLayer) {
-  (dialogControls(layer.node)[0] ?? layer.node).focus();
+  const items = dialogControls(layer.node);
+  (items.find((item) => item.dataset.dialogDismiss === undefined) ?? layer.node).focus();
 }
 
 function useDialogFocus(open: boolean, container: React.RefObject<HTMLElement | null>, modal: boolean,
@@ -500,6 +511,14 @@ function useDialogFocus(open: boolean, container: React.RefObject<HTMLElement | 
 }
 
 export interface ModalProps {
+  /**
+   * Show a dismiss control in the dialog's top corner.
+   *
+   * Off by default. It adds a control to the dialog's focus order, so a surface
+   * turns it on when a visitor is likely to want out quickly, rather than it
+   * being imposed on every dialog in the product.
+   */
+  readonly cornerClose?: boolean;
   readonly open: boolean;
   readonly title: string;
   readonly onClose?: () => void;
@@ -509,7 +528,7 @@ export interface ModalProps {
   readonly footer?: ReactNode;
 }
 
-export function Modal({ open, title, onClose, dismissible = true, children, footer }: ModalProps) {
+export function Modal({ open, title, onClose, dismissible = true, cornerClose = false, children, footer }: ModalProps) {
   const ref = useRef<HTMLDivElement>(null);
   const titleId = useId();
   useDialogFocus(open, ref, true, onClose, dismissible);
@@ -518,7 +537,25 @@ export function Modal({ open, title, onClose, dismissible = true, children, foot
   return (
     <div className="modal-backdrop">
       <div className="modal" role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} ref={ref}>
-        <h2 className="panel__title" id={titleId} style={{ marginBlockEnd: 'var(--space-4)' }}>{title}</h2>
+        {/* The title, and optionally a way out of it, on one row.
+
+            A modal here has no dismiss control by default: the exits are the
+            Escape key and whatever the caller puts in the footer. That is fine on
+            a keyboard and invisible on a phone, where the footer can sit below
+            the fold and there is no Escape key to press, so a dialog the visitor
+            did not mean to open is worth an unmissable corner close.
+
+            Opt-in rather than universal, because a Modal's focus order is a
+            contract that `tests/ui/dialog-stack.test.tsx` pins deliberately, and
+            silently inserting a control into every dialog in the product is not a
+            change to make in passing. `dismissible` still gates it: the control
+            is never offered where it would do nothing. */}
+        <div className="modal__header">
+          <h2 className="panel__title" id={titleId}>{title}</h2>
+          {cornerClose && dismissible && (
+            <IconButton label="Close" className="modal__close" data-dialog-dismiss="" onClick={onClose}>✕</IconButton>
+          )}
+        </div>
         {children}
         {footer && <div style={{ display: 'flex', gap: 'var(--space-3)', justifyContent: 'flex-end', marginBlockStart: 'var(--space-5)' }}>{footer}</div>}
       </div>

@@ -1016,8 +1016,8 @@ describe('scenario report contract', () => {
     expect(route.match(/<ScenarioProblemReport/g)).toHaveLength(1);
     expect(route).toContain("requestReport('limitation')");
     expect(route).toContain("requestReport('source')");
-    expect(prebrief).toContain('Report a problem with these limitations');
-    expect(cockpit.match(/Report a problem with this source/g)).toHaveLength(2);
+    expect(prebrief).toContain('Help us improve these limitations');
+    expect(cockpit.match(/Help us improve this source/g)).toHaveLength(2);
     expect(route).toContain("sourceOpen ? 'source'");
     expect(cockpit).toContain('onSourceVisibilityChange?.(explainerId !== null || drugCardId !== null)');
   });

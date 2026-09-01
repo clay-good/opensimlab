@@ -214,7 +214,7 @@ describe('RenalHyperkalemia worked example through the real session pipeline', (
     for (let decision = 0; decision < 7; decision++) { stale = advance; confirmDecision(); frames(); }
     expect(advance).toBeUndefined(); expect(patient()!.shiftDueInSeconds).toBeGreaterThan(0);
     const count = recorded().length;
-    await act(async () => { container.querySelector<HTMLButtonElement>('button[aria-label="Report a problem"]')!.click(); });
+    await act(async () => { container.querySelector<HTMLButtonElement>('button[aria-label="Help us improve this"]')!.click(); });
     expect(container.querySelector('[role="dialog"]')).not.toBeNull();
     expect(container.textContent).toContain('Reporting is unavailable on this host.');
     readWithoutAdvancing(); act(() => stale!()); frames(); readWithoutAdvancing();

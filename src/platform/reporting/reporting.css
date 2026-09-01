@@ -89,7 +89,7 @@
 }
 
 /* Three full labels do not fit side by side at the narrowest phone width. The
-   accessible name stays "Report a problem" while the visible label compacts. */
+   accessible name stays "Help us improve this" while the visible label compacts. */
 @media (max-width: 400px) {
   .problem-report--floating {
     inset-inline-start: var(--space-3);
@@ -97,4 +97,13 @@
   }
   .problem-report__label-long { display: none; }
   .problem-report__label-short { display: inline; }
+}
+
+/* The ask for a number and a source. It is the sentence that decides whether
+   what arrives here can be acted on, so it is set as prose rather than as a
+   hint, and it sits directly above the field it is describing. */
+.problem-report__invitation {
+  border-inline-start: 2px solid var(--line-strong);
+  padding-inline-start: var(--space-3);
+  color: var(--text-secondary);
 }

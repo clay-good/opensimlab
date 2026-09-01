@@ -1935,7 +1935,7 @@ export function Cockpit({
             <p className="reading__aside">{getExplainer(explainerId).diagram.caption}</p>
             <p className="reading__aside">Reflects: {getExplainer(explainerId).reflects}</p>
             {onReportSource && (
-              <Button compact variant="ghost" onClick={onReportSource}>Report a problem with this source</Button>
+              <Button compact variant="ghost" onClick={onReportSource}>Help us improve this source</Button>
             )}
             <UnreviewedMarker
               status={getExplainer(explainerId).maturity}
@@ -1962,7 +1962,7 @@ export function Cockpit({
           <>
             <DrugCardBody drugId={drugCardId} reviewMode={reviewMode} />
             {onReportSource && (
-              <Button compact variant="ghost" onClick={onReportSource}>Report a problem with this source</Button>
+              <Button compact variant="ghost" onClick={onReportSource}>Help us improve this source</Button>
             )}
           </>
         )}

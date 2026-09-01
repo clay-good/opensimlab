@@ -88,7 +88,7 @@ describe('Renal hypocalcemia reports through the shared centered form and exact-
   const button = (label: string) => [...container.querySelectorAll('button')].find((entry) => entry.textContent === label)!;
   const click = async (target: HTMLElement) => { expect(target).toBeTruthy(); await act(async () => { target.click(); }); };
   const openReport = async () => {
-    await click(container.querySelector<HTMLButtonElement>('button[aria-label="Report a problem"]')!);
+    await click(container.querySelector<HTMLButtonElement>('button[aria-label="Help us improve this"]')!);
     expect(container.querySelector('[role="dialog"][aria-modal="true"]')).not.toBeNull();
     expect(container.querySelector<HTMLTextAreaElement>('#problem-report-note')!.maxLength).toBe(160);
     expect(container.querySelector<HTMLInputElement>('input[type="checkbox"]')!.checked).toBe(false);
@@ -130,7 +130,7 @@ describe('Renal hypocalcemia reports through the shared centered form and exact-
   });
 
   it('reports limitations and source surfaces without starting practice or collecting context', async () => {
-    await render(); await click(button('Report a problem with these limitations'));
+    await render(); await click(button('Help us improve these limitations'));
     await selectCategory(); await click(button('Send report')); expectIdentity(lastPayload(), 'limitation');
     expect(lastPayload().recent_context).toBeNull(); await click(button('Done'));
     harness.session = { ...harness.session, phase: 'running' }; await render();
@@ -142,7 +142,7 @@ describe('Renal hypocalcemia reports through the shared centered form and exact-
   it('returns Cancel focus to the report trigger without advancing paused practice or collecting context', async () => {
     harness.session = { ...harness.session, phase: 'running', transport: 'paused' };
     await render();
-    const trigger = container.querySelector<HTMLButtonElement>('button[aria-label="Report a problem"]')!;
+    const trigger = container.querySelector<HTMLButtonElement>('button[aria-label="Help us improve this"]')!;
     trigger.focus(); const tick = harness.session.tick;
     await openReport();
     expect(container.querySelector('[role="dialog"]')?.contains(document.activeElement)).toBe(true);

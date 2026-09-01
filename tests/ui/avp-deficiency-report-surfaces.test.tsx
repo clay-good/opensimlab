@@ -122,7 +122,7 @@ describe('exact-version AVP-deficiency reporting through shared route surfaces',
   const button = (label: string) => [...container.querySelectorAll('button')].find((entry) => entry.textContent === label)!;
   const click = async (target: HTMLElement) => { expect(target).toBeTruthy(); await act(async () => { target.click(); }); };
   const openReport = async () => {
-    await click(container.querySelector<HTMLButtonElement>('button[aria-label="Report a problem"]')!);
+    await click(container.querySelector<HTMLButtonElement>('button[aria-label="Help us improve this"]')!);
     const dialog = container.querySelector<HTMLElement>('[role="dialog"][aria-modal="true"]')!;
     expect(dialog).not.toBeNull(); expect(dialog.querySelector('textarea')?.maxLength).toBe(160);
     expect(dialog.querySelector<HTMLInputElement>('input[type="checkbox"]')?.checked).toBe(false);
@@ -271,7 +271,7 @@ describe('exact-version AVP-deficiency reporting through shared route surfaces',
 
   it('reports the exact briefing limitation surface without opting into session context', async () => {
     await render();
-    await click(button('Report a problem with these limitations'));
+    await click(button('Help us improve these limitations'));
     expect(container.querySelector<HTMLTextAreaElement>('#problem-report-note')?.maxLength).toBe(160);
     expect(container.querySelector<HTMLInputElement>('input[type="checkbox"]')?.checked).toBe(false);
     await selectCategory(); await click(button('Send report'));

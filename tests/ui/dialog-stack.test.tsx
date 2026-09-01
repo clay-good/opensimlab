@@ -18,7 +18,7 @@ describe('Shared dialogs own only their topmost interaction layer', () => {
         <button id="source-report">Report this source</button>
         <button id="source-last">Source final control</button>
       </Drawer>}
-      <Modal key="report" open={state.modal} title="Report a problem" dismissible={state.dismissible} onClose={() => {
+      <Modal key="report" open={state.modal} title="Help us improve this" dismissible={state.dismissible} onClose={() => {
         modalClosed(); render({ modal: false });
       }}>
         {!state.empty && <><button id="report-first">First report control</button><button id="report-last">Last report control</button></>}

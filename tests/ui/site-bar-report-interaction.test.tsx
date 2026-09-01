@@ -25,7 +25,7 @@ describe('Browse and the shared problem report keep separate keyboard ownership'
   }));
   const browse = () => host.querySelector<HTMLDetailsElement>('.document__browse')!;
   const summary = () => browse().querySelector('summary')!;
-  const reportTrigger = () => host.querySelector<HTMLButtonElement>('button[aria-label="Report a problem"]')!;
+  const reportTrigger = () => host.querySelector<HTMLButtonElement>('button[aria-label="Help us improve this"]')!;
   const dialog = () => host.querySelector<HTMLElement>('[role="dialog"]');
   async function escape(target: HTMLElement) {
     const event = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
@@ -79,14 +79,19 @@ describe('Browse and the shared problem report keep separate keyboard ownership'
     await act(async () => { summary().click(); });
     reportTrigger().focus(); await act(async () => { reportTrigger().click(); });
     const report = dialog()!;
-    const first = report.querySelector<HTMLAnchorElement>('a')!;
+    // Two different elements, deliberately. The corner close leads the dialog's
+    // markup, so it is what Tab wraps to; initial focus and any refocus skip it,
+    // because landing on `Close` announces the way out of a dialog before the
+    // dialog. Conflating the two would let either behaviour regress unnoticed.
+    const tabFirst = report.querySelector<HTMLButtonElement>('button[data-dialog-dismiss]')!;
+    const refocusTarget = report.querySelector<HTMLAnchorElement>('a')!;
     const cancel = [...report.querySelectorAll('button')].find((button) => button.textContent === 'Cancel')!;
     summary().focus();
-    expect(document.activeElement).toBe(first);
+    expect(document.activeElement).toBe(refocusTarget);
     cancel.focus();
     const tab = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
     await act(async () => { cancel.dispatchEvent(tab); });
-    expect(tab.defaultPrevented).toBe(true); expect(document.activeElement).toBe(first);
+    expect(tab.defaultPrevented).toBe(true); expect(document.activeElement).toBe(tabFirst);
     expect(browse().open).toBe(true); expect(onClose).not.toHaveBeenCalled();
     await act(async () => { cancel.click(); });
     expect(document.activeElement).toBe(reportTrigger()); expect(browse().open).toBe(true);

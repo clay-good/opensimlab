@@ -434,7 +434,7 @@ export function Prebrief({
           </p>
           {onReportLimitation && (
             <Button compact variant="ghost" onClick={onReportLimitation}>
-              Report a problem with these limitations
+              Help us improve these limitations
             </Button>
           )}
         </section>

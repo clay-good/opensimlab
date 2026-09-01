@@ -516,7 +516,7 @@ function CorrectionsBody() {
 
       <h2>How to report something</h2>
       <p>
-        Every playable scenario carries a <strong>Report a problem</strong> control. It sends only
+        Every playable scenario carries a <strong>Help us improve this</strong> control. It sends only
         the scenario, its version, the public practice context, a category, and an optional
         160-character note, after showing you a preview of exactly that. Do not include real
         patient or learner information; there is no field that wants it.
@@ -654,7 +654,7 @@ function PrivacyBody() {
       <h2>What leaves the device</h2>
       <p>
         Your simulation, tutor, debrief writing, and practice history do not leave. If you open
-        <strong> Report a problem</strong>, Cloudflare Turnstile loads for abuse prevention. If you
+        <strong> Help us improve this</strong>, Cloudflare Turnstile loads for abuse prevention. If you
         then send, the previewed scenario/version, public practice context, category, and optional
         160-character note go to the isolated correction service. Recent simulated actions and a
         bounded patient/equipment snapshot are included only if you turn that option on and review

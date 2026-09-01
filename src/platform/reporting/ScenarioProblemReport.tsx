@@ -45,7 +45,14 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose, f
   onOpenRef.current = onOpen;
 
   useEffect(() => {
-    if (sent) reportHost.current?.querySelector<HTMLButtonElement>('[role="dialog"] button')?.focus();
+    // `Done`, not the corner close. Both dismiss the dialog, but the first
+    // control in the markup is now the corner X, and landing on it after a
+    // successful send announces the way out rather than the confirmation.
+    if (sent) {
+      reportHost.current
+        ?.querySelector<HTMLButtonElement>('[role="dialog"] button:not([data-dialog-dismiss])')
+        ?.focus();
+    }
   }, [sent]);
 
   useEffect(() => {
@@ -109,7 +116,7 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose, f
       setSending(false);
       setSent(true);
       setStatus(queued
-        ? 'Thanks. Your report is in the weekly review queue.'
+        ? 'Thank you. This is in the weekly review queue, and every correction that lands is published in the corrections log.'
         : 'Thanks. This one did not join the queue, either because it matches a report already filed today or because the queue is full. Nothing is wrong on your side. If it still looks wrong tomorrow, please send it again.');
     } catch {
       setToken('');
@@ -123,14 +130,19 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose, f
 
   return (
     <div className={floating ? 'problem-report problem-report--floating' : 'problem-report'} ref={reportHost}>
-      <Button compact variant="ghost" aria-label="Report a problem"
+      {/* "Report a problem" framed this as a complaints box, which is not what it
+          is. Every correction that arrives here is the only mechanism by which an
+          unsigned corpus gets better, and the people who can send one are
+          colleagues rather than customers. The control says so. */}
+      <Button compact variant="ghost" aria-label="Help us improve this"
         onClick={() => { setOpen(true); onOpen?.(); }}>
-        <span className="problem-report__label-long">Report a problem</span>
-        <span className="problem-report__label-short" aria-hidden="true">Report</span>
+        <span className="problem-report__label-long">Help us improve this</span>
+        <span className="problem-report__label-short" aria-hidden="true">Improve</span>
       </Button>
       <Modal
         open={open}
-        title="Report a problem"
+        cornerClose
+        title="Help us improve this"
         onClose={close}
         dismissible={!sending}
         footer={sent
@@ -149,8 +161,22 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose, f
         {sent ? null : (
           <div className="problem-report__form">
             <p>
-              Tell us what seems wrong in this fictional scenario. Do not include a patient name
-              or any real clinical information. <a href={service?.privacyUrl ?? '/privacy#problem-reports'}>
+              This is an open-source simulator and you are the review it has not had yet. Tell us
+              what looks wrong in this fictional scenario.
+            </p>
+            {/* The one sentence that changes what arrives here.
+                A report saying "the pressure is wrong" cannot be acted on. A
+                report saying "it should be nearer 60 and here is the paper" can
+                be, and can be shown to have been. Asking for the number and the
+                source is the difference between a complaint and a correction. */}
+            <p className="problem-report__invitation">
+              If you know the value it should be, or how a real patient would behave, put it in the
+              note with a source if you have one. That is what lets us change the model and show
+              why, in public, with your citation as the reason.
+            </p>
+            <p className="field__hint">
+              Do not include a patient name or any real clinical information.{' '}
+              <a href={service?.privacyUrl ?? '/privacy#problem-reports'}>
                 How reports stay private
               </a>.
             </p>
@@ -168,7 +194,7 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose, f
               </select>
             </label>
             <label className="field" htmlFor="problem-report-note">
-              <span className="field__label" id="problem-report-note-label">A short note (optional)</span>
+              <span className="field__label" id="problem-report-note-label">What should it be? (optional)</span>
               <textarea
                 id="problem-report-note"
                 className="field__input"
@@ -184,7 +210,7 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose, f
                 aria-describedby="problem-report-count"
                 value={note}
                 onChange={(event) => setNote(event.target.value.slice(0, REPORT_NOTE_LIMIT))}
-                placeholder="What did you expect instead?"
+                placeholder="e.g. closer to 60 mmHg. Reves 2010, table 2."
               />
               <span id="problem-report-count" className="field__hint problem-report__count">
                 {note.length} / {REPORT_NOTE_LIMIT}

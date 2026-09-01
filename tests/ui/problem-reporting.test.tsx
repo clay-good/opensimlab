@@ -109,7 +109,7 @@ describe('shared problem report dialog', () => {
     const onOpen = vi.fn();
     await act(async () => { root.render(<ScenarioProblemReport context={context} onOpen={onOpen} />); });
     expect(fetchMock).not.toHaveBeenCalled();
-    expect(container.querySelector('button')?.getAttribute('aria-label')).toBe('Report a problem');
+    expect(container.querySelector('button')?.getAttribute('aria-label')).toBe('Help us improve this');
     await act(async () => {
       (container.querySelector('button') as HTMLButtonElement).click();
       await Promise.resolve();
@@ -228,7 +228,10 @@ describe('shared problem report dialog', () => {
   it('keeps Tab inside the top report rather than trapping it in the underlying source drawer', async () => {
     const { sourceOpener, sourceTrigger, onSourceClose, onReportClose } = await openNestedSourceReport();
     const report = container.querySelector<HTMLElement>('[role="dialog"][aria-modal="true"]')!;
-    const first = report.querySelector<HTMLAnchorElement>('a')!;
+    // The corner close is the first control in the dialog now, so it is what the
+    // Tab cycle wraps to. Derived from the dialog rather than assumed, so this
+    // keeps testing the wrap rather than a particular first element.
+    const first = report.querySelector<HTMLButtonElement>('button[data-dialog-dismiss]')!;
     const last = [...report.querySelectorAll('button')].find((button) => button.textContent === 'Cancel')!;
     for (const [from, shiftKey, expected] of [[last, false, first], [first, true, last]] as const) {
       from.focus();
@@ -410,7 +413,7 @@ describe('shared problem report dialog', () => {
         <ScenarioProblemReport context={context} /></>);
     });
     await act(async () => {
-      (container.querySelector('[aria-label="Report a problem"]') as HTMLButtonElement).click();
+      (container.querySelector('[aria-label="Help us improve this"]') as HTMLButtonElement).click();
       await Promise.resolve();
     });
     expect(container.textContent).toContain('unavailable on this host');
@@ -478,7 +481,7 @@ describe('shared problem report dialog', () => {
         .mockResolvedValueOnce(Response.json(serviceConfig))
         .mockResolvedValueOnce(new Response(null, { status: 202 }));
       await act(async () => { root.render(<ScenarioProblemReport context={context} onClose={onClose} />); });
-      const trigger = container.querySelector('[aria-label="Report a problem"]') as HTMLButtonElement;
+      const trigger = container.querySelector('[aria-label="Help us improve this"]') as HTMLButtonElement;
       trigger.focus();
       await act(async () => { trigger.click(); await Promise.resolve(); });
       const select = container.querySelector('select') as HTMLSelectElement;
@@ -546,7 +549,7 @@ describe('shared problem report dialog', () => {
     const note = container.querySelector('textarea') as HTMLTextAreaElement;
     expect(note.getAttribute('aria-labelledby')).toBe('problem-report-note-label');
     const label = container.querySelector('#problem-report-note-label')!;
-    expect(label.textContent).toBe('A short note (optional)');
+    expect(label.textContent).toBe('What should it be? (optional)');
     const before = label.textContent;
     await typeNote(note, 'x'.repeat(30));
     // The counter moved; the name did not.
