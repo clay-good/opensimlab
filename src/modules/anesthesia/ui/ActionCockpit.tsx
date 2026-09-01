@@ -109,6 +109,7 @@ import { supportsSilentInteraction, type SilentInteractionAction } from '../../o
 import { supportsEasyLabel, type EasyLabelAction } from '../../oncology/easy-label';
 import { dkaResolutionInlinePrompt } from '../../endocrine-metabolic/tutor/dka-resolution-guidance';
 import { hhsOsmolalityInlinePrompt } from '../../endocrine-metabolic/tutor/hhs-osmolality-guidance';
+import { neonatalHypoglycemiaInlinePrompt } from '../../neonatology/tutor/neonatal-hypoglycemia-guidance';
 import { pretermRespiratoryDistressInlinePrompt } from '../../neonatology/tutor/preterm-respiratory-distress-guidance';
 import { meconiumTransitionInlinePrompt } from '../../neonatology/tutor/meconium-stained-transition-guidance';
 import { neonatalBradycardiaInlinePrompt } from '../../neonatology/tutor/neonatal-bradycardia-guidance';
@@ -2794,6 +2795,7 @@ export interface ActionCockpitProps {
   readonly easyLabelGuidance?: GuidanceLevel;
   readonly endocrineDkaResolutionGuidance?: GuidanceLevel;
   readonly endocrineHhsGuidance?: GuidanceLevel;
+  readonly neonatologyHypoglycemiaGuidance?: GuidanceLevel;
   readonly neonatologyPretermRespiratoryGuidance?: GuidanceLevel;
   readonly neonatologyMeconiumGuidance?: GuidanceLevel;
   readonly neonatologyBradycardiaGuidance?: GuidanceLevel;
@@ -2859,6 +2861,7 @@ export interface ActionCockpitProps {
   readonly easyLabelDemonstrating?: boolean;
   readonly endocrineDkaResolutionDemonstrating?: boolean;
   readonly endocrineHhsDemonstrating?: boolean;
+  readonly neonatologyHypoglycemiaDemonstrating?: boolean;
   readonly neonatologyPretermRespiratoryDemonstrating?: boolean;
   readonly neonatologyMeconiumDemonstrating?: boolean;
   readonly neonatologyBradycardiaDemonstrating?: boolean;
@@ -5802,6 +5805,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasNeonatologyHypoglycemiaResponse && (
               <NeonatologyHypoglycemiaTray assessment={props.resuscitation.neonatologyHypoglycemiaAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.neonatologyHypoglycemiaGuidance}
+                demonstrating={props.neonatologyHypoglycemiaDemonstrating}
                 onAction={props.onNeonatologyHypoglycemiaResponse ?? (() => {})} />
             )}
             {hasNeonatologySepsisResponse && (
@@ -13676,10 +13682,15 @@ function NeonatologyPretermRespiratoryDistressTray({ assessment, scenarioVersion
   </>;
 }
 
-function NeonatologyHypoglycemiaTray({ assessment, onAction }: {
+function NeonatologyHypoglycemiaTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['neonatologyHypoglycemiaAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onNeonatologyHypoglycemiaResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = neonatalHypoglycemiaInlinePrompt(guidance, { scenarioVersion, neonatalHypoglycemia: assessment });
+  const act = demonstrating ? undefined : onAction;
   const support = assessment?.supportAtTick != null;
   const context = assessment?.contextAtTick != null;
   const recognition = assessment?.recognitionAtTick != null;
@@ -13687,22 +13698,27 @@ function NeonatologyHypoglycemiaTray({ assessment, onAction }: {
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="neonatology-hypoglycemia-now-title">
       <div id="neonatology-hypoglycemia-now-title" className="syringe__name">Read the sign and the number together.</div>
       <p className="syringe__remaining">Connect risk, clock, signs, verified glucose, warmth, feeding, parent, and whole dyad. Thresholds vary; every measurement and treatment stays with the qualified team.</p>
       <div className="crisis-drug__actions">
-        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-neonatal-hypoglycemia-newborn-glucose-feeding-neurologic-and-family-support')}>Confirm prepared support</Button>}
-        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neonatal-hypoglycemia-risk-clock-signs-glucose-temperature-feeding-and-whole-dyad')}>Connect newborn + whole dyad</Button>}
-        {context && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-symptomatic-low-neonatal-glucose-requiring-qualified-immediate-escalation-without-universal-threshold-closure')}>Recognize the urgent pattern</Button>}
-        {recognition && !readiness && <Button className="crisis-drug__action" onClick={() => onAction('review-qualified-neonatal-hypoglycemia-local-protocol-treatment-confirmation-and-cause-boundaries')}>Review qualified boundaries</Button>}
+        {!support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-neonatal-hypoglycemia-newborn-glucose-feeding-neurologic-and-family-support') : undefined}>Confirm prepared support</Button>}
+        {support && !context && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-neonatal-hypoglycemia-risk-clock-signs-glucose-temperature-feeding-and-whole-dyad') : undefined}>Connect newborn + whole dyad</Button>}
+        {context && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-symptomatic-low-neonatal-glucose-requiring-qualified-immediate-escalation-without-universal-threshold-closure') : undefined}>Recognize the urgent pattern</Button>}
+        {recognition && !readiness && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-qualified-neonatal-hypoglycemia-local-protocol-treatment-confirmation-and-cause-boundaries') : undefined}>Review qualified boundaries</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="neonatology-hypoglycemia-later-title">
       <div id="neonatology-hypoglycemia-later-title" className="syringe__name">One better value is a checkpoint, not closure.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Recurrence, neurologic, feeding, thermal, cause, family, disposition, and outcome risks handed off.' : reassessment ? 'The supplied glucose is higher. Durable stability, neurologic safety, cause, and outcomes remain open.' : readiness ? 'Qualified local-protocol care and serial reassessment continue. Review the fixed report after time passes.' : support ? 'Prepared support is present. Connect the whole newborn and dyad before naming the pattern.' : 'Begin with calm shared ownership. You can pause or leave this practice at any time.'}</p>
       <div className="crisis-drug__actions">
-        {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-neonatal-hypoglycemia-fixed-thirty-minute-qualified-report')}>Review the fixed 30-minute report</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neonatal-hypoglycemia-recurrence-neurologic-feeding-thermal-cause-family-and-outcome-risk')}>Hand off active newborn risk</Button>}
+        {readiness && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-neonatal-hypoglycemia-fixed-thirty-minute-qualified-report') : undefined}>Review the fixed 30-minute report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-neonatal-hypoglycemia-recurrence-neurologic-feeding-thermal-cause-family-and-outcome-risk') : undefined}>Hand off active newborn risk</Button>}
       </div>
     </section>
   </>;

@@ -91,6 +91,8 @@ import { useSepticShockLabelDemonstration } from '../../infectious-disease/demo/
 import { supportsSepticShockLabelDemonstration } from '../../infectious-disease/demo/septic-shock-label-demonstration';
 import { useMeningitisImagingDemonstration } from '../../infectious-disease/demo/useMeningitisImagingDemonstration';
 import { supportsMeningitisImagingDemonstration } from '../../infectious-disease/demo/meningitis-imaging-demonstration';
+import { useNeonatalHypoglycemiaDemonstration } from '../../neonatology/demo/useNeonatalHypoglycemiaDemonstration';
+import { supportsNeonatalHypoglycemiaDemonstration } from '../../neonatology/demo/neonatal-hypoglycemia-demonstration';
 import { usePretermRespiratoryDistressDemonstration } from '../../neonatology/demo/usePretermRespiratoryDistressDemonstration';
 import { supportsPretermRespiratoryDistressDemonstration } from '../../neonatology/demo/preterm-respiratory-distress-demonstration';
 import { useMeconiumTransitionDemonstration } from '../../neonatology/demo/useMeconiumTransitionDemonstration';
@@ -302,6 +304,7 @@ export function Cockpit({
   const possibleSepsisDemoSupported = supportsPossibleSepsisDemonstration(scenario);
   const septicShockLabelDemoSupported = supportsSepticShockLabelDemonstration(scenario);
   const meningitisImagingDemoSupported = supportsMeningitisImagingDemonstration(scenario);
+  const neonatalHypoglycemiaDemoSupported = supportsNeonatalHypoglycemiaDemonstration(scenario);
   const pretermRespiratoryDemoSupported = supportsPretermRespiratoryDistressDemonstration(scenario);
   const meconiumTransitionDemoSupported = supportsMeconiumTransitionDemonstration(scenario);
   const neonatalBradycardiaDemoSupported = supportsNeonatalBradycardiaDemonstration(scenario);
@@ -350,7 +353,8 @@ export function Cockpit({
     || ineffectiveVentilationDemoSupported
     || neonatalBradycardiaDemoSupported
     || meconiumTransitionDemoSupported
-    || pretermRespiratoryDemoSupported;
+    || pretermRespiratoryDemoSupported
+    || neonatalHypoglycemiaDemoSupported;
   const scenarioDemoSupported = hypoglycemiaDemoSupported || adrenalDemoSupported
     || thyroidDemoSupported || myxedemaDemoSupported || observedStateDemoSupported;
   const inductionDemonstration = useDemonstration({
@@ -432,6 +436,12 @@ export function Cockpit({
   const renalHyponatremiaDemonstration = useRenalHyponatremiaDemonstration({
     active: demonstrating && renalHyponatremiaDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyponatremia,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const neonatalHypoglycemiaDemonstration = useNeonatalHypoglycemiaDemonstration({
+    active: demonstrating && neonatalHypoglycemiaDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.neonatologyHypoglycemiaAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const pretermRespiratoryDemonstration = usePretermRespiratoryDistressDemonstration({
@@ -653,7 +663,8 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypermagnesemia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = pretermRespiratoryDemoSupported ? pretermRespiratoryDemonstration
+  const demonstration = neonatalHypoglycemiaDemoSupported ? neonatalHypoglycemiaDemonstration
+    : pretermRespiratoryDemoSupported ? pretermRespiratoryDemonstration
     : meconiumTransitionDemoSupported ? meconiumTransitionDemonstration
     : neonatalBradycardiaDemoSupported ? neonatalBradycardiaDemonstration
     : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
@@ -1365,6 +1376,8 @@ export function Cockpit({
           septicShockLabelDemonstrating={demonstrating && septicShockLabelDemoSupported}
           meningitisImagingGuidance={session.guidance}
           meningitisImagingDemonstrating={demonstrating && meningitisImagingDemoSupported}
+          neonatologyHypoglycemiaGuidance={session.guidance}
+          neonatologyHypoglycemiaDemonstrating={demonstrating && neonatalHypoglycemiaDemoSupported}
           neonatologyPretermRespiratoryGuidance={session.guidance}
           neonatologyPretermRespiratoryDemonstrating={demonstrating && pretermRespiratoryDemoSupported}
           neonatologyMeconiumGuidance={session.guidance}

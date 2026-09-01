@@ -803,23 +803,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "neonatal-hypoglycemia-fixtures.ts binds seed 6132 and content 0.1.0 to expert, number-first-error, recovery, and no-action paths. The presentation and the fixed 30-minute qualified-team report are authored constants; no glucose, treatment-response, or feeding model is claimed, and no outcome follows from any choice. tests/integration/neonatal-hypoglycemia-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the fixed report refuses until simulated time has passed since the boundary review, and the handoff refuses until time has passed since the report. What moves is not the cause of the signs, which never closes, but what the record can support about a number corrected and a newborn unexplained."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions confirm the glucose and feeding pathways as one team, connect the maternal risk and the signs to the value in that order, escalate immediately while refusing the universal threshold, review the local pathway rather than choosing a treatment, read the fixed report, and hand off active risk. Order is enforced rather than suggested, and refusal names the missing step. The lesson takes no history, obtains or interprets no glucose or other test, feeds nobody, gives no gel, dextrose, fluid or drug, obtains no access, and names no dose."
           ]
         },
         {
@@ -831,23 +831,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at active-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no universal injury threshold, no determined cause, no excluded infection or endocrine or metabolic disease, no proven treatment effect, no durable glucose stability, no neurologic safety, no feeding success, no disposition, and no outcome for the newborn or the parents."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both hold two statements together without letting either cancel the other: no single glucose concentration universally defines clinically important neonatal hypoglycemia or predicts brain injury, and abnormal signs with a confirmed 32 mg/dL still support immediate qualified escalation across the cited frameworks. Both also keep the signs nonspecific, so treating the glucose explains nothing, and neither names a gel, a bolus, or a dose, because the treatment is whatever the current local pathway says. A test asserts nothing anywhere states a universal threshold or claims a treatment effect. tests/unit/neonatal-hypoglycemia-demonstration.test.ts and tests/ui/neonatology-neonatal-hypoglycemia.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that escalated from the number alone can still reach a correct handoff."
           ]
         },
         {
@@ -866,23 +866,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "neonatal-hypoglycemia-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 6132 for deterministic replay through the shared engine, including the two time-gated checkpoints. The common-error path escalates from the number alone, which this lesson refuses precisely because the value does not define the condition and the signs are what make it urgent."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
