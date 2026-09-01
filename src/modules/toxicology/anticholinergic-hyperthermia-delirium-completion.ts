@@ -1,0 +1,34 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
+import { ANTICHOLINERGIC_HYPERTHERMIA_DELIRIUM } from './scenarios/anticholinergic-hyperthermia-delirium';
+import { ANTICHOLINERGIC_FIXTURES } from './anticholinergic-hyperthermia-delirium-fixtures';
+import { ANTICHOLINERGIC_TUTOR_VERSION } from './tutor/anticholinergic-hyperthermia-delirium-guidance';
+import { ANTICHOLINERGIC_DEMONSTRATION_VERSION } from './demo/anticholinergic-hyperthermia-delirium-demonstration';
+
+/**
+ * Exact-version evidence for one lesson, and no claim about any other.
+ *
+ * `observable-objectives` is deliberately not answered here. This scenario
+ * declares six objectives against a cap of five, which is a content-design
+ * decision affecting scenarios across several modules rather than something
+ * this file may settle on its own. The shared audit keeps naming it.
+ */
+export function anticholinergicCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
+  if (moduleId !== 'toxicology' || capabilityVersion !== '0.1.0-alpha.48'
+    || scenario.metadata.id !== ANTICHOLINERGIC_FIXTURES.scenarioId
+    || scenario.metadata.version !== '0.1.0' || ANTICHOLINERGIC_FIXTURES.contentVersion !== '0.1.0'
+    || ANTICHOLINERGIC_FIXTURES.seed !== 5661
+    || ANTICHOLINERGIC_TUTOR_VERSION !== '0.1.0' || ANTICHOLINERGIC_DEMONSTRATION_VERSION !== '0.1.0'
+    || JSON.stringify(scenario) !== JSON.stringify(ANTICHOLINERGIC_HYPERTHERMIA_DELIRIUM)) return [];
+  return [
+    { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['anticholinergic-hyperthermia-delirium-fixtures.ts binds seed 5661 and content 0.1.0 to expert, study-before-cooling error, recovery, and no-action paths. The presentation, the supplied ECG, the laboratory set, and the fixed 30-minute report are authored constants; no thermoregulation, cooling, sedation, or antidote model is claimed, and no outcome follows from any choice. tests/integration/anticholinergic-hyperthermia-delirium-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions.'] },
+    { id: 'meaningful-progression', status: 'satisfied', evidence: ['The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the bounded cooling, sedation, surveillance and physostigmine-eligibility intent refuses until simulated time has passed since the evidence review, and the handoff refuses until time has passed since that. What moves is the temperature rather than the diagnosis, and it moves without anything being established about why.'] },
+    { id: 'meaningful-actions-and-choices', status: 'satisfied', evidence: ['Six declared decisions say the temperature ahead of the more interesting findings, name both halves of the pattern while refusing mnemonic-, temperature-, pupil- and dryness-only closure, give cooling an owner before the workup gets more attention, read the ECG, CK and retention as three separate risks with antidote eligibility left as a toxicologist-led question, record bounded qualified intents, and hand off active risk. Order is enforced rather than suggested, and refusal names the missing step. The lesson takes no history, measures nothing, excludes nothing, and selects no cooling method, fluid, sedative, restraint, catheter, physostigmine product, dose, route, airway, or ventilation.'] },
+    { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The branch ends at active-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no confirmed diagnosis, no excluded alternative, no proven treatment effect, no durable temperature control, no renal safety, no excluded rhabdomyolysis or seizure, no proven exposure purity, no determined antidote eligibility, safety or disposition, and no outcome.'] },
+    { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that kept studying the syndrome while she stayed hot can still reach a correct handoff.'] },
+    { id: 'reference-transcripts', status: 'satisfied', evidence: ['anticholinergic-hyperthermia-delirium-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 5661 for deterministic replay through the shared engine, including the two time-gated checkpoints.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Six observed-state prompts at version ${ANTICHOLINERGIC_TUTOR_VERSION} read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example ${ANTICHOLINERGIC_DEMONSTRATION_VERSION} drives the ordinary controls through the real engine to handoff. Everything memorable at this bedside — dilated pupils, hot dry flushed skin, picking at the air, a palpable bladder — is a clue rather than the emergency, and the emergency is 40.3°C, so both say the temperature first and give cooling an owner before the diagnosis gets any more attention. Both refuse all four early closures and keep the absent sweating as a discriminator that separates this from the sympathomimetic lesson next door without excluding infection, environmental exposure, endocrine causes or coingestion. Physostigmine stays a toxicologist-led eligibility question: the narrow QRS with no terminal rightward pattern in aVR is evidence that belongs in that conversation rather than an answer to it, and neither the tutor nor the example determines eligibility. The ending gives back a lower temperature attached to a patient who is still confused and still not passing urine. A test asserts nothing anywhere excludes an alternative, determines eligibility, or calls the temperature controlled. tests/unit/anticholinergic-hyperthermia-delirium-demonstration.test.ts and tests/ui/toxicology-anticholinergic-hyperthermia-delirium.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding.`] },
+    { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending.'] },
+    { id: 'report-control-coverage', status: 'missing', evidence: ['The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound.'] },
+  ];
+}
