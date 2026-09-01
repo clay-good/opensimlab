@@ -82,9 +82,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This launch slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Eleven observed-state prompts at version 0.1.0 read the learner's own recorded steps. Unassisted is silent and coached withholds the two waiting beats. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both refuse the two exclusions this lesson offers — an unimpressive marker set and a vaccination that does not cover the serogroup — without ever asserting the diagnosis, because recognizing a pattern is not confirming one and nothing here confirms anything. Neither selects an agent, dose, route, dilution, or infusion; what is recorded is intent. The example waits for the authored one-hour review to show an inadequate response before escalating for attendance rather than performing that escalation because a demonstration ought to contain it, and a test asserts the reassessment precedes it. tests/unit/meningococcal-sepsis-demonstration.test.ts and tests/ui/meningococcal-sepsis-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {

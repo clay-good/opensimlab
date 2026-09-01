@@ -28,9 +28,10 @@ let host: HTMLDivElement; let root: Root;
 beforeEach(() => { host = document.createElement('div'); document.body.append(host); root = createRoot(host); });
 afterEach(() => { act(() => root.unmount()); host.remove(); });
 
-const render = (model: MeningococcalSepsis, tick: number, onAction = vi.fn(), demonstrating = false) => {
-  act(() => root.render(<MeningococcalSepsisTray assessment={model.snapshot(tick)}
-    onAction={onAction} demonstrating={demonstrating} />));
+const render = (model: MeningococcalSepsis, tick: number, onAction = vi.fn(), demonstrating = false,
+  guidance: 'unassisted' | 'coached' | 'guided' = 'unassisted') => {
+  act(() => root.render(<MeningococcalSepsisTray assessment={model.snapshot(tick)} scenarioVersion="0.1.0"
+    onAction={onAction} guidance={guidance} demonstrating={demonstrating} />));
   return onAction;
 };
 const button = (label: string) => [...host.querySelectorAll('button')]
@@ -101,5 +102,30 @@ describe('Meningococcal sepsis tray', () => {
     }
     render(model, 1);
     expect(host.textContent).toContain('This is not recovery or discharge readiness.');
+  });
+});
+
+describe('Meningococcal sepsis tutor', () => {
+  it('says nothing at all on the unassisted setting', () => {
+    render(new MeningococcalSepsis(), 0);
+    expect(host.textContent).not.toContain('A moment to think');
+  });
+
+  it('names the pattern without naming a diagnosis', () => {
+    render(new MeningococcalSepsis(), 0, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('Record the pattern you can see');
+    expect(text).toContain('Recognition is not a diagnosis');
+  });
+
+  it('selects no agent, dose, or route when asking for intent', () => {
+    const model = new MeningococcalSepsis();
+    model.apply('recognize-rash', 0);
+    model.apply('call-senior', 1);
+    model.apply('request-bloods', 2);
+    render(model, 3, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('Record bounded antimicrobial intent');
+    expect(text).toContain('No agent, dose, route, dilution, or infusion is chosen here');
   });
 });

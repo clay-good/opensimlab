@@ -2794,6 +2794,7 @@ export interface ActionCockpitProps {
   readonly renalHypernatremiaDemonstrating?: boolean;
   readonly renalHypocalcemiaDemonstrating?: boolean;
   readonly renalHypermagnesemiaDemonstrating?: boolean;
+  readonly meningococcalSepsisGuidance?: GuidanceLevel;
   readonly meningococcalSepsisDemonstrating?: boolean;
   readonly obstructedKidneyDemonstrating?: boolean;
   readonly febrileNeutropeniaDemonstrating?: boolean;
@@ -5997,6 +5998,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasMeningococcalSepsisResponse && (
               <MeningococcalSepsisTray assessment={props.meningococcalSepsis}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.meningococcalSepsisGuidance}
                 demonstrating={props.meningococcalSepsisDemonstrating}
                 onAction={props.onMeningococcalSepsisResponse ?? (() => {})} />
             )}

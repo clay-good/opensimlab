@@ -71,6 +71,8 @@ import { useProxyScaleDemonstration } from '../../medical-surgical-nursing/demo/
 import { useLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/useLastKnownWellDemonstration';
 import { useOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/useOxygenTargetScaleDemonstration';
 import { useLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/useLostContingencyDemonstration';
+import { useMeningococcalSepsisDemonstration } from '../../infectious-disease/demo/useMeningococcalSepsisDemonstration';
+import { supportsMeningococcalSepsisDemonstration } from '../../infectious-disease/demo/meningococcal-sepsis-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -258,6 +260,7 @@ export function Cockpit({
   const lastKnownWellDemoSupported = supportsLastKnownWellDemonstration(scenario);
   const oxygenTargetScaleDemoSupported = supportsOxygenTargetScaleDemonstration(scenario);
   const lostContingencyDemoSupported = supportsLostContingencyDemonstration(scenario);
+  const meningococcalSepsisDemoSupported = supportsMeningococcalSepsisDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -283,7 +286,8 @@ export function Cockpit({
     || laboratoryTlsDemoSupported || rareEarlyMyocarditisDemoSupported
     || loweringTheCountDemoSupported || inheritedUrgencyDemoSupported
     || trialRuleDemoSupported || silentInteractionDemoSupported || easyLabelDemoSupported
-    || dkaResolutionDemoSupported || hhsOsmolalityDemoSupported || lowScoreDemoSupported || countedRateDemoSupported || pairedReadingDemoSupported || afferentLimbDemoSupported || quietPatientDemoSupported || proxyScaleDemoSupported || lastKnownWellDemoSupported || oxygenTargetScaleDemoSupported || lostContingencyDemoSupported;
+    || dkaResolutionDemoSupported || hhsOsmolalityDemoSupported || lowScoreDemoSupported || countedRateDemoSupported || pairedReadingDemoSupported || afferentLimbDemoSupported || quietPatientDemoSupported || proxyScaleDemoSupported || lastKnownWellDemoSupported || oxygenTargetScaleDemoSupported || lostContingencyDemoSupported
+    || meningococcalSepsisDemoSupported;
   const scenarioDemoSupported = hypoglycemiaDemoSupported || adrenalDemoSupported
     || thyroidDemoSupported || myxedemaDemoSupported || observedStateDemoSupported;
   const inductionDemonstration = useDemonstration({
@@ -365,6 +369,11 @@ export function Cockpit({
   const renalHyponatremiaDemonstration = useRenalHyponatremiaDemonstration({
     active: demonstrating && renalHyponatremiaDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyponatremia,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const meningococcalSepsisDemonstration = useMeningococcalSepsisDemonstration({
+    active: demonstrating && meningococcalSepsisDemoSupported,
+    running: session.transport === 'running', patient: session.equipment?.resuscitation.meningococcalSepsis,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const lostContingencyDemonstration = useLostContingencyDemonstration({
@@ -494,7 +503,8 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypermagnesemia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = lostContingencyDemoSupported ? lostContingencyDemonstration
+  const demonstration = meningococcalSepsisDemoSupported ? meningococcalSepsisDemonstration
+    : lostContingencyDemoSupported ? lostContingencyDemonstration
     : oxygenTargetScaleDemoSupported ? oxygenTargetScaleDemonstration
     : lastKnownWellDemoSupported ? lastKnownWellDemonstration
     : proxyScaleDemoSupported ? proxyScaleDemonstration
@@ -1169,6 +1179,8 @@ export function Cockpit({
           lastKnownWellGuidance={session.guidance}
           oxygenTargetScaleGuidance={session.guidance}
           lostContingencyGuidance={session.guidance}
+          meningococcalSepsisGuidance={session.guidance}
+          meningococcalSepsisDemonstrating={demonstrating && meningococcalSepsisDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

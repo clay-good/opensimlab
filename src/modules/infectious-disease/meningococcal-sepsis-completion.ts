@@ -2,11 +2,14 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { MENINGOCOCCAL_SEPSIS_RECOGNITION_AND_ESCALATION } from './scenarios/meningococcal-sepsis-recognition-and-escalation';
 import { MENINGOCOCCAL_SEPSIS_FIXTURES } from './meningococcal-sepsis-fixtures';
+import { MENINGOCOCCAL_SEPSIS_TUTOR_VERSION } from './meningococcal-sepsis-tutor';
+import { MENINGOCOCCAL_SEPSIS_DEMONSTRATION_VERSION } from './demo/meningococcal-sepsis-demonstration';
 
 export function meningococcalSepsisCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'infectious-disease' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== MENINGOCOCCAL_SEPSIS_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
-    || MENINGOCOCCAL_SEPSIS_FIXTURES.contentVersion !== '0.1.0' || MENINGOCOCCAL_SEPSIS_FIXTURES.seed !== 5101
+    || MENINGOCOCCAL_SEPSIS_FIXTURES.contentVersion !== '0.1.0'
+    || MENINGOCOCCAL_SEPSIS_TUTOR_VERSION !== '0.1.0' || MENINGOCOCCAL_SEPSIS_DEMONSTRATION_VERSION !== '0.1.0' || MENINGOCOCCAL_SEPSIS_FIXTURES.seed !== 5101
     || JSON.stringify(scenario) !== JSON.stringify(MENINGOCOCCAL_SEPSIS_RECOGNITION_AND_ESCALATION)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['meningococcal-sepsis-fixtures.ts binds seed 5101 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No stochastic infection or host-response model is claimed.'] },
@@ -15,7 +18,7 @@ export function meningococcalSepsisCompletionEvidence(scenario: Scenario, capabi
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['Rash recognition, senior ownership, sampling, both bounded intents, boundary review, surveillance, and a current full assessment permit unresolved-shock handoff. Consultant attendance is gated only once the authored one-hour review has fired. Instructor takeover bounds a run with no intent or senior ownership at 30 minutes, or an unfinished session at 180 minutes.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Six event-bound objectives distinguish reconciliation, non-closure on a single marker or on vaccination, activation, the timing and fluid-ceiling boundary, bounded intent with consultant attendance, and accountable handoff. Refused shortcuts remain visible after later care, and neither survival nor source control is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['meningococcal-sepsis-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This launch slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Eleven observed-state prompts at version ${MENINGOCOCCAL_SEPSIS_TUTOR_VERSION} read the learner's own recorded steps. Unassisted is silent and coached withholds the two waiting beats. Worked example ${MENINGOCOCCAL_SEPSIS_DEMONSTRATION_VERSION} drives the ordinary controls through the real engine to handoff. Both refuse the two exclusions this lesson offers — an unimpressive marker set and a vaccination that does not cover the serogroup — without ever asserting the diagnosis, because recognizing a pattern is not confirming one and nothing here confirms anything. Neither selects an agent, dose, route, dilution, or infusion; what is recorded is intent. The example waits for the authored one-hour review to show an inadequate response before escalating for attendance rather than performing that escalation because a demonstration ought to contain it, and a test asserts the reassessment precedes it. tests/unit/meningococcal-sepsis-demonstration.test.ts and tests/ui/meningococcal-sepsis-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];
