@@ -2,13 +2,18 @@ import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { SeverePneumoniaSnapshot } from '@platform/kernel/protocol';
 import type { SeverePneumoniaAction } from './severe-pneumonia';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
+import { severePneumoniaInlinePrompt } from './severe-pneumonia-tutor';
 
-export function SeverePneumoniaTray({ assessment, onAction, demonstrating = false }: {
+export function SeverePneumoniaTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: SeverePneumoniaSnapshot;
+  readonly scenarioVersion: string;
   readonly onAction: (action: SeverePneumoniaAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = severePneumoniaInlinePrompt(guidance, { scenarioVersion, severePneumonia: assessment });
   const labs = assessment.labObservation; const respiratory = assessment.respiratoryObservation;
   const observation = assessment.observation;
   const decision = (action: SeverePneumoniaAction, label: string, accepted = false) => {
@@ -17,6 +22,10 @@ export function SeverePneumoniaTray({ assessment, onAction, demonstrating = fals
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <p className="syringe__remaining">Selected sources: the 2019 ATS/IDSA severity definition, NICE NG250 (2025), and a 2012 meta-analysis of severity tools for predicting critical-care admission. Open the source view for exact locators.</p>
     <section className="syringe severe-pneumonia__section" aria-labelledby="severe-pneumonia-recognition-title">
       <div id="severe-pneumonia-recognition-title" className="syringe__name">Both scores are right. They disagree.</div>

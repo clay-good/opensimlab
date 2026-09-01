@@ -81,6 +81,8 @@ import { useNecrotizingInfectionDemonstration } from '../../infectious-disease/d
 import { supportsNecrotizingInfectionDemonstration } from '../../infectious-disease/demo/necrotizing-infection-demonstration';
 import { useEndocarditisHeartFailureDemonstration } from '../../infectious-disease/demo/useEndocarditisHeartFailureDemonstration';
 import { supportsEndocarditisHeartFailureDemonstration } from '../../infectious-disease/demo/endocarditis-heart-failure-demonstration';
+import { useSeverePneumoniaDemonstration } from '../../infectious-disease/demo/useSeverePneumoniaDemonstration';
+import { supportsSeverePneumoniaDemonstration } from '../../infectious-disease/demo/severe-pneumonia-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -273,6 +275,7 @@ export function Cockpit({
   const febrileNeutropeniaDemoSupported = supportsFebrileNeutropeniaDemonstration(scenario);
   const necrotizingInfectionDemoSupported = supportsNecrotizingInfectionDemonstration(scenario);
   const endocarditisHeartFailureDemoSupported = supportsEndocarditisHeartFailureDemonstration(scenario);
+  const severePneumoniaDemoSupported = supportsSeverePneumoniaDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -302,7 +305,8 @@ export function Cockpit({
     || meningococcalSepsisDemoSupported || obstructedKidneyDemoSupported
     || febrileNeutropeniaDemoSupported
     || necrotizingInfectionDemoSupported
-    || endocarditisHeartFailureDemoSupported;
+    || endocarditisHeartFailureDemoSupported
+    || severePneumoniaDemoSupported;
   const scenarioDemoSupported = hypoglycemiaDemoSupported || adrenalDemoSupported
     || thyroidDemoSupported || myxedemaDemoSupported || observedStateDemoSupported;
   const inductionDemonstration = useDemonstration({
@@ -384,6 +388,11 @@ export function Cockpit({
   const renalHyponatremiaDemonstration = useRenalHyponatremiaDemonstration({
     active: demonstrating && renalHyponatremiaDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyponatremia,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const severePneumoniaDemonstration = useSeverePneumoniaDemonstration({
+    active: demonstrating && severePneumoniaDemoSupported,
+    running: session.transport === 'running', patient: session.equipment?.resuscitation.severePneumonia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const endocarditisHeartFailureDemonstration = useEndocarditisHeartFailureDemonstration({
@@ -538,7 +547,8 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypermagnesemia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = endocarditisHeartFailureDemoSupported ? endocarditisHeartFailureDemonstration
+  const demonstration = severePneumoniaDemoSupported ? severePneumoniaDemonstration
+    : endocarditisHeartFailureDemoSupported ? endocarditisHeartFailureDemonstration
     : necrotizingInfectionDemoSupported ? necrotizingInfectionDemonstration
     : febrileNeutropeniaDemoSupported ? febrileNeutropeniaDemonstration
     : obstructedKidneyDemoSupported ? obstructedKidneyDemonstration
@@ -1228,6 +1238,8 @@ export function Cockpit({
           necrotizingInfectionDemonstrating={demonstrating && necrotizingInfectionDemoSupported}
           endocarditisHeartFailureGuidance={session.guidance}
           endocarditisHeartFailureDemonstrating={demonstrating && endocarditisHeartFailureDemoSupported}
+          severePneumoniaGuidance={session.guidance}
+          severePneumoniaDemonstrating={demonstrating && severePneumoniaDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

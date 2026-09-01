@@ -27,9 +27,10 @@ let host: HTMLDivElement; let root: Root;
 beforeEach(() => { host = document.createElement('div'); document.body.append(host); root = createRoot(host); });
 afterEach(() => { act(() => root.unmount()); host.remove(); });
 
-const render = (model: SeverePneumonia, tick: number, onAction = vi.fn(), demonstrating = false) => {
-  act(() => root.render(<SeverePneumoniaTray assessment={model.snapshot(tick)}
-    onAction={onAction} demonstrating={demonstrating} />));
+const render = (model: SeverePneumonia, tick: number, onAction = vi.fn(), demonstrating = false,
+  guidance: 'unassisted' | 'coached' | 'guided' = 'unassisted') => {
+  act(() => root.render(<SeverePneumoniaTray assessment={model.snapshot(tick)} scenarioVersion="0.1.0"
+    onAction={onAction} guidance={guidance} demonstrating={demonstrating} />));
   return onAction;
 };
 const button = (label: string) => [...host.querySelectorAll('button')]
@@ -89,5 +90,28 @@ describe('Severe pneumonia tray', () => {
     for (const entry of host.querySelectorAll('button')) {
       expect(entry.getAttribute('aria-disabled')).toBe('true');
     }
+  });
+});
+
+describe('Severe pneumonia tutor', () => {
+  it('says nothing at all on the unassisted setting', () => {
+    render(new SeverePneumonia(), 0);
+    expect(host.textContent).not.toContain('A moment to think');
+  });
+
+  it('asks for both scores side by side before anything is chosen', () => {
+    render(new SeverePneumonia(), 0, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('side by side');
+    expect(text).toContain('both are calculated correctly');
+  });
+
+  it('never calls the mortality score wrong', () => {
+    const model = new SeverePneumonia();
+    model.apply('reconcile-supplied-scores', 0);
+    render(model, 1, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('an answer to a question you did not ask');
+    expect(text).not.toContain('the score is wrong');
   });
 });

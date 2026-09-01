@@ -2,11 +2,14 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { SEVERE_PNEUMONIA_THE_SCORE_ANSWERED_ANOTHER_QUESTION } from './scenarios/severe-pneumonia-the-score-answered-another-question';
 import { SEVERE_PNEUMONIA_FIXTURES } from './severe-pneumonia-fixtures';
+import { SEVERE_PNEUMONIA_TUTOR_VERSION } from './severe-pneumonia-tutor';
+import { SEVERE_PNEUMONIA_DEMONSTRATION_VERSION } from './demo/severe-pneumonia-demonstration';
 
 export function severePneumoniaCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'infectious-disease' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== SEVERE_PNEUMONIA_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
-    || SEVERE_PNEUMONIA_FIXTURES.contentVersion !== '0.1.0' || SEVERE_PNEUMONIA_FIXTURES.seed !== 5623
+    || SEVERE_PNEUMONIA_FIXTURES.contentVersion !== '0.1.0'
+    || SEVERE_PNEUMONIA_TUTOR_VERSION !== '0.1.0' || SEVERE_PNEUMONIA_DEMONSTRATION_VERSION !== '0.1.0' || SEVERE_PNEUMONIA_FIXTURES.seed !== 5623
     || JSON.stringify(scenario) !== JSON.stringify(SEVERE_PNEUMONIA_THE_SCORE_ANSWERED_ANOTHER_QUESTION)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['severe-pneumonia-fixtures.ts binds seed 5623 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No respiratory, gas-exchange, or antimicrobial model is claimed.'] },
@@ -15,7 +18,7 @@ export function severePneumoniaCompletionEvidence(scenario: Scenario, capability
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['Reconciliation, mismatch recognition, critical-care review, bounded escalation intent, the boundary review, surveillance, and a current full assessment permit handoff with the level-of-care decision pending. Instructor takeover bounds a run with no critical-care review at 180 minutes, or an unfinished session at eight hours.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Six event-bound objectives distinguish holding two correct instruments together, recognizing which answers the question in front of the learner, activation while the patient still looks like a ward admission, the triage evidence boundary, bounded intent with strict reassessment, and accountable handoff. Refused shortcuts remain visible, and neither escalation nor bed availability is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['severe-pneumonia-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Nine observed-state prompts at version ${SEVERE_PNEUMONIA_TUTOR_VERSION} read the learner's own recorded steps. Unassisted is silent and coached withholds the waiting beat. Worked example ${SEVERE_PNEUMONIA_DEMONSTRATION_VERSION} drives the ordinary controls through the real engine to handoff. Both supplied instruments read correctly and disagree, and neither the prompts nor the beats call the mortality score an error: it is answering thirty-day mortality, and the lower band is the right answer to a question nobody asked here. A test forbids calling it wrong anywhere. Both also refuse the two readings that look like measurement — a marker that appears in no criteria set, and a saturation quoted without its inspired fraction — and neither selects an oxygen device, a ventilator setting, or a bed. The example requests critical-care review while the patient is still on a ward trajectory, which the snapshot flag asserts. tests/unit/severe-pneumonia-demonstration.test.ts and tests/ui/severe-pneumonia-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];

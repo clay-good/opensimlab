@@ -712,9 +712,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Nine observed-state prompts at version 0.1.0 read the learner's own recorded steps. Unassisted is silent and coached withholds the waiting beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both supplied instruments read correctly and disagree, and neither the prompts nor the beats call the mortality score an error: it is answering thirty-day mortality, and the lower band is the right answer to a question nobody asked here. A test forbids calling it wrong anywhere. Both also refuse the two readings that look like measurement — a marker that appears in no criteria set, and a saturation quoted without its inspired fraction — and neither selects an oxygen device, a ventilator setting, or a bed. The example requests critical-care review while the patient is still on a ward trajectory, which the snapshot flag asserts. tests/unit/severe-pneumonia-demonstration.test.ts and tests/ui/severe-pneumonia-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
