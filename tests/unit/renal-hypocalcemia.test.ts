@@ -248,5 +248,5 @@ describe('Renal hypocalcemia: ionized calcium, rescue, continuing care, and CKD 
       if (name === 'commonError') expect(first.state).toMatchObject({ rescueAtTick: null, observation: null,
         ionizedObservation: { atTick: 9000, ionizedCalciumMmolL: 0.86 } });
     }
-  }, 20000);
+  });
 });

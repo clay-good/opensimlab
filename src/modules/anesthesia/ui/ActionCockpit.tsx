@@ -109,6 +109,7 @@ import { supportsSilentInteraction, type SilentInteractionAction } from '../../o
 import { supportsEasyLabel, type EasyLabelAction } from '../../oncology/easy-label';
 import { dkaResolutionInlinePrompt } from '../../endocrine-metabolic/tutor/dka-resolution-guidance';
 import { hhsOsmolalityInlinePrompt } from '../../endocrine-metabolic/tutor/hhs-osmolality-guidance';
+import { nicuHandoffInlinePrompt } from '../../neonatology/tutor/delivery-room-to-nicu-handoff-guidance';
 import { thermoregulationInlinePrompt } from '../../neonatology/tutor/thermoregulation-failure-guidance';
 import { neonatalSepsisInlinePrompt } from '../../neonatology/tutor/neonatal-sepsis-guidance';
 import { neonatalHypoglycemiaInlinePrompt } from '../../neonatology/tutor/neonatal-hypoglycemia-guidance';
@@ -2797,6 +2798,7 @@ export interface ActionCockpitProps {
   readonly easyLabelGuidance?: GuidanceLevel;
   readonly endocrineDkaResolutionGuidance?: GuidanceLevel;
   readonly endocrineHhsGuidance?: GuidanceLevel;
+  readonly neonatologyNicuHandoffGuidance?: GuidanceLevel;
   readonly neonatologyThermoregulationGuidance?: GuidanceLevel;
   readonly neonatologySepsisGuidance?: GuidanceLevel;
   readonly neonatologyHypoglycemiaGuidance?: GuidanceLevel;
@@ -2865,6 +2867,7 @@ export interface ActionCockpitProps {
   readonly easyLabelDemonstrating?: boolean;
   readonly endocrineDkaResolutionDemonstrating?: boolean;
   readonly endocrineHhsDemonstrating?: boolean;
+  readonly neonatologyNicuHandoffDemonstrating?: boolean;
   readonly neonatologyThermoregulationDemonstrating?: boolean;
   readonly neonatologySepsisDemonstrating?: boolean;
   readonly neonatologyHypoglycemiaDemonstrating?: boolean;
@@ -5832,6 +5835,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasNeonatologyNicuHandoffResponse && (
               <NeonatologyNicuHandoffTray assessment={props.resuscitation.neonatologyNicuHandoffAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.neonatologyNicuHandoffGuidance}
+                demonstrating={props.neonatologyNicuHandoffDemonstrating}
                 onAction={props.onNeonatologyNicuHandoffResponse ?? (() => {})} />
             )}
             {hasNeonatologyTensionPneumothoraxResponse && (
@@ -13820,10 +13826,15 @@ function NeonatologyThermoregulationTray({ assessment, scenarioVersion, onAction
   </>;
 }
 
-function NeonatologyNicuHandoffTray({ assessment, onAction }: {
+function NeonatologyNicuHandoffTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['neonatologyNicuHandoffAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onNeonatologyNicuHandoffResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = nicuHandoffInlinePrompt(guidance, { scenarioVersion, nicuHandoff: assessment });
+  const act = demonstrating ? undefined : onAction;
   const support = assessment?.supportAtTick != null;
   const context = assessment?.contextAtTick != null;
   const content = assessment?.contentAtTick != null;
@@ -13831,22 +13842,27 @@ function NeonatologyNicuHandoffTray({ assessment, onAction }: {
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="neonatology-nicu-handoff-now-title">
       <div id="neonatology-nicu-handoff-now-title" className="syringe__name">Transfer the story and the ownership.</div>
       <p className="syringe__remaining">Preserve chronology, response, current state, absent actions, pending data, safety concerns, parent context, named owners, and next steps.</p>
       <div className="crisis-drug__actions">
-        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-delivery-room-nicu-sending-receiving-transport-and-family-handoff-support')}>Confirm shared ownership</Button>}
-        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-delivery-room-nicu-gestation-perinatal-birth-resuscitation-current-state-parent-and-whole-dyad')}>Connect newborn + whole dyad</Button>}
-        {context && !content && <Button className="crisis-drug__action" onClick={() => onAction('review-delivery-room-nicu-patient-assessment-situation-safety-background-actions-timing-ownership-and-next-step-content')}>Review the whole story</Button>}
-        {content && !readiness && <Button className="crisis-drug__action" onClick={() => onAction('review-qualified-delivery-room-nicu-transport-continuity-receiving-readiness-check-back-and-family-boundaries')}>Review qualified boundaries</Button>}
+        {!support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-delivery-room-nicu-sending-receiving-transport-and-family-handoff-support') : undefined}>Confirm shared ownership</Button>}
+        {support && !context && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-delivery-room-nicu-gestation-perinatal-birth-resuscitation-current-state-parent-and-whole-dyad') : undefined}>Connect newborn + whole dyad</Button>}
+        {context && !content && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-delivery-room-nicu-patient-assessment-situation-safety-background-actions-timing-ownership-and-next-step-content') : undefined}>Review the whole story</Button>}
+        {content && !readiness && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-qualified-delivery-room-nicu-transport-continuity-receiving-readiness-check-back-and-family-boundaries') : undefined}>Review qualified boundaries</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="neonatology-nicu-handoff-later-title">
       <div id="neonatology-nicu-handoff-later-title" className="syringe__name">A check-back closes a loop, not the clinical risk.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Respiratory, thermal, glucose, neurologic, infection, feeding, family, disposition, and outcome risks handed off.' : reassessment ? 'The supplied receiver confirmation and arrival report preserve active risk. Shared understanding, stability, diagnosis, and outcomes remain open.' : readiness ? 'Qualified continuity, receiver questions, check-back, and family support continue. Review the fixed report after time passes.' : support ? 'Named support is present. Connect the whole newborn and dyad before shaping the story.' : 'Begin with calm shared ownership. You can pause or leave this practice at any time.'}</p>
       <div className="crisis-drug__actions">
-        {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-delivery-room-nicu-fixed-receiver-check-back-and-ten-minute-arrival-report')}>Review receiver confirmation</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-delivery-room-nicu-respiratory-thermal-glucose-neurologic-infection-feeding-family-and-outcome-risk')}>Hand off active newborn risk</Button>}
+        {readiness && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-delivery-room-nicu-fixed-receiver-check-back-and-ten-minute-arrival-report') : undefined}>Review receiver confirmation</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-delivery-room-nicu-respiratory-thermal-glucose-neurologic-infection-feeding-family-and-outcome-risk') : undefined}>Hand off active newborn risk</Button>}
       </div>
     </section>
   </>;

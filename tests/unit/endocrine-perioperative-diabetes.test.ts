@@ -189,5 +189,5 @@ describe('Perioperative type 1 diabetes: insulin continuity without laboratory o
       if (name === 'commonError') expect(first.state).toMatchObject({ observation: null, glucoseObservation: { glucoseMgDl: 280 },
         deteriorationObserved: false, responseObserved: false });
     }
-  }, 20000);
+  });
 });

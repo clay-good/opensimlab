@@ -254,5 +254,5 @@ describe('Renal hyperkalemia: finite cardiac protection, temporary shifting, and
       if (name === 'recovery') expect(first.state).toMatchObject({ shiftResponseObserved: true, removalResponseObserved: true,
         reboundObserved: true, calciumRequests: 2, ecgResolvedAttempted: true, glucoseMonitoringStopAttempted: true });
     }
-  }, 20000);
+  });
 });

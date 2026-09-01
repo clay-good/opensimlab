@@ -221,5 +221,5 @@ describe('Renal hyponatremia: persistent symptoms despite measured sodium improv
       if (name === 'commonError') expect(first.state).toMatchObject({ rescueAtTick: null,
         observation: null, sodiumObservation: { atTick: 0, sodiumMmolL: 118 } });
     }
-  }, 20000);
+  });
 });

@@ -5,8 +5,57 @@ import { PrerenderedBody } from '@routes/Prerendered';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { DELIVERY_ROOM_TO_NICU_HANDOFF as SCENARIO } from '../../src/modules/neonatology/scenarios/delivery-room-to-nicu-handoff';
-const markup = (assessment: NonNullable<ActionCockpitProps['resuscitation']['neonatologyNicuHandoffAssessment']>) => renderToStaticMarkup(createElement(ActionCockpit, { scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, neonatologyNicuHandoffAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 21, respiratoryRateBpm: 40, fio2: 0.3, peep: 5, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 6 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onNeonatologyNicuHandoffResponse: () => {} } satisfies ActionCockpitProps));
+const markup = (assessment: NonNullable<ActionCockpitProps['resuscitation']['neonatologyNicuHandoffAssessment']>, extra: {
+  neonatologyNicuHandoffGuidance?: ActionCockpitProps['neonatologyNicuHandoffGuidance'];
+  neonatologyNicuHandoffDemonstrating?: boolean;
+} = {}) => renderToStaticMarkup(createElement(ActionCockpit, { scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, neonatologyNicuHandoffAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 21, respiratoryRateBpm: 40, fio2: 0.3, peep: 5, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 6 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onNeonatologyNicuHandoffResponse: () => {}, ...extra } satisfies ActionCockpitProps));
 describe('Neonatology delivery-room-to-NICU handoff experience', () => {
   it('is discoverable at its exact calm route', () => { const index = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/neonatology' })); expect(index).toContain('href="/neonatology/scenario/delivery-room-to-nicu-handoff"'); expect(index).toContain('Delivery room to NICU: transfer the whole story'); const route = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/neonatology/scenario/delivery-room-to-nicu-handoff' })); expect(route).toContain('<h1>Delivery room to NICU: transfer the whole story</h1>'); });
-  it('fails closed and exposes one calm cognitive action at a time', () => { expect(crisisResponseAvailability(SCENARIO).hasNeonatologyNicuHandoffResponse).toBe(true); expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasNeonatologyNicuHandoffResponse).toBe(false); const states = [{ supportAtTick: null, contextAtTick: null, contentAtTick: null, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: null, contentAtTick: null, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, contentAtTick: null, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, contentAtTick: 1, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, contentAtTick: 1, readinessAtTick: 1, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, contentAtTick: 1, readinessAtTick: 1, reassessmentAtTick: 2, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, contentAtTick: 1, readinessAtTick: 1, reassessmentAtTick: 2, handoffAtTick: 3 }]; expect(states.map((state) => (markup(state).match(/<button/g) ?? []).length)).toEqual([1,1,1,1,1,1,0]); expect(markup(states[0]!)).toContain('Transfer the story and the ownership.'); const later = markup(states[4]!); expect(later).toContain('A check-back closes a loop, not the clinical risk.'); expect(later).toContain('Review receiver confirmation'); expect((later.match(/role="status"/g) ?? [])).toHaveLength(1); for (const html of states.map(markup)) { const buttons = [...html.matchAll(/<button[^>]*>(.*?)<\/button>/g)].map((match) => match[1]); expect(buttons.join(' ')).not.toMatch(/history|examin|score|monitor|record|diagnos|warm|cool|cpap|oxygen|device|setting|respiratory|ventilat|airway|access|glucose|fluid|blood|drug|dose|feed|resuscitat|position|transport|call|speak|listen|check.?back|document|counsel|parent update|procedure|disposition/iu); } });
+  it('fails closed and exposes one calm cognitive action at a time', () => { expect(crisisResponseAvailability(SCENARIO).hasNeonatologyNicuHandoffResponse).toBe(true); expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasNeonatologyNicuHandoffResponse).toBe(false); const states = [{ supportAtTick: null, contextAtTick: null, contentAtTick: null, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: null, contentAtTick: null, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, contentAtTick: null, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, contentAtTick: 1, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, contentAtTick: 1, readinessAtTick: 1, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, contentAtTick: 1, readinessAtTick: 1, reassessmentAtTick: 2, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, contentAtTick: 1, readinessAtTick: 1, reassessmentAtTick: 2, handoffAtTick: 3 }]; expect(states.map((state) => (markup(state).match(/<button/g) ?? []).length)).toEqual([1,1,1,1,1,1,0]); expect(markup(states[0]!)).toContain('Transfer the story and the ownership.'); const later = markup(states[4]!); expect(later).toContain('A check-back closes a loop, not the clinical risk.'); expect(later).toContain('Review receiver confirmation'); expect((later.match(/role="status"/g) ?? [])).toHaveLength(1); for (const html of states.map((state) => markup(state))) { const buttons = [...html.matchAll(/<button[^>]*>(.*?)<\/button>/g)].map((match) => match[1]); expect(buttons.join(' ')).not.toMatch(/history|examin|score|monitor|record|diagnos|warm|cool|cpap|oxygen|device|setting|respiratory|ventilat|airway|access|glucose|fluid|blood|drug|dose|feed|resuscitat|position|transport|call|speak|listen|check.?back|document|counsel|parent update|procedure|disposition/iu); } });
+});
+
+describe('Delivery-room-to-NICU handoff tutor and worked example', () => {
+  const start = { supportAtTick: null, contextAtTick: null, contentAtTick: null, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null };
+  const connected = { ...start, supportAtTick: 0, contextAtTick: 1 };
+  const told = { ...connected, contentAtTick: 2 };
+
+  it('says nothing at all on the unassisted setting', () => {
+    expect(markup(start)).not.toContain('A moment to think');
+    expect(markup(start, { neonatologyNicuHandoffGuidance: 'unassisted' })).not.toContain('A moment to think');
+  });
+
+  it('reads the learner\u2019s own recorded steps when guidance is on', () => {
+    const opening = markup(start, { neonatologyNicuHandoffGuidance: 'guided' });
+    expect(opening).toContain('A moment to think');
+    expect(opening).toContain('Name both ends of the transfer');
+    const next = markup(connected, { neonatologyNicuHandoffGuidance: 'guided' });
+    expect(next).toContain('Carry the negatives with the same weight');
+    expect(next).not.toContain('Name both ends of the transfer');
+  });
+
+  it('asks for the absent interventions by name', () => {
+    const html = markup(connected, { neonatologyNicuHandoffGuidance: 'guided' });
+    expect(html).toContain('No compressions, no epinephrine, no access, no fluid, no blood, no alternative airway');
+    expect(html).not.toContain('the handoff is complete');
+  });
+
+  it('keeps continuity with the sender until an explicit transfer', () => {
+    const html = markup(told, { neonatologyNicuHandoffGuidance: 'guided' });
+    expect(html).toContain('accepting her is not the transfer');
+  });
+
+  it('goes quiet once the handoff is recorded', () => {
+    const ended = { ...told, readinessAtTick: 3, reassessmentAtTick: 4, handoffAtTick: 5 };
+    expect(markup(ended, { neonatologyNicuHandoffGuidance: 'guided' })).not.toContain('A moment to think');
+  });
+
+  it('leaves the controls visible but inert while the example runs', () => {
+    const label = 'Confirm shared ownership';
+    expect(markup(start)).toContain(label);
+    const watching = markup(start, { neonatologyNicuHandoffGuidance: 'guided', neonatologyNicuHandoffDemonstrating: true });
+    expect(watching).toContain(label);
+    expect(watching).toContain('aria-disabled="true"');
+    expect(watching).toContain('Watching the worked example');
+    expect(watching).not.toContain('A moment to think');
+  });
 });

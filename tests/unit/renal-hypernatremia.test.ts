@@ -270,5 +270,5 @@ describe('Renal hypernatremia: circulation, replacement, ongoing losses, and acc
       if (name === 'commonError') expect(first.state).toMatchObject({ volumeAtTick: null, waterAtTick: null,
         observation: null, sodiumObservation: { atTick: 18000, sodiumMmolL: 164 } });
     }
-  }, 20000);
+  });
 });

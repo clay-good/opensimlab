@@ -256,5 +256,5 @@ describe('Renal hypokalemia: independent replacement, ongoing losses, and curren
       if (name === 'commonError') expect(first.state).toMatchObject({ potassiumAtTick: null, magnesiumAtTick: 0,
         observation: null, responseObserved: false, potassiumObservation: { potassiumMmolL: 2.3 } });
     }
-  }, 20000);
+  });
 });
