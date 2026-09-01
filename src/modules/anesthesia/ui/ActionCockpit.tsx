@@ -122,6 +122,7 @@ import { termTransitionInlinePrompt } from '../../neonatology/tutor/term-newborn
 import { tensionPneumothoraxInlinePrompt } from '../../neonatology/tutor/neonatal-tension-pneumothorax-guidance';
 import { methemoglobinemiaInlinePrompt } from '../../toxicology/tutor/methemoglobinemia-saturation-gap-guidance';
 import { carbonMonoxideInlinePrompt } from '../../toxicology/tutor/carbon-monoxide-reassuring-monitor-guidance';
+import { acetaminophenInlinePrompt } from '../../toxicology/tutor/acetaminophen-clock-and-nomogram-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2813,6 +2814,7 @@ export interface ActionCockpitProps {
   readonly neonatologyTensionPneumothoraxGuidance?: GuidanceLevel;
   readonly toxicologyMethemoglobinemiaGuidance?: GuidanceLevel;
   readonly toxicologyCarbonMonoxideGuidance?: GuidanceLevel;
+  readonly toxicologyAcetaminophenGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2884,6 +2886,7 @@ export interface ActionCockpitProps {
   readonly neonatologyTensionPneumothoraxDemonstrating?: boolean;
   readonly toxicologyMethemoglobinemiaDemonstrating?: boolean;
   readonly toxicologyCarbonMonoxideDemonstrating?: boolean;
+  readonly toxicologyAcetaminophenDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5671,6 +5674,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasToxicologyAcetaminophenResponse && (
               <ToxicologyAcetaminophenTray
                 assessment={props.resuscitation.toxicologyAcetaminophenAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.toxicologyAcetaminophenGuidance}
+                demonstrating={props.toxicologyAcetaminophenDemonstrating}
                 onAction={props.onToxicologyAcetaminophenResponse ?? (() => {})} />
             )}
             {hasToxicologySalicylateResponse && (
@@ -12584,10 +12590,15 @@ function ToxicologyCarbonMonoxideTray({ assessment, scenarioVersion, onAction, g
   </>;
 }
 
-function ToxicologyAcetaminophenTray({ assessment, onAction }: {
+function ToxicologyAcetaminophenTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyAcetaminophenAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onToxicologyAcetaminophenResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = acetaminophenInlinePrompt(guidance, { scenarioVersion, acetaminophen: assessment });
+  const act = demonstrating ? undefined : onAction;
   const trajectory = assessment?.trajectoryAtTick != null;
   const recognition = assessment?.recognitionAtTick != null;
   const support = assessment?.supportAtTick != null;
@@ -12595,22 +12606,27 @@ function ToxicologyAcetaminophenTray({ assessment, onAction }: {
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="toxicology-acetaminophen-early-title">
       <div id="toxicology-acetaminophen-early-title" className="syringe__name">The clock gives the number its meaning.</div>
       <p className="syringe__remaining">Begin with product, ingestion window, exact clock, symptoms, reported-quantity limits, and whole person.</p>
       <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-toxicology-acetaminophen-product-ingestion-window-clock-symptoms-and-whole-patient')}>Connect product + clock</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-toxicology-acetaminophen-acute-timed-pattern-and-nomogram-applicability-boundary')}>Set the nomogram boundary</Button>}
-        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-toxicology-acetaminophen-poison-center-emergency-monitoring-and-nonjudgmental-safety-ownership')}>Bring in toxicology + safety</Button>}
-        {support && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-toxicology-acetaminophen-supplied-timed-level-nomogram-position-liver-and-coingestion-boundary')}>Review the timed evidence</Button>}
+        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-toxicology-acetaminophen-product-ingestion-window-clock-symptoms-and-whole-patient') : undefined}>Connect product + clock</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-toxicology-acetaminophen-acute-timed-pattern-and-nomogram-applicability-boundary') : undefined}>Set the nomogram boundary</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-toxicology-acetaminophen-poison-center-emergency-monitoring-and-nonjudgmental-safety-ownership') : undefined}>Bring in toxicology + safety</Button>}
+        {support && !evidence && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-toxicology-acetaminophen-supplied-timed-level-nomogram-position-liver-and-coingestion-boundary') : undefined}>Review the timed evidence</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="toxicology-acetaminophen-later-title">
       <div id="toxicology-acetaminophen-later-title" className="syringe__name">A finished clock is not a stopping rule.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Serial level, liver and failure markers, stopping criteria, safety, disposition, and outcome uncertainty handed off.' : reassessment ? 'The fixed later level and labs are reassuring. They do not create an automatic stop or prove treatment effect.' : evidence ? 'The supplied timed level and nomogram position are visible. Record bounded intent after time passes.' : support ? 'Qualified toxicology, emergency, monitoring, and safety ownership are active. Review the supplied evidence.' : 'Complete recognition and immediate ownership before antidote review.'}</p>
       <div className="crisis-drug__actions">
-        {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-acetaminophen-bounded-qualified-team-acetylcysteine-intent-and-strict-later-review')}>Record intent + review</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-acetaminophen-serial-level-liver-failure-stopping-safety-and-active-risk')}>Hand off what stays open</Button>}
+        {evidence && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-toxicology-acetaminophen-bounded-qualified-team-acetylcysteine-intent-and-strict-later-review') : undefined}>Record intent + review</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-toxicology-acetaminophen-serial-level-liver-failure-stopping-safety-and-active-risk') : undefined}>Hand off what stays open</Button>}
       </div>
     </section>
   </>;

@@ -299,23 +299,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "acetaminophen-clock-and-nomogram-fixtures.ts binds seed 5388 and content 0.1.0 to expert, plot-before-applicability error, recovery, and no-action paths. The presentation, the 6-hour level with its qualified plot position, the baseline laboratory set, and the fixed 22-hour report are authored constants; no absorption, elimination, hepatotoxicity, or antidote-response model is claimed, and no outcome follows from any choice. tests/integration/acetaminophen-clock-and-nomogram-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the bounded acetylcysteine intent and strict later review refuse until simulated time has passed since the evidence review, and the handoff refuses until time has passed since that. What moves is not the diagnosis, which never closes, but what the record can support about an injury that has had time to start and not time to show."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions fix the product and the clock without using the reported tablet count, test whether this ingestion is the kind the nomogram was built for before reading where the point lands, place the qualified owners including nonjudgmental safety ownership, read the timed level with the baseline laboratory set in context, record bounded antidote intent, and hand off active risk. Order is enforced rather than suggested, and refusal names the missing step. The lesson takes no history, acquires no sample, plots or calculates nothing, and selects no charcoal, product, dose, route, access, or stopping point."
           ]
         },
         {
@@ -327,23 +327,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at active-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no confirmed diagnosis, no proven treatment effect, no authorized stop, no excluded delayed absorption, liver injury, or coingestion, no determined safety or disposition, and no outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. A tool that answers cleanly teaches nothing about when it applies, so both spend their weight on the four conditions that make this plot mean anything — a single acute ingestion, a witnessed completion time, an immediate-release product, and a sample at least four hours after — and name what each one being false would turn this into instead. Both keep two things that look like reassurance out of the reasoning: the reported tablet count, which is a story rather than a measurement, and the normal baseline liver panel, which is six hours old in an injury that takes longer than that to appear. Both treat her safety as part of the care rather than as something after it, and both refuse the stop the 22-hour numbers appear to offer: no automatic 20- or 21-hour stop, no proven treatment effect, no excluded delayed absorption or evolving liver injury. A test asserts nothing anywhere plots, doses, stops, or clears her. tests/unit/acetaminophen-clock-and-nomogram-demonstration.test.ts and tests/ui/toxicology-acetaminophen-clock-and-nomogram.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that read the level before asking whether the nomogram applied can still reach a correct handoff."
           ]
         },
         {
@@ -362,23 +362,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "acetaminophen-clock-and-nomogram-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 5388 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

@@ -117,6 +117,8 @@ import { useMethemoglobinemiaDemonstration } from '../../toxicology/demo/useMeth
 import { supportsMethemoglobinemiaDemonstration } from '../../toxicology/demo/methemoglobinemia-saturation-gap-demonstration';
 import { useCarbonMonoxideDemonstration } from '../../toxicology/demo/useCarbonMonoxideDemonstration';
 import { supportsCarbonMonoxideDemonstration } from '../../toxicology/demo/carbon-monoxide-reassuring-monitor-demonstration';
+import { useAcetaminophenDemonstration } from '../../toxicology/demo/useAcetaminophenDemonstration';
+import { supportsAcetaminophenDemonstration } from '../../toxicology/demo/acetaminophen-clock-and-nomogram-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -327,6 +329,7 @@ export function Cockpit({
   const tensionPneumothoraxDemoSupported = supportsTensionPneumothoraxDemonstration(scenario);
   const methemoglobinemiaDemoSupported = supportsMethemoglobinemiaDemonstration(scenario);
   const carbonMonoxideDemoSupported = supportsCarbonMonoxideDemonstration(scenario);
+  const acetaminophenDemoSupported = supportsAcetaminophenDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -365,6 +368,7 @@ export function Cockpit({
     || tensionPneumothoraxDemoSupported
     || methemoglobinemiaDemoSupported
     || carbonMonoxideDemoSupported
+    || acetaminophenDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -516,6 +520,12 @@ export function Cockpit({
     active: demonstrating && termTransitionDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.neonatologyTermTransitionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const acetaminophenDemonstration = useAcetaminophenDemonstration({
+    active: demonstrating && acetaminophenDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.toxicologyAcetaminophenAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const carbonMonoxideDemonstration = useCarbonMonoxideDemonstration({
@@ -723,6 +733,7 @@ export function Cockpit({
     : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
+    : acetaminophenDemoSupported ? acetaminophenDemonstration
     : carbonMonoxideDemoSupported ? carbonMonoxideDemonstration
     : methemoglobinemiaDemoSupported ? methemoglobinemiaDemonstration
     : tensionPneumothoraxDemoSupported ? tensionPneumothoraxDemonstration
@@ -1457,6 +1468,8 @@ export function Cockpit({
           toxicologyMethemoglobinemiaDemonstrating={demonstrating && methemoglobinemiaDemoSupported}
           toxicologyCarbonMonoxideGuidance={session.guidance}
           toxicologyCarbonMonoxideDemonstrating={demonstrating && carbonMonoxideDemoSupported}
+          toxicologyAcetaminophenGuidance={session.guidance}
+          toxicologyAcetaminophenDemonstrating={demonstrating && acetaminophenDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
