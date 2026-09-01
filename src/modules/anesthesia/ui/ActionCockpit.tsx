@@ -124,6 +124,7 @@ import { methemoglobinemiaInlinePrompt } from '../../toxicology/tutor/methemoglo
 import { carbonMonoxideInlinePrompt } from '../../toxicology/tutor/carbon-monoxide-reassuring-monitor-guidance';
 import { acetaminophenInlinePrompt } from '../../toxicology/tutor/acetaminophen-clock-and-nomogram-guidance';
 import { salicylateInlinePrompt } from '../../toxicology/tutor/salicylate-falling-number-guidance';
+import { tricyclicInlinePrompt } from '../../toxicology/tutor/tricyclic-sodium-channel-cardiotoxicity-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2817,6 +2818,7 @@ export interface ActionCockpitProps {
   readonly toxicologyCarbonMonoxideGuidance?: GuidanceLevel;
   readonly toxicologyAcetaminophenGuidance?: GuidanceLevel;
   readonly toxicologySalicylateGuidance?: GuidanceLevel;
+  readonly toxicologyTricyclicGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2890,6 +2892,7 @@ export interface ActionCockpitProps {
   readonly toxicologyCarbonMonoxideDemonstrating?: boolean;
   readonly toxicologyAcetaminophenDemonstrating?: boolean;
   readonly toxicologySalicylateDemonstrating?: boolean;
+  readonly toxicologyTricyclicDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5692,6 +5695,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasToxicologyTricyclicResponse && (
               <ToxicologyTricyclicTray assessment={props.resuscitation.toxicologyTricyclicAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.toxicologyTricyclicGuidance}
+                demonstrating={props.toxicologyTricyclicDemonstrating}
                 onAction={props.onToxicologyTricyclicResponse ?? (() => {})} />
             )}
             {hasToxicologyBetaBlockerResponse && (
@@ -12680,10 +12686,15 @@ function ToxicologySalicylateTray({ assessment, scenarioVersion, onAction, guida
   </>;
 }
 
-function ToxicologyTricyclicTray({ assessment, onAction }: {
+function ToxicologyTricyclicTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyTricyclicAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onToxicologyTricyclicResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = tricyclicInlinePrompt(guidance, { scenarioVersion, tricyclic: assessment });
+  const act = demonstrating ? undefined : onAction;
   const trajectory = assessment?.trajectoryAtTick != null;
   const recognition = assessment?.recognitionAtTick != null;
   const support = assessment?.supportAtTick != null;
@@ -12691,22 +12702,27 @@ function ToxicologyTricyclicTray({ assessment, onAction }: {
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="toxicology-tricyclic-early-title">
       <div id="toxicology-tricyclic-early-title" className="syringe__name">The tracing belongs to a whole patient.</div>
       <p className="syringe__remaining">Begin with product, clock, mentation, seizure, perfusion, supplied ECG, oxygenation, and whole person.</p>
       <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-toxicology-tricyclic-product-clock-cns-seizure-perfusion-ecg-and-whole-patient')}>Connect patient + tracing</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-toxicology-tricyclic-sodium-channel-cardiotoxicity-pattern-without-qrs-only-closure')}>Recognize the electrical pattern</Button>}
-        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-toxicology-tricyclic-poison-center-resuscitation-cardiac-airway-seizure-and-safety-ownership')}>Build the rescue circle</Button>}
-        {support && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-toxicology-tricyclic-supplied-ecg-perfusion-acid-base-electrolyte-coingestion-and-rescue-boundary')}>Review the coupled risk</Button>}
+        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-toxicology-tricyclic-product-clock-cns-seizure-perfusion-ecg-and-whole-patient') : undefined}>Connect patient + tracing</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-toxicology-tricyclic-sodium-channel-cardiotoxicity-pattern-without-qrs-only-closure') : undefined}>Recognize the electrical pattern</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-toxicology-tricyclic-poison-center-resuscitation-cardiac-airway-seizure-and-safety-ownership') : undefined}>Build the rescue circle</Button>}
+        {support && !evidence && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-toxicology-tricyclic-supplied-ecg-perfusion-acid-base-electrolyte-coingestion-and-rescue-boundary') : undefined}>Review the coupled risk</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="toxicology-tricyclic-later-title">
       <div id="toxicology-tricyclic-later-title" className="syringe__name">A narrower tracing is a checkpoint, not an all-clear.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Serial conduction, perfusion, CNS, seizure, acid-base, recurrence, rescue, safety, and outcome uncertainty handed off.' : reassessment ? 'The fixed electrical, perfusion, and mental-state report improved. Durable stability and treatment effect remain unproven.' : evidence ? 'ECG, perfusion, CNS, seizure, acid-base, electrolytes, and rescue readiness stay coupled. Record qualified intent after time passes.' : support ? 'Qualified toxicology, resuscitation, cardiac, airway, seizure, and safety ownership are active. Review the supplied evidence.' : 'Complete whole-pattern recognition and rescue ownership before treatment-boundary review.'}</p>
       <div className="crisis-drug__actions">
-        {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-tricyclic-bounded-qualified-bicarbonate-and-rescue-intent-with-strict-later-review')}>Record intent + reassess</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-tricyclic-recurrent-conduction-shock-seizure-acidemia-rescue-and-active-risk')}>Hand off what can recur</Button>}
+        {evidence && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-toxicology-tricyclic-bounded-qualified-bicarbonate-and-rescue-intent-with-strict-later-review') : undefined}>Record intent + reassess</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-toxicology-tricyclic-recurrent-conduction-shock-seizure-acidemia-rescue-and-active-risk') : undefined}>Hand off what can recur</Button>}
       </div>
     </section>
   </>;
