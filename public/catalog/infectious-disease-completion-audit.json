@@ -586,9 +586,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This slice ships no observed-state tutor prompt or worked example for this scenario version."
+            "Eight observed-state prompts at version 0.1.0 read the learner's own recorded steps. Unassisted is silent and coached withholds the waiting beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Two problems run on different clocks here — the infection is responding and the valve is failing — and every refused shortcut reads a fact about the first as reassurance about the second, so both keep saying which problem a number belongs to rather than arguing about severity. One prompt corrects a physical sign in the direction people do not expect: acute severe regurgitation gives a normal or narrow pulse pressure, because the ventricle has had no time to dilate. Neither selects an operation, a prosthesis, or a theatre time, and the example refers while the chart is still improving each day, which a test asserts through the snapshot flag. tests/unit/endocarditis-heart-failure-demonstration.test.ts and tests/ui/endocarditis-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {

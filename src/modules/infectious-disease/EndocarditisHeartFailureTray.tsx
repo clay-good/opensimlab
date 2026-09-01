@@ -2,13 +2,18 @@ import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import type { EndocarditisHeartFailureSnapshot } from '@platform/kernel/protocol';
 import type { EndocarditisHeartFailureAction } from './endocarditis-heart-failure';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
+import { endocarditisHeartFailureInlinePrompt } from './endocarditis-heart-failure-tutor';
 
-export function EndocarditisHeartFailureTray({ assessment, onAction, demonstrating = false }: {
+export function EndocarditisHeartFailureTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: EndocarditisHeartFailureSnapshot;
+  readonly scenarioVersion: string;
   readonly onAction: (action: EndocarditisHeartFailureAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = endocarditisHeartFailureInlinePrompt(guidance, { scenarioVersion, endocarditisHeartFailure: assessment });
   const labs = assessment.labObservation; const perfusion = assessment.perfusionObservation;
   const observation = assessment.observation;
   const decision = (action: EndocarditisHeartFailureAction, label: string, accepted = false) => {
@@ -17,6 +22,10 @@ export function EndocarditisHeartFailureTray({ assessment, onAction, demonstrati
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <p className="syringe__remaining">Selected sources: the 2023 European endocarditis guidelines with their 2025 corrigendum, the 2023 Duke-ISCVID criteria, and the 2015 United States statement, which predates both. Open the source view for exact locators.</p>
     <section className="syringe endocarditis__section" aria-labelledby="endocarditis-recognition-title">
       <div id="endocarditis-recognition-title" className="syringe__name">The antimicrobials are working. He is getting worse.</div>

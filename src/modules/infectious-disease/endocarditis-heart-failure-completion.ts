@@ -2,11 +2,14 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { ENDOCARDITIS_MECHANICAL_FAILURE_ON_A_SURGICAL_CLOCK } from './scenarios/endocarditis-mechanical-failure-on-a-surgical-clock';
 import { ENDOCARDITIS_HEART_FAILURE_FIXTURES } from './endocarditis-heart-failure-fixtures';
+import { ENDOCARDITIS_HEART_FAILURE_TUTOR_VERSION } from './endocarditis-heart-failure-tutor';
+import { ENDOCARDITIS_HEART_FAILURE_DEMONSTRATION_VERSION } from './demo/endocarditis-heart-failure-demonstration';
 
 export function endocarditisHeartFailureCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'infectious-disease' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== ENDOCARDITIS_HEART_FAILURE_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
-    || ENDOCARDITIS_HEART_FAILURE_FIXTURES.contentVersion !== '0.1.0' || ENDOCARDITIS_HEART_FAILURE_FIXTURES.seed !== 5519
+    || ENDOCARDITIS_HEART_FAILURE_FIXTURES.contentVersion !== '0.1.0'
+    || ENDOCARDITIS_HEART_FAILURE_TUTOR_VERSION !== '0.1.0' || ENDOCARDITIS_HEART_FAILURE_DEMONSTRATION_VERSION !== '0.1.0' || ENDOCARDITIS_HEART_FAILURE_FIXTURES.seed !== 5519
     || JSON.stringify(scenario) !== JSON.stringify(ENDOCARDITIS_MECHANICAL_FAILURE_ON_A_SURGICAL_CLOCK)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['endocarditis-heart-failure-fixtures.ts binds seed 5519 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No valve, haemodynamic, or antimicrobial model is claimed.'] },
@@ -15,7 +18,7 @@ export function endocarditisHeartFailureCompletionEvidence(scenario: Scenario, c
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['Recognition, team activation, bounded referral intent, the boundary review, surveillance, and a current full assessment permit handoff with the surgical decision pending. Instructor takeover bounds a run with no team activation or referral at 90 minutes, or an unfinished session at six hours.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Six event-bound objectives distinguish reconciliation of breathlessness with a responding infection, recognition of mechanical rather than antimicrobial failure, team and surgical-centre activation, the acute-regurgitation and timing boundary, bounded referral with strict reassessment, and accountable handoff. Refused shortcuts remain visible, and neither operability nor survival is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['endocarditis-heart-failure-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This slice ships no observed-state tutor prompt or worked example for this scenario version.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Eight observed-state prompts at version ${ENDOCARDITIS_HEART_FAILURE_TUTOR_VERSION} read the learner's own recorded steps. Unassisted is silent and coached withholds the waiting beat. Worked example ${ENDOCARDITIS_HEART_FAILURE_DEMONSTRATION_VERSION} drives the ordinary controls through the real engine to handoff. Two problems run on different clocks here — the infection is responding and the valve is failing — and every refused shortcut reads a fact about the first as reassurance about the second, so both keep saying which problem a number belongs to rather than arguing about severity. One prompt corrects a physical sign in the direction people do not expect: acute severe regurgitation gives a normal or narrow pulse pressure, because the ventricle has had no time to dilate. Neither selects an operation, a prosthesis, or a theatre time, and the example refers while the chart is still improving each day, which a test asserts through the snapshot flag. tests/unit/endocarditis-heart-failure-demonstration.test.ts and tests/ui/endocarditis-tray.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];

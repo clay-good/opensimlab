@@ -26,9 +26,10 @@ let host: HTMLDivElement; let root: Root;
 beforeEach(() => { host = document.createElement('div'); document.body.append(host); root = createRoot(host); });
 afterEach(() => { act(() => root.unmount()); host.remove(); });
 
-const render = (model: EndocarditisHeartFailure, tick: number, onAction = vi.fn(), demonstrating = false) => {
-  act(() => root.render(<EndocarditisHeartFailureTray assessment={model.snapshot(tick)}
-    onAction={onAction} demonstrating={demonstrating} />));
+const render = (model: EndocarditisHeartFailure, tick: number, onAction = vi.fn(), demonstrating = false,
+  guidance: 'unassisted' | 'coached' | 'guided' = 'unassisted') => {
+  act(() => root.render(<EndocarditisHeartFailureTray assessment={model.snapshot(tick)} scenarioVersion="0.1.0"
+    onAction={onAction} guidance={guidance} demonstrating={demonstrating} />));
   return onAction;
 };
 const button = (label: string) => [...host.querySelectorAll('button')]
@@ -99,5 +100,28 @@ describe('Endocarditis tray', () => {
     for (const entry of host.querySelectorAll('button')) {
       expect(entry.getAttribute('aria-disabled')).toBe('true');
     }
+  });
+});
+
+describe('Endocarditis mechanical-failure tutor', () => {
+  it('says nothing at all on the unassisted setting', () => {
+    render(new EndocarditisHeartFailure(), 0);
+    expect(host.textContent).not.toContain('A moment to think');
+  });
+
+  it('separates the valve from the infection in its first prompt', () => {
+    render(new EndocarditisHeartFailure(), 0, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('the valve failing, not the treatment failing');
+  });
+
+  it('corrects the pulse pressure in the direction people do not expect', () => {
+    const model = new EndocarditisHeartFailure();
+    for (const action of ['recognize-mechanical-failure', 'call-endocarditis-team',
+      'record-surgical-referral-intent'] as const) model.apply(action, 0);
+    render(model, 1, vi.fn(), false, 'guided');
+    const text = host.textContent ?? '';
+    expect(text).toContain('no time to dilate');
+    expect(text).not.toContain('a wide pulse pressure confirms');
   });
 });

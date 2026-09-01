@@ -79,6 +79,8 @@ import { useFebrileNeutropeniaDemonstration } from '../../infectious-disease/dem
 import { supportsFebrileNeutropeniaDemonstration } from '../../infectious-disease/demo/febrile-neutropenia-demonstration';
 import { useNecrotizingInfectionDemonstration } from '../../infectious-disease/demo/useNecrotizingInfectionDemonstration';
 import { supportsNecrotizingInfectionDemonstration } from '../../infectious-disease/demo/necrotizing-infection-demonstration';
+import { useEndocarditisHeartFailureDemonstration } from '../../infectious-disease/demo/useEndocarditisHeartFailureDemonstration';
+import { supportsEndocarditisHeartFailureDemonstration } from '../../infectious-disease/demo/endocarditis-heart-failure-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -270,6 +272,7 @@ export function Cockpit({
   const obstructedKidneyDemoSupported = supportsObstructedKidneyDemonstration(scenario);
   const febrileNeutropeniaDemoSupported = supportsFebrileNeutropeniaDemonstration(scenario);
   const necrotizingInfectionDemoSupported = supportsNecrotizingInfectionDemonstration(scenario);
+  const endocarditisHeartFailureDemoSupported = supportsEndocarditisHeartFailureDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -298,7 +301,8 @@ export function Cockpit({
     || dkaResolutionDemoSupported || hhsOsmolalityDemoSupported || lowScoreDemoSupported || countedRateDemoSupported || pairedReadingDemoSupported || afferentLimbDemoSupported || quietPatientDemoSupported || proxyScaleDemoSupported || lastKnownWellDemoSupported || oxygenTargetScaleDemoSupported || lostContingencyDemoSupported
     || meningococcalSepsisDemoSupported || obstructedKidneyDemoSupported
     || febrileNeutropeniaDemoSupported
-    || necrotizingInfectionDemoSupported;
+    || necrotizingInfectionDemoSupported
+    || endocarditisHeartFailureDemoSupported;
   const scenarioDemoSupported = hypoglycemiaDemoSupported || adrenalDemoSupported
     || thyroidDemoSupported || myxedemaDemoSupported || observedStateDemoSupported;
   const inductionDemonstration = useDemonstration({
@@ -380,6 +384,11 @@ export function Cockpit({
   const renalHyponatremiaDemonstration = useRenalHyponatremiaDemonstration({
     active: demonstrating && renalHyponatremiaDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyponatremia,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const endocarditisHeartFailureDemonstration = useEndocarditisHeartFailureDemonstration({
+    active: demonstrating && endocarditisHeartFailureDemoSupported,
+    running: session.transport === 'running', patient: session.equipment?.resuscitation.endocarditisHeartFailure,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const necrotizingInfectionDemonstration = useNecrotizingInfectionDemonstration({
@@ -529,7 +538,8 @@ export function Cockpit({
     running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypermagnesemia,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const demonstration = necrotizingInfectionDemoSupported ? necrotizingInfectionDemonstration
+  const demonstration = endocarditisHeartFailureDemoSupported ? endocarditisHeartFailureDemonstration
+    : necrotizingInfectionDemoSupported ? necrotizingInfectionDemonstration
     : febrileNeutropeniaDemoSupported ? febrileNeutropeniaDemonstration
     : obstructedKidneyDemoSupported ? obstructedKidneyDemonstration
     : meningococcalSepsisDemoSupported ? meningococcalSepsisDemonstration
@@ -1216,6 +1226,8 @@ export function Cockpit({
           febrileNeutropeniaDemonstrating={demonstrating && febrileNeutropeniaDemoSupported}
           necrotizingInfectionGuidance={session.guidance}
           necrotizingInfectionDemonstrating={demonstrating && necrotizingInfectionDemoSupported}
+          endocarditisHeartFailureGuidance={session.guidance}
+          endocarditisHeartFailureDemonstrating={demonstrating && endocarditisHeartFailureDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
