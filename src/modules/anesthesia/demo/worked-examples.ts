@@ -137,6 +137,7 @@ import { supportsPediatricInjurySafeguardingDemonstration } from '../../pediatri
 import { supportsStableChestPainDemonstration } from '../../cardiology/demo/stable-chest-pain-demonstration';
 import { supportsClinicStemiDemonstration } from '../../cardiology/demo/clinic-stemi-demonstration';
 import { supportsNstemiRiskDemonstration } from '../../cardiology/demo/nstemi-risk-demonstration';
+import { supportsHeartFailureDemonstration } from '../../cardiology/demo/heart-failure-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -313,6 +314,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsStableChestPainDemonstration,
     supportsClinicStemiDemonstration,
     supportsNstemiRiskDemonstration,
+    supportsHeartFailureDemonstration,
   ],
 };
 

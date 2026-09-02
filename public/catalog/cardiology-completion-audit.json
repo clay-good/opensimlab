@@ -425,23 +425,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "heart-failure-fixtures.ts binds seed 5936 and content 0.1.0 to expert, discharge-on-symptom error, recovery, and no-action paths. The fixed LVEF report of 30%, the missed home medications and high-sodium week, the weights of 77.2 to 75.8 kg against a documented clinic weight of 72.0, the net balance of -1.6 L on 2.4 L of urine, the persistent orthopnea, raised JVP, bibasal crackles and 2+ edema, the warm extremities at 118/73, the creatinine moving 1.1 to 1.3 with sodium 137, potassium 3.7 and magnesium 1.9, and the absent shock, ischemia, dangerous rhythm, infection and respiratory failure are authored constants; no diuretic-response, renal or outcome model is claimed, and no outcome follows from any choice. tests/integration/heart-failure-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through five recorded steps on the shared simulation clock in a strict line with no time gate: the congestion and perfusion status before the decongestion response, the response before the tolerance and precipitant review, that review before the transition intent, and the transition before the discharge-readiness reassessment. Each step refuses until its predecessor is recorded, and the second and third refusals are the ones the lesson is built on, since together they stop a transition being recorded on an improved symptom alone."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions separate congestion from perfusion in a patient who is wet but not cold; judge the decongestion response across symptoms, weight against a documented baseline, fluid balance, urine output and the fixed examination rather than on the symptom alone; review the renal and electrolyte cost of decongestion alongside adherence, sodium exposure and other real-world precipitants; record individualized decongestion, oral-transition and guideline-directed-therapy review intent; and reassess discharge readiness against persistent congestion. The lesson examines nobody, acquires or interprets no test, calculates no dry weight, fluid target, dose or score, diagnoses nothing, prescribes or delivers no treatment, selects no regimen, determines no disposition or prognosis, and predicts no outcome."
           ]
         },
         {
@@ -453,23 +453,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded readiness reassessment in which the authored snapshot is explicitly not discharge-ready. Later actions cannot restart an ended branch, and the ending certifies residualCongestion true, dischargeReady false, doseCalculated false and treatmentDelivered false, with the education, ownership, change triggers and early follow-up recorded as the work that makes a later discharge safe rather than as a substitute for staying."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps. The failure the tutor is built around is the one that fills readmission wards — a patient who feels better sent home still congested — so the response beat lays the five findings side by side and names which one is unreliable: four say partially decongested, one says better, and the one that says better is the one he can tell you about. The opening beat asks the two questions separately, wet and cold, and says the warm-and-wet combination is the one people misread because a comfortable patient at a normal pressure invites the conclusion that the congestion is dealt with. The tolerance beat reads the creatinine rise from 1.1 to 1.3 carefully rather than reactively, since a modest rise during effective decongestion in a congested patient is not automatically kidney injury and stopping at the first bump is a well-worn way to send someone home to bounce back, and it treats potassium and magnesium as what keeps the diuresis safe. It then asks why he decompensated at all, naming cost, understanding, side effects and a change at home as the causes behind missed medications. The transition beat keeps two jobs separate: finishing the decongestion, and the guideline-directed therapy for an ejection fraction of 30% that changes his years rather than his admission. The readiness beat says plainly that persistent congestion is the single best predictor of coming straight back, and asks for early follow-up rather than a routine six-week appointment. Worked example 0.1.0 drives the ordinary controls through the real engine to the readiness reassessment, and its narration is generated from the tutor's own prose so the two cannot drift apart. A test asserts that no beat anywhere names a dry weight, a diuretic dose, a regimen, or a discharge. tests/unit/heart-failure-demonstration.test.ts verifies observed response and every beat against the real engine, and tests/ui/cardiology-heart-failure.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the readmission pattern: the common-error path reconciles the congestion correctly and then records a transition intent on the improved symptom, having weighed neither the decongestion response nor its cost, meeting one of five. The recovery path additionally judges the response before reading the congestion and takes the same skip-the-cost reflex, and still completes in order from the same positions."
           ]
         },
         {
@@ -488,23 +488,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "heart-failure-fixtures.ts binds exact-content expert, discharge-on-symptom error, recovery, and no-action pathways to seed 5936 for deterministic replay through the shared engine, including both order refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

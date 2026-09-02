@@ -101,6 +101,7 @@ import { pediatricInjurySafeguardingCompletionEvidence } from '../../pediatrics/
 import { stableChestPainCompletionEvidence } from '../../cardiology/stable-chest-pain-completion';
 import { clinicStemiCompletionEvidence } from '../../cardiology/clinic-stemi-completion';
 import { nstemiRiskCompletionEvidence } from '../../cardiology/nstemi-risk-completion';
+import { heartFailureCompletionEvidence } from '../../cardiology/heart-failure-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -341,6 +342,7 @@ export function auditClinicalScenario(
     ...stableChestPainCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...clinicStemiCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...nstemiRiskCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...heartFailureCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

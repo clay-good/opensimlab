@@ -199,6 +199,7 @@ import { pediatricInjurySafeguardingInlinePrompt } from '../../pediatrics/tutor/
 import { stableChestPainInlinePrompt } from '../../cardiology/tutor/stable-chest-pain-guidance';
 import { clinicStemiInlinePrompt } from '../../cardiology/tutor/clinic-stemi-guidance';
 import { nstemiRiskInlinePrompt } from '../../cardiology/tutor/nstemi-risk-guidance';
+import { heartFailureInlinePrompt } from '../../cardiology/tutor/heart-failure-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2967,6 +2968,7 @@ export interface ActionCockpitProps {
   readonly stableChestPainGuidance?: GuidanceLevel;
   readonly clinicStemiGuidance?: GuidanceLevel;
   readonly nstemiRiskGuidance?: GuidanceLevel;
+  readonly heartFailureGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3115,6 +3117,7 @@ export interface ActionCockpitProps {
   readonly stableChestPainDemonstrating?: boolean;
   readonly clinicStemiDemonstrating?: boolean;
   readonly nstemiRiskDemonstrating?: boolean;
+  readonly heartFailureDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5607,6 +5610,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasHeartFailureResponse && (
               <HeartFailureTray assessment={props.resuscitation.heartFailureAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.heartFailureGuidance}
+                demonstrating={props.heartFailureDemonstrating}
                 onAction={props.onHeartFailureResponse ?? (() => {})} />
             )}
             {hasAfRvrResponse && (
@@ -15452,8 +15458,11 @@ function AfRvrTray({ assessment, onAction }: {
   );
 }
 
-function HeartFailureTray({ assessment, onAction }: {
+function HeartFailureTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['heartFailureAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onHeartFailureResponse']>;
 }) {
   const status = assessment?.statusAtTick != null;
@@ -15461,7 +15470,17 @@ function HeartFailureTray({ assessment, onAction }: {
   const tolerance = assessment?.toleranceAtTick != null;
   const transition = assessment?.transitionAtTick != null;
   const readiness = assessment?.readinessAtTick != null;
+  const prompt = demonstrating ? null
+    : heartFailureInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <div className="tray-grid">
       <section className="syringe" aria-labelledby="heart-failure-trajectory-title">
         <div id="heart-failure-trajectory-title" className="syringe__name">Decongestion is a trajectory.</div>
@@ -15474,11 +15493,11 @@ function HeartFailureTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={status}
-            onClick={() => onAction('reconcile-heart-failure-congestion-and-perfusion')}>Reconcile congestion + perfusion</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reconcile-heart-failure-congestion-and-perfusion') : undefined}>Reconcile congestion + perfusion</Button>
           <Button className="crisis-drug__action" disabled={!status || response}
-            onClick={() => onAction('review-heart-failure-diuretic-response')}>Review serial decongestion response</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-heart-failure-diuretic-response') : undefined}>Review serial decongestion response</Button>
           <Button className="crisis-drug__action" disabled={!response || tolerance}
-            onClick={() => onAction('review-heart-failure-tolerance-and-precipitant')}>Review tolerance + precipitant</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-heart-failure-tolerance-and-precipitant') : undefined}>Review tolerance + precipitant</Button>
         </div>
         <p className="field__hint">A creatinine change needs context. No single weight, balance, urine-output, or laboratory value proves euvolemia or treatment failure.</p>
       </section>
@@ -15494,12 +15513,13 @@ function HeartFailureTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!tolerance || transition}
-            onClick={() => onAction('record-heart-failure-transition-intent')}>Record decongestion + transition intent</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-heart-failure-transition-intent') : undefined}>Record decongestion + transition intent</Button>
           <Button className="crisis-drug__action" disabled={!transition || readiness}
-            onClick={() => onAction('reassess-heart-failure-discharge-readiness')}>Reassess readiness + ownership</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-heart-failure-discharge-readiness') : undefined}>Reassess readiness + ownership</Button>
         </div>
         <p className="field__hint">No drug, dose, target, order, regimen, disposition, or outcome is supplied. The next reassessment stays owned while congestion remains.</p>
       </section>
+    </div>
     </div>
   );
 }
