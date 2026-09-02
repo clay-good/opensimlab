@@ -56,6 +56,7 @@ import { atonyCompletionEvidence } from '../../obstetrics/postpartum-hemorrhage-
 import { maternalSepsisCompletionEvidence } from '../../obstetrics/maternal-sepsis-postpartum-deterioration-completion';
 import { concealedAbruptionCompletionEvidence } from '../../obstetrics/concealed-placental-abruption-hemorrhage-completion';
 import { postpartumPreeclampsiaCompletionEvidence } from '../../obstetrics/postpartum-severe-preeclampsia-warning-signs-completion';
+import { eclampsiaCompletionEvidence } from '../../obstetrics/eclampsia-first-seizure-response-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -251,6 +252,7 @@ export function auditClinicalScenario(
     ...maternalSepsisCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...concealedAbruptionCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...postpartumPreeclampsiaCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...eclampsiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

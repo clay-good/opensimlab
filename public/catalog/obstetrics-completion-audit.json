@@ -551,23 +551,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "eclampsia-first-seizure-response-fixtures.ts binds seed 7160 and content 0.1.0 to expert, cause-before-the-response error, recovery, and no-action paths. The witnessed convulsion, the recovery state, the supplied pressures, laboratories and fetal report, and the fixed 20-minute report are authored constants; no seizure, magnesium, pressure or fetal model is claimed, and no outcome follows from any choice. tests/integration/eclampsia-first-seizure-response-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the fixed later report refuses until simulated time has passed since the evidence review, and the handoff refuses until time has passed since that. What moves is her alertness, the pressure and the fetal sample; what does not move is the recurrence risk, the pending imaging and toxicology, or the question of whether this was eclampsia at all."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions read the stopped seizure inside five hours of warning symptoms, name the eclampsia pattern without waiting for imaging, urine protein, hemolysis evaluation or toxicology and without excluding stroke, PRES, thrombosis, hemorrhage, epilepsy, infection, metabolic, toxic or traumatic causes, activate injury protection, airway and breathing readiness, monitoring, access, glucose review, the magnesium protocol, the severe-pressure response and obstetric, anesthesia, nursing, pharmacy, critical-care, fetal, neonatal and dignity ownership now with cause review in parallel, keep the fetus and the alternatives coupled to the recovery, review the fixed later report, and hand off recurrence risk. Order is enforced rather than suggested, and refusal names the missing step. The lesson times and protects no seizure, positions and examines nobody, assesses no airway or aspiration, interprets no fetal status, measures no pressure or glucose, acquires or reads no laboratory, imaging or EEG, excludes nothing, and selects no magnesium, antihypertensive, antiseizure drug, dose, rate, target, route, access, oxygen, airway, ventilation, anesthetic, delivery or procedure."
           ]
         },
         {
@@ -579,23 +579,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at recurrence-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no treatment effect, no durable seizure or pressure control, no neurologic or organ recovery, no fetal safety, no safety disposition, and no maternal, newborn or other outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both refuse the ending of the seizure as reassurance: most eclamptic convulsions stop on their own within a couple of minutes, so a 70-second seizure that has stopped is the ordinary course rather than evidence that it is over, and the readiness for the next one is the work. Both refuse the differential as a precondition — the pressure of 176/118, five hours of headache and visual spots, platelets of 96 and transaminases at twice the local ceiling are already the pattern, and the pending imaging, urine protein, hemolysis evaluation and toxicology do not gate the response. Naming it excludes nothing, and the causes that are not eclampsia are exactly why the imaging still matters afterwards. The fetal minimal variability is read as following the maternal seizure rather than standing apart from it. The ending gives back a quieter, still hypertensive, still symptomatic woman who can convulse again. A test asserts nothing anywhere times or protects a seizure, positions or examines her, reads the fetal trace, or selects magnesium, an antihypertensive, an airway maneuver or a birth. tests/unit/eclampsia-first-seizure-response-demonstration.test.ts and tests/ui/obstetrics-eclampsia-first-seizure-response.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that went to work out the cause before starting the response can still reach a correct handoff."
           ]
         },
         {
@@ -614,23 +614,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "eclampsia-first-seizure-response-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 7160 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

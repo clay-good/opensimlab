@@ -92,6 +92,7 @@ import { supportsAtonyDemonstration } from '../../obstetrics/demo/postpartum-hem
 import { supportsMaternalSepsisDemonstration } from '../../obstetrics/demo/maternal-sepsis-postpartum-deterioration-demonstration';
 import { supportsConcealedAbruptionDemonstration } from '../../obstetrics/demo/concealed-placental-abruption-hemorrhage-demonstration';
 import { supportsPostpartumPreeclampsiaDemonstration } from '../../obstetrics/demo/postpartum-severe-preeclampsia-warning-signs-demonstration';
+import { supportsEclampsiaDemonstration } from '../../obstetrics/demo/eclampsia-first-seizure-response-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -217,6 +218,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsMaternalSepsisDemonstration,
     supportsConcealedAbruptionDemonstration,
     supportsPostpartumPreeclampsiaDemonstration,
+    supportsEclampsiaDemonstration,
   ],
 };
 
