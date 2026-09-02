@@ -277,6 +277,8 @@ import { useAfRvrDemonstration } from '../../cardiology/demo/useAfRvrDemonstrati
 import { supportsAfRvrDemonstration } from '../../cardiology/demo/af-rvr-demonstration';
 import { usePostInfarctionShockDemonstration } from '../../cardiology/demo/usePostInfarctionShockDemonstration';
 import { supportsPostInfarctionShockDemonstration } from '../../cardiology/demo/post-infarction-shock-demonstration';
+import { useStableNarrowTachycardiaDemonstration } from '../../cardiology/demo/useStableNarrowTachycardiaDemonstration';
+import { supportsStableNarrowTachycardiaDemonstration } from '../../cardiology/demo/stable-narrow-tachycardia-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -567,6 +569,7 @@ export function Cockpit({
   const heartFailureDemoSupported = supportsHeartFailureDemonstration(scenario);
   const afRvrDemoSupported = supportsAfRvrDemonstration(scenario);
   const postInfarctionShockDemoSupported = supportsPostInfarctionShockDemonstration(scenario);
+  const stableNarrowTachycardiaDemoSupported = supportsStableNarrowTachycardiaDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -685,6 +688,7 @@ export function Cockpit({
     || heartFailureDemoSupported
     || afRvrDemoSupported
     || postInfarctionShockDemoSupported
+    || stableNarrowTachycardiaDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -848,6 +852,12 @@ export function Cockpit({
     active: demonstrating && pediatricStatusAsthmaticusDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.pediatricStatusAsthmaticusAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const stableNarrowTachycardiaDemonstration = useStableNarrowTachycardiaDemonstration({
+    active: demonstrating && stableNarrowTachycardiaDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.stableNarrowTachycardiaAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const postInfarctionShockDemonstration = usePostInfarctionShockDemonstration({
@@ -1552,6 +1562,7 @@ export function Cockpit({
     : heartFailureDemoSupported ? heartFailureDemonstration
     : afRvrDemoSupported ? afRvrDemonstration
     : postInfarctionShockDemoSupported ? postInfarctionShockDemonstration
+    : stableNarrowTachycardiaDemoSupported ? stableNarrowTachycardiaDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2497,6 +2508,8 @@ export function Cockpit({
           afRvrDemonstrating={demonstrating && afRvrDemoSupported}
           postInfarctionShockGuidance={session.guidance}
           postInfarctionShockDemonstrating={demonstrating && postInfarctionShockDemoSupported}
+          stableNarrowTachycardiaGuidance={session.guidance}
+          stableNarrowTachycardiaDemonstrating={demonstrating && stableNarrowTachycardiaDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

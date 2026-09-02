@@ -202,6 +202,7 @@ import { nstemiRiskInlinePrompt } from '../../cardiology/tutor/nstemi-risk-guida
 import { heartFailureInlinePrompt } from '../../cardiology/tutor/heart-failure-guidance';
 import { afRvrInlinePrompt } from '../../cardiology/tutor/af-rvr-guidance';
 import { postInfarctionShockInlinePrompt } from '../../cardiology/tutor/post-infarction-shock-guidance';
+import { stableNarrowTachycardiaInlinePrompt } from '../../cardiology/tutor/stable-narrow-tachycardia-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2973,6 +2974,7 @@ export interface ActionCockpitProps {
   readonly heartFailureGuidance?: GuidanceLevel;
   readonly afRvrGuidance?: GuidanceLevel;
   readonly postInfarctionShockGuidance?: GuidanceLevel;
+  readonly stableNarrowTachycardiaGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3124,6 +3126,7 @@ export interface ActionCockpitProps {
   readonly heartFailureDemonstrating?: boolean;
   readonly afRvrDemonstrating?: boolean;
   readonly postInfarctionShockDemonstrating?: boolean;
+  readonly stableNarrowTachycardiaDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5638,6 +5641,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasStableNarrowTachycardiaResponse && (
               <StableNarrowTachycardiaTray
                 assessment={props.resuscitation.stableNarrowTachycardiaAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.stableNarrowTachycardiaGuidance}
+                demonstrating={props.stableNarrowTachycardiaDemonstrating}
                 onAction={props.onStableNarrowTachycardiaResponse ?? (() => {})} />
             )}
             {hasStableWideTachycardiaResponse && (
@@ -10404,8 +10410,11 @@ function NstemiRiskTray({ assessment, scenarioVersion, guidance = 'unassisted', 
   );
 }
 
-function StableNarrowTachycardiaTray({ assessment, onAction }: {
+function StableNarrowTachycardiaTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['stableNarrowTachycardiaAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onStableNarrowTachycardiaResponse']>;
 }) {
   const stability = assessment?.stabilityAtTick != null;
@@ -10414,7 +10423,17 @@ function StableNarrowTachycardiaTray({ assessment, onAction }: {
   const vagalResponse = assessment?.vagalResponseAtTick != null;
   const adenosine = assessment?.adenosineAtTick != null;
   const reassessed = assessment?.reassessmentAtTick != null;
+  const prompt = demonstrating ? null
+    : stableNarrowTachycardiaInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <div className="tray-grid">
       <section className="syringe" aria-labelledby="stable-narrow-first-title">
         <div id="stable-narrow-first-title" className="syringe__name">Fast rhythm. Steady patient.</div>
@@ -10428,11 +10447,11 @@ function StableNarrowTachycardiaTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={stability}
-            onClick={() => onAction('reconcile-stable-regular-narrow-tachycardia')}>Reconcile rhythm + stability</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reconcile-stable-regular-narrow-tachycardia') : undefined}>Reconcile rhythm + stability</Button>
           <Button className="crisis-drug__action" disabled={!stability || context}
-            onClick={() => onAction('review-stable-regular-narrow-context')}>Review context + monitored readiness</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-stable-regular-narrow-context') : undefined}>Review context + monitored readiness</Button>
           <Button className="crisis-drug__action" disabled={!context || vagal}
-            onClick={() => onAction('record-stable-regular-narrow-vagal-intent')}>Record coached modified-Valsalva intent</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-stable-regular-narrow-vagal-intent') : undefined}>Record coached modified-Valsalva intent</Button>
         </div>
         <p className="field__hint">Heart rate alone does not define instability. The fixed 12-lead supplies width and regularity; it does not prove AVNRT, AVRT, atrial tachycardia, or flutter.</p>
       </section>
@@ -10449,14 +10468,15 @@ function StableNarrowTachycardiaTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!vagal || vagalResponse}
-            onClick={() => onAction('review-stable-regular-narrow-vagal-response')}>Review observed vagal response</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-stable-regular-narrow-vagal-response') : undefined}>Review observed vagal response</Button>
           <Button className="crisis-drug__action" disabled={!vagalResponse || adenosine}
-            onClick={() => onAction('record-stable-regular-narrow-adenosine-intent')}>Record monitored adenosine intent</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-stable-regular-narrow-adenosine-intent') : undefined}>Record monitored adenosine intent</Button>
           <Button className="crisis-drug__action" disabled={!adenosine || reassessed}
-            onClick={() => onAction('reassess-stable-regular-narrow-trajectory')}>Reassess rhythm + recurrence plan</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-stable-regular-narrow-trajectory') : undefined}>Reassess rhythm + recurrence plan</Button>
         </div>
         <p className="field__hint">No dose or drug delivery is supplied. Instability opens synchronized cardioversion; conversion does not prove one mechanism, cure recurrence, or choose ablation.</p>
       </section>
+    </div>
     </div>
   );
 }
