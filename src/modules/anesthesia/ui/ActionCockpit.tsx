@@ -197,6 +197,7 @@ import { pediatricBradycardicArrestInlinePrompt } from '../../pediatrics/tutor/p
 import { pediatricFbaoInlinePrompt } from '../../pediatrics/tutor/pediatric-fbao-guidance';
 import { pediatricInjurySafeguardingInlinePrompt } from '../../pediatrics/tutor/pediatric-injury-safeguarding-guidance';
 import { stableChestPainInlinePrompt } from '../../cardiology/tutor/stable-chest-pain-guidance';
+import { clinicStemiInlinePrompt } from '../../cardiology/tutor/clinic-stemi-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2963,6 +2964,7 @@ export interface ActionCockpitProps {
   readonly pediatricFbaoGuidance?: GuidanceLevel;
   readonly pediatricInjurySafeguardingGuidance?: GuidanceLevel;
   readonly stableChestPainGuidance?: GuidanceLevel;
+  readonly clinicStemiGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3109,6 +3111,7 @@ export interface ActionCockpitProps {
   readonly pediatricFbaoDemonstrating?: boolean;
   readonly pediatricInjurySafeguardingDemonstrating?: boolean;
   readonly stableChestPainDemonstrating?: boolean;
+  readonly clinicStemiDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5591,6 +5594,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasClinicStemiResponse && (
               <ClinicStemiTray assessment={props.resuscitation.clinicStemiAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.clinicStemiGuidance}
+                demonstrating={props.clinicStemiDemonstrating}
                 onAction={props.onClinicStemiResponse ?? (() => {})} />
             )}
             {hasHeartFailureResponse && (
@@ -10239,8 +10245,11 @@ function SepticShockResuscitationTray({ assessment, onAction }: {
   );
 }
 
-function ClinicStemiTray({ assessment, onAction }: {
+function ClinicStemiTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['clinicStemiAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onClinicStemiResponse']>;
 }) {
   const pattern = assessment?.patternAtTick != null;
@@ -10248,7 +10257,17 @@ function ClinicStemiTray({ assessment, onAction }: {
   const transfer = assessment?.transferAtTick != null;
   const bridge = assessment?.bridgeAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
+  const prompt = demonstrating ? null
+    : clinicStemiInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <div className="tray-grid">
       <section className="syringe" aria-labelledby="clinic-stemi-pattern-title">
         <div id="clinic-stemi-pattern-title" className="syringe__name">Recognize, then open the route.</div>
@@ -10263,11 +10282,11 @@ function ClinicStemiTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={pattern}
-            onClick={() => onAction('reconcile-clinic-stemi-pattern')}>Reconcile symptoms + fixed ECG</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reconcile-clinic-stemi-pattern') : undefined}>Reconcile symptoms + fixed ECG</Button>
           <Button className="crisis-drug__action" disabled={!pattern || transfer}
-            onClick={() => onAction('activate-clinic-stemi-transfer')}>Activate EMS + regional STEMI system</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('activate-clinic-stemi-transfer') : undefined}>Activate EMS + regional STEMI system</Button>
           <Button className="crisis-drug__action" disabled={!pattern || danger}
-            onClick={() => onAction('screen-clinic-stemi-danger')}>Screen danger in parallel</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('screen-clinic-stemi-danger') : undefined}>Screen danger in parallel</Button>
         </div>
         <p className="field__hint">Activate EMS now. Do not use private transport or delay for biomarkers, checklist completion, or paperwork.</p>
       </section>
@@ -10283,12 +10302,13 @@ function ClinicStemiTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!transfer || !danger || bridge}
-            onClick={() => onAction('record-clinic-stemi-bridge')}>Record aspirin + monitored-transport intent</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-clinic-stemi-bridge') : undefined}>Record aspirin + monitored-transport intent</Button>
           <Button className="crisis-drug__action" disabled={!bridge || handoff}
-            onClick={() => onAction('reassess-clinic-stemi-handoff')}>Reassess + hand off the trajectory</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-clinic-stemi-handoff') : undefined}>Reassess + hand off the trajectory</Button>
         </div>
         <p className="field__hint">No routine oxygen at 96%. P2Y12, anticoagulation, fibrinolysis, PCI, nitrate, and opioid choices are not controls here.</p>
       </section>
+    </div>
     </div>
   );
 }
