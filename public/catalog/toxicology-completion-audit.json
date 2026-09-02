@@ -1811,23 +1811,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "opioid-xylazine-persistent-sedation-fixtures.ts binds seed 5869 and content 0.1.0 to expert, another-dose-before-ventilation error, recovery, and no-action paths. The presentation, the bystander account, the supplied ECG, the blood-gas and chemistry set, the limited skin survey, and the fixed 10-minute report are authored constants; no opioid, antagonist, adulterant, or ventilation model is claimed, and no outcome follows from any choice. tests/integration/opioid-xylazine-persistent-sedation-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
           "status": "satisfied",
           "evidence": [
-            "The timeline contains at least one non-narrative state event."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the bounded continued support, opioid-antagonist, symptomatic-care and no-veterinary-antagonist intent refuses until simulated time has passed since the evidence review, and the handoff refuses until time has passed since that. What moves is the ventilation rather than the sedation, which is the point rather than a shortfall."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions name the end-tidal CO2 as the emergency rather than the level of consciousness, call this an opioid-compatible respiratory emergency with a possible additional agent while refusing pupil-, naloxone-response-, screen- and wound-only closure, give ventilation and oxygen an owner alongside toxicology, addiction, wound and dignity-centered ownership, read what the numbers rule in and what they cannot speak to, record bounded qualified intents including the explicit absence of any veterinary antagonist, and hand off active risk. Order is enforced rather than suggested, and refusal names the missing step. The lesson takes no history, identifies no street product, confirms no adulterant, excludes nothing, and selects no oxygen setting, airway, antagonist, product, dose, route, or wound treatment."
           ]
         },
         {
@@ -1839,23 +1839,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at active-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no confirmed agent, no confirmed adulterant, no proven naloxone resistance, no excluded alternative, no proven treatment effect, no durable ventilation or perfusion, no neurologic or airway recovery, no excluded aspiration, no temperature, wound or withdrawal safety, no determined disposition, and no outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both turn on which endpoint was ever in danger: it was the breathing, not the wakefulness, so the end-tidal CO2 of 62 is named first and ventilation gets an owner rather than a third antagonist dose, which treats the wakefulness and can buy a withdrawal to manage in someone who still cannot protect her airway. Both refuse all four early closures and say plainly that sedation persisting after naloxone is not evidence naloxone failed and not proof of an adulterant: routine immunoassay screening neither establishes nor excludes xylazine, and alcohol, a benzodiazepine, clonidine, a head injury and simply more opioid than was reversed all look the same from here. No veterinary alpha-2 antagonist appears in either, because supportive care is what the sedative part gets, and the healed scars with no limb-threatening wound are treated as a finding rather than an absence to go looking for. The ending hands off the breathing that was fixed beside the sedation that was not, and names that as the shape of the lesson. A test asserts nothing anywhere identifies the product, confirms the adulterant, proves resistance, or selects a veterinary antagonist. tests/unit/opioid-xylazine-persistent-sedation-demonstration.test.ts and tests/ui/toxicology-opioid-xylazine-persistent-sedation.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that reached for a third dose because she was not awake can still reach a correct handoff."
           ]
         },
         {
@@ -1874,23 +1874,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "opioid-xylazine-persistent-sedation-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 5869 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

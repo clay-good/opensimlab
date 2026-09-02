@@ -72,6 +72,7 @@ import { supportsSerotoninDemonstration } from '../../toxicology/demo/serotonin-
 import { supportsSympathomimeticDemonstration } from '../../toxicology/demo/sympathomimetic-hyperadrenergic-hyperthermia-demonstration';
 import { supportsMethanolDemonstration } from '../../toxicology/demo/methanol-visual-acidosis-gaps-demonstration';
 import { supportsDelayedLastDemonstration } from '../../toxicology/demo/delayed-local-anesthetic-cns-cardiac-toxicity-demonstration';
+import { supportsOpioidXylazineDemonstration } from '../../toxicology/demo/opioid-xylazine-persistent-sedation-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -173,6 +174,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsSympathomimeticDemonstration,
     supportsMethanolDemonstration,
     supportsDelayedLastDemonstration,
+    supportsOpioidXylazineDemonstration,
   ],
 };
 

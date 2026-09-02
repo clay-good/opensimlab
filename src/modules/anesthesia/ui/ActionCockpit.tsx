@@ -134,6 +134,7 @@ import { serotoninInlinePrompt } from '../../toxicology/tutor/serotonin-toxicity
 import { sympathomimeticInlinePrompt } from '../../toxicology/tutor/sympathomimetic-hyperadrenergic-hyperthermia-guidance';
 import { methanolInlinePrompt } from '../../toxicology/tutor/methanol-visual-acidosis-gaps-guidance';
 import { delayedLastInlinePrompt } from '../../toxicology/tutor/delayed-local-anesthetic-cns-cardiac-toxicity-guidance';
+import { opioidXylazineInlinePrompt } from '../../toxicology/tutor/opioid-xylazine-persistent-sedation-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2837,6 +2838,7 @@ export interface ActionCockpitProps {
   readonly toxicologySympathomimeticGuidance?: GuidanceLevel;
   readonly toxicologyMethanolGuidance?: GuidanceLevel;
   readonly toxicologyDelayedLastGuidance?: GuidanceLevel;
+  readonly toxicologyOpioidXylazineGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2920,6 +2922,7 @@ export interface ActionCockpitProps {
   readonly toxicologySympathomimeticDemonstrating?: boolean;
   readonly toxicologyMethanolDemonstrating?: boolean;
   readonly toxicologyDelayedLastDemonstrating?: boolean;
+  readonly toxicologyOpioidXylazineDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5792,6 +5795,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasToxicologyOpioidXylazineResponse && (
               <ToxicologyOpioidXylazineTray assessment={props.resuscitation.toxicologyOpioidXylazineAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.toxicologyOpioidXylazineGuidance}
+                demonstrating={props.toxicologyOpioidXylazineDemonstrating}
                 onAction={props.onToxicologyOpioidXylazineResponse ?? (() => {})} />
             )}
             {hasObstetricsAtonyResponse && (
@@ -13160,10 +13166,15 @@ function ToxicologyDelayedLastTray({ assessment, scenarioVersion, onAction, guid
   </>;
 }
 
-function ToxicologyOpioidXylazineTray({ assessment, onAction }: {
+function ToxicologyOpioidXylazineTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyOpioidXylazineAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onToxicologyOpioidXylazineResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = opioidXylazineInlinePrompt(guidance, { scenarioVersion, opioidXylazine: assessment });
+  const act = demonstrating ? undefined : onAction;
   const trajectory = assessment?.trajectoryAtTick != null;
   const recognition = assessment?.recognitionAtTick != null;
   const support = assessment?.supportAtTick != null;
@@ -13171,22 +13182,27 @@ function ToxicologyOpioidXylazineTray({ assessment, onAction }: {
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="toxicology-opioid-xylazine-early-title">
       <div id="toxicology-opioid-xylazine-early-title" className="syringe__name">Restore breathing. Keep the differential open.</div>
       <p className="syringe__remaining">Begin with the unknown exposure, bystander rescue, breathing, carbon dioxide, sedation, pupils, perfusion, temperature, and the whole person.</p>
       <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-toxicology-opioid-xylazine-exposure-rescue-breathing-sedation-perfusion-and-whole-patient')}>Connect rescue + patient</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-toxicology-opioid-xylazine-opioid-emergency-and-possible-adulterant-without-pupil-naloxone-response-or-screen-only-closure')}>Act without overcalling</Button>}
-        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-toxicology-opioid-xylazine-ventilation-oxygen-monitoring-toxicology-addiction-wound-and-dignity-ownership')}>Bring care around the person</Button>}
-        {support && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-toxicology-opioid-xylazine-supplied-respiratory-response-circulation-temperature-glucose-ecg-screen-wound-and-differential-boundary')}>Review response + hidden harm</Button>}
+        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-toxicology-opioid-xylazine-exposure-rescue-breathing-sedation-perfusion-and-whole-patient') : undefined}>Connect rescue + patient</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-toxicology-opioid-xylazine-opioid-emergency-and-possible-adulterant-without-pupil-naloxone-response-or-screen-only-closure') : undefined}>Act without overcalling</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-toxicology-opioid-xylazine-ventilation-oxygen-monitoring-toxicology-addiction-wound-and-dignity-ownership') : undefined}>Bring care around the person</Button>}
+        {support && !evidence && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-toxicology-opioid-xylazine-supplied-respiratory-response-circulation-temperature-glucose-ecg-screen-wound-and-differential-boundary') : undefined}>Review response + hidden harm</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="toxicology-opioid-xylazine-later-title">
       <div id="toxicology-opioid-xylazine-later-title" className="syringe__name">Better breathing is progress, not proof.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Recurrent depression, sedation, perfusion, temperature, skin, withdrawal, co-exposure, addiction, harm-reduction, and outcome uncertainty handed off.' : reassessment ? 'Breathing and gas exchange improved while sedation persisted. Agent identity, naloxone resistance, recovery, treatment effect, and durable safety remain unproven.' : evidence ? 'Respiratory, circulation, temperature, glucose, ECG, routine-screen, skin, coingestion, and differential evidence stay coupled. Record qualified intent after time passes.' : support ? 'Respiratory, toxicology, addiction, wound, and dignity-centered ownership are active. Review the supplied evidence.' : 'Recognize the actionable opioid emergency and possible co-exposure before the supportive-care boundary.'}</p>
       <div className="crisis-drug__actions">
-        {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-opioid-xylazine-bounded-qualified-continued-support-opioid-antagonist-symptomatic-care-no-veterinary-antagonist-and-strict-later-review')}>Record support + reassess</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-opioid-xylazine-recurrent-depression-persistent-sedation-shock-hypothermia-wound-withdrawal-addiction-and-outcome-risk')}>Hand off the whole horizon</Button>}
+        {evidence && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-toxicology-opioid-xylazine-bounded-qualified-continued-support-opioid-antagonist-symptomatic-care-no-veterinary-antagonist-and-strict-later-review') : undefined}>Record support + reassess</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-toxicology-opioid-xylazine-recurrent-depression-persistent-sedation-shock-hypothermia-wound-withdrawal-addiction-and-outcome-risk') : undefined}>Hand off the whole horizon</Button>}
       </div>
     </section>
   </>;
