@@ -677,23 +677,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "af-rvr-fixtures.ts binds seed 7462 and content 0.1.0 to expert, rate-before-duration error, recovery, and no-action paths. The rhythm-change event putting the irregularly irregular rhythm on the teaching monitor, the fixed diagnostic 12-lead report naming AF at 142/min without pre-excitation or acute ischemic change, the palpitations noticed 6 hours ago against a last symptom-free check 3 days ago, the physiology at 119/71 with 97% on room air, the fixed LVEF report of 55%, the within-range haemoglobin, potassium, magnesium, TSH and temperature, and the absent hypotension, shock, ischemic discomfort, heart failure, syncope, altered mentation, infection, alcohol binge, stimulant exposure and medication change are authored constants; no rhythm, rate-response or outcome model is claimed, and no outcome follows from any choice. tests/integration/af-rvr-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
           "status": "satisfied",
           "evidence": [
-            "The timeline contains at least one non-narrative state event."
+            "The lesson advances through five recorded steps on the shared simulation clock in a strict line with no time gate: rhythm and stability before context, context before rate-control intent, rate-control intent before stroke prevention, and stroke prevention before the trajectory reassessment. Each step refuses until its predecessor is recorded. The second refusal is the one the lesson is built on, since it is what stops rate-control intent being recorded before anybody has asked how long the AF has been present."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions reconcile the rhythm with current stability, noting both that she is stable and that the fixed report excludes pre-excitation; review symptom and rhythm duration, prior AF, medications and adherence, ventricular function, comorbidities and acute contributors; record patient-specific rate-control intent shaped by haemodynamics, ventricular function, contraindications and symptoms without an agent, dose or universal target; review validated thromboembolic risk, bleeding context, preferences and cardioversion implications on a separate lane; and reassess the fixed lower-rate response with monitoring, change triggers, ownership and follow-up. The lesson acquires or interprets no ECG or test, calculates no score, diagnoses nothing, prescribes or delivers no medication, selects no rate or rhythm agent, performs no cardioversion, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -705,23 +705,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded reassessment on a rate response rather than a resolved rhythm. Later actions cannot restart an ended branch, and the ending certifies hemodynamicallyStable true, durationCertain false, exactScoreCalculated false and treatmentDelivered false — so the uncertain duration and the stroke-prevention decision both remain open at the end rather than being closed by the improved rate."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps. The pull this tutor works against is a number: 142 invites treating the rate and considering everything else afterwards. The opening beat holds both halves — the rate and the stability — and says the absent pre-excitation is what makes ordinary rate-control thinking safe here rather than dangerous, then defines stable as having time to get the next decisions right rather than as untreated. The context beat identifies the single most consequential fact in the consultation: palpitations noticed six hours ago against a last symptom-free check three days ago, which makes the duration uncertain rather than six hours. The rate beat records what the choice has to respect rather than which drug does it, and names the trap directly — the rate is a symptom of the rhythm and the rhythm is a symptom of something only just being looked for. The stroke beat is the one that matters most and is written as a separate lane: a slower ventricular rate is a more comfortable patient with exactly the same atrium, and the uncertain duration returns as what makes cardioversion a decision with anticoagulation implications. The reassessment beat reads the lower rate as a rate response and nothing more. Worked example 0.1.0 drives the ordinary controls through the real engine to the reassessment, and its narration is generated from the tutor's own prose so the two cannot drift apart. A test asserts that no beat anywhere names an agent, a target rate, a score or a cardioversion. tests/unit/af-rvr-demonstration.test.ts verifies observed response and every beat against the real engine, and tests/ui/cardiology-af-rvr.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding. As in the SVT lesson the identity guard asserts the opening rhythm-change event and the exact timeline length rather than assuming an all-narrative timeline."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is what the number on the monitor invites: the common-error path reconciles the rhythm and reaches straight for rate-control intent without asking how long this has been going on, meeting one of five. The recovery path additionally reviews the context before reading the rhythm and reaches past rate control into the stroke lane, and still completes in order from the same positions."
           ]
         },
         {
@@ -740,23 +740,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "af-rvr-fixtures.ts binds exact-content expert, rate-before-duration error, recovery, and no-action pathways to seed 7462 for deterministic replay through the shared engine, including both order refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

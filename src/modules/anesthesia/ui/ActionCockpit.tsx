@@ -200,6 +200,7 @@ import { stableChestPainInlinePrompt } from '../../cardiology/tutor/stable-chest
 import { clinicStemiInlinePrompt } from '../../cardiology/tutor/clinic-stemi-guidance';
 import { nstemiRiskInlinePrompt } from '../../cardiology/tutor/nstemi-risk-guidance';
 import { heartFailureInlinePrompt } from '../../cardiology/tutor/heart-failure-guidance';
+import { afRvrInlinePrompt } from '../../cardiology/tutor/af-rvr-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2969,6 +2970,7 @@ export interface ActionCockpitProps {
   readonly clinicStemiGuidance?: GuidanceLevel;
   readonly nstemiRiskGuidance?: GuidanceLevel;
   readonly heartFailureGuidance?: GuidanceLevel;
+  readonly afRvrGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3118,6 +3120,7 @@ export interface ActionCockpitProps {
   readonly clinicStemiDemonstrating?: boolean;
   readonly nstemiRiskDemonstrating?: boolean;
   readonly heartFailureDemonstrating?: boolean;
+  readonly afRvrDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5617,6 +5620,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasAfRvrResponse && (
               <AfRvrTray assessment={props.resuscitation.afRvrAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.afRvrGuidance}
+                demonstrating={props.afRvrDemonstrating}
                 onAction={props.onAfRvrResponse ?? (() => {})} />
             )}
             {hasPostInfarctionShockResponse && (
@@ -15405,8 +15411,11 @@ function PostInfarctionShockTray({ assessment, onAction }: {
   );
 }
 
-function AfRvrTray({ assessment, onAction }: {
+function AfRvrTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['afRvrAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onAfRvrResponse']>;
 }) {
   const stability = assessment?.stabilityAtTick != null;
@@ -15414,7 +15423,17 @@ function AfRvrTray({ assessment, onAction }: {
   const rateIntent = assessment?.rateIntentAtTick != null;
   const stroke = assessment?.strokePreventionAtTick != null;
   const reassessed = assessment?.reassessmentAtTick != null;
+  const prompt = demonstrating ? null
+    : afRvrInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <div className="tray-grid">
       <section className="syringe" aria-labelledby="af-rvr-stability-title">
         <div id="af-rvr-stability-title" className="syringe__name">Treat the patient before the number.</div>
@@ -15428,11 +15447,11 @@ function AfRvrTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={stability}
-            onClick={() => onAction('reconcile-af-rvr-rhythm-and-stability')}>Reconcile rhythm + stability</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reconcile-af-rvr-rhythm-and-stability') : undefined}>Reconcile rhythm + stability</Button>
           <Button className="crisis-drug__action" disabled={!stability || context}
-            onClick={() => onAction('review-af-rvr-context-and-triggers')}>Review duration + contributors</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-af-rvr-context-and-triggers') : undefined}>Review duration + contributors</Button>
           <Button className="crisis-drug__action" disabled={!context || rateIntent}
-            onClick={() => onAction('record-af-rvr-rate-control-intent')}>Record patient-specific rate intent</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-af-rvr-rate-control-intent') : undefined}>Record patient-specific rate intent</Button>
         </div>
         <p className="field__hint">Instability changes urgency. In a stable patient, ventricular function, pressure, symptoms, contraindications, and interactions shape acute rate-control selection.</p>
       </section>
@@ -15448,12 +15467,13 @@ function AfRvrTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!rateIntent || stroke}
-            onClick={() => onAction('record-af-rvr-stroke-prevention-intent')}>Review stroke prevention + cardioversion context</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-af-rvr-stroke-prevention-intent') : undefined}>Review stroke prevention + cardioversion context</Button>
           <Button className="crisis-drug__action" disabled={!stroke || reassessed}
-            onClick={() => onAction('reassess-af-rvr-trajectory-and-follow-up')}>Reassess trajectory + ownership</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-af-rvr-trajectory-and-follow-up') : undefined}>Reassess trajectory + ownership</Button>
         </div>
         <p className="field__hint">Better can still be AF. No score, agent, dose, anticoagulation decision, cardioversion, disposition, prognosis, or outcome is supplied.</p>
       </section>
+    </div>
     </div>
   );
 }
