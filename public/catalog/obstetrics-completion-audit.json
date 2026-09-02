@@ -299,23 +299,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "concealed-placental-abruption-hemorrhage-fixtures.ts binds seed 7132 and content 0.1.0 to expert, evidence-before-the-call error, recovery, and no-action paths. The presentation, the collected volume, the supplied coagulation and fetal reports, and the fixed 10-minute report are authored constants; no bleeding, coagulation, fetal or delivery model is claimed, and no outcome follows from any choice. tests/integration/concealed-placental-abruption-hemorrhage-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the bounded simultaneous resuscitation, coagulation and urgent-delivery intent refuses until simulated time has passed since the evidence review, and the handoff refuses until time has passed since that. What moves is the maternal pulse, pressure and breathing and the visible volume; what does not move is the fetal compromise, the coagulation, or how much blood has actually been lost."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions read the maternal and fetal physiology rather than the collected volume, name a concealed hemorrhage without waiting for ultrasound and without closing rupture, previa, vasa previa, labor, trauma or non-obstetric causes, bring hemorrhage, anesthesia, nursing, blood-bank, operating-room, neonatal, consent and dignity ownership at once, read the supplied perfusion, uterine, fetal, coagulation, placental-location and competing-cause evidence as a boundary, record bounded qualified resuscitation, coagulation and urgent-delivery intent, and hand off unresolved risk. Order is enforced rather than suggested, and refusal names the missing step. The lesson measures and totals no loss, examines nobody, interprets no fetal trace, acquires or reads no ultrasound, acquires no sample, excludes nothing, and selects no fluid, blood component, oxygen, drug, dose, route, access, anesthetic, delivery or procedure."
           ]
         },
         {
@@ -327,23 +327,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at unresolved-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no treatment effect, no quantified concealed loss, no coagulation safety, no fetal recovery, no completed delivery, no safety disposition, no predicted fertility outcome, and no maternal, newborn or other outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both refuse the visible volume: in an abruption most of the loss can stay behind the placenta, so 80 mL of dark blood is consistent with a very large hemorrhage, and the two people showing the same bleed — a mother at 126 and 92/56, a fetus at 170 with minimal variability and recurrent late decelerations — are the only honest measure of it. Both also refuse the scan, because ultrasound detects an abruption often enough to be useful and misses it often enough that a normal study excludes nothing, and the supplied prior placental-location record is one piece of history rather than an exclusion. The coagulation is read as part of the bleed rather than beside it: a fibrinogen of 1.5 g/L is a value that has already fallen a long way from the 4 and above usual late in pregnancy. The room is called for two patients at once because components, an operating room and a neonatal team are the slowest to arrange, and the consent and support are named as part of the response rather than courtesies added to it. The ending gives back slightly better maternal numbers, a fetus that has not recovered, and a loss nobody has quantified. A test asserts nothing anywhere measures or totals the loss, interprets the fetal trace, acquires an ultrasound, or selects an anesthetic or a mode of birth. tests/unit/concealed-placental-abruption-hemorrhage-demonstration.test.ts and tests/ui/obstetrics-concealed-placental-abruption-hemorrhage.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that went to read the evidence before calling it can still reach a correct handoff."
           ]
         },
         {
@@ -362,23 +362,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "concealed-placental-abruption-hemorrhage-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 7132 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

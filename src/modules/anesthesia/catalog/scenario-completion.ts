@@ -54,6 +54,7 @@ import { deliriumCompletionEvidence } from '../../neurology/acute-delirium-rever
 import { dysreflexiaCompletionEvidence } from '../../neurology/autonomic-dysreflexia-authored-trigger-completion';
 import { atonyCompletionEvidence } from '../../obstetrics/postpartum-hemorrhage-uterine-atony-completion';
 import { maternalSepsisCompletionEvidence } from '../../obstetrics/maternal-sepsis-postpartum-deterioration-completion';
+import { concealedAbruptionCompletionEvidence } from '../../obstetrics/concealed-placental-abruption-hemorrhage-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -247,6 +248,7 @@ export function auditClinicalScenario(
     ...dysreflexiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...atonyCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...maternalSepsisCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...concealedAbruptionCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),
