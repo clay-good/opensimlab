@@ -60,6 +60,7 @@ import { eclampsiaCompletionEvidence } from '../../obstetrics/eclampsia-first-se
 import { afeCompletionEvidence } from '../../obstetrics/suspected-amniotic-fluid-embolism-pattern-completion';
 import { maternalArrestCompletionEvidence } from '../../obstetrics/maternal-cardiac-arrest-coordinated-response-completion';
 import { shoulderDystociaCompletionEvidence } from '../../obstetrics/shoulder-dystocia-cognitive-sequence-completion';
+import { cordProlapseCompletionEvidence } from '../../obstetrics/umbilical-cord-prolapse-urgent-birth-coordination-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -259,6 +260,7 @@ export function auditClinicalScenario(
     ...afeCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...maternalArrestCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...shoulderDystociaCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...cordProlapseCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

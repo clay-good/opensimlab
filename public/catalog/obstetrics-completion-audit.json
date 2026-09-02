@@ -1055,23 +1055,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "umbilical-cord-prolapse-urgent-birth-coordination-fixtures.ts binds seed 7216 and content 0.1.0 to expert, understand-before-calling error, recovery, and no-action paths. The membrane rupture, the deceleration, the supplied examination, and the fixed persistent-compromise and transfer report are authored constants; no decompression, fetal-recovery or birth model is claimed, and no outcome follows from any choice. tests/integration/umbilical-cord-prolapse-urgent-birth-coordination-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the fixed transfer report refuses until simulated time has passed since the birth-plan review, and the handoff refuses until time has passed since that. What moves is where she is and who is with her; what does not move is the fetal compromise, which persists at the later report, or the birth, which has not happened."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions name the emergency and open a theatre with the diagnosis clock, leader, timekeeper, anesthesia, newborn team and someone with her, take the supplied examination as the diagnosis, review the pressure-relief, minimal-handling, position and no-delay boundaries as a bridge, review birth urgency, mode, anesthesia, newborn readiness, documentation and maternal safety without turning a time target into a deadline, review the fixed report, and hand off unresolved risk. Order is enforced rather than suggested, and every later step refuses until the emergency has been called. The lesson examines nobody, interprets no fetal monitoring, diagnoses nothing, handles or replaces no cord, elevates no presenting part, fills no bladder, changes no position, performs no delivery or newborn care, and selects no drug, dose, route, anesthetic, birth mode or procedure."
           ]
         },
         {
@@ -1083,23 +1083,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at unresolved-risk handoff, in theatre, before the birth. Later actions cannot restart an ended branch, and the ending certifies no fetal recovery, no treatment effect, no safety disposition, and no maternal, newborn or other outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both open by opening a theatre, because the only treatment for a cord prolapse with a compromised fetus is the birth and the slowest thing to arrange is the room it happens in. Both then read the supplied examination for what it implies rather than re-testing it: the cord is being compressed, and at 5 cm with a high presenting part this baby is not going to be born vaginally in the next few minutes. The central teaching is that the bedside measures are a bridge — the elevation, the position and the minimal handling buy time, none of them relieves the compression permanently, no attempt is made to replace the cord, and none of them is a reason to spend another minute at the bedside. The quoted decision-to-birth intervals are named as audit standards rather than a deadline that makes a slower birth safe or a faster one unnecessary, and her safety is not traded for speed. The ending gives back a hand still relieving the cord, a transfer that happened and a birth that did not. A test asserts nothing anywhere examines her, handles or replaces the cord, elevates the presenting part, or selects an anesthetic or a mode of birth. tests/unit/umbilical-cord-prolapse-urgent-birth-coordination-demonstration.test.ts and tests/ui/obstetrics-umbilical-cord-prolapse-urgent-birth-coordination.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that took in the picture before calling the emergency can still reach a correct handoff."
           ]
         },
         {
@@ -1118,23 +1118,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "umbilical-cord-prolapse-urgent-birth-coordination-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 7216 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

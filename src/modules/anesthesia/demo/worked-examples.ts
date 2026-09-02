@@ -96,6 +96,7 @@ import { supportsEclampsiaDemonstration } from '../../obstetrics/demo/eclampsia-
 import { supportsAfeDemonstration } from '../../obstetrics/demo/suspected-amniotic-fluid-embolism-pattern-demonstration';
 import { supportsMaternalArrestDemonstration } from '../../obstetrics/demo/maternal-cardiac-arrest-coordinated-response-demonstration';
 import { supportsShoulderDystociaDemonstration } from '../../obstetrics/demo/shoulder-dystocia-cognitive-sequence-demonstration';
+import { supportsCordProlapseDemonstration } from '../../obstetrics/demo/umbilical-cord-prolapse-urgent-birth-coordination-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -225,6 +226,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsAfeDemonstration,
     supportsMaternalArrestDemonstration,
     supportsShoulderDystociaDemonstration,
+    supportsCordProlapseDemonstration,
   ],
 };
 
