@@ -299,23 +299,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "nstemi-risk-fixtures.ts binds seed 4218 and content 0.1.0 to expert, inherited-stability error, recovery, and no-action paths. The 25 minutes of pressure five hours earlier with the patient pain-free now, the high-sensitivity troponin rising from 18 to 146 ng/L above the assay-specific 99th percentile, the initial ECG report of horizontal ST depression in V4-V6 and the repeat showing new lateral T-wave inversion, the physiology at 132/78, and the absent shock, recurrent pain, heart failure, arrhythmia, arrest, mechanical complication and recurrent dynamic ST change are authored constants; no ischemic, assay or outcome model is claimed, and no outcome follows from any choice. tests/integration/nstemi-risk-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through five recorded steps on the shared simulation clock in a strict line with no time gate, as in the stable-chest-pain lesson: the trajectory before the verification, the verification before the very-high-risk re-screen, the re-screen before the strategy, and the strategy before the monitoring and handoff. Each step refuses until its predecessor is recorded, and the third refusal is the one the lesson is built on, since it is what stops a strategy being recorded on inherited stability."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions reconcile the serial symptom, ECG-report and assay-bounded troponin trajectory as one moving picture rather than three findings; verify the authored NSTEMI conclusion while keeping myocardial-injury alternatives in the assessment; re-screen the very-high-risk features now rather than inheriting an earlier observation; record an inpatient invasive strategy whose exact timing follows the applicable region and pathway; and record monitoring, deterioration triggers, ownership and the next reassessment. The lesson examines nobody, acquires or interprets no test, calculates no score, diagnoses nothing, prescribes or delivers no treatment, chooses no procedure, determines no universal timing or disposition, and predicts no prognosis or outcome. One authoring detail is worth recording for the next reader: the action ids and the declared objective ids are not the same list — the fourth objective is classify-nstemi-invasive-strategy while the accepted action is record-nstemi-invasive-strategy — so the identity guard compares against the objective ids explicitly rather than reusing the action list as every other lesson does."
           ]
         },
         {
@@ -327,23 +327,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at recorded monitoring and handoff with an inpatient strategy and no timing, no procedure and no disposition claimed. Later actions cannot restart an ended branch, and the ending certifies ischemicRisk as the authored high band, currentVeryHighRisk false, exactScoreCalculated false and procedurePerformed false, and preserves the myocardial-injury alternatives as open rather than excluded."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps. The failure the tutor is built around is inheritance — a patient screened once, found stable, and treated as stable for the rest of the admission — so the opening beat ends on the observation that 132/78 is where she is rather than where she has been, and the re-screen beat says the word carrying the weight is \"now\", because a patient with a rising troponin and an evolving ECG can acquire a very-high-risk feature between two conversations. The trajectory beat explains why the three findings only mean something together: a rise on serial sampling is what separates infarction from a chronically elevated value, an assay-specific threshold is why a number without its assay means nothing, and an ECG that changed between two recordings says more than either alone. The verification beat states the conclusion plainly and then keeps myocarditis, pulmonary embolism, tachyarrhythmia, sepsis, renal impairment and takotsubo in the room, because a rising troponin is myocardial injury and infarction is one cause of it. The strategy beat treats bleeding risk as load-bearing rather than a footnote, since the same catheter that treats the ischemic risk raises the bleeding one, and leaves timing to the regional pathway. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff, and its narration is generated from the tutor's own prose so the two cannot drift apart. A test asserts that no beat anywhere states a score, names an hour for angiography, prescribes a drug, or excludes an alternative. tests/unit/nstemi-risk-demonstration.test.ts verifies observed response and every beat against the real engine, and tests/ui/cardiology-nstemi-risk.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the inheritance the lesson exists to refuse: the common-error path reads the trajectory and verifies the conclusion correctly, then records a strategy without re-screening the very-high-risk features that would have changed it, meeting two of five. The recovery path additionally verifies before reconciling and takes the same inherited-stability reflex, and still completes in order from the same positions."
           ]
         },
         {
@@ -362,23 +362,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "nstemi-risk-fixtures.ts binds exact-content expert, inherited-stability error, recovery, and no-action pathways to seed 4218 for deterministic replay through the shared engine, including both order refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

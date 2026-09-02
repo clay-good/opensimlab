@@ -198,6 +198,7 @@ import { pediatricFbaoInlinePrompt } from '../../pediatrics/tutor/pediatric-fbao
 import { pediatricInjurySafeguardingInlinePrompt } from '../../pediatrics/tutor/pediatric-injury-safeguarding-guidance';
 import { stableChestPainInlinePrompt } from '../../cardiology/tutor/stable-chest-pain-guidance';
 import { clinicStemiInlinePrompt } from '../../cardiology/tutor/clinic-stemi-guidance';
+import { nstemiRiskInlinePrompt } from '../../cardiology/tutor/nstemi-risk-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2965,6 +2966,7 @@ export interface ActionCockpitProps {
   readonly pediatricInjurySafeguardingGuidance?: GuidanceLevel;
   readonly stableChestPainGuidance?: GuidanceLevel;
   readonly clinicStemiGuidance?: GuidanceLevel;
+  readonly nstemiRiskGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3112,6 +3114,7 @@ export interface ActionCockpitProps {
   readonly pediatricInjurySafeguardingDemonstrating?: boolean;
   readonly stableChestPainDemonstrating?: boolean;
   readonly clinicStemiDemonstrating?: boolean;
+  readonly nstemiRiskDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5590,6 +5593,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasNstemiRiskResponse && (
               <NstemiRiskTray assessment={props.resuscitation.nstemiRiskAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.nstemiRiskGuidance}
+                demonstrating={props.nstemiRiskDemonstrating}
                 onAction={props.onNstemiRiskResponse ?? (() => {})} />
             )}
             {hasClinicStemiResponse && (
@@ -10313,8 +10319,11 @@ function ClinicStemiTray({ assessment, scenarioVersion, guidance = 'unassisted',
   );
 }
 
-function NstemiRiskTray({ assessment, onAction }: {
+function NstemiRiskTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['nstemiRiskAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onNstemiRiskResponse']>;
 }) {
   const trajectory = assessment?.trajectoryAtTick != null;
@@ -10322,7 +10331,17 @@ function NstemiRiskTray({ assessment, onAction }: {
   const danger = assessment?.veryHighRiskAtTick != null;
   const strategy = assessment?.strategyAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
+  const prompt = demonstrating ? null
+    : nstemiRiskInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <div className="tray-grid">
       <section className="syringe" aria-labelledby="nstemi-trajectory-title">
         <div id="nstemi-trajectory-title" className="syringe__name">Risk is a moving picture.</div>
@@ -10336,11 +10355,11 @@ function NstemiRiskTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={trajectory}
-            onClick={() => onAction('reconcile-nstemi-serial-trajectory')}>Reconcile the serial trajectory</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reconcile-nstemi-serial-trajectory') : undefined}>Reconcile the serial trajectory</Button>
           <Button className="crisis-drug__action" disabled={!trajectory || verification}
-            onClick={() => onAction('verify-nstemi-and-alternatives')}>Verify NSTEMI + preserve alternatives</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('verify-nstemi-and-alternatives') : undefined}>Verify NSTEMI + preserve alternatives</Button>
           <Button className="crisis-drug__action" disabled={!verification || danger}
-            onClick={() => onAction('screen-nstemi-very-high-risk-features')}>Re-screen very-high-risk features</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('screen-nstemi-very-high-risk-features') : undefined}>Re-screen very-high-risk features</Button>
         </div>
         <p className="field__hint">Stable now does not erase high risk. Recurrent pain, instability, heart failure, dangerous rhythm, arrest, mechanical concern, or dynamic ECG change alters urgency.</p>
       </section>
@@ -10356,12 +10375,13 @@ function NstemiRiskTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!danger || strategy}
-            onClick={() => onAction('record-nstemi-invasive-strategy')}>Record region-bounded invasive intent</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-nstemi-invasive-strategy') : undefined}>Record region-bounded invasive intent</Button>
           <Button className="crisis-drug__action" disabled={!strategy || handoff}
-            onClick={() => onAction('record-nstemi-monitoring-and-handoff')}>Record triggers + owner + reassessment</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-nstemi-monitoring-and-handoff') : undefined}>Record triggers + owner + reassessment</Button>
         </div>
         <p className="field__hint">No score, medication, angiography, or procedure is supplied. The applicable local pathway resolves exact timing as risk evolves.</p>
       </section>
+    </div>
     </div>
   );
 }
