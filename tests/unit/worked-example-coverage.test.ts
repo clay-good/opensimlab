@@ -17,9 +17,10 @@
  * is now a list entry like the rest, checked the same way, and its
  * part-finished form is gone rather than left behind saying something stale.
  * Neurology inherited that form and that guard, counted upward through fourteen
- * lessons, and has now made the same transition. No module is described by a
- * number here at present; if one is again, the derived-count guard is the shape
- * to bring back.
+ * lessons, and has now made the same transition. Obstetrics is now the module described
+ * part-finished, and it carries that same derived-count guard: the number in
+ * the sentence comes from the audit, so a lesson cannot land without the front
+ * page being rewritten.
  */
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
@@ -34,6 +35,10 @@ import { INFECTIOUS_DISEASE_SCENARIOS } from '../../src/modules/infectious-disea
 import { NEONATOLOGY_SCENARIOS } from '../../src/modules/neonatology/scenarios';
 import { TOXICOLOGY_SCENARIOS } from '../../src/modules/toxicology/scenarios';
 import { NEUROLOGY_SCENARIOS } from '../../src/modules/neurology/scenarios';
+import { OBSTETRICS_SCENARIOS } from '../../src/modules/obstetrics/scenarios';
+
+const COUNT_WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight',
+  'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen'] as const;
 
 function uncovered(scenarios: Parameters<typeof buildModuleCompletionCatalog>[0], moduleId: string) {
   const catalog = buildModuleCompletionCatalog(scenarios, ENGINE_VERSION, moduleId, 'ward');
@@ -103,6 +108,21 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
     expect(coveredCount(TOXICOLOGY_SCENARIOS, 'toxicology')).toBe(TOXICOLOGY_SCENARIOS.length);
     const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');
     expect(readme).not.toContain('Toxicology has started');
+  });
+
+  it('counts the finished obstetrics labs rather than trusting the sentence', () => {
+    expect(OBSTETRICS_SCENARIOS).toHaveLength(15);
+    const covered = coveredCount(OBSTETRICS_SCENARIOS, 'obstetrics');
+    expect(covered).toBeGreaterThan(0);
+    const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');
+    if (covered === OBSTETRICS_SCENARIOS.length) {
+      // The part-finished sentence is not allowed to linger once it is untrue.
+      expect(readme).not.toContain('Obstetrics has started');
+      expect(uncovered(OBSTETRICS_SCENARIOS, 'obstetrics')).toEqual([]);
+      return;
+    }
+    expect(readme).toContain(`Obstetrics has started: ${COUNT_WORDS[covered]} of its`);
+    expect(readme).toContain(`${COUNT_WORDS[OBSTETRICS_SCENARIOS.length]} labs has both.`);
   });
 
   it('claims only what those eight modules support', () => {

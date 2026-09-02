@@ -150,6 +150,7 @@ import { herniationInlinePrompt } from '../../neurology/tutor/acute-transtentori
 import { msccInlinePrompt } from '../../neurology/tutor/metastatic-spinal-cord-compression-guidance';
 import { deliriumInlinePrompt } from '../../neurology/tutor/acute-delirium-reversible-causes-guidance';
 import { dysreflexiaInlinePrompt } from '../../neurology/tutor/autonomic-dysreflexia-authored-trigger-guidance';
+import { atonyInlinePrompt } from '../../obstetrics/tutor/postpartum-hemorrhage-uterine-atony-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2869,6 +2870,7 @@ export interface ActionCockpitProps {
   readonly neurologyMsccGuidance?: GuidanceLevel;
   readonly neurologyDeliriumGuidance?: GuidanceLevel;
   readonly neurologyDysreflexiaGuidance?: GuidanceLevel;
+  readonly obstetricsAtonyGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2968,6 +2970,7 @@ export interface ActionCockpitProps {
   readonly neurologyMsccDemonstrating?: boolean;
   readonly neurologyDeliriumDemonstrating?: boolean;
   readonly neurologyDysreflexiaDemonstrating?: boolean;
+  readonly obstetricsAtonyDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5892,6 +5895,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasObstetricsAtonyResponse && (
               <ObstetricsAtonyTray assessment={props.resuscitation.obstetricsAtonyAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.obstetricsAtonyGuidance}
+                demonstrating={props.obstetricsAtonyDemonstrating}
                 onAction={props.onObstetricsAtonyResponse ?? (() => {})} />
             )}
             {hasObstetricsMaternalSepsisResponse && (
@@ -13448,10 +13454,15 @@ function ToxicologyOpioidXylazineTray({ assessment, scenarioVersion, onAction, g
   </>;
 }
 
-function ObstetricsAtonyTray({ assessment, onAction }: {
+function ObstetricsAtonyTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['obstetricsAtonyAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onObstetricsAtonyResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = atonyInlinePrompt(guidance, { scenarioVersion, atony: assessment });
+  const act = demonstrating ? undefined : onAction;
   const trajectory = assessment?.trajectoryAtTick != null;
   const recognition = assessment?.recognitionAtTick != null;
   const support = assessment?.supportAtTick != null;
@@ -13459,22 +13470,27 @@ function ObstetricsAtonyTray({ assessment, onAction }: {
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="obstetrics-atony-early-title">
       <div id="obstetrics-atony-early-title" className="syringe__name">See the bleeding early. Bring calm around it.</div>
       <p className="syringe__remaining">Begin with the birth clock, measured loss, symptoms, perfusion, uterine tone, and the whole person. One clue never gets to close every cause.</p>
       <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-obstetrics-atony-hemorrhage-birth-clock-measured-loss-physiology-tone-and-whole-person')}>Connect birth + whole person</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-obstetrics-atony-postpartum-hemorrhage-and-atony-pattern-without-threshold-tone-or-single-cause-closure')}>Act early, keep causes open</Button>}
-        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-obstetrics-atony-hemorrhage-obstetric-anesthesia-nursing-blood-bank-operating-room-and-dignity-ownership')}>Bring the room together</Button>}
-        {support && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-atony-supplied-tone-placenta-tract-coagulation-perfusion-and-competing-cause-boundary')}>Review tone + hidden causes</Button>}
+        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-obstetrics-atony-hemorrhage-birth-clock-measured-loss-physiology-tone-and-whole-person') : undefined}>Connect birth + whole person</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-obstetrics-atony-postpartum-hemorrhage-and-atony-pattern-without-threshold-tone-or-single-cause-closure') : undefined}>Act early, keep causes open</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-obstetrics-atony-hemorrhage-obstetric-anesthesia-nursing-blood-bank-operating-room-and-dignity-ownership') : undefined}>Bring the room together</Button>}
+        {support && !evidence && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-obstetrics-atony-supplied-tone-placenta-tract-coagulation-perfusion-and-competing-cause-boundary') : undefined}>Review tone + hidden causes</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="obstetrics-atony-later-title">
       <div id="obstetrics-atony-later-title" className="syringe__name">Slower bleeding is a checkpoint, not closure.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Recurrent bleeding, shock, coagulation, blood-bank, operative, dignity, newborn, fertility, and outcome uncertainty handed off.' : reassessment ? 'Pressure, pulse, uterine tone, and visible bleeding improved. Cumulative loss, hidden bleeding, durable control, treatment effect, and outcome remain open.' : evidence ? 'Tone, placenta, tract, coagulation, perfusion, laboratory, and competing-cause evidence stay coupled. Record bounded bundled intent after time passes.' : support ? 'Hemorrhage, resuscitation, blood-bank, escalation, newborn-support, and dignity-centered ownership are active. Review the supplied evidence.' : 'Recognize the early actionable hemorrhage and atony pattern before the bundled-care boundary.'}</p>
       <div className="crisis-drug__actions">
-        {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-obstetrics-atony-bounded-qualified-motive-bundle-escalation-intent-and-strict-later-review')}>Record bundle + reassess</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-obstetrics-atony-recurrent-bleeding-shock-coagulopathy-blood-procedure-newborn-and-outcome-risk')}>Hand off what stays open</Button>}
+        {evidence && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-obstetrics-atony-bounded-qualified-motive-bundle-escalation-intent-and-strict-later-review') : undefined}>Record bundle + reassess</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-obstetrics-atony-recurrent-bleeding-shock-coagulopathy-blood-procedure-newborn-and-outcome-risk') : undefined}>Hand off what stays open</Button>}
       </div>
     </section>
   </>;

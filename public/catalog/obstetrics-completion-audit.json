@@ -47,23 +47,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "postpartum-hemorrhage-uterine-atony-fixtures.ts binds seed 7104 and content 0.1.0 to expert, differential-before-the-call error, recovery, and no-action paths. The presentation, the measured loss, the supplied tone and placental report, and the fixed 10-minute report are authored constants; no bleeding, uterotonic, transfusion or hemostasis model is claimed, and no outcome follows from any choice. tests/integration/postpartum-hemorrhage-uterine-atony-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the bounded bundle and escalation intent refuses until simulated time has passed since the evidence review, and the handoff refuses until time has passed since that. What moves is the pulse, the pressure, the tone and the visible bleeding; what does not move is the certainty about cause, coagulation or concealed loss."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions read the physiology rather than the volume and keep a talking patient unreassuring, name an actionable hemorrhage without waiting for a threshold and without closing tone, trauma, tissue, thrombin, rupture, inversion or concealed bleeding, bring hemorrhage, anesthesia, nursing, monitoring, blood-bank, operating-room, newborn-support and dignity ownership at once, keep the supplied tone, placental report, tract, coagulation and perfusion coupled, record bounded qualified bundle and escalation intent, and hand off active risk. Order is enforced rather than suggested, and refusal names the missing step. The lesson measures no blood loss, takes no history, examines no uterus, placenta or genital tract, acquires no monitoring or sample, excludes nothing, and selects no massage technique, uterotonic, tranexamic acid, fluid, blood component, oxygen, drug, dose, route, access, tamponade, procedure, surgery or hysterectomy."
           ]
         },
         {
@@ -75,23 +75,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at active-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no durable hemostasis, no coagulation safety, no excluded concealed bleeding, no determined transfusion or procedure need, no proven treatment effect, no predicted fertility outcome, no safety disposition, no prognosis, and no maternal, newborn or other outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both refuse the threshold first: 650 mL is not a thousand, and a thousand is a definition that exists so cases can be counted rather than a trigger for starting — what starts this is a rising measured loss with a heart rate of 118 and a pressure of 94/58 eight minutes after birth. Both also refuse the reassurance of a patient who is still conversing, because a healthy thirty-one-year-old compensates well and then stops compensating quickly. The second refusal is the single cause: a boggy uterus makes atony most likely without making it the only thing, and a placenta reported grossly complete has been looked at rather than proven whole, so trauma, retained tissue, coagulopathy, rupture, inversion and concealed bleeding all stay open. The whole room is called at once because components and an operating room are the two slowest things to arrange and are needed before anyone knows whether they will be used, and the dignity and newborn support are named as part of the response rather than courtesies added to it. The ending gives back better numbers and an unfinished bleed. A test asserts nothing anywhere measures the loss, examines the uterus or tract, selects a uterotonic or operation, or excludes concealed bleeding. tests/unit/postpartum-hemorrhage-uterine-atony-demonstration.test.ts and tests/ui/obstetrics-postpartum-hemorrhage-uterine-atony.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that went to work out which cause this was before calling it can still reach a correct handoff."
           ]
         },
         {
@@ -110,23 +110,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "postpartum-hemorrhage-uterine-atony-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 7104 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

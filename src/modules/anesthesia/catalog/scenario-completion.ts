@@ -52,6 +52,7 @@ import { herniationCompletionEvidence } from '../../neurology/acute-transtentori
 import { msccCompletionEvidence } from '../../neurology/metastatic-spinal-cord-compression-completion';
 import { deliriumCompletionEvidence } from '../../neurology/acute-delirium-reversible-causes-completion';
 import { dysreflexiaCompletionEvidence } from '../../neurology/autonomic-dysreflexia-authored-trigger-completion';
+import { atonyCompletionEvidence } from '../../obstetrics/postpartum-hemorrhage-uterine-atony-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -243,6 +244,7 @@ export function auditClinicalScenario(
     ...msccCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...deliriumCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...dysreflexiaCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...atonyCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),
