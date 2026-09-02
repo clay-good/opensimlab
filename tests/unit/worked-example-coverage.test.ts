@@ -17,10 +17,11 @@
  * is now a list entry like the rest, checked the same way, and its
  * part-finished form is gone rather than left behind saying something stale.
  * Neurology inherited that form and that guard, counted upward through fourteen
- * lessons, and has now made the same transition. Obstetrics is now the module described
- * part-finished, and it carries that same derived-count guard: the number in
- * the sentence comes from the audit, so a lesson cannot land without the front
- * page being rewritten.
+ * lessons, and has now made the same transition. Obstetrics inherited it in turn, counted
+ * upward through fourteen lessons, and has now made the same transition, so no
+ * module is described by a number here at present. If one is again, the
+ * derived-count guard is the shape to bring back — it is preserved below in
+ * the obstetrics test's part-finished branch.
  */
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
@@ -110,25 +111,25 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
     expect(readme).not.toContain('Toxicology has started');
   });
 
-  it('counts the finished obstetrics labs rather than trusting the sentence', () => {
+  it('covers every obstetrics lab', () => {
     expect(OBSTETRICS_SCENARIOS).toHaveLength(15);
     const covered = coveredCount(OBSTETRICS_SCENARIOS, 'obstetrics');
-    expect(covered).toBeGreaterThan(0);
     const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');
-    if (covered === OBSTETRICS_SCENARIOS.length) {
-      // The part-finished sentence is not allowed to linger once it is untrue.
-      expect(readme).not.toContain('Obstetrics has started');
-      expect(uncovered(OBSTETRICS_SCENARIOS, 'obstetrics')).toEqual([]);
+    if (covered !== OBSTETRICS_SCENARIOS.length) {
+      // The part-finished form, kept here for the next module to inherit.
+      expect(readme).toContain(`with ${COUNT_WORDS[covered]} of its`);
+      expect(readme).toContain(`${COUNT_WORDS[OBSTETRICS_SCENARIOS.length]} labs done.`);
       return;
     }
-    expect(readme).toContain(`with ${COUNT_WORDS[covered]} of its`);
-    expect(readme).toContain(`${COUNT_WORDS[OBSTETRICS_SCENARIOS.length]} labs done.`);
+    // The part-finished sentence is not allowed to linger once it is untrue.
+    expect(uncovered(OBSTETRICS_SCENARIOS, 'obstetrics')).toEqual([]);
+    expect(readme).not.toContain('Obstetrics has');
   });
 
-  it('claims only what those eight modules support', () => {
+  it('claims only what those nine modules support', () => {
     const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');
     expect(readme).toContain('Every renal, oncology, endocrine, nursing,');
-    expect(readme).toContain('infectious-disease, neonatology, toxicology, and neurology lab has');
+    expect(readme).toContain('infectious-disease, neonatology, toxicology, neurology, and obstetrics lab has');
     // The hedge this sentence used to carry belongs to a state the audit has
     // left behind. If it comes back, one of the three tests above is failing too.
     expect(readme).not.toContain('and most\nendocrine ones');

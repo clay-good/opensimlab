@@ -47,8 +47,7 @@ Some labs also carry a **worked example** you can watch and take the controls ba
 point, and a private tutor that reads only what you have actually done. The tutor is silent
 unless you ask for it, says nothing at all on the unassisted setting, and never supplies the
 diagnosis a lesson exists to leave open. Every renal, oncology, endocrine, nursing,
-infectious-disease, neonatology, toxicology, and neurology lab has both. Obstetrics has
-started, with fourteen of its fifteen labs done.
+infectious-disease, neonatology, toxicology, neurology, and obstetrics lab has both.
 
 ## How it works
 

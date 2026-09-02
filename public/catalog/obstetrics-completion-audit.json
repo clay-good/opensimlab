@@ -1811,23 +1811,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "oxytocin-associated-uterine-tachysystole-fixtures.ts binds seed 7300 and content 0.1.0 to expert, study-before-calling error, recovery, and no-action paths. The infusion history, the contraction frequency and duration, the fetal-heart trajectory, and the fixed 6-minute report are authored constants; no uterine, placental, fetal or recovery model is claimed, and no outcome follows from any choice. tests/integration/oxytocin-associated-uterine-tachysystole-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the fixed 6-minute report refuses until simulated time has passed since the readiness review, and the handoff refuses until time has passed since that. What moves is an early partial fetal recovery; what does not move is the recurrence risk, the restart decision, or the alternative causes."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions bring senior obstetric, midwifery, anesthesia, newborn and support ownership first, connect the infusion increase to the contraction pattern and the fetal change, name tachysystole with fetal deterioration on the trajectory rather than a single trace while artifact, maternal and fetal alternatives stay open, review the qualified source-stop, position, cause correction, surveillance and birth readiness, review the fixed report, and hand off unresolved risk. Order is enforced rather than suggested, and every later step refuses until the response has been activated. The lesson examines and palpates nobody, interprets no monitoring or tests, diagnoses nothing, operates no infusion, changes no position, delivers no oxygen or fluid, selects no drug or dose, performs no fetal stimulation or amnioinfusion, performs no anesthesia, surgery, delivery or newborn care."
           ]
         },
         {
@@ -1839,23 +1839,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at unresolved-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no proven fetal recovery, no determined restart eligibility, no determined birth plan, no newborn safety, no safety disposition, and no maternal, newborn or other outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both bring senior help in before studying anything, because the drug that produced this is still running and the interval spent interpreting is an interval the fetus spends under the same contractions. The infusion increase and the fetal change are read as cause and effect: six contractions in every ten-minute window lasting seventy to ninety seconds leave too little time in between, and the time in between is when the placenta refills. The recognition is made on the trajectory rather than one trace — a baseline that rose, variability that fell and decelerations that appeared, together, after an increase — because reading one snapshot lets each of those be argued away separately; and naming it still leaves artifact, maternal causes and an evolving fetal problem open. The first correction is named as stopping the cause, and two reflexive additions are refused: routine oxygen for a fetal heart-rate pattern is not supported, and a fluid bolus without hypotension treats the monitor rather than the mother. The ending gives back an early partial recovery and a cause that could be repeated. A test asserts nothing anywhere examines or palpates her, operates the infusion, changes a position, delivers oxygen or fluid, or plans a birth. tests/unit/oxytocin-associated-uterine-tachysystole-demonstration.test.ts and tests/ui/obstetrics-oxytocin-associated-uterine-tachysystole.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that studied the trace before calling for help can still reach a correct handoff."
           ]
         },
         {
@@ -1874,23 +1874,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "oxytocin-associated-uterine-tachysystole-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 7300 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

@@ -102,6 +102,7 @@ import { supportsMagnesiumToxicityDemonstration } from '../../obstetrics/demo/ma
 import { supportsHighNeuraxialDemonstration } from '../../obstetrics/demo/high-neuraxial-block-obstetric-coordination-demonstration';
 import { supportsFailedIntubationDemonstration } from '../../obstetrics/demo/failed-obstetric-intubation-oxygenation-first-demonstration';
 import { supportsMaternalNeonatalHandoffDemonstration } from '../../obstetrics/demo/maternal-to-neonatal-resuscitation-handoff-demonstration';
+import { supportsOxytocinTachysystoleDemonstration } from '../../obstetrics/demo/oxytocin-associated-uterine-tachysystole-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -237,6 +238,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsHighNeuraxialDemonstration,
     supportsFailedIntubationDemonstration,
     supportsMaternalNeonatalHandoffDemonstration,
+    supportsOxytocinTachysystoleDemonstration,
   ],
 };
 

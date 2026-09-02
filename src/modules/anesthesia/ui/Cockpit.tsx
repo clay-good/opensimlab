@@ -201,6 +201,8 @@ import { useFailedIntubationDemonstration } from '../../obstetrics/demo/useFaile
 import { supportsFailedIntubationDemonstration } from '../../obstetrics/demo/failed-obstetric-intubation-oxygenation-first-demonstration';
 import { useMaternalNeonatalHandoffDemonstration } from '../../obstetrics/demo/useMaternalNeonatalHandoffDemonstration';
 import { supportsMaternalNeonatalHandoffDemonstration } from '../../obstetrics/demo/maternal-to-neonatal-resuscitation-handoff-demonstration';
+import { useOxytocinTachysystoleDemonstration } from '../../obstetrics/demo/useOxytocinTachysystoleDemonstration';
+import { supportsOxytocinTachysystoleDemonstration } from '../../obstetrics/demo/oxytocin-associated-uterine-tachysystole-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -453,6 +455,7 @@ export function Cockpit({
   const highNeuraxialDemoSupported = supportsHighNeuraxialDemonstration(scenario);
   const failedIntubationDemoSupported = supportsFailedIntubationDemonstration(scenario);
   const maternalNeonatalHandoffDemoSupported = supportsMaternalNeonatalHandoffDemonstration(scenario);
+  const oxytocinTachysystoleDemoSupported = supportsOxytocinTachysystoleDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -533,6 +536,7 @@ export function Cockpit({
     || highNeuraxialDemoSupported
     || failedIntubationDemoSupported
     || maternalNeonatalHandoffDemoSupported
+    || oxytocinTachysystoleDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -684,6 +688,12 @@ export function Cockpit({
     active: demonstrating && termTransitionDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.neonatologyTermTransitionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const oxytocinTachysystoleDemonstration = useOxytocinTachysystoleDemonstration({
+    active: demonstrating && oxytocinTachysystoleDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.obstetricsOxytocinTachysystoleAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const maternalNeonatalHandoffDemonstration = useMaternalNeonatalHandoffDemonstration({
@@ -1143,6 +1153,7 @@ export function Cockpit({
     : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
+    : oxytocinTachysystoleDemoSupported ? oxytocinTachysystoleDemonstration
     : maternalNeonatalHandoffDemoSupported ? maternalNeonatalHandoffDemonstration
     : failedIntubationDemoSupported ? failedIntubationDemonstration
     : highNeuraxialDemoSupported ? highNeuraxialDemonstration
@@ -2003,6 +2014,8 @@ export function Cockpit({
           obstetricsFailedIntubationDemonstrating={demonstrating && failedIntubationDemoSupported}
           obstetricsMaternalNeonatalHandoffGuidance={session.guidance}
           obstetricsMaternalNeonatalHandoffDemonstrating={demonstrating && maternalNeonatalHandoffDemoSupported}
+          obstetricsOxytocinTachysystoleGuidance={session.guidance}
+          obstetricsOxytocinTachysystoleDemonstrating={demonstrating && oxytocinTachysystoleDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
