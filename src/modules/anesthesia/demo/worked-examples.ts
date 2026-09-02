@@ -122,6 +122,7 @@ import { supportsPediatricRespiratoryDistressDemonstration } from '../../pediatr
 import { supportsBronchiolitisDemonstration } from '../../pediatrics/demo/bronchiolitis-demonstration';
 import { supportsCroupDemonstration } from '../../pediatrics/demo/croup-demonstration';
 import { supportsPediatricStatusAsthmaticusDemonstration } from '../../pediatrics/demo/pediatric-status-asthmaticus-demonstration';
+import { supportsPediatricSepsisDemonstration } from '../../pediatrics/demo/pediatric-sepsis-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -281,6 +282,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsBronchiolitisDemonstration,
     supportsCroupDemonstration,
     supportsPediatricStatusAsthmaticusDemonstration,
+    supportsPediatricSepsisDemonstration,
   ],
 };
 

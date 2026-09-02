@@ -546,28 +546,28 @@
           "id": "observable-objectives",
           "status": "missing",
           "evidence": [
-            "This scenario declares 6 objectives; the contract allows at most 5."
+            "Six declared objectives exceed the five the shared catalog counts as independently observable within one session."
           ]
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "pediatric-sepsis-fixtures.ts binds seed 5188 and content 0.1.0 to expert, premature-trajectory error, recovery, and no-action paths. The thirty-hour febrile history with dysuria and flank discomfort, the probable but unconfirmed urinary source, the minute-25 qualified-care record, the minute-35 findings with platelets 82,000, INR 1.5 and lactate 2.6, the supplied Phoenix classification of 2 coagulation and 0 cardiovascular points, the fixed minute-120 report, and the absences that narrow without excluding are authored constants; no infection, antimicrobial-response or outcome model is claimed, and no outcome follows from any choice. tests/integration/pediatric-sepsis-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock. Unlike the other pediatrics lessons written so far, this engine case authors no refusable choice: what it refuses is order and time. Each step refuses until its predecessor is recorded, and two are additionally time-gated — the later report and the handoff each refuse until simulated time has passed, so a trajectory cannot be declared in the minute the source review was recorded."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions reconcile the supplied infection, coagulation dysfunction, whole-child state and qualified-care record; draw the sepsis-without-shock boundary in both directions, so that no routine fluid bolus is reached for and preserved pressure is not read as low risk; confirm continuing pediatric, nursing, pharmacy, laboratory and escalation ownership of care already delivered; hold source, organ, alternative-cause and deterioration work in parallel without waiting for every result; review the strictly later fixed report; and hand off. The tray shows one clear current action per card. The lesson examines nobody, calculates no Phoenix, PEWS or SIRS score, diagnoses nothing, acquires or interprets no culture, specimen, lactate, gas, laboratory test or image, identifies no source or pathogen, chooses or delivers no antimicrobial, drug, dose, concentration, route, interval, intravenous or intraosseous access, fluid, bolus, volume, rate, vasoactive, oxygen, device, flow, ventilation, airway maneuver, source-control procedure or treatment, and determines no disposition, prognosis or outcome."
           ]
         },
         {
@@ -579,23 +579,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at handoff on improved physiology with unchanged coagulation dysfunction and an unconfirmed source. Later actions cannot restart an ended branch, and the ending certifies no learner diagnosis, no learner-calculated score, no learner-selected antimicrobial, dose or route, no confirmed source or pathogen, no proven treatment effect, no durable recovery, no determined disposition, and no outcome — and preserves shock surveillance, bleeding surveillance, and the alternative sources and causes that thirty hours of fever leaves open."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps. There is no wrong-turn prose here because the engine authors no refusable choice; the failure mode the tutor answers is quieter than a bad choice, being a boy who is awake, warm and normotensive and does not look like the emergency his platelet count says he is. The opening beat separates what makes this sepsis — platelets of 82,000, an INR of 1.5, a lactate of 2.6 — from the fever and tachycardia that are its context rather than a shortcut to it. The boundary beat is deliberately two-directional: no current shock means no routine fluid bolus is authored, because a bolus given to a child who is not shocked buys nothing and costs something, and preserved pressure, refill, pulse quality, mentation and oxygenation describe this minute rather than establishing low risk. The ownership beat names what stays with the qualified team and observes that care nobody owns is care that quietly stops. The source beat holds pending cultures and organ trends together, since waiting for every result is how a wrong source survives the afternoon and claiming the source is how the alternative gets missed. The later beat says plainly that the physiology got better and the organ dysfunction did not. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff, and its narration is generated from the tutor's own prose so the two cannot drift apart. A test asserts nothing anywhere examines him, calculates the score, names a pathogen, or selects an antimicrobial, dose, route, fluid or bolus. tests/unit/pediatric-sepsis-demonstration.test.ts verifies observed response and every beat against the real engine, and tests/ui/pediatrics-sepsis.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. The counterfactual is impatience rather than over-treatment: the common-error path does everything correctly and then asks for the later report in the same minute it recorded the source review, meeting four of six. The recovery path additionally reaches for care ownership before there is a pattern to own and for the source review before the boundary is drawn, and still reaches a correct handoff from the same positions."
           ]
         },
         {
@@ -614,23 +614,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "pediatric-sepsis-fixtures.ts binds exact-content expert, premature-trajectory error, recovery, and no-action pathways to seed 5188 for deterministic replay through the shared engine, including both order refusals and both time gates."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

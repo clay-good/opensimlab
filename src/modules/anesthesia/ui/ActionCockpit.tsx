@@ -184,6 +184,7 @@ import { pediatricRespiratoryDistressInlinePrompt } from '../../pediatrics/tutor
 import { bronchiolitisInlinePrompt } from '../../pediatrics/tutor/bronchiolitis-guidance';
 import { croupInlinePrompt } from '../../pediatrics/tutor/croup-guidance';
 import { pediatricStatusAsthmaticusInlinePrompt } from '../../pediatrics/tutor/pediatric-status-asthmaticus-guidance';
+import { pediatricSepsisInlinePrompt } from '../../pediatrics/tutor/pediatric-sepsis-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2937,6 +2938,7 @@ export interface ActionCockpitProps {
   readonly bronchiolitisGuidance?: GuidanceLevel;
   readonly croupGuidance?: GuidanceLevel;
   readonly pediatricStatusAsthmaticusGuidance?: GuidanceLevel;
+  readonly pediatricSepsisGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3070,6 +3072,7 @@ export interface ActionCockpitProps {
   readonly bronchiolitisDemonstrating?: boolean;
   readonly croupDemonstrating?: boolean;
   readonly pediatricStatusAsthmaticusDemonstrating?: boolean;
+  readonly pediatricSepsisDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5763,6 +5766,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasPediatricSepsisResponse && (
               <PediatricSepsisTray assessment={props.resuscitation.pediatricSepsisAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.pediatricSepsisGuidance}
+                demonstrating={props.pediatricSepsisDemonstrating}
                 onAction={props.onPediatricSepsisResponse ?? (() => {})} />
             )}
             {hasPediatricSepticShockResponse && (
@@ -11873,8 +11879,11 @@ function PediatricStatusAsthmaticusTray({ assessment, scenarioVersion, guidance 
   </div>;
 }
 
-function PediatricSepsisTray({ assessment, onAction }: {
+function PediatricSepsisTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricSepsisAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onPediatricSepsisResponse']>;
 }) {
   const pattern = assessment?.patternAtTick != null;
@@ -11883,7 +11892,17 @@ function PediatricSepsisTray({ assessment, onAction }: {
   const sourceReview = assessment?.sourceReviewAtTick != null;
   const later = assessment?.laterResponseAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : pediatricSepsisInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-sepsis-pattern-title">
       <div id="pediatric-sepsis-pattern-title" className="syringe__name">See the whole pattern.</div>
       <Badge kind="teaching">infection · organ dysfunction · circulation</Badge>
@@ -11897,13 +11916,13 @@ function PediatricSepsisTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {!pattern && <Button className="crisis-drug__action"
-          onClick={() => onAction('reconcile-pediatric-sepsis-infection-and-organ-dysfunction')}>Review infection + organ dysfunction</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('reconcile-pediatric-sepsis-infection-and-organ-dysfunction') : undefined}>Review infection + organ dysfunction</Button>}
         {pattern && !shockBoundary && <Button className="crisis-drug__action"
-          onClick={() => onAction('distinguish-pediatric-sepsis-without-shock')}>Separate sepsis from shock</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('distinguish-pediatric-sepsis-without-shock') : undefined}>Separate sepsis from shock</Button>}
         {shockBoundary && !care && <Button className="crisis-drug__action"
-          onClick={() => onAction('confirm-pediatric-sepsis-qualified-care-ownership')}>Confirm qualified care ownership</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('confirm-pediatric-sepsis-qualified-care-ownership') : undefined}>Confirm qualified care ownership</Button>}
         {care && !sourceReview && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-pediatric-sepsis-source-organs-and-alternatives')}>Review source + organ support</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-sepsis-source-organs-and-alternatives') : undefined}>Review source + organ support</Button>}
       </div>
       <p className="field__hint">Experienced teams own specimens, tests, antimicrobial selection and delivery, access, fluids, oxygen, organ support, and source procedures. Phoenix is supplied classification, not an early screening control.</p>
     </section>
@@ -11919,12 +11938,13 @@ function PediatricSepsisTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {sourceReview && !later && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-pediatric-sepsis-later-response')}>Review the 120-minute report</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-sepsis-later-response') : undefined}>Review the 120-minute report</Button>}
         {later && !handoff && <Button className="crisis-drug__action"
-          onClick={() => onAction('handoff-pediatric-sepsis-active-risk')}>Hand off active sepsis risk</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('handoff-pediatric-sepsis-active-risk') : undefined}>Hand off active sepsis risk</Button>}
       </div>
       <p className="field__hint">No cardiovascular Phoenix points are authored now; continue shock surveillance. Improved physiology does not erase persistent organ dysfunction, prove source control, or establish recovery.</p>
     </section>
+    </div>
   </div>;
 }
 

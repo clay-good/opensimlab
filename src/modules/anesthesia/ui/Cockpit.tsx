@@ -241,6 +241,8 @@ import { useCroupDemonstration } from '../../pediatrics/demo/useCroupDemonstrati
 import { supportsCroupDemonstration } from '../../pediatrics/demo/croup-demonstration';
 import { usePediatricStatusAsthmaticusDemonstration } from '../../pediatrics/demo/usePediatricStatusAsthmaticusDemonstration';
 import { supportsPediatricStatusAsthmaticusDemonstration } from '../../pediatrics/demo/pediatric-status-asthmaticus-demonstration';
+import { usePediatricSepsisDemonstration } from '../../pediatrics/demo/usePediatricSepsisDemonstration';
+import { supportsPediatricSepsisDemonstration } from '../../pediatrics/demo/pediatric-sepsis-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -513,6 +515,7 @@ export function Cockpit({
   const bronchiolitisDemoSupported = supportsBronchiolitisDemonstration(scenario);
   const croupDemoSupported = supportsCroupDemonstration(scenario);
   const pediatricStatusAsthmaticusDemoSupported = supportsPediatricStatusAsthmaticusDemonstration(scenario);
+  const pediatricSepsisDemoSupported = supportsPediatricSepsisDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -613,6 +616,7 @@ export function Cockpit({
     || bronchiolitisDemoSupported
     || croupDemoSupported
     || pediatricStatusAsthmaticusDemoSupported
+    || pediatricSepsisDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -776,6 +780,12 @@ export function Cockpit({
     active: demonstrating && pediatricStatusAsthmaticusDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.pediatricStatusAsthmaticusAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const pediatricSepsisDemonstration = usePediatricSepsisDemonstration({
+    active: demonstrating && pediatricSepsisDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.pediatricSepsisAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const croupDemonstration = useCroupDemonstration({
@@ -1354,6 +1364,7 @@ export function Cockpit({
     : bronchiolitisDemoSupported ? bronchiolitisDemonstration
     : croupDemoSupported ? croupDemonstration
     : pediatricStatusAsthmaticusDemoSupported ? pediatricStatusAsthmaticusDemonstration
+    : pediatricSepsisDemoSupported ? pediatricSepsisDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2263,6 +2274,8 @@ export function Cockpit({
           croupDemonstrating={demonstrating && croupDemoSupported}
           pediatricStatusAsthmaticusGuidance={session.guidance}
           pediatricStatusAsthmaticusDemonstrating={demonstrating && pediatricStatusAsthmaticusDemoSupported}
+          pediatricSepsisGuidance={session.guidance}
+          pediatricSepsisDemonstrating={demonstrating && pediatricSepsisDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
