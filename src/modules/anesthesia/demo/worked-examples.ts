@@ -119,6 +119,8 @@ import { supportsHighFlowOxygenEscalationDemonstration } from '../../respiratory
 import { supportsOxygenDeviceFailureDemonstration } from '../../respiratory-medicine/demo/oxygen-device-failure-demonstration';
 import { supportsAcuteTracheostomyObstructionDemonstration } from '../../respiratory-medicine/demo/acute-tracheostomy-obstruction-demonstration';
 import { supportsPediatricRespiratoryDistressDemonstration } from '../../pediatrics/demo/pediatric-respiratory-distress-demonstration';
+import { supportsBronchiolitisDemonstration } from '../../pediatrics/demo/bronchiolitis-demonstration';
+import { supportsCroupDemonstration } from '../../pediatrics/demo/croup-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -275,6 +277,8 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
   ],
   pediatrics: [
     supportsPediatricRespiratoryDistressDemonstration,
+    supportsBronchiolitisDemonstration,
+    supportsCroupDemonstration,
   ],
 };
 

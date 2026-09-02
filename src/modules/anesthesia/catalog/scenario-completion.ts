@@ -83,6 +83,8 @@ import { highFlowOxygenEscalationCompletionEvidence } from '../../respiratory-me
 import { oxygenDeviceFailureCompletionEvidence } from '../../respiratory-medicine/oxygen-device-failure-completion';
 import { acuteTracheostomyObstructionCompletionEvidence } from '../../respiratory-medicine/acute-tracheostomy-obstruction-completion';
 import { pediatricRespiratoryDistressCompletionEvidence } from '../../pediatrics/pediatric-respiratory-distress-completion';
+import { bronchiolitisCompletionEvidence } from '../../pediatrics/bronchiolitis-completion';
+import { croupCompletionEvidence } from '../../pediatrics/croup-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -305,6 +307,8 @@ export function auditClinicalScenario(
     ...oxygenDeviceFailureCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...acuteTracheostomyObstructionCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...pediatricRespiratoryDistressCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...bronchiolitisCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...croupCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

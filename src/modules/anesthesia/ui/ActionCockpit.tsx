@@ -181,6 +181,8 @@ import { highFlowOxygenEscalationInlinePrompt } from '../../respiratory-medicine
 import { oxygenDeviceFailureInlinePrompt } from '../../respiratory-medicine/tutor/oxygen-device-failure-guidance';
 import { acuteTracheostomyObstructionInlinePrompt } from '../../respiratory-medicine/tutor/acute-tracheostomy-obstruction-guidance';
 import { pediatricRespiratoryDistressInlinePrompt } from '../../pediatrics/tutor/pediatric-respiratory-distress-guidance';
+import { bronchiolitisInlinePrompt } from '../../pediatrics/tutor/bronchiolitis-guidance';
+import { croupInlinePrompt } from '../../pediatrics/tutor/croup-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2931,6 +2933,8 @@ export interface ActionCockpitProps {
   readonly oxygenDeviceFailureGuidance?: GuidanceLevel;
   readonly acuteTracheostomyObstructionGuidance?: GuidanceLevel;
   readonly pediatricRespiratoryDistressGuidance?: GuidanceLevel;
+  readonly bronchiolitisGuidance?: GuidanceLevel;
+  readonly croupGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3061,6 +3065,8 @@ export interface ActionCockpitProps {
   readonly oxygenDeviceFailureDemonstrating?: boolean;
   readonly acuteTracheostomyObstructionDemonstrating?: boolean;
   readonly pediatricRespiratoryDistressDemonstrating?: boolean;
+  readonly bronchiolitisDemonstrating?: boolean;
+  readonly croupDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5732,10 +5738,16 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasBronchiolitisResponse && (
               <BronchiolitisTray assessment={props.resuscitation.bronchiolitisAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.bronchiolitisGuidance}
+                demonstrating={props.bronchiolitisDemonstrating}
                 onAction={props.onBronchiolitisResponse ?? (() => {})} />
             )}
             {hasCroupResponse && (
               <CroupTray assessment={props.resuscitation.croupAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.croupGuidance}
+                demonstrating={props.croupDemonstrating}
                 onAction={props.onCroupResponse ?? (() => {})} />
             )}
             {hasPediatricStatusAsthmaticusResponse && (
@@ -11604,8 +11616,11 @@ function PediatricRespiratoryDistressTray({ assessment, scenarioVersion, guidanc
   </div>;
 }
 
-function BronchiolitisTray({ assessment, onAction }: {
+function BronchiolitisTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['bronchiolitisAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onBronchiolitisResponse']>;
 }) {
   const recognition = assessment?.recognitionAtTick != null;
@@ -11615,7 +11630,17 @@ function BronchiolitisTray({ assessment, onAction }: {
   const later = assessment?.laterResponseAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   const unsupported = assessment?.lastUnsupportedChoice;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : bronchiolitisInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="bronchiolitis-pattern-title">
       <div id="bronchiolitis-pattern-title" className="syringe__name">Read the whole infant.</div>
       <Badge kind="teaching">illness day · breathing · feeding · hydration</Badge>
@@ -11624,28 +11649,30 @@ function BronchiolitisTray({ assessment, onAction }: {
         {support ? 'Experienced support active · keep feeding and hydration visible'
           : unsupported === 'radiograph-first' ? 'A typical clinical pattern does not wait for routine imaging'
             : unsupported === 'single-saturation' ? 'One saturation cannot summarize the infant'
-              : pattern ? 'Clinical pattern recorded · activate qualified support'
-                : recognition ? 'Severity trajectory reconciled · keep low-value care out'
-                  : 'Start with age, illness day, breathing, intake, urine, and perfusion'}
+              : unsupported === 'routine-albuterol' ? 'A first wheezing illness is not asthma · keep the supportive pathway'
+                : unsupported === 'routine-antibiotic' ? 'No bacterial focus is authored · coinfection stays open, untreated'
+                  : pattern ? 'Clinical pattern recorded · activate qualified support'
+                    : recognition ? 'Severity trajectory reconciled · keep low-value care out'
+                      : 'Start with age, illness day, breathing, intake, urine, and perfusion'}
       </p>
       <div className="syringe__presets">
         {!recognition && <Button className="crisis-drug__action"
-          onClick={() => onAction('reconcile-bronchiolitis-risk-and-trajectory')}>Review the whole-infant trajectory</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('reconcile-bronchiolitis-risk-and-trajectory') : undefined}>Review the whole-infant trajectory</Button>}
         {recognition && !pattern && <>
           <Button className="crisis-drug__action"
-            onClick={() => onAction('recognize-bronchiolitis-supportive-care-pattern')}>Record the supplied clinical pattern</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('recognize-bronchiolitis-supportive-care-pattern') : undefined}>Record the supplied clinical pattern</Button>
           <Button className="crisis-drug__action"
-            onClick={() => onAction('wait-for-bronchiolitis-routine-radiograph')}>Wait for a routine chest X-ray</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('wait-for-bronchiolitis-routine-radiograph') : undefined}>Wait for a routine chest X-ray</Button>
           <Button className="crisis-drug__action"
-            onClick={() => onAction('observe-bronchiolitis-saturation-alone')}>Watch the saturation alone</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('observe-bronchiolitis-saturation-alone') : undefined}>Watch the saturation alone</Button>
         </>}
         {pattern && !support && <>
           <Button className="crisis-drug__action"
-            onClick={() => onAction('activate-bronchiolitis-oxygenation-and-monitoring')}>Activate experienced supportive care</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('activate-bronchiolitis-oxygenation-and-monitoring') : undefined}>Activate experienced supportive care</Button>
           <Button className="crisis-drug__action"
-            onClick={() => onAction('select-routine-bronchiolitis-albuterol')}>Try routine albuterol</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('select-routine-bronchiolitis-albuterol') : undefined}>Try routine albuterol</Button>
           <Button className="crisis-drug__action"
-            onClick={() => onAction('start-routine-bronchiolitis-antibiotic')}>Start routine antibiotics</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('start-routine-bronchiolitis-antibiotic') : undefined}>Start routine antibiotics</Button>
         </>}
       </div>
       <p className="field__hint">Qualified support happens off-screen. No examination, test, oxygen setting, medicine, suction, feeding route, fluid, or treatment is selected here.</p>
@@ -11664,23 +11691,27 @@ function BronchiolitisTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {support && !feeding && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-bronchiolitis-feeding-and-hydration')}>Review feeding and hydration</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-bronchiolitis-feeding-and-hydration') : undefined}>Review feeding and hydration</Button>}
         {feeding && !later && <>
           <Button className="crisis-drug__action"
-            onClick={() => onAction('review-bronchiolitis-later-response')}>Review the one-hour response</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-bronchiolitis-later-response') : undefined}>Review the one-hour response</Button>
           <Button className="crisis-drug__action"
-            onClick={() => onAction('discharge-bronchiolitis-on-saturation-alone')}>Discharge from saturation alone</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('discharge-bronchiolitis-on-saturation-alone') : undefined}>Discharge from saturation alone</Button>
         </>}
         {later && !handoff && <Button className="crisis-drug__action"
-          onClick={() => onAction('handoff-bronchiolitis-active-risk')}>Hand off active bronchiolitis risk</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('handoff-bronchiolitis-active-risk') : undefined}>Hand off active bronchiolitis risk</Button>}
       </div>
       <p className="field__hint">Partial improvement does not prove oral readiness, room-air stability, resolution, discharge readiness, or durable outcome.</p>
     </section>
+    </div>
   </div>;
 }
 
-function CroupTray({ assessment, onAction }: {
+function CroupTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['croupAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onCroupResponse']>;
 }) {
   const pattern = assessment?.patternAtTick != null;
@@ -11690,7 +11721,17 @@ function CroupTray({ assessment, onAction }: {
   const recurrence = assessment?.recurrenceAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   const unsupported = assessment?.lastUnsupportedChoice;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : croupInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="croup-pattern-title">
       <div id="croup-pattern-title" className="syringe__name">Make calm part of care.</div>
       <Badge kind="teaching">caregiver · voice · stridor · work · behavior</Badge>
@@ -11705,17 +11746,17 @@ function CroupTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {!pattern && <Button className="crisis-drug__action"
-          onClick={() => onAction('reconcile-croup-whole-child-upper-airway-pattern')}>Review the upper-airway pattern</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('reconcile-croup-whole-child-upper-airway-pattern') : undefined}>Review the upper-airway pattern</Button>}
         {pattern && !severity && <>
           <Button className="crisis-drug__action"
-            onClick={() => onAction('review-croup-severity-and-alternative-red-flags')}>Review severity + red flags</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-croup-severity-and-alternative-red-flags') : undefined}>Review severity + red flags</Button>
           <Button className="crisis-drug__action"
-            onClick={() => onAction('select-croup-albuterol-for-stridor')}>Try albuterol for stridor</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('select-croup-albuterol-for-stridor') : undefined}>Try albuterol for stridor</Button>
           <Button className="crisis-drug__action"
-            onClick={() => onAction('wait-for-croup-neck-radiograph')}>Wait for a neck X-ray</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('wait-for-croup-neck-radiograph') : undefined}>Wait for a neck X-ray</Button>
         </>}
         {severity && !treatment && <Button className="crisis-drug__action"
-          onClick={() => onAction('record-croup-minimal-distress-support-and-qualified-treatment-intent')}>Keep calm + activate qualified care</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('record-croup-minimal-distress-support-and-qualified-treatment-intent') : undefined}>Keep calm + activate qualified care</Button>}
       </div>
       <p className="field__hint">Keep her with her caregiver in a position of comfort. Qualified staff own medicine and airway care off-screen; no examination, dose, route, device, setting, or procedure is selected here.</p>
     </section>
@@ -11734,20 +11775,21 @@ function CroupTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {treatment && !early && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-croup-early-response')}>Review the early response</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-croup-early-response') : undefined}>Review the early response</Button>}
         {early && !recurrence && <>
           <Button className="crisis-drug__action"
-            onClick={() => onAction('review-croup-recurrence-and-preserve-airway-readiness')}>Review the later observation</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-croup-recurrence-and-preserve-airway-readiness') : undefined}>Review the later observation</Button>
           <Button className="crisis-drug__action"
-            onClick={() => onAction('discharge-croup-after-early-response')}>Discharge after early improvement</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('discharge-croup-after-early-response') : undefined}>Discharge after early improvement</Button>
           <Button className="crisis-drug__action"
-            onClick={() => onAction('treat-croup-normal-saturation-as-low-risk')}>Treat SpO₂ 97% as low risk</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('treat-croup-normal-saturation-as-low-risk') : undefined}>Treat SpO₂ 97% as low risk</Button>
         </>}
         {recurrence && !handoff && <Button className="crisis-drug__action"
-          onClick={() => onAction('handoff-croup-active-upper-airway-risk')}>Hand off active upper-airway risk</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('handoff-croup-active-upper-airway-risk') : undefined}>Hand off active upper-airway risk</Button>}
       </div>
       <p className="field__hint">Review voice, stridor at calm rest, work, behavior, color, and breathing together. Recurrence renews experienced ownership; it does not select a repeat treatment, airway procedure, or disposition.</p>
     </section>
+    </div>
   </div>;
 }
 

@@ -235,6 +235,10 @@ import { useAcuteTracheostomyObstructionDemonstration } from '../../respiratory-
 import { supportsAcuteTracheostomyObstructionDemonstration } from '../../respiratory-medicine/demo/acute-tracheostomy-obstruction-demonstration';
 import { usePediatricRespiratoryDistressDemonstration } from '../../pediatrics/demo/usePediatricRespiratoryDistressDemonstration';
 import { supportsPediatricRespiratoryDistressDemonstration } from '../../pediatrics/demo/pediatric-respiratory-distress-demonstration';
+import { useBronchiolitisDemonstration } from '../../pediatrics/demo/useBronchiolitisDemonstration';
+import { supportsBronchiolitisDemonstration } from '../../pediatrics/demo/bronchiolitis-demonstration';
+import { useCroupDemonstration } from '../../pediatrics/demo/useCroupDemonstration';
+import { supportsCroupDemonstration } from '../../pediatrics/demo/croup-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -504,6 +508,8 @@ export function Cockpit({
   const oxygenDeviceFailureDemoSupported = supportsOxygenDeviceFailureDemonstration(scenario);
   const acuteTracheostomyObstructionDemoSupported = supportsAcuteTracheostomyObstructionDemonstration(scenario);
   const pediatricRespiratoryDistressDemoSupported = supportsPediatricRespiratoryDistressDemonstration(scenario);
+  const bronchiolitisDemoSupported = supportsBronchiolitisDemonstration(scenario);
+  const croupDemoSupported = supportsCroupDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -601,6 +607,8 @@ export function Cockpit({
     || oxygenDeviceFailureDemoSupported
     || acuteTracheostomyObstructionDemoSupported
     || pediatricRespiratoryDistressDemoSupported
+    || bronchiolitisDemoSupported
+    || croupDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -758,6 +766,18 @@ export function Cockpit({
     active: demonstrating && chronicOpioidHypoventilationDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.chronicOpioidHypoventilationAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const croupDemonstration = useCroupDemonstration({
+    active: demonstrating && croupDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.croupAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const bronchiolitisDemonstration = useBronchiolitisDemonstration({
+    active: demonstrating && bronchiolitisDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.bronchiolitisAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const pediatricRespiratoryDistressDemonstration = usePediatricRespiratoryDistressDemonstration({
@@ -1321,6 +1341,8 @@ export function Cockpit({
     : oxygenDeviceFailureDemoSupported ? oxygenDeviceFailureDemonstration
     : acuteTracheostomyObstructionDemoSupported ? acuteTracheostomyObstructionDemonstration
     : pediatricRespiratoryDistressDemoSupported ? pediatricRespiratoryDistressDemonstration
+    : bronchiolitisDemoSupported ? bronchiolitisDemonstration
+    : croupDemoSupported ? croupDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2224,6 +2246,10 @@ export function Cockpit({
           acuteTracheostomyObstructionDemonstrating={demonstrating && acuteTracheostomyObstructionDemoSupported}
           pediatricRespiratoryDistressGuidance={session.guidance}
           pediatricRespiratoryDistressDemonstrating={demonstrating && pediatricRespiratoryDistressDemoSupported}
+          bronchiolitisGuidance={session.guidance}
+          bronchiolitisDemonstrating={demonstrating && bronchiolitisDemoSupported}
+          croupGuidance={session.guidance}
+          croupDemonstrating={demonstrating && croupDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

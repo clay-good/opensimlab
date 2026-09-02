@@ -168,28 +168,28 @@
           "id": "observable-objectives",
           "status": "missing",
           "evidence": [
-            "This scenario declares 6 objectives; the contract allows at most 5."
+            "Six declared objectives exceed the five the shared catalog counts as independently observable within one session."
           ]
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "bronchiolitis-fixtures.ts binds seed 5348 and content 0.1.0 to expert, routine-treatment error, recovery, and no-action paths. The day-four presentation, the caregiver intake and diaper history, the qualified working diagnosis, the fixed absences that narrow without excluding, and the later report are authored constants; no respiratory, hydration or outcome model is claimed, and no outcome follows from any choice. tests/integration/bronchiolitis-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, and three are time-gated: the feeding and hydration review, the later response, and the handoff each refuse until simulated time has passed. Unsupported choices are recorded events that move nothing, offered at three separate moments — a routine radiograph or a saturation watched alone before the pattern is named, a bronchodilator or an antibiotic before support is activated, and a discharge decided by a number before the later review."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions reconcile the whole-infant severity pattern including the feeding history, name it as the supportive-care pattern it is, activate experienced supportive-care ownership with oxygenation and continuous monitoring, review feeding and hydration after elapsed time, review the strictly later whole-infant response, and hand off active risk. Five further choices are deliberately offered and refused. The lesson examines nobody, makes or confirms no diagnosis, identifies no virus, acquires or interprets no radiography, blood, urine or viral test, chooses or delivers no oxygen, suction, feeding, fluid route or volume, bronchodilator, steroid, antibiotic, nebulized therapy, ventilation, airway maneuver, procedure or treatment, determines no admission or discharge, and predicts no recovery or outcome."
           ]
         },
         {
@@ -201,23 +201,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at handoff with the illness likely not yet at its peak. Later actions cannot restart an ended branch, and the ending certifies no learner diagnosis, no identified virus, no learner-delivered oxygen, feed, fluid or drug, no proven durable recovery, no proven discharge readiness, no determined disposition, and no outcome — and preserves that another diagnosis and bacterial coinfection both stay open."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps, and the tutor also reads the wrong turn just taken, answering each of the five refusals with its own prose. The routine radiograph is answered with what it tends to cause rather than prevent — atelectasis read as pneumonia and answered with antibiotics he does not need. Watching the saturation alone is answered by noting an infant can hold a number while he tires and can stop feeding long before the monitor says so. The bronchodilator is answered by naming the wheeze as small airways full of debris and edema rather than bronchospasm, in a first episode that is not asthma. The antibiotic is answered by distinguishing no authored bacterial focus from coinfection being excluded, which it is not. The discharge is answered with what discharge in bronchiolitis actually rests on, and with day four being around when this illness peaks. Throughout, feeding is treated as a vital sign in an infant this age: 40% of usual intake and two wet diapers is named as the finding that more often decides where he spends the night. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff taking none of the five, and its narration is generated from the tutor's own prose so the two cannot drift apart. A test asserts nothing anywhere examines him, confirms a diagnosis, or selects or delivers oxygen, a feed, a fluid, a bronchodilator or an antibiotic. tests/unit/bronchiolitis-demonstration.test.ts and tests/ui/pediatrics-bronchiolitis.test.tsx verify observed response, all five wrong-choice prompts, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. The counterfactual is over-treatment rather than an ordering slip: the recovery path takes a radiograph, watches the saturation alone, gives a bronchodilator, starts an antibiotic and reaches for discharge on a number — and all five refusals stay visible in the transcript after the correct actions are taken from the same positions."
           ]
         },
         {
@@ -236,23 +236,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "bronchiolitis-fixtures.ts binds exact-content expert, routine-treatment, recovery, and no-action pathways to seed 5348 for deterministic replay through the shared engine, including all three time gates and all five refused choices."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
@@ -294,28 +294,28 @@
           "id": "observable-objectives",
           "status": "missing",
           "evidence": [
-            "This scenario declares 6 objectives; the contract allows at most 5."
+            "Six declared objectives exceed the five the shared catalog counts as independently observable within one session."
           ]
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "croup-fixtures.ts binds seed 7015 and content 0.1.0 to expert, distress-causing error, recovery, and no-action paths. The two-day coryza and two-hour change, the stridor at rest with preserved room-air oxygenation, the fixed absences that place the branch without excluding alternatives, and the early and recurrence reports are authored constants; no airway, drug-response or outcome model is claimed, and no outcome follows from any choice. tests/integration/croup-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, and three are time-gated: the early response, the recurrence review, and the handoff each refuse until simulated time has passed. Unsupported choices are recorded events that move nothing, offered at two separate moments — a bronchodilator or a neck radiograph before severity is graded, and discharge on the early effect or a normal saturation read as low risk before the recurrence review. Unlike the first two lessons in this module, this engine case clears the recorded wrong turn when a correct step lands, so no stale value reaches a later beat."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions read the whole child in her caregiver’s position of comfort, grade severity and keep the alternative red flags open, record minimal-distress support with experienced pediatric and airway-capable ownership and qualified-team treatment intent, review the fixed early response after elapsed time, review recurrence while preserving airway readiness, and hand off. Four further choices are deliberately offered and refused. The lesson examines no mouth or throat, scores, diagnoses, tests, images or swabs nothing, identifies no pathogen, chooses or delivers no drug, dose, route, concentration, repeat interval, oxygen target, flow, interface or nebulizer, performs no airway maneuver, ventilation, intubation or procedure, determines no discharge or admission, and predicts no recovery or outcome."
           ]
         },
         {
@@ -327,23 +327,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at handoff with the treatment effect still capable of wearing off. Later actions cannot restart an ended branch, and the ending certifies no learner diagnosis, no identified pathogen, no learner-selected drug, dose, route or device, no proven recovery, no established discharge readiness, no determined disposition, and no outcome — and preserves that foreign body, anaphylaxis, epiglottitis, bacterial tracheitis and deep-neck infection stay open if the trajectory changes."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps, and the tutor also reads the wrong turn just taken, answering each of the four refusals with its own prose. The through-line is that upsetting this child is itself a clinical act, because crying narrows an already narrowed airway: her caregiver's position of comfort is named as treatment rather than sentiment, and taking her out of it to examine her properly is named as costing more than it could tell you. The bronchodilator is answered by locating the noise — stridor is inspiratory and above the cords, wheeze is expiratory and below them — and by the mask it would take to deliver. The neck film is answered as a cold room, a flat table and a child who will scream, with imaging earning its place only when a specific alternative changes the question. Discharge on the early effect is answered with nebulized epinephrine wearing off and a family returning at three in the morning worse than they left. The normal saturation is answered with hypoxemia being a late finding in upper-airway obstruction: 96% will hold until she is close to exhausted, so it says almost nothing about how much airway she has left. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff taking none of the four and never once moving her, and its narration is generated from the tutor's own prose so the two cannot drift apart. A test asserts nothing anywhere examines her throat, images her, or selects a drug, dose, route or nebulizer. tests/unit/croup-demonstration.test.ts and tests/ui/pediatrics-croup.test.tsx verify observed response, all four wrong-choice prompts, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. The counterfactual is a child made worse by thoroughness rather than an ordering slip: the recovery path reaches for a bronchodilator and a neck film, then discharges on the early effect and reads a normal saturation as low risk — and all four refusals stay visible in the transcript after the correct actions are taken from the same positions."
           ]
         },
         {
@@ -362,23 +362,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "croup-fixtures.ts binds exact-content expert, distress-causing, recovery, and no-action pathways to seed 7015 for deterministic replay through the shared engine, including all three time gates and all four refused choices."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
