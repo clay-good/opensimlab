@@ -87,6 +87,7 @@ import { supportsRaisedIcpDemonstration } from '../../neurology/demo/raised-intr
 import { supportsHerniationDemonstration } from '../../neurology/demo/acute-transtentorial-herniation-pattern-demonstration';
 import { supportsMsccDemonstration } from '../../neurology/demo/metastatic-spinal-cord-compression-demonstration';
 import { supportsDeliriumDemonstration } from '../../neurology/demo/acute-delirium-reversible-causes-demonstration';
+import { supportsDysreflexiaDemonstration } from '../../neurology/demo/autonomic-dysreflexia-authored-trigger-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -205,6 +206,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsHerniationDemonstration,
     supportsMsccDemonstration,
     supportsDeliriumDemonstration,
+    supportsDysreflexiaDemonstration,
   ],
 };
 

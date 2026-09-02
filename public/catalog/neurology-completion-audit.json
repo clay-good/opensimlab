@@ -1811,23 +1811,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "autonomic-dysreflexia-authored-trigger-fixtures.ts binds seed 6679 and content 0.1.0 to expert, hunted-before-sitting-him-up error, recovery, and no-action paths. The verified baseline, the presentation, the intermediate state after upright support, the discrete transition after the kink is freed, and the fixed later reassessment are authored constants; no autonomic, pressure-response or drainage model is claimed, and no outcome follows from any choice. tests/integration/autonomic-dysreflexia-authored-trigger-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the strict reassessment refuses until simulated time has passed since the trigger release, and the handoff refuses until time has passed since that. Two authored transitions punctuate it — upright support produces 166/98 with a rate of 50, and freeing the kink produces 124/76 with a rate of 60 and drainage resuming."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions put a verified baseline of 98/62 beside a reading of 178/106 in a complete T4 injury and keep the bradycardia inside the reflex, name the pattern urgent without closing intracranial, cardiac, medication, pain, infection, urinary, bowel, skin or equipment causes, sit him upright with surveillance and qualified ownership before any search begins, survey the supplied triggers from the bladder and release the one visible external kink, compare a strict reassessment, and hand off active risk. Order is enforced rather than suggested, and refusal names the missing step. This is the only lesson in the module exposing a physical act, and it is bounded to that kink: no insertion, disconnection, irrigation, replacement, catheterization, bowel examination, drug or other procedure is available."
           ]
         },
         {
@@ -1839,23 +1839,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at active-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no sole cause, no predicted individualized response, no durable resolution, no excluded complications or recurrence, no disposition, no prognosis and no outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both open by putting his verified usual seated pressure of 98/62 beside the 178/106 in front of them, because eighty above his own systolic in a complete T4 lesion is the number that matters and a pressure that would look unremarkable on anyone else can be a crisis here. Both keep the bradycardia inside the reflex rather than treating it as a second problem, and both read the split at the lesion — flushed and sweating above, piloerection below — as the sign. The intervention both insist on first is the one that costs nothing and is most often skipped in the rush to find a cause: sit him up, lower the legs, loosen constriction, because it works in every version of this emergency including the ones where no trigger is ever found. The survey then starts at the bladder, where the finding is an absence — no urine for two hours — and the physical act is bounded to freeing one visible kink trapped under the chair rail. The ending reads the two-step improvement as suggestive rather than proof of a sole cause, a repeatable response, or a durable resolution. A test asserts nothing anywhere manipulates the catheter, performs bowel care, selects a drug, or proves the cause. tests/unit/autonomic-dysreflexia-authored-trigger-demonstration.test.ts and tests/ui/neurology-autonomic-dysreflexia.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that went hunting for the trigger before sitting him up can still reach a correct handoff."
           ]
         },
         {
@@ -1874,23 +1874,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "autonomic-dysreflexia-authored-trigger-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 6679 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

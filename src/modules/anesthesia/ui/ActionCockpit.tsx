@@ -149,6 +149,7 @@ import { raisedIcpInlinePrompt } from '../../neurology/tutor/raised-intracranial
 import { herniationInlinePrompt } from '../../neurology/tutor/acute-transtentorial-herniation-pattern-guidance';
 import { msccInlinePrompt } from '../../neurology/tutor/metastatic-spinal-cord-compression-guidance';
 import { deliriumInlinePrompt } from '../../neurology/tutor/acute-delirium-reversible-causes-guidance';
+import { dysreflexiaInlinePrompt } from '../../neurology/tutor/autonomic-dysreflexia-authored-trigger-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2867,6 +2868,7 @@ export interface ActionCockpitProps {
   readonly neurologyHerniationGuidance?: GuidanceLevel;
   readonly neurologyMsccGuidance?: GuidanceLevel;
   readonly neurologyDeliriumGuidance?: GuidanceLevel;
+  readonly neurologyDysreflexiaGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2965,6 +2967,7 @@ export interface ActionCockpitProps {
   readonly neurologyHerniationDemonstrating?: boolean;
   readonly neurologyMsccDemonstrating?: boolean;
   readonly neurologyDeliriumDemonstrating?: boolean;
+  readonly neurologyDysreflexiaDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5773,6 +5776,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNeurologyAutonomicDysreflexiaResponse && (
               <NeurologyAutonomicDysreflexiaTray
                 assessment={props.resuscitation.neurologyAutonomicDysreflexiaAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.neurologyDysreflexiaGuidance}
+                demonstrating={props.neurologyDysreflexiaDemonstrating}
                 onAction={props.onNeurologyAutonomicDysreflexiaResponse ?? (() => {})} />
             )}
             {hasToxicologyMethemoglobinemiaResponse && (
@@ -12770,10 +12776,15 @@ function NeurologyDeliriumTray({ assessment, scenarioVersion, onAction, guidance
   </>;
 }
 
-function NeurologyAutonomicDysreflexiaTray({ assessment, onAction }: {
+function NeurologyAutonomicDysreflexiaTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['neurologyAutonomicDysreflexiaAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onNeurologyAutonomicDysreflexiaResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = dysreflexiaInlinePrompt(guidance, { scenarioVersion, dysreflexia: assessment });
+  const act = demonstrating ? undefined : onAction;
   const trajectory = assessment?.trajectoryAtTick != null;
   const recognition = assessment?.recognitionAtTick != null;
   const support = assessment?.supportAtTick != null;
@@ -12781,22 +12792,27 @@ function NeurologyAutonomicDysreflexiaTray({ assessment, onAction }: {
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="neurology-autonomic-dysreflexia-early-title">
       <div id="neurology-autonomic-dysreflexia-early-title" className="syringe__name">His usual pressure matters.</div>
       <p className="syringe__remaining">Begin with the lesion, verified baseline, sudden change, symptoms, pulse, and the whole person.</p>
       <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neurology-autonomic-dysreflexia-lesion-baseline-pressure-symptoms-rhythm-and-whole-patient')}>Connect baseline + pattern</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-neurology-autonomic-dysreflexia-pattern-without-closing-alternatives-or-definitive-diagnosis')}>Recognize the urgent pattern</Button>}
-        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-neurology-autonomic-dysreflexia-upright-support-monitoring-and-qualified-ownership')}>Sit up + bring help close</Button>}
-        {support && !trigger && <Button className="crisis-drug__action" onClick={() => onAction('review-and-release-neurology-autonomic-dysreflexia-supplied-external-urinary-trigger-within-role')}>Free the visible tubing kink</Button>}
+        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-neurology-autonomic-dysreflexia-lesion-baseline-pressure-symptoms-rhythm-and-whole-patient') : undefined}>Connect baseline + pattern</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-neurology-autonomic-dysreflexia-pattern-without-closing-alternatives-or-definitive-diagnosis') : undefined}>Recognize the urgent pattern</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-neurology-autonomic-dysreflexia-upright-support-monitoring-and-qualified-ownership') : undefined}>Sit up + bring help close</Button>}
+        {support && !trigger && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-and-release-neurology-autonomic-dysreflexia-supplied-external-urinary-trigger-within-role') : undefined}>Free the visible tubing kink</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="neurology-autonomic-dysreflexia-later-title">
       <div id="neurology-autonomic-dysreflexia-later-title" className="syringe__name">Relief still needs watching.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Baseline, triggers, recurrence, complications, prevention, and outcome uncertainty handed off.' : reassessment ? 'Pressure and pulse are near baseline in the fixed report. Recurrence, another trigger, and complications remain open.' : trigger ? 'The visible kink is free and the monitor changed. Reassess after time passes.' : support ? 'Upright support and surveillance are active. Start the supplied trigger survey with urine flow.' : 'Complete the pattern, recognition, and immediate support before trigger review.'}</p>
       <div className="crisis-drug__actions">
-        {trigger && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('reassess-neurology-autonomic-dysreflexia-strict-pressure-pulse-symptom-and-trigger-transition')}>Review the strict response</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-autonomic-dysreflexia-baseline-triggers-recurrence-complications-prevention-and-active-risk')}>Hand off what could return</Button>}
+        {trigger && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reassess-neurology-autonomic-dysreflexia-strict-pressure-pulse-symptom-and-trigger-transition') : undefined}>Review the strict response</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-neurology-autonomic-dysreflexia-baseline-triggers-recurrence-complications-prevention-and-active-risk') : undefined}>Hand off what could return</Button>}
       </div>
     </section>
   </>;

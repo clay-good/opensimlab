@@ -51,6 +51,7 @@ import { raisedIcpCompletionEvidence } from '../../neurology/raised-intracranial
 import { herniationCompletionEvidence } from '../../neurology/acute-transtentorial-herniation-pattern-completion';
 import { msccCompletionEvidence } from '../../neurology/metastatic-spinal-cord-compression-completion';
 import { deliriumCompletionEvidence } from '../../neurology/acute-delirium-reversible-causes-completion';
+import { dysreflexiaCompletionEvidence } from '../../neurology/autonomic-dysreflexia-authored-trigger-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -241,6 +242,7 @@ export function auditClinicalScenario(
     ...herniationCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...msccCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...deliriumCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...dysreflexiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

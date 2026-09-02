@@ -47,8 +47,7 @@ Some labs also carry a **worked example** you can watch and take the controls ba
 point, and a private tutor that reads only what you have actually done. The tutor is silent
 unless you ask for it, says nothing at all on the unassisted setting, and never supplies the
 diagnosis a lesson exists to leave open. Every renal, oncology, endocrine, nursing,
-infectious-disease, neonatology, and toxicology lab has both. Neurology has started — fourteen of its
-fifteen are finished to the same standard — and the rest are being written toward it.
+infectious-disease, neonatology, toxicology, and neurology lab has both.
 
 ## How it works
 
