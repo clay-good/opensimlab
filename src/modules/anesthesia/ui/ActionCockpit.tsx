@@ -136,6 +136,7 @@ import { methanolInlinePrompt } from '../../toxicology/tutor/methanol-visual-aci
 import { delayedLastInlinePrompt } from '../../toxicology/tutor/delayed-local-anesthetic-cns-cardiac-toxicity-guidance';
 import { opioidXylazineInlinePrompt } from '../../toxicology/tutor/opioid-xylazine-persistent-sedation-guidance';
 import { minorStrokeInlinePrompt } from '../../neurology/tutor/minor-nondisabling-acute-ischemic-stroke-guidance';
+import { basilarLvoInlinePrompt } from '../../neurology/tutor/basilar-artery-occlusion-escalation-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2841,6 +2842,7 @@ export interface ActionCockpitProps {
   readonly toxicologyDelayedLastGuidance?: GuidanceLevel;
   readonly toxicologyOpioidXylazineGuidance?: GuidanceLevel;
   readonly neurologyMinorStrokeGuidance?: GuidanceLevel;
+  readonly neurologyBasilarLvoGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2926,6 +2928,7 @@ export interface ActionCockpitProps {
   readonly toxicologyDelayedLastDemonstrating?: boolean;
   readonly toxicologyOpioidXylazineDemonstrating?: boolean;
   readonly neurologyMinorStrokeDemonstrating?: boolean;
+  readonly neurologyBasilarLvoDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5630,6 +5633,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNeurologyBasilarLvoResponse && (
               <NeurologyBasilarLvoTray
                 assessment={props.resuscitation.neurologyBasilarLvoAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.neurologyBasilarLvoGuidance}
+                demonstrating={props.neurologyBasilarLvoDemonstrating}
                 onAction={props.onNeurologyBasilarLvoResponse ?? (() => {})} />
             )}
             {hasNeurologyCerebellarIchResponse && (
@@ -12099,10 +12105,15 @@ function NeurologyMinorStrokeTray({ assessment, scenarioVersion, onAction, guida
   </div>;
 }
 
-function NeurologyBasilarLvoTray({ assessment, onAction }: {
+function NeurologyBasilarLvoTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['neurologyBasilarLvoAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onNeurologyBasilarLvoResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = basilarLvoInlinePrompt(guidance, { scenarioVersion, basilarLvo: assessment });
+  const act = demonstrating ? undefined : onAction;
   const trajectory = assessment?.trajectoryAtTick != null;
   const imaging = assessment?.imagingAtTick != null;
   const boundary = assessment?.boundaryAtTick != null;
@@ -12110,6 +12121,11 @@ function NeurologyBasilarLvoTray({ assessment, onAction }: {
   const later = assessment?.laterAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="neurology-basilar-lvo-recognition-title">
       <div id="neurology-basilar-lvo-recognition-title" className="syringe__name">Posterior signs still need speed.</div>
       <Badge kind="teaching">clock · posterior syndrome · CT · CTA · selection · airway watch</Badge>
@@ -12123,13 +12139,13 @@ function NeurologyBasilarLvoTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {!trajectory && <Button className="crisis-drug__action"
-          onClick={() => onAction('reconcile-neurology-basilar-lvo-clock-posterior-syndrome-and-whole-patient')}>Review clock + posterior syndrome</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('reconcile-neurology-basilar-lvo-clock-posterior-syndrome-and-whole-patient') : undefined}>Review clock + posterior syndrome</Button>}
         {trajectory && !imaging && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-neurology-basilar-lvo-imaging-selection-and-open-mimics')}>Review fixed imaging + selection context</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-neurology-basilar-lvo-imaging-selection-and-open-mimics') : undefined}>Review fixed imaging + selection context</Button>}
         {imaging && !boundary && <Button className="crisis-drug__action"
-          onClick={() => onAction('recognize-neurology-basilar-lvo-thrombectomy-escalation-boundary')}>Recognize the escalation boundary</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('recognize-neurology-basilar-lvo-thrombectomy-escalation-boundary') : undefined}>Recognize the escalation boundary</Button>}
         {boundary && !activation && <Button className="crisis-drug__action"
-          onClick={() => onAction('activate-neurology-basilar-lvo-qualified-endovascular-and-airway-capable-ownership')}>Activate qualified EVT + airway ownership</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('activate-neurology-basilar-lvo-qualified-endovascular-and-airway-capable-ownership') : undefined}>Activate qualified EVT + airway ownership</Button>}
       </div>
       <p className="field__hint">The examination, score, imaging, and selection context are supplied. Qualified stroke, endovascular, transfer, and airway-capable teams own eligibility, treatment, procedures, transport, and deterioration support.</p>
     </section>
@@ -12145,9 +12161,9 @@ function NeurologyBasilarLvoTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {activation && !later && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-neurology-basilar-lvo-strict-later-neurologic-and-airway-trajectory')}>Review the later neurologic report</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-neurology-basilar-lvo-strict-later-neurologic-and-airway-trajectory') : undefined}>Review the later neurologic report</Button>}
         {later && !handoff && <Button className="crisis-drug__action"
-          onClick={() => onAction('handoff-neurology-basilar-lvo-clocks-imaging-deterioration-and-unresolved-outcome')}>Hand off clocks + active risk</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('handoff-neurology-basilar-lvo-clocks-imaging-deterioration-and-unresolved-outcome') : undefined}>Hand off clocks + active risk</Button>}
       </div>
       <p className="field__hint">The later report does not establish reperfusion, treatment effect, durable airway protection, neurological recovery, transfer completion, disposition, prognosis, or outcome.</p>
     </section>

@@ -173,23 +173,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "basilar-artery-occlusion-escalation-fixtures.ts binds seed 6145 and content 0.1.0 to expert, waiting-instead-of-calling error, recovery, and no-action paths. The presentation, the supplied examination and scores, the fixed CT and CTA, and the fixed later report are authored constants; no perfusion, thrombectomy, or recovery model is claimed, and no outcome follows from any choice. tests/integration/basilar-artery-occlusion-escalation-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the later neurological and airway review refuses until simulated time has passed since the activation, and the handoff refuses until time has passed since that. What moves is who has been called rather than the deficit, which is unchanged at the later report — and unchanged is neither failure nor reassurance here."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions read a ten-hour clock as a reason to hurry rather than a closed door, review the pc-ASPECTS and the mid-basilar occlusion as selection facts with the authored absences kept as snapshots, name an escalation boundary that has already been met, call the endovascular and airway-capable owners without letting the thrombolysis review or a period of watching hold that call, compare a fixed later report, and hand off active risk. Order is enforced rather than suggested, and refusal names the missing step. The lesson takes no history, examines nobody, calculates no score, excludes no mimic, determines no eligibility, and selects no thrombolytic, drug, dose, route, access, blood-pressure target, transport, airway device, anesthetic, thrombectomy device, or procedure."
           ]
         },
         {
@@ -201,23 +201,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at active-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no proven vessel patency, no reperfusion, no treatment effect, no durable airway protection, no durable neurologic recovery, no excluded deterioration, no discharge readiness or disposition, and no outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both are built on three things that make this case hard. Ten hours is the number that ends the conversation in the anterior circulation and does not end it here. The posterior syndrome is the one that gets filed under something benign, so both put the NIHSS of 14 against a prestroke Rankin of 0 — a man who was fully independent this morning. And the escalation is not downstream of the thrombolysis question: the two run alongside each other, which is why the boundary exists to trigger a phone call rather than a decision, and why neither the tutor nor the example lets the activation wait on a treatment review or on watching which way he goes. The airway travels with the call, because a present cough and handled secretions are a snapshot, and bulbar findings with fluctuating alertness are the combination that stops being true without warning. The ending says unchanged is neither failure nor reassurance, and proves nothing about patency or reperfusion. A test asserts nothing anywhere scores him, excludes a mimic, determines eligibility, or calls the vessel open. tests/unit/basilar-artery-occlusion-escalation-demonstration.test.ts and tests/ui/neurology-basilar-artery-occlusion-escalation.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that agreed he met the boundary and then waited can still reach a correct handoff."
           ]
         },
         {
@@ -236,23 +236,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "basilar-artery-occlusion-escalation-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 6145 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

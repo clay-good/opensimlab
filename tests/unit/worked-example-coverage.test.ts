@@ -95,7 +95,7 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
     expect(covered).toBeLessThan(NEUROLOGY_SCENARIOS.length);
     const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');
     expect(readme).toContain(`Neurology has started — ${COUNT_WORDS[covered]} of its\n`
-      + `${COUNT_WORDS[NEUROLOGY_SCENARIOS.length]} is`);
+      + `${COUNT_WORDS[NEUROLOGY_SCENARIOS.length]} ${covered === 1 ? 'is' : 'are'}`);
   });
 
   it('covers every toxicology lab', () => {
