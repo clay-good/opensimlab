@@ -189,6 +189,7 @@ import { pediatricSepticShockInlinePrompt } from '../../pediatrics/tutor/pediatr
 import { pediatricDehydrationInlinePrompt } from '../../pediatrics/tutor/pediatric-dehydration-guidance';
 import { pediatricDkaInlinePrompt } from '../../pediatrics/tutor/pediatric-dka-guidance';
 import { pediatricHypoglycemicSeizureInlinePrompt } from '../../pediatrics/tutor/pediatric-hypoglycemic-seizure-guidance';
+import { pediatricFebrileSeizureInlinePrompt } from '../../pediatrics/tutor/pediatric-febrile-seizure-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2947,6 +2948,7 @@ export interface ActionCockpitProps {
   readonly pediatricDehydrationGuidance?: GuidanceLevel;
   readonly pediatricDkaGuidance?: GuidanceLevel;
   readonly pediatricHypoglycemicSeizureGuidance?: GuidanceLevel;
+  readonly pediatricFebrileSeizureGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3085,6 +3087,7 @@ export interface ActionCockpitProps {
   readonly pediatricDehydrationDemonstrating?: boolean;
   readonly pediatricDkaDemonstrating?: boolean;
   readonly pediatricHypoglycemicSeizureDemonstrating?: boolean;
+  readonly pediatricFebrileSeizureDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5818,6 +5821,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasPediatricFebrileSeizureResponse && (
               <PediatricFebrileSeizureTray
                 assessment={props.resuscitation.pediatricFebrileSeizureAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.pediatricFebrileSeizureGuidance}
+                demonstrating={props.pediatricFebrileSeizureDemonstrating}
                 onAction={props.onPediatricFebrileSeizureResponse ?? (() => {})} />
             )}
             {hasPediatricStatusEpilepticusResponse && (
@@ -12260,8 +12266,11 @@ function PediatricHypoglycemicSeizureTray({ assessment, scenarioVersion, guidanc
   </div>;
 }
 
-function PediatricFebrileSeizureTray({ assessment, onAction }: {
+function PediatricFebrileSeizureTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricFebrileSeizureAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onPediatricFebrileSeizureResponse']>;
 }) {
   const trajectory = assessment?.trajectoryAtTick != null;
@@ -12270,7 +12279,17 @@ function PediatricFebrileSeizureTray({ assessment, onAction }: {
   const safety = assessment?.safetyAtTick != null;
   const later = assessment?.laterResponseAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : pediatricFebrileSeizureInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-febrile-seizure-pattern-title">
       <div id="pediatric-febrile-seizure-pattern-title" className="syringe__name">Read the event, then the child.</div>
       <Badge kind="teaching">seizure · fever · recovery · breathing · perfusion</Badge>
@@ -12285,13 +12304,13 @@ function PediatricFebrileSeizureTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {!trajectory && <Button className="crisis-drug__action"
-          onClick={() => onAction('reconcile-pediatric-febrile-seizure-event-recovery-and-fever')}>Review seizure + whole-child recovery</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('reconcile-pediatric-febrile-seizure-event-recovery-and-fever') : undefined}>Review seizure + whole-child recovery</Button>}
         {trajectory && !recognition && <Button className="crisis-drug__action"
-          onClick={() => onAction('recognize-pediatric-febrile-seizure-pattern-and-danger-boundary')}>Recognize the febrile-seizure pattern</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('recognize-pediatric-febrile-seizure-pattern-and-danger-boundary') : undefined}>Recognize the febrile-seizure pattern</Button>}
         {recognition && !care && <Button className="crisis-drug__action"
-          onClick={() => onAction('activate-pediatric-febrile-seizure-qualified-care-ownership')}>Confirm qualified observation</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('activate-pediatric-febrile-seizure-qualified-care-ownership') : undefined}>Confirm qualified observation</Button>}
         {recognition && !safety && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-pediatric-febrile-seizure-infection-recurrence-and-alternatives')}>Review red flags + recurrence</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-febrile-seizure-infection-recurrence-and-alternatives') : undefined}>Review red flags + recurrence</Button>}
       </div>
       <p className="field__hint">Experienced teams own examination, serious-infection and alternative-cause review, testing, medicines, airway support, observation, escalation, and caregiver communication. This lab exposes no learner test, drug, dose, route, access, device, airway, procedure, treatment, or disposition control.</p>
     </section>
@@ -12309,12 +12328,13 @@ function PediatricFebrileSeizureTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {care && safety && !later && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-pediatric-febrile-seizure-later-response')}>Review the 30-minute report</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-febrile-seizure-later-response') : undefined}>Review the 30-minute report</Button>}
         {later && !handoff && <Button className="crisis-drug__action"
-          onClick={() => onAction('handoff-pediatric-febrile-seizure-active-risk')}>Hand off safety + caregiver guidance</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('handoff-pediatric-febrile-seizure-active-risk') : undefined}>Hand off safety + caregiver guidance</Button>}
       </div>
       <p className="field__hint">The fixed report does not prove a benign cause, exclude serious infection, predict recurrence, establish durable neurological recovery, or determine discharge readiness or outcome.</p>
     </section>
+    </div>
   </div>;
 }
 

@@ -1176,28 +1176,28 @@
           "id": "observable-objectives",
           "status": "missing",
           "evidence": [
-            "This scenario declares 6 objectives; the contract allows at most 5."
+            "Six declared objectives exceed the five the shared catalog counts as independently observable within one session."
           ]
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "pediatric-febrile-seizure-fixtures.ts binds seed 2461 and content 0.1.0 to expert, closed-too-early error, recovery, and no-action paths. The twelve-hour febrile illness, the current Hib and pneumococcal immunization context, the first bilateral generalized convulsion of about three minutes that stopped without rescue medicine, the recovering whole-child findings at 39.0°C, the supplied experienced-team assessment of simple features to date, the authored absences, the deliberate absence of any supplied routine glucose or other test, and the fixed minute-30 report are authored constants; no febrile, seizure-threshold, infection or outcome model is claimed, and no outcome follows from any choice. tests/integration/pediatric-febrile-seizure-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, in the branching shape it shares with the other unordered-pair lessons in this module. Qualified care ownership and the infection-recurrence-alternatives review may be recorded in either order, and the later report refuses until both are active and simulated time has passed since whichever landed second. The handoff is gated on another elapsed tick. This engine case authors no refusable choice; what it refuses is order and time."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions reconcile the witnessed event with the child now recovering in front of the learner; recognize a febrile-seizure pattern with simple features to date, which is simultaneously the reason an aggressive workup is the wrong reflex and a claim that settles no fever source and excludes no central-nervous-system infection, serious infection, other cause, deterioration or recurrence; activate experienced pediatric and nursing ownership of comfort, hydration, observation, repeated neurological reassessment, recurrence contingencies, fever-source evaluation and the caregiver conversation; keep the dangerous alternatives under review in parallel; review the strictly later fixed report; and hand off. The tray shows one clear current action per card except at the recognition step, where it deliberately offers both halves of the unordered pair at once. The lesson examines nobody, measures no temperature, times no seizure, acquires or interprets no glucose, urine, blood, culture, lumbar-puncture, EEG, ECG or imaging finding, diagnoses neither the seizure nor the fever source, chooses or delivers no antipyretic, antimicrobial, antiseizure or rescue medicine, fluid, oxygen, dose, concentration, route, access, device, airway maneuver, procedure or treatment, and determines no disposition, prognosis, recurrence or outcome. Two boundaries are stated rather than implied: an antipyretic may be considered by the qualified team for distress and does not prevent febrile seizures, and routine prophylactic antiseizure medicine is not modeled."
           ]
         },
         {
@@ -1209,23 +1209,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at handoff on a child who is awake, interactive and playing, with the fever source unidentified and the dangerous alternatives open. Later actions cannot restart an ended branch, and the ending certifies no learner examination, temperature acquisition, test, lumbar puncture, EEG or imaging, no learner diagnosis or classification, no learner-selected medicine, dose or route, no finally proven simple febrile seizure, no proven benign course, no proven cause, no excluded central-nervous-system or serious infection, no proven treatment effect, no durable recovery, no excluded recurrence, no discharge readiness, no determined disposition, and no outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Seven observed-state prompts at version 0.1.0 read the learner's own recorded steps. There is no wrong-turn prose because the engine authors no refusable choice, and this is the one lesson in the module whose failure mode runs in both directions at once: a well-looking toddler after a first three-minute convulsion invites both a false reassurance and an unnecessary workup. The opening beat notices what was not supplied — no routine glucose, no other test — and says the absence is deliberate. The recognition beat takes the phrase \"simple features to date\" apart and holds both halves: simple so far is what makes an aggressive workup the wrong reflex, and \"to date\" is not a formality. Three of the seven prompts cover the three ways the unordered pair can be half done, with the distinction drawn as surveillance against care, and the caregiver conversation named as part of the medicine rather than a footnote to it. The safety beat says why somebody keeps watching rather than deciding: a child who looks well at minute ten can look different at minute forty. The later beat calls the improving half-hour genuinely reassuring, says it is worth telling the family, and then bounds it — reassurance with boundaries being more useful to this family than reassurance without them. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff, taking the pair care-first as one valid order rather than the required one, and its narration is generated from the tutor's own prose so the two cannot drift apart. A test asserts nothing anywhere examines him, takes a temperature, performs a lumbar puncture, EEG or imaging, or selects an antipyretic, antiseizure medicine, antimicrobial, dose or route. tests/unit/pediatric-febrile-seizure-demonstration.test.ts verifies observed response and every beat against the real engine, including both orders of the unordered pair and that the improving report never flips simpleFebrileSeizureFinallyProven, benignCourseProven, cnsInfectionExcluded, seriousInfectionExcluded or recurrenceExcluded, and tests/ui/pediatrics-febrile-seizure.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. The counterfactual is the one reassurance produces, which is the opposite of every other error path in this module: the common-error path looks after the child correctly and reaches for the later report having never opened the infection, recurrence and alternative-cause review, meeting three of six. The recovery path takes the unordered pair the other way round, red flags watched before anybody is looking after him, and walks into both time gates before clearing them, and still reaches a correct handoff from the same positions."
           ]
         },
         {
@@ -1244,23 +1244,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "pediatric-febrile-seizure-fixtures.ts binds exact-content expert, closed-too-early error, recovery, and no-action pathways to seed 2461 for deterministic replay through the shared engine, including the order refusal, the parallel-care refusal, and both time gates."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
