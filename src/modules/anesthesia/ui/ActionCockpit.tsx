@@ -194,6 +194,7 @@ import { pediatricStatusEpilepticusInlinePrompt } from '../../pediatrics/tutor/p
 import { pediatricAnaphylaxisInlinePrompt } from '../../pediatrics/tutor/pediatric-anaphylaxis-guidance';
 import { pediatricSvtInlinePrompt } from '../../pediatrics/tutor/pediatric-svt-guidance';
 import { pediatricBradycardicArrestInlinePrompt } from '../../pediatrics/tutor/pediatric-bradycardic-arrest-guidance';
+import { pediatricFbaoInlinePrompt } from '../../pediatrics/tutor/pediatric-fbao-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2957,6 +2958,7 @@ export interface ActionCockpitProps {
   readonly pediatricAnaphylaxisGuidance?: GuidanceLevel;
   readonly pediatricSvtGuidance?: GuidanceLevel;
   readonly pediatricBradycardicArrestGuidance?: GuidanceLevel;
+  readonly pediatricFbaoGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3100,6 +3102,7 @@ export interface ActionCockpitProps {
   readonly pediatricAnaphylaxisDemonstrating?: boolean;
   readonly pediatricSvtDemonstrating?: boolean;
   readonly pediatricBradycardicArrestDemonstrating?: boolean;
+  readonly pediatricFbaoDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5873,6 +5876,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasPediatricForeignBodyAirwayObstructionResponse && (
               <PediatricForeignBodyAirwayObstructionTray
                 assessment={props.resuscitation.pediatricForeignBodyAirwayObstructionAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.pediatricFbaoGuidance}
+                demonstrating={props.pediatricFbaoDemonstrating}
                 onAction={props.onPediatricForeignBodyAirwayObstructionResponse ?? (() => {})} />
             )}
             {hasPediatricInjurySafeguardingResponse && (
@@ -12642,8 +12648,11 @@ function PediatricBradycardicArrestTray({ assessment, scenarioVersion, guidance 
   </div>;
 }
 
-function PediatricForeignBodyAirwayObstructionTray({ assessment, onAction }: {
+function PediatricForeignBodyAirwayObstructionTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricForeignBodyAirwayObstructionAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onPediatricForeignBodyAirwayObstructionResponse']>;
 }) {
   const reconciled = assessment?.reconciledAtTick != null;
@@ -12652,7 +12661,17 @@ function PediatricForeignBodyAirwayObstructionTray({ assessment, onAction }: {
   const responsiveCare = assessment?.responsivePathwayAtTick != null;
   const unresponsiveCare = assessment?.unresponsivePathwayAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : pediatricFbaoInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-fbao-pattern-title">
       <div id="pediatric-fbao-pattern-title" className="syringe__name">Let the child’s sound guide urgency.</div>
       <Badge kind="teaching">onset · cough · voice · airflow · color · responsiveness</Badge>
@@ -12666,13 +12685,13 @@ function PediatricForeignBodyAirwayObstructionTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {!reconciled && <Button className="crisis-drug__action"
-          onClick={() => onAction('reconcile-pediatric-foreign-body-airway-obstruction-event-cough-and-whole-child')}>Review choking + whole-child signs</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('reconcile-pediatric-foreign-body-airway-obstruction-event-cough-and-whole-child') : undefined}>Review choking + whole-child signs</Button>}
         {reconciled && !effectiveCough && <Button className="crisis-drug__action"
-          onClick={() => onAction('preserve-pediatric-foreign-body-airway-obstruction-effective-cough-and-surveillance')}>Preserve effective cough + watch closely</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('preserve-pediatric-foreign-body-airway-obstruction-effective-cough-and-surveillance') : undefined}>Preserve effective cough + watch closely</Button>}
         {effectiveCough && !severe && <Button className="crisis-drug__action"
-          onClick={() => onAction('recognize-pediatric-foreign-body-airway-obstruction-severe-responsive-transition')}>Recognize severe responsive obstruction</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('recognize-pediatric-foreign-body-airway-obstruction-severe-responsive-transition') : undefined}>Recognize severe responsive obstruction</Button>}
         {severe && !responsiveCare && <Button className="crisis-drug__action"
-          onClick={() => onAction('activate-pediatric-foreign-body-airway-obstruction-qualified-responsive-pathway')}>Activate qualified choking rescue</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('activate-pediatric-foreign-body-airway-obstruction-qualified-responsive-pathway') : undefined}>Activate qualified choking rescue</Button>}
       </div>
       <p className="field__hint">Qualified pediatric and emergency responders own age-appropriate obstruction care, monitoring, visible-object review, and escalation. This surface exposes no learner blow, thrust, sweep, suction, compression, breath, oxygen, device, airway procedure, object removal, or treatment control.</p>
     </section>
@@ -12689,12 +12708,13 @@ function PediatricForeignBodyAirwayObstructionTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {responsiveCare && !unresponsiveCare && <Button className="crisis-drug__action"
-          onClick={() => onAction('activate-pediatric-foreign-body-airway-obstruction-unresponsive-cpr-pathway')}>Review transition + activate unresponsive care</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('activate-pediatric-foreign-body-airway-obstruction-unresponsive-cpr-pathway') : undefined}>Review transition + activate unresponsive care</Button>}
         {unresponsiveCare && !handoff && <Button className="crisis-drug__action"
-          onClick={() => onAction('handoff-pediatric-foreign-body-airway-obstruction-active-risk')}>Hand off active obstruction risk</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('handoff-pediatric-foreign-body-airway-obstruction-active-risk') : undefined}>Hand off active obstruction risk</Button>}
       </div>
       <p className="field__hint">The fixed transition does not prove object or location, pulse status, cardiac arrest, treatment modality or effect, clearance, neurological recovery, prognosis, or outcome. Only a visible object is reviewed; no blind sweep is exposed.</p>
     </section>
+    </div>
   </div>;
 }
 
