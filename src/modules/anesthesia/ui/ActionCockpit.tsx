@@ -185,6 +185,7 @@ import { bronchiolitisInlinePrompt } from '../../pediatrics/tutor/bronchiolitis-
 import { croupInlinePrompt } from '../../pediatrics/tutor/croup-guidance';
 import { pediatricStatusAsthmaticusInlinePrompt } from '../../pediatrics/tutor/pediatric-status-asthmaticus-guidance';
 import { pediatricSepsisInlinePrompt } from '../../pediatrics/tutor/pediatric-sepsis-guidance';
+import { pediatricSepticShockInlinePrompt } from '../../pediatrics/tutor/pediatric-septic-shock-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2939,6 +2940,7 @@ export interface ActionCockpitProps {
   readonly croupGuidance?: GuidanceLevel;
   readonly pediatricStatusAsthmaticusGuidance?: GuidanceLevel;
   readonly pediatricSepsisGuidance?: GuidanceLevel;
+  readonly pediatricSepticShockGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3073,6 +3075,7 @@ export interface ActionCockpitProps {
   readonly croupDemonstrating?: boolean;
   readonly pediatricStatusAsthmaticusDemonstrating?: boolean;
   readonly pediatricSepsisDemonstrating?: boolean;
+  readonly pediatricSepticShockDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5774,6 +5777,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasPediatricSepticShockResponse && (
               <PediatricSepticShockTray
                 assessment={props.resuscitation.pediatricSepticShockAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.pediatricSepticShockGuidance}
+                demonstrating={props.pediatricSepticShockDemonstrating}
                 onAction={props.onPediatricSepticShockResponse ?? (() => {})} />
             )}
             {hasPediatricDehydrationResponse && (
@@ -11948,8 +11954,11 @@ function PediatricSepsisTray({ assessment, scenarioVersion, guidance = 'unassist
   </div>;
 }
 
-function PediatricSepticShockTray({ assessment, onAction }: {
+function PediatricSepticShockTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricSepticShockAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onPediatricSepticShockResponse']>;
 }) {
   const trajectory = assessment?.trajectoryAtTick != null;
@@ -11958,7 +11967,17 @@ function PediatricSepticShockTray({ assessment, onAction }: {
   const source = assessment?.sourceAtTick != null;
   const later = assessment?.laterResponseAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : pediatricSepticShockInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-septic-shock-pattern-title">
       <div id="pediatric-septic-shock-pattern-title" className="syringe__name">More fluid is not automatic.</div>
       <Badge kind="teaching">mentation · pulses · refill · urine · lactate</Badge>
@@ -11973,13 +11992,13 @@ function PediatricSepticShockTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {!trajectory && <Button className="crisis-drug__action"
-          onClick={() => onAction('reconcile-pediatric-septic-shock-care-and-trajectory')}>Review care + perfusion trajectory</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('reconcile-pediatric-septic-shock-care-and-trajectory') : undefined}>Review care + perfusion trajectory</Button>}
         {trajectory && !recognition && <Button className="crisis-drug__action"
-          onClick={() => onAction('recognize-pediatric-septic-shock-after-fluid-reassessment')}>Recognize persistent septic shock</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('recognize-pediatric-septic-shock-after-fluid-reassessment') : undefined}>Recognize persistent septic shock</Button>}
         {recognition && !rescue && <Button className="crisis-drug__action"
-          onClick={() => onAction('activate-pediatric-septic-shock-critical-care-and-vasoactive-ownership')}>Activate qualified shock rescue</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('activate-pediatric-septic-shock-critical-care-and-vasoactive-ownership') : undefined}>Activate qualified shock rescue</Button>}
         {recognition && !source && <Button className="crisis-drug__action"
-          onClick={() => onAction('escalate-pediatric-septic-shock-source-control')}>Escalate source-control review</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('escalate-pediatric-septic-shock-source-control') : undefined}>Escalate source-control review</Button>}
       </div>
       <p className="field__hint">Experienced teams own antimicrobials, tests, fluid decisions, access, vasoactives, monitoring, and source procedures. No universal fluid total, MAP target, agent, access route, or response is taught.</p>
     </section>
@@ -11997,12 +12016,13 @@ function PediatricSepticShockTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {source && rescue && !later && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-pediatric-septic-shock-later-response')}>Review the 90-minute report</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-septic-shock-later-response') : undefined}>Review the 90-minute report</Button>}
         {later && !handoff && <Button className="crisis-drug__action"
-          onClick={() => onAction('handoff-pediatric-septic-shock-active-risk')}>Hand off active shock risk</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('handoff-pediatric-septic-shock-active-risk') : undefined}>Hand off active shock risk</Button>}
       </div>
       <p className="field__hint">One unnamed vasoactive and source planning remain qualified-team work. Better pressure or refill does not prove treatment effect, source control, durable recovery, or readiness to leave care.</p>
     </section>
+    </div>
   </div>;
 }
 

@@ -243,6 +243,8 @@ import { usePediatricStatusAsthmaticusDemonstration } from '../../pediatrics/dem
 import { supportsPediatricStatusAsthmaticusDemonstration } from '../../pediatrics/demo/pediatric-status-asthmaticus-demonstration';
 import { usePediatricSepsisDemonstration } from '../../pediatrics/demo/usePediatricSepsisDemonstration';
 import { supportsPediatricSepsisDemonstration } from '../../pediatrics/demo/pediatric-sepsis-demonstration';
+import { usePediatricSepticShockDemonstration } from '../../pediatrics/demo/usePediatricSepticShockDemonstration';
+import { supportsPediatricSepticShockDemonstration } from '../../pediatrics/demo/pediatric-septic-shock-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -516,6 +518,7 @@ export function Cockpit({
   const croupDemoSupported = supportsCroupDemonstration(scenario);
   const pediatricStatusAsthmaticusDemoSupported = supportsPediatricStatusAsthmaticusDemonstration(scenario);
   const pediatricSepsisDemoSupported = supportsPediatricSepsisDemonstration(scenario);
+  const pediatricSepticShockDemoSupported = supportsPediatricSepticShockDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -617,6 +620,7 @@ export function Cockpit({
     || croupDemoSupported
     || pediatricStatusAsthmaticusDemoSupported
     || pediatricSepsisDemoSupported
+    || pediatricSepticShockDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -780,6 +784,12 @@ export function Cockpit({
     active: demonstrating && pediatricStatusAsthmaticusDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.pediatricStatusAsthmaticusAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const pediatricSepticShockDemonstration = usePediatricSepticShockDemonstration({
+    active: demonstrating && pediatricSepticShockDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.pediatricSepticShockAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const pediatricSepsisDemonstration = usePediatricSepsisDemonstration({
@@ -1365,6 +1375,7 @@ export function Cockpit({
     : croupDemoSupported ? croupDemonstration
     : pediatricStatusAsthmaticusDemoSupported ? pediatricStatusAsthmaticusDemonstration
     : pediatricSepsisDemoSupported ? pediatricSepsisDemonstration
+    : pediatricSepticShockDemoSupported ? pediatricSepticShockDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2276,6 +2287,8 @@ export function Cockpit({
           pediatricStatusAsthmaticusDemonstrating={demonstrating && pediatricStatusAsthmaticusDemoSupported}
           pediatricSepsisGuidance={session.guidance}
           pediatricSepsisDemonstrating={demonstrating && pediatricSepsisDemoSupported}
+          pediatricSepticShockGuidance={session.guidance}
+          pediatricSepticShockDemonstrating={demonstrating && pediatricSepticShockDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

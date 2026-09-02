@@ -672,28 +672,28 @@
           "id": "observable-objectives",
           "status": "missing",
           "evidence": [
-            "This scenario declares 6 objectives; the contract allows at most 5."
+            "Six declared objectives exceed the five the shared catalog counts as independently observable within one session."
           ]
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "pediatric-septic-shock-fixtures.ts binds seed 6704 and content 0.1.0 to expert, unescalated-source error, recovery, and no-action paths. The three-day febrile history, the qualified examination and ultrasound concerning for a perforated appendiceal source, the minute-15 antimicrobial and the two individually reassessed 10 mL/kg aliquots at minutes 10 and 25, the minute-35 findings with MAP 43, refill 6 seconds and lactate 6.2, the new congestion warnings, the supplied Phoenix classification of 2 cardiovascular points, and the fixed minute-90 report are authored constants; no infection, fluid-response, vasoactive-response or outcome model is claimed, and no outcome follows from any choice. tests/integration/pediatric-septic-shock-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, and its structure is not a straight line. Rescue and source-control escalation are unordered against each other: either may be recorded first, and the later report refuses until both are active and simulated time has passed since whichever landed second. The handoff is gated on another elapsed tick. As with pediatric sepsis, this engine case authors no refusable choice; what it refuses is order and time."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions reconcile the supplied care record against a worsening trajectory; recognize persistent shock after two individually reassessed aliquots and read the new crackles and hepatomegaly as congestion warnings rather than as proof of fluid causation or as permission to ignore the shock; activate experienced critical-care, nursing, pharmacy and access ownership of continuous reassessment and one locally selected first-line vasoactive started without waiting for central access; escalate source clarification and source-control planning in parallel rather than after the shock resolves; review the strictly later fixed report; and hand off. The tray shows one clear current action per card except at the recognition step, where it deliberately offers both halves of the unordered pair at once — a design tests/ui/pediatric-septic-shock.test.tsx pins as a button count of two at that step. The lesson examines nobody, calculates no Phoenix, PEWS or SIRS score, diagnoses nothing, acquires or interprets no culture, specimen, lactate, gas, laboratory test, ultrasound or image, identifies no source or pathogen, chooses or delivers no antimicrobial, drug, dose, concentration, route, interval, intravenous, intraosseous or central access, fluid, bolus, volume, rate, vasoactive, oxygen, device, flow, ventilation, airway maneuver, source-control procedure or treatment, and determines no disposition, prognosis or outcome. No universal fluid total, MAP target, agent or access route is taught."
           ]
         },
         {
@@ -705,23 +705,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at handoff on partial stabilization with active shock: one unnamed vasoactive running, persistent congestion findings, a cardiovascular Phoenix subscore still at 2, and an unconfirmed source with source-control planning still in progress. Later actions cannot restart an ended branch, and the ending certifies no learner diagnosis, no learner-calculated score, no learner-selected fluid, vasoactive, dose or access, no confirmed source or pathogen, no proven treatment effect, no shock resolution, no durable recovery, no determined disposition, and no outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Seven observed-state prompts at version 0.1.0 read the learner's own recorded steps. There is no wrong-turn prose because the engine authors no refusable choice; the reflex the lesson interrupts is a third aliquot, and the structure the tutor has to respect is that rescue and source control are unordered, so three of the seven prompts cover the three ways that pair can be half done — neither started, source moving without an owner for her pressure, and rescue running while the reason she is in shock is still in her abdomen. The opening beat reads the direction rather than the numbers, putting arrival beside minute thirty-five: refill four seconds to six, MAP 54 to 43, urine 0.3 to 0.2, tired to drowsy at GCS 11. The recognition beat is careful in both directions about the crackles and the liver edge: congestion warnings, not proof the fluid caused them and not permission to ignore the shock, and the reason the next thing reached for is not another bolus. The later beat names real movement — GCS 13, MAP 60, refill three seconds, lactate 5.4 — and then the column that did not move. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff, taking the unordered pair rescue-first as one valid order rather than the required one, and its narration is generated from the tutor's own prose so the two cannot drift apart. A test asserts nothing anywhere examines her, calculates the score, names a pathogen or a procedure, or selects a bolus, vasoactive, dose, rate or access. tests/unit/pediatric-septic-shock-demonstration.test.ts verifies observed response and every beat against the real engine, including both orders of the unordered pair, and tests/ui/pediatrics-septic-shock.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. The counterfactual is a half-treated child rather than an over-treated one: the common-error path rescues the shock correctly and reaches for the later report having never escalated the source, meeting three of six. The recovery path takes the unordered pair in the opposite order, source before rescue, and walks into both time gates before clearing them, and still reaches a correct handoff from the same positions."
           ]
         },
         {
@@ -740,23 +740,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "pediatric-septic-shock-fixtures.ts binds exact-content expert, unescalated-source error, recovery, and no-action pathways to seed 6704 for deterministic replay through the shared engine, including the order refusal, the parallel-care refusal, and both time gates."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
