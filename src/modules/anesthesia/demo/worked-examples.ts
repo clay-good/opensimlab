@@ -107,6 +107,7 @@ import { supportsAcuteSevereAsthmaDemonstration } from '../../respiratory-medici
 import { supportsCopdTransitionDemonstration } from '../../respiratory-medicine/demo/copd-exacerbation-transition-reassessment-demonstration';
 import { supportsCapHypoxemiaDemonstration } from '../../respiratory-medicine/demo/community-acquired-pneumonia-hypoxemia-reassessment-demonstration';
 import { supportsPostPeDyspneaDemonstration } from '../../respiratory-medicine/demo/post-pulmonary-embolism-persistent-dyspnea-demonstration';
+import { supportsApeSupportDemonstration } from '../../respiratory-medicine/demo/acute-pulmonary-edema-respiratory-support-reassessment-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -249,6 +250,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsCopdTransitionDemonstration,
     supportsCapHypoxemiaDemonstration,
     supportsPostPeDyspneaDemonstration,
+    supportsApeSupportDemonstration,
   ],
 };
 

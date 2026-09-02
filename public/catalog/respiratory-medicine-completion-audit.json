@@ -551,23 +551,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "acute-pulmonary-edema-respiratory-support-reassessment-fixtures.ts binds seed 7370 and content 0.1.0 to expert, cause-review-before-recognition error, recovery, and no-action paths. The arrival state, the delivered-care record, the 30-minute observations, the interface sampling and the two blood gases are authored constants; no edema, diuresis, vasodilator or support-response model is claimed, and no outcome follows from any choice. tests/integration/acute-pulmonary-edema-support-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through five recorded steps on the shared simulation clock, and the handoff is time-gated: it refuses until simulated time has passed since the escalation. What moves is what has been reconciled, named and called; what does not move is the congestion, the acidemia, or the precipitant."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions separate correct initial care from the trajectory since, name progressive hypoxemic, hypercapnic, acidemic failure from the mentation, effort, oxygenation, ventilation and acid-base evidence together rather than any single value, read the treated pressure and persistent congestion while ischemia, arrhythmia, mechanical disease, infection, embolism, treatment effect, renal and medication factors stay open, activate respiratory, critical-care and airway-capable help for a failure already established, and hand off. Order is enforced rather than suggested, and refusal names the missing step. The lesson examines nobody, acquires or interprets no monitoring, blood gas, ECG, imaging or ultrasound, selects or changes no oxygen device, flow, FiO₂, interface, mode, pressure, PEEP or ventilator setting, starts or operates no noninvasive support, delivers or titrates no medication, performs no airway procedure, and determines no disposition."
           ]
         },
         {
@@ -579,23 +579,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at active-deterioration handoff. Later actions cannot restart an ended branch, and the ending certifies no delivered oxygen or medication, no started noninvasive support or selected setting, no airway procedure, no determined disposition, and no outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both separate the experienced team's correct initial care — upright, monitored noninvasive support with titrated oxygen, a loop diuretic and a pressure-appropriate vasodilator — from where she has ended up, and note that her pressure has genuinely come down from 196/118 to 108/68. The failure is then named from the mentation, the effort and the gas together: a respiratory rate of 34 that is now 12, single words, a saturation of 86% on an authored FiO₂ of 0.60, an end-tidal CO₂ of 60, and a pH of 7.18 with a PaCO₂ of 68. The falling rate is fatigue rather than improvement — the same trap as the asthma lab, reached here through a treatment that is working on the thing it was aimed at. The treated pressure is read as afterload rather than shock and the persistent crackles as unresolved congestion, with ischemia, arrhythmia, mechanical disease, infection, embolism, treatment effect and renal and medication factors all open. The escalation deliberately follows that review rather than preceding it, because the help being called is airway-capable help for a failure that has been established. A test asserts nothing anywhere touches the support or its settings, delivers a drug, or performs an airway procedure. tests/unit/ape-support-demonstration.test.ts and tests/ui/respiratory-ape-support.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that went to the precipitants before naming the failure can still reach a correct handoff."
           ]
         },
         {
@@ -614,23 +614,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "acute-pulmonary-edema-respiratory-support-reassessment-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 7370 for deterministic replay through the shared engine, including the time-gated handoff."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

@@ -211,6 +211,8 @@ import { useCapHypoxemiaDemonstration } from '../../respiratory-medicine/demo/us
 import { supportsCapHypoxemiaDemonstration } from '../../respiratory-medicine/demo/community-acquired-pneumonia-hypoxemia-reassessment-demonstration';
 import { usePostPeDyspneaDemonstration } from '../../respiratory-medicine/demo/usePostPeDyspneaDemonstration';
 import { supportsPostPeDyspneaDemonstration } from '../../respiratory-medicine/demo/post-pulmonary-embolism-persistent-dyspnea-demonstration';
+import { useApeSupportDemonstration } from '../../respiratory-medicine/demo/useApeSupportDemonstration';
+import { supportsApeSupportDemonstration } from '../../respiratory-medicine/demo/acute-pulmonary-edema-respiratory-support-reassessment-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -468,6 +470,7 @@ export function Cockpit({
   const copdTransitionDemoSupported = supportsCopdTransitionDemonstration(scenario);
   const capHypoxemiaDemoSupported = supportsCapHypoxemiaDemonstration(scenario);
   const postPeDyspneaDemoSupported = supportsPostPeDyspneaDemonstration(scenario);
+  const apeSupportDemoSupported = supportsApeSupportDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -553,6 +556,7 @@ export function Cockpit({
     || copdTransitionDemoSupported
     || capHypoxemiaDemoSupported
     || postPeDyspneaDemoSupported
+    || apeSupportDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -704,6 +708,12 @@ export function Cockpit({
     active: demonstrating && termTransitionDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.neonatologyTermTransitionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const apeSupportDemonstration = useApeSupportDemonstration({
+    active: demonstrating && apeSupportDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.apeSupportAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const postPeDyspneaDemonstration = usePostPeDyspneaDemonstration({
@@ -1193,6 +1203,7 @@ export function Cockpit({
     : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
+    : apeSupportDemoSupported ? apeSupportDemonstration
     : postPeDyspneaDemoSupported ? postPeDyspneaDemonstration
     : capHypoxemiaDemoSupported ? capHypoxemiaDemonstration
     : copdTransitionDemoSupported ? copdTransitionDemonstration
@@ -2068,6 +2079,8 @@ export function Cockpit({
           capHypoxemiaDemonstrating={demonstrating && capHypoxemiaDemoSupported}
           postPeDyspneaGuidance={session.guidance}
           postPeDyspneaDemonstrating={demonstrating && postPeDyspneaDemoSupported}
+          apeSupportGuidance={session.guidance}
+          apeSupportDemonstrating={demonstrating && apeSupportDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
