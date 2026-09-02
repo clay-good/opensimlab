@@ -177,6 +177,7 @@ import { chronicOpioidHypoventilationInlinePrompt } from '../../respiratory-medi
 import { neuromuscularRespiratoryFailureInlinePrompt } from '../../respiratory-medicine/tutor/neuromuscular-respiratory-failure-reassessment-guidance';
 import { obesityHypoventilationInlinePrompt } from '../../respiratory-medicine/tutor/obesity-hypoventilation-reassessment-guidance';
 import { noninvasiveVentilationSelectionInlinePrompt } from '../../respiratory-medicine/tutor/noninvasive-ventilation-selection-guidance';
+import { highFlowOxygenEscalationInlinePrompt } from '../../respiratory-medicine/tutor/high-flow-nasal-oxygen-escalation-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2923,6 +2924,7 @@ export interface ActionCockpitProps {
   readonly neuromuscularRespiratoryFailureGuidance?: GuidanceLevel;
   readonly obesityHypoventilationGuidance?: GuidanceLevel;
   readonly noninvasiveVentilationSelectionGuidance?: GuidanceLevel;
+  readonly highFlowOxygenEscalationGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3049,6 +3051,7 @@ export interface ActionCockpitProps {
   readonly neuromuscularRespiratoryFailureDemonstrating?: boolean;
   readonly obesityHypoventilationDemonstrating?: boolean;
   readonly noninvasiveVentilationSelectionDemonstrating?: boolean;
+  readonly highFlowOxygenEscalationDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5689,6 +5692,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasHighFlowOxygenEscalationResponse && (
               <HighFlowOxygenEscalationTray
                 assessment={props.resuscitation.highFlowOxygenEscalationAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.highFlowOxygenEscalationGuidance}
+                demonstrating={props.highFlowOxygenEscalationDemonstrating}
                 onAction={props.onHighFlowOxygenEscalationResponse ?? (() => {})} />
             )}
             {hasOxygenDeviceFailureResponse && (
@@ -11252,8 +11258,11 @@ function NoninvasiveVentilationSelectionTray({ assessment, scenarioVersion, guid
   </div>;
 }
 
-function HighFlowOxygenEscalationTray({ assessment, onAction }: {
+function HighFlowOxygenEscalationTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['highFlowOxygenEscalationAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onHighFlowOxygenEscalationResponse']>;
 }) {
   const trajectory = assessment?.trajectoryAtTick != null;
@@ -11263,7 +11272,17 @@ function HighFlowOxygenEscalationTray({ assessment, onAction }: {
   const guards = assessment?.guardsAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   const unsupportedChoice = assessment?.lastUnsupportedChoice;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : highFlowOxygenEscalationInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="high-flow-oxygen-escalation-choice-title">
       <div id="high-flow-oxygen-escalation-choice-title" className="syringe__name">Match the support to the breath.</div>
       <Badge kind="teaching">signal · oxygen need · work · CO₂ · circulation</Badge>
@@ -11278,13 +11297,13 @@ function HighFlowOxygenEscalationTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {!trajectory && <Button className="crisis-drug__action"
-          onClick={() => onAction('reconcile-high-flow-oxygen-conventional-support-trajectory')}>Review oxygen + work trend</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('reconcile-high-flow-oxygen-conventional-support-trajectory') : undefined}>Review oxygen + work trend</Button>}
         {trajectory && !suitability && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-high-flow-oxygen-suitability-and-rescue-readiness')}>Review suitability + rescue</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-high-flow-oxygen-suitability-and-rescue-readiness') : undefined}>Review suitability + rescue</Button>}
         {suitability && !selected && <>
-          <Button className="crisis-drug__action" onClick={() => onAction('select-high-flow-nasal-oxygen-escalation')}>High-flow nasal oxygen</Button>
-          <Button className="crisis-drug__action" onClick={() => onAction('continue-conventional-oxygen')}>Continue reservoir mask</Button>
-          <Button className="crisis-drug__action" onClick={() => onAction('select-bilevel-niv-first')}>Bilevel NIV</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('select-high-flow-nasal-oxygen-escalation') : undefined}>High-flow nasal oxygen</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('continue-conventional-oxygen') : undefined}>Continue reservoir mask</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('select-bilevel-niv-first') : undefined}>Bilevel NIV</Button>
         </>}
       </div>
       <p className="field__hint">The choice records a support goal only. No source, device, cannula, fit, flow, temperature, humidification, FiO₂, target, or treatment technique is selected or delivered.</p>
@@ -11304,17 +11323,18 @@ function HighFlowOxygenEscalationTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {selected && !response && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-high-flow-oxygen-early-response')}>Review 30-minute response</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-high-flow-oxygen-early-response') : undefined}>Review 30-minute response</Button>}
         {response && !guards && <>
-          <Button className="crisis-drug__action" onClick={() => onAction('preserve-high-flow-oxygen-monitoring-and-failure-guards')}>Continue + watch triggers</Button>
-          <Button className="crisis-drug__action" onClick={() => onAction('mark-high-flow-respiratory-failure-resolved')}>Mark respiratory failure resolved</Button>
-          <Button className="crisis-drug__action" onClick={() => onAction('reduce-high-flow-monitoring')}>Reduce monitoring now</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('preserve-high-flow-oxygen-monitoring-and-failure-guards') : undefined}>Continue + watch triggers</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('mark-high-flow-respiratory-failure-resolved') : undefined}>Mark respiratory failure resolved</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reduce-high-flow-monitoring') : undefined}>Reduce monitoring now</Button>
         </>}
         {guards && !handoff && <Button className="crisis-drug__action"
-          onClick={() => onAction('handoff-high-flow-oxygen-escalation')}>Hand off active support + rescue plan</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('handoff-high-flow-oxygen-escalation') : undefined}>Hand off active support + rescue plan</Button>}
       </div>
       <p className="field__hint">Worsening alertness, airway protection, work, oxygenation, ventilation, hemodynamics, tolerance, secretions, or another cause prompts immediate experienced reassessment. HFNO must not delay escalation.</p>
     </section>
+    </div>
   </div>;
 }
 
