@@ -1559,23 +1559,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "failed-obstetric-intubation-oxygenation-first-fixtures.ts binds seed 7272 and content 0.1.0 to expert, take-stock-before-declaring error, recovery, and no-action paths. The two failed attempts, the ventilating rescue device with sustained capnography, the fetal baseline, and the fixed 3-minute course report are authored constants; no airway, oxygenation, aspiration or awareness model is claimed, and no outcome follows from any choice. tests/integration/failed-obstetric-intubation-oxygenation-first-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the fixed 3-minute report refuses until simulated time has passed since the decision review, and the handoff refuses until time has passed since that. What moves is how the room is organized around an unsecured airway; what does not move is the airway itself, the aspiration and awareness questions, or the birth."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions name the failed intubation out loud and activate oxygenation-first shared ownership, read the attempts, rescue device, ventilation, aspiration risk and fetal urgency as one picture, review the attempt-limit, oxygenation, CICO, awareness and aspiration boundaries, review the individualized wake-or-proceed judgment alongside parallel readiness, review the fixed report, and hand off unresolved risk. Order is enforced rather than suggested, and every later step refuses until the failure has been declared. The lesson examines nobody, interprets no monitoring, diagnoses nothing, manages no airway, delivers no oxygen or ventilation, selects or manipulates no device, changes no position, performs no suction or front-of-neck access, makes no wake-or-proceed decision, performs no surgery or delivery, assesses no newborn, and selects no drug, dose, device, anesthetic or birth plan."
           ]
         },
         {
@@ -1587,23 +1587,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at unresolved-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no airway safety, no excluded aspiration, no excluded awareness, no fetal recovery, no treatment effect, no newborn safety, no safety disposition, and no maternal, newborn or other outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both open by saying the words out loud, and both say why: declaring it is what stops a third attempt, repeated attempts are how a manageable airway becomes an unmanageable one, and naming the failure is an action rather than an admission. The airway is then read as working and the situation as still open — a second-generation supraglottic device with sustained waveform capnography and a saturation recovered to 97% is adequate oxygenation, which is what matters, because the tube was never the goal. The oxygenation is not allowed to close anything: displacement, aspiration against an unprotected airway, awareness under an anesthetic nobody can titrate to her responses, and progression to can't-intubate-can't-oxygenate all stay live at 97%, and front-of-neck access is named as a plan the qualified team already holds rather than a last resort nobody has considered. Wake-or-proceed is held as an individual judgment that no protocol and no lesson makes, turning on maternal factors, a fetal baseline of 70, the surgical indication, device and aspiration risk, and the people in the room. The ending gives back an airway that is working and not safe, and a question about awareness she is not yet able to answer. A test asserts nothing anywhere examines her, manages an airway, manipulates a device, or makes the wake-or-proceed decision. tests/unit/failed-obstetric-intubation-oxygenation-first-demonstration.test.ts and tests/ui/obstetrics-failed-obstetric-intubation-oxygenation-first.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that took stock before declaring the failure can still reach a correct handoff."
           ]
         },
         {
@@ -1622,23 +1622,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "failed-obstetric-intubation-oxygenation-first-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 7272 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

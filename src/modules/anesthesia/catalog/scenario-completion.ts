@@ -64,6 +64,7 @@ import { cordProlapseCompletionEvidence } from '../../obstetrics/umbilical-cord-
 import { uterineRuptureCompletionEvidence } from '../../obstetrics/suspected-uterine-rupture-recognition-completion';
 import { magnesiumToxicityCompletionEvidence } from '../../obstetrics/magnesium-sulfate-toxicity-recognition-completion';
 import { highNeuraxialCompletionEvidence } from '../../obstetrics/high-neuraxial-block-obstetric-coordination-completion';
+import { failedIntubationCompletionEvidence } from '../../obstetrics/failed-obstetric-intubation-oxygenation-first-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -267,6 +268,7 @@ export function auditClinicalScenario(
     ...uterineRuptureCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...magnesiumToxicityCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...highNeuraxialCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...failedIntubationCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),
