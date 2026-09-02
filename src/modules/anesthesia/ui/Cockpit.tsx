@@ -221,6 +221,8 @@ import { useBronchiectasisMucusPluggingDemonstration } from '../../respiratory-m
 import { supportsBronchiectasisMucusPluggingDemonstration } from '../../respiratory-medicine/demo/bronchiectasis-mucus-plugging-reassessment-demonstration';
 import { useChronicOpioidHypoventilationDemonstration } from '../../respiratory-medicine/demo/useChronicOpioidHypoventilationDemonstration';
 import { supportsChronicOpioidHypoventilationDemonstration } from '../../respiratory-medicine/demo/chronic-opioid-related-hypoventilation-reassessment-demonstration';
+import { useNeuromuscularRespiratoryFailureDemonstration } from '../../respiratory-medicine/demo/useNeuromuscularRespiratoryFailureDemonstration';
+import { supportsNeuromuscularRespiratoryFailureDemonstration } from '../../respiratory-medicine/demo/neuromuscular-respiratory-failure-reassessment-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -483,6 +485,7 @@ export function Cockpit({
   const largePleuralEffusionDemoSupported = supportsLargePleuralEffusionDemonstration(scenario);
   const bronchiectasisMucusPluggingDemoSupported = supportsBronchiectasisMucusPluggingDemonstration(scenario);
   const chronicOpioidHypoventilationDemoSupported = supportsChronicOpioidHypoventilationDemonstration(scenario);
+  const neuromuscularRespiratoryFailureDemoSupported = supportsNeuromuscularRespiratoryFailureDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -573,6 +576,7 @@ export function Cockpit({
     || largePleuralEffusionDemoSupported
     || bronchiectasisMucusPluggingDemoSupported
     || chronicOpioidHypoventilationDemoSupported
+    || neuromuscularRespiratoryFailureDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -730,6 +734,12 @@ export function Cockpit({
     active: demonstrating && chronicOpioidHypoventilationDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.chronicOpioidHypoventilationAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const neuromuscularRespiratoryFailureDemonstration = useNeuromuscularRespiratoryFailureDemonstration({
+    active: demonstrating && neuromuscularRespiratoryFailureDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.neuromuscularRespiratoryFailureAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const bronchiectasisMucusPluggingDemonstration = useBronchiectasisMucusPluggingDemonstration({
@@ -1244,6 +1254,7 @@ export function Cockpit({
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
     : chronicOpioidHypoventilationDemoSupported ? chronicOpioidHypoventilationDemonstration
+    : neuromuscularRespiratoryFailureDemoSupported ? neuromuscularRespiratoryFailureDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2133,6 +2144,8 @@ export function Cockpit({
           bronchiectasisMucusPluggingDemonstrating={demonstrating && bronchiectasisMucusPluggingDemoSupported}
           chronicOpioidHypoventilationGuidance={session.guidance}
           chronicOpioidHypoventilationDemonstrating={demonstrating && chronicOpioidHypoventilationDemoSupported}
+          neuromuscularRespiratoryFailureGuidance={session.guidance}
+          neuromuscularRespiratoryFailureDemonstrating={demonstrating && neuromuscularRespiratoryFailureDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

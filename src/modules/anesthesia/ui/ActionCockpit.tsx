@@ -174,6 +174,7 @@ import { postTensionPneumothoraxInlinePrompt } from '../../respiratory-medicine/
 import { largePleuralEffusionInlinePrompt } from '../../respiratory-medicine/tutor/large-unilateral-pleural-effusion-reassessment-guidance';
 import { bronchiectasisMucusPluggingInlinePrompt } from '../../respiratory-medicine/tutor/bronchiectasis-mucus-plugging-reassessment-guidance';
 import { chronicOpioidHypoventilationInlinePrompt } from '../../respiratory-medicine/tutor/chronic-opioid-related-hypoventilation-reassessment-guidance';
+import { neuromuscularRespiratoryFailureInlinePrompt } from '../../respiratory-medicine/tutor/neuromuscular-respiratory-failure-reassessment-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2917,6 +2918,7 @@ export interface ActionCockpitProps {
   readonly largePleuralEffusionGuidance?: GuidanceLevel;
   readonly bronchiectasisMucusPluggingGuidance?: GuidanceLevel;
   readonly chronicOpioidHypoventilationGuidance?: GuidanceLevel;
+  readonly neuromuscularRespiratoryFailureGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3040,6 +3042,7 @@ export interface ActionCockpitProps {
   readonly largePleuralEffusionDemonstrating?: boolean;
   readonly bronchiectasisMucusPluggingDemonstrating?: boolean;
   readonly chronicOpioidHypoventilationDemonstrating?: boolean;
+  readonly neuromuscularRespiratoryFailureDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5656,6 +5659,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNeuromuscularRespiratoryFailureResponse && (
               <NeuromuscularRespiratoryFailureTray
                 assessment={props.resuscitation.neuromuscularRespiratoryFailureAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.neuromuscularRespiratoryFailureGuidance}
+                demonstrating={props.neuromuscularRespiratoryFailureDemonstrating}
                 onAction={props.onNeuromuscularRespiratoryFailureResponse ?? (() => {})} />
             )}
             {hasObesityHypoventilationResponse && (
@@ -11053,8 +11059,11 @@ function ChronicOpioidHypoventilationTray({ assessment, scenarioVersion, onActio
   </div>;
 }
 
-function NeuromuscularRespiratoryFailureTray({ assessment, onAction }: {
+function NeuromuscularRespiratoryFailureTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['neuromuscularRespiratoryFailureAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onNeuromuscularRespiratoryFailureResponse']>;
 }) {
   const trajectory = assessment?.trajectoryAtTick != null;
@@ -11063,16 +11072,26 @@ function NeuromuscularRespiratoryFailureTray({ assessment, onAction }: {
   const review = assessment?.reviewAtTick != null;
   const ownership = assessment?.ownershipAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : neuromuscularRespiratoryFailureInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="neuromuscular-respiratory-failure-pattern-title">
       <div id="neuromuscular-respiratory-failure-pattern-title" className="syringe__name">Muscle strength can fade before saturation tells the story.</div>
       <Badge kind="teaching">serial change · shallow breathing · hypercapnia · pulse present</Badge>
       <div className="syringe__meta">function · orthopnea · sleep · FVC · SNIP · cough flow</div>
       <p className="syringe__remaining" role="status">{escalation ? 'Urgent experienced evaluation connected' : failure ? 'Failure pattern held · connect owners while review continues' : trajectory ? 'Whole trajectory reconciled · name the pattern' : 'Begin with the person and the trend'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={trajectory} onClick={() => onAction('reconcile-neuromuscular-respiratory-failure-trajectory')}>Review breathing + weakness trajectory</Button>
-        <Button className="crisis-drug__action" disabled={!trajectory || failure} onClick={() => onAction('recognize-neuromuscular-respiratory-failure')}>Recognize convergent failure pattern</Button>
-        <Button className="crisis-drug__action" disabled={!failure || escalation} onClick={() => onAction('activate-neuromuscular-respiratory-failure-escalation')}>Connect ventilation + airway-ready owners</Button>
+        <Button className="crisis-drug__action" disabled={trajectory} aria-disabled={demonstrating} onClick={act ? () => act('reconcile-neuromuscular-respiratory-failure-trajectory') : undefined}>Review breathing + weakness trajectory</Button>
+        <Button className="crisis-drug__action" disabled={!trajectory || failure} aria-disabled={demonstrating} onClick={act ? () => act('recognize-neuromuscular-respiratory-failure') : undefined}>Recognize convergent failure pattern</Button>
+        <Button className="crisis-drug__action" disabled={!failure || escalation} aria-disabled={demonstrating} onClick={act ? () => act('activate-neuromuscular-respiratory-failure-escalation') : undefined}>Connect ventilation + airway-ready owners</Button>
       </div>
       <p className="field__hint">Symptoms, supine change, serial muscle and cough measures, carbon dioxide, bulbar function, and test quality travel together. No oxygen saturation or mechanics value is a universal isolated cutoff.</p>
     </section>
@@ -11082,12 +11101,13 @@ function NeuromuscularRespiratoryFailureTray({ assessment, onAction }: {
       <div className="syringe__meta">respiratory · neurology · swallowing · nutrition · caregivers</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Active risk + unresolved work handed off' : ownership ? 'Shared ownership connected · advance time before handoff' : escalation && review ? 'Both urgent lanes connected · coordinate the whole team' : failure ? 'Escalation and safety review are open in parallel' : 'Recognize the pattern before planning'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={!failure || review} onClick={() => onAction('review-neuromuscular-respiratory-failure-bulbar-cough-and-alternatives')}>Review cough + bulbar + open causes</Button>
-        <Button className="crisis-drug__action" disabled={!escalation || !review || ownership} onClick={() => onAction('coordinate-neuromuscular-respiratory-failure-goals-and-ownership')}>Coordinate priorities + shared owners</Button>
-        <Button className="crisis-drug__action" disabled={!ownership || handoff} onClick={() => onAction('handoff-neuromuscular-respiratory-failure-reassessment')}>Hand off active risk + open work</Button>
+        <Button className="crisis-drug__action" disabled={!failure || review} aria-disabled={demonstrating} onClick={act ? () => act('review-neuromuscular-respiratory-failure-bulbar-cough-and-alternatives') : undefined}>Review cough + bulbar + open causes</Button>
+        <Button className="crisis-drug__action" disabled={!escalation || !review || ownership} aria-disabled={demonstrating} onClick={act ? () => act('coordinate-neuromuscular-respiratory-failure-goals-and-ownership') : undefined}>Coordinate priorities + shared owners</Button>
+        <Button className="crisis-drug__action" disabled={!ownership || handoff} aria-disabled={demonstrating} onClick={act ? () => act('handoff-neuromuscular-respiratory-failure-reassessment') : undefined}>Hand off active risk + open work</Button>
       </div>
       <p className="field__hint">No FVC, SNIP, cough, swallow, or neurologic test; oxygen, NIV, mode, pressure, backup rate, cough-assist setting, suction, intubation, tracheostomy, nutrition, drug, treatment, disposition, prognosis, or outcome is performed or chosen.</p>
     </section>
+    </div>
   </div>;
 }
 

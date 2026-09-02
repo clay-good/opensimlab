@@ -1,5 +1,5 @@
 /**
- * Reference transcripts for the post-drainage pneumothorax lesson, replayed
+ * Reference transcripts for the opioid-hypoventilation lesson, replayed
  * through the real engine.
  *
  * The evidence and contributor reviews may be completed in either order, so
