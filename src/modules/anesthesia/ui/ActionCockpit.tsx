@@ -186,6 +186,7 @@ import { croupInlinePrompt } from '../../pediatrics/tutor/croup-guidance';
 import { pediatricStatusAsthmaticusInlinePrompt } from '../../pediatrics/tutor/pediatric-status-asthmaticus-guidance';
 import { pediatricSepsisInlinePrompt } from '../../pediatrics/tutor/pediatric-sepsis-guidance';
 import { pediatricSepticShockInlinePrompt } from '../../pediatrics/tutor/pediatric-septic-shock-guidance';
+import { pediatricDehydrationInlinePrompt } from '../../pediatrics/tutor/pediatric-dehydration-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2941,6 +2942,7 @@ export interface ActionCockpitProps {
   readonly pediatricStatusAsthmaticusGuidance?: GuidanceLevel;
   readonly pediatricSepsisGuidance?: GuidanceLevel;
   readonly pediatricSepticShockGuidance?: GuidanceLevel;
+  readonly pediatricDehydrationGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3076,6 +3078,7 @@ export interface ActionCockpitProps {
   readonly pediatricStatusAsthmaticusDemonstrating?: boolean;
   readonly pediatricSepsisDemonstrating?: boolean;
   readonly pediatricSepticShockDemonstrating?: boolean;
+  readonly pediatricDehydrationDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5785,6 +5788,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasPediatricDehydrationResponse && (
               <PediatricDehydrationTray
                 assessment={props.resuscitation.pediatricDehydrationAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.pediatricDehydrationGuidance}
+                demonstrating={props.pediatricDehydrationDemonstrating}
                 onAction={props.onPediatricDehydrationResponse ?? (() => {})} />
             )}
             {hasPediatricDiabeticKetoacidosisResponse && (
@@ -12026,8 +12032,11 @@ function PediatricSepticShockTray({ assessment, scenarioVersion, guidance = 'una
   </div>;
 }
 
-function PediatricDehydrationTray({ assessment, onAction }: {
+function PediatricDehydrationTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricDehydrationAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onPediatricDehydrationResponse']>;
 }) {
   const trajectory = assessment?.trajectoryAtTick != null;
@@ -12036,7 +12045,17 @@ function PediatricDehydrationTray({ assessment, onAction }: {
   const safety = assessment?.safetyAtTick != null;
   const later = assessment?.laterResponseAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : pediatricDehydrationInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-dehydration-pattern-title">
       <div id="pediatric-dehydration-pattern-title" className="syringe__name">Read losses through the whole child.</div>
       <Badge kind="teaching">intake · losses · mentation · hydration · urine</Badge>
@@ -12051,13 +12070,13 @@ function PediatricDehydrationTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {!trajectory && <Button className="crisis-drug__action"
-          onClick={() => onAction('reconcile-pediatric-dehydration-losses-and-perfusion')}>Review losses + whole child</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('reconcile-pediatric-dehydration-losses-and-perfusion') : undefined}>Review losses + whole child</Button>}
         {trajectory && !recognition && <Button className="crisis-drug__action"
-          onClick={() => onAction('recognize-pediatric-dehydration-with-hypovolemia')}>Recognize dehydration + hypovolemia</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('recognize-pediatric-dehydration-with-hypovolemia') : undefined}>Recognize dehydration + hypovolemia</Button>}
         {recognition && !rehydration && <Button className="crisis-drug__action"
-          onClick={() => onAction('activate-pediatric-dehydration-qualified-rehydration-ownership')}>Activate qualified rehydration</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('activate-pediatric-dehydration-qualified-rehydration-ownership') : undefined}>Activate qualified rehydration</Button>}
         {recognition && !safety && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-pediatric-dehydration-ongoing-losses-and-safety')}>Review losses + safety</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-dehydration-ongoing-losses-and-safety') : undefined}>Review losses + safety</Button>}
       </div>
       <p className="field__hint">Experienced teams own oral support, breastfeeding and phase-appropriate feeding, tests, access, route escalation, fluids, electrolytes, and monitoring. This lab exposes no percentage, deficit, maintenance, solution, route, volume, or rate control.</p>
     </section>
@@ -12075,12 +12094,13 @@ function PediatricDehydrationTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {rehydration && safety && !later && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-pediatric-dehydration-later-response')}>Review the 60-minute report</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-dehydration-later-response') : undefined}>Review the 60-minute report</Button>}
         {later && !handoff && <Button className="crisis-drug__action"
-          onClick={() => onAction('handoff-pediatric-dehydration-active-risk')}>Hand off active rehydration risk</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('handoff-pediatric-dehydration-active-risk') : undefined}>Hand off active rehydration risk</Button>}
       </div>
       <p className="field__hint">Better interaction or hydration signs do not prove causal treatment effect, complete deficit correction, durable recovery, discharge readiness, or outcome.</p>
     </section>
+    </div>
   </div>;
 }
 

@@ -798,28 +798,28 @@
           "id": "observable-objectives",
           "status": "missing",
           "evidence": [
-            "This scenario declares 6 objectives; the contract allows at most 5."
+            "Six declared objectives exceed the five the shared catalog counts as independently observable within one session."
           ]
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "pediatric-dehydration-fixtures.ts binds seed 8236 and content 0.1.0 to expert, unwatched-rehydration error, recovery, and no-action paths. The three-day watery-diarrhea history, the same-scale 12.6 kg a week before the current 12 kg, the hydration signs, the preserved mentation, perfusion and pressure, the supplied experienced-team classification of clinical dehydration with compensated volume depletion and no current shock, the authored absences, and the fixed minute-60 report are authored constants; no fluid-loss, absorption, electrolyte or outcome model is claimed, and no outcome follows from any choice. tests/integration/pediatric-dehydration-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, in the branching shape it shares with pediatric septic shock rather than a straight line. Rehydration ownership and the ongoing-loss safety review are unordered against each other: either may be recorded first, and the later report refuses until both are active and simulated time has passed since whichever landed second. The handoff is gated on another elapsed tick. As with the other two pediatric sepsis-family lessons, this engine case authors no refusable choice; what it refuses is order and time."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions reconcile the supplied losses, intake, weight history and hydration signs while treating the weight change as one clue rather than a stand-alone dehydration percentage or intravascular deficit; recognize compensated volume depletion and say plainly that this is not current shock; activate experienced pediatric and nursing ownership of locally protocolized oral rehydration in small frequent amounts, the feeding context, intake and output, tolerance and route escalation; keep ongoing losses, tolerance, alternative causes and escalation triggers under review in parallel; review the strictly later fixed report; and hand off. The tray shows one clear current action per card except at the recognition step, where it deliberately offers both halves of the unordered pair at once. The lesson examines nobody, weighs nobody, calculates no percentage, deficit or maintenance, diagnoses gastroenteritis or any other cause, acquires or interprets no glucose, electrolyte, renal, acid-base, urine, stool, culture or imaging test, chooses or delivers no oral, nasogastric, intraosseous or intravenous fluid, solution, route, bolus, volume, rate, electrolyte, glucose, access, device, drug, feeding plan, procedure or treatment, and determines no disposition, prognosis, recurrence or outcome."
           ]
         },
         {
@@ -831,23 +831,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at handoff on partial improvement with losses still running: tolerating oral rehydration, one urine and one further watery stool, and no repeat weight, intake total, laboratory panel, completed deficit correction or route endpoint supplied. Later actions cannot restart an ended branch, and the ending certifies no learner diagnosis, no learner-calculated percentage or deficit, no learner-selected solution, route, volume, rate or access, no proven treatment effect, no completed rehydration, no durable recovery, no discharge readiness, no determined disposition, and no outcome — and preserves the alternative serious causes the fixed negative findings narrow without excluding."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Seven observed-state prompts at version 0.1.0 read the learner's own recorded steps. There is no wrong-turn prose because the engine authors no refusable choice; the reflex the lesson interrupts is arithmetic — two weights a week apart make a percentage, a percentage makes a deficit, and a deficit makes a cannula, in a child who is interactive, warm and perfusing and for whom the mouth is the route the evidence supports. The opening beat says why the weight is one clue rather than a calculation, including that a week-old weight also contains a week of not eating. The recognition beat puts the compensation on the other side of the chart and treats the authored absences as fixed snapshots rather than permanent exclusions, which is the reason the safety review exists. Three of the seven prompts cover the three ways the unordered pair can be half done: neither started, a watch set with nobody owning the fluid, and rehydration owned without the watch for why it might not work. The later beat names what genuinely improved and then names what was not supplied — no repeat weight, no intake total, no laboratory panel, no completed correction, no route endpoint. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff, taking the pair rehydration-first as one valid order rather than the required one, and its narration is generated from the tutor's own prose so the two cannot drift apart. A test asserts nothing anywhere examines or weighs her, calculates a percentage or deficit, or selects a solution, route, volume, rate, access or feeding plan. tests/unit/pediatric-dehydration-demonstration.test.ts verifies observed response and every beat against the real engine, including both orders of the unordered pair, and tests/ui/pediatrics-dehydration.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. The counterfactual is a plan without a watch on it: the common-error path activates rehydration correctly and reaches for the later report having never reviewed the ongoing losses and escalation triggers, meeting three of six. The recovery path takes the unordered pair in the opposite order, safety before rehydration, and walks into both time gates before clearing them, and still reaches a correct handoff from the same positions."
           ]
         },
         {
@@ -866,23 +866,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "pediatric-dehydration-fixtures.ts binds exact-content expert, unwatched-rehydration error, recovery, and no-action pathways to seed 8236 for deterministic replay through the shared engine, including the order refusal, the parallel-care refusal, and both time gates."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
