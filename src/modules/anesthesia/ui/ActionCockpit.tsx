@@ -146,6 +146,7 @@ import { gbsInlinePrompt } from '../../neurology/tutor/guillain-barre-respirator
 import { meningitisInlinePrompt } from '../../neurology/tutor/acute-bacterial-meningitis-first-hour-guidance';
 import { encephalitisInlinePrompt } from '../../neurology/tutor/suspected-herpes-simplex-encephalitis-guidance';
 import { raisedIcpInlinePrompt } from '../../neurology/tutor/raised-intracranial-pressure-visual-threat-guidance';
+import { herniationInlinePrompt } from '../../neurology/tutor/acute-transtentorial-herniation-pattern-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2861,6 +2862,7 @@ export interface ActionCockpitProps {
   readonly neurologyMeningitisGuidance?: GuidanceLevel;
   readonly neurologyEncephalitisGuidance?: GuidanceLevel;
   readonly neurologyRaisedIcpGuidance?: GuidanceLevel;
+  readonly neurologyHerniationGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2956,6 +2958,7 @@ export interface ActionCockpitProps {
   readonly neurologyMeningitisDemonstrating?: boolean;
   readonly neurologyEncephalitisDemonstrating?: boolean;
   readonly neurologyRaisedIcpDemonstrating?: boolean;
+  readonly neurologyHerniationDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5740,6 +5743,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNeurologyHerniationResponse && (
               <NeurologyHerniationTray
                 assessment={props.resuscitation.neurologyHerniationAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.neurologyHerniationGuidance}
+                demonstrating={props.neurologyHerniationDemonstrating}
                 onAction={props.onNeurologyHerniationResponse ?? (() => {})} />
             )}
             {hasNeurologyMsccResponse && (
@@ -12626,10 +12632,15 @@ function NeurologyRaisedIcpTray({ assessment, scenarioVersion, onAction, guidanc
   </>;
 }
 
-function NeurologyHerniationTray({ assessment, onAction }: {
+function NeurologyHerniationTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['neurologyHerniationAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onNeurologyHerniationResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = herniationInlinePrompt(guidance, { scenarioVersion, herniation: assessment });
+  const act = demonstrating ? undefined : onAction;
   const trajectory = assessment?.trajectoryAtTick != null;
   const recognition = assessment?.recognitionAtTick != null;
   const ownership = assessment?.ownershipAtTick != null;
@@ -12637,22 +12648,27 @@ function NeurologyHerniationTray({ assessment, onAction }: {
   const later = assessment?.laterAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="neurology-herniation-early-title">
       <div id="neurology-herniation-early-title" className="syringe__name">The pattern changed now.</div>
       <p className="syringe__remaining">Consciousness, pupils, movement, physiology, and structure converge. One sign never stands alone.</p>
       <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neurology-herniation-clock-consciousness-pupils-motor-physiology-and-whole-patient')}>Review the rapid change</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-neurology-converging-transtentorial-herniation-pattern-without-isolated-pupil-or-complete-triad')}>Recognize the whole pattern</Button>}
-        {recognition && !ownership && <Button className="crisis-drug__action" onClick={() => onAction('activate-neurology-herniation-qualified-airway-neurocritical-neurosurgical-and-brain-rescue-ownership')}>Activate brain rescue owners</Button>}
-        {ownership && !boundary && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-herniation-immediate-systemic-brain-rescue-imaging-and-definitive-source-control-boundary')}>Review rescue boundaries</Button>}
+        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-neurology-herniation-clock-consciousness-pupils-motor-physiology-and-whole-patient') : undefined}>Review the rapid change</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-neurology-converging-transtentorial-herniation-pattern-without-isolated-pupil-or-complete-triad') : undefined}>Recognize the whole pattern</Button>}
+        {recognition && !ownership && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-neurology-herniation-qualified-airway-neurocritical-neurosurgical-and-brain-rescue-ownership') : undefined}>Activate brain rescue owners</Button>}
+        {ownership && !boundary && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-neurology-herniation-immediate-systemic-brain-rescue-imaging-and-definitive-source-control-boundary') : undefined}>Review rescue boundaries</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="neurology-herniation-later-title">
       <div id="neurology-herniation-later-title" className="syringe__name">Rescue first. Certainty follows.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Lesion, airway, pressure, seizure, surgery, recovery, and outcome uncertainty handed off.' : later ? 'Qualified rescue is active, but the pupil remains nonreactive and definitive control is unresolved.' : boundary ? 'Parallel rescue and definitive-control owners are active. Review the fixed 15-minute report after time passes.' : 'Complete the pattern, recognition, owners, and rescue boundary before reassessment.'}</p>
       <div className="crisis-drug__actions">
-        {boundary && !later && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-herniation-strict-later-qualified-rescue-and-unresolved-neurologic-trajectory')}>Review the 15-minute report</Button>}
-        {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-herniation-lesion-airway-pressure-seizure-surgery-and-active-risk')}>Hand off rescue + active risk</Button>}
+        {boundary && !later && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-neurology-herniation-strict-later-qualified-rescue-and-unresolved-neurologic-trajectory') : undefined}>Review the 15-minute report</Button>}
+        {later && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-neurology-herniation-lesion-airway-pressure-seizure-surgery-and-active-risk') : undefined}>Hand off rescue + active risk</Button>}
       </div>
     </section>
   </>;

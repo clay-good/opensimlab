@@ -1,0 +1,34 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
+import { ACUTE_TRANSTENTORIAL_HERNIATION_PATTERN } from './scenarios/acute-transtentorial-herniation-pattern';
+import { HERNIATION_FIXTURES } from './acute-transtentorial-herniation-pattern-fixtures';
+import { HERNIATION_TUTOR_VERSION } from './tutor/acute-transtentorial-herniation-pattern-guidance';
+import { HERNIATION_DEMONSTRATION_VERSION } from './demo/acute-transtentorial-herniation-pattern-demonstration';
+
+/**
+ * Exact-version evidence for one lesson, and no claim about any other.
+ *
+ * `observable-objectives` is deliberately not answered here. This scenario
+ * declares six objectives against a cap of five, which is a content-design
+ * decision affecting scenarios across several modules rather than something
+ * this file may settle on its own. The shared audit keeps naming it.
+ */
+export function herniationCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
+  if (moduleId !== 'neurology' || capabilityVersion !== '0.1.0-alpha.48'
+    || scenario.metadata.id !== HERNIATION_FIXTURES.scenarioId
+    || scenario.metadata.version !== '0.1.0' || HERNIATION_FIXTURES.contentVersion !== '0.1.0'
+    || HERNIATION_FIXTURES.seed !== 6556
+    || HERNIATION_TUTOR_VERSION !== '0.1.0' || HERNIATION_DEMONSTRATION_VERSION !== '0.1.0'
+    || JSON.stringify(scenario) !== JSON.stringify(ACUTE_TRANSTENTORIAL_HERNIATION_PATTERN)) return [];
+  return [
+    { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['acute-transtentorial-herniation-pattern-fixtures.ts binds seed 6556 and content 0.1.0 to expert, reviewed-before-recognizing error, recovery, and no-action paths. The presentation, the twelve-minute decline, the pre-decline CT, and the fixed 15-minute report are authored constants; no intracranial-pressure, osmotic or surgical model is claimed, and no outcome follows from any choice. tests/integration/acute-transtentorial-herniation-pattern-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions.'] },
+    { id: 'meaningful-progression', status: 'satisfied', evidence: ['The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the later rescue review refuses until simulated time has passed since the boundary review, and the handoff refuses until time has passed since that. What moves is what has been started; the right pupil is 6 mm and nonreactive at the beginning and at the end.'] },
+    { id: 'meaningful-actions-and-choices', status: 'satisfied', evidence: ['Six declared decisions state four changes and the twelve minutes they occupied, name the emergency without waiting for an isolated sign or a complete triad, call airway, neurocritical, neurosurgical and operating-room ownership in one breath, read the pre-decline CT as context with definitive source control named as the actual treatment, compare a fixed later report, and hand off active risk. Order is enforced rather than suggested, and refusal names the missing step. The lesson takes no history, examines nobody, calculates no score, interprets no imaging, performs no airway procedure, and selects no drug, dose, or procedure.'] },
+    { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The branch ends at active-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no proven treatment effect, no neurologic recovery, no durable pressure control, no definitive source control, no disposition, no prognosis and no outcome.'] },
+    { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that went to review the rescue options before naming the emergency can still reach a correct handoff.'] },
+    { id: 'reference-transcripts', status: 'satisfied', evidence: ['acute-transtentorial-herniation-pattern-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 6556 for deterministic replay through the shared engine, including the two time-gated checkpoints.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Six observed-state prompts at version ${HERNIATION_TUTOR_VERSION} read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example ${HERNIATION_DEMONSTRATION_VERSION} drives the ordinary controls through the real engine to handoff. Both are built on convergence rather than on any one sign: the consciousness fell from 14 to 9, a right pupil became 6 mm and nonreactive, the left arm began extending while the right still localizes, and the rate and pressure moved — all inside twelve minutes in a man with a known right temporal mass. Each of those alone has a long differential and together they have one, so both refuse the two ways this gets delayed. A complete Cushing triad is named as a description of how bad things get rather than a threshold for acting, with the respiratory irregularity explicitly not required; and the CT is read as context obtained immediately before the steep decline, describing the situation he was in rather than the one he is in, with repeat imaging not allowed in front of the call. The airway travels with the rescue because he is breathing at 14 and no longer reliably protecting it, and the operating-room pathway is part of the same breath because definitive source control is the actual treatment and takes longest to arrange. The ending hands off everything started and nothing yet achieved, with the pupil unchanged. A test asserts nothing anywhere calculates a score, interprets the imaging, performs the airway, or claims recovery. tests/unit/acute-transtentorial-herniation-pattern-demonstration.test.ts and tests/ui/neurology-acute-transtentorial-herniation.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding.`] },
+    { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending.'] },
+    { id: 'report-control-coverage', status: 'missing', evidence: ['The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound.'] },
+  ];
+}
