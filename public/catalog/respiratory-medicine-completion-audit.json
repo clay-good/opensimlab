@@ -1428,28 +1428,28 @@
           "id": "observable-objectives",
           "status": "missing",
           "evidence": [
-            "This scenario declares 6 objectives; the contract allows at most 5."
+            "Six declared objectives exceed the five the shared catalog counts as independently observable within one session."
           ]
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "noninvasive-ventilation-selection-fixtures.ts binds seed 8634 and content 0.1.0 to expert, wrong-modality error, recovery, and no-action paths. The baseline gas, the arrival severity, the verified hour of controlled oxygen, bronchodilator, antimuscarinic, corticosteroid and antibiotic therapy, the repeat gas, the suitability report and the fixed first-hour response are authored constants; no ventilatory, device-response or outcome model is claimed, and no outcome follows from any choice. tests/integration/noninvasive-ventilation-selection-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, and two of them are time-gated: the first-hour response refuses until simulated time has passed since the selection, and the handoff refuses until time has passed again. Uniquely in this module, an unsupported support goal is a recorded event that moves nothing — selecting CPAP alone or high-flow nasal oxygen alone is answered and leaves the patient exactly as she was."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions reconcile an hour of verified correct therapy against persistent acidotic hypercapnia, review suitability and rapid rescue readiness without treating the report as a contraindication checklist, select a closely monitored bilevel NIV trial as a goal, read the fixed first-hour response after elapsed time, name the continuation and failure guards, and hand off. Two further support goals are deliberately offered and refused: CPAP alone provides distending pressure rather than ventilatory assistance, and high-flow nasal oxygen alone may support oxygenation while the acidosis continues. The lesson examines nobody, acquires or interprets no blood gas, imaging or other test, diagnoses nothing, selects or delivers no oxygen, medication, sedation, suction, mask ventilation or intubation, chooses no device, interface, fit, pressure, PEEP, backup rate, trigger, cycle, flow or FiO₂, operates no ventilator, decides no ceiling of care, and determines no disposition, prognosis or outcome."
           ]
         },
         {
@@ -1461,23 +1461,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at first-hour handoff with the trial still running. Later actions cannot restart an ended branch, and the ending certifies no proven durable NIV success, no learner-performed intubation, no decided ceiling of care, no determined disposition, and no outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps, and this lesson's tutor also reads the wrong turn they just took: the engine publishes which unsupported goal was last offered, so the tutor answers CPAP alone and high-flow alone with different prose instead of repeating one generic beat. CPAP is named as the right tool for a different problem — it holds the airway open and does not do the breathing — and high-flow as the choice that risks a better-looking saturation while the acidosis carries on; both note that nothing changed, because nothing about her changed. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff without ever making the wrong choice, and its narration is generated from the tutor's own prose so the two cannot drift apart. Both open by asking what an hour of correct treatment has already failed to fix, and are explicit that none of that care was the learner's to give and all of it was right. Both refuse to let the suitability report become a checklist, both insist a trial without a failure guard is an assumption with a mask on it, and both keep every device setting with the qualified staff who own it. A test asserts nothing anywhere examines her, interprets a gas, or sets an interface, pressure, backup rate or FiO₂. tests/unit/noninvasive-ventilation-selection-demonstration.test.ts and tests/ui/respiratory-noninvasive-ventilation-selection.test.tsx verify observed response, the two wrong-choice prompts, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. The counterfactual here is stronger than an ordering slip: the recovery path tries CPAP alone, then high-flow alone, and both refusals stay visible in the transcript after the correct selection is made from the same position."
           ]
         },
         {
@@ -1496,23 +1496,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "noninvasive-ventilation-selection-fixtures.ts binds exact-content expert, wrong-modality, recovery, and no-action pathways to seed 8634 for deterministic replay through the shared engine, including both time gates and both refused support goals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

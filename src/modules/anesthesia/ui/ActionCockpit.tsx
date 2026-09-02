@@ -176,6 +176,7 @@ import { bronchiectasisMucusPluggingInlinePrompt } from '../../respiratory-medic
 import { chronicOpioidHypoventilationInlinePrompt } from '../../respiratory-medicine/tutor/chronic-opioid-related-hypoventilation-reassessment-guidance';
 import { neuromuscularRespiratoryFailureInlinePrompt } from '../../respiratory-medicine/tutor/neuromuscular-respiratory-failure-reassessment-guidance';
 import { obesityHypoventilationInlinePrompt } from '../../respiratory-medicine/tutor/obesity-hypoventilation-reassessment-guidance';
+import { noninvasiveVentilationSelectionInlinePrompt } from '../../respiratory-medicine/tutor/noninvasive-ventilation-selection-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2921,6 +2922,7 @@ export interface ActionCockpitProps {
   readonly chronicOpioidHypoventilationGuidance?: GuidanceLevel;
   readonly neuromuscularRespiratoryFailureGuidance?: GuidanceLevel;
   readonly obesityHypoventilationGuidance?: GuidanceLevel;
+  readonly noninvasiveVentilationSelectionGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3046,6 +3048,7 @@ export interface ActionCockpitProps {
   readonly chronicOpioidHypoventilationDemonstrating?: boolean;
   readonly neuromuscularRespiratoryFailureDemonstrating?: boolean;
   readonly obesityHypoventilationDemonstrating?: boolean;
+  readonly noninvasiveVentilationSelectionDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5678,6 +5681,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNoninvasiveVentilationSelectionResponse && (
               <NoninvasiveVentilationSelectionTray
                 assessment={props.resuscitation.noninvasiveVentilationSelectionAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.noninvasiveVentilationSelectionGuidance}
+                demonstrating={props.noninvasiveVentilationSelectionDemonstrating}
                 onAction={props.onNoninvasiveVentilationSelectionResponse ?? (() => {})} />
             )}
             {hasHighFlowOxygenEscalationResponse && (
@@ -11169,8 +11175,11 @@ function ObesityHypoventilationTray({ assessment, scenarioVersion, guidance = 'u
   </div>;
 }
 
-function NoninvasiveVentilationSelectionTray({ assessment, onAction }: {
+function NoninvasiveVentilationSelectionTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['noninvasiveVentilationSelectionAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onNoninvasiveVentilationSelectionResponse']>;
 }) {
   const trajectory = assessment?.trajectoryAtTick != null;
@@ -11180,7 +11189,17 @@ function NoninvasiveVentilationSelectionTray({ assessment, onAction }: {
   const guards = assessment?.failureGuardsAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   const unsupportedChoice = assessment?.lastUnsupportedChoice;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : noninvasiveVentilationSelectionInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="noninvasive-ventilation-selection-choice-title">
       <div id="noninvasive-ventilation-selection-choice-title" className="syringe__name">Choose support from physiology, not familiarity.</div>
       <Badge kind="teaching">persistent acidosis · ventilatory assistance · monitored trial</Badge>
@@ -11196,14 +11215,14 @@ function NoninvasiveVentilationSelectionTray({ assessment, onAction }: {
       <div className="syringe__presets">
         {!suitability && <>
           <Button className="crisis-drug__action" disabled={trajectory}
-            onClick={() => onAction('reconcile-noninvasive-ventilation-selection-treatment-and-trajectory')}>Review initial care + trajectory</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reconcile-noninvasive-ventilation-selection-treatment-and-trajectory') : undefined}>Review initial care + trajectory</Button>
           <Button className="crisis-drug__action" disabled={!trajectory}
-            onClick={() => onAction('review-noninvasive-ventilation-selection-suitability-and-rescue-readiness')}>Review acidosis + NIV suitability</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-noninvasive-ventilation-selection-suitability-and-rescue-readiness') : undefined}>Review acidosis + NIV suitability</Button>
         </>}
         {suitability && !selected && <>
-          <Button className="crisis-drug__action" onClick={() => onAction('select-bilevel-noninvasive-ventilation')}>Bilevel NIV trial</Button>
-          <Button className="crisis-drug__action" onClick={() => onAction('select-cpap-alone')}>CPAP alone</Button>
-          <Button className="crisis-drug__action" onClick={() => onAction('select-high-flow-nasal-oxygen-alone')}>High-flow nasal oxygen</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('select-bilevel-noninvasive-ventilation') : undefined}>Bilevel NIV trial</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('select-cpap-alone') : undefined}>CPAP alone</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('select-high-flow-nasal-oxygen-alone') : undefined}>High-flow nasal oxygen</Button>
         </>}
       </div>
       <p className="field__hint">The choice records a support goal only. No device, interface, pressure, backup rate, oxygen target, or treatment technique is selected or delivered.</p>
@@ -11221,14 +11240,15 @@ function NoninvasiveVentilationSelectionTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         <Button className="crisis-drug__action" disabled={!selected || response}
-          onClick={() => onAction('review-noninvasive-ventilation-selection-early-response')}>Review 1-hour whole-patient response</Button>
+          aria-disabled={demonstrating} onClick={act ? () => act('review-noninvasive-ventilation-selection-early-response') : undefined}>Review 1-hour whole-patient response</Button>
         <Button className="crisis-drug__action" disabled={!response || guards}
-          onClick={() => onAction('review-noninvasive-ventilation-selection-failure-guards')}>Continue trial + preserve rescue triggers</Button>
+          aria-disabled={demonstrating} onClick={act ? () => act('review-noninvasive-ventilation-selection-failure-guards') : undefined}>Continue trial + preserve rescue triggers</Button>
         <Button className="crisis-drug__action" disabled={!guards || handoff}
-          onClick={() => onAction('handoff-noninvasive-ventilation-selection-reassessment')}>Hand off active support + rescue plan</Button>
+          aria-disabled={demonstrating} onClick={act ? () => act('handoff-noninvasive-ventilation-selection-reassessment') : undefined}>Hand off active support + rescue plan</Button>
       </div>
       <p className="field__hint">Early improvement is not durable success. Worsening mentation, airway protection, work, gas exchange, hemodynamics, tolerance, secretions, or another cause prompts immediate experienced reassessment.</p>
     </section>
+    </div>
   </div>;
 }
 
