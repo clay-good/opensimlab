@@ -139,6 +139,7 @@ import { supportsClinicStemiDemonstration } from '../../cardiology/demo/clinic-s
 import { supportsNstemiRiskDemonstration } from '../../cardiology/demo/nstemi-risk-demonstration';
 import { supportsHeartFailureDemonstration } from '../../cardiology/demo/heart-failure-demonstration';
 import { supportsAfRvrDemonstration } from '../../cardiology/demo/af-rvr-demonstration';
+import { supportsPostInfarctionShockDemonstration } from '../../cardiology/demo/post-infarction-shock-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -317,6 +318,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsNstemiRiskDemonstration,
     supportsHeartFailureDemonstration,
     supportsAfRvrDemonstration,
+    supportsPostInfarctionShockDemonstration,
   ],
 };
 

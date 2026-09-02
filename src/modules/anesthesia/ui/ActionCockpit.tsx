@@ -201,6 +201,7 @@ import { clinicStemiInlinePrompt } from '../../cardiology/tutor/clinic-stemi-gui
 import { nstemiRiskInlinePrompt } from '../../cardiology/tutor/nstemi-risk-guidance';
 import { heartFailureInlinePrompt } from '../../cardiology/tutor/heart-failure-guidance';
 import { afRvrInlinePrompt } from '../../cardiology/tutor/af-rvr-guidance';
+import { postInfarctionShockInlinePrompt } from '../../cardiology/tutor/post-infarction-shock-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2971,6 +2972,7 @@ export interface ActionCockpitProps {
   readonly nstemiRiskGuidance?: GuidanceLevel;
   readonly heartFailureGuidance?: GuidanceLevel;
   readonly afRvrGuidance?: GuidanceLevel;
+  readonly postInfarctionShockGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3121,6 +3123,7 @@ export interface ActionCockpitProps {
   readonly nstemiRiskDemonstrating?: boolean;
   readonly heartFailureDemonstrating?: boolean;
   readonly afRvrDemonstrating?: boolean;
+  readonly postInfarctionShockDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5627,6 +5630,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasPostInfarctionShockResponse && (
               <PostInfarctionShockTray assessment={props.resuscitation.postInfarctionShockAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.postInfarctionShockGuidance}
+                demonstrating={props.postInfarctionShockDemonstrating}
                 onAction={props.onPostInfarctionShockResponse ?? (() => {})} />
             )}
             {hasStableNarrowTachycardiaResponse && (
@@ -15359,8 +15365,11 @@ function EndocrineHhsTray({ assessment, scenarioVersion, onAction, guidance = 'u
   </>;
 }
 
-function PostInfarctionShockTray({ assessment, onAction }: {
+function PostInfarctionShockTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['postInfarctionShockAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onPostInfarctionShockResponse']>;
 }) {
   const trajectory = assessment?.trajectoryAtTick != null;
@@ -15368,7 +15377,17 @@ function PostInfarctionShockTray({ assessment, onAction }: {
   const transfer = assessment?.transferAtTick != null;
   const bridge = assessment?.bridgeAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
+  const prompt = demonstrating ? null
+    : postInfarctionShockInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <div className="tray-grid">
       <section className="syringe" aria-labelledby="post-infarction-shock-trajectory-title">
         <div id="post-infarction-shock-trajectory-title" className="syringe__name">Pressure moved. Perfusion did not.</div>
@@ -15381,11 +15400,11 @@ function PostInfarctionShockTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={trajectory}
-            onClick={() => onAction('reconcile-post-infarction-shock-trajectory')}>Reconcile failure to improve</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reconcile-post-infarction-shock-trajectory') : undefined}>Reconcile failure to improve</Button>
           <Button className="crisis-drug__action" disabled={!trajectory || causes}
-            onClick={() => onAction('reopen-post-infarction-shock-causes')}>Reopen causes + reported care</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reopen-post-infarction-shock-causes') : undefined}>Reopen causes + reported care</Button>
           <Button className="crisis-drug__action" disabled={!trajectory || transfer}
-            onClick={() => onAction('contact-post-infarction-shock-center')}>Contact local + regional shock teams</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('contact-post-infarction-shock-center') : undefined}>Contact local + regional shock teams</Button>
         </div>
         <p className="field__hint">Immediate post-PCI findings are snapshots. Recurrent ischemia, mechanical, RV, rhythm, bleeding, vasodilated, and obstructive causes remain open.</p>
       </section>
@@ -15401,12 +15420,13 @@ function PostInfarctionShockTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!causes || !transfer || bridge}
-            onClick={() => onAction('record-post-infarction-shock-bridge')}>Record individualized potential-transport bridge</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-post-infarction-shock-bridge') : undefined}>Record individualized potential-transport bridge</Button>
           <Button className="crisis-drug__action" disabled={!bridge || handoff}
-            onClick={() => onAction('handoff-post-infarction-shock-trajectory')}>Reassess + hand off unresolved work</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('handoff-post-infarction-shock-trajectory') : undefined}>Reassess + hand off unresolved work</Button>
         </div>
         <p className="field__hint">Consultation is not transfer authorization. Stability, contraindications, preferences, accepting-center selection, support, transport, disposition, and outcome remain expert work.</p>
       </section>
+    </div>
     </div>
   );
 }

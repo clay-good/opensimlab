@@ -275,6 +275,8 @@ import { useHeartFailureDemonstration } from '../../cardiology/demo/useHeartFail
 import { supportsHeartFailureDemonstration } from '../../cardiology/demo/heart-failure-demonstration';
 import { useAfRvrDemonstration } from '../../cardiology/demo/useAfRvrDemonstration';
 import { supportsAfRvrDemonstration } from '../../cardiology/demo/af-rvr-demonstration';
+import { usePostInfarctionShockDemonstration } from '../../cardiology/demo/usePostInfarctionShockDemonstration';
+import { supportsPostInfarctionShockDemonstration } from '../../cardiology/demo/post-infarction-shock-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -564,6 +566,7 @@ export function Cockpit({
   const nstemiRiskDemoSupported = supportsNstemiRiskDemonstration(scenario);
   const heartFailureDemoSupported = supportsHeartFailureDemonstration(scenario);
   const afRvrDemoSupported = supportsAfRvrDemonstration(scenario);
+  const postInfarctionShockDemoSupported = supportsPostInfarctionShockDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -681,6 +684,7 @@ export function Cockpit({
     || nstemiRiskDemoSupported
     || heartFailureDemoSupported
     || afRvrDemoSupported
+    || postInfarctionShockDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -844,6 +848,12 @@ export function Cockpit({
     active: demonstrating && pediatricStatusAsthmaticusDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.pediatricStatusAsthmaticusAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const postInfarctionShockDemonstration = usePostInfarctionShockDemonstration({
+    active: demonstrating && postInfarctionShockDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.postInfarctionShockAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const afRvrDemonstration = useAfRvrDemonstration({
@@ -1541,6 +1551,7 @@ export function Cockpit({
     : nstemiRiskDemoSupported ? nstemiRiskDemonstration
     : heartFailureDemoSupported ? heartFailureDemonstration
     : afRvrDemoSupported ? afRvrDemonstration
+    : postInfarctionShockDemoSupported ? postInfarctionShockDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2484,6 +2495,8 @@ export function Cockpit({
           heartFailureDemonstrating={demonstrating && heartFailureDemoSupported}
           afRvrGuidance={session.guidance}
           afRvrDemonstrating={demonstrating && afRvrDemoSupported}
+          postInfarctionShockGuidance={session.guidance}
+          postInfarctionShockDemonstrating={demonstrating && postInfarctionShockDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
