@@ -279,6 +279,8 @@ import { usePostInfarctionShockDemonstration } from '../../cardiology/demo/usePo
 import { supportsPostInfarctionShockDemonstration } from '../../cardiology/demo/post-infarction-shock-demonstration';
 import { useStableNarrowTachycardiaDemonstration } from '../../cardiology/demo/useStableNarrowTachycardiaDemonstration';
 import { supportsStableNarrowTachycardiaDemonstration } from '../../cardiology/demo/stable-narrow-tachycardia-demonstration';
+import { useStableWideTachycardiaDemonstration } from '../../cardiology/demo/useStableWideTachycardiaDemonstration';
+import { supportsStableWideTachycardiaDemonstration } from '../../cardiology/demo/stable-wide-tachycardia-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -570,6 +572,7 @@ export function Cockpit({
   const afRvrDemoSupported = supportsAfRvrDemonstration(scenario);
   const postInfarctionShockDemoSupported = supportsPostInfarctionShockDemonstration(scenario);
   const stableNarrowTachycardiaDemoSupported = supportsStableNarrowTachycardiaDemonstration(scenario);
+  const stableWideTachycardiaDemoSupported = supportsStableWideTachycardiaDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -689,6 +692,7 @@ export function Cockpit({
     || afRvrDemoSupported
     || postInfarctionShockDemoSupported
     || stableNarrowTachycardiaDemoSupported
+    || stableWideTachycardiaDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -852,6 +856,12 @@ export function Cockpit({
     active: demonstrating && pediatricStatusAsthmaticusDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.pediatricStatusAsthmaticusAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const stableWideTachycardiaDemonstration = useStableWideTachycardiaDemonstration({
+    active: demonstrating && stableWideTachycardiaDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.stableWideTachycardiaAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const stableNarrowTachycardiaDemonstration = useStableNarrowTachycardiaDemonstration({
@@ -1563,6 +1573,7 @@ export function Cockpit({
     : afRvrDemoSupported ? afRvrDemonstration
     : postInfarctionShockDemoSupported ? postInfarctionShockDemonstration
     : stableNarrowTachycardiaDemoSupported ? stableNarrowTachycardiaDemonstration
+    : stableWideTachycardiaDemoSupported ? stableWideTachycardiaDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2510,6 +2521,8 @@ export function Cockpit({
           postInfarctionShockDemonstrating={demonstrating && postInfarctionShockDemoSupported}
           stableNarrowTachycardiaGuidance={session.guidance}
           stableNarrowTachycardiaDemonstrating={demonstrating && stableNarrowTachycardiaDemoSupported}
+          stableWideTachycardiaGuidance={session.guidance}
+          stableWideTachycardiaDemonstrating={demonstrating && stableWideTachycardiaDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

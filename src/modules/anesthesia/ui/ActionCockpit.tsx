@@ -203,6 +203,7 @@ import { heartFailureInlinePrompt } from '../../cardiology/tutor/heart-failure-g
 import { afRvrInlinePrompt } from '../../cardiology/tutor/af-rvr-guidance';
 import { postInfarctionShockInlinePrompt } from '../../cardiology/tutor/post-infarction-shock-guidance';
 import { stableNarrowTachycardiaInlinePrompt } from '../../cardiology/tutor/stable-narrow-tachycardia-guidance';
+import { stableWideTachycardiaInlinePrompt } from '../../cardiology/tutor/stable-wide-tachycardia-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2975,6 +2976,7 @@ export interface ActionCockpitProps {
   readonly afRvrGuidance?: GuidanceLevel;
   readonly postInfarctionShockGuidance?: GuidanceLevel;
   readonly stableNarrowTachycardiaGuidance?: GuidanceLevel;
+  readonly stableWideTachycardiaGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3127,6 +3129,7 @@ export interface ActionCockpitProps {
   readonly afRvrDemonstrating?: boolean;
   readonly postInfarctionShockDemonstrating?: boolean;
   readonly stableNarrowTachycardiaDemonstrating?: boolean;
+  readonly stableWideTachycardiaDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5649,6 +5652,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasStableWideTachycardiaResponse && (
               <StableWideTachycardiaTray
                 assessment={props.resuscitation.stableWideTachycardiaAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.stableWideTachycardiaGuidance}
+                demonstrating={props.stableWideTachycardiaDemonstrating}
                 onAction={props.onStableWideTachycardiaResponse ?? (() => {})} />
             )}
             {hasSymptomaticBradycardiaResponse && (
@@ -10481,8 +10487,11 @@ function StableNarrowTachycardiaTray({ assessment, scenarioVersion, guidance = '
   );
 }
 
-function StableWideTachycardiaTray({ assessment, onAction }: {
+function StableWideTachycardiaTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['stableWideTachycardiaAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onStableWideTachycardiaResponse']>;
 }) {
   const stability = assessment?.stabilityAtTick != null;
@@ -10492,16 +10501,26 @@ function StableWideTachycardiaTray({ assessment, onAction }: {
   const nonresponse = assessment?.nonresponseAtTick != null;
   const cardioversion = assessment?.cardioversionAtTick != null;
   const reassessed = assessment?.reassessmentAtTick != null;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : stableWideTachycardiaInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="stable-wide-first-title">
       <div id="stable-wide-first-title" className="syringe__name">Wide rhythm. Steady patient.</div>
       <Badge kind="teaching">stable now · regular · monomorphic</Badge>
       <div className="syringe__meta">164/min · QRS 158 ms · BP 118/72 · warm + alert</div>
       <p className="syringe__remaining" role="status">{context ? 'Regular + monomorphic · mechanism remains open' : stability ? 'Stable now · define the wide rhythm' : 'Start with the patient, then read the width'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={stability} onClick={() => onAction('reconcile-stable-wide-complex-tachycardia')}>Reconcile pulse + stability</Button>
-        <Button className="crisis-drug__action" disabled={!stability || context} onClick={() => onAction('review-wide-complex-context')}>Review morphology + context</Button>
-        <Button className="crisis-drug__action" disabled={!context || readiness} onClick={() => onAction('prepare-wide-complex-pathway')}>Prepare monitored WCT pathway</Button>
+        <Button className="crisis-drug__action" disabled={stability} aria-disabled={demonstrating} onClick={act ? () => act('reconcile-stable-wide-complex-tachycardia') : undefined}>Reconcile pulse + stability</Button>
+        <Button className="crisis-drug__action" disabled={!stability || context} aria-disabled={demonstrating} onClick={act ? () => act('review-wide-complex-context') : undefined}>Review morphology + context</Button>
+        <Button className="crisis-drug__action" disabled={!context || readiness} aria-disabled={demonstrating} onClick={act ? () => act('prepare-wide-complex-pathway') : undefined}>Prepare monitored WCT pathway</Button>
       </div>
       <p className="field__hint">A wide rhythm is a pattern, not a final diagnosis. Keep VT, aberrancy, pre-excitation, pacing, electrolyte, and drug causes visible.</p>
     </section>
@@ -10511,13 +10530,14 @@ function StableWideTachycardiaTray({ assessment, onAction }: {
       <div className="syringe__meta">one authored medication lane · cardioversion ready</div>
       <p className="syringe__remaining" role="status">{reassessed ? 'Sinus 84/min · cause + recurrence work remain' : cardioversion ? 'Cardioversion intent recorded · allow reassessment time' : nonresponse ? 'WCT persists · synchronized escalation ready' : medication ? 'Medication path recorded · observe before reassessing' : readiness ? 'Team + rescue readiness recorded' : 'Rhythm review opens the monitored pathway'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={!readiness || medication} onClick={() => onAction('record-wide-complex-procainamide-pathway')}>Record expert-guided medication path</Button>
-        <Button className="crisis-drug__action" disabled={!medication || nonresponse} onClick={() => onAction('review-wide-complex-medication-nonresponse')}>Review observed medication response</Button>
-        <Button className="crisis-drug__action" disabled={!nonresponse || cardioversion} onClick={() => onAction('record-wide-complex-cardioversion-intent')}>Record synchronized-cardioversion intent</Button>
-        <Button className="crisis-drug__action" disabled={!cardioversion || reassessed} onClick={() => onAction('reassess-wide-complex-trajectory')}>Reassess rhythm + ownership</Button>
+        <Button className="crisis-drug__action" disabled={!readiness || medication} aria-disabled={demonstrating} onClick={act ? () => act('record-wide-complex-procainamide-pathway') : undefined}>Record expert-guided medication path</Button>
+        <Button className="crisis-drug__action" disabled={!medication || nonresponse} aria-disabled={demonstrating} onClick={act ? () => act('review-wide-complex-medication-nonresponse') : undefined}>Review observed medication response</Button>
+        <Button className="crisis-drug__action" disabled={!nonresponse || cardioversion} aria-disabled={demonstrating} onClick={act ? () => act('record-wide-complex-cardioversion-intent') : undefined}>Record synchronized-cardioversion intent</Button>
+        <Button className="crisis-drug__action" disabled={!cardioversion || reassessed} aria-disabled={demonstrating} onClick={act ? () => act('reassess-wide-complex-trajectory') : undefined}>Reassess rhythm + ownership</Button>
       </div>
       <p className="field__hint">No dose, rate, energy, or learner delivery is supplied. Any instability opens prompt synchronized cardioversion; polymorphic or pulseless rhythms use different pathways.</p>
     </section>
+    </div>
   </div>;
 }
 
