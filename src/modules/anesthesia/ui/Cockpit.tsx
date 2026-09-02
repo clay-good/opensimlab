@@ -139,6 +139,8 @@ import { useSympathomimeticDemonstration } from '../../toxicology/demo/useSympat
 import { supportsSympathomimeticDemonstration } from '../../toxicology/demo/sympathomimetic-hyperadrenergic-hyperthermia-demonstration';
 import { useMethanolDemonstration } from '../../toxicology/demo/useMethanolDemonstration';
 import { supportsMethanolDemonstration } from '../../toxicology/demo/methanol-visual-acidosis-gaps-demonstration';
+import { useDelayedLastDemonstration } from '../../toxicology/demo/useDelayedLastDemonstration';
+import { supportsDelayedLastDemonstration } from '../../toxicology/demo/delayed-local-anesthetic-cns-cardiac-toxicity-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -360,6 +362,7 @@ export function Cockpit({
   const serotoninDemoSupported = supportsSerotoninDemonstration(scenario);
   const sympathomimeticDemoSupported = supportsSympathomimeticDemonstration(scenario);
   const methanolDemoSupported = supportsMethanolDemonstration(scenario);
+  const delayedLastDemoSupported = supportsDelayedLastDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -409,6 +412,7 @@ export function Cockpit({
     || serotoninDemoSupported
     || sympathomimeticDemoSupported
     || methanolDemoSupported
+    || delayedLastDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -560,6 +564,12 @@ export function Cockpit({
     active: demonstrating && termTransitionDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.neonatologyTermTransitionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const delayedLastDemonstration = useDelayedLastDemonstration({
+    active: demonstrating && delayedLastDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.toxicologyDelayedLastAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const methanolDemonstration = useMethanolDemonstration({
@@ -833,6 +843,7 @@ export function Cockpit({
     : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
+    : delayedLastDemoSupported ? delayedLastDemonstration
     : methanolDemoSupported ? methanolDemonstration
     : sympathomimeticDemoSupported ? sympathomimeticDemonstration
     : serotoninDemoSupported ? serotoninDemonstration
@@ -1600,6 +1611,8 @@ export function Cockpit({
           toxicologySympathomimeticDemonstrating={demonstrating && sympathomimeticDemoSupported}
           toxicologyMethanolGuidance={session.guidance}
           toxicologyMethanolDemonstrating={demonstrating && methanolDemoSupported}
+          toxicologyDelayedLastGuidance={session.guidance}
+          toxicologyDelayedLastDemonstrating={demonstrating && delayedLastDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

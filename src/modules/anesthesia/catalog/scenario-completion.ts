@@ -35,6 +35,7 @@ import { anticholinergicCompletionEvidence } from '../../toxicology/anticholiner
 import { serotoninCompletionEvidence } from '../../toxicology/serotonin-toxicity-hyperthermia-clonus-completion';
 import { sympathomimeticCompletionEvidence } from '../../toxicology/sympathomimetic-hyperadrenergic-hyperthermia-completion';
 import { methanolCompletionEvidence } from '../../toxicology/methanol-visual-acidosis-gaps-completion';
+import { delayedLastCompletionEvidence } from '../../toxicology/delayed-local-anesthetic-cns-cardiac-toxicity-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -209,6 +210,7 @@ export function auditClinicalScenario(
     ...serotoninCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...sympathomimeticCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...methanolCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...delayedLastCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

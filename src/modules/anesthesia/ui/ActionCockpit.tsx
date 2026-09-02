@@ -133,6 +133,7 @@ import { anticholinergicInlinePrompt } from '../../toxicology/tutor/anticholiner
 import { serotoninInlinePrompt } from '../../toxicology/tutor/serotonin-toxicity-hyperthermia-clonus-guidance';
 import { sympathomimeticInlinePrompt } from '../../toxicology/tutor/sympathomimetic-hyperadrenergic-hyperthermia-guidance';
 import { methanolInlinePrompt } from '../../toxicology/tutor/methanol-visual-acidosis-gaps-guidance';
+import { delayedLastInlinePrompt } from '../../toxicology/tutor/delayed-local-anesthetic-cns-cardiac-toxicity-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2835,6 +2836,7 @@ export interface ActionCockpitProps {
   readonly toxicologySerotoninGuidance?: GuidanceLevel;
   readonly toxicologySympathomimeticGuidance?: GuidanceLevel;
   readonly toxicologyMethanolGuidance?: GuidanceLevel;
+  readonly toxicologyDelayedLastGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2917,6 +2919,7 @@ export interface ActionCockpitProps {
   readonly toxicologySerotoninDemonstrating?: boolean;
   readonly toxicologySympathomimeticDemonstrating?: boolean;
   readonly toxicologyMethanolDemonstrating?: boolean;
+  readonly toxicologyDelayedLastDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5782,6 +5785,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasToxicologyDelayedLastResponse && (
               <ToxicologyDelayedLastTray assessment={props.resuscitation.toxicologyDelayedLastAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.toxicologyDelayedLastGuidance}
+                demonstrating={props.toxicologyDelayedLastDemonstrating}
                 onAction={props.onToxicologyDelayedLastResponse ?? (() => {})} />
             )}
             {hasToxicologyOpioidXylazineResponse && (
@@ -13112,10 +13118,15 @@ function ToxicologyMethanolTray({ assessment, scenarioVersion, onAction, guidanc
   </>;
 }
 
-function ToxicologyDelayedLastTray({ assessment, onAction }: {
+function ToxicologyDelayedLastTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyDelayedLastAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onToxicologyDelayedLastResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = delayedLastInlinePrompt(guidance, { scenarioVersion, delayedLast: assessment });
+  const act = demonstrating ? undefined : onAction;
   const trajectory = assessment?.trajectoryAtTick != null;
   const recognition = assessment?.recognitionAtTick != null;
   const support = assessment?.supportAtTick != null;
@@ -13123,22 +13134,27 @@ function ToxicologyDelayedLastTray({ assessment, onAction }: {
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="toxicology-delayed-last-early-title">
       <div id="toxicology-delayed-last-early-title" className="syringe__name">The quiet cues were part of the crisis.</div>
       <p className="syringe__remaining">Begin with source, long clock, short prodrome, seizure, breathing, conduction, perfusion, and the whole person.</p>
       <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-toxicology-delayed-last-source-clock-prodrome-seizure-cardiac-and-whole-patient')}>Connect source + evolution</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-toxicology-delayed-last-coupled-pattern-without-classic-sequence-clock-symptom-or-ecg-only-closure')}>Recognize the whole pattern</Button>}
-        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-toxicology-delayed-last-source-airway-seizure-cardiac-toxicology-lipid-and-refractory-rescue-ownership')}>Bring rescue owners together</Button>}
-        {support && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-toxicology-delayed-last-supplied-source-delivery-cns-ecg-perfusion-acid-base-electrolyte-and-differential-boundary')}>Review source + hidden harm</Button>}
+        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-toxicology-delayed-last-source-clock-prodrome-seizure-cardiac-and-whole-patient') : undefined}>Connect source + evolution</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-toxicology-delayed-last-coupled-pattern-without-classic-sequence-clock-symptom-or-ecg-only-closure') : undefined}>Recognize the whole pattern</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-toxicology-delayed-last-source-airway-seizure-cardiac-toxicology-lipid-and-refractory-rescue-ownership') : undefined}>Bring rescue owners together</Button>}
+        {support && !evidence && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-toxicology-delayed-last-supplied-source-delivery-cns-ecg-perfusion-acid-base-electrolyte-and-differential-boundary') : undefined}>Review source + hidden harm</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="toxicology-delayed-last-later-title">
       <div id="toxicology-delayed-last-later-title" className="syringe__name">A steadier rhythm is a checkpoint, not an ending.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Seizure, rhythm, conduction, perfusion, airway, acid-base, source, lipid, refractory-rescue, and outcome uncertainty handed off.' : reassessment ? 'Rhythm, pressure, breathing, and QRS improved. Durable seizure control, recovery, source completeness, lipid safety, and treatment effect remain unproven.' : evidence ? 'Source-delivery, CNS, ECG, perfusion, acid-base, electrolyte, coingestion, and differential evidence stay coupled. Record qualified intent after time passes.' : support ? 'Source, airway, seizure, cardiac, toxicology, lipid, and refractory-rescue ownership are active. Review the supplied evidence.' : 'Complete whole-pattern recognition and qualified ownership before the rescue-boundary review.'}</p>
       <div className="crisis-drug__actions">
-        {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-delayed-last-bounded-qualified-source-airway-seizure-lipid-acid-base-modified-resuscitation-and-ecls-intent-with-strict-later-review')}>Record rescue intent + reassess</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-delayed-last-recurrent-seizure-arrhythmia-shock-airway-acidemia-source-lipid-and-refractory-risk')}>Hand off what can return</Button>}
+        {evidence && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-toxicology-delayed-last-bounded-qualified-source-airway-seizure-lipid-acid-base-modified-resuscitation-and-ecls-intent-with-strict-later-review') : undefined}>Record rescue intent + reassess</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-toxicology-delayed-last-recurrent-seizure-arrhythmia-shock-airway-acidemia-source-lipid-and-refractory-risk') : undefined}>Hand off what can return</Button>}
       </div>
     </section>
   </>;
