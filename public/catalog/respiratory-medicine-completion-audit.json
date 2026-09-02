@@ -1055,23 +1055,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "chronic-opioid-related-hypoventilation-reassessment-fixtures.ts binds seed 7426 and content 0.1.0 to expert, plan-before-review error, recovery, and no-action paths. The eight-year exposure, the six-month symptom change, the awake blood gas, the attended polysomnogram with transcutaneous CO₂, and the medication reconciliation are authored constants; no ventilatory, sleep, causality or treatment-response model is claimed, and no outcome follows from any choice. tests/integration/chronic-opioid-hypoventilation-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through five recorded steps on the shared simulation clock, and the handoff is time-gated: it refuses until simulated time has passed since the coordinated plan. What moves is what has been reconciled, read, kept open and owned; what does not move is the causality, the diagnosis, or her prescription."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions reconcile eight years of stable therapy against six months of new symptoms, read the awake and attended sleep evidence and the gap between them, keep opioid exposure a contributor while obesity, upper-airway obstruction, central sleep apnea, lung, neuromuscular, chest-wall, cardiac and endocrine causes and medication interactions stay open, coordinate prescriber, sleep, respiratory, pharmacy and primary-care ownership around pain goals as well as breathing, and hand off. The evidence and contributor reviews may be completed in either order; the coordinated plan waits for both. The lesson examines nobody, acquires, scores or interprets no blood gas, sleep study, capnography, oximetry or spirometry, diagnoses nothing, selects no drug, dose or taper, changes no opioid, selects or delivers no naloxone, delivers no oxygen, selects no support device, and determines no disposition."
           ]
         },
         {
@@ -1083,23 +1083,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at unattributed-pattern handoff. Later actions cannot restart an ended branch, and the ending certifies no proven opioid causality, no determined diagnosis, no medication change, no determined disposition, and no outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff, and its narration is generated from the tutor's own prose so the two cannot drift apart. Both read eight years of stable therapy against a six-month change and name this as neither an overdose nor an emergency but a chronic pattern that developed while the dose stayed the same. Both then put the weight on the sleep study rather than the clinic numbers: an essentially normal awake gas and one awake saturation of 94% say nothing about the eight hours nobody was watching, while a transcutaneous CO₂ rising from 46 to 58 for twenty-four minutes is where the finding lives — and the specialist's wording is named as a description rather than a diagnosis. The obvious cause is then refused: opioid exposure is a contributor, a BMI of 23.7 and clean spirometry and no focal weakness do not exclude the other contributors, and the nighttime gabapentin is called out as easy to overlook because it is not the opioid. Both failure modes are named at the planning step — leaving a hypoventilating patient on unchanged therapy because nobody owns the question, and stopping eight years of analgesia in a single visit on a pattern that has not been attributed. A test asserts nothing anywhere examines her, acquires or interprets a gas or sleep study, or selects a dose, taper or naloxone. tests/unit/chronic-opioid-hypoventilation-demonstration.test.ts and tests/ui/respiratory-chronic-opioid-hypoventilation.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that reached for a prescriber plan before either review existed can still reach a correct handoff."
           ]
         },
         {
@@ -1118,23 +1118,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "chronic-opioid-related-hypoventilation-reassessment-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 7426 for deterministic replay through the shared engine, including the time-gated handoff."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
