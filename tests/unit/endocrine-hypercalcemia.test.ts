@@ -186,7 +186,7 @@ describe('Hypercalcemia: tailored volume support and a temporary calcium bridge'
       fluidResponseObserved: complete, bridgeResponseObserved: complete, urgentTreatmentDelayed: path !== 'expert',
       unrestrictedFluidsAttempted: mistakes, routineDiureticAttempted: mistakes, waitForCauseChosen: mistakes, durableRecoveryProven: false });
     if (complete) expect(first.patient.observation?.adjustedCalciumMgDl).toBe(14.8);
-  }, 60_000);
+  });
 
   it('does not reflect hostile inputs, expose mutable observations, or mutate ended branches', () => {
     const model = new Hypercalcemia();

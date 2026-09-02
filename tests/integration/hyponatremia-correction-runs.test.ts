@@ -100,7 +100,7 @@ describe('Post-rescue sodium correction through the real engine and causal debri
       .not.toMatch(/115|350|total rise 9|excessive correction has|limit crossed/i);
     expect(result.patient).toMatchObject({ observation: { atTick: BREACH + 1, sodiumMmolL: 115, urineOutputMlPerHour: 350 },
       peakObservedSodiumMmolL: 115, aquaresisObserved: true, overcorrectionObserved: true });
-  }, 60_000);
+  });
 
   it('bounds a stale-observation control branch without awarding unobserved prevention or a fresh result', () => {
     const actions: Choices = [[0, 'review-risk'], [0, 'call-support'], [0, 'monitor'],
@@ -121,7 +121,7 @@ describe('Post-rescue sodium correction through the real engine and causal debri
     const result = run(FIXTURES.expert, FIXTURES.expert.at(-1)![0], 'unassisted', [], 'GB');
     expect(result.patient).toMatchObject({ ended: 'handoff', reloweringAtTick: null, peakObservedSodiumMmolL: 112 });
     expect(objectiveFindings(SCENARIO, [], 0, 0, [], result.events).map(({ outcome }) => outcome)).toEqual(Array(5).fill('met'));
-  }, 60_000);
+  });
 
   it('refuses generic, adjacent, malformed, and extra-field actions without trusting caller timestamps or echoing payloads', () => {
     const engine = newEngine(); const control = newEngine();

@@ -101,7 +101,7 @@ describe('Observed-state hypoglycemia tutor', () => {
     expect(guided.ended).toBe(kind === 'commonError' ? 'instructor-takeover' : 'handoff');
     if (kind === 'commonError') expect(guided.shown.length).toBeGreaterThan(coached.shown.length);
     if (kind === 'recovery') expect(guided.findings[1]!.outcome).toBe('not-met');
-  }, 60_000);
+  });
   it('binds implemented completion evidence without declaring remaining work complete', () => {
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'endocrine-metabolic', 'ward', 'state_transition');
     expect(audit.complete).toBe(false);

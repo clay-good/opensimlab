@@ -603,7 +603,7 @@ describe('the demonstration, run for its full length', () => {
       expect(advance.current).toBeUndefined(); expect(useSession.getState().tick).toBe(endedTick);
     } finally { act(() => exampleRoot.unmount()); exampleContainer.remove(); }
   // The authored hour is run once through the real session and once as replay.
-  }, 60_000);
+  });
 
   it('runs the hypercalcemia example through distinct volume and calcium waits and replays its real transcript', () => {
     // This test must also run alone without the induction fixture owning the store.

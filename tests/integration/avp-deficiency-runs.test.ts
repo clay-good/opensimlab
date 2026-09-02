@@ -100,7 +100,7 @@ describe('Known AVP deficiency through the real engine and causal debrief', () =
     const ended = guided.patient;
     guided.engine.apply(choice(999999, 'reassess')); guided.engine.step();
     expect(guided.engine.equipment().resuscitation.avpDeficiency).toEqual(ended);
-  }, 180_000);
+  });
 
   it('changes visible circulation without leaking new sodium, urine output, or osmolality', () => {
     const result = run([[0, 'restore-volume'], [0, 'reassess'], [UNCONTROLLED + 1, 'reassess']], UNCONTROLLED + 1,
@@ -120,7 +120,7 @@ describe('Known AVP deficiency through the real engine and causal debrief', () =
       .not.toMatch(/\b163\b|\b165\b|\b450\b|\b95\b/);
     expect(result.patient).toMatchObject({ peakObservedSodiumMmolL: 165, volumeObserved: true, diluteLossesObserved: true,
       observation: { sodiumMmolL: 165, urineOutputMlPerHour: 450, urineOsmolalityMosmPerKg: 95 } });
-  }, 60_000);
+  });
 
   it.each([['replace-water', 'restore-desmopressin'], ['restore-desmopressin', 'replace-water']] as const)(
     'allows %s then %s at restored circulation without an observation or administrative gate', (first, second) => {
@@ -143,7 +143,7 @@ describe('Known AVP deficiency through the real engine and causal debrief', () =
         observation: { sodiumMmolL: 162, urineOutputMlPerHour: 80, urineOsmolalityMosmPerKg: 500 } });
       // Missing an early teaching observation loses that objective, never blocks appropriate late handoff.
       expect(findings(result.events).map(({ outcome }) => outcome)).toEqual(['met', 'met', 'met', 'not-met', 'met']);
-    }, 60_000);
+    });
 
   it('does not mistake a desmopressin-only urine response for water-deficit correction', () => {
     const at = VOLUME + DESMOPRESSIN;
@@ -156,7 +156,7 @@ describe('Known AVP deficiency through the real engine and causal debrief', () =
     expect(result.patient).toMatchObject({ ended: null, waterAtTick: null, responseObserved: false,
       observation: { sodiumMmolL: 163, urineOutputMlPerHour: 80, urineOsmolalityMosmPerKg: 500 } });
     expect(findings(result.events).find(({ objectiveId }) => objectiveId === 'avp-water-control')?.outcome).toBe('not-met');
-  }, 60_000);
+  });
 
   it('bounds incomplete post-volume care at 300 minutes without inventing a latest result', () => {
     const result = run([[0, 'restore-volume'], [VOLUME, 'reassess']], SESSION,
@@ -165,14 +165,14 @@ describe('Known AVP deficiency through the real engine and causal debrief', () =
     expect(result.patient).toMatchObject({ ended: 'instructor-takeover', responseObserved: false, peakObservedSodiumMmolL: 163,
       observation: { atTick: VOLUME, sodiumMmolL: 163, urineOutputMlPerHour: 450, urineOsmolalityMosmPerKg: 95 } });
     expect(findings(result.events).find(({ objectiveId }) => objectiveId === 'avp-handoff')?.outcome).toBe('not-met');
-  }, 90_000);
+  });
 
   it('uses the same declared GB pathway without claiming a completed regional matrix', () => {
     const result = run(FIXTURES.expert, FIXTURES.expert.at(-1)![0], { region: 'GB' });
     expect(result.patient).toMatchObject({ ended: 'handoff', peakObservedSodiumMmolL: 163,
       observation: { sodiumMmolL: 162 }, durableRecoveryProven: false });
     expect(findings(result.events).map(({ outcome }) => outcome)).toEqual(Array(5).fill('met'));
-  }, 60_000);
+  });
 
   it('rejects generic and malformed actions without trusting timestamps or echoing payloads', () => {
     const engine = newEngine(); const control = newEngine();

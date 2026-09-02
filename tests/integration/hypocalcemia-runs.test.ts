@@ -116,7 +116,7 @@ describe('Hypocalcemia: real engine rescue, recurrence, continuing care, and rep
       observation: { adjustedCalciumMgDl: 7.2 } });
     expect(objectiveFindings(SCENARIO, [], 0, 0, [], result.events).map(({ outcome }) => outcome))
       .toEqual(['met', 'met', 'met', 'not-met', 'met']);
-  }, 60_000);
+  });
 
   it('credits recurrence and later support observations without claiming that early relief was observed', () => {
     const rescueTick = FIXTURES.recovery.find(([, action]) => action === 'calcium-rescue')![0];
@@ -134,7 +134,7 @@ describe('Hypocalcemia: real engine rescue, recurrence, continuing care, and rep
     expect(reassessment.finding).not.toMatch(/early symptom relief/i);
     expect(findings.find(({ objectiveId }) => objectiveId === 'hypocalcemia-handoff')?.outcome).toBe('met');
     expect(result.patient.ended).toBe('handoff');
-  }, 60_000);
+  });
 
   it('rejects generic, adjacent, injected, and malformed actions while using only the authoritative engine tick', () => {
     const engine = newEngine(); const control = newEngine();

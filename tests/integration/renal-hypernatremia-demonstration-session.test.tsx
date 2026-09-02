@@ -180,7 +180,7 @@ describe('RenalHypernatremia worked example through the real session pipeline', 
         alertness: 'awake, thirsty, and fatigued', ongoingDiarrhea: true, urineOutputMlPerHour: 35 } });
     readWithoutAdvancing(); replayWholeTrace(); render(); frames();
     expect(finishes).toBe(1); expect(recorded()).toHaveLength(10); expect(advance).toBeUndefined();
-  }, 180_000);
+  });
 
   it('preserves accepted rescue and a paused clock after takeover while invalidating callbacks across reactivation', () => {
     begin(); confirmDecision(); frames();
@@ -266,5 +266,5 @@ describe('RenalHypernatremia worked example through the real session pipeline', 
         alertness: 'awake, thirsty, and fatigued', ongoingDiarrhea: true } });
     expect(recorded().filter((action) => action.payload.action === 'handoff')).toHaveLength(2);
     readWithoutAdvancing(); replayWholeTrace();
-  }, 180_000);
+  });
 });
