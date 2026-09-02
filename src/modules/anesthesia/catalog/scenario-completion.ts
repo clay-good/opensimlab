@@ -95,6 +95,7 @@ import { pediatricFebrileSeizureCompletionEvidence } from '../../pediatrics/pedi
 import { pediatricStatusEpilepticusCompletionEvidence } from '../../pediatrics/pediatric-status-epilepticus-completion';
 import { pediatricAnaphylaxisCompletionEvidence } from '../../pediatrics/pediatric-anaphylaxis-completion';
 import { pediatricSvtCompletionEvidence } from '../../pediatrics/pediatric-svt-completion';
+import { pediatricBradycardicArrestCompletionEvidence } from '../../pediatrics/pediatric-bradycardic-arrest-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -329,6 +330,7 @@ export function auditClinicalScenario(
     ...pediatricStatusEpilepticusCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...pediatricAnaphylaxisCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...pediatricSvtCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...pediatricBradycardicArrestCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

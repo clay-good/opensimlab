@@ -193,6 +193,7 @@ import { pediatricFebrileSeizureInlinePrompt } from '../../pediatrics/tutor/pedi
 import { pediatricStatusEpilepticusInlinePrompt } from '../../pediatrics/tutor/pediatric-status-epilepticus-guidance';
 import { pediatricAnaphylaxisInlinePrompt } from '../../pediatrics/tutor/pediatric-anaphylaxis-guidance';
 import { pediatricSvtInlinePrompt } from '../../pediatrics/tutor/pediatric-svt-guidance';
+import { pediatricBradycardicArrestInlinePrompt } from '../../pediatrics/tutor/pediatric-bradycardic-arrest-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2955,6 +2956,7 @@ export interface ActionCockpitProps {
   readonly pediatricStatusEpilepticusGuidance?: GuidanceLevel;
   readonly pediatricAnaphylaxisGuidance?: GuidanceLevel;
   readonly pediatricSvtGuidance?: GuidanceLevel;
+  readonly pediatricBradycardicArrestGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3097,6 +3099,7 @@ export interface ActionCockpitProps {
   readonly pediatricStatusEpilepticusDemonstrating?: boolean;
   readonly pediatricAnaphylaxisDemonstrating?: boolean;
   readonly pediatricSvtDemonstrating?: boolean;
+  readonly pediatricBradycardicArrestDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5862,6 +5865,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasPediatricBradycardicArrestResponse && (
               <PediatricBradycardicArrestTray
                 assessment={props.resuscitation.pediatricBradycardicArrestAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.pediatricBradycardicArrestGuidance}
+                demonstrating={props.pediatricBradycardicArrestDemonstrating}
                 onAction={props.onPediatricBradycardicArrestResponse ?? (() => {})} />
             )}
             {hasPediatricForeignBodyAirwayObstructionResponse && (
@@ -12567,8 +12573,11 @@ function PediatricSupraventricularTachycardiaTray({ assessment, scenarioVersion,
   </div>;
 }
 
-function PediatricBradycardicArrestTray({ assessment, onAction }: {
+function PediatricBradycardicArrestTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricBradycardicArrestAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onPediatricBradycardicArrestResponse']>;
 }) {
   const trajectory = assessment?.trajectoryAtTick != null;
@@ -12577,7 +12586,17 @@ function PediatricBradycardicArrestTray({ assessment, onAction }: {
   const safety = assessment?.safetyAtTick != null;
   const later = assessment?.laterResponseAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : pediatricBradycardicArrestInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-bradycardic-arrest-pattern-title">
       <div id="pediatric-bradycardic-arrest-pattern-title" className="syringe__name">Read the pulse behind the rate.</div>
       <Badge kind="teaching">breathing · oxygenation · rhythm · pulse · perfusion · responsiveness</Badge>
@@ -12591,13 +12610,13 @@ function PediatricBradycardicArrestTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {!trajectory && <Button className="crisis-drug__action"
-          onClick={() => onAction('reconcile-pediatric-bradycardic-arrest-support-and-trajectory')}>Review breathing + rhythm + whole child</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('reconcile-pediatric-bradycardic-arrest-support-and-trajectory') : undefined}>Review breathing + rhythm + whole child</Button>}
         {trajectory && !recognition && <Button className="crisis-drug__action"
-          onClick={() => onAction('recognize-pediatric-bradycardia-with-persistent-compromise')}>Recognize persistent bradycardic compromise</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('recognize-pediatric-bradycardia-with-persistent-compromise') : undefined}>Recognize persistent bradycardic compromise</Button>}
         {recognition && !care && <Button className="crisis-drug__action"
-          onClick={() => onAction('activate-pediatric-bradycardic-arrest-qualified-resuscitation-ownership')}>Activate qualified pediatric resuscitation</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('activate-pediatric-bradycardic-arrest-qualified-resuscitation-ownership') : undefined}>Activate qualified pediatric resuscitation</Button>}
         {care && !safety && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-pediatric-bradycardic-arrest-causes-pulse-and-arrest-boundary')}>Review pulse + breathing + causes</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-bradycardic-arrest-causes-pulse-and-arrest-boundary') : undefined}>Review pulse + breathing + causes</Button>}
       </div>
       <p className="field__hint">Experienced pediatric, resuscitation, airway-capable, nursing, pharmacy, and cardiology teams own immediate breathing and circulation care, monitoring, access, cause review, and escalation. This surface exposes no learner compression, ventilation, oxygen, product, drug, dose, route, pacing, shock, energy, device, procedure, or treatment control.</p>
     </section>
@@ -12613,12 +12632,13 @@ function PediatricBradycardicArrestTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {safety && !later && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-pediatric-bradycardic-arrest-pulse-loss-response')}>Review the 2-minute pulse-loss report</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-bradycardic-arrest-pulse-loss-response') : undefined}>Review the 2-minute pulse-loss report</Button>}
         {later && !handoff && <Button className="crisis-drug__action"
-          onClick={() => onAction('handoff-pediatric-bradycardic-arrest-active-risk')}>Hand off active arrest risk</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('handoff-pediatric-bradycardic-arrest-active-risk') : undefined}>Hand off active arrest risk</Button>}
       </div>
       <p className="field__hint">The fixed pulse-loss transition does not prove cause, treatment modality or effect, resuscitation quality, return of circulation, neurological recovery, prognosis, or outcome.</p>
     </section>
+    </div>
   </div>;
 }
 

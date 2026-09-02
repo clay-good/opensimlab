@@ -259,6 +259,8 @@ import { usePediatricAnaphylaxisDemonstration } from '../../pediatrics/demo/useP
 import { supportsPediatricAnaphylaxisDemonstration } from '../../pediatrics/demo/pediatric-anaphylaxis-demonstration';
 import { usePediatricSvtDemonstration } from '../../pediatrics/demo/usePediatricSvtDemonstration';
 import { supportsPediatricSvtDemonstration } from '../../pediatrics/demo/pediatric-svt-demonstration';
+import { usePediatricBradycardicArrestDemonstration } from '../../pediatrics/demo/usePediatricBradycardicArrestDemonstration';
+import { supportsPediatricBradycardicArrestDemonstration } from '../../pediatrics/demo/pediatric-bradycardic-arrest-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -540,6 +542,7 @@ export function Cockpit({
   const pediatricStatusEpilepticusDemoSupported = supportsPediatricStatusEpilepticusDemonstration(scenario);
   const pediatricAnaphylaxisDemoSupported = supportsPediatricAnaphylaxisDemonstration(scenario);
   const pediatricSvtDemoSupported = supportsPediatricSvtDemonstration(scenario);
+  const pediatricBradycardicArrestDemoSupported = supportsPediatricBradycardicArrestDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -649,6 +652,7 @@ export function Cockpit({
     || pediatricStatusEpilepticusDemoSupported
     || pediatricAnaphylaxisDemoSupported
     || pediatricSvtDemoSupported
+    || pediatricBradycardicArrestDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -812,6 +816,12 @@ export function Cockpit({
     active: demonstrating && pediatricStatusAsthmaticusDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.pediatricStatusAsthmaticusAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const pediatricBradycardicArrestDemonstration = usePediatricBradycardicArrestDemonstration({
+    active: demonstrating && pediatricBradycardicArrestDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.pediatricBradycardicArrestAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const pediatricSvtDemonstration = usePediatricSvtDemonstration({
@@ -1453,6 +1463,7 @@ export function Cockpit({
     : pediatricStatusEpilepticusDemoSupported ? pediatricStatusEpilepticusDemonstration
     : pediatricAnaphylaxisDemoSupported ? pediatricAnaphylaxisDemonstration
     : pediatricSvtDemoSupported ? pediatricSvtDemonstration
+    : pediatricBradycardicArrestDemoSupported ? pediatricBradycardicArrestDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2380,6 +2391,8 @@ export function Cockpit({
           pediatricAnaphylaxisDemonstrating={demonstrating && pediatricAnaphylaxisDemoSupported}
           pediatricSvtGuidance={session.guidance}
           pediatricSvtDemonstrating={demonstrating && pediatricSvtDemoSupported}
+          pediatricBradycardicArrestGuidance={session.guidance}
+          pediatricBradycardicArrestDemonstrating={demonstrating && pediatricBradycardicArrestDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
