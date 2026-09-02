@@ -420,28 +420,28 @@
           "id": "observable-objectives",
           "status": "missing",
           "evidence": [
-            "This scenario declares 6 objectives; the contract allows at most 5."
+            "Six declared objectives exceed the five the shared catalog counts as independently observable within one session."
           ]
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "pediatric-status-asthmaticus-fixtures.ts binds seed 4472 and content 0.1.0 to expert, delayed-escalation error, recovery, and no-action paths. The asthma history and prior PICU admission, the recorded personal best and the arrival PEF at 32% of it, the verified first-hour delivered-care record, the minute-sixty findings, and the fixed absences that narrow without excluding are authored constants; no airway, drug-response or outcome model is claimed, and no outcome follows from any choice. tests/integration/pediatric-status-asthmaticus-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, and two are time-gated: the later response and the handoff each refuse until simulated time has passed. Unsupported choices are recorded events that move nothing, offered at three separate moments — a forced peak flow or a routine radiograph before nonresponse is recognized, a trigger review that delays the second-line plan, and a discharge read from a saturation before handoff. As in croup, this engine case clears the recorded wrong turn when a correct step lands."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions reconcile the verified first-hour care against the whole-child trajectory, name severe nonresponse plainly, activate pediatric critical-care and airway-capable ownership on that nonresponse rather than on further deterioration, record experienced-team ownership and monitoring for the supplied second-line plan, review the strictly later response, and hand off. Four further choices are refused by the engine when they are dispatched, and this tray deliberately shows one clear current action rather than placing them on screen beside the correct one — a design tests/ui/pediatric-status-asthmaticus.test.tsx pins, and one that differs from the croup and bronchiolitis trays in the same module. The lesson examines nobody, diagnoses and scores nothing, measures no PEF or spirometry, acquires or interprets no gas, laboratory test or image, chooses or delivers no oxygen, inhaler, spacer, nebulizer, drug, dose, concentration, route, interval, intravenous access, fluid, infusion, device, setting, ventilation, airway maneuver, intubation, sedation, paralysis, procedure or treatment, and determines no disposition, prognosis or outcome."
           ]
         },
         {
@@ -453,23 +453,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at handoff on a partial response, with treatment still running. Later actions cannot restart an ended branch, and the ending certifies no learner diagnosis, no learner-measured PEF, no learner-selected drug, dose or route, no determined disposition, and no outcome — and preserves that foreign body, anaphylaxis, upper-airway disease, infection, pneumothorax, mucus plugging, dysfunctional breathing and treatment toxicity stay open, with anaphylaxis care explicitly not to be delayed behind this pathway if allergic features emerge."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps, and the tutor also reads the wrong turn just taken, answering each of the four refusals with its own prose. Unlike bronchiolitis, none of these is over-treatment — they all spend time she does not have. The forced peak flow is answered by pointing out that a girl speaking one word at a time cannot perform it, that trying spends the reserve she is using to stay conscious, and that the resulting number could not be trusted anyway. The radiograph is answered by naming what would justify one — a pneumothorax, a focal collapse, a foreign body — and noting that air entry is reduced equally with no abrupt choking or focal asymmetry. The trigger review is treated as a sequencing judgment rather than a dismissal: controller access, adherence and barriers are real questions owed to her without blame, asked later by someone with time to listen. The discharge is answered with a saturation held on oxygen after three bronchodilator cycles, a steroid and a second-line plan, in a child with a prior PICU admission who failed first-line treatment an hour ago. The nonresponse beat is careful about reassurance: alert rather than drowsy, no quiet chest, no weakening effort, no apnea, no shock and no pulse loss means she has not arrived at respiratory failure, not that she is safe from it. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff taking none of the four, and its narration is generated from the tutor's own prose so the two cannot drift apart. A test asserts nothing anywhere examines her, measures a peak flow, or selects a drug, dose, route or infusion. tests/unit/pediatric-status-asthmaticus-demonstration.test.ts verifies observed response and all four wrong-choice prompts against the real engine, and tests/ui/pediatrics-status-asthmaticus.test.tsx verifies the one-action tray, the refusal status text, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. The counterfactual is time spent rather than treatment given: the recovery path forces a peak flow, waits for a film, delays for a trigger review and then reaches for discharge on a saturation — and all four refusals stay visible in the transcript after the correct actions are taken from the same positions."
           ]
         },
         {
@@ -488,23 +488,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "pediatric-status-asthmaticus-fixtures.ts binds exact-content expert, delayed-escalation, recovery, and no-action pathways to seed 4472 for deterministic replay through the shared engine, including both time gates and all four refused choices."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

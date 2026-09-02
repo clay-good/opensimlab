@@ -239,6 +239,8 @@ import { useBronchiolitisDemonstration } from '../../pediatrics/demo/useBronchio
 import { supportsBronchiolitisDemonstration } from '../../pediatrics/demo/bronchiolitis-demonstration';
 import { useCroupDemonstration } from '../../pediatrics/demo/useCroupDemonstration';
 import { supportsCroupDemonstration } from '../../pediatrics/demo/croup-demonstration';
+import { usePediatricStatusAsthmaticusDemonstration } from '../../pediatrics/demo/usePediatricStatusAsthmaticusDemonstration';
+import { supportsPediatricStatusAsthmaticusDemonstration } from '../../pediatrics/demo/pediatric-status-asthmaticus-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -510,6 +512,7 @@ export function Cockpit({
   const pediatricRespiratoryDistressDemoSupported = supportsPediatricRespiratoryDistressDemonstration(scenario);
   const bronchiolitisDemoSupported = supportsBronchiolitisDemonstration(scenario);
   const croupDemoSupported = supportsCroupDemonstration(scenario);
+  const pediatricStatusAsthmaticusDemoSupported = supportsPediatricStatusAsthmaticusDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -609,6 +612,7 @@ export function Cockpit({
     || pediatricRespiratoryDistressDemoSupported
     || bronchiolitisDemoSupported
     || croupDemoSupported
+    || pediatricStatusAsthmaticusDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -766,6 +770,12 @@ export function Cockpit({
     active: demonstrating && chronicOpioidHypoventilationDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.chronicOpioidHypoventilationAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const pediatricStatusAsthmaticusDemonstration = usePediatricStatusAsthmaticusDemonstration({
+    active: demonstrating && pediatricStatusAsthmaticusDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.pediatricStatusAsthmaticusAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const croupDemonstration = useCroupDemonstration({
@@ -1343,6 +1353,7 @@ export function Cockpit({
     : pediatricRespiratoryDistressDemoSupported ? pediatricRespiratoryDistressDemonstration
     : bronchiolitisDemoSupported ? bronchiolitisDemonstration
     : croupDemoSupported ? croupDemonstration
+    : pediatricStatusAsthmaticusDemoSupported ? pediatricStatusAsthmaticusDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2250,6 +2261,8 @@ export function Cockpit({
           bronchiolitisDemonstrating={demonstrating && bronchiolitisDemoSupported}
           croupGuidance={session.guidance}
           croupDemonstrating={demonstrating && croupDemoSupported}
+          pediatricStatusAsthmaticusGuidance={session.guidance}
+          pediatricStatusAsthmaticusDemonstrating={demonstrating && pediatricStatusAsthmaticusDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

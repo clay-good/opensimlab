@@ -85,6 +85,7 @@ import { acuteTracheostomyObstructionCompletionEvidence } from '../../respirator
 import { pediatricRespiratoryDistressCompletionEvidence } from '../../pediatrics/pediatric-respiratory-distress-completion';
 import { bronchiolitisCompletionEvidence } from '../../pediatrics/bronchiolitis-completion';
 import { croupCompletionEvidence } from '../../pediatrics/croup-completion';
+import { pediatricStatusAsthmaticusCompletionEvidence } from '../../pediatrics/pediatric-status-asthmaticus-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -309,6 +310,7 @@ export function auditClinicalScenario(
     ...pediatricRespiratoryDistressCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...bronchiolitisCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...croupCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...pediatricStatusAsthmaticusCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

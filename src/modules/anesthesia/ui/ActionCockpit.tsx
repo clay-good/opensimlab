@@ -183,6 +183,7 @@ import { acuteTracheostomyObstructionInlinePrompt } from '../../respiratory-medi
 import { pediatricRespiratoryDistressInlinePrompt } from '../../pediatrics/tutor/pediatric-respiratory-distress-guidance';
 import { bronchiolitisInlinePrompt } from '../../pediatrics/tutor/bronchiolitis-guidance';
 import { croupInlinePrompt } from '../../pediatrics/tutor/croup-guidance';
+import { pediatricStatusAsthmaticusInlinePrompt } from '../../pediatrics/tutor/pediatric-status-asthmaticus-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2935,6 +2936,7 @@ export interface ActionCockpitProps {
   readonly pediatricRespiratoryDistressGuidance?: GuidanceLevel;
   readonly bronchiolitisGuidance?: GuidanceLevel;
   readonly croupGuidance?: GuidanceLevel;
+  readonly pediatricStatusAsthmaticusGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3067,6 +3069,7 @@ export interface ActionCockpitProps {
   readonly pediatricRespiratoryDistressDemonstrating?: boolean;
   readonly bronchiolitisDemonstrating?: boolean;
   readonly croupDemonstrating?: boolean;
+  readonly pediatricStatusAsthmaticusDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5753,6 +5756,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasPediatricStatusAsthmaticusResponse && (
               <PediatricStatusAsthmaticusTray
                 assessment={props.resuscitation.pediatricStatusAsthmaticusAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.pediatricStatusAsthmaticusGuidance}
+                demonstrating={props.pediatricStatusAsthmaticusDemonstrating}
                 onAction={props.onPediatricStatusAsthmaticusResponse ?? (() => {})} />
             )}
             {hasPediatricSepsisResponse && (
@@ -11793,8 +11799,11 @@ function CroupTray({ assessment, scenarioVersion, guidance = 'unassisted', demon
   </div>;
 }
 
-function PediatricStatusAsthmaticusTray({ assessment, onAction }: {
+function PediatricStatusAsthmaticusTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricStatusAsthmaticusAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onPediatricStatusAsthmaticusResponse']>;
 }) {
   const trajectory = assessment?.trajectoryAtTick != null;
@@ -11804,7 +11813,17 @@ function PediatricStatusAsthmaticusTray({ assessment, onAction }: {
   const later = assessment?.laterResponseAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   const unsupported = assessment?.lastUnsupportedChoice;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : pediatricStatusAsthmaticusInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-status-asthmaticus-pattern-title">
       <div id="pediatric-status-asthmaticus-pattern-title" className="syringe__name">Read the whole child.</div>
       <Badge kind="teaching">history · prior care · speech · work · air entry</Badge>
@@ -11821,13 +11840,13 @@ function PediatricStatusAsthmaticusTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {!trajectory && <Button className="crisis-drug__action"
-          onClick={() => onAction('reconcile-pediatric-status-asthmaticus-treatment-and-trajectory')}>Review trajectory + prior care</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('reconcile-pediatric-status-asthmaticus-treatment-and-trajectory') : undefined}>Review trajectory + prior care</Button>}
         {trajectory && !nonresponse && <Button className="crisis-drug__action"
-          onClick={() => onAction('recognize-pediatric-status-asthmaticus-severe-nonresponse')}>Recognize severe nonresponse</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('recognize-pediatric-status-asthmaticus-severe-nonresponse') : undefined}>Recognize severe nonresponse</Button>}
         {nonresponse && !escalation && <Button className="crisis-drug__action"
-          onClick={() => onAction('activate-pediatric-status-asthmaticus-critical-care-escalation')}>Activate pediatric critical-care help</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('activate-pediatric-status-asthmaticus-critical-care-escalation') : undefined}>Activate pediatric critical-care help</Button>}
         {escalation && !secondLine && <Button className="crisis-drug__action"
-          onClick={() => onAction('record-pediatric-status-asthmaticus-qualified-second-line-care-intent')}>Record qualified care + monitoring</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('record-pediatric-status-asthmaticus-qualified-second-line-care-intent') : undefined}>Record qualified care + monitoring</Button>}
       </div>
       <p className="field__hint">Experienced pediatric staff own oxygen, inhaled and systemic medicines, monitoring, access, doses, routes, devices, and delivery. The learner records recognition and qualified ownership only.</p>
     </section>
@@ -11844,12 +11863,13 @@ function PediatricStatusAsthmaticusTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {secondLine && !later && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-pediatric-status-asthmaticus-later-response')}>Review the later response</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-status-asthmaticus-later-response') : undefined}>Review the later response</Button>}
         {later && !handoff && <Button className="crisis-drug__action"
-          onClick={() => onAction('handoff-pediatric-status-asthmaticus-reassessment')}>Hand off active severe asthma</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('handoff-pediatric-status-asthmaticus-reassessment') : undefined}>Hand off active severe asthma</Button>}
       </div>
       <p className="field__hint">Partial improvement does not prove durable recovery. Keep residual work, air entry, oxygen need, treatment exposure, toxicity surveillance, recurrence, access, and caregiver context visible.</p>
     </section>
+    </div>
   </div>;
 }
 
