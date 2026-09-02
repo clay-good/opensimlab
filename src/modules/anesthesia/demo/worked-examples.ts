@@ -99,6 +99,7 @@ import { supportsShoulderDystociaDemonstration } from '../../obstetrics/demo/sho
 import { supportsCordProlapseDemonstration } from '../../obstetrics/demo/umbilical-cord-prolapse-urgent-birth-coordination-demonstration';
 import { supportsUterineRuptureDemonstration } from '../../obstetrics/demo/suspected-uterine-rupture-recognition-demonstration';
 import { supportsMagnesiumToxicityDemonstration } from '../../obstetrics/demo/magnesium-sulfate-toxicity-recognition-demonstration';
+import { supportsHighNeuraxialDemonstration } from '../../obstetrics/demo/high-neuraxial-block-obstetric-coordination-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -231,6 +232,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsCordProlapseDemonstration,
     supportsUterineRuptureDemonstration,
     supportsMagnesiumToxicityDemonstration,
+    supportsHighNeuraxialDemonstration,
   ],
 };
 

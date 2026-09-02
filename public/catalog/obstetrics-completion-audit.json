@@ -1433,23 +1433,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "high-neuraxial-block-obstetric-coordination-fixtures.ts binds seed 7258 and content 0.1.0 to expert, assess-before-calling error, recovery, and no-action paths. The top-up clock, the ninety-second ascent, the supplied sensory level and fetal baseline, and the fixed 4-minute report are authored constants; no block, recession, circulation or fetal model is claimed, and no outcome follows from any choice. tests/integration/high-neuraxial-block-obstetric-coordination-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the fixed 4-minute report refuses until simulated time has passed since the readiness review, and the handoff refuses until time has passed since that. What moves is the support around her; what does not move is the block, which has not receded at the later report, or the fetal baseline."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions bring airway-capable anesthesia, obstetric, theatre, newborn and support ownership with someone at her head first, read the injection clock, block level, breathing, arm strength, circulation and fetal context as one ascending line, hold the high block as the leading explanation while vasovagal, aortocaval, toxicity, embolic, hemorrhagic and cardiopulmonary causes stay open, review the parallel airway, ventilation, circulation, uterine-displacement, fetal, birth and support readiness, review the fixed report, and hand off unresolved risk. Order is enforced rather than suggested, and every later step refuses until the response has been activated. The lesson examines nobody, assesses no block, interprets no monitoring, diagnoses nothing, changes no injection or infusion, changes no position, manages no airway, delivers no oxygen, ventilation or circulatory support, assesses no newborn, and selects no drug, dose, concentration, route, rate, target, anesthetic, birth plan or procedure."
           ]
         },
         {
@@ -1461,23 +1461,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at unresolved-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no block recession, no fetal recovery, no treatment effect, no newborn safety, no excluded awareness, no safety disposition, and no maternal, newborn or other outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both call for airway-capable help before measuring anything, and both give the reason: a block that reached C6 in ninety seconds has not stopped there, so any level established is the one it has already passed. The arms are named as the useful sign, because hand weakness means the block is at the level that runs the diaphragm, and the bradycardia, the pressure of 78/42 and the fetal baseline of 90 are read as the same event rather than three problems. Both keep vasovagal, aortocaval, toxicity, embolic, hemorrhagic and cardiopulmonary causes open behind the obvious reading, and both treat her being awake and frightened as part of the presentation rather than a detail beside it — someone stays at her head throughout, and the awareness question is raised before an airway is secured rather than afterwards. The ending gives back partial support, an unreceded block and a birth that has not happened. A test asserts nothing anywhere examines her, assesses the block, manages an airway, delivers oxygen or ventilation, or selects an anesthetic or a birth plan. tests/unit/high-neuraxial-block-obstetric-coordination-demonstration.test.ts and tests/ui/obstetrics-high-neuraxial-block-obstetric-coordination.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that measured the block before calling for airway help can still reach a correct handoff."
           ]
         },
         {
@@ -1496,23 +1496,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "high-neuraxial-block-obstetric-coordination-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 7258 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

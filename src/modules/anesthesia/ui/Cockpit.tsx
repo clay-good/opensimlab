@@ -195,6 +195,8 @@ import { useUterineRuptureDemonstration } from '../../obstetrics/demo/useUterine
 import { supportsUterineRuptureDemonstration } from '../../obstetrics/demo/suspected-uterine-rupture-recognition-demonstration';
 import { useMagnesiumToxicityDemonstration } from '../../obstetrics/demo/useMagnesiumToxicityDemonstration';
 import { supportsMagnesiumToxicityDemonstration } from '../../obstetrics/demo/magnesium-sulfate-toxicity-recognition-demonstration';
+import { useHighNeuraxialDemonstration } from '../../obstetrics/demo/useHighNeuraxialDemonstration';
+import { supportsHighNeuraxialDemonstration } from '../../obstetrics/demo/high-neuraxial-block-obstetric-coordination-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -444,6 +446,7 @@ export function Cockpit({
   const cordProlapseDemoSupported = supportsCordProlapseDemonstration(scenario);
   const uterineRuptureDemoSupported = supportsUterineRuptureDemonstration(scenario);
   const magnesiumToxicityDemoSupported = supportsMagnesiumToxicityDemonstration(scenario);
+  const highNeuraxialDemoSupported = supportsHighNeuraxialDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -521,6 +524,7 @@ export function Cockpit({
     || cordProlapseDemoSupported
     || uterineRuptureDemoSupported
     || magnesiumToxicityDemoSupported
+    || highNeuraxialDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -672,6 +676,12 @@ export function Cockpit({
     active: demonstrating && termTransitionDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.neonatologyTermTransitionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const highNeuraxialDemonstration = useHighNeuraxialDemonstration({
+    active: demonstrating && highNeuraxialDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.obstetricsHighNeuraxialAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const magnesiumToxicityDemonstration = useMagnesiumToxicityDemonstration({
@@ -1113,6 +1123,7 @@ export function Cockpit({
     : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
+    : highNeuraxialDemoSupported ? highNeuraxialDemonstration
     : magnesiumToxicityDemoSupported ? magnesiumToxicityDemonstration
     : uterineRuptureDemoSupported ? uterineRuptureDemonstration
     : cordProlapseDemoSupported ? cordProlapseDemonstration
@@ -1964,6 +1975,8 @@ export function Cockpit({
           obstetricsUterineRuptureDemonstrating={demonstrating && uterineRuptureDemoSupported}
           obstetricsMagnesiumToxicityGuidance={session.guidance}
           obstetricsMagnesiumToxicityDemonstrating={demonstrating && magnesiumToxicityDemoSupported}
+          obstetricsHighNeuraxialGuidance={session.guidance}
+          obstetricsHighNeuraxialDemonstrating={demonstrating && highNeuraxialDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
