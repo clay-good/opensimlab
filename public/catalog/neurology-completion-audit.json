@@ -929,23 +929,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "guillain-barre-respiratory-decline-fixtures.ts binds seed 6392 and content 0.1.0 to expert, skipped-the-mimic error, recovery, and no-action paths. The presentation, the serial mechanics and single-breath counts, the fixed blood gas, CSF and nerve-conduction reports, the monitored autonomic hour, and the fixed 4-hour report are authored constants; no neuromuscular, autonomic or ventilation model is claimed, and no outcome follows from any choice. tests/integration/guillain-barre-respiratory-decline-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the later respiratory, bulbar and autonomic review refuses until simulated time has passed since the ownership activation, and the handoff refuses until time has passed since that. Three axes move together — the vital capacity falls, the bulbar failure deepens, and the autonomic range widens — while the saturation stays above 96%."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions measure the ascent in days rather than findings, ask what else does this before the obvious answer is allowed to close, call a high-risk respiratory decline while the saturation is still 98% and while no score or single cutoff is treated as the threshold, bring neurocritical, respiratory, airway-capable and cardiac-monitoring ownership in together, compare a fixed later report, and hand off active risk. Order is enforced rather than suggested, and refusal names the missing step. The lesson takes no history, examines nobody, calculates no score, acquires no respiratory mechanics, blood gas or CSF, interprets no electrodiagnostic or cardiac-monitoring record, and selects no drug, dose, route, access, oxygen, ventilation, airway device, rhythm or pressure treatment."
           ]
         },
         {
@@ -957,23 +957,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at active-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no proven diagnosis, no treatment effect, no durable neurologic recovery, no disposition, and no outcome. No respiratory arrest is authored."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. This lesson shares the saturation trap with the myasthenic lesson next door and adds two things that one does not have. The first is a mimic that must be excluded before the obvious answer is allowed to close: ascending weakness with areflexia is also what a cord lesion looks like, so both the tutor and the example say out loud what argues against it here — preserved sensation, no sensory level, no extensor plantar — rather than assuming it. The CSF protein of 86 with 3 cells and the demyelinating nerve-conduction pattern support the picture without making any one test diagnostic. The second is dysautonomia as a third axis of risk, where the instruction is to monitor rather than chase: a monitored hour ranging from 48 to 138 beats and 88/52 to 188/110 is a reason for cardiac ownership and continuous watching, not a list of values to correct one at a time, and provoking or automatically treating each one is named as the failure mode. The respiratory call is made on the slope — 3.6 to 2.4 litres, a single-breath count from 28 to 18, MIP -45 to -30 in twelve hours — with the gas normal because in neuromuscular failure it is normal until it is not. The ending hands off three problems rather than one. A test asserts nothing anywhere measures mechanics, interprets the monitor, proves the diagnosis, or treats a rhythm. tests/unit/guillain-barre-respiratory-decline-demonstration.test.ts and tests/ui/neurology-guillain-barre-respiratory-decline.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that accepted the textbook story without asking what else does this can still reach a correct handoff."
           ]
         },
         {
@@ -992,23 +992,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "guillain-barre-respiratory-decline-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 6392 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

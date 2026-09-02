@@ -80,6 +80,7 @@ import { supportsAsahDemonstration } from '../../neurology/demo/aneurysmal-subar
 import { supportsFocalMotorStatusDemonstration } from '../../neurology/demo/focal-motor-status-epilepticus-escalation-demonstration';
 import { supportsNcseDemonstration } from '../../neurology/demo/nonconvulsive-status-epilepticus-recognition-demonstration';
 import { supportsMyastheniaDemonstration } from '../../neurology/demo/myasthenic-crisis-escalation-demonstration';
+import { supportsGbsDemonstration } from '../../neurology/demo/guillain-barre-respiratory-decline-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -191,6 +192,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsFocalMotorStatusDemonstration,
     supportsNcseDemonstration,
     supportsMyastheniaDemonstration,
+    supportsGbsDemonstration,
   ],
 };
 
