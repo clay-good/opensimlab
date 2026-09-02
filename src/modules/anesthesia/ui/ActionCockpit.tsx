@@ -148,6 +148,7 @@ import { encephalitisInlinePrompt } from '../../neurology/tutor/suspected-herpes
 import { raisedIcpInlinePrompt } from '../../neurology/tutor/raised-intracranial-pressure-visual-threat-guidance';
 import { herniationInlinePrompt } from '../../neurology/tutor/acute-transtentorial-herniation-pattern-guidance';
 import { msccInlinePrompt } from '../../neurology/tutor/metastatic-spinal-cord-compression-guidance';
+import { deliriumInlinePrompt } from '../../neurology/tutor/acute-delirium-reversible-causes-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2865,6 +2866,7 @@ export interface ActionCockpitProps {
   readonly neurologyRaisedIcpGuidance?: GuidanceLevel;
   readonly neurologyHerniationGuidance?: GuidanceLevel;
   readonly neurologyMsccGuidance?: GuidanceLevel;
+  readonly neurologyDeliriumGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2962,6 +2964,7 @@ export interface ActionCockpitProps {
   readonly neurologyRaisedIcpDemonstrating?: boolean;
   readonly neurologyHerniationDemonstrating?: boolean;
   readonly neurologyMsccDemonstrating?: boolean;
+  readonly neurologyDeliriumDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5762,6 +5765,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNeurologyDeliriumResponse && (
               <NeurologyDeliriumTray
                 assessment={props.resuscitation.neurologyDeliriumAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.neurologyDeliriumGuidance}
+                demonstrating={props.neurologyDeliriumDemonstrating}
                 onAction={props.onNeurologyDeliriumResponse ?? (() => {})} />
             )}
             {hasNeurologyAutonomicDysreflexiaResponse && (
@@ -12722,10 +12728,15 @@ function NeurologyMsccTray({ assessment, scenarioVersion, onAction, guidance = '
   </>;
 }
 
-function NeurologyDeliriumTray({ assessment, onAction }: {
+function NeurologyDeliriumTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['neurologyDeliriumAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onNeurologyDeliriumResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = deliriumInlinePrompt(guidance, { scenarioVersion, delirium: assessment });
+  const act = demonstrating ? undefined : onAction;
   const trajectory = assessment?.trajectoryAtTick != null;
   const recognition = assessment?.recognitionAtTick != null;
   const ownership = assessment?.ownershipAtTick != null;
@@ -12733,22 +12744,27 @@ function NeurologyDeliriumTray({ assessment, onAction }: {
   const later = assessment?.laterAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="neurology-delirium-early-title">
       <div id="neurology-delirium-early-title" className="syringe__name">Begin with who she was.</div>
       <p className="syringe__remaining">Baseline, fluctuation, attention, perception, function, and the whole patient belong together.</p>
       <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neurology-delirium-baseline-clock-fluctuation-attention-perception-function-and-whole-patient')}>Review baseline + fluctuation</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-neurology-delirium-indicators-and-qualified-assessment-boundary-without-dementia-or-single-cause-closure')}>Recognize the assessment boundary</Button>}
-        {recognition && !ownership && <Button className="crisis-drug__action" onClick={() => onAction('activate-neurology-delirium-qualified-medical-nursing-pharmacy-family-safety-capacity-and-mobility-ownership')}>Bring familiar care together</Button>}
-        {ownership && !boundary && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-delirium-reversible-contributors-communication-environment-deescalation-and-treatment-boundary')}>Review causes + calm care</Button>}
+        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-neurology-delirium-baseline-clock-fluctuation-attention-perception-function-and-whole-patient') : undefined}>Review baseline + fluctuation</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-neurology-delirium-indicators-and-qualified-assessment-boundary-without-dementia-or-single-cause-closure') : undefined}>Recognize the assessment boundary</Button>}
+        {recognition && !ownership && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-neurology-delirium-qualified-medical-nursing-pharmacy-family-safety-capacity-and-mobility-ownership') : undefined}>Bring familiar care together</Button>}
+        {ownership && !boundary && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-neurology-delirium-reversible-contributors-communication-environment-deescalation-and-treatment-boundary') : undefined}>Review causes + calm care</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="neurology-delirium-later-title">
       <div id="neurology-delirium-later-title" className="syringe__name">Make the room easier to understand.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Causes, capacity, safety, medicines, function, recurrence, follow-up, and outcome uncertainty handed off.' : later ? 'Several contributors are visible. Attention still fluctuates, so no single cause or recovery is claimed.' : boundary ? 'Familiar, least-restrictive care is active. Review the fixed 6-hour report after time passes.' : 'Complete the baseline, assessment, owners, and contributor boundary before reassessment.'}</p>
       <div className="crisis-drug__actions">
-        {boundary && !later && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-delirium-strict-later-contributor-and-unresolved-cognitive-trajectory')}>Review the 6-hour report</Button>}
-        {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-delirium-causes-capacity-safety-medicines-function-recurrence-follow-up-and-active-risk')}>Hand off the whole picture</Button>}
+        {boundary && !later && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-neurology-delirium-strict-later-contributor-and-unresolved-cognitive-trajectory') : undefined}>Review the 6-hour report</Button>}
+        {later && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-neurology-delirium-causes-capacity-safety-medicines-function-recurrence-follow-up-and-active-risk') : undefined}>Hand off the whole picture</Button>}
       </div>
     </section>
   </>;
