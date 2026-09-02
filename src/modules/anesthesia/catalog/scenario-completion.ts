@@ -69,6 +69,7 @@ import { maternalNeonatalHandoffCompletionEvidence } from '../../obstetrics/mate
 import { oxytocinTachysystoleCompletionEvidence } from '../../obstetrics/oxytocin-associated-uterine-tachysystole-completion';
 import { acuteSevereAsthmaCompletionEvidence } from '../../respiratory-medicine/acute-severe-asthma-completion';
 import { copdTransitionCompletionEvidence } from '../../respiratory-medicine/copd-exacerbation-transition-reassessment-completion';
+import { capHypoxemiaCompletionEvidence } from '../../respiratory-medicine/community-acquired-pneumonia-hypoxemia-reassessment-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -277,6 +278,7 @@ export function auditClinicalScenario(
     ...oxytocinTachysystoleCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...acuteSevereAsthmaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...copdTransitionCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...capHypoxemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

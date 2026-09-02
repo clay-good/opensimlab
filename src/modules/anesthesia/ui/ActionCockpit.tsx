@@ -167,6 +167,7 @@ import { maternalNeonatalHandoffInlinePrompt } from '../../obstetrics/tutor/mate
 import { oxytocinTachysystoleInlinePrompt } from '../../obstetrics/tutor/oxytocin-associated-uterine-tachysystole-guidance';
 import { acuteSevereAsthmaInlinePrompt } from '../../respiratory-medicine/tutor/acute-severe-asthma-guidance';
 import { copdTransitionInlinePrompt } from '../../respiratory-medicine/tutor/copd-exacerbation-transition-reassessment-guidance';
+import { capHypoxemiaInlinePrompt } from '../../respiratory-medicine/tutor/community-acquired-pneumonia-hypoxemia-reassessment-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2903,6 +2904,7 @@ export interface ActionCockpitProps {
   readonly obstetricsOxytocinTachysystoleGuidance?: GuidanceLevel;
   readonly acuteSevereAsthmaGuidance?: GuidanceLevel;
   readonly copdTransitionGuidance?: GuidanceLevel;
+  readonly capHypoxemiaGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3019,6 +3021,7 @@ export interface ActionCockpitProps {
   readonly obstetricsOxytocinTachysystoleDemonstrating?: boolean;
   readonly acuteSevereAsthmaDemonstrating?: boolean;
   readonly copdTransitionDemonstrating?: boolean;
+  readonly capHypoxemiaDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5582,6 +5585,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasCapHypoxemiaResponse && (
               <CapHypoxemiaTray assessment={props.resuscitation.capHypoxemiaAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.capHypoxemiaGuidance}
+                demonstrating={props.capHypoxemiaDemonstrating}
                 onAction={props.onCapHypoxemiaResponse ?? (() => {})} />
             )}
             {hasPostPeDyspneaResponse && (
@@ -10685,25 +10691,35 @@ function CopdTransitionTray({ assessment, scenarioVersion, onAction, guidance = 
   </div>;
 }
 
-function CapHypoxemiaTray({ assessment, onAction }: {
+function CapHypoxemiaTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['capHypoxemiaAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onCapHypoxemiaResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = capHypoxemiaInlinePrompt(guidance, { scenarioVersion, capHypoxemia: assessment });
+  const act = demonstrating ? undefined : onAction;
   const support = assessment?.supportAtTick != null;
   const evidence = assessment?.evidenceAtTick != null;
   const severity = assessment?.severityAtTick != null;
   const treatment = assessment?.treatmentIntentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="cap-hypoxemia-first-title">
       <div id="cap-hypoxemia-first-title" className="syringe__name">Low oxygen, clear next steps.</div>
       <Badge kind="teaching">SpO₂ 85% room air · RR 32 · focal opacity</Badge>
       <div className="syringe__meta">signal · work · mentation · perfusion · pattern</div>
       <p className="syringe__remaining" role="status">{severity ? 'Whole-patient severity reviewed · higher-acuity help active' : evidence ? 'Pattern supported · review severity + escalation' : support ? 'Support intent recorded · reconcile the pattern' : 'Oxygenation + whole-patient review pending'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={support} onClick={() => onAction('corroborate-and-support-cap-hypoxemia')}>Corroborate hypoxemia + whole patient</Button>
-        <Button className="crisis-drug__action" disabled={!support || evidence} onClick={() => onAction('reconcile-cap-evidence-and-dangerous-alternatives')}>Review pneumonia pattern + alternatives</Button>
-        <Button className="crisis-drug__action" disabled={!evidence || severity} onClick={() => onAction('classify-cap-severity-and-escalation-needs')}>Review severity + activate help</Button>
+        <Button className="crisis-drug__action" disabled={support} aria-disabled={demonstrating} onClick={act ? () => act('corroborate-and-support-cap-hypoxemia') : undefined}>Corroborate hypoxemia + whole patient</Button>
+        <Button className="crisis-drug__action" disabled={!support || evidence} aria-disabled={demonstrating} onClick={act ? () => act('reconcile-cap-evidence-and-dangerous-alternatives') : undefined}>Review pneumonia pattern + alternatives</Button>
+        <Button className="crisis-drug__action" disabled={!evidence || severity} aria-disabled={demonstrating} onClick={act ? () => act('classify-cap-severity-and-escalation-needs') : undefined}>Review severity + activate help</Button>
       </div>
       <p className="field__hint">The pulse, room-air gas, imaging, and laboratory reports are authored. Three minor features support urgent judgment; they do not automatically choose a location of care.</p>
     </section>
@@ -10713,8 +10729,8 @@ function CapHypoxemiaTray({ assessment, onAction }: {
       <div className="syringe__meta">named owners · active oxygen need · open cause</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Active pneumonia care handed off' : treatment ? 'Ownership recorded · advance time before handoff' : severity ? 'Support intent recorded · assign treatment + testing ownership' : 'Pattern review + support intent come first'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={!severity || treatment} onClick={() => onAction('record-cap-testing-and-empiric-treatment-intent')}>Record treatment + indicated tests</Button>
-        <Button className="crisis-drug__action" disabled={!treatment || handoff} onClick={() => onAction('handoff-cap-hypoxemia-reassessment')}>Reassess + hand off active care</Button>
+        <Button className="crisis-drug__action" disabled={!severity || treatment} aria-disabled={demonstrating} onClick={act ? () => act('record-cap-testing-and-empiric-treatment-intent') : undefined}>Record treatment + indicated tests</Button>
+        <Button className="crisis-drug__action" disabled={!treatment || handoff} aria-disabled={demonstrating} onClick={act ? () => act('handoff-cap-hypoxemia-reassessment') : undefined}>Reassess + hand off active care</Button>
       </div>
       <p className="field__hint">No antibiotic, dose, oxygen device, flow, support setting, procedure, treatment response, disposition, pathogen, prognosis, or outcome is chosen here.</p>
     </section>

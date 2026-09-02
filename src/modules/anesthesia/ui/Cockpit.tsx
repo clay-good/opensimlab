@@ -207,6 +207,8 @@ import { useAcuteSevereAsthmaDemonstration } from '../../respiratory-medicine/de
 import { supportsAcuteSevereAsthmaDemonstration } from '../../respiratory-medicine/demo/acute-severe-asthma-demonstration';
 import { useCopdTransitionDemonstration } from '../../respiratory-medicine/demo/useCopdTransitionDemonstration';
 import { supportsCopdTransitionDemonstration } from '../../respiratory-medicine/demo/copd-exacerbation-transition-reassessment-demonstration';
+import { useCapHypoxemiaDemonstration } from '../../respiratory-medicine/demo/useCapHypoxemiaDemonstration';
+import { supportsCapHypoxemiaDemonstration } from '../../respiratory-medicine/demo/community-acquired-pneumonia-hypoxemia-reassessment-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -462,6 +464,7 @@ export function Cockpit({
   const oxytocinTachysystoleDemoSupported = supportsOxytocinTachysystoleDemonstration(scenario);
   const acuteSevereAsthmaDemoSupported = supportsAcuteSevereAsthmaDemonstration(scenario);
   const copdTransitionDemoSupported = supportsCopdTransitionDemonstration(scenario);
+  const capHypoxemiaDemoSupported = supportsCapHypoxemiaDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -545,6 +548,7 @@ export function Cockpit({
     || oxytocinTachysystoleDemoSupported
     || acuteSevereAsthmaDemoSupported
     || copdTransitionDemoSupported
+    || capHypoxemiaDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -696,6 +700,12 @@ export function Cockpit({
     active: demonstrating && termTransitionDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.neonatologyTermTransitionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const capHypoxemiaDemonstration = useCapHypoxemiaDemonstration({
+    active: demonstrating && capHypoxemiaDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.capHypoxemiaAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const copdTransitionDemonstration = useCopdTransitionDemonstration({
@@ -1173,6 +1183,7 @@ export function Cockpit({
     : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
+    : capHypoxemiaDemoSupported ? capHypoxemiaDemonstration
     : copdTransitionDemoSupported ? copdTransitionDemonstration
     : acuteSevereAsthmaDemoSupported ? acuteSevereAsthmaDemonstration
     : oxytocinTachysystoleDemoSupported ? oxytocinTachysystoleDemonstration
@@ -2042,6 +2053,8 @@ export function Cockpit({
           acuteSevereAsthmaDemonstrating={demonstrating && acuteSevereAsthmaDemoSupported}
           copdTransitionGuidance={session.guidance}
           copdTransitionDemonstrating={demonstrating && copdTransitionDemoSupported}
+          capHypoxemiaGuidance={session.guidance}
+          capHypoxemiaDemonstrating={demonstrating && capHypoxemiaDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
