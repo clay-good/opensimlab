@@ -1302,28 +1302,28 @@
           "id": "observable-objectives",
           "status": "missing",
           "evidence": [
-            "This scenario declares 6 objectives; the contract allows at most 5."
+            "Six declared objectives exceed the five the shared catalog counts as independently observable within one session."
           ]
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "pediatric-status-epilepticus-fixtures.ts binds seed 7159 and content 0.1.0 to expert, unwatched-airway error, recovery, and no-action paths. The 14-minute-30-second seizure clock, the two documented appropriate weight-based first-line doses at minutes 5 and 10 with product and delivery deliberately not shown, the continuing convulsions without recovery, the supplied findings including a point-of-care glucose of 108 mg/dL, the uncountable respiratory rate and absent capnography, the authored absences, and the fixed minute-25 report are authored constants; no seizure-threshold, drug-response or outcome model is claimed, and no outcome follows from any choice. tests/integration/pediatric-status-epilepticus-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, in the branching shape it shares with the other unordered-pair lessons in this module. Qualified second-line ownership and the airway-cause-refractory review may be recorded in either order, and the later report refuses until both are active and simulated time has passed since whichever landed second. The handoff is gated on another elapsed tick. This engine case authors no refusable choice; what it refuses is order and time."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions reconcile the seizure clock against the verified first-line record and the whole-child state; recognize persistent convulsive status after two documented appropriate first-line doses, which is the naming that stops a third benzodiazepine and moves the next step to a different drug class; activate qualified second-line ownership immediately rather than after the parallel work finishes; hold airway and breathing, causes and the refractory boundary together; review the strictly later fixed report; and hand off. The tray shows one clear current action per card except at the recognition step, where it deliberately offers both halves of the unordered pair at once. The lesson times and examines nothing, acquires or interprets no monitoring, glucose, laboratory, EEG, imaging or lumbar-puncture finding, verifies or selects no first-line or second-line product, dose, concentration, route, access, infusion, oxygen, suction, airway device, procedure or treatment, diagnoses and treats no cause, assesses no team performance, and determines no disposition, prognosis or outcome."
           ]
         },
         {
@@ -1335,23 +1335,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at handoff on a child with no visible convulsion since minute 18 who is drowsy, not at baseline, and not safe to swallow. Later actions cannot restart an ended branch, and the ending certifies no learner timing, examination, monitoring, test or first-line verification, no learner diagnosis, no learner-selected agent, dose or route, no proven cause, no proven treatment effect, no electrographic seizure control, no durable seizure control, no proven neurological recovery, no excluded recurrence, no determined disposition, and no outcome. The gap between no visible convulsion and no seizure is preserved explicitly."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Seven observed-state prompts at version 0.1.0 read the learner's own recorded steps. There is no wrong-turn prose because the engine authors no refusable choice; the lesson turns on two clocks and the tutor is built around both. The first is running, so the opening beat starts from it and notes why the supplied glucose of 108 matters — a treatable cause has already been looked for and is not the answer — and what cannot be had, since the respiratory rate is not countable through the movements and there is no capnography. The recognition beat names persistent status after two adequate doses as the thing that stops a third benzodiazepine and changes the drug class. Three of the seven prompts cover the three ways the unordered pair can be half done, including the honest line that opening the airway and cause review does not stop a seizure. The safety beat says why the airway is not incidental: the second-line agent itself can depress her breathing, and deciding the refractory boundary in advance is the difference between escalating and noticing late. The second clock is the later beat, where the movements stop and stillness becomes the most over-read finding in the lesson: a child who has stopped moving and is not back to herself still needs watching. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff, taking the pair second-line-first as one valid order rather than the required one, and its narration is generated from the tutor's own prose so the two cannot drift apart. A test asserts nothing anywhere times the seizure, examines her, acquires an EEG or image, or selects or verifies an agent, dose, route or access. tests/unit/pediatric-status-epilepticus-demonstration.test.ts verifies observed response and every beat against the real engine, including both orders of the unordered pair and that the still minute-25 report never flips electrographicSeizureControlProven, durableSeizureControlProven, neurologicRecoveryProven, seizureCauseProven or recurrenceExcluded, and tests/ui/pediatrics-status-epilepticus.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. The counterfactual is a running drug with nothing watching the breathing: the common-error path activates second-line ownership correctly and reaches for the later report having never opened the airway, cause and refractory-boundary review, in a child whose respiratory rate cannot be counted and whose next agent can depress it, meeting three of six. The recovery path takes the unordered pair the other way round, and walks into both time gates before clearing them, and still reaches a correct handoff from the same positions."
           ]
         },
         {
@@ -1370,23 +1370,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "pediatric-status-epilepticus-fixtures.ts binds exact-content expert, unwatched-airway error, recovery, and no-action pathways to seed 7159 for deterministic replay through the shared engine, including the order refusal, the parallel-care refusal, and both time gates."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

@@ -190,6 +190,7 @@ import { pediatricDehydrationInlinePrompt } from '../../pediatrics/tutor/pediatr
 import { pediatricDkaInlinePrompt } from '../../pediatrics/tutor/pediatric-dka-guidance';
 import { pediatricHypoglycemicSeizureInlinePrompt } from '../../pediatrics/tutor/pediatric-hypoglycemic-seizure-guidance';
 import { pediatricFebrileSeizureInlinePrompt } from '../../pediatrics/tutor/pediatric-febrile-seizure-guidance';
+import { pediatricStatusEpilepticusInlinePrompt } from '../../pediatrics/tutor/pediatric-status-epilepticus-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2949,6 +2950,7 @@ export interface ActionCockpitProps {
   readonly pediatricDkaGuidance?: GuidanceLevel;
   readonly pediatricHypoglycemicSeizureGuidance?: GuidanceLevel;
   readonly pediatricFebrileSeizureGuidance?: GuidanceLevel;
+  readonly pediatricStatusEpilepticusGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3088,6 +3090,7 @@ export interface ActionCockpitProps {
   readonly pediatricDkaDemonstrating?: boolean;
   readonly pediatricHypoglycemicSeizureDemonstrating?: boolean;
   readonly pediatricFebrileSeizureDemonstrating?: boolean;
+  readonly pediatricStatusEpilepticusDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5829,6 +5832,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasPediatricStatusEpilepticusResponse && (
               <PediatricStatusEpilepticusTray
                 assessment={props.resuscitation.pediatricStatusEpilepticusAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.pediatricStatusEpilepticusGuidance}
+                demonstrating={props.pediatricStatusEpilepticusDemonstrating}
                 onAction={props.onPediatricStatusEpilepticusResponse ?? (() => {})} />
             )}
             {hasPediatricAnaphylaxisResponse && (
@@ -12338,8 +12344,11 @@ function PediatricFebrileSeizureTray({ assessment, scenarioVersion, guidance = '
   </div>;
 }
 
-function PediatricStatusEpilepticusTray({ assessment, onAction }: {
+function PediatricStatusEpilepticusTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricStatusEpilepticusAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onPediatricStatusEpilepticusResponse']>;
 }) {
   const trajectory = assessment?.trajectoryAtTick != null;
@@ -12348,7 +12357,17 @@ function PediatricStatusEpilepticusTray({ assessment, onAction }: {
   const safety = assessment?.safetyAtTick != null;
   const later = assessment?.laterResponseAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : pediatricStatusEpilepticusInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-status-epilepticus-pattern-title">
       <div id="pediatric-status-epilepticus-pattern-title" className="syringe__name">Read the clock and the child.</div>
       <Badge kind="teaching">clock · movement · recovery · breathing · pulse · glucose</Badge>
@@ -12363,13 +12382,13 @@ function PediatricStatusEpilepticusTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {!trajectory && <Button className="crisis-drug__action"
-          onClick={() => onAction('reconcile-pediatric-status-epilepticus-clock-care-and-whole-child')}>Review clock + first-line care</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('reconcile-pediatric-status-epilepticus-clock-care-and-whole-child') : undefined}>Review clock + first-line care</Button>}
         {trajectory && !recognition && <Button className="crisis-drug__action"
-          onClick={() => onAction('recognize-pediatric-convulsive-status-after-first-line-care')}>Recognize ongoing convulsive status</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('recognize-pediatric-convulsive-status-after-first-line-care') : undefined}>Recognize ongoing convulsive status</Button>}
         {recognition && !secondLine && <Button className="crisis-drug__action"
-          onClick={() => onAction('activate-pediatric-status-epilepticus-qualified-second-line-ownership')}>Activate qualified second-line ownership</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('activate-pediatric-status-epilepticus-qualified-second-line-ownership') : undefined}>Activate qualified second-line ownership</Button>}
         {recognition && !safety && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-pediatric-status-epilepticus-airway-causes-and-refractory-boundary')}>Review airway + causes + boundaries</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-status-epilepticus-airway-causes-and-refractory-boundary') : undefined}>Review airway + causes + boundaries</Button>}
       </div>
       <p className="field__hint">Experienced pediatric, neurological, pharmacy, nursing, and airway-capable teams own medicines, monitoring, glucose and cause work, oxygenation, access, devices, procedures, and escalation. The learner selects or delivers none of them.</p>
     </section>
@@ -12387,12 +12406,13 @@ function PediatricStatusEpilepticusTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {secondLine && safety && !later && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-pediatric-status-epilepticus-later-response')}>Review the minute-25 response</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-status-epilepticus-later-response') : undefined}>Review the minute-25 response</Button>}
         {later && !handoff && <Button className="crisis-drug__action"
-          onClick={() => onAction('handoff-pediatric-status-epilepticus-active-risk')}>Hand off active status risk</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('handoff-pediatric-status-epilepticus-active-risk') : undefined}>Hand off active status risk</Button>}
       </div>
       <p className="field__hint">Stopped visible movements do not prove electrographic seizure control, durable seizure control, neurological recovery, causal closure, discharge readiness, or outcome.</p>
     </section>
+    </div>
   </div>;
 }
 
