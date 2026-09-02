@@ -133,6 +133,7 @@ import { supportsPediatricAnaphylaxisDemonstration } from '../../pediatrics/demo
 import { supportsPediatricSvtDemonstration } from '../../pediatrics/demo/pediatric-svt-demonstration';
 import { supportsPediatricBradycardicArrestDemonstration } from '../../pediatrics/demo/pediatric-bradycardic-arrest-demonstration';
 import { supportsPediatricFbaoDemonstration } from '../../pediatrics/demo/pediatric-fbao-demonstration';
+import { supportsPediatricInjurySafeguardingDemonstration } from '../../pediatrics/demo/pediatric-injury-safeguarding-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -303,6 +304,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsPediatricSvtDemonstration,
     supportsPediatricBradycardicArrestDemonstration,
     supportsPediatricFbaoDemonstration,
+    supportsPediatricInjurySafeguardingDemonstration,
   ],
 };
 

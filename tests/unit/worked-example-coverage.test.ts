@@ -21,10 +21,13 @@
  * upward through fourteen lessons, and made the same transition. Respiratory
  * medicine carried it through fourteen lessons too and has now made the same
  * transition: it is a list entry, and the sentence calling it started is gone.
+ * Pediatrics is the sixth module to make it, and the longest: its number was
+ * rewritten fifteen times, from four through sixteen, before the sentence
+ * calling it started could go.
  *
- * The part-finished form itself is not gone. The obstetrics case below still
- * holds it, so the next module to start inherits a guard that derives its
- * number from the audit rather than trusting the front page.
+ * The part-finished form itself is not gone. The obstetrics and pediatrics
+ * cases below still hold it, so the next module to start inherits a guard that
+ * derives its number from the audit rather than trusting the front page.
  */
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
@@ -161,10 +164,11 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
     expect(readme).toContain(`${COUNT_WORDS[PEDIATRICS_SCENARIOS.length]} labs done.`);
   });
 
-  it('claims only what those ten modules support', () => {
+  it('claims only what those eleven modules support', () => {
     const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');
     expect(readme).toContain('Every renal, oncology, endocrine, nursing,');
-    expect(readme).toContain('infectious-disease, neonatology, toxicology, neurology, obstetrics, and respiratory-medicine lab');
+    expect(readme).toContain('infectious-disease, neonatology, toxicology, neurology, obstetrics, respiratory-medicine, and');
+    expect(readme).toContain('pediatrics lab has both.');
     // The hedge this sentence used to carry belongs to a state the audit has
     // left behind. If it comes back, one of the three tests above is failing too.
     expect(readme).not.toContain('and most\nendocrine ones');

@@ -195,6 +195,7 @@ import { pediatricAnaphylaxisInlinePrompt } from '../../pediatrics/tutor/pediatr
 import { pediatricSvtInlinePrompt } from '../../pediatrics/tutor/pediatric-svt-guidance';
 import { pediatricBradycardicArrestInlinePrompt } from '../../pediatrics/tutor/pediatric-bradycardic-arrest-guidance';
 import { pediatricFbaoInlinePrompt } from '../../pediatrics/tutor/pediatric-fbao-guidance';
+import { pediatricInjurySafeguardingInlinePrompt } from '../../pediatrics/tutor/pediatric-injury-safeguarding-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2959,6 +2960,7 @@ export interface ActionCockpitProps {
   readonly pediatricSvtGuidance?: GuidanceLevel;
   readonly pediatricBradycardicArrestGuidance?: GuidanceLevel;
   readonly pediatricFbaoGuidance?: GuidanceLevel;
+  readonly pediatricInjurySafeguardingGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3103,6 +3105,7 @@ export interface ActionCockpitProps {
   readonly pediatricSvtDemonstrating?: boolean;
   readonly pediatricBradycardicArrestDemonstrating?: boolean;
   readonly pediatricFbaoDemonstrating?: boolean;
+  readonly pediatricInjurySafeguardingDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5884,6 +5887,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasPediatricInjurySafeguardingResponse && (
               <PediatricInjurySafeguardingTray
                 assessment={props.resuscitation.pediatricInjurySafeguardingAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.pediatricInjurySafeguardingGuidance}
+                demonstrating={props.pediatricInjurySafeguardingDemonstrating}
                 onAction={props.onPediatricInjurySafeguardingResponse ?? (() => {})} />
             )}
             {hasNeurologyMinorStrokeResponse && (
@@ -12718,8 +12724,11 @@ function PediatricForeignBodyAirwayObstructionTray({ assessment, scenarioVersion
   </div>;
 }
 
-function PediatricInjurySafeguardingTray({ assessment, onAction }: {
+function PediatricInjurySafeguardingTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricInjurySafeguardingAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onPediatricInjurySafeguardingResponse']>;
 }) {
   const trajectory = assessment?.trajectoryAtTick != null;
@@ -12728,7 +12737,17 @@ function PediatricInjurySafeguardingTray({ assessment, onAction }: {
   const alternatives = assessment?.alternativesAtTick != null;
   const laterSafety = assessment?.laterSafetyAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : pediatricInjurySafeguardingInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-safeguarding-pattern-title">
       <div id="pediatric-safeguarding-pattern-title" className="syringe__name">Hold concern without closing the story.</div>
       <Badge kind="teaching">injury · development · history · alternatives · privacy · uncertainty</Badge>
@@ -12742,13 +12761,13 @@ function PediatricInjurySafeguardingTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {!trajectory && <Button className="crisis-drug__action"
-          onClick={() => onAction('reconcile-pediatric-injury-development-history-and-whole-child')}>Review child + supplied record</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('reconcile-pediatric-injury-development-history-and-whole-child') : undefined}>Review child + supplied record</Button>}
         {trajectory && !concern && <Button className="crisis-drug__action"
-          onClick={() => onAction('recognize-pediatric-injury-safeguarding-concern-without-diagnosis')}>Recognize concern without diagnosing</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('recognize-pediatric-injury-safeguarding-concern-without-diagnosis') : undefined}>Recognize concern without diagnosing</Button>}
         {concern && !safeguarding && <Button className="crisis-drug__action"
-          onClick={() => onAction('activate-pediatric-injury-qualified-safeguarding-and-immediate-safety-ownership')}>Activate qualified safeguarding care</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('activate-pediatric-injury-qualified-safeguarding-and-immediate-safety-ownership') : undefined}>Activate qualified safeguarding care</Button>}
         {safeguarding && !alternatives && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-pediatric-injury-medical-alternatives-and-information-boundary')}>Review alternatives + privacy</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-injury-medical-alternatives-and-information-boundary') : undefined}>Review alternatives + privacy</Button>}
       </div>
       <p className="field__hint">Qualified pediatric, safeguarding, nursing, social-work, and locally appropriate protection teams own examination, history, private-conversation decisions, documentation, testing, immediate safety, communication, and local duties. The scenario actions expose no interview, clinical free text, diagnosis, confrontation, accusation, photograph, clinical report filing, agency, legal, placement, or disposition control.</p>
     </section>
@@ -12765,12 +12784,13 @@ function PediatricInjurySafeguardingTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {alternatives && !laterSafety && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-pediatric-injury-later-safety-state')}>Review the team safety checkpoint</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-injury-later-safety-state') : undefined}>Review the team safety checkpoint</Button>}
         {laterSafety && !handoff && <Button className="crisis-drug__action"
-          onClick={() => onAction('handoff-pediatric-injury-unresolved-safeguarding-risk')}>Hand off concern + open questions</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('handoff-pediatric-injury-unresolved-safeguarding-risk') : undefined}>Hand off concern + open questions</Button>}
       </div>
       <p className="field__hint">Team involvement does not prove abuse, identify a person responsible, establish a legal finding, close medical alternatives, or determine placement, disposition, prognosis, or outcome. Information remains need-to-know rather than absolutely confidential.</p>
     </section>
+    </div>
   </div>;
 }
 
