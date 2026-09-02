@@ -1806,28 +1806,28 @@
           "id": "observable-objectives",
           "status": "missing",
           "evidence": [
-            "This scenario declares 6 objectives; the contract allows at most 5."
+            "Six declared objectives exceed the five the shared catalog counts as independently observable within one session."
           ]
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "acute-tracheostomy-obstruction-fixtures.ts binds seed 4917 and content 0.1.0 to expert, unverified-ventilation error, recovery, and no-action paths. The bedhead sign and fixed airway plan, the ten-minute-earlier baseline, the converging patency findings, the qualified device-pathway report and the fixed two-minute restoration are authored constants; no airway, device-response or outcome model is claimed, and no outcome follows from any choice. tests/integration/acute-tracheostomy-obstruction-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, and two are time-gated: the two-minute restoration review refuses until simulated time has passed since the inner-cannula removal, and the handoff refuses until time has passed again. Unsupported choices are recorded events that move nothing, offered at two separate moments — waiting for imaging or ventilating through an unverified tracheostomy before help and oxygenation, and forcing a catheter or replacing the whole tube before the inner-cannula branch."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions read the bedhead sign that separates a tracheostomy from a laryngectomy and a patent native upper airway from an absent one, record immediate airway-expert and resuscitation help with team-delivered oxygen to both face and tracheostomy, review the fixed qualified pathway for this declared dual-cannula device, record experienced-team removal of the removable inner cannula, review the fixed two-minute restoration after elapsed time, and hand off. Four further choices are deliberately offered and refused. The lesson examines nobody, acquires or interprets no capnography, oximetry, imaging or other test, diagnoses nothing, selects no oxygen source, interface, flow, fraction, target, humidification, drug, ventilation or treatment, removes no cap, valve, cannula or tube, passes no catheter, suctions nothing, deflates no cuff, exchanges or reinserts no tube, ventilates neither face nor stoma, intubates nobody, performs no bronchoscopy or other procedure, and decides no disposition, prognosis or outcome. Loss of pulse or breathing leaves this bounded lesson for resuscitation."
           ]
         },
         {
@@ -1839,23 +1839,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at two-minute handoff with the cause of the occlusion unfixed. Later actions cannot restart an ended branch, and the ending certifies no proven durable patency, no learner-performed cannula, tube, catheter, suction or cuff handling, no learner ventilation or intubation, no determined disposition, and no outcome. The authored branch is explicitly not a universal pathway for a laryngectomy, a fresh stoma, another tube design, upper-airway obstruction, or ventilator dependence."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps, and the tutor also reads the wrong turn just taken, answering each of the four refusals with its own prose. Waiting for imaging is answered by pointing out that a picture cannot help him in the next two minutes and would cost the only thing he is short of. Ventilating an unverified tracheostomy is answered directly: with no waveform CO₂ and scant airflow you do not know where the far end is, and positive pressure can inflate tissue rather than lung and turn a patency problem into a surgical-emphysema problem in seconds. Forcing a catheter is answered by naming resistance as information, and the risk as false passage, bleeding and the loss of a stoma track that is currently intact. Whole-tube replacement is not called wrong in general — it is a real and sometimes necessary step — but it gives up a secure, correctly sited outer tube for a harder, bloodier problem, under the time pressure of a patient at 82%. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff taking none of the four, and its narration is generated from the tutor's own prose so the two cannot drift apart. Both begin by reading the bedhead sign as the fact that changes everything after it, and both name absent capnography as one strand of the converging findings rather than the finding on its own. Both take dual-route oxygenation as the step that buys every other step its time, both keep the authored pathway bounded to this declared device and anatomy, and both separate a patent tube from a recovered patient. The handoff names what has not been fixed: thick dried secretion that occluded a lumen once has a cause, and humidification, secretion management and inner-cannula care are what stay open. A test asserts nothing anywhere examines him, interprets capnography, or handles a cannula, tube, catheter or cuff. tests/unit/acute-tracheostomy-obstruction-demonstration.test.ts and tests/ui/respiratory-acute-tracheostomy-obstruction.test.tsx verify observed response, all four wrong-choice prompts, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. The counterfactual is four ways this patient gets hurt rather than an ordering slip: the recovery path ventilates through an unverified tracheostomy, waits for imaging, then after the pathway review forces a catheter and reaches for whole-tube replacement — and all four refusals stay visible in the transcript after the correct actions are taken from the same positions."
           ]
         },
         {
@@ -1874,23 +1874,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "acute-tracheostomy-obstruction-fixtures.ts binds exact-content expert, unverified-ventilation, recovery, and no-action pathways to seed 4917 for deterministic replay through the shared engine, including both time gates and all four refused choices."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

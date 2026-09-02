@@ -19,9 +19,12 @@
  * Neurology inherited that form and that guard, counted upward through fourteen
  * lessons, and has now made the same transition. Obstetrics inherited it in turn, counted
  * upward through fourteen lessons, and made the same transition. Respiratory
- * medicine now carries the part-finished form and the same guard: the number
- * in the sentence is derived from the audit, so a lesson cannot land without
- * the front page being rewritten.
+ * medicine carried it through fourteen lessons too and has now made the same
+ * transition: it is a list entry, and the sentence calling it started is gone.
+ *
+ * The part-finished form itself is not gone. The obstetrics case below still
+ * holds it, so the next module to start inherits a guard that derives its
+ * number from the audit rather than trusting the front page.
  */
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
@@ -142,10 +145,10 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
     expect(readme).toContain(`${COUNT_WORDS[RESPIRATORY_MEDICINE_SCENARIOS.length]} labs done.`);
   });
 
-  it('claims only what those nine modules support', () => {
+  it('claims only what those ten modules support', () => {
     const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');
     expect(readme).toContain('Every renal, oncology, endocrine, nursing,');
-    expect(readme).toContain('infectious-disease, neonatology, toxicology, neurology, and obstetrics lab has');
+    expect(readme).toContain('infectious-disease, neonatology, toxicology, neurology, obstetrics, and respiratory-medicine lab');
     // The hedge this sentence used to carry belongs to a state the audit has
     // left behind. If it comes back, one of the three tests above is failing too.
     expect(readme).not.toContain('and most\nendocrine ones');

@@ -179,6 +179,7 @@ import { obesityHypoventilationInlinePrompt } from '../../respiratory-medicine/t
 import { noninvasiveVentilationSelectionInlinePrompt } from '../../respiratory-medicine/tutor/noninvasive-ventilation-selection-guidance';
 import { highFlowOxygenEscalationInlinePrompt } from '../../respiratory-medicine/tutor/high-flow-nasal-oxygen-escalation-guidance';
 import { oxygenDeviceFailureInlinePrompt } from '../../respiratory-medicine/tutor/oxygen-device-failure-guidance';
+import { acuteTracheostomyObstructionInlinePrompt } from '../../respiratory-medicine/tutor/acute-tracheostomy-obstruction-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2927,6 +2928,7 @@ export interface ActionCockpitProps {
   readonly noninvasiveVentilationSelectionGuidance?: GuidanceLevel;
   readonly highFlowOxygenEscalationGuidance?: GuidanceLevel;
   readonly oxygenDeviceFailureGuidance?: GuidanceLevel;
+  readonly acuteTracheostomyObstructionGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3055,6 +3057,7 @@ export interface ActionCockpitProps {
   readonly noninvasiveVentilationSelectionDemonstrating?: boolean;
   readonly highFlowOxygenEscalationDemonstrating?: boolean;
   readonly oxygenDeviceFailureDemonstrating?: boolean;
+  readonly acuteTracheostomyObstructionDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5711,6 +5714,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasAcuteTracheostomyObstructionResponse && (
               <AcuteTracheostomyObstructionTray
                 assessment={props.resuscitation.acuteTracheostomyObstructionAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.acuteTracheostomyObstructionGuidance}
+                demonstrating={props.acuteTracheostomyObstructionDemonstrating}
                 onAction={props.onAcuteTracheostomyObstructionResponse ?? (() => {})} />
             )}
             {hasPediatricRespiratoryDistressResponse && (
@@ -11424,8 +11430,11 @@ function OxygenDeviceFailureTray({ assessment, scenarioVersion, guidance = 'unas
   </div>;
 }
 
-function AcuteTracheostomyObstructionTray({ assessment, onAction }: {
+function AcuteTracheostomyObstructionTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['acuteTracheostomyObstructionAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onAcuteTracheostomyObstructionResponse']>;
 }) {
   const recognition = assessment?.recognitionAtTick != null;
@@ -11435,7 +11444,17 @@ function AcuteTracheostomyObstructionTray({ assessment, onAction }: {
   const restoration = assessment?.restorationAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   const unsupported = assessment?.lastUnsupportedChoice;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : acuteTracheostomyObstructionInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="tracheostomy-obstruction-person-title">
       <div id="tracheostomy-obstruction-person-title" className="syringe__name">The person comes before the tube.</div>
       <Badge kind="teaching">tracheostomy · not laryngectomy · upper airway patent</Badge>
@@ -11450,14 +11469,14 @@ function AcuteTracheostomyObstructionTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {!recognition && <Button className="crisis-drug__action"
-          onClick={() => onAction('reconcile-acute-tracheostomy-obstruction-anatomy-and-patency')}>Review person + airway map</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('reconcile-acute-tracheostomy-obstruction-anatomy-and-patency') : undefined}>Review person + airway map</Button>}
         {recognition && !support && <>
-          <Button className="crisis-drug__action" onClick={() => onAction('activate-acute-tracheostomy-obstruction-help-and-oxygenation')}>Call airway help + support both routes</Button>
-          <Button className="crisis-drug__action" onClick={() => onAction('wait-for-acute-tracheostomy-obstruction-imaging')}>Wait for imaging</Button>
-          <Button className="crisis-drug__action" onClick={() => onAction('ventilate-through-unverified-tracheostomy')}>Ventilate through the tube now</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-acute-tracheostomy-obstruction-help-and-oxygenation') : undefined}>Call airway help + support both routes</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('wait-for-acute-tracheostomy-obstruction-imaging') : undefined}>Wait for imaging</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('ventilate-through-unverified-tracheostomy') : undefined}>Ventilate through the tube now</Button>
         </>}
         {support && !pathway && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-acute-tracheostomy-obstruction-device-pathway')}>Review declared device pathway</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-acute-tracheostomy-obstruction-device-pathway') : undefined}>Review declared device pathway</Button>}
       </div>
       <p className="field__hint">This exact case has a tracheostomy, a documented patent native upper airway, and ongoing spontaneous breathing. Qualified staff deliver oxygen to face and tracheostomy off-screen; this does not generalize to laryngectomy.</p>
     </section>
@@ -11476,17 +11495,18 @@ function AcuteTracheostomyObstructionTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {pathway && !correction && <>
-          <Button className="crisis-drug__action" onClick={() => onAction('record-acute-tracheostomy-obstruction-inner-cannula-removal')}>Connect qualified inner-cannula action</Button>
-          <Button className="crisis-drug__action" onClick={() => onAction('force-acute-tracheostomy-obstruction-catheter')}>Force the catheter through</Button>
-          <Button className="crisis-drug__action" onClick={() => onAction('replace-whole-tracheostomy-first')}>Replace the whole tube first</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-acute-tracheostomy-obstruction-inner-cannula-removal') : undefined}>Connect qualified inner-cannula action</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('force-acute-tracheostomy-obstruction-catheter') : undefined}>Force the catheter through</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('replace-whole-tracheostomy-first') : undefined}>Replace the whole tube first</Button>
         </>}
         {correction && !restoration && <Button className="crisis-drug__action"
-          onClick={() => onAction('reassess-acute-tracheostomy-obstruction-restoration')}>Review 2-minute response</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('reassess-acute-tracheostomy-obstruction-restoration') : undefined}>Review 2-minute response</Button>}
         {restoration && !handoff && <Button className="crisis-drug__action"
-          onClick={() => onAction('handoff-acute-tracheostomy-obstruction-reassessment')}>Hand off active airway risk</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('handoff-acute-tracheostomy-obstruction-reassessment') : undefined}>Hand off active airway risk</Button>}
       </div>
       <p className="field__hint">The learner does not inspect, handle, remove, suction, exchange, ventilate, or intubate. Worsening or unresolved obstruction continues down the local emergency pathway outside this bounded lesson.</p>
     </section>
+    </div>
   </div>;
 }
 

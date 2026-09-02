@@ -231,6 +231,8 @@ import { useHighFlowOxygenEscalationDemonstration } from '../../respiratory-medi
 import { supportsHighFlowOxygenEscalationDemonstration } from '../../respiratory-medicine/demo/high-flow-nasal-oxygen-escalation-demonstration';
 import { useOxygenDeviceFailureDemonstration } from '../../respiratory-medicine/demo/useOxygenDeviceFailureDemonstration';
 import { supportsOxygenDeviceFailureDemonstration } from '../../respiratory-medicine/demo/oxygen-device-failure-demonstration';
+import { useAcuteTracheostomyObstructionDemonstration } from '../../respiratory-medicine/demo/useAcuteTracheostomyObstructionDemonstration';
+import { supportsAcuteTracheostomyObstructionDemonstration } from '../../respiratory-medicine/demo/acute-tracheostomy-obstruction-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -498,6 +500,7 @@ export function Cockpit({
   const nivSelectionDemoSupported = supportsNoninvasiveVentilationSelectionDemonstration(scenario);
   const highFlowOxygenDemoSupported = supportsHighFlowOxygenEscalationDemonstration(scenario);
   const oxygenDeviceFailureDemoSupported = supportsOxygenDeviceFailureDemonstration(scenario);
+  const acuteTracheostomyObstructionDemoSupported = supportsAcuteTracheostomyObstructionDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -593,6 +596,7 @@ export function Cockpit({
     || nivSelectionDemoSupported
     || highFlowOxygenDemoSupported
     || oxygenDeviceFailureDemoSupported
+    || acuteTracheostomyObstructionDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -750,6 +754,12 @@ export function Cockpit({
     active: demonstrating && chronicOpioidHypoventilationDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.chronicOpioidHypoventilationAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const acuteTracheostomyObstructionDemonstration = useAcuteTracheostomyObstructionDemonstration({
+    active: demonstrating && acuteTracheostomyObstructionDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.acuteTracheostomyObstructionAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const oxygenDeviceFailureDemonstration = useOxygenDeviceFailureDemonstration({
@@ -1299,6 +1309,7 @@ export function Cockpit({
     : nivSelectionDemoSupported ? nivSelectionDemonstration
     : highFlowOxygenDemoSupported ? highFlowOxygenDemonstration
     : oxygenDeviceFailureDemoSupported ? oxygenDeviceFailureDemonstration
+    : acuteTracheostomyObstructionDemoSupported ? acuteTracheostomyObstructionDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2198,6 +2209,8 @@ export function Cockpit({
           highFlowOxygenEscalationDemonstrating={demonstrating && highFlowOxygenDemoSupported}
           oxygenDeviceFailureGuidance={session.guidance}
           oxygenDeviceFailureDemonstrating={demonstrating && oxygenDeviceFailureDemoSupported}
+          acuteTracheostomyObstructionGuidance={session.guidance}
+          acuteTracheostomyObstructionDemonstrating={demonstrating && acuteTracheostomyObstructionDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
