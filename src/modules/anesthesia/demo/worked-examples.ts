@@ -89,6 +89,7 @@ import { supportsMsccDemonstration } from '../../neurology/demo/metastatic-spina
 import { supportsDeliriumDemonstration } from '../../neurology/demo/acute-delirium-reversible-causes-demonstration';
 import { supportsDysreflexiaDemonstration } from '../../neurology/demo/autonomic-dysreflexia-authored-trigger-demonstration';
 import { supportsAtonyDemonstration } from '../../obstetrics/demo/postpartum-hemorrhage-uterine-atony-demonstration';
+import { supportsMaternalSepsisDemonstration } from '../../obstetrics/demo/maternal-sepsis-postpartum-deterioration-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -211,6 +212,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
   ],
   obstetrics: [
     supportsAtonyDemonstration,
+    supportsMaternalSepsisDemonstration,
   ],
 };
 

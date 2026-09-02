@@ -151,6 +151,7 @@ import { msccInlinePrompt } from '../../neurology/tutor/metastatic-spinal-cord-c
 import { deliriumInlinePrompt } from '../../neurology/tutor/acute-delirium-reversible-causes-guidance';
 import { dysreflexiaInlinePrompt } from '../../neurology/tutor/autonomic-dysreflexia-authored-trigger-guidance';
 import { atonyInlinePrompt } from '../../obstetrics/tutor/postpartum-hemorrhage-uterine-atony-guidance';
+import { maternalSepsisInlinePrompt } from '../../obstetrics/tutor/maternal-sepsis-postpartum-deterioration-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2871,6 +2872,7 @@ export interface ActionCockpitProps {
   readonly neurologyDeliriumGuidance?: GuidanceLevel;
   readonly neurologyDysreflexiaGuidance?: GuidanceLevel;
   readonly obstetricsAtonyGuidance?: GuidanceLevel;
+  readonly obstetricsMaternalSepsisGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2971,6 +2973,7 @@ export interface ActionCockpitProps {
   readonly neurologyDeliriumDemonstrating?: boolean;
   readonly neurologyDysreflexiaDemonstrating?: boolean;
   readonly obstetricsAtonyDemonstrating?: boolean;
+  readonly obstetricsMaternalSepsisDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5902,6 +5905,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasObstetricsMaternalSepsisResponse && (
               <ObstetricsMaternalSepsisTray assessment={props.resuscitation.obstetricsMaternalSepsisAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.obstetricsMaternalSepsisGuidance}
+                demonstrating={props.obstetricsMaternalSepsisDemonstrating}
                 onAction={props.onObstetricsMaternalSepsisResponse ?? (() => {})} />
             )}
             {hasObstetricsConcealedAbruptionResponse && (
@@ -13496,10 +13502,15 @@ function ObstetricsAtonyTray({ assessment, scenarioVersion, onAction, guidance =
   </>;
 }
 
-function ObstetricsMaternalSepsisTray({ assessment, onAction }: {
+function ObstetricsMaternalSepsisTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['obstetricsMaternalSepsisAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onObstetricsMaternalSepsisResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = maternalSepsisInlinePrompt(guidance, { scenarioVersion, maternalSepsis: assessment });
+  const act = demonstrating ? undefined : onAction;
   const trajectory = assessment?.trajectoryAtTick != null;
   const recognition = assessment?.recognitionAtTick != null;
   const support = assessment?.supportAtTick != null;
@@ -13507,22 +13518,27 @@ function ObstetricsMaternalSepsisTray({ assessment, onAction }: {
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="maternal-sepsis-now-title">
       <div id="maternal-sepsis-now-title" className="syringe__name">Notice the whole person. Move together.</div>
       <p className="syringe__remaining">The postpartum clock, infection pattern, brain, kidney, circulation, breathing, newborn context, and dignity belong in one calm view.</p>
       <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-obstetrics-sepsis-postpartum-clock-infection-organ-dysfunction-and-whole-person')}>Connect infection + organs</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-obstetrics-maternal-sepsis-emergency-without-fever-score-source-or-single-value-closure')}>See the emergency, keep it open</Button>}
-        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-obstetrics-sepsis-obstetric-critical-care-anesthesia-nursing-pharmacy-microbiology-source-newborn-and-dignity-ownership')}>Bring every owner in</Button>}
-        {support && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-sepsis-supplied-infectious-noninfectious-culture-lactate-perfusion-and-source-boundary')}>Review source + mimics</Button>}
+        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-obstetrics-sepsis-postpartum-clock-infection-organ-dysfunction-and-whole-person') : undefined}>Connect infection + organs</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-obstetrics-maternal-sepsis-emergency-without-fever-score-source-or-single-value-closure') : undefined}>See the emergency, keep it open</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-obstetrics-sepsis-obstetric-critical-care-anesthesia-nursing-pharmacy-microbiology-source-newborn-and-dignity-ownership') : undefined}>Bring every owner in</Button>}
+        {support && !evidence && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-obstetrics-sepsis-supplied-infectious-noninfectious-culture-lactate-perfusion-and-source-boundary') : undefined}>Review source + mimics</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="maternal-sepsis-later-title">
       <div id="maternal-sepsis-later-title" className="syringe__name">A better number is a checkpoint, not recovery.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Shock, source, organ, antimicrobial, VTE, newborn, survivor, and outcome uncertainty handed off.' : reassessment ? 'Pulse, pressure, breathing, and responses improved modestly. Repeat perfusion, source control, organ recovery, treatment effect, and outcome remain open.' : evidence ? 'Infection, perfusion, organ dysfunction, source, cultures, lactate, and noninfectious mimics stay coupled. Record bounded immediate-care intent after time passes.' : support ? 'Sepsis, organ-support, source, newborn, and dignity-centered owners are together. Review the supplied evidence.' : 'Connect the whole pattern before one fever, score, value, or source closes the view.'}</p>
       <div className="crisis-drug__actions">
-        {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-obstetrics-sepsis-bounded-qualified-immediate-care-source-control-intent-and-strict-later-review')}>Record care intent + reassess</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-obstetrics-sepsis-shock-source-organ-antimicrobial-vte-newborn-survivor-and-outcome-risk')}>Hand off what stays open</Button>}
+        {evidence && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-obstetrics-sepsis-bounded-qualified-immediate-care-source-control-intent-and-strict-later-review') : undefined}>Record care intent + reassess</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-obstetrics-sepsis-shock-source-organ-antimicrobial-vte-newborn-survivor-and-outcome-risk') : undefined}>Hand off what stays open</Button>}
       </div>
     </section>
   </>;

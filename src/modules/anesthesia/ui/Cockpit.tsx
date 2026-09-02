@@ -175,6 +175,8 @@ import { useDysreflexiaDemonstration } from '../../neurology/demo/useDysreflexia
 import { supportsDysreflexiaDemonstration } from '../../neurology/demo/autonomic-dysreflexia-authored-trigger-demonstration';
 import { useAtonyDemonstration } from '../../obstetrics/demo/useAtonyDemonstration';
 import { supportsAtonyDemonstration } from '../../obstetrics/demo/postpartum-hemorrhage-uterine-atony-demonstration';
+import { useMaternalSepsisDemonstration } from '../../obstetrics/demo/useMaternalSepsisDemonstration';
+import { supportsMaternalSepsisDemonstration } from '../../obstetrics/demo/maternal-sepsis-postpartum-deterioration-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -414,6 +416,7 @@ export function Cockpit({
   const deliriumDemoSupported = supportsDeliriumDemonstration(scenario);
   const dysreflexiaDemoSupported = supportsDysreflexiaDemonstration(scenario);
   const atonyDemoSupported = supportsAtonyDemonstration(scenario);
+  const maternalSepsisDemoSupported = supportsMaternalSepsisDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -481,6 +484,7 @@ export function Cockpit({
     || deliriumDemoSupported
     || dysreflexiaDemoSupported
     || atonyDemoSupported
+    || maternalSepsisDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -632,6 +636,12 @@ export function Cockpit({
     active: demonstrating && termTransitionDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.neonatologyTermTransitionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const maternalSepsisDemonstration = useMaternalSepsisDemonstration({
+    active: demonstrating && maternalSepsisDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.obstetricsMaternalSepsisAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const atonyDemonstration = useAtonyDemonstration({
@@ -1013,6 +1023,7 @@ export function Cockpit({
     : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
+    : maternalSepsisDemoSupported ? maternalSepsisDemonstration
     : atonyDemoSupported ? atonyDemonstration
     : dysreflexiaDemoSupported ? dysreflexiaDemonstration
     : deliriumDemoSupported ? deliriumDemonstration
@@ -1834,6 +1845,8 @@ export function Cockpit({
           neurologyDysreflexiaDemonstrating={demonstrating && dysreflexiaDemoSupported}
           obstetricsAtonyGuidance={session.guidance}
           obstetricsAtonyDemonstrating={demonstrating && atonyDemoSupported}
+          obstetricsMaternalSepsisGuidance={session.guidance}
+          obstetricsMaternalSepsisDemonstrating={demonstrating && maternalSepsisDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

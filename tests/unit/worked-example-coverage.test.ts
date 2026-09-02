@@ -121,8 +121,8 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
       expect(uncovered(OBSTETRICS_SCENARIOS, 'obstetrics')).toEqual([]);
       return;
     }
-    expect(readme).toContain(`Obstetrics has started: ${COUNT_WORDS[covered]} of its`);
-    expect(readme).toContain(`${COUNT_WORDS[OBSTETRICS_SCENARIOS.length]} labs has both.`);
+    expect(readme).toContain(`with ${COUNT_WORDS[covered]} of its`);
+    expect(readme).toContain(`${COUNT_WORDS[OBSTETRICS_SCENARIOS.length]} labs done.`);
   });
 
   it('claims only what those eight modules support', () => {

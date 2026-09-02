@@ -173,23 +173,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "maternal-sepsis-postpartum-deterioration-fixtures.ts binds seed 7118 and content 0.1.0 to expert, confirm-before-calling error, recovery, and no-action paths. The presentation, the supplied laboratory values, and the fixed 30-minute report are authored constants; no infection, antimicrobial, perfusion or organ-recovery model is claimed, and no outcome follows from any choice. tests/integration/maternal-sepsis-postpartum-deterioration-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the bounded immediate-care and source-control intent refuses until simulated time has passed since the evidence review, and the handoff refuses until time has passed since that. What moves is the pulse, the pressure, the breathing and the clarity of her responses; what does not move is the temperature, the source, or the pending lactate and urine output."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions put the infection and the organ dysfunction in one view, name a maternal-sepsis emergency without a fever threshold, a screening score, microbiology or a confirmed source and without closing embolism, hemorrhage, hypertensive disease or medication effect, bring obstetric, critical-care, anesthesia, nursing, pharmacy, microbiology, source-control, organ-support, newborn and dignity ownership at once, read the supplied infectious, noninfectious, culture, lactate, perfusion and source evidence as a boundary, record bounded qualified immediate-care and source-control intent, and hand off unresolved risk. Order is enforced rather than suggested, and refusal names the missing step. The lesson examines nobody, calculates no score, acquires no culture, sample or image, excludes nothing, and selects no antimicrobial, fluid, vasopressor, oxygen, drug, dose, route, access, source-control procedure or disposition."
           ]
         },
         {
@@ -201,23 +201,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at unresolved-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no treatment effect, no organ recovery, no achieved source control, no safety disposition, and no maternal, newborn or other outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both refuse the confirmation: suspected infection plus organ dysfunction nothing else explains is the whole definition, a screening score exists to compare populations rather than to permit treatment, and the source is frequently not identified until later or at all — so nothing waits for a score, a culture or a named source. Both separate the two halves of the picture, because the fever, the tender uterus and the lochia are the easy half and the doubled creatinine, the falling urine output and the lactate of 4.2 are the half that says how little time there is. The second refusal is the mirror of the first: naming sepsis closes nothing, and embolism, concealed hemorrhage, hypertensive disease and medication effect stay open behind the name. Source control is called with everyone else because it is the slowest to arrange and the one most often started last, and the newborn support and privacy are named as part of the response rather than courtesies added to it. The ending gives back better numbers, an unchanged temperature, a source nobody has controlled and a pending lactate. A test asserts nothing anywhere calculates a score, acquires a culture or sample, selects an antimicrobial, fluid or vasopressor, or performs source control. tests/unit/maternal-sepsis-postpartum-deterioration-demonstration.test.ts and tests/ui/obstetrics-maternal-sepsis-postpartum-deterioration.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that went to confirm the diagnosis before calling it can still reach a correct handoff."
           ]
         },
         {
@@ -236,23 +236,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "maternal-sepsis-postpartum-deterioration-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 7118 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
