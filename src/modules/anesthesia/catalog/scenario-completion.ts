@@ -39,6 +39,7 @@ import { delayedLastCompletionEvidence } from '../../toxicology/delayed-local-an
 import { opioidXylazineCompletionEvidence } from '../../toxicology/opioid-xylazine-persistent-sedation-completion';
 import { minorStrokeCompletionEvidence } from '../../neurology/minor-nondisabling-acute-ischemic-stroke-completion';
 import { basilarLvoCompletionEvidence } from '../../neurology/basilar-artery-occlusion-escalation-completion';
+import { cerebellarIchCompletionEvidence } from '../../neurology/spontaneous-cerebellar-intracerebral-hemorrhage-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -217,6 +218,7 @@ export function auditClinicalScenario(
     ...opioidXylazineCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...minorStrokeCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...basilarLvoCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...cerebellarIchCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

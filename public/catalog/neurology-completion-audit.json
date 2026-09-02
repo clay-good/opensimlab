@@ -299,23 +299,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "spontaneous-cerebellar-intracerebral-hemorrhage-fixtures.ts binds seed 6187 and content 0.1.0 to expert, escalate-on-the-syndrome error, recovery, and no-action paths. The presentation, the supplied examination, the fixed initial and repeat CT, and the fixed later report are authored constants; no expansion, hydrocephalus, or surgical model is claimed, no hematoma volume is calculated, and no outcome follows from any choice. tests/integration/spontaneous-cerebellar-intracerebral-hemorrhage-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the later neurological and airway review refuses until simulated time has passed since the ownership activation, and the handoff refuses until time has passed since that. What moves is the patient: eleven millilitres becomes fourteen with new obstructive hydrocephalus and brainstem compression, and the alertness goes before the airway does."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions put a fully alert patient beside her inability to sit unsupported, read the scan before deciding what the syndrome is, name a confined posterior-fossa boundary while she still looks well, get neurosurgical, neurocritical and airway-capable ownership involved before anything changes, compare a fixed repeat report, and hand off active risk. Order is enforced rather than suggested, and refusal names the missing step. The lesson takes no history, examines nobody, calculates no score or hematoma volume, determines no etiology or reversal eligibility, excludes no anticoagulant exposure, and selects no drug, dose, route, access, pressure target, airway device, drain, operation, or procedure."
           ]
         },
         {
@@ -327,23 +327,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at active-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no proven etiology, no excluded anticoagulant exposure, no excluded future expansion or herniation, no proven treatment effect, no durable pressure control or airway protection, no neurologic recovery, no discharge readiness or disposition, and no outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both are built on the observation that everything reassuring here is a timestamp: the intact conversation, the volume that would be modest above the tentorium, and a first scan reporting no hydrocephalus, no brainstem compression and no herniation — all true at that minute and none of it a forecast. What the scan does say is that the fourth ventricle is already effaced, so both treat location rather than volume as the risk, and both insist the syndrome does not tell you whether this is blood or infarct: the CT is what changes who gets called. The escalation happens while she still looks like she does not need it, because the interval between looking well and being obstructed is short and one-directional, and airway capability sits alongside the surgical conversation rather than after it. The ending names the order the deterioration arrived in — the alertness went before the airway did. A test asserts nothing anywhere measures the hematoma, determines an etiology or reversal eligibility, or calls the airway safe. tests/unit/spontaneous-cerebellar-intracerebral-hemorrhage-demonstration.test.ts and tests/ui/neurology-spontaneous-cerebellar-intracerebral-hemorrhage.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that escalated on the syndrome before reading the scan can still reach a correct handoff."
           ]
         },
         {
@@ -362,23 +362,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "spontaneous-cerebellar-intracerebral-hemorrhage-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 6187 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

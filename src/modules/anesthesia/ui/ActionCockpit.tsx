@@ -137,6 +137,7 @@ import { delayedLastInlinePrompt } from '../../toxicology/tutor/delayed-local-an
 import { opioidXylazineInlinePrompt } from '../../toxicology/tutor/opioid-xylazine-persistent-sedation-guidance';
 import { minorStrokeInlinePrompt } from '../../neurology/tutor/minor-nondisabling-acute-ischemic-stroke-guidance';
 import { basilarLvoInlinePrompt } from '../../neurology/tutor/basilar-artery-occlusion-escalation-guidance';
+import { cerebellarIchInlinePrompt } from '../../neurology/tutor/spontaneous-cerebellar-intracerebral-hemorrhage-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2843,6 +2844,7 @@ export interface ActionCockpitProps {
   readonly toxicologyOpioidXylazineGuidance?: GuidanceLevel;
   readonly neurologyMinorStrokeGuidance?: GuidanceLevel;
   readonly neurologyBasilarLvoGuidance?: GuidanceLevel;
+  readonly neurologyCerebellarIchGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2929,6 +2931,7 @@ export interface ActionCockpitProps {
   readonly toxicologyOpioidXylazineDemonstrating?: boolean;
   readonly neurologyMinorStrokeDemonstrating?: boolean;
   readonly neurologyBasilarLvoDemonstrating?: boolean;
+  readonly neurologyCerebellarIchDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5641,6 +5644,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNeurologyCerebellarIchResponse && (
               <NeurologyCerebellarIchTray
                 assessment={props.resuscitation.neurologyCerebellarIchAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.neurologyCerebellarIchGuidance}
+                demonstrating={props.neurologyCerebellarIchDemonstrating}
                 onAction={props.onNeurologyCerebellarIchResponse ?? (() => {})} />
             )}
             {hasNeurologyAsahDeteriorationResponse && (
@@ -12170,10 +12176,15 @@ function NeurologyBasilarLvoTray({ assessment, scenarioVersion, onAction, guidan
   </div>;
 }
 
-function NeurologyCerebellarIchTray({ assessment, onAction }: {
+function NeurologyCerebellarIchTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['neurologyCerebellarIchAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onNeurologyCerebellarIchResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = cerebellarIchInlinePrompt(guidance, { scenarioVersion, cerebellarIch: assessment });
+  const act = demonstrating ? undefined : onAction;
   const trajectory = assessment?.trajectoryAtTick != null;
   const imaging = assessment?.imagingAtTick != null;
   const boundary = assessment?.boundaryAtTick != null;
@@ -12181,15 +12192,20 @@ function NeurologyCerebellarIchTray({ assessment, onAction }: {
   const later = assessment?.laterAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="neurology-cerebellar-ich-location-title">
       <div id="neurology-cerebellar-ich-location-title" className="syringe__name">Location changes the danger.</div>
       <div className="syringe__meta">fixed cerebellar hemorrhage report · supplied neurologic record</div>
       <p className="syringe__remaining">{ownership ? 'Qualified neurocritical, neurosurgical, and airway-capable ownership is active.' : boundary ? 'Escalation boundary clear · activate qualified ownership' : imaging ? 'Posterior-fossa threats reviewed · recognize the escalation boundary' : trajectory ? 'Trajectory clear · review the supplied CT context' : 'Start with the clock, posterior pattern, alertness, and whole patient.'}</p>
       <div className="syringe__presets">
-        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neurology-cerebellar-ich-clock-deficit-alertness-and-whole-patient')}>Review clock + neurologic trajectory</Button>}
-        {trajectory && !imaging && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-cerebellar-ich-imaging-location-causes-and-immediate-threats')}>Review fixed CT + threat context</Button>}
-        {imaging && !boundary && <Button className="crisis-drug__action" onClick={() => onAction('recognize-neurology-cerebellar-ich-posterior-fossa-escalation-boundary')}>Recognize posterior-fossa escalation</Button>}
-        {boundary && !ownership && <Button className="crisis-drug__action" onClick={() => onAction('activate-neurology-cerebellar-ich-qualified-neurocritical-neurosurgical-and-airway-ownership')}>Activate qualified neuro + airway ownership</Button>}
+        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-neurology-cerebellar-ich-clock-deficit-alertness-and-whole-patient') : undefined}>Review clock + neurologic trajectory</Button>}
+        {trajectory && !imaging && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-neurology-cerebellar-ich-imaging-location-causes-and-immediate-threats') : undefined}>Review fixed CT + threat context</Button>}
+        {imaging && !boundary && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-neurology-cerebellar-ich-posterior-fossa-escalation-boundary') : undefined}>Recognize posterior-fossa escalation</Button>}
+        {boundary && !ownership && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-neurology-cerebellar-ich-qualified-neurocritical-neurosurgical-and-airway-ownership') : undefined}>Activate qualified neuro + airway ownership</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="neurology-cerebellar-ich-trajectory-title">
@@ -12197,8 +12213,8 @@ function NeurologyCerebellarIchTray({ assessment, onAction }: {
       <div className="syringe__meta">fixed later report · procedure and outcome remain open</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Trajectory, imaging context, active risk, and owners handed off.' : later ? 'Repeat CT reports expansion, hydrocephalus, and brainstem compression. Future course remains open.' : ownership ? 'Qualified ownership is active. Review the fixed later report.' : 'Complete recognition and qualified ownership before reassessment.'}</p>
       <div className="syringe__presets">
-        {ownership && !later && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-cerebellar-ich-strict-later-neurologic-and-airway-trajectory')}>Review the later neurologic report</Button>}
-        {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-cerebellar-ich-imaging-expansion-etiology-and-active-risk')}>Hand off imaging + active risk</Button>}
+        {ownership && !later && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-neurology-cerebellar-ich-strict-later-neurologic-and-airway-trajectory') : undefined}>Review the later neurologic report</Button>}
+        {later && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-neurology-cerebellar-ich-imaging-expansion-etiology-and-active-risk') : undefined}>Hand off imaging + active risk</Button>}
       </div>
     </section>
   </div>;
