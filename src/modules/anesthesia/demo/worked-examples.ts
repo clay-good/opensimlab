@@ -78,6 +78,7 @@ import { supportsBasilarLvoDemonstration } from '../../neurology/demo/basilar-ar
 import { supportsCerebellarIchDemonstration } from '../../neurology/demo/spontaneous-cerebellar-intracerebral-hemorrhage-demonstration';
 import { supportsAsahDemonstration } from '../../neurology/demo/aneurysmal-subarachnoid-hemorrhage-deterioration-demonstration';
 import { supportsFocalMotorStatusDemonstration } from '../../neurology/demo/focal-motor-status-epilepticus-escalation-demonstration';
+import { supportsNcseDemonstration } from '../../neurology/demo/nonconvulsive-status-epilepticus-recognition-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -187,6 +188,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsCerebellarIchDemonstration,
     supportsAsahDemonstration,
     supportsFocalMotorStatusDemonstration,
+    supportsNcseDemonstration,
   ],
 };
 

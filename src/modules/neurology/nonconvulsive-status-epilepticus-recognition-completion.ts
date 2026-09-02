@@ -1,0 +1,34 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
+import { NONCONVULSIVE_STATUS_EPILEPTICUS_RECOGNITION } from './scenarios/nonconvulsive-status-epilepticus-recognition';
+import { NCSE_FIXTURES } from './nonconvulsive-status-epilepticus-recognition-fixtures';
+import { NCSE_TUTOR_VERSION } from './tutor/nonconvulsive-status-epilepticus-recognition-guidance';
+import { NCSE_DEMONSTRATION_VERSION } from './demo/nonconvulsive-status-epilepticus-recognition-demonstration';
+
+/**
+ * Exact-version evidence for one lesson, and no claim about any other.
+ *
+ * `observable-objectives` is deliberately not answered here. This scenario
+ * declares six objectives against a cap of five, which is a content-design
+ * decision affecting scenarios across several modules rather than something
+ * this file may settle on its own. The shared audit keeps naming it.
+ */
+export function ncseCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
+  if (moduleId !== 'neurology' || capabilityVersion !== '0.1.0-alpha.48'
+    || scenario.metadata.id !== NCSE_FIXTURES.scenarioId
+    || scenario.metadata.version !== '0.1.0' || NCSE_FIXTURES.contentVersion !== '0.1.0'
+    || NCSE_FIXTURES.seed !== 6310
+    || NCSE_TUTOR_VERSION !== '0.1.0' || NCSE_DEMONSTRATION_VERSION !== '0.1.0'
+    || JSON.stringify(scenario) !== JSON.stringify(NONCONVULSIVE_STATUS_EPILEPTICUS_RECOGNITION)) return [];
+  return [
+    { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['nonconvulsive-status-epilepticus-recognition-fixtures.ts binds seed 6310 and content 0.1.0 to expert, worked-up-as-delirium error, recovery, and no-action paths. The presentation, the witness and examination record, the fixed CT and CTA, the supplied glucose and sodium, and the fixed 60-minute recording report are authored constants; no electrographic, seizure-propagation, or treatment model is claimed, and no outcome follows from any choice. tests/integration/nonconvulsive-status-epilepticus-recognition-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions.'] },
+    { id: 'meaningful-progression', status: 'satisfied', evidence: ['The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the later recording and clinical review refuses until simulated time has passed since the alternatives review, and the handoff refuses until time has passed since that. What changes is what is known rather than what is visible — the bedside picture at the later report is the same one it started with.'] },
+    { id: 'meaningful-actions-and-choices', status: 'satisfied', evidence: ['Six declared decisions describe the fluctuation in seconds rather than as confusion, name a seizure suspicion and an urgent EEG boundary without diagnosing from clinical features, activate qualified neurology, EEG and airway-capable ownership together, work the vascular, metabolic, toxic, infectious, medication and delirium alternatives alongside the recording rather than instead of it, compare a fixed recording report, and hand off active risk. Order is enforced rather than suggested, and refusal names the missing step. The lesson takes no history, examines nobody, times no seizure, places, acquires or interprets no EEG, and selects no drug, dose, route, access, oxygen, airway device, or procedure.'] },
+    { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The branch ends at active-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no proven cause, no treatment effect, no durable electrographic control, no durable neurologic recovery or airway protection, no disposition, and no outcome.'] },
+    { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that turned fluctuating confusion into a delirium workup can still reach a correct handoff.'] },
+    { id: 'reference-transcripts', status: 'satisfied', evidence: ['nonconvulsive-status-epilepticus-recognition-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 6310 for deterministic replay through the shared engine, including the two time-gated checkpoints.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Six observed-state prompts at version ${NCSE_TUTOR_VERSION} read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example ${NCSE_DEMONSTRATION_VERSION} drives the ordinary controls through the real engine to handoff. Both are written as the mirror of the focal-motor lesson: there the movement was visible and waiting for an EEG was the error, and here there is nothing to watch, so the error runs the other way. Both halves are refused — the suspicion is named without a clinical diagnosis, and the urgent EEG is the boundary rather than an afterthought, because the recording is what settles this and somebody has to ask for it. What raises the suspicion is the shape of the fluctuation: speech arrest measured in seconds, gaze that deviates and comes back toward midline, the same stereotyped events for ninety-five minutes with no return to baseline, which is not how delirium behaves. The alternatives are worked properly and in parallel, because a fluctuating seventy-two-year-old becoming a delirium workup is exactly how this diagnosis is lost. The ending gives back a bedside picture that has not changed beside a recording that meets the ACNS electrographic-status definition, and says the absent motor correlate is why it was invisible rather than a reason to doubt it. A test asserts nothing anywhere places or reads an EEG, diagnoses nonconvulsive status clinically, or claims control. tests/unit/nonconvulsive-status-epilepticus-recognition-demonstration.test.ts and tests/ui/neurology-nonconvulsive-status-epilepticus-recognition.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding.`] },
+    { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending.'] },
+    { id: 'report-control-coverage', status: 'missing', evidence: ['The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound.'] },
+  ];
+}
