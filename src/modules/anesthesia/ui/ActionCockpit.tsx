@@ -160,6 +160,7 @@ import { maternalArrestInlinePrompt } from '../../obstetrics/tutor/maternal-card
 import { shoulderDystociaInlinePrompt } from '../../obstetrics/tutor/shoulder-dystocia-cognitive-sequence-guidance';
 import { cordProlapseInlinePrompt } from '../../obstetrics/tutor/umbilical-cord-prolapse-urgent-birth-coordination-guidance';
 import { uterineRuptureInlinePrompt } from '../../obstetrics/tutor/suspected-uterine-rupture-recognition-guidance';
+import { magnesiumToxicityInlinePrompt } from '../../obstetrics/tutor/magnesium-sulfate-toxicity-recognition-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2889,6 +2890,7 @@ export interface ActionCockpitProps {
   readonly obstetricsShoulderDystociaGuidance?: GuidanceLevel;
   readonly obstetricsCordProlapseGuidance?: GuidanceLevel;
   readonly obstetricsUterineRuptureGuidance?: GuidanceLevel;
+  readonly obstetricsMagnesiumToxicityGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2998,6 +3000,7 @@ export interface ActionCockpitProps {
   readonly obstetricsShoulderDystociaDemonstrating?: boolean;
   readonly obstetricsCordProlapseDemonstrating?: boolean;
   readonly obstetricsUterineRuptureDemonstrating?: boolean;
+  readonly obstetricsMagnesiumToxicityDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5992,6 +5995,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasObstetricsMagnesiumToxicityResponse && (
               <ObstetricsMagnesiumToxicityTray assessment={props.resuscitation.obstetricsMagnesiumToxicityAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.obstetricsMagnesiumToxicityGuidance}
+                demonstrating={props.obstetricsMagnesiumToxicityDemonstrating}
                 onAction={props.onObstetricsMagnesiumToxicityResponse ?? (() => {})} />
             )}
             {hasObstetricsHighNeuraxialResponse && (
@@ -13928,10 +13934,15 @@ function ObstetricsUterineRuptureTray({ assessment, scenarioVersion, onAction, g
   </>;
 }
 
-function ObstetricsMagnesiumToxicityTray({ assessment, onAction }: {
+function ObstetricsMagnesiumToxicityTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['obstetricsMagnesiumToxicityAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onObstetricsMagnesiumToxicityResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = magnesiumToxicityInlinePrompt(guidance, { scenarioVersion, magnesiumToxicity: assessment });
+  const act = demonstrating ? undefined : onAction;
   const support = assessment?.supportAtTick != null;
   const context = assessment?.contextAtTick != null;
   const uncertainty = assessment?.uncertaintyAtTick != null;
@@ -13939,22 +13950,27 @@ function ObstetricsMagnesiumToxicityTray({ assessment, onAction }: {
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="obstetrics-magnesium-toxicity-now-title">
       <div id="obstetrics-magnesium-toxicity-now-title" className="syringe__name">Notice the quiet change. Bring the whole team close.</div>
       <p className="syringe__remaining">Connect breathing, strength, reflexes, exposure, and clearance. The learner surface keeps every infusion, airway, antidote, and dose with the qualified team.</p>
       <div className="crisis-drug__actions">
-        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-obstetrics-magnesium-toxicity-airway-anesthesia-critical-care-pharmacy-and-support-response')}>Activate airway-capable response</Button>}
-        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-obstetrics-magnesium-toxicity-exposure-renal-respiratory-reflex-neurologic-and-whole-person')}>Connect exposure + clearance</Button>}
-        {context && !uncertainty && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-magnesium-toxicity-multisignal-level-unit-and-alternative-cause-boundaries')}>Review units + alternatives</Button>}
-        {uncertainty && !readiness && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-magnesium-toxicity-source-stop-airway-ventilation-antidote-monitoring-newborn-and-support-readiness')}>Review parallel readiness</Button>}
+        {!support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-obstetrics-magnesium-toxicity-airway-anesthesia-critical-care-pharmacy-and-support-response') : undefined}>Activate airway-capable response</Button>}
+        {support && !context && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-obstetrics-magnesium-toxicity-exposure-renal-respiratory-reflex-neurologic-and-whole-person') : undefined}>Connect exposure + clearance</Button>}
+        {context && !uncertainty && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-obstetrics-magnesium-toxicity-multisignal-level-unit-and-alternative-cause-boundaries') : undefined}>Review units + alternatives</Button>}
+        {uncertainty && !readiness && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-obstetrics-magnesium-toxicity-source-stop-airway-ventilation-antidote-monitoring-newborn-and-support-readiness') : undefined}>Review parallel readiness</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="obstetrics-magnesium-toxicity-later-title">
       <div id="obstetrics-magnesium-toxicity-later-title" className="syringe__name">A better number is not yet a safe person.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Respiratory, renal, preeclampsia, medication, newborn, support, and outcome risks handed off.' : reassessment ? 'Breathing is partly improved in the fixed report. Reflexes, clearance, recovery, and outcomes remain open.' : readiness ? 'The qualified response is moving in parallel. Review the fixed report after time passes.' : support ? 'The response is active. Connect the pattern without waiting for one serum threshold.' : 'Start with a calm declaration and airway-capable shared ownership. You can pause or leave this practice at any time.'}</p>
       <div className="crisis-drug__actions">
-        {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-magnesium-toxicity-fixed-five-minute-qualified-response-report')}>Review the fixed 5-minute report</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-obstetrics-magnesium-toxicity-respiratory-renal-preeclampsia-medication-newborn-support-and-outcome-risk')}>Hand off active quiet risk</Button>}
+        {readiness && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-obstetrics-magnesium-toxicity-fixed-five-minute-qualified-response-report') : undefined}>Review the fixed 5-minute report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-obstetrics-magnesium-toxicity-respiratory-renal-preeclampsia-medication-newborn-support-and-outcome-risk') : undefined}>Hand off active quiet risk</Button>}
       </div>
     </section>
   </>;

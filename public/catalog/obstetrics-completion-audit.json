@@ -1307,23 +1307,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "magnesium-sulfate-toxicity-recognition-fixtures.ts binds seed 7244 and content 0.1.0 to expert, assess-before-calling error, recovery, and no-action paths. The supplied dosing record, the renal decline, the clinical findings, the reported level with all three units, and the fixed 5-minute report are authored constants; no magnesium, clearance, antidote or recovery model is claimed, and no outcome follows from any choice. tests/integration/magnesium-sulfate-toxicity-recognition-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the fixed 5-minute report refuses until simulated time has passed since the readiness review, and the handoff refuses until time has passed since that. What moves is a partial clinical response; what does not move is the magnesium already in her, or the renal function that let it accumulate."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions bring airway-capable anesthesia, obstetrics, critical care, pharmacy and support ownership before any further review, connect the magnesium exposure to the falling renal clearance and the respiratory, reflex and neurologic findings, hold the level as supporting rather than replacing clinical assessment while postpartum, medication, airway, neurologic, metabolic and cardiopulmonary alternatives stay open, review the source-stop, airway, ventilation, antidote, monitoring, newborn and support readiness in parallel, review the fixed report, and hand off unresolved risk. Order is enforced rather than suggested, and every later step refuses until the response has been activated. The lesson examines nobody, interprets no monitoring or laboratory, diagnoses nothing, changes no infusion, manages no airway, delivers no oxygen or ventilation, selects and delivers no antidote, performs no seizure care or procedure, and assesses no newborn."
           ]
         },
         {
@@ -1335,23 +1335,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at unresolved-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no complete reversal, no proven magnesium clearance, no renal recovery, no treatment effect, no newborn safety, no safety disposition, and no maternal, newborn or other outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both open by getting airway-capable help into the room before working anything out, and both name why: a respiratory rate of nine with absent reflexes is respiratory failure arriving quietly, and magnesium toxicity does not look dramatic until it is very late. The mechanism is read as one thing rather than two — a 4 g load and 2 g an hour for twelve hours against a urine output of 70 mL in four hours and a creatinine risen from 0.8 to 1.9, so the dose never changed and her ability to remove it did. The reported level is held as a supporting document rather than the assessment: it is quoted in all three units because confusing mg/dL, mmol/L and mEq/L is a documented source of error, and it was drawn before the infusion stopped, so it describes a moment that has passed while the reflexes and the breathing describe now. Magnesium is not allowed to close the differential. The source-stop, airway, antidote and monitoring are held as one parallel readiness, and stopping the infusion is named as the beginning rather than the end because it removes the cause and not the magnesium already in her. The ending gives back a partial response, which is not a reversal. A test asserts nothing anywhere examines her, changes an infusion, manages an airway, delivers oxygen or ventilation, or selects calcium. tests/unit/magnesium-sulfate-toxicity-recognition-demonstration.test.ts and tests/ui/obstetrics-magnesium-sulfate-toxicity-recognition.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that assessed the severity before calling for airway help can still reach a correct handoff."
           ]
         },
         {
@@ -1370,23 +1370,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "magnesium-sulfate-toxicity-recognition-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 7244 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
