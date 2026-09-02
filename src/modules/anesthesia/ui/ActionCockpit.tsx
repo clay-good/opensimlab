@@ -180,6 +180,7 @@ import { noninvasiveVentilationSelectionInlinePrompt } from '../../respiratory-m
 import { highFlowOxygenEscalationInlinePrompt } from '../../respiratory-medicine/tutor/high-flow-nasal-oxygen-escalation-guidance';
 import { oxygenDeviceFailureInlinePrompt } from '../../respiratory-medicine/tutor/oxygen-device-failure-guidance';
 import { acuteTracheostomyObstructionInlinePrompt } from '../../respiratory-medicine/tutor/acute-tracheostomy-obstruction-guidance';
+import { pediatricRespiratoryDistressInlinePrompt } from '../../pediatrics/tutor/pediatric-respiratory-distress-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2929,6 +2930,7 @@ export interface ActionCockpitProps {
   readonly highFlowOxygenEscalationGuidance?: GuidanceLevel;
   readonly oxygenDeviceFailureGuidance?: GuidanceLevel;
   readonly acuteTracheostomyObstructionGuidance?: GuidanceLevel;
+  readonly pediatricRespiratoryDistressGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3058,6 +3060,7 @@ export interface ActionCockpitProps {
   readonly highFlowOxygenEscalationDemonstrating?: boolean;
   readonly oxygenDeviceFailureDemonstrating?: boolean;
   readonly acuteTracheostomyObstructionDemonstrating?: boolean;
+  readonly pediatricRespiratoryDistressDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5722,6 +5725,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasPediatricRespiratoryDistressResponse && (
               <PediatricRespiratoryDistressTray
                 assessment={props.resuscitation.pediatricRespiratoryDistressAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.pediatricRespiratoryDistressGuidance}
+                demonstrating={props.pediatricRespiratoryDistressDemonstrating}
                 onAction={props.onPediatricRespiratoryDistressResponse ?? (() => {})} />
             )}
             {hasBronchiolitisResponse && (
@@ -11510,8 +11516,11 @@ function AcuteTracheostomyObstructionTray({ assessment, scenarioVersion, guidanc
   </div>;
 }
 
-function PediatricRespiratoryDistressTray({ assessment, onAction }: {
+function PediatricRespiratoryDistressTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricRespiratoryDistressAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onPediatricRespiratoryDistressResponse']>;
 }) {
   const recognition = assessment?.recognitionAtTick != null;
@@ -11521,7 +11530,17 @@ function PediatricRespiratoryDistressTray({ assessment, onAction }: {
   const rescue = assessment?.rescueAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   const unsupported = assessment?.lastUnsupportedChoice;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : pediatricRespiratoryDistressInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-distress-whole-child-title">
       <div id="pediatric-distress-whole-child-title" className="syringe__name">Read the whole child.</div>
       <Badge kind="teaching">appearance · breathing · circulation · trend</Badge>
@@ -11536,17 +11555,17 @@ function PediatricRespiratoryDistressTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {!recognition && <Button className="crisis-drug__action"
-          onClick={() => onAction('reconcile-pediatric-respiratory-distress-whole-child')}>Review the whole-child trend</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('reconcile-pediatric-respiratory-distress-whole-child') : undefined}>Review the whole-child trend</Button>}
         {recognition && !support && <>
           <Button className="crisis-drug__action"
-            onClick={() => onAction('activate-pediatric-respiratory-distress-support')}>Activate experienced pediatric help</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('activate-pediatric-respiratory-distress-support') : undefined}>Activate experienced pediatric help</Button>
           <Button className="crisis-drug__action"
-            onClick={() => onAction('complete-pediatric-respiratory-distress-history-first')}>Complete the history first</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('complete-pediatric-respiratory-distress-history-first') : undefined}>Complete the history first</Button>
           <Button className="crisis-drug__action"
-            onClick={() => onAction('wait-for-pediatric-respiratory-distress-imaging')}>Wait for imaging first</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('wait-for-pediatric-respiratory-distress-imaging') : undefined}>Wait for imaging first</Button>
         </>}
         {support && !early && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-pediatric-respiratory-distress-early-response')}>Review the 5-minute response</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-respiratory-distress-early-response') : undefined}>Review the 5-minute response</Button>}
       </div>
       <p className="field__hint">Qualified support happens off-screen. No device, flow, oxygen target, drug, dose, fluid, diagnosis, or procedure is selected here.</p>
     </section>
@@ -11566,21 +11585,22 @@ function PediatricRespiratoryDistressTray({ assessment, onAction }: {
       <div className="syringe__presets">
         {early && !later && <>
           <Button className="crisis-drug__action"
-            onClick={() => onAction('review-pediatric-respiratory-distress-later-panel')}>Review the later whole-child panel</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-respiratory-distress-later-panel') : undefined}>Review the later whole-child panel</Button>
           <Button className="crisis-drug__action"
-            onClick={() => onAction('reassure-pediatric-respiratory-distress-saturation-alone')}>Reassure from SpO₂ 94%</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassure-pediatric-respiratory-distress-saturation-alone') : undefined}>Reassure from SpO₂ 94%</Button>
         </>}
         {later && !rescue && <>
           <Button className="crisis-drug__action"
-            onClick={() => onAction('activate-pediatric-respiratory-failure-rescue')}>Activate airway-capable pediatric rescue</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('activate-pediatric-respiratory-failure-rescue') : undefined}>Activate airway-capable pediatric rescue</Button>
           <Button className="crisis-drug__action"
-            onClick={() => onAction('treat-pediatric-respiratory-distress-falling-rate-as-recovery')}>Treat RR 28 as recovery</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('treat-pediatric-respiratory-distress-falling-rate-as-recovery') : undefined}>Treat RR 28 as recovery</Button>
         </>}
         {rescue && !handoff && <Button className="crisis-drug__action"
-          onClick={() => onAction('handoff-pediatric-respiratory-distress-reassessment')}>Hand off active breathing risk</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('handoff-pediatric-respiratory-distress-reassessment') : undefined}>Hand off active breathing risk</Button>}
       </div>
       <p className="field__hint">The falling rate and quieter effort come with worsening mentation and air movement. This authored panel triggers rescue ownership; it does not diagnose a cause or predict outcome.</p>
     </section>
+    </div>
   </div>;
 }
 

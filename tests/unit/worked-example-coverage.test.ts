@@ -41,9 +41,10 @@ import { TOXICOLOGY_SCENARIOS } from '../../src/modules/toxicology/scenarios';
 import { NEUROLOGY_SCENARIOS } from '../../src/modules/neurology/scenarios';
 import { RESPIRATORY_MEDICINE_SCENARIOS } from '../../src/modules/respiratory-medicine/scenarios';
 import { OBSTETRICS_SCENARIOS } from '../../src/modules/obstetrics/scenarios';
+import { PEDIATRICS_SCENARIOS } from '../../src/modules/pediatrics/scenarios';
 
 const COUNT_WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight',
-  'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen'] as const;
+  'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen'] as const;
 
 function uncovered(scenarios: Parameters<typeof buildModuleCompletionCatalog>[0], moduleId: string) {
   const catalog = buildModuleCompletionCatalog(scenarios, ENGINE_VERSION, moduleId, 'ward');
@@ -143,6 +144,21 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
     }
     expect(readme).toContain(`with ${COUNT_WORDS[covered]} of its`);
     expect(readme).toContain(`${COUNT_WORDS[RESPIRATORY_MEDICINE_SCENARIOS.length]} labs done.`);
+  });
+
+  it('counts the finished pediatrics labs rather than trusting the sentence', () => {
+    expect(PEDIATRICS_SCENARIOS).toHaveLength(16);
+    const covered = coveredCount(PEDIATRICS_SCENARIOS, 'pediatrics');
+    expect(covered).toBeGreaterThan(0);
+    const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');
+    if (covered === PEDIATRICS_SCENARIOS.length) {
+      // The part-finished sentence is not allowed to linger once it is untrue.
+      expect(uncovered(PEDIATRICS_SCENARIOS, 'pediatrics')).toEqual([]);
+      expect(readme).not.toContain('Pediatrics has started');
+      return;
+    }
+    expect(readme).toContain(`with ${COUNT_WORDS[covered]} of its`);
+    expect(readme).toContain(`${COUNT_WORDS[PEDIATRICS_SCENARIOS.length]} labs done.`);
   });
 
   it('claims only what those ten modules support', () => {

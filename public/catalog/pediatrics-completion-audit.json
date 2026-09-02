@@ -42,28 +42,28 @@
           "id": "observable-objectives",
           "status": "missing",
           "evidence": [
-            "This scenario declares 6 objectives; the contract allows at most 5."
+            "Six declared objectives exceed the five the shared catalog counts as independently observable within one session."
           ]
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "pediatric-respiratory-distress-fixtures.ts binds seed 3620 and content 0.1.0 to expert, falling-rate error, recovery, and no-action paths. The presenting whole-child report, the negative-findings panel that leaves the causes open, and the fixed early and later reports are authored constants; no respiratory, oxygenation or outcome model is claimed, and no outcome follows from any choice. tests/integration/pediatric-respiratory-distress-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, and three are time-gated: the early response, the later panel, and the handoff each refuse until simulated time has passed. Unsupported choices are recorded events that move nothing, offered at three separate moments — completing a history or waiting for imaging before support, reading an improved saturation as an improved child after the early response, and reading a falling respiratory rate as recovery after the later panel."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions reconcile appearance, work of breathing, speech, circulation and pulse-coherent oxygenation as one pattern, activate experienced pediatric help with qualified oxygenation, continuous monitoring and rescue readiness, review the fixed early whole-child response after elapsed time, review the strictly later panel, activate airway-capable pediatric rescue ownership on the pattern rather than on an arrest, and hand off. Four further choices are deliberately offered and refused. The lesson examines nobody, diagnoses nothing, orders or interprets no test, selects or delivers no oxygen device, flow, fraction, target, drug, dose, fluid or ventilation, performs no airway maneuver, intubation or procedure, calculates no score, and decides no disposition, prognosis or outcome."
           ]
         },
         {
@@ -75,23 +75,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at handoff with the child still deteriorating and the cause unresolved. Later actions cannot restart an ended branch, and the ending certifies no learner diagnosis, no learner-delivered oxygen, ventilation, drug, fluid or procedure, no proven durable recovery, no determined disposition, and no outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps, and the tutor also reads the wrong turn just taken, answering each of the four refusals with its own prose. Completing a history first is answered by agreeing it matters and placing it alongside support rather than in front of it; waiting for imaging by noting that nothing a scan says changes the next few minutes and getting it moves a distressed child away from help. The improved saturation is answered with the grunting, recession, short phrases, tachypnea and reduced air entry that all persist — a saturation being what you get while the work is still succeeding. The fourth is the one the lesson exists for: a rate that has fallen from 46 to 28 with less dramatic recession, in a child now drowsy and answering in one weak word with shallow irregular breathing, markedly reduced air movement, a rising heart rate and 90% on unchanged support, is named as fatigue rather than recovery — the most dangerous reassuring number in pediatrics. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff taking none of the four, and its narration is generated from the tutor's own prose so the two cannot drift apart. Both refuse to let a single number speak for her, and both treat spontaneous breathing with a pulse as the condition in which deterioration is still preventable. A test asserts nothing anywhere examines her, diagnoses a cause, or selects or delivers oxygen, a drug, a fluid or a procedure. tests/unit/pediatric-respiratory-distress-demonstration.test.ts and tests/ui/pediatrics-respiratory-distress.test.tsx verify observed response, all four wrong-choice prompts, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. The counterfactual is a reading rather than an ordering slip: the recovery path delays support twice, then reads an improved saturation as an improved child, then reads the falling respiratory rate as recovery — and all four refusals stay visible in the transcript after the correct actions are taken from the same positions."
           ]
         },
         {
@@ -110,23 +110,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "pediatric-respiratory-distress-fixtures.ts binds exact-content expert, falling-rate, recovery, and no-action pathways to seed 3620 for deterministic replay through the shared engine, including all three time gates and all four refused choices."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

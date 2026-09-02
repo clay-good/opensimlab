@@ -50,8 +50,8 @@ describe('Requirement: Every Audited Example Is Offered', () => {
   it('names the modules that ship examples and no others', () => {
     expect(WORKED_EXAMPLE_MODULE_IDS.slice().sort())
       .toEqual(['endocrine-metabolic', 'infectious-disease', 'medical-surgical-nursing',
-        'neonatology', 'neurology', 'obstetrics', 'oncology', 'renal-electrolyte',
-        'respiratory-medicine', 'toxicology']);
+        'neonatology', 'neurology', 'obstetrics', 'oncology', 'pediatrics',
+        'renal-electrolyte', 'respiratory-medicine', 'toxicology']);
   });
 
   it('offers nothing for a module that has no worked example', () => {

@@ -233,6 +233,8 @@ import { useOxygenDeviceFailureDemonstration } from '../../respiratory-medicine/
 import { supportsOxygenDeviceFailureDemonstration } from '../../respiratory-medicine/demo/oxygen-device-failure-demonstration';
 import { useAcuteTracheostomyObstructionDemonstration } from '../../respiratory-medicine/demo/useAcuteTracheostomyObstructionDemonstration';
 import { supportsAcuteTracheostomyObstructionDemonstration } from '../../respiratory-medicine/demo/acute-tracheostomy-obstruction-demonstration';
+import { usePediatricRespiratoryDistressDemonstration } from '../../pediatrics/demo/usePediatricRespiratoryDistressDemonstration';
+import { supportsPediatricRespiratoryDistressDemonstration } from '../../pediatrics/demo/pediatric-respiratory-distress-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -501,6 +503,7 @@ export function Cockpit({
   const highFlowOxygenDemoSupported = supportsHighFlowOxygenEscalationDemonstration(scenario);
   const oxygenDeviceFailureDemoSupported = supportsOxygenDeviceFailureDemonstration(scenario);
   const acuteTracheostomyObstructionDemoSupported = supportsAcuteTracheostomyObstructionDemonstration(scenario);
+  const pediatricRespiratoryDistressDemoSupported = supportsPediatricRespiratoryDistressDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -597,6 +600,7 @@ export function Cockpit({
     || highFlowOxygenDemoSupported
     || oxygenDeviceFailureDemoSupported
     || acuteTracheostomyObstructionDemoSupported
+    || pediatricRespiratoryDistressDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -754,6 +758,12 @@ export function Cockpit({
     active: demonstrating && chronicOpioidHypoventilationDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.chronicOpioidHypoventilationAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const pediatricRespiratoryDistressDemonstration = usePediatricRespiratoryDistressDemonstration({
+    active: demonstrating && pediatricRespiratoryDistressDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.pediatricRespiratoryDistressAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const acuteTracheostomyObstructionDemonstration = useAcuteTracheostomyObstructionDemonstration({
@@ -1310,6 +1320,7 @@ export function Cockpit({
     : highFlowOxygenDemoSupported ? highFlowOxygenDemonstration
     : oxygenDeviceFailureDemoSupported ? oxygenDeviceFailureDemonstration
     : acuteTracheostomyObstructionDemoSupported ? acuteTracheostomyObstructionDemonstration
+    : pediatricRespiratoryDistressDemoSupported ? pediatricRespiratoryDistressDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2211,6 +2222,8 @@ export function Cockpit({
           oxygenDeviceFailureDemonstrating={demonstrating && oxygenDeviceFailureDemoSupported}
           acuteTracheostomyObstructionGuidance={session.guidance}
           acuteTracheostomyObstructionDemonstrating={demonstrating && acuteTracheostomyObstructionDemoSupported}
+          pediatricRespiratoryDistressGuidance={session.guidance}
+          pediatricRespiratoryDistressDemonstrating={demonstrating && pediatricRespiratoryDistressDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
