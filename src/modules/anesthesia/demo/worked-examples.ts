@@ -109,6 +109,7 @@ import { supportsCapHypoxemiaDemonstration } from '../../respiratory-medicine/de
 import { supportsPostPeDyspneaDemonstration } from '../../respiratory-medicine/demo/post-pulmonary-embolism-persistent-dyspnea-demonstration';
 import { supportsApeSupportDemonstration } from '../../respiratory-medicine/demo/acute-pulmonary-edema-respiratory-support-reassessment-demonstration';
 import { supportsPostTensionPneumothoraxDemonstration } from '../../respiratory-medicine/demo/spontaneous-tension-pneumothorax-post-drainage-reassessment-demonstration';
+import { supportsLargePleuralEffusionDemonstration } from '../../respiratory-medicine/demo/large-unilateral-pleural-effusion-reassessment-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -253,6 +254,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsPostPeDyspneaDemonstration,
     supportsApeSupportDemonstration,
     supportsPostTensionPneumothoraxDemonstration,
+    supportsLargePleuralEffusionDemonstration,
   ],
 };
 

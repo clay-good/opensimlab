@@ -803,23 +803,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "large-unilateral-pleural-effusion-reassessment-fixtures.ts binds seed 7398 and content 0.1.0 to expert, response-before-intent error, recovery, and no-action paths. The six-week history, the current observations, the radiograph and ultrasound reports, the aspiration checkpoint and the paired-fluid classification are authored constants; no drainage, symptom-relief, fluid-formation or diagnostic model is claimed, and no outcome follows from any choice. tests/integration/large-pleural-effusion-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, with a time gate before the checkpoint and another before the handoff: the drainage-response review refuses until simulated time has passed since the aspiration intent was recorded. What moves is her breathing and the residual effusion; what does not move is the cause, or the pending cytology and microbiology."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions reconcile a six-week decline against the current state, record what the pleural team is asked to do and on what terms — image-guided, diagnostic and slow symptom relief, symptom-led stop triggers, no target volume — review the authored checkpoint as a case fact, read the exudative classification as a narrowing rather than an answer, give the pending results and the definitive evaluation a named owner, and hand off. Order is enforced rather than suggested, and refusal names the missing step. The lesson examines nobody, acquires or interprets no monitoring, radiograph, CT, ultrasound, laboratory, cytology, microbiology or pleural-fluid data, calculates no criteria, performs no thoracentesis, selects no device, site or drainage volume, delivers no treatment, determines no diagnosis or disposition, and predicts no outcome."
           ]
         },
         {
@@ -831,23 +831,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at unresolved-cause handoff. Later actions cannot restart an ended branch, and the ending certifies no complete drainage, no determined diagnosis, no determined disposition, and no outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff, and its narration is generated from the tutor's own prose so the two cannot drift apart. Both refuse the striking radiograph as a source of urgency — two-thirds of a hemithorax establishes neither urgency nor safety nor a cause — and both make the aspiration intent about its terms rather than its existence: an aspiration that stops when the patient says so is a different procedure from one that stops at a number. The checkpoint is then read as a case fact, and the 850 mL is named explicitly as what happened to this patient rather than a maximum to carry to the next one, because the stop was symptom-led. The exudative classification narrows without answering: a lymphocytic exudate after six weeks of decline raises malignancy and tuberculosis among others, and cytology, microbiology and cause-directed studies are all pending. The evaluation step is named as the point where a patient who feels much better after 850 mL quietly becomes a patient nobody is following up. A test asserts nothing anywhere examines her, acquires or reads imaging or fluid, performs a thoracentesis, or selects a drainage volume. tests/unit/large-pleural-effusion-demonstration.test.ts and tests/ui/respiratory-large-pleural-effusion.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that went to review a drainage response before recording what was actually requested can still reach a correct handoff."
           ]
         },
         {
@@ -866,23 +866,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "large-unilateral-pleural-effusion-reassessment-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 7398 for deterministic replay through the shared engine, including both time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
