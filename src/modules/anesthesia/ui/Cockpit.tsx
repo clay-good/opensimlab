@@ -183,6 +183,8 @@ import { usePostpartumPreeclampsiaDemonstration } from '../../obstetrics/demo/us
 import { supportsPostpartumPreeclampsiaDemonstration } from '../../obstetrics/demo/postpartum-severe-preeclampsia-warning-signs-demonstration';
 import { useEclampsiaDemonstration } from '../../obstetrics/demo/useEclampsiaDemonstration';
 import { supportsEclampsiaDemonstration } from '../../obstetrics/demo/eclampsia-first-seizure-response-demonstration';
+import { useAfeDemonstration } from '../../obstetrics/demo/useAfeDemonstration';
+import { supportsAfeDemonstration } from '../../obstetrics/demo/suspected-amniotic-fluid-embolism-pattern-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -426,6 +428,7 @@ export function Cockpit({
   const concealedAbruptionDemoSupported = supportsConcealedAbruptionDemonstration(scenario);
   const postpartumPreeclampsiaDemoSupported = supportsPostpartumPreeclampsiaDemonstration(scenario);
   const eclampsiaDemoSupported = supportsEclampsiaDemonstration(scenario);
+  const afeDemoSupported = supportsAfeDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -497,6 +500,7 @@ export function Cockpit({
     || concealedAbruptionDemoSupported
     || postpartumPreeclampsiaDemoSupported
     || eclampsiaDemoSupported
+    || afeDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -648,6 +652,12 @@ export function Cockpit({
     active: demonstrating && termTransitionDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.neonatologyTermTransitionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const afeDemonstration = useAfeDemonstration({
+    active: demonstrating && afeDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.obstetricsAfeAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const eclampsiaDemonstration = useEclampsiaDemonstration({
@@ -1053,6 +1063,7 @@ export function Cockpit({
     : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
+    : afeDemoSupported ? afeDemonstration
     : eclampsiaDemoSupported ? eclampsiaDemonstration
     : postpartumPreeclampsiaDemoSupported ? postpartumPreeclampsiaDemonstration
     : concealedAbruptionDemoSupported ? concealedAbruptionDemonstration
@@ -1886,6 +1897,8 @@ export function Cockpit({
           obstetricsPostpartumPreeclampsiaDemonstrating={demonstrating && postpartumPreeclampsiaDemoSupported}
           obstetricsEclampsiaGuidance={session.guidance}
           obstetricsEclampsiaDemonstrating={demonstrating && eclampsiaDemoSupported}
+          obstetricsAfeGuidance={session.guidance}
+          obstetricsAfeDemonstrating={demonstrating && afeDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

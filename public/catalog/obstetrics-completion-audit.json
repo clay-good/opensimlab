@@ -677,23 +677,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "suspected-amniotic-fluid-embolism-pattern-fixtures.ts binds seed 7174 and content 0.1.0 to expert, understand-before-calling error, recovery, and no-action paths. The collapse, its order relative to the bleeding, the supplied coagulation sample, and the fixed 12-minute report are authored constants; no embolism, coagulation, resuscitation or recovery model is claimed, and no outcome follows from any choice. tests/integration/suspected-amniotic-fluid-embolism-pattern-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the fixed later report refuses until simulated time has passed since the evidence review, and the handoff refuses until time has passed since that. What moves is nothing reassuring — the shock persists, the respiratory compromise continues, and the coagulopathy is still progressing at the later report."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions activate the whole coordinated response before any of the understanding, then put the events in the order they happened, name the collapse-then-coagulopathy pattern without closing a diagnosis that has no confirmatory test, read the supplied cardiac, pulmonary, hemorrhage, coagulation, uterine, anesthetic, thrombotic, infectious, allergic and competing-cause evidence as a boundary, review the fixed later report, and hand off unresolved risk. Order is enforced rather than suggested — uniquely in this module the activation comes first, and every later step refuses until it has happened. The lesson assesses no pulse, examines nobody, measures no loss, assesses no uterus or genital tract, interprets no monitoring, acquires or reads no laboratory, imaging or echo, calculates no DIC score, excludes nothing, and selects no oxygen, ventilation, airway, fluid, vasoactive, blood or coagulation product, drug, dose, route, target, CPR, defibrillation, ECMO, delivery or procedure."
           ]
         },
         {
@@ -705,23 +705,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at unresolved-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no treatment effect, no respiratory or hemodynamic recovery, no bleeding or coagulopathy control, no safety disposition, and no maternal, newborn or other outcome. No cardiac arrest is authored, and none is claimed either way."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both open by calling everyone before the diagnosis, and both say why that inversion is the teaching rather than an accident of ordering: there is no confirmatory test for amniotic fluid embolism, it is recognized clinically and settled only afterwards, and the minutes spent deciding are minutes she does not have. The pattern both name is the order of events — the breathing and the circulation failed first and the bleeding came after, which is the reverse of a hemorrhage, and a firm midline uterus with 180 mL measured does not explain a pressure of 74/42. The coagulation is read as the second act of one event: a fibrinogen of 105 mg/dL down from 430 at a measured loss of 240 mL is neither dilution nor consumption from bleeding. Suspicion is not closure, so high spinal, anaphylaxis, pulmonary or air embolism, a cardiac event, sepsis and an unfound bleeding source all stay open. The ending gives back someone still in shock, still compromised, and bleeding into a worsening coagulopathy. A test asserts nothing anywhere assesses a pulse, measures a loss, acquires or reads a laboratory value, or selects oxygen, a vasoactive, a component, CPR or a delivery. tests/unit/suspected-amniotic-fluid-embolism-pattern-demonstration.test.ts and tests/ui/obstetrics-suspected-amniotic-fluid-embolism-pattern.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that tried to understand the event before calling the room can still reach a correct handoff."
           ]
         },
         {
@@ -740,23 +740,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "suspected-amniotic-fluid-embolism-pattern-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 7174 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

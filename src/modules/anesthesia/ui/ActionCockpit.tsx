@@ -155,6 +155,7 @@ import { maternalSepsisInlinePrompt } from '../../obstetrics/tutor/maternal-seps
 import { concealedAbruptionInlinePrompt } from '../../obstetrics/tutor/concealed-placental-abruption-hemorrhage-guidance';
 import { postpartumPreeclampsiaInlinePrompt } from '../../obstetrics/tutor/postpartum-severe-preeclampsia-warning-signs-guidance';
 import { eclampsiaInlinePrompt } from '../../obstetrics/tutor/eclampsia-first-seizure-response-guidance';
+import { afeInlinePrompt } from '../../obstetrics/tutor/suspected-amniotic-fluid-embolism-pattern-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2879,6 +2880,7 @@ export interface ActionCockpitProps {
   readonly obstetricsConcealedAbruptionGuidance?: GuidanceLevel;
   readonly obstetricsPostpartumPreeclampsiaGuidance?: GuidanceLevel;
   readonly obstetricsEclampsiaGuidance?: GuidanceLevel;
+  readonly obstetricsAfeGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2983,6 +2985,7 @@ export interface ActionCockpitProps {
   readonly obstetricsConcealedAbruptionDemonstrating?: boolean;
   readonly obstetricsPostpartumPreeclampsiaDemonstrating?: boolean;
   readonly obstetricsEclampsiaDemonstrating?: boolean;
+  readonly obstetricsAfeDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5942,6 +5945,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasObstetricsAfeResponse && (
               <ObstetricsAfeTray assessment={props.resuscitation.obstetricsAfeAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.obstetricsAfeGuidance}
+                demonstrating={props.obstetricsAfeDemonstrating}
                 onAction={props.onObstetricsAfeResponse ?? (() => {})} />
             )}
             {hasObstetricsMaternalArrestResponse && (
@@ -13688,10 +13694,15 @@ function ObstetricsEclampsiaTray({ assessment, scenarioVersion, onAction, guidan
   </>;
 }
 
-function ObstetricsAfeTray({ assessment, onAction }: {
+function ObstetricsAfeTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['obstetricsAfeAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onObstetricsAfeResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = afeInlinePrompt(guidance, { scenarioVersion, afe: assessment });
+  const act = demonstrating ? undefined : onAction;
   const support = assessment?.supportAtTick != null;
   const trajectory = assessment?.trajectoryAtTick != null;
   const recognition = assessment?.recognitionAtTick != null;
@@ -13699,22 +13710,27 @@ function ObstetricsAfeTray({ assessment, onAction }: {
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="obstetrics-afe-now-title">
       <div id="obstetrics-afe-now-title" className="syringe__name">Connect the sudden whole-body change.</div>
       <p className="syringe__remaining">Qualified help starts first. Then keep birth timing, breathing, circulation, alertness, bleeding, coagulation, the newborn, and her support in one picture.</p>
       <div className="crisis-drug__actions">
-        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-obstetrics-afe-coordinated-obstetric-anesthesia-critical-care-cardiopulmonary-hemorrhage-newborn-and-dignity-response')}>Activate coordinated response</Button>}
-        {support && !trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-obstetrics-afe-birth-clock-symptom-order-cardiorespiratory-state-bleeding-coagulation-newborn-and-whole-person')}>Connect birth clock + whole pattern</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-obstetrics-afe-rapid-maternal-collapse-and-coagulopathy-pattern-without-diagnostic-closure')}>Recognize rapid maternal collapse</Button>}
-        {recognition && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-afe-supplied-cardiac-pulmonary-hemorrhage-coagulation-uterine-anesthetic-thrombotic-infectious-allergic-and-competing-cause-boundary')}>Review shock + bleeding + open causes</Button>}
+        {!support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-obstetrics-afe-coordinated-obstetric-anesthesia-critical-care-cardiopulmonary-hemorrhage-newborn-and-dignity-response') : undefined}>Activate coordinated response</Button>}
+        {support && !trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-obstetrics-afe-birth-clock-symptom-order-cardiorespiratory-state-bleeding-coagulation-newborn-and-whole-person') : undefined}>Connect birth clock + whole pattern</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-obstetrics-afe-rapid-maternal-collapse-and-coagulopathy-pattern-without-diagnostic-closure') : undefined}>Recognize rapid maternal collapse</Button>}
+        {recognition && !evidence && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-obstetrics-afe-supplied-cardiac-pulmonary-hemorrhage-coagulation-uterine-anesthetic-thrombotic-infectious-allergic-and-competing-cause-boundary') : undefined}>Review shock + bleeding + open causes</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="obstetrics-afe-later-title">
       <div id="obstetrics-afe-later-title" className="syringe__name">Reassess breathing, circulation, and bleeding.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Active shock, hypoxemia, bleeding, coagulation, arrest, newborn-support, family, staff, and outcome risks handed off.' : reassessment ? 'A central pulse remains. Shock, respiratory compromise, rising bleeding, progressive coagulopathy, cause, procedures, and treatment effect remain open.' : evidence ? 'Qualified support is active. Review the fixed 12-minute report after time passes.' : support ? 'The coordinated response is active. Connect the sequence, recognize without diagnostic closure, and review the supplied evidence.' : 'Activate qualified coordinated ownership now; then work through the pattern without adding treatment controls.'}</p>
       <div className="crisis-drug__actions">
-        {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-afe-fixed-later-breathing-circulation-bleeding-coagulation-and-support-report')}>Review the 12-minute report</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-obstetrics-afe-hypoxemia-shock-coagulopathy-bleeding-arrest-procedure-newborn-family-support-and-outcome-risk')}>Hand off active maternal risk</Button>}
+        {evidence && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-obstetrics-afe-fixed-later-breathing-circulation-bleeding-coagulation-and-support-report') : undefined}>Review the 12-minute report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-obstetrics-afe-hypoxemia-shock-coagulopathy-bleeding-arrest-procedure-newborn-family-support-and-outcome-risk') : undefined}>Hand off active maternal risk</Button>}
       </div>
     </section>
   </>;
