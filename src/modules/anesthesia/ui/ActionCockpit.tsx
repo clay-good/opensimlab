@@ -170,6 +170,7 @@ import { copdTransitionInlinePrompt } from '../../respiratory-medicine/tutor/cop
 import { capHypoxemiaInlinePrompt } from '../../respiratory-medicine/tutor/community-acquired-pneumonia-hypoxemia-reassessment-guidance';
 import { postPeDyspneaInlinePrompt } from '../../respiratory-medicine/tutor/post-pulmonary-embolism-persistent-dyspnea-guidance';
 import { apeSupportInlinePrompt } from '../../respiratory-medicine/tutor/acute-pulmonary-edema-respiratory-support-reassessment-guidance';
+import { postTensionPneumothoraxInlinePrompt } from '../../respiratory-medicine/tutor/spontaneous-tension-pneumothorax-post-drainage-reassessment-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2909,6 +2910,7 @@ export interface ActionCockpitProps {
   readonly capHypoxemiaGuidance?: GuidanceLevel;
   readonly postPeDyspneaGuidance?: GuidanceLevel;
   readonly apeSupportGuidance?: GuidanceLevel;
+  readonly postTensionPneumothoraxGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3028,6 +3030,7 @@ export interface ActionCockpitProps {
   readonly capHypoxemiaDemonstrating?: boolean;
   readonly postPeDyspneaDemonstrating?: boolean;
   readonly apeSupportDemonstrating?: boolean;
+  readonly postTensionPneumothoraxDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5613,6 +5616,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasPostTensionPneumothoraxResponse && (
               <PostTensionPneumothoraxTray
                 assessment={props.resuscitation.postTensionPneumothoraxAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.postTensionPneumothoraxGuidance}
+                demonstrating={props.postTensionPneumothoraxDemonstrating}
                 onAction={props.onPostTensionPneumothoraxResponse ?? (() => {})} />
             )}
             {hasLargePleuralEffusionResponse && (
@@ -10841,24 +10847,34 @@ function ApeSupportTray({ assessment, scenarioVersion, onAction, guidance = 'una
   </div>;
 }
 
-function PostTensionPneumothoraxTray({ assessment, onAction }: {
+function PostTensionPneumothoraxTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['postTensionPneumothoraxAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onPostTensionPneumothoraxResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = postTensionPneumothoraxInlinePrompt(guidance, { scenarioVersion, postTensionPneumothorax: assessment });
+  const act = demonstrating ? undefined : onAction;
   const trajectory = assessment?.trajectoryAtTick != null;
   const response = assessment?.drainageResponseAtTick != null;
   const system = assessment?.systemAtTick != null;
   const etiology = assessment?.etiologyAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="post-tension-trajectory-title">
       <div id="post-tension-trajectory-title" className="syringe__name">Relief is the start of the next watch.</div>
       <Badge kind="teaching">6 hours after experienced-team drainage</Badge>
       <div className="syringe__meta">prior tension · current safety · response without certainty</div>
       <p className="syringe__remaining" role="status">{response ? 'Improvement reviewed · durable recovery remains open' : trajectory ? 'Prior rescue reconciled · review the patient now' : 'Start with the event, rescue + trajectory'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={trajectory} onClick={() => onAction('reconcile-spontaneous-tension-pneumothorax-trajectory-and-prior-care')}>Reconcile tension event + prior care</Button>
-        <Button className="crisis-drug__action" disabled={!trajectory || response} onClick={() => onAction('review-spontaneous-tension-pneumothorax-drainage-response')}>Review post-drainage response</Button>
+        <Button className="crisis-drug__action" disabled={trajectory} aria-disabled={demonstrating} onClick={act ? () => act('reconcile-spontaneous-tension-pneumothorax-trajectory-and-prior-care') : undefined}>Reconcile tension event + prior care</Button>
+        <Button className="crisis-drug__action" disabled={!trajectory || response} aria-disabled={demonstrating} onClick={act ? () => act('review-spontaneous-tension-pneumothorax-drainage-response') : undefined}>Review post-drainage response</Button>
       </div>
       <p className="field__hint">The presentation, examination, drainage, radiograph, and current findings are authored. Improvement does not prove full re-expansion, durable drain function, or resolution.</p>
     </section>
@@ -10868,9 +10884,9 @@ function PostTensionPneumothoraxTray({ assessment, onAction }: {
       <div className="syringe__meta">parallel review · change triggers · definitive planning</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Unresolved pleural work handed off' : system && etiology ? 'Both lanes complete · advance time before handoff' : response ? 'Open both the system + planning lanes' : 'Review the current response first'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={!response || system} onClick={() => onAction('review-spontaneous-tension-pneumothorax-drain-system-and-complications')}>Review drain system + complications</Button>
-        <Button className="crisis-drug__action" disabled={!response || etiology} onClick={() => onAction('review-spontaneous-tension-pneumothorax-etiology-recurrence-and-definitive-planning')}>Review causes + definitive planning</Button>
-        <Button className="crisis-drug__action" disabled={!system || !etiology || handoff} onClick={() => onAction('handoff-spontaneous-tension-pneumothorax-post-drainage-reassessment')}>Hand off unresolved pleural work</Button>
+        <Button className="crisis-drug__action" disabled={!response || system} aria-disabled={demonstrating} onClick={act ? () => act('review-spontaneous-tension-pneumothorax-drain-system-and-complications') : undefined}>Review drain system + complications</Button>
+        <Button className="crisis-drug__action" disabled={!response || etiology} aria-disabled={demonstrating} onClick={act ? () => act('review-spontaneous-tension-pneumothorax-etiology-recurrence-and-definitive-planning') : undefined}>Review causes + definitive planning</Button>
+        <Button className="crisis-drug__action" disabled={!system || !etiology || handoff} aria-disabled={demonstrating} onClick={act ? () => act('handoff-spontaneous-tension-pneumothorax-post-drainage-reassessment') : undefined}>Hand off unresolved pleural work</Button>
       </div>
       <p className="field__hint">No drain inspection or manipulation, suction, clamp, flush, device, site, oxygen target, drug, procedure, pleurodesis, surgery, disposition, prognosis, recurrence, resolution, or outcome is chosen.</p>
     </section>

@@ -72,6 +72,7 @@ import { copdTransitionCompletionEvidence } from '../../respiratory-medicine/cop
 import { capHypoxemiaCompletionEvidence } from '../../respiratory-medicine/community-acquired-pneumonia-hypoxemia-reassessment-completion';
 import { postPeDyspneaCompletionEvidence } from '../../respiratory-medicine/post-pulmonary-embolism-persistent-dyspnea-completion';
 import { apeSupportCompletionEvidence } from '../../respiratory-medicine/acute-pulmonary-edema-respiratory-support-reassessment-completion';
+import { postTensionPneumothoraxCompletionEvidence } from '../../respiratory-medicine/spontaneous-tension-pneumothorax-post-drainage-reassessment-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -283,6 +284,7 @@ export function auditClinicalScenario(
     ...capHypoxemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...postPeDyspneaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...apeSupportCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...postTensionPneumothoraxCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

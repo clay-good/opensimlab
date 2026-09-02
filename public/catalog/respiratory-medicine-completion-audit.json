@@ -677,23 +677,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "spontaneous-tension-pneumothorax-post-drainage-reassessment-fixtures.ts binds seed 7384 and content 0.1.0 to expert, handoff-with-an-empty-lane error, recovery, and no-action paths. The presenting physiology, the experienced-team drainage record, the current observations, the post-drainage radiograph and the pleural observation record are authored constants; no drainage, re-expansion, leak-sealing or recurrence model is claimed, and no outcome follows from any choice. tests/integration/post-tension-pneumothorax-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through five recorded steps on the shared simulation clock, and the handoff is time-gated: it refuses until simulated time has passed since the etiology review. What moves is what has been reconciled, credited, read and owned; what does not move is the air leak, the partial re-expansion, or the definitive plan."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions reconcile the tension event and the experienced-team drainage against the current trajectory, credit the drainage response without upgrading partial re-expansion into resolution, read the drain as a system with each observation named alongside what its failure would look like, review the secondary etiology, recurrence prevention, surgical fitness, the patient’s own priorities and the pleural and thoracic ownership, and hand off. The drain system and the definitive planning are independent lanes that can be opened in either order, and the handoff waits for both; refusal names the missing lane. The lesson examines nobody, acquires or interprets no monitoring, imaging, ultrasound, pleural-pressure or laboratory data, performs no decompression, places or manipulates no drain, selects no suction, clamp, device or site, delivers no oxygen or medication, performs no procedure, determines no disposition, and predicts no recurrence."
           ]
         },
         {
@@ -705,23 +705,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at unresolved-pleural-work handoff. Later actions cannot restart an ended branch, and the ending certifies no durable drain function, no complete re-expansion, no sealed leak, no definitive plan, no determined disposition, no predicted recurrence, and no outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both start from how close this was — 76/44 and 82%, confused and cold, with a silent right chest — and both name the experienced team's decision to treat the pattern rather than wait to confirm it as the reason there is a patient to reassess. The response is credited without being upgraded: partial re-expansion establishes neither durable drain function nor complete re-expansion, and both are true at a point in time rather than settled. The centre of the lesson is reading the drain as a system before any long-term planning — an upright bottle below the insertion site, an intact connection, respiratory swing that says it is communicating with the pleural space, and intermittent bubbling at six hours that says the leak has not sealed — with each observation paired to what its failure would look like, because a drain that has quietly stopped working looks like a patient who is fine right up until he is not. The emphysema makes this a secondary spontaneous pneumothorax, which changes the recurrence risk and the threshold for a definitive procedure, and the persistent leak makes that conversation urgent rather than elective. A test asserts nothing anywhere touches the drain, selects suction or a clamp, or predicts a recurrence. tests/unit/post-tension-pneumothorax-demonstration.test.ts and tests/ui/respiratory-post-tension-pneumothorax.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that tried to hand off with the planning lane still empty can still reach a correct handoff."
           ]
         },
         {
@@ -740,23 +740,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "spontaneous-tension-pneumothorax-post-drainage-reassessment-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 7384 for deterministic replay through the shared engine, including the time-gated handoff."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

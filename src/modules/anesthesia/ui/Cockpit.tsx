@@ -213,6 +213,8 @@ import { usePostPeDyspneaDemonstration } from '../../respiratory-medicine/demo/u
 import { supportsPostPeDyspneaDemonstration } from '../../respiratory-medicine/demo/post-pulmonary-embolism-persistent-dyspnea-demonstration';
 import { useApeSupportDemonstration } from '../../respiratory-medicine/demo/useApeSupportDemonstration';
 import { supportsApeSupportDemonstration } from '../../respiratory-medicine/demo/acute-pulmonary-edema-respiratory-support-reassessment-demonstration';
+import { usePostTensionPneumothoraxDemonstration } from '../../respiratory-medicine/demo/usePostTensionPneumothoraxDemonstration';
+import { supportsPostTensionPneumothoraxDemonstration } from '../../respiratory-medicine/demo/spontaneous-tension-pneumothorax-post-drainage-reassessment-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -471,6 +473,7 @@ export function Cockpit({
   const capHypoxemiaDemoSupported = supportsCapHypoxemiaDemonstration(scenario);
   const postPeDyspneaDemoSupported = supportsPostPeDyspneaDemonstration(scenario);
   const apeSupportDemoSupported = supportsApeSupportDemonstration(scenario);
+  const postTensionPneumothoraxDemoSupported = supportsPostTensionPneumothoraxDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -557,6 +560,7 @@ export function Cockpit({
     || capHypoxemiaDemoSupported
     || postPeDyspneaDemoSupported
     || apeSupportDemoSupported
+    || postTensionPneumothoraxDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -708,6 +712,12 @@ export function Cockpit({
     active: demonstrating && termTransitionDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.neonatologyTermTransitionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const postTensionPneumothoraxDemonstration = usePostTensionPneumothoraxDemonstration({
+    active: demonstrating && postTensionPneumothoraxDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.postTensionPneumothoraxAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const apeSupportDemonstration = useApeSupportDemonstration({
@@ -1203,6 +1213,7 @@ export function Cockpit({
     : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
+    : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
     : apeSupportDemoSupported ? apeSupportDemonstration
     : postPeDyspneaDemoSupported ? postPeDyspneaDemonstration
     : capHypoxemiaDemoSupported ? capHypoxemiaDemonstration
@@ -2081,6 +2092,8 @@ export function Cockpit({
           postPeDyspneaDemonstrating={demonstrating && postPeDyspneaDemoSupported}
           apeSupportGuidance={session.guidance}
           apeSupportDemonstrating={demonstrating && apeSupportDemoSupported}
+          postTensionPneumothoraxGuidance={session.guidance}
+          postTensionPneumothoraxDemonstrating={demonstrating && postTensionPneumothoraxDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
