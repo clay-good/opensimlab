@@ -81,6 +81,7 @@ import { supportsFocalMotorStatusDemonstration } from '../../neurology/demo/foca
 import { supportsNcseDemonstration } from '../../neurology/demo/nonconvulsive-status-epilepticus-recognition-demonstration';
 import { supportsMyastheniaDemonstration } from '../../neurology/demo/myasthenic-crisis-escalation-demonstration';
 import { supportsGbsDemonstration } from '../../neurology/demo/guillain-barre-respiratory-decline-demonstration';
+import { supportsMeningitisDemonstration } from '../../neurology/demo/acute-bacterial-meningitis-first-hour-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -193,6 +194,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsNcseDemonstration,
     supportsMyastheniaDemonstration,
     supportsGbsDemonstration,
+    supportsMeningitisDemonstration,
   ],
 };
 

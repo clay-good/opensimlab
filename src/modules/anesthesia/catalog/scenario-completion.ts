@@ -45,6 +45,7 @@ import { focalMotorStatusCompletionEvidence } from '../../neurology/focal-motor-
 import { ncseCompletionEvidence } from '../../neurology/nonconvulsive-status-epilepticus-recognition-completion';
 import { myastheniaCompletionEvidence } from '../../neurology/myasthenic-crisis-escalation-completion';
 import { gbsCompletionEvidence } from '../../neurology/guillain-barre-respiratory-decline-completion';
+import { meningitisCompletionEvidence } from '../../neurology/acute-bacterial-meningitis-first-hour-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -229,6 +230,7 @@ export function auditClinicalScenario(
     ...ncseCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...myastheniaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...gbsCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...meningitisCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

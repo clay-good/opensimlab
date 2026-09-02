@@ -1055,23 +1055,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "acute-bacterial-meningitis-first-hour-fixtures.ts binds seed 6433 and content 0.1.0 to expert, puzzle-before-service error, recovery, and no-action paths. The presentation, the blood panel, the lumbar-puncture safety boundary, and the fixed 45-minute CSF and clinical report are authored constants; no infection, antimicrobial or CSF model is claimed, and no outcome follows from any choice. tests/integration/acute-bacterial-meningitis-first-hour-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the later CSF and clinical review refuses until simulated time has passed since the empiric pathway was activated, and the handoff refuses until time has passed since that. What the progression demonstrates is parallelism — the treatment clock and the diagnostic clock running alongside each other rather than one behind the other."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions say how fast this arrived alongside what remains intact, turn a single clinician into a service with infection, neurological, resuscitation, nursing and precaution owners, check the list that would justify pre-puncture imaging and notice she is not on it, activate an empiric pathway that no test is allowed to delay, compare a fixed later report, and hand off active risk. Order is enforced rather than suggested, and refusal names the missing step. The lesson takes no history, examines nobody, acquires no blood test, culture, CSF or imaging, performs no lumbar puncture, interprets no CSF, and selects no drug, dose, route, access, fluid, oxygen, airway, or isolation equipment."
           ]
         },
         {
@@ -1083,23 +1083,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at active-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no identified pathogen, no proven treatment effect, no durable neurologic stability, no disposition, and no outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both are built on the observation that this hour is decided by what happens in parallel rather than in sequence. She is GCS 15, oriented and nonfocal, which is precisely the state in which a lumbar puncture does not wait for routine imaging: the scan is for altered consciousness, focal deficit, abnormal pupils, posturing, uncontrolled seizure, bleeding risk, extensive purpura, severe immunocompromise or rapid decline, and she has none of them — a judgement about this minute that continuous reassessment can reopen rather than a permanent clearance. Both refuse the blood work as an answer too: leukocytes of 18.6, a CRP of 162 and a procalcitonin of 4.8 are consistent and confirm nothing. Ownership and precautions come before the diagnostic question, because one clinician thinking carefully is the slowest possible version of this hour and precautions stop being retrofittable once she is moved. The empiric pathway is then put on a track no test can hold up, with no regimen, dose or route chosen. The ending gives back a convincing CSF with a Gram stain showing abundant white cells and no organism, and says plainly that a negative Gram stain narrows nothing. A test asserts nothing anywhere performs the puncture, interprets the CSF, identifies a pathogen, or picks a regimen. tests/unit/acute-bacterial-meningitis-first-hour-demonstration.test.ts and tests/ui/neurology-acute-bacterial-meningitis-first-hour.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that went to work the imaging question alone can still reach a correct handoff."
           ]
         },
         {
@@ -1118,23 +1118,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "acute-bacterial-meningitis-first-hour-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 6433 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

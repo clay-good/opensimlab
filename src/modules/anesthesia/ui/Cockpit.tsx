@@ -159,6 +159,8 @@ import { useMyastheniaDemonstration } from '../../neurology/demo/useMyastheniaDe
 import { supportsMyastheniaDemonstration } from '../../neurology/demo/myasthenic-crisis-escalation-demonstration';
 import { useGbsDemonstration } from '../../neurology/demo/useGbsDemonstration';
 import { supportsGbsDemonstration } from '../../neurology/demo/guillain-barre-respiratory-decline-demonstration';
+import { useMeningitisDemonstration } from '../../neurology/demo/useMeningitisDemonstration';
+import { supportsMeningitisDemonstration } from '../../neurology/demo/acute-bacterial-meningitis-first-hour-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -390,6 +392,7 @@ export function Cockpit({
   const ncseDemoSupported = supportsNcseDemonstration(scenario);
   const myastheniaDemoSupported = supportsMyastheniaDemonstration(scenario);
   const gbsDemoSupported = supportsGbsDemonstration(scenario);
+  const meningitisDemoSupported = supportsMeningitisDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -449,6 +452,7 @@ export function Cockpit({
     || ncseDemoSupported
     || myastheniaDemoSupported
     || gbsDemoSupported
+    || meningitisDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -600,6 +604,12 @@ export function Cockpit({
     active: demonstrating && termTransitionDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.neonatologyTermTransitionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const meningitisDemonstration = useMeningitisDemonstration({
+    active: demonstrating && meningitisDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.neurologyMeningitisAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const gbsDemonstration = useGbsDemonstration({
@@ -933,6 +943,7 @@ export function Cockpit({
     : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
+    : meningitisDemoSupported ? meningitisDemonstration
     : gbsDemoSupported ? gbsDemonstration
     : myastheniaDemoSupported ? myastheniaDemonstration
     : ncseDemoSupported ? ncseDemonstration
@@ -1730,6 +1741,8 @@ export function Cockpit({
           neurologyMyastheniaDemonstrating={demonstrating && myastheniaDemoSupported}
           neurologyGbsGuidance={session.guidance}
           neurologyGbsDemonstrating={demonstrating && gbsDemoSupported}
+          neurologyMeningitisGuidance={session.guidance}
+          neurologyMeningitisDemonstrating={demonstrating && meningitisDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

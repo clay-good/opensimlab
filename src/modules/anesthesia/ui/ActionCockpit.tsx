@@ -143,6 +143,7 @@ import { focalMotorStatusInlinePrompt } from '../../neurology/tutor/focal-motor-
 import { ncseInlinePrompt } from '../../neurology/tutor/nonconvulsive-status-epilepticus-recognition-guidance';
 import { myastheniaInlinePrompt } from '../../neurology/tutor/myasthenic-crisis-escalation-guidance';
 import { gbsInlinePrompt } from '../../neurology/tutor/guillain-barre-respiratory-decline-guidance';
+import { meningitisInlinePrompt } from '../../neurology/tutor/acute-bacterial-meningitis-first-hour-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2855,6 +2856,7 @@ export interface ActionCockpitProps {
   readonly neurologyNcseGuidance?: GuidanceLevel;
   readonly neurologyMyastheniaGuidance?: GuidanceLevel;
   readonly neurologyGbsGuidance?: GuidanceLevel;
+  readonly neurologyMeningitisGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2947,6 +2949,7 @@ export interface ActionCockpitProps {
   readonly neurologyNcseDemonstrating?: boolean;
   readonly neurologyMyastheniaDemonstrating?: boolean;
   readonly neurologyGbsDemonstrating?: boolean;
+  readonly neurologyMeningitisDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5707,6 +5710,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNeurologyMeningitisResponse && (
               <NeurologyMeningitisTray
                 assessment={props.resuscitation.neurologyMeningitisAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.neurologyMeningitisGuidance}
+                demonstrating={props.neurologyMeningitisDemonstrating}
                 onAction={props.onNeurologyMeningitisResponse ?? (() => {})} />
             )}
             {hasNeurologyEncephalitisResponse && (
@@ -12478,10 +12484,15 @@ function NeurologyGbsTray({ assessment, scenarioVersion, onAction, guidance = 'u
   </div>;
 }
 
-function NeurologyMeningitisTray({ assessment, onAction }: {
+function NeurologyMeningitisTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['neurologyMeningitisAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onNeurologyMeningitisResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = meningitisInlinePrompt(guidance, { scenarioVersion, meningitis: assessment });
+  const act = demonstrating ? undefined : onAction;
   const trajectory = assessment?.trajectoryAtTick != null;
   const ownership = assessment?.ownershipAtTick != null;
   const diagnostics = assessment?.diagnosticsAtTick != null;
@@ -12489,15 +12500,20 @@ function NeurologyMeningitisTray({ assessment, onAction }: {
   const later = assessment?.laterAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="neurology-meningitis-first-hour-title">
       <div id="neurology-meningitis-first-hour-title" className="syringe__name">Protect the hour.</div>
       <div className="syringe__meta">28 years · 14-hour illness · GCS 15 · nonfocal · T 39.3°C</div>
       <p className="syringe__remaining">{treatment ? 'Qualified early diagnostics and empiric care are active without delay.' : diagnostics ? 'Prompt LP boundary reviewed · activate qualified empiric care' : ownership ? 'Time-critical owners are active · review LP safety and imaging needs' : trajectory ? 'Acute meningeal and infection pattern reconciled · activate qualified owners' : 'Begin with the clock, meningeal symptoms, neurological state, physiology, and whole patient.'}</p>
       <div className="syringe__presets">
-        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neurology-meningitis-clock-meningeal-infection-neurologic-and-whole-patient')}>Review the acute trajectory</Button>}
-        {trajectory && !ownership && <Button className="crisis-drug__action" onClick={() => onAction('activate-neurology-meningitis-qualified-time-critical-infection-neurologic-resuscitation-and-precaution-ownership')}>Activate time-critical owners</Button>}
-        {ownership && !diagnostics && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-meningitis-lp-safety-no-routine-imaging-and-parallel-diagnostic-boundary')}>Review LP + imaging boundary</Button>}
-        {diagnostics && !treatment && <Button className="crisis-drug__action" onClick={() => onAction('activate-neurology-meningitis-qualified-early-empiric-antimicrobial-and-adjunct-pathway-without-diagnostic-delay')}>Activate early qualified care</Button>}
+        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-neurology-meningitis-clock-meningeal-infection-neurologic-and-whole-patient') : undefined}>Review the acute trajectory</Button>}
+        {trajectory && !ownership && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-neurology-meningitis-qualified-time-critical-infection-neurologic-resuscitation-and-precaution-ownership') : undefined}>Activate time-critical owners</Button>}
+        {ownership && !diagnostics && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-neurology-meningitis-lp-safety-no-routine-imaging-and-parallel-diagnostic-boundary') : undefined}>Review LP + imaging boundary</Button>}
+        {diagnostics && !treatment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-neurology-meningitis-qualified-early-empiric-antimicrobial-and-adjunct-pathway-without-diagnostic-delay') : undefined}>Activate early qualified care</Button>}
       </div>
       <p className="field__hint">Prompt blood and CSF sampling matters, but delayed tests or imaging must not delay qualified empiric care. This exact alert, nonfocal, stable state supports LP without routine prior imaging. New focal, pupillary, seizure, consciousness, airway, breathing, shock, bleeding, purpura, or evolving-lesion concerns reopen the boundary.</p>
     </section>
@@ -12506,8 +12522,8 @@ function NeurologyMeningitisTray({ assessment, onAction }: {
       <div className="syringe__meta">fixed 45-minute report · bacterial-pattern CSF · organism pending</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Organism, treatment, complications, public health, hearing, and outcome uncertainty handed off.' : later ? 'The CSF strongly supports bacterial meningitis. Organism, response, complications, and outcome remain open.' : treatment ? 'Qualified diagnostics and care are active. Review the fixed 45-minute CSF and clinical report.' : 'Complete trajectory, ownership, diagnostic, and treatment boundaries before reassessment.'}</p>
       <div className="syringe__presets">
-        {treatment && !later && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-meningitis-strict-later-csf-clinical-and-supplied-treatment-trajectory')}>Review the 45-minute report</Button>}
-        {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-meningitis-organism-treatment-complication-public-health-hearing-and-active-risk')}>Hand off meningitis risk</Button>}
+        {treatment && !later && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-neurology-meningitis-strict-later-csf-clinical-and-supplied-treatment-trajectory') : undefined}>Review the 45-minute report</Button>}
+        {later && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-neurology-meningitis-organism-treatment-complication-public-health-hearing-and-active-risk') : undefined}>Hand off meningitis risk</Button>}
       </div>
       <p className="field__hint">The blood, LP, CSF, and prior qualified care are fixed reports, not learner tests, interpretation, procedure, prescribing, or treatment. No pathogen, susceptibility, treatment effect, durable neurological safety, hearing result, disposition, prognosis, or outcome is supplied.</p>
     </section>
