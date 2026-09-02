@@ -929,23 +929,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "shoulder-dystocia-cognitive-sequence-fixtures.ts binds seed 7202 and content 0.1.0 to expert, understand-before-calling error, recovery, and no-action paths. The head delivery, the failed gentle traction, and the fixed case-specific delivery report are authored constants; no maneuver, force, injury or resolution model is claimed, and no outcome follows from any choice. tests/integration/shoulder-dystocia-cognitive-sequence-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the fixed delivery report refuses until simulated time has passed since the escalation review, and the handoff refuses until time has passed since that. What moves is the organization around her and, at the report, the birth itself; what does not move is anyone’s injury status, which stays undetermined at the end."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions name the emergency and start the head-delivery clock with a leader, a timekeeper, the newborn team and someone with her, take the birth facts as given, review the stop-pushing, no-fundal-pressure, no-forceful-traction and first-line position boundaries, review the qualified escalation maneuvers, the access-only role of episiotomy, the rare rescue options and the contemporaneous record, review the fixed case-specific report, and hand off unresolved risk. Order is enforced rather than suggested, and every later step refuses until the emergency has been called. The lesson examines nobody, applies no traction or pressure, directs no pushing, changes no position, performs no maneuver, episiotomy, delivery or newborn care, and selects no drug, dose, route or procedure."
           ]
         },
         {
@@ -957,23 +957,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at unresolved-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no determined maternal or newborn injury, no treatment effect, no safety disposition, and no maternal, newborn or other outcome — a completed birth is not a completed assessment."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both open by saying the word out loud, because that is what brings the extra hands, and both start the clock at the delivery of the head rather than at the moment anyone realized, since every later decision is timed against it. Both take the failed gentle traction as the diagnosis rather than something to repeat, and both set the prenatal size estimates aside as having neither predicted this nor ruled it out. The central teaching is that the first two instructions are things to stop: fundal pressure drives the shoulder harder into the pubic bone, continued pushing does the same, and repeating the traction with more force is the specific mechanism by which a brachial plexus is stretched. The escalation is held as a menu rather than a script, because the maneuvers are ordered by convenience and reversibility rather than by evidence that one must precede another, and an episiotomy makes room for hands rather than for the shoulder — the obstruction is bone. Someone records times throughout, because that record is the only version of those two minutes that survives. The ending gives back a birth that happened and two people nobody has examined. A test asserts nothing anywhere examines her, applies traction or pressure, changes a position, or performs a maneuver, episiotomy or delivery. tests/unit/shoulder-dystocia-cognitive-sequence-demonstration.test.ts and tests/ui/obstetrics-shoulder-dystocia-cognitive-sequence.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that took in the situation before calling the emergency can still reach a correct handoff."
           ]
         },
         {
@@ -992,23 +992,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "shoulder-dystocia-cognitive-sequence-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 7202 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

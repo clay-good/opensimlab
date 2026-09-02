@@ -59,6 +59,7 @@ import { postpartumPreeclampsiaCompletionEvidence } from '../../obstetrics/postp
 import { eclampsiaCompletionEvidence } from '../../obstetrics/eclampsia-first-seizure-response-completion';
 import { afeCompletionEvidence } from '../../obstetrics/suspected-amniotic-fluid-embolism-pattern-completion';
 import { maternalArrestCompletionEvidence } from '../../obstetrics/maternal-cardiac-arrest-coordinated-response-completion';
+import { shoulderDystociaCompletionEvidence } from '../../obstetrics/shoulder-dystocia-cognitive-sequence-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -257,6 +258,7 @@ export function auditClinicalScenario(
     ...eclampsiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...afeCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...maternalArrestCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...shoulderDystociaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

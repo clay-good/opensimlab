@@ -187,6 +187,8 @@ import { useAfeDemonstration } from '../../obstetrics/demo/useAfeDemonstration';
 import { supportsAfeDemonstration } from '../../obstetrics/demo/suspected-amniotic-fluid-embolism-pattern-demonstration';
 import { useMaternalArrestDemonstration } from '../../obstetrics/demo/useMaternalArrestDemonstration';
 import { supportsMaternalArrestDemonstration } from '../../obstetrics/demo/maternal-cardiac-arrest-coordinated-response-demonstration';
+import { useShoulderDystociaDemonstration } from '../../obstetrics/demo/useShoulderDystociaDemonstration';
+import { supportsShoulderDystociaDemonstration } from '../../obstetrics/demo/shoulder-dystocia-cognitive-sequence-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -432,6 +434,7 @@ export function Cockpit({
   const eclampsiaDemoSupported = supportsEclampsiaDemonstration(scenario);
   const afeDemoSupported = supportsAfeDemonstration(scenario);
   const maternalArrestDemoSupported = supportsMaternalArrestDemonstration(scenario);
+  const shoulderDystociaDemoSupported = supportsShoulderDystociaDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -505,6 +508,7 @@ export function Cockpit({
     || eclampsiaDemoSupported
     || afeDemoSupported
     || maternalArrestDemoSupported
+    || shoulderDystociaDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -656,6 +660,12 @@ export function Cockpit({
     active: demonstrating && termTransitionDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.neonatologyTermTransitionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const shoulderDystociaDemonstration = useShoulderDystociaDemonstration({
+    active: demonstrating && shoulderDystociaDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.obstetricsShoulderDystociaAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const maternalArrestDemonstration = useMaternalArrestDemonstration({
@@ -1073,6 +1083,7 @@ export function Cockpit({
     : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
+    : shoulderDystociaDemoSupported ? shoulderDystociaDemonstration
     : maternalArrestDemoSupported ? maternalArrestDemonstration
     : afeDemoSupported ? afeDemonstration
     : eclampsiaDemoSupported ? eclampsiaDemonstration
@@ -1912,6 +1923,8 @@ export function Cockpit({
           obstetricsAfeDemonstrating={demonstrating && afeDemoSupported}
           obstetricsMaternalArrestGuidance={session.guidance}
           obstetricsMaternalArrestDemonstrating={demonstrating && maternalArrestDemoSupported}
+          obstetricsShoulderDystociaGuidance={session.guidance}
+          obstetricsShoulderDystociaDemonstrating={demonstrating && shoulderDystociaDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
