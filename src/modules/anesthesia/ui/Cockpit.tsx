@@ -149,6 +149,8 @@ import { useBasilarLvoDemonstration } from '../../neurology/demo/useBasilarLvoDe
 import { supportsBasilarLvoDemonstration } from '../../neurology/demo/basilar-artery-occlusion-escalation-demonstration';
 import { useCerebellarIchDemonstration } from '../../neurology/demo/useCerebellarIchDemonstration';
 import { supportsCerebellarIchDemonstration } from '../../neurology/demo/spontaneous-cerebellar-intracerebral-hemorrhage-demonstration';
+import { useAsahDemonstration } from '../../neurology/demo/useAsahDemonstration';
+import { supportsAsahDemonstration } from '../../neurology/demo/aneurysmal-subarachnoid-hemorrhage-deterioration-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -375,6 +377,7 @@ export function Cockpit({
   const minorStrokeDemoSupported = supportsMinorStrokeDemonstration(scenario);
   const basilarLvoDemoSupported = supportsBasilarLvoDemonstration(scenario);
   const cerebellarIchDemoSupported = supportsCerebellarIchDemonstration(scenario);
+  const asahDemoSupported = supportsAsahDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -429,6 +432,7 @@ export function Cockpit({
     || minorStrokeDemoSupported
     || basilarLvoDemoSupported
     || cerebellarIchDemoSupported
+    || asahDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -580,6 +584,12 @@ export function Cockpit({
     active: demonstrating && termTransitionDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.neonatologyTermTransitionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const asahDemonstration = useAsahDemonstration({
+    active: demonstrating && asahDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.neurologyAsahAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const cerebellarIchDemonstration = useCerebellarIchDemonstration({
@@ -883,6 +893,7 @@ export function Cockpit({
     : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
+    : asahDemoSupported ? asahDemonstration
     : cerebellarIchDemoSupported ? cerebellarIchDemonstration
     : basilarLvoDemoSupported ? basilarLvoDemonstration
     : minorStrokeDemoSupported ? minorStrokeDemonstration
@@ -1665,6 +1676,8 @@ export function Cockpit({
           neurologyBasilarLvoDemonstrating={demonstrating && basilarLvoDemoSupported}
           neurologyCerebellarIchGuidance={session.guidance}
           neurologyCerebellarIchDemonstrating={demonstrating && cerebellarIchDemoSupported}
+          neurologyAsahGuidance={session.guidance}
+          neurologyAsahDemonstrating={demonstrating && asahDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

@@ -425,23 +425,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "aneurysmal-subarachnoid-hemorrhage-deterioration-fixtures.ts binds seed 6228 and content 0.1.0 to expert, diagnose-from-the-scan error, recovery, and no-action paths. The presentation, the aneurysm record, the fixed CT, CTA and CTP, the captured EEG window, and the fixed later report are authored constants; no vasospasm, perfusion, or rescue model is claimed, and no outcome follows from any choice. tests/integration/aneurysmal-subarachnoid-hemorrhage-deterioration-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the later neurological and perfusion review refuses until simulated time has passed since the ownership activation, and the handoff refuses until time has passed since that. What moves is the deficit — the arm that drifted falls to the bed — while the diagnosis stays a suspicion throughout."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions name day 7 as the reason this is expected, walk rebleeding, hydrocephalus, seizure and metabolic causes on the supplied evidence with each negative kept attached to its window, recognize possible delayed cerebral ischemia while refusing both the imaging-only shortcut and the research clock, activate neurocritical, neurovascular and rescue ownership on a suspicion rather than a confirmation, compare a fixed later report, and hand off active risk. Order is enforced rather than suggested, and refusal names the missing step. The lesson takes no history, examines nobody, interprets no imaging or EEG, diagnoses no delayed cerebral ischemia, excludes no alternative, and selects no drug, dose, route, access, fluid, pressure target, vasopressor, angiography, angioplasty, intra-arterial therapy, drain, airway, or procedure."
           ]
         },
         {
@@ -453,23 +453,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at active-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no finally proven delayed cerebral ischemia, no causal vasospasm, no durable aneurysm security, no excluded rebleeding, hydrocephalus, seizure, infection, metabolic cause or established infarct, no treatment effect, no durable neurologic recovery or airway protection, no discharge readiness or disposition, and no outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both are built on a diagnosis the imaging cannot make: the new M1 and proximal M2 narrowing and the delayed right-MCA perfusion support delayed cerebral ischemia and cannot establish it, so what establishes it is a deficit with no other explanation on day 7 — which is why both walk rebleeding, hydrocephalus, seizure and metabolic causes before landing anywhere. Both refuse the second shortcut too: the one-hour deficit duration in the research definition exists so studies can count cases, and treating it as a waiting period is a misreading that costs her the interval. Every negative stays attached to its window — a CT that reports no rebleeding describes this scan, and an EEG that captured no seizure describes the interval it captured. Ownership is activated on the word \"possible\" rather than on a confirmation, because the people who can escalate need to be in the conversation while the deficit is still young. A test asserts nothing anywhere diagnoses the ischemia, excludes an alternative, or selects a rescue. tests/unit/aneurysmal-subarachnoid-hemorrhage-deterioration-demonstration.test.ts and tests/ui/neurology-aneurysmal-subarachnoid-hemorrhage-deterioration.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that read the scan and called it delayed cerebral ischemia can still reach a correct handoff."
           ]
         },
         {
@@ -488,23 +488,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "aneurysmal-subarachnoid-hemorrhage-deterioration-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 6228 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

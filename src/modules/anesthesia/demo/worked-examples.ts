@@ -76,6 +76,7 @@ import { supportsOpioidXylazineDemonstration } from '../../toxicology/demo/opioi
 import { supportsMinorStrokeDemonstration } from '../../neurology/demo/minor-nondisabling-acute-ischemic-stroke-demonstration';
 import { supportsBasilarLvoDemonstration } from '../../neurology/demo/basilar-artery-occlusion-escalation-demonstration';
 import { supportsCerebellarIchDemonstration } from '../../neurology/demo/spontaneous-cerebellar-intracerebral-hemorrhage-demonstration';
+import { supportsAsahDemonstration } from '../../neurology/demo/aneurysmal-subarachnoid-hemorrhage-deterioration-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -183,6 +184,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsMinorStrokeDemonstration,
     supportsBasilarLvoDemonstration,
     supportsCerebellarIchDemonstration,
+    supportsAsahDemonstration,
   ],
 };
 

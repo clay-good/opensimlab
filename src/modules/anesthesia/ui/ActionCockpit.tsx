@@ -138,6 +138,7 @@ import { opioidXylazineInlinePrompt } from '../../toxicology/tutor/opioid-xylazi
 import { minorStrokeInlinePrompt } from '../../neurology/tutor/minor-nondisabling-acute-ischemic-stroke-guidance';
 import { basilarLvoInlinePrompt } from '../../neurology/tutor/basilar-artery-occlusion-escalation-guidance';
 import { cerebellarIchInlinePrompt } from '../../neurology/tutor/spontaneous-cerebellar-intracerebral-hemorrhage-guidance';
+import { asahInlinePrompt } from '../../neurology/tutor/aneurysmal-subarachnoid-hemorrhage-deterioration-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2845,6 +2846,7 @@ export interface ActionCockpitProps {
   readonly neurologyMinorStrokeGuidance?: GuidanceLevel;
   readonly neurologyBasilarLvoGuidance?: GuidanceLevel;
   readonly neurologyCerebellarIchGuidance?: GuidanceLevel;
+  readonly neurologyAsahGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2932,6 +2934,7 @@ export interface ActionCockpitProps {
   readonly neurologyMinorStrokeDemonstrating?: boolean;
   readonly neurologyBasilarLvoDemonstrating?: boolean;
   readonly neurologyCerebellarIchDemonstrating?: boolean;
+  readonly neurologyAsahDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5652,6 +5655,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNeurologyAsahDeteriorationResponse && (
               <NeurologyAsahDeteriorationTray
                 assessment={props.resuscitation.neurologyAsahAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.neurologyAsahGuidance}
+                demonstrating={props.neurologyAsahDemonstrating}
                 onAction={props.onNeurologyAsahDeteriorationResponse ?? (() => {})} />
             )}
             {hasNeurologyFocalMotorStatusResponse && (
@@ -12220,10 +12226,15 @@ function NeurologyCerebellarIchTray({ assessment, scenarioVersion, onAction, gui
   </div>;
 }
 
-function NeurologyAsahDeteriorationTray({ assessment, onAction }: {
+function NeurologyAsahDeteriorationTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['neurologyAsahAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onNeurologyAsahDeteriorationResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = asahInlinePrompt(guidance, { scenarioVersion, asah: assessment });
+  const act = demonstrating ? undefined : onAction;
   const trajectory = assessment?.trajectoryAtTick != null;
   const evidence = assessment?.evidenceAtTick != null;
   const boundary = assessment?.boundaryAtTick != null;
@@ -12231,15 +12242,20 @@ function NeurologyAsahDeteriorationTray({ assessment, onAction }: {
   const later = assessment?.laterAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="neurology-asah-deficit-title">
       <div id="neurology-asah-deficit-title" className="syringe__name">A new deficit reopens the whole story.</div>
       <div className="syringe__meta">day 7 · right MCA coiling reported · new left neglect + weakness</div>
       <p className="syringe__remaining">{ownership ? 'Qualified neurocritical, neurovascular, and rescue ownership is active.' : boundary ? 'Possible DCI boundary clear · activate qualified ownership' : evidence ? 'No current rebleed, hydrocephalus, or established infarct reported · perfusion evidence supplied · causes remain open' : trajectory ? 'New deficit reconciled · review fixed threats and alternatives' : 'Start with the SAH course, new function, and whole patient.'}</p>
       <div className="syringe__presets">
-        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neurology-asah-day-aneurysm-status-new-deficit-and-whole-patient')}>Review SAH course + new deficit</Button>}
-        {trajectory && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-asah-rebleeding-hydrocephalus-seizure-metabolic-and-perfusion-evidence')}>Review evidence + immediate threats</Button>}
-        {evidence && !boundary && <Button className="crisis-drug__action" onClick={() => onAction('recognize-neurology-asah-possible-dci-without-imaging-alone')}>Recognize possible DCI boundary</Button>}
-        {boundary && !ownership && <Button className="crisis-drug__action" onClick={() => onAction('activate-neurology-asah-qualified-neurocritical-neurovascular-and-rescue-ownership')}>Activate qualified DCI ownership</Button>}
+        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-neurology-asah-day-aneurysm-status-new-deficit-and-whole-patient') : undefined}>Review SAH course + new deficit</Button>}
+        {trajectory && !evidence && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-neurology-asah-rebleeding-hydrocephalus-seizure-metabolic-and-perfusion-evidence') : undefined}>Review evidence + immediate threats</Button>}
+        {evidence && !boundary && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-neurology-asah-possible-dci-without-imaging-alone') : undefined}>Recognize possible DCI boundary</Button>}
+        {boundary && !ownership && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-neurology-asah-qualified-neurocritical-neurovascular-and-rescue-ownership') : undefined}>Activate qualified DCI ownership</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="neurology-asah-trajectory-title">
@@ -12247,8 +12263,8 @@ function NeurologyAsahDeteriorationTray({ assessment, onAction }: {
       <div className="syringe__meta">fixed 80-minute report · cause and outcome remain open</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Deficit, perfusion context, open causes, and owners handed off.' : later ? 'At 80 minutes, neglect and weakness are worse. Infarction, treatment response, and outcome remain open.' : ownership ? 'Qualified ownership is active. Review the fixed later report.' : 'Complete the new-deficit review before reassessment.'}</p>
       <div className="syringe__presets">
-        {ownership && !later && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-asah-strict-later-neurologic-and-perfusion-trajectory')}>Review the later neurologic report</Button>}
-        {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-asah-dci-aneurysm-recurrence-and-active-risk')}>Hand off deficit + open risk</Button>}
+        {ownership && !later && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-neurology-asah-strict-later-neurologic-and-perfusion-trajectory') : undefined}>Review the later neurologic report</Button>}
+        {later && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-neurology-asah-dci-aneurysm-recurrence-and-active-risk') : undefined}>Hand off deficit + open risk</Button>}
       </div>
     </section>
   </div>;
