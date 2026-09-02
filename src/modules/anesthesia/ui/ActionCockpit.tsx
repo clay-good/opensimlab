@@ -192,6 +192,7 @@ import { pediatricHypoglycemicSeizureInlinePrompt } from '../../pediatrics/tutor
 import { pediatricFebrileSeizureInlinePrompt } from '../../pediatrics/tutor/pediatric-febrile-seizure-guidance';
 import { pediatricStatusEpilepticusInlinePrompt } from '../../pediatrics/tutor/pediatric-status-epilepticus-guidance';
 import { pediatricAnaphylaxisInlinePrompt } from '../../pediatrics/tutor/pediatric-anaphylaxis-guidance';
+import { pediatricSvtInlinePrompt } from '../../pediatrics/tutor/pediatric-svt-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2953,6 +2954,7 @@ export interface ActionCockpitProps {
   readonly pediatricFebrileSeizureGuidance?: GuidanceLevel;
   readonly pediatricStatusEpilepticusGuidance?: GuidanceLevel;
   readonly pediatricAnaphylaxisGuidance?: GuidanceLevel;
+  readonly pediatricSvtGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3094,6 +3096,7 @@ export interface ActionCockpitProps {
   readonly pediatricFebrileSeizureDemonstrating?: boolean;
   readonly pediatricStatusEpilepticusDemonstrating?: boolean;
   readonly pediatricAnaphylaxisDemonstrating?: boolean;
+  readonly pediatricSvtDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5851,6 +5854,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasPediatricSupraventricularTachycardiaResponse && (
               <PediatricSupraventricularTachycardiaTray
                 assessment={props.resuscitation.pediatricSupraventricularTachycardiaAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.pediatricSvtGuidance}
+                demonstrating={props.pediatricSvtDemonstrating}
                 onAction={props.onPediatricSupraventricularTachycardiaResponse ?? (() => {})} />
             )}
             {hasPediatricBradycardicArrestResponse && (
@@ -12492,8 +12498,11 @@ function PediatricAnaphylaxisTray({ assessment, scenarioVersion, guidance = 'una
   </div>;
 }
 
-function PediatricSupraventricularTachycardiaTray({ assessment, onAction }: {
+function PediatricSupraventricularTachycardiaTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricSupraventricularTachycardiaAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onPediatricSupraventricularTachycardiaResponse']>;
 }) {
   const trajectory = assessment?.trajectoryAtTick != null;
@@ -12502,7 +12511,17 @@ function PediatricSupraventricularTachycardiaTray({ assessment, onAction }: {
   const safety = assessment?.safetyAtTick != null;
   const later = assessment?.laterResponseAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : pediatricSvtInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-svt-pattern-title">
       <div id="pediatric-svt-pattern-title" className="syringe__name">Read the rhythm through the child.</div>
       <Badge kind="teaching">onset · regularity · width · rate · perfusion · symptoms</Badge>
@@ -12516,13 +12535,13 @@ function PediatricSupraventricularTachycardiaTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {!trajectory && <Button className="crisis-drug__action"
-          onClick={() => onAction('reconcile-pediatric-svt-clock-rhythm-and-whole-child')}>Review rhythm + whole-child trajectory</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('reconcile-pediatric-svt-clock-rhythm-and-whole-child') : undefined}>Review rhythm + whole-child trajectory</Button>}
         {trajectory && !recognition && <Button className="crisis-drug__action"
-          onClick={() => onAction('recognize-pediatric-svt-with-perfusion-compromise')}>Recognize SVT with perfusion risk</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('recognize-pediatric-svt-with-perfusion-compromise') : undefined}>Recognize SVT with perfusion risk</Button>}
         {recognition && !care && <Button className="crisis-drug__action"
-          onClick={() => onAction('activate-pediatric-svt-qualified-rhythm-care-and-resuscitation-ownership')}>Activate qualified pediatric SVT care</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('activate-pediatric-svt-qualified-rhythm-care-and-resuscitation-ownership') : undefined}>Activate qualified pediatric SVT care</Button>}
         {care && !safety && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-pediatric-svt-support-causes-heart-failure-and-deterioration-boundary')}>Review support + deterioration risks</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-svt-support-causes-heart-failure-and-deterioration-boundary') : undefined}>Review support + deterioration risks</Button>}
       </div>
       <p className="field__hint">Experienced pediatric, cardiology, nursing, pharmacy, and resuscitation teams own rhythm care, monitoring, access, support, cause review, and escalation. This surface exposes no learner maneuver, product, drug, dose, route, interval, device, energy, procedure, or treatment control.</p>
     </section>
@@ -12538,12 +12557,13 @@ function PediatricSupraventricularTachycardiaTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {safety && !later && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-pediatric-svt-later-response')}>Review the minute-12 response</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-svt-later-response') : undefined}>Review the minute-12 response</Button>}
         {later && !handoff && <Button className="crisis-drug__action"
-          onClick={() => onAction('handoff-pediatric-svt-recurrence-cardiology-and-caregiver-risk')}>Hand off recurrence + cardiology risk</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('handoff-pediatric-svt-recurrence-cardiology-and-caregiver-risk') : undefined}>Hand off recurrence + cardiology risk</Button>}
       </div>
       <p className="field__hint">Reported conversion does not prove treatment effect, durable rhythm control, ventricular recovery, recurrence exclusion, cause closure, discharge readiness, or outcome.</p>
     </section>
+    </div>
   </div>;
 }
 
