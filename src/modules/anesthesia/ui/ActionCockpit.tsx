@@ -163,6 +163,7 @@ import { uterineRuptureInlinePrompt } from '../../obstetrics/tutor/suspected-ute
 import { magnesiumToxicityInlinePrompt } from '../../obstetrics/tutor/magnesium-sulfate-toxicity-recognition-guidance';
 import { highNeuraxialInlinePrompt } from '../../obstetrics/tutor/high-neuraxial-block-obstetric-coordination-guidance';
 import { failedIntubationInlinePrompt } from '../../obstetrics/tutor/failed-obstetric-intubation-oxygenation-first-guidance';
+import { maternalNeonatalHandoffInlinePrompt } from '../../obstetrics/tutor/maternal-to-neonatal-resuscitation-handoff-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2895,6 +2896,7 @@ export interface ActionCockpitProps {
   readonly obstetricsMagnesiumToxicityGuidance?: GuidanceLevel;
   readonly obstetricsHighNeuraxialGuidance?: GuidanceLevel;
   readonly obstetricsFailedIntubationGuidance?: GuidanceLevel;
+  readonly obstetricsMaternalNeonatalHandoffGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3007,6 +3009,7 @@ export interface ActionCockpitProps {
   readonly obstetricsMagnesiumToxicityDemonstrating?: boolean;
   readonly obstetricsHighNeuraxialDemonstrating?: boolean;
   readonly obstetricsFailedIntubationDemonstrating?: boolean;
+  readonly obstetricsMaternalNeonatalHandoffDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -6022,6 +6025,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasObstetricsMaternalNeonatalHandoffResponse && (
               <ObstetricsMaternalNeonatalHandoffTray assessment={props.resuscitation.obstetricsMaternalNeonatalHandoffAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.obstetricsMaternalNeonatalHandoffGuidance}
+                demonstrating={props.obstetricsMaternalNeonatalHandoffDemonstrating}
                 onAction={props.onObstetricsMaternalNeonatalHandoffResponse ?? (() => {})} />
             )}
             {hasObstetricsOxytocinTachysystoleResponse && (
@@ -14072,10 +14078,15 @@ function ObstetricsFailedIntubationTray({ assessment, scenarioVersion, onAction,
   </>;
 }
 
-function ObstetricsMaternalNeonatalHandoffTray({ assessment, onAction }: {
+function ObstetricsMaternalNeonatalHandoffTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['obstetricsMaternalNeonatalHandoffAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onObstetricsMaternalNeonatalHandoffResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = maternalNeonatalHandoffInlinePrompt(guidance, { scenarioVersion, maternalNeonatalHandoff: assessment });
+  const act = demonstrating ? undefined : onAction;
   const support = assessment?.supportAtTick != null;
   const context = assessment?.contextAtTick != null;
   const safety = assessment?.safetyAtTick != null;
@@ -14083,22 +14094,27 @@ function ObstetricsMaternalNeonatalHandoffTray({ assessment, onAction }: {
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="obstetrics-maternal-neonatal-handoff-now-title">
       <div id="obstetrics-maternal-neonatal-handoff-now-title" className="syringe__name">Two patients. Two teams. One clear transfer.</div>
       <p className="syringe__remaining">Carry the birth clock, maternal context, newborn trajectory, current support, and open risks together. Every physical intervention stays with the qualified teams.</p>
       <div className="crisis-drug__actions">
-        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-obstetrics-maternal-neonatal-handoff-two-patient-team-and-support-ownership')}>Name teams + transfer owners</Button>}
-        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-obstetrics-maternal-neonatal-handoff-antenatal-intrapartum-birth-resuscitation-and-whole-family-context')}>Connect clocks + whole family</Button>}
-        {context && !safety && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-maternal-neonatal-handoff-ventilation-priority-response-and-uncertainty-boundaries')}>Review response + uncertainty</Button>}
-        {safety && !transfer && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-maternal-neonatal-handoff-structured-transfer-readback-and-parallel-readiness')}>Review transfer + readback</Button>}
+        {!support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-obstetrics-maternal-neonatal-handoff-two-patient-team-and-support-ownership') : undefined}>Name teams + transfer owners</Button>}
+        {support && !context && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-obstetrics-maternal-neonatal-handoff-antenatal-intrapartum-birth-resuscitation-and-whole-family-context') : undefined}>Connect clocks + whole family</Button>}
+        {context && !safety && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-obstetrics-maternal-neonatal-handoff-ventilation-priority-response-and-uncertainty-boundaries') : undefined}>Review response + uncertainty</Button>}
+        {safety && !transfer && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-obstetrics-maternal-neonatal-handoff-structured-transfer-readback-and-parallel-readiness') : undefined}>Review transfer + readback</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="obstetrics-maternal-neonatal-handoff-later-title">
       <div id="obstetrics-maternal-neonatal-handoff-later-title" className="syringe__name">A rising heart rate is encouraging, not the end of the story.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Postresuscitation, maternal, family, documentation, follow-up, and outcome risks handed off.' : reassessment ? 'Spontaneous breathing is supplied while qualified support continues. Monitoring, maternal recovery, disposition, and outcomes remain open.' : transfer ? 'The transfer structure is ready. Review the fixed report after time passes.' : support ? 'Ownership is explicit. Connect the whole trajectory before compressing it into a handoff.' : 'Begin by naming who owns each patient and the transfer. You can pause or leave this practice at any time.'}</p>
       <div className="crisis-drug__actions">
-        {transfer && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-maternal-neonatal-handoff-fixed-five-minute-qualified-course-report')}>Review the fixed 5-minute report</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-obstetrics-maternal-neonatal-postresuscitation-monitoring-maternal-family-and-outcome-risk')}>Hand off active two-patient risk</Button>}
+        {transfer && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-obstetrics-maternal-neonatal-handoff-fixed-five-minute-qualified-course-report') : undefined}>Review the fixed 5-minute report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-obstetrics-maternal-neonatal-postresuscitation-monitoring-maternal-family-and-outcome-risk') : undefined}>Hand off active two-patient risk</Button>}
       </div>
     </section>
   </>;

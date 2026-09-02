@@ -1685,23 +1685,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "maternal-to-neonatal-resuscitation-handoff-fixtures.ts binds seed 7286 and content 0.1.0 to expert, history-before-ownership error, recovery, and no-action paths. The birth time, the newborn heart-rate trajectory, the maternal state, and the fixed 5-minute report are authored constants; no resuscitation, transition, stability or outcome model is claimed, and no outcome follows from any choice. tests/integration/maternal-to-neonatal-resuscitation-handoff-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the fixed 5-minute report refuses until simulated time has passed since the transfer review, and the handoff refuses until time has passed since that. What moves is who owns what and what has been said aloud; what does not move is the newborn’s unresolved trajectory, or the placental findings and cord gases that do not exist yet."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions name separate maternal and newborn ownership with communication and family support before anything else, connect the antenatal, intrapartum, birth, resuscitation-clock and whole-family context, read the rising heart rate as supplied evidence of effective ventilation rather than proof of stable transition, review the structured transfer, the receiver readback and parallel readiness, review the fixed report, and hand off unresolved two-patient risk. Order is enforced rather than suggested, and every later step refuses until ownership has been named. The lesson examines neither patient, interprets no monitoring or tests, diagnoses nothing, performs no newborn resuscitation, delivers no oxygen, ventilation, compressions, access, fluid, blood, glucose or drug, performs no maternal anesthesia or surgery, performs no newborn care or transport, and counsels no family."
           ]
         },
         {
@@ -1713,23 +1713,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at unresolved-risk handoff, with both patients still under care. Later actions cannot restart an ended branch, and the ending certifies no newborn stability, no maternal recovery, no determined placental cause, no safety disposition, and no maternal, newborn or other outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both open by saying out loud who owns the mother and who owns the newborn, and both name why: two patients in one room with overlapping teams is where someone stops being watched, and it never happens as a decision — it happens as an assumption that the other team has it. The mother asking whether her baby is breathing is answered by a named person rather than whoever is nearest. The central refusal is the rising heart rate: climbing from 70 to 118 with visible chest movement is the supplied evidence that effective ventilation is being delivered, which is the most important thing in newborn resuscitation and also the narrowest claim available — it establishes no completed transition, respiratory trajectory, neurologic state, glucose or temperature, and whatever is producing that number is being produced continuously by someone right now. The transfer is structured and read back, because the readback is the only point where a mistaken assumption becomes visible while it can still be corrected. The ending gives back two patients, neither finished, with the placental findings and cord gases still to come. A test asserts nothing anywhere examines either patient, resuscitates the newborn, delivers ventilation, or counsels the family. tests/unit/maternal-to-neonatal-resuscitation-handoff-demonstration.test.ts and tests/ui/obstetrics-maternal-to-neonatal-resuscitation-handoff.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that gathered the history before naming ownership can still reach a correct handoff."
           ]
         },
         {
@@ -1748,23 +1748,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "maternal-to-neonatal-resuscitation-handoff-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 7286 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

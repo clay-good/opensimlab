@@ -101,6 +101,7 @@ import { supportsUterineRuptureDemonstration } from '../../obstetrics/demo/suspe
 import { supportsMagnesiumToxicityDemonstration } from '../../obstetrics/demo/magnesium-sulfate-toxicity-recognition-demonstration';
 import { supportsHighNeuraxialDemonstration } from '../../obstetrics/demo/high-neuraxial-block-obstetric-coordination-demonstration';
 import { supportsFailedIntubationDemonstration } from '../../obstetrics/demo/failed-obstetric-intubation-oxygenation-first-demonstration';
+import { supportsMaternalNeonatalHandoffDemonstration } from '../../obstetrics/demo/maternal-to-neonatal-resuscitation-handoff-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -235,6 +236,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsMagnesiumToxicityDemonstration,
     supportsHighNeuraxialDemonstration,
     supportsFailedIntubationDemonstration,
+    supportsMaternalNeonatalHandoffDemonstration,
   ],
 };
 
