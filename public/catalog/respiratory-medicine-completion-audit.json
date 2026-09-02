@@ -173,9 +173,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "copd-exacerbation-transition-reassessment-fixtures.ts binds seed 7328 and content 0.1.0 to expert, medication-before-function error, recovery, and no-action paths. The pre-admission baseline, the delivered-care record, the day-three observations, the corridor walk and the medication reconciliation are authored constants; no recovery, oxygen-need, rehabilitation or follow-up model is claimed, and no outcome follows from any choice. tests/integration/copd-exacerbation-transition-reassessment-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -187,9 +187,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions reconcile the recovery against who she was before admission, review the residual respiratory and oxygen needs from the corridor walk without settling long-term oxygen from an acute snapshot, review the maintenance and acute medication plan including technique errors already found by a qualified therapist, coordinate the rehabilitation, self-management, comorbidity review and follow-up that remain unarranged, and hand off unresolved work. Order is enforced rather than suggested, and refusal names the missing step. The lesson delivers no treatment or oxygen, determines no long-term oxygen eligibility, selects no regimen, performs or grades no inhaler technique, enrolls nobody in rehabilitation, guarantees no appointment, and determines no disposition."
           ]
         },
         {
@@ -201,23 +201,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at unresolved-transition handoff. Later actions cannot restart an ended branch, and the ending certifies no determined long-term oxygen eligibility, no selected regimen, no performed technique, no rehabilitation enrollment, no guaranteed appointment, no determined disposition, and no outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both start from who she was before this admission rather than from today's numbers — independent, walking about 200 metres, resting saturation 92%, no home oxygen — and both then put the corridor walk ahead of everything else, because that is where the answer is: she pauses after thirty metres, desaturates to 86%, and takes three minutes to come back to 91%. Symptoms and gas exchange improved and function did not, and function is what decides whether home works. The oxygen question is refused rather than answered, since a desaturation on day three of an exacerbation does not establish long-term oxygen eligibility, which is assessed when she is stable. The inhaler-technique errors a qualified therapist already found are named as a finding to carry rather than something to re-grade, and as mattering more than any change of drug, because a maintenance inhaler she cannot use is not a maintenance inhaler. The rehabilitation, self-management, comorbidity review and follow-up are named as the parts most likely to be skipped and most likely to matter, and as requested rather than secured. A test asserts nothing anywhere delivers treatment or oxygen, settles the oxygen eligibility, selects a regimen, grades a technique, or guarantees an appointment. tests/unit/copd-exacerbation-transition-demonstration.test.ts and tests/ui/respiratory-copd-exacerbation-transition.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that went to the medication plan before looking at what she can do can still reach a correct handoff."
           ]
         },
         {
@@ -236,23 +236,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "copd-exacerbation-transition-reassessment-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 7328 for deterministic replay through the shared engine, including the time-gated handoff."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
