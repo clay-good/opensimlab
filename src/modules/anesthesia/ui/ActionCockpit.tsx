@@ -145,6 +145,7 @@ import { myastheniaInlinePrompt } from '../../neurology/tutor/myasthenic-crisis-
 import { gbsInlinePrompt } from '../../neurology/tutor/guillain-barre-respiratory-decline-guidance';
 import { meningitisInlinePrompt } from '../../neurology/tutor/acute-bacterial-meningitis-first-hour-guidance';
 import { encephalitisInlinePrompt } from '../../neurology/tutor/suspected-herpes-simplex-encephalitis-guidance';
+import { raisedIcpInlinePrompt } from '../../neurology/tutor/raised-intracranial-pressure-visual-threat-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2859,6 +2860,7 @@ export interface ActionCockpitProps {
   readonly neurologyGbsGuidance?: GuidanceLevel;
   readonly neurologyMeningitisGuidance?: GuidanceLevel;
   readonly neurologyEncephalitisGuidance?: GuidanceLevel;
+  readonly neurologyRaisedIcpGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2953,6 +2955,7 @@ export interface ActionCockpitProps {
   readonly neurologyGbsDemonstrating?: boolean;
   readonly neurologyMeningitisDemonstrating?: boolean;
   readonly neurologyEncephalitisDemonstrating?: boolean;
+  readonly neurologyRaisedIcpDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5729,6 +5732,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNeurologyRaisedIcpResponse && (
               <NeurologyRaisedIcpTray
                 assessment={props.resuscitation.neurologyRaisedIcpAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.neurologyRaisedIcpGuidance}
+                demonstrating={props.neurologyRaisedIcpDemonstrating}
                 onAction={props.onNeurologyRaisedIcpResponse ?? (() => {})} />
             )}
             {hasNeurologyHerniationResponse && (
@@ -12578,10 +12584,15 @@ function NeurologyEncephalitisTray({ assessment, scenarioVersion, onAction, guid
   </>;
 }
 
-function NeurologyRaisedIcpTray({ assessment, onAction }: {
+function NeurologyRaisedIcpTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['neurologyRaisedIcpAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onNeurologyRaisedIcpResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = raisedIcpInlinePrompt(guidance, { scenarioVersion, raisedIcp: assessment });
+  const act = demonstrating ? undefined : onAction;
   const trajectory = assessment?.trajectoryAtTick != null;
   const ownership = assessment?.ownershipAtTick != null;
   const eyes = assessment?.eyesAtTick != null;
@@ -12589,22 +12600,27 @@ function NeurologyRaisedIcpTray({ assessment, onAction }: {
   const later = assessment?.laterAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="neurology-raised-icp-early-title">
       <div id="neurology-raised-icp-early-title" className="syringe__name">Protect the whole field.</div>
       <p className="syringe__remaining">Central acuity can stay sharp while papilledema quietly threatens peripheral vision.</p>
       <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neurology-raised-icp-headache-visual-tinnitus-diplopia-and-whole-patient')}>Review the pressure clock</Button>}
-        {trajectory && !ownership && <Button className="crisis-drug__action" onClick={() => onAction('activate-neurology-raised-icp-qualified-neurology-neuro-ophthalmology-imaging-and-procedure-ownership')}>Activate vision + brain owners</Button>}
-        {ownership && !eyes && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-raised-icp-confirmed-papilledema-visual-function-and-pseudopapilledema-boundary')}>Review papilledema + fields</Button>}
-        {eyes && !diagnostics && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-raised-icp-mri-venography-lp-secondary-cause-and-diagnostic-boundary')}>Review MRI + veins + LP</Button>}
+        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-neurology-raised-icp-headache-visual-tinnitus-diplopia-and-whole-patient') : undefined}>Review the pressure clock</Button>}
+        {trajectory && !ownership && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-neurology-raised-icp-qualified-neurology-neuro-ophthalmology-imaging-and-procedure-ownership') : undefined}>Activate vision + brain owners</Button>}
+        {ownership && !eyes && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-neurology-raised-icp-confirmed-papilledema-visual-function-and-pseudopapilledema-boundary') : undefined}>Review papilledema + fields</Button>}
+        {eyes && !diagnostics && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-neurology-raised-icp-mri-venography-lp-secondary-cause-and-diagnostic-boundary') : undefined}>Review MRI + veins + LP</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="neurology-raised-icp-later-title">
       <div id="neurology-raised-icp-later-title" className="syringe__name">Sharp center, narrowing world.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Sight rescue, secondary causes, disease, headache, surveillance, and outcome uncertainty handed off.' : later ? 'The fields worsened despite 20/20 acuity. Urgent qualified sight-preservation review is open.' : diagnostics ? 'Papilledema and raised pressure are supplied. Review the fixed 24-hour visual report after time passes.' : 'Complete the clock, owners, eye evidence, and diagnostic boundaries before reassessment.'}</p>
       <div className="crisis-drug__actions">
-        {diagnostics && !later && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-raised-icp-strict-later-worsening-visual-field-and-imminent-sight-threat')}>Review the 24-hour fields</Button>}
-        {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-raised-icp-vision-rescue-cause-disease-headache-follow-up-and-active-risk')}>Hand off sight + active risk</Button>}
+        {diagnostics && !later && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-neurology-raised-icp-strict-later-worsening-visual-field-and-imminent-sight-threat') : undefined}>Review the 24-hour fields</Button>}
+        {later && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-neurology-raised-icp-vision-rescue-cause-disease-headache-follow-up-and-active-risk') : undefined}>Hand off sight + active risk</Button>}
       </div>
     </section>
   </>;

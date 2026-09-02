@@ -83,6 +83,7 @@ import { supportsMyastheniaDemonstration } from '../../neurology/demo/myasthenic
 import { supportsGbsDemonstration } from '../../neurology/demo/guillain-barre-respiratory-decline-demonstration';
 import { supportsMeningitisDemonstration } from '../../neurology/demo/acute-bacterial-meningitis-first-hour-demonstration';
 import { supportsEncephalitisDemonstration } from '../../neurology/demo/suspected-herpes-simplex-encephalitis-demonstration';
+import { supportsRaisedIcpDemonstration } from '../../neurology/demo/raised-intracranial-pressure-visual-threat-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -197,6 +198,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsGbsDemonstration,
     supportsMeningitisDemonstration,
     supportsEncephalitisDemonstration,
+    supportsRaisedIcpDemonstration,
   ],
 };
 
