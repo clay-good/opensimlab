@@ -178,6 +178,7 @@ import { neuromuscularRespiratoryFailureInlinePrompt } from '../../respiratory-m
 import { obesityHypoventilationInlinePrompt } from '../../respiratory-medicine/tutor/obesity-hypoventilation-reassessment-guidance';
 import { noninvasiveVentilationSelectionInlinePrompt } from '../../respiratory-medicine/tutor/noninvasive-ventilation-selection-guidance';
 import { highFlowOxygenEscalationInlinePrompt } from '../../respiratory-medicine/tutor/high-flow-nasal-oxygen-escalation-guidance';
+import { oxygenDeviceFailureInlinePrompt } from '../../respiratory-medicine/tutor/oxygen-device-failure-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2925,6 +2926,7 @@ export interface ActionCockpitProps {
   readonly obesityHypoventilationGuidance?: GuidanceLevel;
   readonly noninvasiveVentilationSelectionGuidance?: GuidanceLevel;
   readonly highFlowOxygenEscalationGuidance?: GuidanceLevel;
+  readonly oxygenDeviceFailureGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3052,6 +3054,7 @@ export interface ActionCockpitProps {
   readonly obesityHypoventilationDemonstrating?: boolean;
   readonly noninvasiveVentilationSelectionDemonstrating?: boolean;
   readonly highFlowOxygenEscalationDemonstrating?: boolean;
+  readonly oxygenDeviceFailureDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5700,6 +5703,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasOxygenDeviceFailureResponse && (
               <OxygenDeviceFailureTray
                 assessment={props.resuscitation.oxygenDeviceFailureAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.oxygenDeviceFailureGuidance}
+                demonstrating={props.oxygenDeviceFailureDemonstrating}
                 onAction={props.onOxygenDeviceFailureResponse ?? (() => {})} />
             )}
             {hasAcuteTracheostomyObstructionResponse && (
@@ -11338,8 +11344,11 @@ function HighFlowOxygenEscalationTray({ assessment, scenarioVersion, guidance = 
   </div>;
 }
 
-function OxygenDeviceFailureTray({ assessment, onAction }: {
+function OxygenDeviceFailureTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['oxygenDeviceFailureAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onOxygenDeviceFailureResponse']>;
 }) {
   const reconciled = assessment?.reconciledAtTick != null;
@@ -11349,7 +11358,17 @@ function OxygenDeviceFailureTray({ assessment, onAction }: {
   const response = assessment?.responseAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   const unsupportedChoice = assessment?.lastUnsupportedChoice;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : oxygenDeviceFailureInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="oxygen-device-failure-recognition-title">
       <div id="oxygen-device-failure-recognition-title" className="syringe__name">Confirm the person. Then follow the oxygen.</div>
       <Badge kind="teaching">person · pleth · breathing · circulation · source · path</Badge>
@@ -11364,14 +11383,14 @@ function OxygenDeviceFailureTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {!reconciled && <Button className="crisis-drug__action"
-          onClick={() => onAction('reconcile-oxygen-device-failure-patient-signal-and-delivery')}>Review patient + signal</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('reconcile-oxygen-device-failure-patient-signal-and-delivery') : undefined}>Review patient + signal</Button>}
         {reconciled && !bridge && <>
-          <Button className="crisis-drug__action" onClick={() => onAction('activate-oxygen-device-failure-immediate-bridge-and-help')}>Bridge to verified backup oxygen</Button>
-          <Button className="crisis-drug__action" onClick={() => onAction('wait-for-oxygen-device-failure-blood-gas')}>Wait for a blood gas</Button>
-          <Button className="crisis-drug__action" onClick={() => onAction('continue-oxygen-device-failure-transport')}>Keep transport moving</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-oxygen-device-failure-immediate-bridge-and-help') : undefined}>Bridge to verified backup oxygen</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('wait-for-oxygen-device-failure-blood-gas') : undefined}>Wait for a blood gas</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('continue-oxygen-device-failure-transport') : undefined}>Keep transport moving</Button>
         </>}
         {bridge && !path && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-oxygen-device-failure-source-to-patient-path')}>Trace patient-to-source path</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-oxygen-device-failure-source-to-patient-path') : undefined}>Trace patient-to-source path</Button>}
       </div>
       <p className="field__hint">The patient comes before troubleshooting. Qualified staff provide the separate verified bridge off-screen; no oxygen source, device, interface, flow, target, or treatment is selected or delivered here.</p>
     </section>
@@ -11390,17 +11409,18 @@ function OxygenDeviceFailureTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {path && !restoration && <>
-          <Button className="crisis-drug__action" onClick={() => onAction('record-oxygen-device-failure-restoration-and-backup-intent')}>Use checked replacement source</Button>
-          <Button className="crisis-drug__action" onClick={() => onAction('increase-depleted-oxygen-source-control')}>Turn the depleted source higher</Button>
-          <Button className="crisis-drug__action" onClick={() => onAction('reseat-patent-oxygen-interface')}>Reseat the patent cannula</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-oxygen-device-failure-restoration-and-backup-intent') : undefined}>Use checked replacement source</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('increase-depleted-oxygen-source-control') : undefined}>Turn the depleted source higher</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reseat-patent-oxygen-interface') : undefined}>Reseat the patent cannula</Button>
         </>}
         {restoration && !response && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-oxygen-device-failure-delivery-and-patient-response')}>Review 3-minute response</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-oxygen-device-failure-delivery-and-patient-response') : undefined}>Review 3-minute response</Button>}
         {response && !handoff && <Button className="crisis-drug__action"
-          onClick={() => onAction('handoff-oxygen-device-failure-reassessment')}>Hand off source + reserve check</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('handoff-oxygen-device-failure-reassessment') : undefined}>Hand off source + reserve check</Button>}
       </div>
       <p className="field__hint">A fixed early response does not resolve the lung disease or declare transport safe. Handoff keeps the verified source, documented reserve, independent backup, monitoring, failed-source isolation, and named owners visible without blame.</p>
     </section>
+    </div>
   </div>;
 }
 

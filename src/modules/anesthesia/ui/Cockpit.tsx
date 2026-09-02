@@ -229,6 +229,8 @@ import { useNoninvasiveVentilationSelectionDemonstration } from '../../respirato
 import { supportsNoninvasiveVentilationSelectionDemonstration } from '../../respiratory-medicine/demo/noninvasive-ventilation-selection-demonstration';
 import { useHighFlowOxygenEscalationDemonstration } from '../../respiratory-medicine/demo/useHighFlowOxygenEscalationDemonstration';
 import { supportsHighFlowOxygenEscalationDemonstration } from '../../respiratory-medicine/demo/high-flow-nasal-oxygen-escalation-demonstration';
+import { useOxygenDeviceFailureDemonstration } from '../../respiratory-medicine/demo/useOxygenDeviceFailureDemonstration';
+import { supportsOxygenDeviceFailureDemonstration } from '../../respiratory-medicine/demo/oxygen-device-failure-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -495,6 +497,7 @@ export function Cockpit({
   const obesityHypoventilationDemoSupported = supportsObesityHypoventilationDemonstration(scenario);
   const nivSelectionDemoSupported = supportsNoninvasiveVentilationSelectionDemonstration(scenario);
   const highFlowOxygenDemoSupported = supportsHighFlowOxygenEscalationDemonstration(scenario);
+  const oxygenDeviceFailureDemoSupported = supportsOxygenDeviceFailureDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -589,6 +592,7 @@ export function Cockpit({
     || obesityHypoventilationDemoSupported
     || nivSelectionDemoSupported
     || highFlowOxygenDemoSupported
+    || oxygenDeviceFailureDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -746,6 +750,12 @@ export function Cockpit({
     active: demonstrating && chronicOpioidHypoventilationDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.chronicOpioidHypoventilationAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const oxygenDeviceFailureDemonstration = useOxygenDeviceFailureDemonstration({
+    active: demonstrating && oxygenDeviceFailureDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.oxygenDeviceFailureAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const highFlowOxygenDemonstration = useHighFlowOxygenEscalationDemonstration({
@@ -1288,6 +1298,7 @@ export function Cockpit({
     : obesityHypoventilationDemoSupported ? obesityHypoventilationDemonstration
     : nivSelectionDemoSupported ? nivSelectionDemonstration
     : highFlowOxygenDemoSupported ? highFlowOxygenDemonstration
+    : oxygenDeviceFailureDemoSupported ? oxygenDeviceFailureDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2185,6 +2196,8 @@ export function Cockpit({
           noninvasiveVentilationSelectionDemonstrating={demonstrating && nivSelectionDemoSupported}
           highFlowOxygenEscalationGuidance={session.guidance}
           highFlowOxygenEscalationDemonstrating={demonstrating && highFlowOxygenDemoSupported}
+          oxygenDeviceFailureGuidance={session.guidance}
+          oxygenDeviceFailureDemonstrating={demonstrating && oxygenDeviceFailureDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

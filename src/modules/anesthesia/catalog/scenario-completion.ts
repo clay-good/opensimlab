@@ -80,6 +80,7 @@ import { neuromuscularRespiratoryFailureCompletionEvidence } from '../../respira
 import { obesityHypoventilationCompletionEvidence } from '../../respiratory-medicine/obesity-hypoventilation-reassessment-completion';
 import { noninvasiveVentilationSelectionCompletionEvidence } from '../../respiratory-medicine/noninvasive-ventilation-selection-completion';
 import { highFlowOxygenEscalationCompletionEvidence } from '../../respiratory-medicine/high-flow-nasal-oxygen-escalation-completion';
+import { oxygenDeviceFailureCompletionEvidence } from '../../respiratory-medicine/oxygen-device-failure-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -299,6 +300,7 @@ export function auditClinicalScenario(
     ...obesityHypoventilationCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...noninvasiveVentilationSelectionCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...highFlowOxygenEscalationCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...oxygenDeviceFailureCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

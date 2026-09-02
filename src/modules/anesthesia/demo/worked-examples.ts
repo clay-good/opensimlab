@@ -116,6 +116,7 @@ import { supportsNeuromuscularRespiratoryFailureDemonstration } from '../../resp
 import { supportsObesityHypoventilationDemonstration } from '../../respiratory-medicine/demo/obesity-hypoventilation-reassessment-demonstration';
 import { supportsNoninvasiveVentilationSelectionDemonstration } from '../../respiratory-medicine/demo/noninvasive-ventilation-selection-demonstration';
 import { supportsHighFlowOxygenEscalationDemonstration } from '../../respiratory-medicine/demo/high-flow-nasal-oxygen-escalation-demonstration';
+import { supportsOxygenDeviceFailureDemonstration } from '../../respiratory-medicine/demo/oxygen-device-failure-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -267,6 +268,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsObesityHypoventilationDemonstration,
     supportsNoninvasiveVentilationSelectionDemonstration,
     supportsHighFlowOxygenEscalationDemonstration,
+    supportsOxygenDeviceFailureDemonstration,
   ],
 };
 

@@ -1680,28 +1680,28 @@
           "id": "observable-objectives",
           "status": "missing",
           "evidence": [
-            "This scenario declares 6 objectives; the contract allows at most 5."
+            "Six declared objectives exceed the five the shared catalog counts as independently observable within one session."
           ]
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "oxygen-device-failure-fixtures.ts binds seed 6083 and content 0.1.1 to expert, continue-transport error, recovery, and no-action paths. The pre-departure report on verified wall oxygen, the four-minute deterioration on the portable source, the qualified source-to-patient review reporting a patent cannula and no remaining source pressure, and the fixed three-minute response are authored constants; no oxygen-delivery, equipment-failure or outcome model is claimed, and no outcome follows from any choice. tests/integration/oxygen-device-failure-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, and two are time-gated: the three-minute delivery-and-response review refuses until simulated time has passed since the restoration intent, and the handoff refuses until time has passed again. Unsupported choices are recorded events that move nothing, offered at two separate moments — waiting for a blood gas or continuing transport before the bridge, and increasing a depleted source or reseating a patent cannula before the restoration."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions believe the person and the coherent pleth over the attached interface and the selected number, activate experienced help and a separate verified oxygen bridge before the fault has a label, review the fixed source-to-patient path that localizes a depleted-source delivery interruption, record qualified restoration of her established pathway from a checked replacement source with independent backup, review the fixed three-minute delivery and whole-person response after elapsed time, and hand off. Four further choices are deliberately offered and refused. The lesson examines nobody, measures no saturation or flow, acquires or interprets no blood gas, imaging, monitor or other test, diagnoses nothing, inspects, opens, closes, attaches, detaches, reconnects, replaces, repairs or operates no cylinder, valve, regulator, flowmeter, tubing or cannula, calculates no cylinder duration, selects no device, source, interface, flow, FiO₂, oxygen target, prescription, drug, ventilation or treatment, delivers no oxygen, performs no procedure, and decides no transport readiness, disposition, prognosis or outcome."
           ]
         },
         {
@@ -1713,23 +1713,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at three-minute handoff with the restoration still unproven. Later actions cannot restart an ended branch, and the ending certifies no proven durable restoration, no learner-performed repair or connection handling, no decided transport readiness, no determined disposition, and no outcome — and preserves that a delivery interruption explains this episode without permanently excluding another cause if recovery is incomplete."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps, and the tutor also reads the wrong turn just taken, answering each of the four refusals with its own prose rather than one generic beat. Waiting for a blood gas is answered by pointing out the finding is already in hand and a test is how you resolve doubt there is none of; continuing transport is named as the most natural thing in the world while she keeps being hypoxemic in the least monitored place in the hospital; increasing a depleted source is called the reflex of everyone who has watched a saturation fall, on a cylinder where the selector already read 4 L/min while she desaturated — which is precisely how the number and the delivery were known to have come apart; and reseating the cannula is called a good instinct that the qualified review has already answered. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff taking none of the four, and its narration is generated from the tutor's own prose so the two cannot drift apart. Both open on believing the person and the pleth before the equipment, and name the trap directly: an attached interface and a chosen number are not evidence of delivered oxygen, and the monitor's FiO₂ 0.40 is a display proxy rather than a dose. Both distinguish bridging from repairing, and both separate a restored number on a device from a recovered patient. The handoff names the empty cylinder as something a process should look at. A test asserts nothing anywhere examines her, measures a flow, or attaches, replaces, repairs or operates equipment. tests/unit/oxygen-device-failure-demonstration.test.ts and tests/ui/respiratory-oxygen-device-failure.test.tsx verify observed response, all four wrong-choice prompts, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. The counterfactual is four ordinary reflexes rather than an ordering slip: the recovery path continues transport, waits for a gas, then after localizing the fault turns up a depleted source and reseats a patent cannula — and all four refusals stay visible in the transcript after the correct actions are taken from the same positions."
           ]
         },
         {
@@ -1748,23 +1748,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "oxygen-device-failure-fixtures.ts binds exact-content expert, continue-transport, recovery, and no-action pathways to seed 6083 for deterministic replay through the shared engine, including both time gates and all four refused choices."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
