@@ -175,6 +175,7 @@ import { largePleuralEffusionInlinePrompt } from '../../respiratory-medicine/tut
 import { bronchiectasisMucusPluggingInlinePrompt } from '../../respiratory-medicine/tutor/bronchiectasis-mucus-plugging-reassessment-guidance';
 import { chronicOpioidHypoventilationInlinePrompt } from '../../respiratory-medicine/tutor/chronic-opioid-related-hypoventilation-reassessment-guidance';
 import { neuromuscularRespiratoryFailureInlinePrompt } from '../../respiratory-medicine/tutor/neuromuscular-respiratory-failure-reassessment-guidance';
+import { obesityHypoventilationInlinePrompt } from '../../respiratory-medicine/tutor/obesity-hypoventilation-reassessment-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2919,6 +2920,7 @@ export interface ActionCockpitProps {
   readonly bronchiectasisMucusPluggingGuidance?: GuidanceLevel;
   readonly chronicOpioidHypoventilationGuidance?: GuidanceLevel;
   readonly neuromuscularRespiratoryFailureGuidance?: GuidanceLevel;
+  readonly obesityHypoventilationGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3043,6 +3045,7 @@ export interface ActionCockpitProps {
   readonly bronchiectasisMucusPluggingDemonstrating?: boolean;
   readonly chronicOpioidHypoventilationDemonstrating?: boolean;
   readonly neuromuscularRespiratoryFailureDemonstrating?: boolean;
+  readonly obesityHypoventilationDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5667,6 +5670,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasObesityHypoventilationResponse && (
               <ObesityHypoventilationTray
                 assessment={props.resuscitation.obesityHypoventilationAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.obesityHypoventilationGuidance}
+                demonstrating={props.obesityHypoventilationDemonstrating}
                 onAction={props.onObesityHypoventilationResponse ?? (() => {})} />
             )}
             {hasNoninvasiveVentilationSelectionResponse && (
@@ -11111,8 +11117,11 @@ function NeuromuscularRespiratoryFailureTray({ assessment, scenarioVersion, guid
   </div>;
 }
 
-function ObesityHypoventilationTray({ assessment, onAction }: {
+function ObesityHypoventilationTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['obesityHypoventilationAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onObesityHypoventilationResponse']>;
 }) {
   const phenotype = assessment?.phenotypeAtTick != null;
@@ -11121,16 +11130,26 @@ function ObesityHypoventilationTray({ assessment, onAction }: {
   const recognition = assessment?.recognitionAtTick != null;
   const plan = assessment?.coordinatedPlanAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : obesityHypoventilationInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="obesity-hypoventilation-evidence-title">
       <div id="obesity-hypoventilation-evidence-title" className="syringe__name">Awake carbon dioxide completes the sleep story.</div>
       <Badge kind="teaching">symptoms · awake PaCO₂ · bicarbonate · sleep breathing · exclusions</Badge>
       <div className="syringe__meta">daytime function · current safety · fixed awake + sleep evidence</div>
       <p className="syringe__remaining" role="status">{recognition ? 'Daytime + sleep evidence align · bounded pattern recorded' : awake && sleep ? 'Both evidence lanes held · record the whole pattern' : phenotype ? 'Daytime story held · awake and sleep reviews are open' : 'Start with symptoms and daytime function, not body size'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={phenotype} onClick={() => onAction('reconcile-obesity-hypoventilation-phenotype-and-trajectory')}>Review symptoms + daytime state</Button>
-        <Button className="crisis-drug__action" disabled={!phenotype || awake} onClick={() => onAction('review-obesity-hypoventilation-awake-evidence')}>Review awake CO₂ + bicarbonate</Button>
-        <Button className="crisis-drug__action" disabled={!phenotype || sleep} onClick={() => onAction('review-obesity-hypoventilation-sleep-evidence-and-open-causes')}>Review sleep evidence + open causes</Button>
+        <Button className="crisis-drug__action" disabled={phenotype} aria-disabled={demonstrating} onClick={act ? () => act('reconcile-obesity-hypoventilation-phenotype-and-trajectory') : undefined}>Review symptoms + daytime state</Button>
+        <Button className="crisis-drug__action" disabled={!phenotype || awake} aria-disabled={demonstrating} onClick={act ? () => act('review-obesity-hypoventilation-awake-evidence') : undefined}>Review awake CO₂ + bicarbonate</Button>
+        <Button className="crisis-drug__action" disabled={!phenotype || sleep} aria-disabled={demonstrating} onClick={act ? () => act('review-obesity-hypoventilation-sleep-evidence-and-open-causes') : undefined}>Review sleep evidence + open causes</Button>
       </div>
       <p className="field__hint">Bicarbonate can prompt PaCO₂ measurement in the right screening context; it does not diagnose OHS. Awake saturation, BMI, PaCO₂, and AHI also do not stand alone.</p>
     </section>
@@ -11140,12 +11159,13 @@ function ObesityHypoventilationTray({ assessment, onAction }: {
       <div className="syringe__meta">preferences · access · cardiometabolic health · follow-through</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Evidence + unresolved work handed off' : plan ? 'Owners connected · advance time before handoff' : recognition ? 'Pattern recorded · connect respectful shared ownership' : 'Bring both evidence lanes together before planning'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={!awake || !sleep || recognition} onClick={() => onAction('recognize-obesity-hypoventilation-working-pattern')}>Recognize convergent OHS pattern</Button>
-        <Button className="crisis-drug__action" disabled={!recognition || plan} onClick={() => onAction('coordinate-obesity-hypoventilation-shared-plan')}>Connect respiratory + sleep + weight-health owners</Button>
-        <Button className="crisis-drug__action" disabled={!plan || handoff} onClick={() => onAction('handoff-obesity-hypoventilation-reassessment')}>Hand off evidence + open work</Button>
+        <Button className="crisis-drug__action" disabled={!awake || !sleep || recognition} aria-disabled={demonstrating} onClick={act ? () => act('recognize-obesity-hypoventilation-working-pattern') : undefined}>Recognize convergent OHS pattern</Button>
+        <Button className="crisis-drug__action" disabled={!recognition || plan} aria-disabled={demonstrating} onClick={act ? () => act('coordinate-obesity-hypoventilation-shared-plan') : undefined}>Connect respiratory + sleep + weight-health owners</Button>
+        <Button className="crisis-drug__action" disabled={!plan || handoff} aria-disabled={demonstrating} onClick={act ? () => act('handoff-obesity-hypoventilation-reassessment') : undefined}>Hand off evidence + open work</Button>
       </div>
       <p className="field__hint">No PAP, interface, pressure, backup rate, oxygen, medication, procedure, weight intervention, disposition, response, or outcome is selected.</p>
     </section>
+    </div>
   </div>;
 }
 

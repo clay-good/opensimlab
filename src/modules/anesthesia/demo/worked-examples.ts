@@ -113,6 +113,7 @@ import { supportsLargePleuralEffusionDemonstration } from '../../respiratory-med
 import { supportsBronchiectasisMucusPluggingDemonstration } from '../../respiratory-medicine/demo/bronchiectasis-mucus-plugging-reassessment-demonstration';
 import { supportsChronicOpioidHypoventilationDemonstration } from '../../respiratory-medicine/demo/chronic-opioid-related-hypoventilation-reassessment-demonstration';
 import { supportsNeuromuscularRespiratoryFailureDemonstration } from '../../respiratory-medicine/demo/neuromuscular-respiratory-failure-reassessment-demonstration';
+import { supportsObesityHypoventilationDemonstration } from '../../respiratory-medicine/demo/obesity-hypoventilation-reassessment-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -261,6 +262,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsBronchiectasisMucusPluggingDemonstration,
     supportsChronicOpioidHypoventilationDemonstration,
     supportsNeuromuscularRespiratoryFailureDemonstration,
+    supportsObesityHypoventilationDemonstration,
   ],
 };
 
