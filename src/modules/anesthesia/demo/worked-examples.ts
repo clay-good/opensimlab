@@ -126,6 +126,7 @@ import { supportsPediatricSepsisDemonstration } from '../../pediatrics/demo/pedi
 import { supportsPediatricSepticShockDemonstration } from '../../pediatrics/demo/pediatric-septic-shock-demonstration';
 import { supportsPediatricDehydrationDemonstration } from '../../pediatrics/demo/pediatric-dehydration-demonstration';
 import { supportsPediatricDkaDemonstration } from '../../pediatrics/demo/pediatric-dka-demonstration';
+import { supportsPediatricHypoglycemicSeizureDemonstration } from '../../pediatrics/demo/pediatric-hypoglycemic-seizure-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -289,6 +290,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsPediatricSepticShockDemonstration,
     supportsPediatricDehydrationDemonstration,
     supportsPediatricDkaDemonstration,
+    supportsPediatricHypoglycemicSeizureDemonstration,
   ],
 };
 

@@ -188,6 +188,7 @@ import { pediatricSepsisInlinePrompt } from '../../pediatrics/tutor/pediatric-se
 import { pediatricSepticShockInlinePrompt } from '../../pediatrics/tutor/pediatric-septic-shock-guidance';
 import { pediatricDehydrationInlinePrompt } from '../../pediatrics/tutor/pediatric-dehydration-guidance';
 import { pediatricDkaInlinePrompt } from '../../pediatrics/tutor/pediatric-dka-guidance';
+import { pediatricHypoglycemicSeizureInlinePrompt } from '../../pediatrics/tutor/pediatric-hypoglycemic-seizure-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2945,6 +2946,7 @@ export interface ActionCockpitProps {
   readonly pediatricSepticShockGuidance?: GuidanceLevel;
   readonly pediatricDehydrationGuidance?: GuidanceLevel;
   readonly pediatricDkaGuidance?: GuidanceLevel;
+  readonly pediatricHypoglycemicSeizureGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3082,6 +3084,7 @@ export interface ActionCockpitProps {
   readonly pediatricSepticShockDemonstrating?: boolean;
   readonly pediatricDehydrationDemonstrating?: boolean;
   readonly pediatricDkaDemonstrating?: boolean;
+  readonly pediatricHypoglycemicSeizureDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5807,6 +5810,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasPediatricHypoglycemicSeizureResponse && (
               <PediatricHypoglycemicSeizureTray
                 assessment={props.resuscitation.pediatricHypoglycemicSeizureAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.pediatricHypoglycemicSeizureGuidance}
+                demonstrating={props.pediatricHypoglycemicSeizureDemonstrating}
                 onAction={props.onPediatricHypoglycemicSeizureResponse ?? (() => {})} />
             )}
             {hasPediatricFebrileSeizureResponse && (
@@ -12182,8 +12188,11 @@ function PediatricDiabeticKetoacidosisTray({ assessment, scenarioVersion, guidan
   </div>;
 }
 
-function PediatricHypoglycemicSeizureTray({ assessment, onAction }: {
+function PediatricHypoglycemicSeizureTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricHypoglycemicSeizureAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onPediatricHypoglycemicSeizureResponse']>;
 }) {
   const trajectory = assessment?.trajectoryAtTick != null;
@@ -12192,7 +12201,17 @@ function PediatricHypoglycemicSeizureTray({ assessment, onAction }: {
   const safety = assessment?.safetyAtTick != null;
   const later = assessment?.laterResponseAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : pediatricHypoglycemicSeizureInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-hypoglycemia-pattern-title">
       <div id="pediatric-hypoglycemia-pattern-title" className="syringe__name">Read the seizure and the child.</div>
       <Badge kind="teaching">seizure · glucose · breathing · perfusion · recovery</Badge>
@@ -12207,13 +12226,13 @@ function PediatricHypoglycemicSeizureTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {!trajectory && <Button className="crisis-drug__action"
-          onClick={() => onAction('reconcile-pediatric-hypoglycemic-seizure-whole-child-and-glucose')}>Review seizure + fixed glucose</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('reconcile-pediatric-hypoglycemic-seizure-whole-child-and-glucose') : undefined}>Review seizure + fixed glucose</Button>}
         {trajectory && !recognition && <Button className="crisis-drug__action"
-          onClick={() => onAction('recognize-pediatric-hypoglycemic-seizure')}>Recognize hypoglycemic emergency</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('recognize-pediatric-hypoglycemic-seizure') : undefined}>Recognize hypoglycemic emergency</Button>}
         {recognition && !rescue && <Button className="crisis-drug__action"
-          onClick={() => onAction('activate-pediatric-hypoglycemic-seizure-qualified-rescue-ownership')}>Activate qualified glucose rescue</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('activate-pediatric-hypoglycemic-seizure-qualified-rescue-ownership') : undefined}>Activate qualified glucose rescue</Button>}
         {recognition && !safety && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-pediatric-hypoglycemic-seizure-causes-and-recurrence-risk')}>Review recovery + cause risks</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-hypoglycemic-seizure-causes-and-recurrence-risk') : undefined}>Review recovery + cause risks</Button>}
       </div>
       <p className="field__hint">Experienced teams own serial glucose checks, glucose rescue, recurrence and cause review, access, airway and seizure support, and monitoring. Give nothing by mouth while consciousness is impaired. This lab exposes no learner test, drug, dose, concentration, route, access, device, airway, procedure, treatment, or disposition control.</p>
     </section>
@@ -12231,12 +12250,13 @@ function PediatricHypoglycemicSeizureTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {rescue && safety && !later && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-pediatric-hypoglycemic-seizure-later-response')}>Review the 20-minute report</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-hypoglycemic-seizure-later-response') : undefined}>Review the 20-minute report</Button>}
         {later && !handoff && <Button className="crisis-drug__action"
-          onClick={() => onAction('handoff-pediatric-hypoglycemic-seizure-active-risk')}>Hand off recurrence + cause risk</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('handoff-pediatric-hypoglycemic-seizure-active-risk') : undefined}>Hand off recurrence + cause risk</Button>}
       </div>
       <p className="field__hint">The fixed minute-20 report does not prove treatment effect, durable euglycemia, neurological recovery, etiology, freedom from recurrence, discharge readiness, or outcome.</p>
     </section>
+    </div>
   </div>;
 }
 

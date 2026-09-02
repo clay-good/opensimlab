@@ -1050,28 +1050,28 @@
           "id": "observable-objectives",
           "status": "missing",
           "evidence": [
-            "This scenario declares 6 objectives; the contract allows at most 5."
+            "Six declared objectives exceed the five the shared catalog counts as independently observable within one session."
           ]
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "pediatric-hypoglycemic-seizure-fixtures.ts binds seed 3078 and content 0.1.0 to expert, unexplained-cause error, recovery, and no-action paths. The witnessed 90-second convulsion that stopped before the surface opened, the postictal state including that he is not safe to swallow, the whole-child findings, the supplied qualified glucose of 34 mg/dL, the authored absences, and the fixed later report at 86 mg/dL are authored constants; no glycemic, anticonvulsant or outcome model is claimed, and no outcome follows from any choice. tests/integration/pediatric-hypoglycemic-seizure-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, in the branching shape it shares with the septic-shock, dehydration and DKA lessons. Rescue ownership and the cause-and-recurrence review are unordered against each other: either may be recorded first, and the later report refuses until both are active and simulated time has passed since whichever landed second. The handoff is gated on another elapsed tick. This engine case authors no refusable choice; what it refuses is order and time."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions reconcile the stopped convulsion, the postictal state, the swallow safety that shapes the route, the circulation and the supplied glucose; recognize a time-critical hypoglycemic emergency while keeping the cause open, since the supplied association justifies immediate rescue without being the explanation; activate experienced pediatric, nursing, pharmacy, airway-capable and escalation ownership of seizure safety, locally protocolized glucose correction, surveillance, repeated glucose review and airway contingencies; keep cause, recurrence and safeguarding review running in parallel; review the strictly later fixed report; and hand off. The tray shows one clear current action per card except at the recognition step, where it deliberately offers both halves of the unordered pair at once. The lesson examines and palpates nobody, acquires or interprets no glucose or other test, diagnoses neither the seizure nor its cause, chooses or delivers no oral, intravenous or intraosseous glucose, dextrose, glucagon, carbohydrate, fluid, anticonvulsant, drug, concentration, route, dose, rate, access, infusion, feeding plan, oxygen, device, airway maneuver, procedure or treatment, and determines no disposition, prognosis, recurrence or outcome."
           ]
         },
         {
@@ -1083,23 +1083,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at handoff on a child who is awake and talking at a glucose of 86 with the cause of his seizure unidentified. Later actions cannot restart an ended branch, and the ending certifies no learner examination, glucose acquisition or interpretation, no learner diagnosis, no learner-selected formulation, dose, route or access, no proven treatment effect, no proven seizure cause, no durable euglycemia, no proven neurological recovery, no excluded recurrence, no determined disposition, and no outcome — and preserves illness, ingestion or exposure, fasting, endocrine, metabolic and hepatic causes as open, with safeguarding named as part of the work rather than as an accusation."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Seven observed-state prompts at version 0.1.0 read the learner's own recorded steps. There is no wrong-turn prose because the engine authors no refusable choice; the trap this tutor exists for is a single number moving from 34 to 86 while the room relaxes. The opening beat treats \"not safe to swallow\" as a fact about the route rather than a detail, and says why the rescue is not a cup of juice. The recognition beat holds two things true at once: the rescue cannot wait for a cause, and the association is not the cause, because a previously well five-year-old does not usually run out of sugar for no reason. Three of the seven prompts cover the three ways the unordered pair can be half done, including the honest line that opening the cause work raises nobody's blood sugar. The safety beat names ingestion and safeguarding explicitly, the latter as part of the work rather than as an accusation. The later beat is precise about what the improved numbers earned and what they did not: he is better, and nothing is explained. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff, taking the pair rescue-first as one valid order rather than the required one, and its narration is generated from the tutor's own prose so the two cannot drift apart. A test asserts nothing anywhere examines him, takes or reads a glucose, or selects a formulation, dose, route, rate or access. tests/unit/pediatric-hypoglycemic-seizure-demonstration.test.ts verifies observed response and every beat against the real engine, including both orders of the unordered pair and that the later glucose of 86 never flips seizureCauseProven, durableEuglycemiaProven, neurologicRecoveryProven or recurrenceExcluded, and tests/ui/pediatrics-hypoglycemic-seizure.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. The counterfactual is a corrected number read as an answered question: the common-error path activates rescue correctly and reaches for the later report having never opened the cause and recurrence review, meeting three of six. The recovery path takes the unordered pair in the opposite order, cause review first while his glucose is still 34, and walks into both time gates before clearing them, and still reaches a correct handoff from the same positions."
           ]
         },
         {
@@ -1118,23 +1118,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "pediatric-hypoglycemic-seizure-fixtures.ts binds exact-content expert, unexplained-cause error, recovery, and no-action pathways to seed 3078 for deterministic replay through the shared engine, including the order refusal, the parallel-care refusal, and both time gates."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
