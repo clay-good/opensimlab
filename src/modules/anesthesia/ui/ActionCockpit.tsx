@@ -147,6 +147,7 @@ import { meningitisInlinePrompt } from '../../neurology/tutor/acute-bacterial-me
 import { encephalitisInlinePrompt } from '../../neurology/tutor/suspected-herpes-simplex-encephalitis-guidance';
 import { raisedIcpInlinePrompt } from '../../neurology/tutor/raised-intracranial-pressure-visual-threat-guidance';
 import { herniationInlinePrompt } from '../../neurology/tutor/acute-transtentorial-herniation-pattern-guidance';
+import { msccInlinePrompt } from '../../neurology/tutor/metastatic-spinal-cord-compression-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2863,6 +2864,7 @@ export interface ActionCockpitProps {
   readonly neurologyEncephalitisGuidance?: GuidanceLevel;
   readonly neurologyRaisedIcpGuidance?: GuidanceLevel;
   readonly neurologyHerniationGuidance?: GuidanceLevel;
+  readonly neurologyMsccGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2959,6 +2961,7 @@ export interface ActionCockpitProps {
   readonly neurologyEncephalitisDemonstrating?: boolean;
   readonly neurologyRaisedIcpDemonstrating?: boolean;
   readonly neurologyHerniationDemonstrating?: boolean;
+  readonly neurologyMsccDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5751,6 +5754,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNeurologyMsccResponse && (
               <NeurologyMsccTray
                 assessment={props.resuscitation.neurologyMsccAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.neurologyMsccGuidance}
+                demonstrating={props.neurologyMsccDemonstrating}
                 onAction={props.onNeurologyMsccResponse ?? (() => {})} />
             )}
             {hasNeurologyDeliriumResponse && (
@@ -12674,10 +12680,15 @@ function NeurologyHerniationTray({ assessment, scenarioVersion, onAction, guidan
   </>;
 }
 
-function NeurologyMsccTray({ assessment, onAction }: {
+function NeurologyMsccTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['neurologyMsccAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onNeurologyMsccResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = msccInlinePrompt(guidance, { scenarioVersion, mscc: assessment });
+  const act = demonstrating ? undefined : onAction;
   const trajectory = assessment?.trajectoryAtTick != null;
   const recognition = assessment?.recognitionAtTick != null;
   const ownership = assessment?.ownershipAtTick != null;
@@ -12685,22 +12696,27 @@ function NeurologyMsccTray({ assessment, onAction }: {
   const later = assessment?.laterAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="neurology-mscc-early-title">
       <div id="neurology-mscc-early-title" className="syringe__name">The pattern has a level.</div>
       <p className="syringe__remaining">Pain, pyramidal weakness, sensation, gait, and bladder function converge before the scan.</p>
       <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neurology-mscc-cancer-pain-motor-sensory-bladder-and-whole-patient-clock')}>Review the cord clock</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-neurology-mscc-oncologic-emergency-before-imaging-confirmation')}>Recognize the emergency</Button>}
-        {recognition && !ownership && <Button className="crisis-drug__action" onClick={() => onAction('activate-neurology-mscc-qualified-spinal-oncology-radiology-nursing-and-rehabilitation-ownership')}>Activate spine + cancer owners</Button>}
-        {ownership && !boundary && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-mscc-stability-movement-whole-spine-mri-corticosteroid-and-definitive-care-boundary')}>Review care boundaries</Button>}
+        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-neurology-mscc-cancer-pain-motor-sensory-bladder-and-whole-patient-clock') : undefined}>Review the cord clock</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-neurology-mscc-oncologic-emergency-before-imaging-confirmation') : undefined}>Recognize the emergency</Button>}
+        {recognition && !ownership && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-neurology-mscc-qualified-spinal-oncology-radiology-nursing-and-rehabilitation-ownership') : undefined}>Activate spine + cancer owners</Button>}
+        {ownership && !boundary && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-neurology-mscc-stability-movement-whole-spine-mri-corticosteroid-and-definitive-care-boundary') : undefined}>Review care boundaries</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="neurology-mscc-later-title">
       <div id="neurology-mscc-later-title" className="syringe__name">Keep every option open.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Level, stability, function, bladder, definitive care, rehabilitation, and outcome uncertainty handed off.' : later ? 'Qualified MRI confirms T6 compression. Function remains impaired and definitive care is unresolved.' : boundary ? 'Protection and qualified care are active. Review the fixed 4-hour report after time passes.' : 'Complete the clock, recognition, owners, and care boundary before reassessment.'}</p>
       <div className="crisis-drug__actions">
-        {boundary && !later && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-mscc-strict-later-qualified-mri-and-unresolved-function-trajectory')}>Review the 4-hour report</Button>}
-        {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-mscc-level-stability-function-bladder-definitive-care-and-active-risk')}>Hand off function + active risk</Button>}
+        {boundary && !later && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-neurology-mscc-strict-later-qualified-mri-and-unresolved-function-trajectory') : undefined}>Review the 4-hour report</Button>}
+        {later && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-neurology-mscc-level-stability-function-bladder-definitive-care-and-active-risk') : undefined}>Hand off function + active risk</Button>}
       </div>
     </section>
   </>;

@@ -49,6 +49,7 @@ import { meningitisCompletionEvidence } from '../../neurology/acute-bacterial-me
 import { encephalitisCompletionEvidence } from '../../neurology/suspected-herpes-simplex-encephalitis-completion';
 import { raisedIcpCompletionEvidence } from '../../neurology/raised-intracranial-pressure-visual-threat-completion';
 import { herniationCompletionEvidence } from '../../neurology/acute-transtentorial-herniation-pattern-completion';
+import { msccCompletionEvidence } from '../../neurology/metastatic-spinal-cord-compression-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -237,6 +238,7 @@ export function auditClinicalScenario(
     ...encephalitisCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...raisedIcpCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...herniationCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...msccCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

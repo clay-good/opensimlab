@@ -85,6 +85,7 @@ import { supportsMeningitisDemonstration } from '../../neurology/demo/acute-bact
 import { supportsEncephalitisDemonstration } from '../../neurology/demo/suspected-herpes-simplex-encephalitis-demonstration';
 import { supportsRaisedIcpDemonstration } from '../../neurology/demo/raised-intracranial-pressure-visual-threat-demonstration';
 import { supportsHerniationDemonstration } from '../../neurology/demo/acute-transtentorial-herniation-pattern-demonstration';
+import { supportsMsccDemonstration } from '../../neurology/demo/metastatic-spinal-cord-compression-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -201,6 +202,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsEncephalitisDemonstration,
     supportsRaisedIcpDemonstration,
     supportsHerniationDemonstration,
+    supportsMsccDemonstration,
   ],
 };
 

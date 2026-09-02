@@ -167,6 +167,8 @@ import { useRaisedIcpDemonstration } from '../../neurology/demo/useRaisedIcpDemo
 import { supportsRaisedIcpDemonstration } from '../../neurology/demo/raised-intracranial-pressure-visual-threat-demonstration';
 import { useHerniationDemonstration } from '../../neurology/demo/useHerniationDemonstration';
 import { supportsHerniationDemonstration } from '../../neurology/demo/acute-transtentorial-herniation-pattern-demonstration';
+import { useMsccDemonstration } from '../../neurology/demo/useMsccDemonstration';
+import { supportsMsccDemonstration } from '../../neurology/demo/metastatic-spinal-cord-compression-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -402,6 +404,7 @@ export function Cockpit({
   const encephalitisDemoSupported = supportsEncephalitisDemonstration(scenario);
   const raisedIcpDemoSupported = supportsRaisedIcpDemonstration(scenario);
   const herniationDemoSupported = supportsHerniationDemonstration(scenario);
+  const msccDemoSupported = supportsMsccDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -465,6 +468,7 @@ export function Cockpit({
     || encephalitisDemoSupported
     || raisedIcpDemoSupported
     || herniationDemoSupported
+    || msccDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -616,6 +620,12 @@ export function Cockpit({
     active: demonstrating && termTransitionDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.neonatologyTermTransitionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const msccDemonstration = useMsccDemonstration({
+    active: demonstrating && msccDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.neurologyMsccAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const herniationDemonstration = useHerniationDemonstration({
@@ -973,6 +983,7 @@ export function Cockpit({
     : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
+    : msccDemoSupported ? msccDemonstration
     : herniationDemoSupported ? herniationDemonstration
     : raisedIcpDemoSupported ? raisedIcpDemonstration
     : encephalitisDemoSupported ? encephalitisDemonstration
@@ -1782,6 +1793,8 @@ export function Cockpit({
           neurologyRaisedIcpDemonstrating={demonstrating && raisedIcpDemoSupported}
           neurologyHerniationGuidance={session.guidance}
           neurologyHerniationDemonstrating={demonstrating && herniationDemoSupported}
+          neurologyMsccGuidance={session.guidance}
+          neurologyMsccDemonstrating={demonstrating && msccDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
