@@ -165,6 +165,7 @@ import { highNeuraxialInlinePrompt } from '../../obstetrics/tutor/high-neuraxial
 import { failedIntubationInlinePrompt } from '../../obstetrics/tutor/failed-obstetric-intubation-oxygenation-first-guidance';
 import { maternalNeonatalHandoffInlinePrompt } from '../../obstetrics/tutor/maternal-to-neonatal-resuscitation-handoff-guidance';
 import { oxytocinTachysystoleInlinePrompt } from '../../obstetrics/tutor/oxytocin-associated-uterine-tachysystole-guidance';
+import { acuteSevereAsthmaInlinePrompt } from '../../respiratory-medicine/tutor/acute-severe-asthma-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2899,6 +2900,7 @@ export interface ActionCockpitProps {
   readonly obstetricsFailedIntubationGuidance?: GuidanceLevel;
   readonly obstetricsMaternalNeonatalHandoffGuidance?: GuidanceLevel;
   readonly obstetricsOxytocinTachysystoleGuidance?: GuidanceLevel;
+  readonly acuteSevereAsthmaGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3013,6 +3015,7 @@ export interface ActionCockpitProps {
   readonly obstetricsFailedIntubationDemonstrating?: boolean;
   readonly obstetricsMaternalNeonatalHandoffDemonstrating?: boolean;
   readonly obstetricsOxytocinTachysystoleDemonstrating?: boolean;
+  readonly acuteSevereAsthmaDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5562,6 +5565,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasAcuteSevereAsthmaResponse && (
               <AcuteSevereAsthmaTray
                 assessment={props.resuscitation.acuteSevereAsthmaAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.acuteSevereAsthmaGuidance}
+                demonstrating={props.acuteSevereAsthmaDemonstrating}
                 onAction={props.onAcuteSevereAsthmaResponse ?? (() => {})} />
             )}
             {hasCopdTransitionResponse && (
@@ -10581,25 +10587,35 @@ function TranscutaneousPacingCaptureTray({ assessment, onAction }: {
   </div>;
 }
 
-function AcuteSevereAsthmaTray({ assessment, onAction }: {
+function AcuteSevereAsthmaTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['acuteSevereAsthmaAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onAcuteSevereAsthmaResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = acuteSevereAsthmaInlinePrompt(guidance, { scenarioVersion, acuteSevereAsthma: assessment });
+  const act = demonstrating ? undefined : onAction;
   const treatment = assessment?.treatmentAtTick != null;
   const failure = assessment?.failureAtTick != null;
   const escalation = assessment?.escalationAtTick != null;
   const risks = assessment?.risksAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="acute-severe-asthma-trajectory-title">
       <div id="acute-severe-asthma-trajectory-title" className="syringe__name">Quieter is not always better.</div>
       <Badge kind="teaching">post-treatment · exhausted · hypercapnic failure</Badge>
       <div className="syringe__meta">delivery record → whole trajectory → gas trend</div>
       <p className="syringe__remaining" role="status">{escalation ? 'Respiratory failure recognized · critical-care help active' : failure ? 'Life-threatening failure recognized · escalate now' : treatment ? 'Treatment verified · reconcile the quieter, slower patient' : 'Start with what was delivered and what changed'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={treatment} onClick={() => onAction('reconcile-acute-severe-asthma-treatment-and-trajectory')}>Reconcile treatment + trajectory</Button>
-        <Button className="crisis-drug__action" disabled={!treatment || failure} onClick={() => onAction('recognize-acute-severe-asthma-respiratory-failure')}>Recognize respiratory failure</Button>
-        <Button className="crisis-drug__action" disabled={!failure || escalation} onClick={() => onAction('activate-acute-severe-asthma-critical-care-escalation')}>Activate critical-care help</Button>
+        <Button className="crisis-drug__action" disabled={treatment} aria-disabled={demonstrating} onClick={act ? () => act('reconcile-acute-severe-asthma-treatment-and-trajectory') : undefined}>Reconcile treatment + trajectory</Button>
+        <Button className="crisis-drug__action" disabled={!treatment || failure} aria-disabled={demonstrating} onClick={act ? () => act('recognize-acute-severe-asthma-respiratory-failure') : undefined}>Recognize respiratory failure</Button>
+        <Button className="crisis-drug__action" disabled={!failure || escalation} aria-disabled={demonstrating} onClick={act ? () => act('activate-acute-severe-asthma-critical-care-escalation') : undefined}>Activate critical-care help</Button>
       </div>
       <p className="field__hint">A fall from 36 to 18 breaths/min, less wheeze, and SpO₂ 93% on oxygen do not signal recovery when mentation and effort worsen. Peak flow is not forced in an exhausted, drowsy patient.</p>
     </section>
@@ -10609,8 +10625,8 @@ function AcuteSevereAsthmaTray({ assessment, onAction }: {
       <div className="syringe__meta">alternatives · air trapping · ownership + triggers</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Active failure, hazards, and owners handed off' : risks ? 'Open causes + ventilation hazards reviewed · advance time before handoff' : escalation ? 'Help is active · review alternatives and support hazards' : 'Escalation comes before the complete cause review'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={!escalation || risks} onClick={() => onAction('review-acute-severe-asthma-alternatives-and-ventilation-risks')}>Review causes + ventilation risks</Button>
-        <Button className="crisis-drug__action" disabled={!risks || handoff} onClick={() => onAction('handoff-acute-severe-asthma-reassessment')}>Hand off active respiratory failure</Button>
+        <Button className="crisis-drug__action" disabled={!escalation || risks} aria-disabled={demonstrating} onClick={act ? () => act('review-acute-severe-asthma-alternatives-and-ventilation-risks') : undefined}>Review causes + ventilation risks</Button>
+        <Button className="crisis-drug__action" disabled={!risks || handoff} aria-disabled={demonstrating} onClick={act ? () => act('handoff-acute-severe-asthma-reassessment') : undefined}>Hand off active respiratory failure</Button>
       </div>
       <p className="field__hint">No repeat medication, oxygen change, support device, airway procedure, sedation, ventilator setting, disposition, or outcome is selected. Gas values inform this trajectory; they are not universal intubation cutoffs.</p>
     </section>

@@ -103,6 +103,7 @@ import { supportsHighNeuraxialDemonstration } from '../../obstetrics/demo/high-n
 import { supportsFailedIntubationDemonstration } from '../../obstetrics/demo/failed-obstetric-intubation-oxygenation-first-demonstration';
 import { supportsMaternalNeonatalHandoffDemonstration } from '../../obstetrics/demo/maternal-to-neonatal-resuscitation-handoff-demonstration';
 import { supportsOxytocinTachysystoleDemonstration } from '../../obstetrics/demo/oxytocin-associated-uterine-tachysystole-demonstration';
+import { supportsAcuteSevereAsthmaDemonstration } from '../../respiratory-medicine/demo/acute-severe-asthma-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -239,6 +240,9 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsFailedIntubationDemonstration,
     supportsMaternalNeonatalHandoffDemonstration,
     supportsOxytocinTachysystoleDemonstration,
+  ],
+  'respiratory-medicine': [
+    supportsAcuteSevereAsthmaDemonstration,
   ],
 };
 

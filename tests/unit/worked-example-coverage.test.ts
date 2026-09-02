@@ -18,10 +18,10 @@
  * part-finished form is gone rather than left behind saying something stale.
  * Neurology inherited that form and that guard, counted upward through fourteen
  * lessons, and has now made the same transition. Obstetrics inherited it in turn, counted
- * upward through fourteen lessons, and has now made the same transition, so no
- * module is described by a number here at present. If one is again, the
- * derived-count guard is the shape to bring back — it is preserved below in
- * the obstetrics test's part-finished branch.
+ * upward through fourteen lessons, and made the same transition. Respiratory
+ * medicine now carries the part-finished form and the same guard: the number
+ * in the sentence is derived from the audit, so a lesson cannot land without
+ * the front page being rewritten.
  */
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
@@ -36,6 +36,7 @@ import { INFECTIOUS_DISEASE_SCENARIOS } from '../../src/modules/infectious-disea
 import { NEONATOLOGY_SCENARIOS } from '../../src/modules/neonatology/scenarios';
 import { TOXICOLOGY_SCENARIOS } from '../../src/modules/toxicology/scenarios';
 import { NEUROLOGY_SCENARIOS } from '../../src/modules/neurology/scenarios';
+import { RESPIRATORY_MEDICINE_SCENARIOS } from '../../src/modules/respiratory-medicine/scenarios';
 import { OBSTETRICS_SCENARIOS } from '../../src/modules/obstetrics/scenarios';
 
 const COUNT_WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight',
@@ -124,6 +125,21 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
     // The part-finished sentence is not allowed to linger once it is untrue.
     expect(uncovered(OBSTETRICS_SCENARIOS, 'obstetrics')).toEqual([]);
     expect(readme).not.toContain('Obstetrics has');
+  });
+
+  it('counts the finished respiratory-medicine labs rather than trusting the sentence', () => {
+    expect(RESPIRATORY_MEDICINE_SCENARIOS).toHaveLength(15);
+    const covered = coveredCount(RESPIRATORY_MEDICINE_SCENARIOS, 'respiratory-medicine');
+    expect(covered).toBeGreaterThan(0);
+    const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');
+    if (covered === RESPIRATORY_MEDICINE_SCENARIOS.length) {
+      // The part-finished sentence is not allowed to linger once it is untrue.
+      expect(uncovered(RESPIRATORY_MEDICINE_SCENARIOS, 'respiratory-medicine')).toEqual([]);
+      expect(readme).not.toContain('medicine has started');
+      return;
+    }
+    expect(readme).toContain(`with ${COUNT_WORDS[covered]} of its`);
+    expect(readme).toContain(`${COUNT_WORDS[RESPIRATORY_MEDICINE_SCENARIOS.length]} labs done.`);
   });
 
   it('claims only what those nine modules support', () => {

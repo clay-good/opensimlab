@@ -47,9 +47,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "acute-severe-asthma-fixtures.ts binds seed 7314 and content 0.1.0 to expert, review-before-escalating error, recovery, and no-action paths. The delivered-care record, the 75-minute reassessment, the two fixed blood gases and the radiograph report are authored constants; no bronchodilator, corticosteroid, magnesium, oxygen or ventilation model is claimed, and no outcome follows from any choice. tests/integration/acute-severe-asthma-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -61,9 +61,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions separate the verified prior treatment from the response to it, recognize evolving respiratory failure from the combination rather than any single threshold, activate critical-care and airway-capable support before the alternative review is finished, review the narrowed-but-open alternatives and the ventilation hazards as planning concerns, and hand off active failure. Order is enforced rather than suggested, and refusal names the missing step. The lesson examines nobody, measures no peak flow, samples or interprets no blood gas, acquires or interprets no imaging, diagnoses nothing, and delivers or selects no bronchodilator, antimuscarinic, corticosteroid, magnesium, antibiotic, epinephrine, fluid, oxygen, noninvasive or high-flow trial, intubation, sedation, neuromuscular blockade, ventilator mode, rate, tidal volume, flow, I:E ratio, PEEP or hypercapnia target."
           ]
         },
         {
@@ -75,23 +75,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at active-failure handoff, with no treatment-response or resolution panel following. Later actions cannot restart an ended branch, and the ending certifies no delivered medication or oxygen, no airway procedure, no ventilator setting, no determined disposition, and no outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds nothing here, because every beat in this lesson is urgent. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both open by separating a complete, correctly given initial treatment from the response to it, and both then refuse two numbers that moved the right way: a respiratory rate that fell from 36 to 18 because she is running out of the strength to breathe, and a saturation that rose from 89% to 93% because she is now on 35% oxygen rather than room air. The quiet chest is named as the same finding a third time — air movement below what makes a wheeze — and the pH falling from 7.45 to 7.24 with a PaCO₂ rising from 31 to 58 completes it, with no single value offered as a threshold. The escalation is called before the differential is finished, because a patient treated properly and failing anyway is the whole indication and the people who might secure her airway should be present before that is urgent. The ventilation hazards are held as planning concerns rather than controls: an asthmatic chest that cannot empty stacks breaths, and dynamic hyperinflation is how ventilating this patient causes hypotension and barotrauma. The ending refuses a response panel, because nothing in this lesson treated her. A test asserts nothing anywhere examines her, measures a flow, reads a gas, or selects a drug, device or ventilator setting. tests/unit/acute-severe-asthma-demonstration.test.ts and tests/ui/respiratory-acute-severe-asthma.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that reviewed the alternatives before calling critical care can still reach a correct handoff."
           ]
         },
         {
@@ -110,23 +110,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "acute-severe-asthma-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 7314 for deterministic replay through the shared engine, including the time-gated handoff."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
