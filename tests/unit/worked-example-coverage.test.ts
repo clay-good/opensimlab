@@ -14,8 +14,11 @@
  * the audit here and matched against the sentence, so it could not survive a
  * lesson landing without being rewritten — which is what happened, five times,
  * until the fifteenth landed and the number had nowhere left to go. Toxicology
- * is now a list entry like the rest, checked the same way, and the
+ * is now a list entry like the rest, checked the same way, and its
  * part-finished form is gone rather than left behind saying something stale.
+ * Neurology has inherited that form and that guard: it is the module the front
+ * page now describes as a number, derived here the same way, so the sentence
+ * cannot outlive the count it quotes.
  */
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
@@ -29,6 +32,7 @@ import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../../src/modules/medical-su
 import { INFECTIOUS_DISEASE_SCENARIOS } from '../../src/modules/infectious-disease/scenarios';
 import { NEONATOLOGY_SCENARIOS } from '../../src/modules/neonatology/scenarios';
 import { TOXICOLOGY_SCENARIOS } from '../../src/modules/toxicology/scenarios';
+import { NEUROLOGY_SCENARIOS } from '../../src/modules/neurology/scenarios';
 
 function uncovered(scenarios: Parameters<typeof buildModuleCompletionCatalog>[0], moduleId: string) {
   const catalog = buildModuleCompletionCatalog(scenarios, ENGINE_VERSION, moduleId, 'ward');
@@ -46,6 +50,9 @@ function coveredCount(scenarios: Parameters<typeof buildModuleCompletionCatalog>
     (entry) => entry.id === 'guidance-and-demonstration' && entry.status === 'satisfied',
   )).length;
 }
+
+const COUNT_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven',
+  'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen'] as const;
 
 describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
   it('covers every oncology lab', () => {
@@ -76,6 +83,19 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
   it('covers every neonatology lab', () => {
     expect(NEONATOLOGY_SCENARIOS).toHaveLength(11);
     expect(uncovered(NEONATOLOGY_SCENARIOS, 'neonatology')).toEqual([]);
+  });
+
+  it('spells the part-finished neurology count the way the audit counts it', () => {
+    const covered = coveredCount(NEUROLOGY_SCENARIOS, 'neurology');
+    // Neurology is now the part-finished module, so the front page carries a
+    // number rather than a list again. Both halves are derived, exactly as
+    // toxicology's were, and the sentence cannot survive the next lesson
+    // landing without being rewritten.
+    expect(covered).toBeGreaterThan(0);
+    expect(covered).toBeLessThan(NEUROLOGY_SCENARIOS.length);
+    const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');
+    expect(readme).toContain(`Neurology has started — ${COUNT_WORDS[covered]} of its\n`
+      + `${COUNT_WORDS[NEUROLOGY_SCENARIOS.length]} is`);
   });
 
   it('covers every toxicology lab', () => {

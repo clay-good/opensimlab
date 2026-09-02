@@ -37,6 +37,7 @@ import { sympathomimeticCompletionEvidence } from '../../toxicology/sympathomime
 import { methanolCompletionEvidence } from '../../toxicology/methanol-visual-acidosis-gaps-completion';
 import { delayedLastCompletionEvidence } from '../../toxicology/delayed-local-anesthetic-cns-cardiac-toxicity-completion';
 import { opioidXylazineCompletionEvidence } from '../../toxicology/opioid-xylazine-persistent-sedation-completion';
+import { minorStrokeCompletionEvidence } from '../../neurology/minor-nondisabling-acute-ischemic-stroke-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -213,6 +214,7 @@ export function auditClinicalScenario(
     ...methanolCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...delayedLastCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...opioidXylazineCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...minorStrokeCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

@@ -143,6 +143,8 @@ import { useDelayedLastDemonstration } from '../../toxicology/demo/useDelayedLas
 import { supportsDelayedLastDemonstration } from '../../toxicology/demo/delayed-local-anesthetic-cns-cardiac-toxicity-demonstration';
 import { useOpioidXylazineDemonstration } from '../../toxicology/demo/useOpioidXylazineDemonstration';
 import { supportsOpioidXylazineDemonstration } from '../../toxicology/demo/opioid-xylazine-persistent-sedation-demonstration';
+import { useMinorStrokeDemonstration } from '../../neurology/demo/useMinorStrokeDemonstration';
+import { supportsMinorStrokeDemonstration } from '../../neurology/demo/minor-nondisabling-acute-ischemic-stroke-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -366,6 +368,7 @@ export function Cockpit({
   const methanolDemoSupported = supportsMethanolDemonstration(scenario);
   const delayedLastDemoSupported = supportsDelayedLastDemonstration(scenario);
   const opioidXylazineDemoSupported = supportsOpioidXylazineDemonstration(scenario);
+  const minorStrokeDemoSupported = supportsMinorStrokeDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -417,6 +420,7 @@ export function Cockpit({
     || methanolDemoSupported
     || delayedLastDemoSupported
     || opioidXylazineDemoSupported
+    || minorStrokeDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -568,6 +572,12 @@ export function Cockpit({
     active: demonstrating && termTransitionDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.neonatologyTermTransitionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const minorStrokeDemonstration = useMinorStrokeDemonstration({
+    active: demonstrating && minorStrokeDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.neurologyMinorStrokeAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const opioidXylazineDemonstration = useOpioidXylazineDemonstration({
@@ -853,6 +863,7 @@ export function Cockpit({
     : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
+    : minorStrokeDemoSupported ? minorStrokeDemonstration
     : opioidXylazineDemoSupported ? opioidXylazineDemonstration
     : delayedLastDemoSupported ? delayedLastDemonstration
     : methanolDemoSupported ? methanolDemonstration
@@ -1626,6 +1637,8 @@ export function Cockpit({
           toxicologyDelayedLastDemonstrating={demonstrating && delayedLastDemoSupported}
           toxicologyOpioidXylazineGuidance={session.guidance}
           toxicologyOpioidXylazineDemonstrating={demonstrating && opioidXylazineDemoSupported}
+          neurologyMinorStrokeGuidance={session.guidance}
+          neurologyMinorStrokeDemonstrating={demonstrating && minorStrokeDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

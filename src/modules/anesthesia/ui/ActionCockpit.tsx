@@ -135,6 +135,7 @@ import { sympathomimeticInlinePrompt } from '../../toxicology/tutor/sympathomime
 import { methanolInlinePrompt } from '../../toxicology/tutor/methanol-visual-acidosis-gaps-guidance';
 import { delayedLastInlinePrompt } from '../../toxicology/tutor/delayed-local-anesthetic-cns-cardiac-toxicity-guidance';
 import { opioidXylazineInlinePrompt } from '../../toxicology/tutor/opioid-xylazine-persistent-sedation-guidance';
+import { minorStrokeInlinePrompt } from '../../neurology/tutor/minor-nondisabling-acute-ischemic-stroke-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2839,6 +2840,7 @@ export interface ActionCockpitProps {
   readonly toxicologyMethanolGuidance?: GuidanceLevel;
   readonly toxicologyDelayedLastGuidance?: GuidanceLevel;
   readonly toxicologyOpioidXylazineGuidance?: GuidanceLevel;
+  readonly neurologyMinorStrokeGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2923,6 +2925,7 @@ export interface ActionCockpitProps {
   readonly toxicologyMethanolDemonstrating?: boolean;
   readonly toxicologyDelayedLastDemonstrating?: boolean;
   readonly toxicologyOpioidXylazineDemonstrating?: boolean;
+  readonly neurologyMinorStrokeDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5619,6 +5622,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNeurologyMinorStrokeResponse && (
               <NeurologyMinorStrokeTray
                 assessment={props.resuscitation.neurologyMinorStrokeAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.neurologyMinorStrokeGuidance}
+                demonstrating={props.neurologyMinorStrokeDemonstrating}
                 onAction={props.onNeurologyMinorStrokeResponse ?? (() => {})} />
             )}
             {hasNeurologyBasilarLvoResponse && (
@@ -12028,10 +12034,15 @@ function PediatricInjurySafeguardingTray({ assessment, onAction }: {
   </div>;
 }
 
-function NeurologyMinorStrokeTray({ assessment, onAction }: {
+function NeurologyMinorStrokeTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['neurologyMinorStrokeAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onNeurologyMinorStrokeResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = minorStrokeInlinePrompt(guidance, { scenarioVersion, minorStroke: assessment });
+  const act = demonstrating ? undefined : onAction;
   const reconciled = assessment?.trajectoryAtTick != null;
   const imaging = assessment?.threatsAtTick != null;
   const disability = assessment?.boundaryAtTick != null;
@@ -12039,6 +12050,11 @@ function NeurologyMinorStrokeTray({ assessment, onAction }: {
   const later = assessment?.laterAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="neurology-minor-stroke-function-title">
       <div id="neurology-minor-stroke-function-title" className="syringe__name">Function, not one score.</div>
       <Badge kind="teaching">clock · focal change · patient priorities · imaging · threats · function</Badge>
@@ -12052,13 +12068,13 @@ function NeurologyMinorStrokeTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {!reconciled && <Button className="crisis-drug__action"
-          onClick={() => onAction('reconcile-neurology-minor-stroke-clock-deficit-function-and-whole-patient')}>Review clock + deficit + function</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('reconcile-neurology-minor-stroke-clock-deficit-function-and-whole-patient') : undefined}>Review clock + deficit + function</Button>}
         {reconciled && !imaging && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-neurology-minor-stroke-imaging-mimics-and-immediate-threats')}>Review imaging + immediate threats</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-neurology-minor-stroke-imaging-mimics-and-immediate-threats') : undefined}>Review imaging + immediate threats</Button>}
         {imaging && !disability && <Button className="crisis-drug__action"
-          onClick={() => onAction('recognize-neurology-minor-nondisabling-stroke-boundary-without-score-alone')}>Recognize the functional boundary</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('recognize-neurology-minor-nondisabling-stroke-boundary-without-score-alone') : undefined}>Recognize the functional boundary</Button>}
         {disability && !strategy && <Button className="crisis-drug__action"
-          onClick={() => onAction('record-neurology-minor-stroke-qualified-antiplatelet-and-surveillance-intent')}>Record qualified strategy + surveillance</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('record-neurology-minor-stroke-qualified-antiplatelet-and-surveillance-intent') : undefined}>Record qualified strategy + surveillance</Button>}
       </div>
       <p className="field__hint">The supplied score supports description, not the decision by itself. Qualified stroke clinicians own examination, diagnosis, eligibility, prescribing, treatment, and disposition; this surface exposes none of those controls.</p>
     </section>
@@ -12074,9 +12090,9 @@ function NeurologyMinorStrokeTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {strategy && !later && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-neurology-minor-stroke-later-neurologic-trajectory')}>Review the later neurologic report</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-neurology-minor-stroke-later-neurologic-trajectory') : undefined}>Review the later neurologic report</Button>}
         {later && !handoff && <Button className="crisis-drug__action"
-          onClick={() => onAction('handoff-neurology-minor-stroke-etiology-recurrence-and-secondary-prevention-risk')}>Hand off cause + recurrence risk</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('handoff-neurology-minor-stroke-etiology-recurrence-and-secondary-prevention-risk') : undefined}>Hand off cause + recurrence risk</Button>}
       </div>
       <p className="field__hint">Short-window stability does not establish treatment effect, infarct resolution, complete recovery, durable control, low recurrence risk, disposition, prognosis, or outcome.</p>
     </section>
