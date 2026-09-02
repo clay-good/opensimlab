@@ -803,23 +803,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "maternal-cardiac-arrest-coordinated-response-fixtures.ts binds seed 7188 and content 0.1.0 to expert, read-before-activating error, recovery, and no-action paths. The arrest facts, the reported rhythm, the fundal height, and the fixed minute-4 report are authored constants; no resuscitation, circulation, delivery or newborn model is claimed, and no outcome follows from any choice. tests/integration/maternal-cardiac-arrest-coordinated-response-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the minute-4 report refuses until simulated time has passed since the readiness review, and the handoff refuses until time has passed since that. What moves is the readiness around her; what does not move is the circulation, which has not returned at the later report."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions activate the prepared pregnancy response and the arrest clock first, then take the supplied arrest facts as given and add the pregnancy context, review the pregnancy-specific modifications and airway priority, review the open causes alongside in-place delivery, newborn and hemorrhage readiness, review the fixed minute-4 report, and hand off an active arrest. Order is enforced rather than suggested, and every later step refuses until the response has been activated. The lesson assesses no responsiveness, breathing or pulse, interprets no rhythm or monitoring, performs no compressions or uterine displacement, operates no fetal monitor, diagnoses and excludes no cause, determines no delivery eligibility, and selects no airway, ventilation, access, drug, dose, route, target, shock, pacing, delivery or procedure."
           ]
         },
         {
@@ -831,23 +831,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at active-arrest handoff. Later actions cannot restart an ended branch, and the ending certifies no completed delivery, no return of spontaneous circulation, no treatment effect, no termination decision, no safety disposition, and no maternal, newborn or other outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both start the prepared response and the clock before looking at anything, because the resuscitation is already running and what the activation adds is everything a pregnancy adds — and because the delivery decision in a maternal arrest is timed from the arrest rather than from anyone arriving. Both then take the arrest facts as given rather than rechecking them, and name the one fact that changes the response: a fundal height above the umbilicus, which means a uterus large enough to compress the vena cava and limit what compressions can return. The modifications are named as additions to a standard resuscitation rather than a different one — continuous left uterine displacement, standard hand position, the same defibrillation energy as anyone else, an early airway because pregnancy makes both hypoxemia and difficult intubation more likely — and none of them is a reason to pause compressions. The delivery is prepared in the room, because moving an arrested patient costs the minutes that make it worth doing. The ending gives back an arrest that is still happening and a delivery nobody has performed. A test asserts nothing anywhere checks a pulse, compresses, displaces the uterus, reads the rhythm, or selects an airway, drug, shock, delivery or procedure. tests/unit/maternal-cardiac-arrest-coordinated-response-demonstration.test.ts and tests/ui/obstetrics-maternal-cardiac-arrest-coordinated-response.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that read the arrest before activating the response can still reach a correct handoff."
           ]
         },
         {
@@ -866,23 +866,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "maternal-cardiac-arrest-coordinated-response-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 7188 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

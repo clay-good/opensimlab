@@ -156,6 +156,7 @@ import { concealedAbruptionInlinePrompt } from '../../obstetrics/tutor/concealed
 import { postpartumPreeclampsiaInlinePrompt } from '../../obstetrics/tutor/postpartum-severe-preeclampsia-warning-signs-guidance';
 import { eclampsiaInlinePrompt } from '../../obstetrics/tutor/eclampsia-first-seizure-response-guidance';
 import { afeInlinePrompt } from '../../obstetrics/tutor/suspected-amniotic-fluid-embolism-pattern-guidance';
+import { maternalArrestInlinePrompt } from '../../obstetrics/tutor/maternal-cardiac-arrest-coordinated-response-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2881,6 +2882,7 @@ export interface ActionCockpitProps {
   readonly obstetricsPostpartumPreeclampsiaGuidance?: GuidanceLevel;
   readonly obstetricsEclampsiaGuidance?: GuidanceLevel;
   readonly obstetricsAfeGuidance?: GuidanceLevel;
+  readonly obstetricsMaternalArrestGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2986,6 +2988,7 @@ export interface ActionCockpitProps {
   readonly obstetricsPostpartumPreeclampsiaDemonstrating?: boolean;
   readonly obstetricsEclampsiaDemonstrating?: boolean;
   readonly obstetricsAfeDemonstrating?: boolean;
+  readonly obstetricsMaternalArrestDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5952,6 +5955,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasObstetricsMaternalArrestResponse && (
               <ObstetricsMaternalArrestTray assessment={props.resuscitation.obstetricsMaternalArrestAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.obstetricsMaternalArrestGuidance}
+                demonstrating={props.obstetricsMaternalArrestDemonstrating}
                 onAction={props.onObstetricsMaternalArrestResponse ?? (() => {})} />
             )}
             {hasObstetricsShoulderDystociaResponse && (
@@ -13736,10 +13742,15 @@ function ObstetricsAfeTray({ assessment, scenarioVersion, onAction, guidance = '
   </>;
 }
 
-function ObstetricsMaternalArrestTray({ assessment, onAction }: {
+function ObstetricsMaternalArrestTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['obstetricsMaternalArrestAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onObstetricsMaternalArrestResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = maternalArrestInlinePrompt(guidance, { scenarioVersion, maternalArrest: assessment });
+  const act = demonstrating ? undefined : onAction;
   const support = assessment?.supportAtTick != null;
   const context = assessment?.contextAtTick != null;
   const modifications = assessment?.modificationsAtTick != null;
@@ -13747,22 +13758,27 @@ function ObstetricsMaternalArrestTray({ assessment, onAction }: {
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="obstetrics-maternal-arrest-now-title">
       <div id="obstetrics-maternal-arrest-now-title" className="syringe__name">Make the whole team ready at once.</div>
       <p className="syringe__remaining">Qualified standard resuscitation is already underway. Add the pregnancy clock, specialized roles, in-place delivery readiness, newborn care, and support without cluttering the learner surface.</p>
       <div className="crisis-drug__actions">
-        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-obstetrics-maternal-arrest-prepared-resuscitation-obstetric-anesthesia-delivery-newborn-and-dignity-response-now')}>Activate prepared response + clock</Button>}
-        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-obstetrics-maternal-arrest-clock-responsiveness-breathing-pulse-rhythm-pregnancy-and-whole-person')}>Connect arrest + pregnancy context</Button>}
-        {context && !modifications && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-maternal-arrest-supplied-pregnancy-modifications-and-airway-priority-boundary')}>Review pregnancy responsibilities</Button>}
-        {modifications && !readiness && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-maternal-arrest-reversible-causes-delivery-newborn-and-hemorrhage-readiness-boundary')}>Review causes + team readiness</Button>}
+        {!support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-obstetrics-maternal-arrest-prepared-resuscitation-obstetric-anesthesia-delivery-newborn-and-dignity-response-now') : undefined}>Activate prepared response + clock</Button>}
+        {support && !context && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-obstetrics-maternal-arrest-clock-responsiveness-breathing-pulse-rhythm-pregnancy-and-whole-person') : undefined}>Connect arrest + pregnancy context</Button>}
+        {context && !modifications && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-obstetrics-maternal-arrest-supplied-pregnancy-modifications-and-airway-priority-boundary') : undefined}>Review pregnancy responsibilities</Button>}
+        {modifications && !readiness && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-obstetrics-maternal-arrest-reversible-causes-delivery-newborn-and-hemorrhage-readiness-boundary') : undefined}>Review causes + team readiness</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="obstetrics-maternal-arrest-later-title">
       <div id="obstetrics-maternal-arrest-later-title" className="syringe__name">Minute 4 is a readiness checkpoint.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Active maternal resuscitation, cause, delivery, hemorrhage, newborn, family, staff, disposition, prognosis, and outcome risks handed off.' : reassessment ? 'Circulation has not returned. Qualified resuscitative delivery is beginning at the arrest location while advanced life support continues; completion and outcomes remain open.' : readiness ? 'Qualified maternal-arrest care and in-place delivery readiness are active. Review the fixed minute-4 report after time passes.' : support ? 'The prepared response is active. Connect the context, pregnancy responsibilities, open causes, and team readiness.' : 'Activate the prepared pregnancy cardiac-arrest response now. This practice includes team-owned resuscitative delivery; you can pause or leave at any time.'}</p>
       <div className="crisis-drug__actions">
-        {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-maternal-arrest-fixed-minute-four-active-resuscitation-and-delivery-readiness-report')}>Review the minute-4 report</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-obstetrics-maternal-arrest-active-arrest-cause-procedure-hemorrhage-newborn-family-and-outcome-risk')}>Hand off active maternal + newborn risk</Button>}
+        {readiness && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-obstetrics-maternal-arrest-fixed-minute-four-active-resuscitation-and-delivery-readiness-report') : undefined}>Review the minute-4 report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-obstetrics-maternal-arrest-active-arrest-cause-procedure-hemorrhage-newborn-family-and-outcome-risk') : undefined}>Hand off active maternal + newborn risk</Button>}
       </div>
     </section>
   </>;
