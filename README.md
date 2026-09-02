@@ -48,7 +48,7 @@ point, and a private tutor that reads only what you have actually done. The tuto
 unless you ask for it, says nothing at all on the unassisted setting, and never supplies the
 diagnosis a lesson exists to leave open. Every renal, oncology, endocrine, nursing,
 infectious-disease, neonatology, toxicology, and neurology lab has both. Obstetrics has
-started, with nine of its fifteen labs done.
+started, with ten of its fifteen labs done.
 
 ## How it works
 

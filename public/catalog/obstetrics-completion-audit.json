@@ -1181,23 +1181,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "suspected-uterine-rupture-recognition-fixtures.ts binds seed 7230 and content 0.1.0 to expert, confirm-before-calling error, recovery, and no-action paths. The scar history, the coupled findings, and the fixed worsening and laparotomy-start report are authored constants; no rupture, hemostasis, fetal or operative model is claimed, and no outcome follows from any choice. tests/integration/suspected-uterine-rupture-recognition-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the fixed laparotomy report refuses until simulated time has passed since the readiness review, and the handoff refuses until time has passed since that. What moves is the readiness and, at the report, the start of an operation; what does not move is the diagnosis, which stays suspected at the end."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions activate category-1 surgery, anesthesia, blood, the newborn team and support on the suspicion alone, read the scar, pain, fetal heart, station, uterine activity and bleeding as one coupled pattern, hold the diagnosis as suspected with the placental, fetal, vascular, surgical and non-obstetric alternatives open, review the parallel maternal, fetal, surgical, hemorrhage, fertility and communication readiness, review the fixed report, and hand off unresolved risk. Order is enforced rather than suggested, and every later step refuses until the response has been activated. The lesson examines nobody, interprets no fetal monitoring, diagnoses nothing, changes no infusion, delivers no resuscitation, and selects no drug, dose, route, target, anesthetic, delivery, surgery, repair or hysterectomy."
           ]
         },
         {
@@ -1209,23 +1209,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at unresolved-risk handoff, with the abdomen open. Later actions cannot restart an ended branch, and the ending certifies no operative confirmation, no proven hemostasis, no fetal recovery, no treatment effect, no safety disposition, no predicted fertility outcome, and no maternal, newborn or other outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both call for the theatre on the suspicion and say why nothing at the bedside will upgrade it: a uterine rupture is confirmed by opening the abdomen and not before, so waiting to be certain means waiting for the operation that the waiting is delaying. Both read the findings as one coupled pattern rather than a list — a prior low-transverse scar, pain persisting between contractions, a fetal heart at 72, station lost from -1 to -3, efficient uterine activity that simply stopped, new bleeding, scar tenderness, and a mother at 118 and 96/58 — while naming that any one of them has other explanations. The classic triad is refused as neither necessary nor reliable, the abnormal fetal heart rate is named as the most consistent sign and still not specific, and abruption, fetal, vascular, surgical and non-obstetric causes stay open; acting at full urgency and holding the diagnosis as a suspicion are the same posture rather than opposite ones. The readiness runs in parallel because arranging any part after the others costs the same minutes, and the fertility conversation belongs before theatre because what happens to her uterus may be decided while she is asleep. The ending gives back an open abdomen and a suspicion that is still a suspicion. A test asserts nothing anywhere examines her, interprets the fetal monitoring, or selects an anesthetic, a birth, a repair or a hysterectomy. tests/unit/suspected-uterine-rupture-recognition-demonstration.test.ts and tests/ui/obstetrics-suspected-uterine-rupture-recognition.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that tried to be sure before calling for a theatre can still reach a correct handoff."
           ]
         },
         {
@@ -1244,23 +1244,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "suspected-uterine-rupture-recognition-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 7230 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

@@ -159,6 +159,7 @@ import { afeInlinePrompt } from '../../obstetrics/tutor/suspected-amniotic-fluid
 import { maternalArrestInlinePrompt } from '../../obstetrics/tutor/maternal-cardiac-arrest-coordinated-response-guidance';
 import { shoulderDystociaInlinePrompt } from '../../obstetrics/tutor/shoulder-dystocia-cognitive-sequence-guidance';
 import { cordProlapseInlinePrompt } from '../../obstetrics/tutor/umbilical-cord-prolapse-urgent-birth-coordination-guidance';
+import { uterineRuptureInlinePrompt } from '../../obstetrics/tutor/suspected-uterine-rupture-recognition-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2887,6 +2888,7 @@ export interface ActionCockpitProps {
   readonly obstetricsMaternalArrestGuidance?: GuidanceLevel;
   readonly obstetricsShoulderDystociaGuidance?: GuidanceLevel;
   readonly obstetricsCordProlapseGuidance?: GuidanceLevel;
+  readonly obstetricsUterineRuptureGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2995,6 +2997,7 @@ export interface ActionCockpitProps {
   readonly obstetricsMaternalArrestDemonstrating?: boolean;
   readonly obstetricsShoulderDystociaDemonstrating?: boolean;
   readonly obstetricsCordProlapseDemonstrating?: boolean;
+  readonly obstetricsUterineRuptureDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5982,6 +5985,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasObstetricsUterineRuptureResponse && (
               <ObstetricsUterineRuptureTray assessment={props.resuscitation.obstetricsUterineRuptureAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.obstetricsUterineRuptureGuidance}
+                demonstrating={props.obstetricsUterineRuptureDemonstrating}
                 onAction={props.onObstetricsUterineRuptureResponse ?? (() => {})} />
             )}
             {hasObstetricsMagnesiumToxicityResponse && (
@@ -13880,10 +13886,15 @@ function ObstetricsCordProlapseTray({ assessment, scenarioVersion, onAction, gui
   </>;
 }
 
-function ObstetricsUterineRuptureTray({ assessment, onAction }: {
+function ObstetricsUterineRuptureTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['obstetricsUterineRuptureAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onObstetricsUterineRuptureResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = uterineRuptureInlinePrompt(guidance, { scenarioVersion, uterineRupture: assessment });
+  const act = demonstrating ? undefined : onAction;
   const support = assessment?.supportAtTick != null;
   const context = assessment?.contextAtTick != null;
   const uncertainty = assessment?.uncertaintyAtTick != null;
@@ -13891,22 +13902,27 @@ function ObstetricsUterineRuptureTray({ assessment, onAction }: {
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="obstetrics-uterine-rupture-now-title">
       <div id="obstetrics-uterine-rupture-now-title" className="syringe__name">Act on the pattern. Keep the diagnosis honest.</div>
       <p className="syringe__remaining">Bring surgery, blood, anesthesia, and newborn care together now. The learner surface keeps treatment and every operation with the qualified team.</p>
       <div className="crisis-drug__actions">
-        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-obstetrics-suspected-uterine-rupture-category-one-surgery-anesthesia-blood-newborn-and-support-response')}>Activate suspected-rupture response</Button>}
-        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-obstetrics-suspected-uterine-rupture-scar-pain-fetal-heart-station-activity-bleeding-and-whole-person')}>Connect the whole pattern</Button>}
-        {context && !uncertainty && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-suspected-uterine-rupture-multisignal-nonclassic-triad-and-alternative-cause-boundaries')}>Review uncertainty + alternatives</Button>}
-        {uncertainty && !readiness && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-suspected-uterine-rupture-parallel-maternal-fetal-surgical-hemorrhage-fertility-and-communication-readiness')}>Review parallel readiness</Button>}
+        {!support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-obstetrics-suspected-uterine-rupture-category-one-surgery-anesthesia-blood-newborn-and-support-response') : undefined}>Activate suspected-rupture response</Button>}
+        {support && !context && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-obstetrics-suspected-uterine-rupture-scar-pain-fetal-heart-station-activity-bleeding-and-whole-person') : undefined}>Connect the whole pattern</Button>}
+        {context && !uncertainty && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-obstetrics-suspected-uterine-rupture-multisignal-nonclassic-triad-and-alternative-cause-boundaries') : undefined}>Review uncertainty + alternatives</Button>}
+        {uncertainty && !readiness && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-obstetrics-suspected-uterine-rupture-parallel-maternal-fetal-surgical-hemorrhage-fertility-and-communication-readiness') : undefined}>Review parallel readiness</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="obstetrics-uterine-rupture-later-title">
       <div id="obstetrics-uterine-rupture-later-title" className="syringe__name">The operation answers what the monitor cannot.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Maternal, fetal, hemorrhage, surgery, newborn, fertility, support, and outcome risks handed off.' : reassessment ? 'Laparotomy begins in the fixed report. Findings, birth, hemostasis, fertility, and outcomes remain open.' : readiness ? 'The qualified team is preparing simultaneous maternal, fetal, surgical, blood, and newborn care. Review the fixed report after time passes.' : support ? 'The response is active. Connect the whole pattern without waiting for a classic triad or diagnostic certainty.' : 'Start with a calm declaration and immediate shared ownership. You can pause or leave this practice at any time.'}</p>
       <div className="crisis-drug__actions">
-        {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-suspected-uterine-rupture-fixed-worsening-and-laparotomy-start-report')}>Review the fixed theatre report</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-obstetrics-suspected-uterine-rupture-maternal-fetal-hemorrhage-surgery-newborn-fertility-support-and-outcome-risk')}>Hand off maternal + fetal risk</Button>}
+        {readiness && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-obstetrics-suspected-uterine-rupture-fixed-worsening-and-laparotomy-start-report') : undefined}>Review the fixed theatre report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-obstetrics-suspected-uterine-rupture-maternal-fetal-hemorrhage-surgery-newborn-fertility-support-and-outcome-risk') : undefined}>Hand off maternal + fetal risk</Button>}
       </div>
     </section>
   </>;

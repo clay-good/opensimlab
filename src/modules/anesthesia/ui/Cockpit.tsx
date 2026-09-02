@@ -191,6 +191,8 @@ import { useShoulderDystociaDemonstration } from '../../obstetrics/demo/useShoul
 import { supportsShoulderDystociaDemonstration } from '../../obstetrics/demo/shoulder-dystocia-cognitive-sequence-demonstration';
 import { useCordProlapseDemonstration } from '../../obstetrics/demo/useCordProlapseDemonstration';
 import { supportsCordProlapseDemonstration } from '../../obstetrics/demo/umbilical-cord-prolapse-urgent-birth-coordination-demonstration';
+import { useUterineRuptureDemonstration } from '../../obstetrics/demo/useUterineRuptureDemonstration';
+import { supportsUterineRuptureDemonstration } from '../../obstetrics/demo/suspected-uterine-rupture-recognition-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -438,6 +440,7 @@ export function Cockpit({
   const maternalArrestDemoSupported = supportsMaternalArrestDemonstration(scenario);
   const shoulderDystociaDemoSupported = supportsShoulderDystociaDemonstration(scenario);
   const cordProlapseDemoSupported = supportsCordProlapseDemonstration(scenario);
+  const uterineRuptureDemoSupported = supportsUterineRuptureDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -513,6 +516,7 @@ export function Cockpit({
     || maternalArrestDemoSupported
     || shoulderDystociaDemoSupported
     || cordProlapseDemoSupported
+    || uterineRuptureDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -664,6 +668,12 @@ export function Cockpit({
     active: demonstrating && termTransitionDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.neonatologyTermTransitionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const uterineRuptureDemonstration = useUterineRuptureDemonstration({
+    active: demonstrating && uterineRuptureDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.obstetricsUterineRuptureAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const cordProlapseDemonstration = useCordProlapseDemonstration({
@@ -1093,6 +1103,7 @@ export function Cockpit({
     : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
+    : uterineRuptureDemoSupported ? uterineRuptureDemonstration
     : cordProlapseDemoSupported ? cordProlapseDemonstration
     : shoulderDystociaDemoSupported ? shoulderDystociaDemonstration
     : maternalArrestDemoSupported ? maternalArrestDemonstration
@@ -1938,6 +1949,8 @@ export function Cockpit({
           obstetricsShoulderDystociaDemonstrating={demonstrating && shoulderDystociaDemoSupported}
           obstetricsCordProlapseGuidance={session.guidance}
           obstetricsCordProlapseDemonstrating={demonstrating && cordProlapseDemoSupported}
+          obstetricsUterineRuptureGuidance={session.guidance}
+          obstetricsUterineRuptureDemonstrating={demonstrating && uterineRuptureDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
