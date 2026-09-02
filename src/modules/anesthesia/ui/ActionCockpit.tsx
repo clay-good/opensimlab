@@ -187,6 +187,7 @@ import { pediatricStatusAsthmaticusInlinePrompt } from '../../pediatrics/tutor/p
 import { pediatricSepsisInlinePrompt } from '../../pediatrics/tutor/pediatric-sepsis-guidance';
 import { pediatricSepticShockInlinePrompt } from '../../pediatrics/tutor/pediatric-septic-shock-guidance';
 import { pediatricDehydrationInlinePrompt } from '../../pediatrics/tutor/pediatric-dehydration-guidance';
+import { pediatricDkaInlinePrompt } from '../../pediatrics/tutor/pediatric-dka-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2943,6 +2944,7 @@ export interface ActionCockpitProps {
   readonly pediatricSepsisGuidance?: GuidanceLevel;
   readonly pediatricSepticShockGuidance?: GuidanceLevel;
   readonly pediatricDehydrationGuidance?: GuidanceLevel;
+  readonly pediatricDkaGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3079,6 +3081,7 @@ export interface ActionCockpitProps {
   readonly pediatricSepsisDemonstrating?: boolean;
   readonly pediatricSepticShockDemonstrating?: boolean;
   readonly pediatricDehydrationDemonstrating?: boolean;
+  readonly pediatricDkaDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5796,6 +5799,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasPediatricDiabeticKetoacidosisResponse && (
               <PediatricDiabeticKetoacidosisTray
                 assessment={props.resuscitation.pediatricDiabeticKetoacidosisAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.pediatricDkaGuidance}
+                demonstrating={props.pediatricDkaDemonstrating}
                 onAction={props.onPediatricDiabeticKetoacidosisResponse ?? (() => {})} />
             )}
             {hasPediatricHypoglycemicSeizureResponse && (
@@ -12104,8 +12110,11 @@ function PediatricDehydrationTray({ assessment, scenarioVersion, guidance = 'una
   </div>;
 }
 
-function PediatricDiabeticKetoacidosisTray({ assessment, onAction }: {
+function PediatricDiabeticKetoacidosisTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricDiabeticKetoacidosisAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onPediatricDiabeticKetoacidosisResponse']>;
 }) {
   const trajectory = assessment?.trajectoryAtTick != null;
@@ -12114,7 +12123,17 @@ function PediatricDiabeticKetoacidosisTray({ assessment, onAction }: {
   const safety = assessment?.safetyAtTick != null;
   const later = assessment?.laterResponseAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : pediatricDkaInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-dka-pattern-title">
       <div id="pediatric-dka-pattern-title" className="syringe__name">Read the child, not one number.</div>
       <Badge kind="teaching">history · ketones · acidosis · breathing · perfusion</Badge>
@@ -12129,13 +12148,13 @@ function PediatricDiabeticKetoacidosisTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {!trajectory && <Button className="crisis-drug__action"
-          onClick={() => onAction('reconcile-pediatric-dka-illness-and-fixed-pattern')}>Review illness + fixed panel</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('reconcile-pediatric-dka-illness-and-fixed-pattern') : undefined}>Review illness + fixed panel</Button>}
         {trajectory && !recognition && <Button className="crisis-drug__action"
-          onClick={() => onAction('recognize-pediatric-dka-and-current-risk')}>Recognize pediatric DKA risk</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('recognize-pediatric-dka-and-current-risk') : undefined}>Recognize pediatric DKA risk</Button>}
         {recognition && !care && <Button className="crisis-drug__action"
-          onClick={() => onAction('activate-pediatric-dka-qualified-care-ownership')}>Activate qualified DKA care</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('activate-pediatric-dka-qualified-care-ownership') : undefined}>Activate qualified DKA care</Button>}
         {recognition && !safety && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-pediatric-dka-neurologic-and-metabolic-safety')}>Review neurologic + metabolic safety</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-dka-neurologic-and-metabolic-safety') : undefined}>Review neurologic + metabolic safety</Button>}
       </div>
       <p className="field__hint">Experienced teams own fluids, insulin, glucose, electrolytes, access, rhythm, neurological and biochemical monitoring, and escalation. This lab exposes no calculation, sequence, solution, route, concentration, bolus, dose, rate, threshold, or pump control.</p>
     </section>
@@ -12153,12 +12172,13 @@ function PediatricDiabeticKetoacidosisTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {care && safety && !later && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-pediatric-dka-later-response')}>Review the 60-minute report</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-dka-later-response') : undefined}>Review the 60-minute report</Button>}
         {later && !handoff && <Button className="crisis-drug__action"
-          onClick={() => onAction('handoff-pediatric-dka-active-risk')}>Hand off active DKA risk</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('handoff-pediatric-dka-active-risk') : undefined}>Hand off active DKA risk</Button>}
       </div>
       <p className="field__hint">Improving vitals or fixed laboratory trends do not prove treatment effect, biochemical resolution, cerebral-injury exclusion, durable recovery, discharge readiness, or outcome.</p>
     </section>
+    </div>
   </div>;
 }
 

@@ -247,6 +247,8 @@ import { usePediatricSepticShockDemonstration } from '../../pediatrics/demo/useP
 import { supportsPediatricSepticShockDemonstration } from '../../pediatrics/demo/pediatric-septic-shock-demonstration';
 import { usePediatricDehydrationDemonstration } from '../../pediatrics/demo/usePediatricDehydrationDemonstration';
 import { supportsPediatricDehydrationDemonstration } from '../../pediatrics/demo/pediatric-dehydration-demonstration';
+import { usePediatricDkaDemonstration } from '../../pediatrics/demo/usePediatricDkaDemonstration';
+import { supportsPediatricDkaDemonstration } from '../../pediatrics/demo/pediatric-dka-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -522,6 +524,7 @@ export function Cockpit({
   const pediatricSepsisDemoSupported = supportsPediatricSepsisDemonstration(scenario);
   const pediatricSepticShockDemoSupported = supportsPediatricSepticShockDemonstration(scenario);
   const pediatricDehydrationDemoSupported = supportsPediatricDehydrationDemonstration(scenario);
+  const pediatricDkaDemoSupported = supportsPediatricDkaDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -625,6 +628,7 @@ export function Cockpit({
     || pediatricSepsisDemoSupported
     || pediatricSepticShockDemoSupported
     || pediatricDehydrationDemoSupported
+    || pediatricDkaDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -788,6 +792,12 @@ export function Cockpit({
     active: demonstrating && pediatricStatusAsthmaticusDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.pediatricStatusAsthmaticusAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const pediatricDkaDemonstration = usePediatricDkaDemonstration({
+    active: demonstrating && pediatricDkaDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.pediatricDiabeticKetoacidosisAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const pediatricDehydrationDemonstration = usePediatricDehydrationDemonstration({
@@ -1387,6 +1397,7 @@ export function Cockpit({
     : pediatricSepsisDemoSupported ? pediatricSepsisDemonstration
     : pediatricSepticShockDemoSupported ? pediatricSepticShockDemonstration
     : pediatricDehydrationDemoSupported ? pediatricDehydrationDemonstration
+    : pediatricDkaDemoSupported ? pediatricDkaDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2302,6 +2313,8 @@ export function Cockpit({
           pediatricSepticShockDemonstrating={demonstrating && pediatricSepticShockDemoSupported}
           pediatricDehydrationGuidance={session.guidance}
           pediatricDehydrationDemonstrating={demonstrating && pediatricDehydrationDemoSupported}
+          pediatricDkaGuidance={session.guidance}
+          pediatricDkaDemonstrating={demonstrating && pediatricDkaDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

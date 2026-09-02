@@ -89,6 +89,7 @@ import { pediatricStatusAsthmaticusCompletionEvidence } from '../../pediatrics/p
 import { pediatricSepsisCompletionEvidence } from '../../pediatrics/pediatric-sepsis-completion';
 import { pediatricSepticShockCompletionEvidence } from '../../pediatrics/pediatric-septic-shock-completion';
 import { pediatricDehydrationCompletionEvidence } from '../../pediatrics/pediatric-dehydration-completion';
+import { pediatricDkaCompletionEvidence } from '../../pediatrics/pediatric-dka-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -317,6 +318,7 @@ export function auditClinicalScenario(
     ...pediatricSepsisCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...pediatricSepticShockCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...pediatricDehydrationCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...pediatricDkaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),
