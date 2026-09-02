@@ -1,0 +1,34 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
+import { MYASTHENIC_CRISIS_ESCALATION } from './scenarios/myasthenic-crisis-escalation';
+import { MYASTHENIA_FIXTURES } from './myasthenic-crisis-escalation-fixtures';
+import { MYASTHENIA_TUTOR_VERSION } from './tutor/myasthenic-crisis-escalation-guidance';
+import { MYASTHENIA_DEMONSTRATION_VERSION } from './demo/myasthenic-crisis-escalation-demonstration';
+
+/**
+ * Exact-version evidence for one lesson, and no claim about any other.
+ *
+ * `observable-objectives` is deliberately not answered here. This scenario
+ * declares six objectives against a cap of five, which is a content-design
+ * decision affecting scenarios across several modules rather than something
+ * this file may settle on its own. The shared audit keeps naming it.
+ */
+export function myastheniaCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
+  if (moduleId !== 'neurology' || capabilityVersion !== '0.1.0-alpha.48'
+    || scenario.metadata.id !== MYASTHENIA_FIXTURES.scenarioId
+    || scenario.metadata.version !== '0.1.0' || MYASTHENIA_FIXTURES.contentVersion !== '0.1.0'
+    || MYASTHENIA_FIXTURES.seed !== 6351
+    || MYASTHENIA_TUTOR_VERSION !== '0.1.0' || MYASTHENIA_DEMONSTRATION_VERSION !== '0.1.0'
+    || JSON.stringify(scenario) !== JSON.stringify(MYASTHENIC_CRISIS_ESCALATION)) return [];
+  return [
+    { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['myasthenic-crisis-escalation-fixtures.ts binds seed 6351 and content 0.1.0 to expert, reassured-by-the-saturation error, recovery, and no-action paths. The presentation, the serial vital capacity and inspiratory pressure, the fixed blood gas and radiograph, and the fixed 30-minute report are authored constants; no respiratory-mechanics, neuromuscular or ventilation model is claimed, and no outcome follows from any choice. tests/integration/myasthenic-crisis-escalation-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions.'] },
+    { id: 'meaningful-progression', status: 'satisfied', evidence: ['The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the later bulbar and ventilatory review refuses until simulated time has passed since the causes review, and the handoff refuses until time has passed since that. What moves is everything except the saturation, which is 97% at the start and 95% at the point invasive ventilation is required.'] },
+    { id: 'meaningful-actions-and-choices', status: 'satisfied', evidence: ['Six declared decisions read the direction of the vital capacity and inspiratory pressure rather than their values, call an impending crisis while the saturation is still normal and while no single cutoff is treated as a threshold, activate neurology, neurocritical, respiratory and airway-capable ownership ahead of the event, review the chest as a trigger with infection and aspiration both open, compare a fixed later report, and hand off active risk. Order is enforced rather than suggested, and refusal names the missing step. The lesson takes no history, examines nobody, acquires no respiratory mechanics, blood gas, imaging or laboratory test, and selects no drug, dose, route, access, oxygen, ventilation, or airway device.'] },
+    { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The branch ends at active-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no proven trigger, no treatment effect, no weaning success, no durable neurologic recovery, no disposition, and no outcome. The supplied invasive ventilation establishes the authored manifest-crisis transition and nothing beyond it.'] },
+    { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that went to work up the pneumonia can still reach a correct handoff.'] },
+    { id: 'reference-transcripts', status: 'satisfied', evidence: ['myasthenic-crisis-escalation-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 6351 for deterministic replay through the shared engine, including the two time-gated checkpoints.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Six observed-state prompts at version ${MYASTHENIA_TUTOR_VERSION} read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example ${MYASTHENIA_DEMONSTRATION_VERSION} drives the ordinary controls through the real engine to handoff. Both are built on the fact the scenario states outright: preserved saturation and near-normal carbon dioxide do not establish respiratory or bulbar safety. A room-air saturation of 97% and a PaCO2 of 41 are what this looks like shortly before it stops looking like anything, because neuromuscular failure holds its oxygenation until it does not and hypercapnia here is a late sign rather than a warning. Both also refuse the other shortcut the scenario forbids — no one vital capacity, inspiratory pressure, word count or gas value is a universal isolated threshold — so what carries the decision is the trajectory from 2.4 to 1.4 litres alongside a bulbar picture that cannot protect an airway. The pooled secretions and barely effective cough are kept as an emergency separate from the ventilation, because one is about protecting and the other about ventilating. The chest is the trigger rather than the problem, and the radiograph cannot say whether the opacity is infection or aspiration. The ending notes what the saturation did the whole way down. A test asserts nothing anywhere measures mechanics, takes a gas, proves the trigger, or performs an airway. tests/unit/myasthenic-crisis-escalation-demonstration.test.ts and tests/ui/neurology-myasthenic-crisis-escalation.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding.`] },
+    { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending.'] },
+    { id: 'report-control-coverage', status: 'missing', evidence: ['The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound.'] },
+  ];
+}

@@ -43,6 +43,7 @@ import { cerebellarIchCompletionEvidence } from '../../neurology/spontaneous-cer
 import { asahCompletionEvidence } from '../../neurology/aneurysmal-subarachnoid-hemorrhage-deterioration-completion';
 import { focalMotorStatusCompletionEvidence } from '../../neurology/focal-motor-status-epilepticus-escalation-completion';
 import { ncseCompletionEvidence } from '../../neurology/nonconvulsive-status-epilepticus-recognition-completion';
+import { myastheniaCompletionEvidence } from '../../neurology/myasthenic-crisis-escalation-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -225,6 +226,7 @@ export function auditClinicalScenario(
     ...asahCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...focalMotorStatusCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...ncseCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...myastheniaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),
