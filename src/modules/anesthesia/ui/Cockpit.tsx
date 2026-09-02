@@ -179,6 +179,8 @@ import { useMaternalSepsisDemonstration } from '../../obstetrics/demo/useMaterna
 import { supportsMaternalSepsisDemonstration } from '../../obstetrics/demo/maternal-sepsis-postpartum-deterioration-demonstration';
 import { useConcealedAbruptionDemonstration } from '../../obstetrics/demo/useConcealedAbruptionDemonstration';
 import { supportsConcealedAbruptionDemonstration } from '../../obstetrics/demo/concealed-placental-abruption-hemorrhage-demonstration';
+import { usePostpartumPreeclampsiaDemonstration } from '../../obstetrics/demo/usePostpartumPreeclampsiaDemonstration';
+import { supportsPostpartumPreeclampsiaDemonstration } from '../../obstetrics/demo/postpartum-severe-preeclampsia-warning-signs-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -420,6 +422,7 @@ export function Cockpit({
   const atonyDemoSupported = supportsAtonyDemonstration(scenario);
   const maternalSepsisDemoSupported = supportsMaternalSepsisDemonstration(scenario);
   const concealedAbruptionDemoSupported = supportsConcealedAbruptionDemonstration(scenario);
+  const postpartumPreeclampsiaDemoSupported = supportsPostpartumPreeclampsiaDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -489,6 +492,7 @@ export function Cockpit({
     || atonyDemoSupported
     || maternalSepsisDemoSupported
     || concealedAbruptionDemoSupported
+    || postpartumPreeclampsiaDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -640,6 +644,12 @@ export function Cockpit({
     active: demonstrating && termTransitionDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.neonatologyTermTransitionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const postpartumPreeclampsiaDemonstration = usePostpartumPreeclampsiaDemonstration({
+    active: demonstrating && postpartumPreeclampsiaDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.obstetricsPostpartumPreeclampsiaAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const concealedAbruptionDemonstration = useConcealedAbruptionDemonstration({
@@ -1033,6 +1043,7 @@ export function Cockpit({
     : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
+    : postpartumPreeclampsiaDemoSupported ? postpartumPreeclampsiaDemonstration
     : concealedAbruptionDemoSupported ? concealedAbruptionDemonstration
     : maternalSepsisDemoSupported ? maternalSepsisDemonstration
     : atonyDemoSupported ? atonyDemonstration
@@ -1860,6 +1871,8 @@ export function Cockpit({
           obstetricsMaternalSepsisDemonstrating={demonstrating && maternalSepsisDemoSupported}
           obstetricsConcealedAbruptionGuidance={session.guidance}
           obstetricsConcealedAbruptionDemonstrating={demonstrating && concealedAbruptionDemoSupported}
+          obstetricsPostpartumPreeclampsiaGuidance={session.guidance}
+          obstetricsPostpartumPreeclampsiaDemonstrating={demonstrating && postpartumPreeclampsiaDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

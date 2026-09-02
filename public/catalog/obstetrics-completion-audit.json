@@ -425,23 +425,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "postpartum-severe-preeclampsia-warning-signs-fixtures.ts binds seed 7146 and content 0.1.0 to expert, evidence-before-the-call error, recovery, and no-action paths. Her reported symptoms, the two qualified pressures, the supplied laboratory report, and the fixed later report are authored constants; no pressure, antihypertensive, magnesium or organ-recovery model is claimed, and no outcome follows from any choice. tests/integration/postpartum-severe-preeclampsia-warning-signs-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock, two of them time-gated: the fixed later report refuses until simulated time has passed since the evidence review, and the handoff refuses until time has passed since that. What moves is the pressure and the intensity of her symptoms; what does not move is the pending urine ratio and hemolysis evaluation, the organ risk, or the question of which cause this is."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions start from her own four-hour account rather than the monitor, name the emergency on two properly obtained severe-range readings without waiting for proteinuria and without closing hemorrhage, infection, thrombotic microangiopathy, a vascular event or a medication effect, start the protocol and the qualified response now with cause evaluation running in parallel rather than first, read the supplied neurologic, pulmonary, hematologic, renal, hepatic, medication and competing-cause evidence as severe features rather than a pending workup, review the fixed later report, and hand off unresolved risk. Order is enforced rather than suggested, and refusal names the missing step. The lesson measures no pressure, selects no cuff, interviews and examines nobody, assesses no reflexes or urine, acquires or interprets no laboratory or imaging, calculates no score or ratio, excludes nothing, and selects no antihypertensive, magnesium, dose, rate, target, route, access, oxygen, fluid, diuretic, seizure or airway care, feeding plan, transfer, disposition or follow-up."
           ]
         },
         {
@@ -453,23 +453,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at unresolved-risk handoff. Later actions cannot restart an ended branch, and the ending certifies no treatment effect, no durable pressure control, no symptom resolution, no excluded seizure, no organ recovery, no safety disposition, no predicted fertility outcome, and no maternal, newborn or other outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps; unassisted is silent and coached withholds the single non-urgent beat. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff. Both start from what she has been saying for four hours rather than from the monitor, and both refuse the wait: two correctly obtained severe-range pressures fifteen minutes apart are the whole trigger, the clock to treatment runs sixty minutes from the first of them, and proteinuria is neither required to recognize preeclampsia with severe features nor able to settle it either way — the symptoms and the organ evidence already are the severe features. The cause work runs beside the protocol rather than before it, and nothing about the parallel work is allowed to move the treatment later. Both refuse the reassurance of a woman who is alert, conversant and holding a six-day-old, and both read platelets of 88, transaminases at twice the local ceiling and a nearly doubled creatinine as four organs speaking at once. The ending gives back 152/98 — out of the severe range, still hypertensive, and no evidence of durable control, a target or a treatment effect — alongside the prompt follow-up this diagnosis specifically requires. A test asserts nothing anywhere measures a pressure, interviews or examines her, acquires or reads a laboratory value, or selects an antihypertensive or magnesium. tests/unit/postpartum-severe-preeclampsia-warning-signs-demonstration.test.ts and tests/ui/obstetrics-postpartum-severe-preeclampsia-warning-signs.test.tsx verify observed response, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. Refused out-of-order attempts stay visible in the transcript after a correct recovery, which is the authored counterfactual: the same run that went to read the organ evidence before calling it can still reach a correct handoff."
           ]
         },
         {
@@ -488,23 +488,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "postpartum-severe-preeclampsia-warning-signs-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways to seed 7146 for deterministic replay through the shared engine, including the two time-gated checkpoints."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
