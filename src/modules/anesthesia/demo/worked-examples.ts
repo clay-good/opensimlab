@@ -106,6 +106,7 @@ import { supportsOxytocinTachysystoleDemonstration } from '../../obstetrics/demo
 import { supportsAcuteSevereAsthmaDemonstration } from '../../respiratory-medicine/demo/acute-severe-asthma-demonstration';
 import { supportsCopdTransitionDemonstration } from '../../respiratory-medicine/demo/copd-exacerbation-transition-reassessment-demonstration';
 import { supportsCapHypoxemiaDemonstration } from '../../respiratory-medicine/demo/community-acquired-pneumonia-hypoxemia-reassessment-demonstration';
+import { supportsPostPeDyspneaDemonstration } from '../../respiratory-medicine/demo/post-pulmonary-embolism-persistent-dyspnea-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -247,6 +248,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsAcuteSevereAsthmaDemonstration,
     supportsCopdTransitionDemonstration,
     supportsCapHypoxemiaDemonstration,
+    supportsPostPeDyspneaDemonstration,
   ],
 };
 

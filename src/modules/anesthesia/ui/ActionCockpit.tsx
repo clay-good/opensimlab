@@ -168,6 +168,7 @@ import { oxytocinTachysystoleInlinePrompt } from '../../obstetrics/tutor/oxytoci
 import { acuteSevereAsthmaInlinePrompt } from '../../respiratory-medicine/tutor/acute-severe-asthma-guidance';
 import { copdTransitionInlinePrompt } from '../../respiratory-medicine/tutor/copd-exacerbation-transition-reassessment-guidance';
 import { capHypoxemiaInlinePrompt } from '../../respiratory-medicine/tutor/community-acquired-pneumonia-hypoxemia-reassessment-guidance';
+import { postPeDyspneaInlinePrompt } from '../../respiratory-medicine/tutor/post-pulmonary-embolism-persistent-dyspnea-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2905,6 +2906,7 @@ export interface ActionCockpitProps {
   readonly acuteSevereAsthmaGuidance?: GuidanceLevel;
   readonly copdTransitionGuidance?: GuidanceLevel;
   readonly capHypoxemiaGuidance?: GuidanceLevel;
+  readonly postPeDyspneaGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3022,6 +3024,7 @@ export interface ActionCockpitProps {
   readonly acuteSevereAsthmaDemonstrating?: boolean;
   readonly copdTransitionDemonstrating?: boolean;
   readonly capHypoxemiaDemonstrating?: boolean;
+  readonly postPeDyspneaDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5592,6 +5595,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasPostPeDyspneaResponse && (
               <PostPeDyspneaTray assessment={props.resuscitation.postPeDyspneaAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.postPeDyspneaGuidance}
+                demonstrating={props.postPeDyspneaDemonstrating}
                 onAction={props.onPostPeDyspneaResponse ?? (() => {})} />
             )}
             {hasApeSupportResponse && (
@@ -10737,25 +10743,35 @@ function CapHypoxemiaTray({ assessment, scenarioVersion, onAction, guidance = 'u
   </div>;
 }
 
-function PostPeDyspneaTray({ assessment, onAction }: {
+function PostPeDyspneaTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['postPeDyspneaAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onPostPeDyspneaResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = postPeDyspneaInlinePrompt(guidance, { scenarioVersion, postPeDyspnea: assessment });
+  const act = demonstrating ? undefined : onAction;
   const trajectory = assessment?.trajectoryAtTick != null;
   const safety = assessment?.safetyAtTick != null;
   const evidence = assessment?.evidenceAtTick != null;
   const referral = assessment?.referralAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="post-pe-dyspnea-trajectory-title">
       <div id="post-pe-dyspnea-trajectory-title" className="syringe__name">Recovery deserves a real comparison.</div>
       <Badge kind="teaching">4 months · 2 miles before · 150 m now</Badge>
       <div className="syringe__meta">course · anticoagulation · rest · exertion · warnings</div>
       <p className="syringe__remaining" role="status">{evidence ? 'Persistent limitation + fixed evidence reviewed' : safety ? 'Current safety held · review what may explain the limit' : trajectory ? 'Trajectory reconciled · review function + warning signs' : 'Start with life before and after the embolism'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={trajectory} onClick={() => onAction('reconcile-post-pe-symptoms-and-anticoagulation-course')}>Reconcile course + symptoms</Button>
-        <Button className="crisis-drug__action" disabled={!trajectory || safety} onClick={() => onAction('review-post-pe-functional-limitation-and-current-safety')}>Review function + current safety</Button>
-        <Button className="crisis-drug__action" disabled={!safety || evidence} onClick={() => onAction('review-post-pe-ctepd-evidence-and-alternatives')}>Review evidence + open causes</Button>
+        <Button className="crisis-drug__action" disabled={trajectory} aria-disabled={demonstrating} onClick={act ? () => act('reconcile-post-pe-symptoms-and-anticoagulation-course') : undefined}>Reconcile course + symptoms</Button>
+        <Button className="crisis-drug__action" disabled={!trajectory || safety} aria-disabled={demonstrating} onClick={act ? () => act('review-post-pe-functional-limitation-and-current-safety') : undefined}>Review function + current safety</Button>
+        <Button className="crisis-drug__action" disabled={!safety || evidence} aria-disabled={demonstrating} onClick={act ? () => act('review-post-pe-ctepd-evidence-and-alternatives') : undefined}>Review evidence + open causes</Button>
       </div>
       <p className="field__hint">The treatment record, walk, echo, and perfusion reports are authored. Persistent symptoms justify evaluation; no single report makes a CTEPD or CTEPH diagnosis.</p>
     </section>
@@ -10765,8 +10781,8 @@ function PostPeDyspneaTray({ assessment, onAction }: {
       <div className="syringe__meta">named results · open diagnosis · urgent triggers</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Persistent symptoms + unresolved evaluation handed off' : referral ? 'Expert pathway active · advance time before handoff' : evidence ? 'Concern is clear · connect the expert pathway' : 'Complete the symptom and evidence review first'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={!evidence || referral} onClick={() => onAction('activate-post-pe-pulmonary-vascular-referral')}>Coordinate expert evaluation</Button>
-        <Button className="crisis-drug__action" disabled={!referral || handoff} onClick={() => onAction('handoff-post-pe-persistent-dyspnea-reassessment')}>Hand off unresolved post-PE work</Button>
+        <Button className="crisis-drug__action" disabled={!evidence || referral} aria-disabled={demonstrating} onClick={act ? () => act('activate-post-pe-pulmonary-vascular-referral') : undefined}>Coordinate expert evaluation</Button>
+        <Button className="crisis-drug__action" disabled={!referral || handoff} aria-disabled={demonstrating} onClick={act ? () => act('handoff-post-pe-persistent-dyspnea-reassessment') : undefined}>Hand off unresolved post-PE work</Button>
       </div>
       <p className="field__hint">No anticoagulant, dose, duration, oxygen, rehabilitation, pulmonary-hypertension therapy, surgery, balloon procedure, operability decision, disposition, prognosis, or outcome is chosen.</p>
     </section>

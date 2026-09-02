@@ -16,7 +16,7 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "ad7f84765c6a95ca63d8c54a1872968ac94ad7c799e7013da3bc7df57becf9a4"
+        "sha256": "1672c37cb735fe757771a0d79b682c32ba8864f1f4705f6b65839ffc714aacdb"
       },
       {
         "path": "src/modules/anesthesia/engine.ts",
@@ -221,7 +221,7 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "ad7f84765c6a95ca63d8c54a1872968ac94ad7c799e7013da3bc7df57becf9a4"
+        "sha256": "1672c37cb735fe757771a0d79b682c32ba8864f1f4705f6b65839ffc714aacdb"
       },
       {
         "path": "src/modules/anesthesia/demo/useObservedDemonstration.ts",
@@ -241,11 +241,11 @@
       },
       {
         "path": "src/modules/anesthesia/ui/ActionCockpit.tsx",
-        "sha256": "acf50d7af12f9ee3a5542949182e2c8ce04a6345abb194ca9c74aab21de29ce9"
+        "sha256": "92ec68694a65d28506f75d7208a1c6e9d973bfde920d96db7c058d72652506ec"
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "8f3b748eff1190dcd886f911917a63727e86253ccf6258ad06e51c372fa99374"
+        "sha256": "b2aabe5a88e84c897706c69e0935ab231ca2ca9fab5916fe2c1e99ab8192df10"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
@@ -482,7 +482,7 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "ad7f84765c6a95ca63d8c54a1872968ac94ad7c799e7013da3bc7df57becf9a4"
+        "sha256": "1672c37cb735fe757771a0d79b682c32ba8864f1f4705f6b65839ffc714aacdb"
       },
       {
         "path": "src/modules/anesthesia/demo/useDemonstration.ts",
@@ -502,11 +502,11 @@
       },
       {
         "path": "src/modules/anesthesia/ui/ActionCockpit.tsx",
-        "sha256": "acf50d7af12f9ee3a5542949182e2c8ce04a6345abb194ca9c74aab21de29ce9"
+        "sha256": "92ec68694a65d28506f75d7208a1c6e9d973bfde920d96db7c058d72652506ec"
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "8f3b748eff1190dcd886f911917a63727e86253ccf6258ad06e51c372fa99374"
+        "sha256": "b2aabe5a88e84c897706c69e0935ab231ca2ca9fab5916fe2c1e99ab8192df10"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
