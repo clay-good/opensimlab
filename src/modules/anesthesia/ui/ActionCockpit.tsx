@@ -144,6 +144,7 @@ import { ncseInlinePrompt } from '../../neurology/tutor/nonconvulsive-status-epi
 import { myastheniaInlinePrompt } from '../../neurology/tutor/myasthenic-crisis-escalation-guidance';
 import { gbsInlinePrompt } from '../../neurology/tutor/guillain-barre-respiratory-decline-guidance';
 import { meningitisInlinePrompt } from '../../neurology/tutor/acute-bacterial-meningitis-first-hour-guidance';
+import { encephalitisInlinePrompt } from '../../neurology/tutor/suspected-herpes-simplex-encephalitis-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2857,6 +2858,7 @@ export interface ActionCockpitProps {
   readonly neurologyMyastheniaGuidance?: GuidanceLevel;
   readonly neurologyGbsGuidance?: GuidanceLevel;
   readonly neurologyMeningitisGuidance?: GuidanceLevel;
+  readonly neurologyEncephalitisGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -2950,6 +2952,7 @@ export interface ActionCockpitProps {
   readonly neurologyMyastheniaDemonstrating?: boolean;
   readonly neurologyGbsDemonstrating?: boolean;
   readonly neurologyMeningitisDemonstrating?: boolean;
+  readonly neurologyEncephalitisDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5718,6 +5721,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNeurologyEncephalitisResponse && (
               <NeurologyEncephalitisTray
                 assessment={props.resuscitation.neurologyEncephalitisAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.neurologyEncephalitisGuidance}
+                demonstrating={props.neurologyEncephalitisDemonstrating}
                 onAction={props.onNeurologyEncephalitisResponse ?? (() => {})} />
             )}
             {hasNeurologyRaisedIcpResponse && (
@@ -12530,10 +12536,15 @@ function NeurologyMeningitisTray({ assessment, scenarioVersion, onAction, guidan
   </div>;
 }
 
-function NeurologyEncephalitisTray({ assessment, onAction }: {
+function NeurologyEncephalitisTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['neurologyEncephalitisAssessment']>;
+  scenarioVersion: string;
   onAction: NonNullable<ActionCockpitProps['onNeurologyEncephalitisResponse']>;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = encephalitisInlinePrompt(guidance, { scenarioVersion, encephalitis: assessment });
+  const act = demonstrating ? undefined : onAction;
   const trajectory = assessment?.trajectoryAtTick != null;
   const ownership = assessment?.ownershipAtTick != null;
   const treatment = assessment?.treatmentAtTick != null;
@@ -12541,22 +12552,27 @@ function NeurologyEncephalitisTray({ assessment, onAction }: {
   const later = assessment?.laterAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="neurology-encephalitis-early-title">
       <div id="neurology-encephalitis-early-title" className="syringe__name">The brain changed first.</div>
       <p className="syringe__remaining">Fever with new memory, language, behavior, and focal-seizure change needs parallel ownership and care.</p>
       <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neurology-encephalitis-clock-cognition-language-focal-seizure-and-whole-patient')}>Review encephalitic trajectory</Button>}
-        {trajectory && !ownership && <Button className="crisis-drug__action" onClick={() => onAction('activate-neurology-encephalitis-qualified-neurocritical-infection-airway-and-seizure-ownership')}>Activate brain + infection owners</Button>}
-        {ownership && !treatment && <Button className="crisis-drug__action" onClick={() => onAction('activate-neurology-encephalitis-qualified-immediate-empiric-antiviral-pathway-without-test-delay')}>Activate early antiviral care</Button>}
-        {treatment && !diagnostics && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-encephalitis-mri-eeg-csf-etiology-and-nonconvulsive-seizure-boundary')}>Review MRI + EEG + CSF</Button>}
+        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-neurology-encephalitis-clock-cognition-language-focal-seizure-and-whole-patient') : undefined}>Review encephalitic trajectory</Button>}
+        {trajectory && !ownership && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-neurology-encephalitis-qualified-neurocritical-infection-airway-and-seizure-ownership') : undefined}>Activate brain + infection owners</Button>}
+        {ownership && !treatment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-neurology-encephalitis-qualified-immediate-empiric-antiviral-pathway-without-test-delay') : undefined}>Activate early antiviral care</Button>}
+        {treatment && !diagnostics && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-neurology-encephalitis-mri-eeg-csf-etiology-and-nonconvulsive-seizure-boundary') : undefined}>Review MRI + EEG + CSF</Button>}
       </div>
     </section>
     <section className="syringe" aria-labelledby="neurology-encephalitis-later-title">
       <div id="neurology-encephalitis-later-title" className="syringe__name">One negative is not the end.</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Repeat testing, treatment safety, seizures, autoimmune causes, cognition, and outcome uncertainty handed off.' : later ? 'The localized pattern remains compatible despite an early negative HSV PCR. Risk stays open.' : diagnostics ? 'Qualified early care and diagnostics are active. Review the fixed 4-hour report after time passes.' : 'Complete trajectory, ownership, care, and diagnostic boundaries before reassessment.'}</p>
       <div className="crisis-drug__actions">
-        {diagnostics && !later && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-encephalitis-strict-later-early-negative-hsv-pcr-and-clinical-trajectory')}>Review the 4-hour report</Button>}
-        {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-encephalitis-repeat-testing-antiviral-seizure-autoimmune-and-active-risk')}>Hand off repeat testing + risk</Button>}
+        {diagnostics && !later && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-neurology-encephalitis-strict-later-early-negative-hsv-pcr-and-clinical-trajectory') : undefined}>Review the 4-hour report</Button>}
+        {later && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-neurology-encephalitis-repeat-testing-antiviral-seizure-autoimmune-and-active-risk') : undefined}>Hand off repeat testing + risk</Button>}
       </div>
     </section>
   </>;
