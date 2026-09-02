@@ -255,6 +255,8 @@ import { usePediatricFebrileSeizureDemonstration } from '../../pediatrics/demo/u
 import { supportsPediatricFebrileSeizureDemonstration } from '../../pediatrics/demo/pediatric-febrile-seizure-demonstration';
 import { usePediatricStatusEpilepticusDemonstration } from '../../pediatrics/demo/usePediatricStatusEpilepticusDemonstration';
 import { supportsPediatricStatusEpilepticusDemonstration } from '../../pediatrics/demo/pediatric-status-epilepticus-demonstration';
+import { usePediatricAnaphylaxisDemonstration } from '../../pediatrics/demo/usePediatricAnaphylaxisDemonstration';
+import { supportsPediatricAnaphylaxisDemonstration } from '../../pediatrics/demo/pediatric-anaphylaxis-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -534,6 +536,7 @@ export function Cockpit({
   const pediatricHypoglycemicSeizureDemoSupported = supportsPediatricHypoglycemicSeizureDemonstration(scenario);
   const pediatricFebrileSeizureDemoSupported = supportsPediatricFebrileSeizureDemonstration(scenario);
   const pediatricStatusEpilepticusDemoSupported = supportsPediatricStatusEpilepticusDemonstration(scenario);
+  const pediatricAnaphylaxisDemoSupported = supportsPediatricAnaphylaxisDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -641,6 +644,7 @@ export function Cockpit({
     || pediatricHypoglycemicSeizureDemoSupported
     || pediatricFebrileSeizureDemoSupported
     || pediatricStatusEpilepticusDemoSupported
+    || pediatricAnaphylaxisDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -804,6 +808,12 @@ export function Cockpit({
     active: demonstrating && pediatricStatusAsthmaticusDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.pediatricStatusAsthmaticusAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const pediatricAnaphylaxisDemonstration = usePediatricAnaphylaxisDemonstration({
+    active: demonstrating && pediatricAnaphylaxisDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.pediatricAnaphylaxisAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const pediatricStatusEpilepticusDemonstration = usePediatricStatusEpilepticusDemonstration({
@@ -1431,6 +1441,7 @@ export function Cockpit({
     : pediatricHypoglycemicSeizureDemoSupported ? pediatricHypoglycemicSeizureDemonstration
     : pediatricFebrileSeizureDemoSupported ? pediatricFebrileSeizureDemonstration
     : pediatricStatusEpilepticusDemoSupported ? pediatricStatusEpilepticusDemonstration
+    : pediatricAnaphylaxisDemoSupported ? pediatricAnaphylaxisDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2354,6 +2365,8 @@ export function Cockpit({
           pediatricFebrileSeizureDemonstrating={demonstrating && pediatricFebrileSeizureDemoSupported}
           pediatricStatusEpilepticusGuidance={session.guidance}
           pediatricStatusEpilepticusDemonstrating={demonstrating && pediatricStatusEpilepticusDemoSupported}
+          pediatricAnaphylaxisGuidance={session.guidance}
+          pediatricAnaphylaxisDemonstrating={demonstrating && pediatricAnaphylaxisDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

@@ -1428,28 +1428,28 @@
           "id": "observable-objectives",
           "status": "missing",
           "evidence": [
-            "This scenario declares 6 objectives; the contract allows at most 5."
+            "Six declared objectives exceed the five the shared catalog counts as independently observable within one session."
           ]
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "pediatric-anaphylaxis-fixtures.ts binds seed 6832 and content 0.1.0 to expert, review-before-the-dose error, recovery, and no-action paths. The witnessed sting with species and trigger unconfirmed, the mild asthma and absent prior anaphylaxis, the multisystem onset within minutes, the minute-10 findings with MAP 54, refill 4 seconds and 91% on supplied oxygen, the qualified responder record including flat positioning and one appropriate intramuscular dose at minute 5 with product and technique deliberately not shown, the authored absences including no hives and no swelling, and the fixed minute-18 report are authored constants; no allergic, epinephrine-response or outcome model is claimed, and no outcome follows from any choice. tests/integration/pediatric-anaphylaxis-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The lesson advances through six recorded steps on the shared simulation clock as a strict line, which is the one place this lesson differs structurally from the six unordered-pair lessons elsewhere in the module. The broader airway, asthma, cause and refractory review refuses until qualified repeat first-line ownership is recorded — the ordering is the argument rather than an implementation detail, since the interval between doses is the treatment. Two time gates follow, on the later report and on the handoff. This engine case authors no refusable choice; what it refuses is order and time."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions reconcile the reported exposure, the qualified first-line record including flat positioning, and the persistent whole-child compromise; recognize sudden multisystem involvement after a plausible exposure as the pattern, with the absent skin findings named as a known presentation rather than as an argument against; activate qualified repeat first-line and resuscitation ownership before anything broader; review airway, asthma overlap, open causes, circulation and the refractory boundary; review the strictly later fixed report; and hand off. The lesson examines and monitors nobody, scores no criteria, confirms no diagnosis or trigger, verifies or selects no product, concentration, dose, route, device, injection, access, oxygen interface or flow, fluid type, volume or rate, bronchodilator, antihistamine, corticosteroid, infusion, vasopressor, airway device or procedure, performs no positioning, trigger removal or CPR, orders no tryptase or allergy test, and determines no observation duration, prescription, training, referral, disposition, prognosis, recurrence or outcome."
           ]
         },
         {
@@ -1461,23 +1461,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at handoff on a child speaking in short sentences, still on oxygen and still wheezing, with the trigger unconfirmed. Later actions cannot restart an ended branch, and the ending certifies no learner examination, monitoring, test or exposure verification, no learner diagnosis or classification, no learner-selected product, dose, route or device, no finally proven anaphylaxis, no confirmed trigger, no proven treatment effect, no resolved airway risk, no resolved shock, no excluded refractory course, no excluded biphasic reaction, no excluded recurrence, no durable recovery, no discharge readiness, no determined disposition, and no outcome."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps. There is no wrong-turn prose because the engine authors no refusable choice, and no unordered-pair prose because there is no pair. What the tutor has to hold instead is a child in anaphylaxis with no rash. The opening beat says so first — do not let the absent hives be the finding you weigh most — and notes the flat positioning deliberately, because standing a child up in this state is its own harm. The recognition beat gives the pattern as sudden onset, more than one system, plausible exposure, and names the absent skin findings as a known presentation and one of the reasons the diagnosis gets missed. The first-line beat says why the ordering exists: the interval is the treatment, so the second dose comes before the broader review rather than after it. The safety beat names the asthma trap, since wheeze in a child with asthma invites the comfortable explanation and both can be true at once. The later beat treats improvement after epinephrine as where this diagnosis is most dangerous, and ends on the two facts that keep him in the department — still on oxygen, still wheezing. Worked example 0.1.0 drives the ordinary controls through the real engine to handoff, and its narration is generated from the tutor's own prose so the two cannot drift apart. A test asserts nothing anywhere examines him, verifies the exposure, positions him, or selects a product, concentration, dose, route, device or fluid, and that the autoinjector conversation is attributed to a prescriber rather than to the learner. tests/unit/pediatric-anaphylaxis-demonstration.test.ts verifies observed response and every beat against the real engine, including that the improving minute-18 report never flips anaphylaxisFinallyProven, triggerConfirmed, airwayRiskResolved, shockResolved, refractoryAnaphylaxisExcluded, biphasicReactionExcluded or recurrenceExcluded, and tests/ui/pediatrics-anaphylaxis.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. The counterfactual is exactly what the engine ordering exists to refuse: the common-error path recognizes the pattern correctly and then reaches for the airway, asthma and cause review while the child is still compromised and the second dose has no owner, meeting two of six. The recovery path takes that refusal, corrects it, and walks into both time gates before clearing them, and still reaches a correct handoff from the same positions."
           ]
         },
         {
@@ -1496,23 +1496,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "pediatric-anaphylaxis-fixtures.ts binds exact-content expert, review-before-the-dose error, recovery, and no-action pathways to seed 6832 for deterministic replay through the shared engine, including both order refusals and both time gates."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

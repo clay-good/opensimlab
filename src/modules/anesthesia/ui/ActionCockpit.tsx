@@ -191,6 +191,7 @@ import { pediatricDkaInlinePrompt } from '../../pediatrics/tutor/pediatric-dka-g
 import { pediatricHypoglycemicSeizureInlinePrompt } from '../../pediatrics/tutor/pediatric-hypoglycemic-seizure-guidance';
 import { pediatricFebrileSeizureInlinePrompt } from '../../pediatrics/tutor/pediatric-febrile-seizure-guidance';
 import { pediatricStatusEpilepticusInlinePrompt } from '../../pediatrics/tutor/pediatric-status-epilepticus-guidance';
+import { pediatricAnaphylaxisInlinePrompt } from '../../pediatrics/tutor/pediatric-anaphylaxis-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2951,6 +2952,7 @@ export interface ActionCockpitProps {
   readonly pediatricHypoglycemicSeizureGuidance?: GuidanceLevel;
   readonly pediatricFebrileSeizureGuidance?: GuidanceLevel;
   readonly pediatricStatusEpilepticusGuidance?: GuidanceLevel;
+  readonly pediatricAnaphylaxisGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3091,6 +3093,7 @@ export interface ActionCockpitProps {
   readonly pediatricHypoglycemicSeizureDemonstrating?: boolean;
   readonly pediatricFebrileSeizureDemonstrating?: boolean;
   readonly pediatricStatusEpilepticusDemonstrating?: boolean;
+  readonly pediatricAnaphylaxisDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5840,6 +5843,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasPediatricAnaphylaxisResponse && (
               <PediatricAnaphylaxisTray
                 assessment={props.resuscitation.pediatricAnaphylaxisAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.pediatricAnaphylaxisGuidance}
+                demonstrating={props.pediatricAnaphylaxisDemonstrating}
                 onAction={props.onPediatricAnaphylaxisResponse ?? (() => {})} />
             )}
             {hasPediatricSupraventricularTachycardiaResponse && (
@@ -12416,8 +12422,11 @@ function PediatricStatusEpilepticusTray({ assessment, scenarioVersion, guidance 
   </div>;
 }
 
-function PediatricAnaphylaxisTray({ assessment, onAction }: {
+function PediatricAnaphylaxisTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricAnaphylaxisAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onPediatricAnaphylaxisResponse']>;
 }) {
   const trajectory = assessment?.trajectoryAtTick != null;
@@ -12426,7 +12435,17 @@ function PediatricAnaphylaxisTray({ assessment, onAction }: {
   const safety = assessment?.safetyAtTick != null;
   const later = assessment?.laterResponseAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : pediatricAnaphylaxisInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-anaphylaxis-pattern-title">
       <div id="pediatric-anaphylaxis-pattern-title" className="syringe__name">See the whole allergic pattern.</div>
       <Badge kind="teaching">exposure · airway · breathing · gut · perfusion</Badge>
@@ -12440,13 +12459,13 @@ function PediatricAnaphylaxisTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {!trajectory && <Button className="crisis-drug__action"
-          onClick={() => onAction('reconcile-pediatric-anaphylaxis-exposure-care-and-whole-child')}>Review exposure + whole-child trajectory</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('reconcile-pediatric-anaphylaxis-exposure-care-and-whole-child') : undefined}>Review exposure + whole-child trajectory</Button>}
         {trajectory && !recognition && <Button className="crisis-drug__action"
-          onClick={() => onAction('recognize-pediatric-anaphylaxis-persistent-abc-compromise')}>Recognize persistent ABC compromise</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('recognize-pediatric-anaphylaxis-persistent-abc-compromise') : undefined}>Recognize persistent ABC compromise</Button>}
         {recognition && !rescue && <Button className="crisis-drug__action"
-          onClick={() => onAction('activate-pediatric-anaphylaxis-qualified-repeat-first-line-and-resuscitation-ownership')}>Activate qualified anaphylaxis rescue</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('activate-pediatric-anaphylaxis-qualified-repeat-first-line-and-resuscitation-ownership') : undefined}>Activate qualified anaphylaxis rescue</Button>}
         {rescue && !safety && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-pediatric-anaphylaxis-airway-asthma-causes-and-refractory-boundary')}>Review airway + asthma + causes</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-anaphylaxis-airway-asthma-causes-and-refractory-boundary') : undefined}>Review airway + asthma + causes</Button>}
       </div>
       <p className="field__hint">Experienced pediatric, allergy, nursing, pharmacy, and airway-capable teams own first-line medicine, circulation and airway support, monitoring, access, devices, cause review, and escalation. This surface exposes no learner product, drug, dose, route, interval, device, procedure, or treatment control.</p>
     </section>
@@ -12463,12 +12482,13 @@ function PediatricAnaphylaxisTray({ assessment, onAction }: {
       </p>
       <div className="syringe__presets">
         {safety && !later && <Button className="crisis-drug__action"
-          onClick={() => onAction('review-pediatric-anaphylaxis-later-response')}>Review the minute-18 response</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('review-pediatric-anaphylaxis-later-response') : undefined}>Review the minute-18 response</Button>}
         {later && !handoff && <Button className="crisis-drug__action"
-          onClick={() => onAction('handoff-pediatric-anaphylaxis-observation-allergy-and-caregiver-risk')}>Hand off active anaphylaxis risk</Button>}
+          aria-disabled={demonstrating} onClick={act ? () => act('handoff-pediatric-anaphylaxis-observation-allergy-and-caregiver-risk') : undefined}>Hand off active anaphylaxis risk</Button>}
       </div>
       <p className="field__hint">Partial improvement does not prove treatment effect, trigger, durable airway or circulatory recovery, refractory-risk closure, recurrence exclusion, discharge readiness, or outcome.</p>
     </section>
+    </div>
   </div>;
 }
 
