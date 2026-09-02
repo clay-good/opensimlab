@@ -1055,9 +1055,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "symptomatic-bradycardia-fixtures.ts binds seed 4471 and content 0.1.0 to expert, one-lane-referral error, recovery, and no-action paths. The rhythm-change event, the three weeks of fatigue and exertional lightheadedness without syncope or rest symptoms, the fixed 12-lead report describing sinus bradycardia at 44/min with PR 178 ms and QRS 88 ms and no AV block or acute ischemic pattern, the physiology at 134/72 with 98% on room air, the completed ambulatory patch and diary aligning typical lightheadedness with sinus rates of 38-44/min without high-grade AV block, long pause, atrial fibrillation or ventricular arrhythmia, and the reviewable medication, endocrine, metabolic, sleep, ischemic, infectious, structural and physiologic context are authored constants; no sinus-node, chronotropic or medication-effect model is claimed, and no outcome follows from any choice. tests/integration/symptomatic-bradycardia-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -1069,9 +1069,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions reconcile the rate, pulse, chronic symptoms and current whole-patient stability without deciding anything by rate alone; review medication, endocrine, metabolic, sleep, ischemic, infectious, structural and physiologic context without inventing a cause or reflexively stopping a beta blocker; correlate the fixed ambulatory report and diary for temporal symptom-rhythm alignment and the rhythms it excludes; record individualized cardiology and electrophysiology pacing-evaluation and shared-decision intent; and record symptom tracking, an acute-change safety net, an owner and locally determined follow-up. The middle two are an unordered pair: the engine accepts either order and refuses the referral until both have landed, so a learner who reviews the record before the causes is not corrected for a sequence the lesson does not hold. The lesson examines nobody, acquires or interprets no ECG or monitor, diagnoses nothing, changes no medication, gives no atropine, oxygen or infusion, paces nothing, reaches no eligibility conclusion, selects, implants or programs no device, performs no procedure, determines no disposition, and predicts no recurrence, prognosis or outcome."
           ]
         },
         {
@@ -1083,23 +1083,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded handoff carrying symptom tracking, a named owner, locally determined follow-up, and explicit urgent triggers for syncope, hypotension, confusion, shock, ischemic discomfort, dyspnea or acute heart failure, worsening hypoxemia, poor perfusion or pulse loss. Later actions cannot restart an ended branch, and the ending certifies hemodynamicallyStable true, mechanismProven false and treatmentDelivered false — the patient leaves in the rhythm she arrived in, on the medication she arrived on, with the cause, the preference and the device questions written down as open rather than closed."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps — six rather than five because the unordered pair needs a beat for the state where neither lane has been taken, and that beat says out loud that the order is the learner's rather than naming one. The reflex the tutor works against throughout is the number: a rate of 44 decides nothing here, and the tutor says so at the stability beat by separating symptomatic from unstable, and again at the referral beat by refusing to let pacing be something a low rate earns. The context beat names the beta blocker as the thing a learner will want to stop and gives the two reasons not to — nobody has established it is the cause, and it may be treating something she needs treated — while distinguishing reviewing an indication from changing a prescription. The correlation beat is precise about how little the alignment establishes: not a diagnostic rate, not a diagnostic pause length, and not sinus-node dysfunction. The referral beat lists what the conversation contains and what it must not conclude. The handoff beat asks for a named owner and concrete acute-change triggers. Worked example 0.1.0 drives the ordinary controls through the real engine to the handoff, taking context before correlation as a choice rather than a rule, and its narration is generated from the tutor's own prose so the two cannot drift apart. A test asserts that no beat anywhere names a device, a rate threshold, a pause threshold, a medication change or a mechanism. tests/unit/symptomatic-bradycardia-demonstration.test.ts verifies both orderings and every beat against the real engine, and tests/ui/cardiology-symptomatic-bradycardia.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the one an unordered pair invites: the common-error path reconciles stability and correlates the record correctly, then reaches for the referral as though one review lane were the whole review, meeting two of five — the referral objective is lost because src/modules/anesthesia/ui/Debrief.tsx requires both lanes to precede it, and the context objective is lost because it never happened. The recovery path reviews context before establishing stability and is refused, takes the pair in the other order — which the engine accepts without comment — closes the plan before the referral exists and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -1118,23 +1118,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "symptomatic-bradycardia-fixtures.ts binds exact-content expert, one-lane-referral error, recovery, and no-action pathways to seed 4471 for deterministic replay through the shared engine, including the opening order refusal, the combined both-lanes refusal on the referral, and the handoff-before-referral refusal."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

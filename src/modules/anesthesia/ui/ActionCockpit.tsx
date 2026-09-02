@@ -204,6 +204,7 @@ import { afRvrInlinePrompt } from '../../cardiology/tutor/af-rvr-guidance';
 import { postInfarctionShockInlinePrompt } from '../../cardiology/tutor/post-infarction-shock-guidance';
 import { stableNarrowTachycardiaInlinePrompt } from '../../cardiology/tutor/stable-narrow-tachycardia-guidance';
 import { stableWideTachycardiaInlinePrompt } from '../../cardiology/tutor/stable-wide-tachycardia-guidance';
+import { symptomaticBradycardiaInlinePrompt } from '../../cardiology/tutor/symptomatic-bradycardia-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2977,6 +2978,7 @@ export interface ActionCockpitProps {
   readonly postInfarctionShockGuidance?: GuidanceLevel;
   readonly stableNarrowTachycardiaGuidance?: GuidanceLevel;
   readonly stableWideTachycardiaGuidance?: GuidanceLevel;
+  readonly symptomaticBradycardiaGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3130,6 +3132,7 @@ export interface ActionCockpitProps {
   readonly postInfarctionShockDemonstrating?: boolean;
   readonly stableNarrowTachycardiaDemonstrating?: boolean;
   readonly stableWideTachycardiaDemonstrating?: boolean;
+  readonly symptomaticBradycardiaDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5660,6 +5663,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasSymptomaticBradycardiaResponse && (
               <SymptomaticBradycardiaTray
                 assessment={props.resuscitation.symptomaticBradycardiaAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.symptomaticBradycardiaGuidance}
+                demonstrating={props.symptomaticBradycardiaDemonstrating}
                 onAction={props.onSymptomaticBradycardiaResponse ?? (() => {})} />
             )}
             {hasCompleteHeartBlockResponse && (
@@ -10541,8 +10547,11 @@ function StableWideTachycardiaTray({ assessment, scenarioVersion, guidance = 'un
   </div>;
 }
 
-function SymptomaticBradycardiaTray({ assessment, onAction }: {
+function SymptomaticBradycardiaTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['symptomaticBradycardiaAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onSymptomaticBradycardiaResponse']>;
 }) {
   const stability = assessment?.stabilityAtTick != null;
@@ -10550,15 +10559,25 @@ function SymptomaticBradycardiaTray({ assessment, onAction }: {
   const correlation = assessment?.correlationAtTick != null;
   const pacing = assessment?.pacingEvaluationAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : symptomaticBradycardiaInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="symptomatic-bradycardia-first-title">
       <div id="symptomatic-bradycardia-first-title" className="syringe__name">Slow rhythm. Match the symptom.</div>
       <Badge kind="teaching">stable now · symptom-rhythm correlation</Badge>
       <div className="syringe__meta">44/min sinus · BP 134/72 · warm + alert</div>
       <p className="syringe__remaining" role="status">{correlation ? 'Symptoms align with bradycardia · mechanism remains open' : stability ? 'Stable now · connect the episodes to the rhythm' : 'A slow number matters when it explains the patient'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={stability} onClick={() => onAction('reconcile-symptomatic-bradycardia-stability')}>Reconcile rate + stability</Button>
-        <Button className="crisis-drug__action" disabled={!stability || correlation} onClick={() => onAction('correlate-symptomatic-bradycardia-record')}>Review symptom-rhythm record</Button>
+        <Button className="crisis-drug__action" disabled={stability} aria-disabled={demonstrating} onClick={act ? () => act('reconcile-symptomatic-bradycardia-stability') : undefined}>Reconcile rate + stability</Button>
+        <Button className="crisis-drug__action" disabled={!stability || correlation} aria-disabled={demonstrating} onClick={act ? () => act('correlate-symptomatic-bradycardia-record') : undefined}>Review symptom-rhythm record</Button>
       </div>
       <p className="field__hint">There is no universal heart-rate or pause cutoff for pacing in sinus-node dysfunction. The temporal symptom link carries the decision.</p>
     </section>
@@ -10568,12 +10587,13 @@ function SymptomaticBradycardiaTray({ assessment, onAction }: {
       <div className="syringe__meta">reversible context · goals · pacing evaluation · safety net</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Plan owned · follow-up + acute-change triggers are clear' : pacing ? 'Pacing evaluation recorded · close the ownership loop' : context && correlation ? 'Both review lanes complete · shared plan ready' : context ? 'Context reviewed · symptom-rhythm record remains' : 'Correlation and context open the longitudinal plan'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={!stability || context} onClick={() => onAction('review-symptomatic-bradycardia-context')}>Review reversible context</Button>
-        <Button className="crisis-drug__action" disabled={!context || !correlation || pacing} onClick={() => onAction('record-symptomatic-bradycardia-pacing-evaluation')}>Record shared pacing evaluation</Button>
-        <Button className="crisis-drug__action" disabled={!pacing || handoff} onClick={() => onAction('handoff-symptomatic-bradycardia-plan')}>Record safety net + owner</Button>
+        <Button className="crisis-drug__action" disabled={!stability || context} aria-disabled={demonstrating} onClick={act ? () => act('review-symptomatic-bradycardia-context') : undefined}>Review reversible context</Button>
+        <Button className="crisis-drug__action" disabled={!context || !correlation || pacing} aria-disabled={demonstrating} onClick={act ? () => act('record-symptomatic-bradycardia-pacing-evaluation') : undefined}>Record shared pacing evaluation</Button>
+        <Button className="crisis-drug__action" disabled={!pacing || handoff} aria-disabled={demonstrating} onClick={act ? () => act('handoff-symptomatic-bradycardia-plan') : undefined}>Record safety net + owner</Button>
       </div>
       <p className="field__hint">Pacing is a shared clinical decision, not a reward for a low number. Acute compromise opens the emergency bradycardia pathway.</p>
     </section>
+    </div>
   </div>;
 }
 

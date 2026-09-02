@@ -142,6 +142,7 @@ import { supportsAfRvrDemonstration } from '../../cardiology/demo/af-rvr-demonst
 import { supportsPostInfarctionShockDemonstration } from '../../cardiology/demo/post-infarction-shock-demonstration';
 import { supportsStableNarrowTachycardiaDemonstration } from '../../cardiology/demo/stable-narrow-tachycardia-demonstration';
 import { supportsStableWideTachycardiaDemonstration } from '../../cardiology/demo/stable-wide-tachycardia-demonstration';
+import { supportsSymptomaticBradycardiaDemonstration } from '../../cardiology/demo/symptomatic-bradycardia-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -323,6 +324,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsPostInfarctionShockDemonstration,
     supportsStableNarrowTachycardiaDemonstration,
     supportsStableWideTachycardiaDemonstration,
+    supportsSymptomaticBradycardiaDemonstration,
   ],
 };
 
