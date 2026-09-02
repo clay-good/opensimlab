@@ -196,6 +196,7 @@ import { pediatricSvtInlinePrompt } from '../../pediatrics/tutor/pediatric-svt-g
 import { pediatricBradycardicArrestInlinePrompt } from '../../pediatrics/tutor/pediatric-bradycardic-arrest-guidance';
 import { pediatricFbaoInlinePrompt } from '../../pediatrics/tutor/pediatric-fbao-guidance';
 import { pediatricInjurySafeguardingInlinePrompt } from '../../pediatrics/tutor/pediatric-injury-safeguarding-guidance';
+import { stableChestPainInlinePrompt } from '../../cardiology/tutor/stable-chest-pain-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2961,6 +2962,7 @@ export interface ActionCockpitProps {
   readonly pediatricBradycardicArrestGuidance?: GuidanceLevel;
   readonly pediatricFbaoGuidance?: GuidanceLevel;
   readonly pediatricInjurySafeguardingGuidance?: GuidanceLevel;
+  readonly stableChestPainGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3106,6 +3108,7 @@ export interface ActionCockpitProps {
   readonly pediatricBradycardicArrestDemonstrating?: boolean;
   readonly pediatricFbaoDemonstrating?: boolean;
   readonly pediatricInjurySafeguardingDemonstrating?: boolean;
+  readonly stableChestPainDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5577,6 +5580,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasStableChestPainResponse && (
               <StableChestPainTray assessment={props.resuscitation.stableChestPainAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.stableChestPainGuidance}
+                demonstrating={props.stableChestPainDemonstrating}
                 onAction={props.onStableChestPainResponse ?? (() => {})} />
             )}
             {hasNstemiRiskResponse && (
@@ -15458,8 +15464,11 @@ function HeartFailureTray({ assessment, onAction }: {
   );
 }
 
-function StableChestPainTray({ assessment, onAction }: {
+function StableChestPainTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['stableChestPainAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onStableChestPainResponse']>;
 }) {
   const stable = assessment?.stabilityAtTick != null;
@@ -15467,7 +15476,17 @@ function StableChestPainTray({ assessment, onAction }: {
   const likelihood = assessment?.likelihoodAtTick != null;
   const testing = assessment?.testingAtTick != null;
   const safetyNet = assessment?.safetyNetAtTick != null;
+  const prompt = demonstrating ? null
+    : stableChestPainInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <div className="tray-grid">
       <section className="syringe" aria-labelledby="stable-chest-pattern-title">
         <div id="stable-chest-pattern-title" className="syringe__name">Stable is a trajectory, not a synonym for safe.</div>
@@ -15480,11 +15499,11 @@ function StableChestPainTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={stable}
-            onClick={() => onAction('verify-stable-chest-pain-trajectory')}>Verify stable vs acute change</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('verify-stable-chest-pain-trajectory') : undefined}>Verify stable vs acute change</Button>
           <Button className="crisis-drug__action" disabled={!stable || pattern}
-            onClick={() => onAction('characterize-stable-chest-pain-pattern')}>Characterize symptom + function</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('characterize-stable-chest-pain-pattern') : undefined}>Characterize symptom + function</Button>
           <Button className="crisis-drug__action" disabled={!pattern || likelihood}
-            onClick={() => onAction('estimate-stable-chest-pain-clinical-likelihood')}>Review clinical likelihood</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('estimate-stable-chest-pain-clinical-likelihood') : undefined}>Review clinical likelihood</Button>
         </div>
         <p className="field__hint">A calm visit can still need an acute-change safety net. The symptom pattern informs likelihood; it does not announce coronary disease.</p>
       </section>
@@ -15500,12 +15519,13 @@ function StableChestPainTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!likelihood || testing}
-            onClick={() => onAction('record-stable-chest-pain-testing-intent')}>Share a patient-specific test pathway</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-stable-chest-pain-testing-intent') : undefined}>Share a patient-specific test pathway</Button>
           <Button className="crisis-drug__action" disabled={!testing || safetyNet}
-            onClick={() => onAction('safety-net-stable-chest-pain-follow-up')}>Record follow-up + acute-change safety net</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('safety-net-stable-chest-pain-follow-up') : undefined}>Record follow-up + acute-change safety net</Button>
         </div>
         <p className="field__hint">No exact score or universal modality is supplied. These controls acquire no ECG, order no test, diagnose nothing, and prescribe nothing.</p>
       </section>
+    </div>
     </div>
   );
 }
