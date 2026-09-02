@@ -172,6 +172,7 @@ import { postPeDyspneaInlinePrompt } from '../../respiratory-medicine/tutor/post
 import { apeSupportInlinePrompt } from '../../respiratory-medicine/tutor/acute-pulmonary-edema-respiratory-support-reassessment-guidance';
 import { postTensionPneumothoraxInlinePrompt } from '../../respiratory-medicine/tutor/spontaneous-tension-pneumothorax-post-drainage-reassessment-guidance';
 import { largePleuralEffusionInlinePrompt } from '../../respiratory-medicine/tutor/large-unilateral-pleural-effusion-reassessment-guidance';
+import { bronchiectasisMucusPluggingInlinePrompt } from '../../respiratory-medicine/tutor/bronchiectasis-mucus-plugging-reassessment-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2913,6 +2914,7 @@ export interface ActionCockpitProps {
   readonly apeSupportGuidance?: GuidanceLevel;
   readonly postTensionPneumothoraxGuidance?: GuidanceLevel;
   readonly largePleuralEffusionGuidance?: GuidanceLevel;
+  readonly bronchiectasisMucusPluggingGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3034,6 +3036,7 @@ export interface ActionCockpitProps {
   readonly apeSupportDemonstrating?: boolean;
   readonly postTensionPneumothoraxDemonstrating?: boolean;
   readonly largePleuralEffusionDemonstrating?: boolean;
+  readonly bronchiectasisMucusPluggingDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5634,6 +5637,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasBronchiectasisMucusPluggingResponse && (
               <BronchiectasisMucusPluggingTray
                 assessment={props.resuscitation.bronchiectasisMucusPluggingAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.bronchiectasisMucusPluggingGuidance}
+                demonstrating={props.bronchiectasisMucusPluggingDemonstrating}
                 onAction={props.onBronchiectasisMucusPluggingResponse ?? (() => {})} />
             )}
             {hasChronicOpioidHypoventilationResponse && (
@@ -10947,10 +10953,15 @@ function LargePleuralEffusionTray({ assessment, scenarioVersion, onAction, guida
   </div>;
 }
 
-function BronchiectasisMucusPluggingTray({ assessment, onAction }: {
+function BronchiectasisMucusPluggingTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['bronchiectasisMucusPluggingAssessment']>;
   onAction: NonNullable<ActionCockpitProps['onBronchiectasisMucusPluggingResponse']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
 }) {
+  const prompt = bronchiectasisMucusPluggingInlinePrompt(guidance, { scenarioVersion, bronchiectasisMucusPlugging: assessment });
+  const act = demonstrating ? undefined : onAction;
   const trajectory = assessment?.trajectoryAtTick != null;
   const evidence = assessment?.evidenceAtTick != null;
   const clearance = assessment?.clearanceIntentAtTick != null;
@@ -10958,15 +10969,20 @@ function BronchiectasisMucusPluggingTray({ assessment, onAction }: {
   const escalation = assessment?.escalationAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
+    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <section className="syringe" aria-labelledby="bronchiectasis-mucus-pattern-title">
       <div id="bronchiectasis-mucus-pattern-title" className="syringe__name">The image says where. The trajectory says why it matters.</div>
       <Badge kind="teaching">spontaneous breathing · focal collapse · stable circulation</Badge>
       <div className="syringe__meta">baseline · cough · secretions · oxygenation · fixed imaging</div>
       <p className="syringe__remaining" role="status">{clearance ? 'Individualized team trial recorded · advance to its response' : evidence ? 'Working pattern held beside open causes' : trajectory ? 'Whole-patient change reconciled · review the fixed evidence' : 'Begin with the change in clearance capacity'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={trajectory} onClick={() => onAction('reconcile-bronchiectasis-mucus-plugging-trajectory')}>Review patient + clearance trajectory</Button>
-        <Button className="crisis-drug__action" disabled={!trajectory || evidence} onClick={() => onAction('review-bronchiectasis-mucus-plugging-evidence-and-alternatives')}>Review focal evidence + alternatives</Button>
-        <Button className="crisis-drug__action" disabled={!evidence || clearance} onClick={() => onAction('record-bronchiectasis-mucus-plugging-supported-airway-clearance-intent')}>Record individualized clearance trial</Button>
+        <Button className="crisis-drug__action" disabled={trajectory} aria-disabled={demonstrating} onClick={act ? () => act('reconcile-bronchiectasis-mucus-plugging-trajectory') : undefined}>Review patient + clearance trajectory</Button>
+        <Button className="crisis-drug__action" disabled={!trajectory || evidence} aria-disabled={demonstrating} onClick={act ? () => act('review-bronchiectasis-mucus-plugging-evidence-and-alternatives') : undefined}>Review focal evidence + alternatives</Button>
+        <Button className="crisis-drug__action" disabled={!evidence || clearance} aria-disabled={demonstrating} onClick={act ? () => act('record-bronchiectasis-mucus-plugging-supported-airway-clearance-intent') : undefined}>Record individualized clearance trial</Button>
       </div>
       <p className="field__hint">Respiratory-physiotherapy expertise, preference, tolerance, and an expected response shape the trial. No technique, device, position, duration, frequency, oxygen setting, or drug is selected.</p>
     </section>
@@ -10976,9 +10992,9 @@ function BronchiectasisMucusPluggingTray({ assessment, onAction }: {
       <div className="syringe__meta">cough · speech · work · SpO₂ · air entry · re-expansion</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Response + unresolved focal work handed off' : escalation ? 'Experienced evaluation connected · advance time before handoff' : response ? 'Clearance improved · focal collapse and cause remain active' : 'Review the authored team response first'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={!clearance || response} onClick={() => onAction('review-bronchiectasis-mucus-plugging-later-response')}>Review later patient + focal response</Button>
-        <Button className="crisis-drug__action" disabled={!response || escalation} onClick={() => onAction('escalate-bronchiectasis-mucus-plugging-persistent-collapse')}>Connect persistent-collapse evaluation</Button>
-        <Button className="crisis-drug__action" disabled={!escalation || handoff} onClick={() => onAction('handoff-bronchiectasis-mucus-plugging-reassessment')}>Hand off unresolved focal work</Button>
+        <Button className="crisis-drug__action" disabled={!clearance || response} aria-disabled={demonstrating} onClick={act ? () => act('review-bronchiectasis-mucus-plugging-later-response') : undefined}>Review later patient + focal response</Button>
+        <Button className="crisis-drug__action" disabled={!response || escalation} aria-disabled={demonstrating} onClick={act ? () => act('escalate-bronchiectasis-mucus-plugging-persistent-collapse') : undefined}>Connect persistent-collapse evaluation</Button>
+        <Button className="crisis-drug__action" disabled={!escalation || handoff} aria-disabled={demonstrating} onClick={act ? () => act('handoff-bronchiectasis-mucus-plugging-reassessment') : undefined}>Hand off unresolved focal work</Button>
       </div>
       <p className="field__hint">No sputum test, clearance maneuver, suction, bronchoscopy, plug removal, biopsy, treatment, diagnosis, disposition, recurrence, or outcome is performed or chosen.</p>
     </section>

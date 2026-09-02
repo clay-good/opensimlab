@@ -217,6 +217,8 @@ import { usePostTensionPneumothoraxDemonstration } from '../../respiratory-medic
 import { supportsPostTensionPneumothoraxDemonstration } from '../../respiratory-medicine/demo/spontaneous-tension-pneumothorax-post-drainage-reassessment-demonstration';
 import { useLargePleuralEffusionDemonstration } from '../../respiratory-medicine/demo/useLargePleuralEffusionDemonstration';
 import { supportsLargePleuralEffusionDemonstration } from '../../respiratory-medicine/demo/large-unilateral-pleural-effusion-reassessment-demonstration';
+import { useBronchiectasisMucusPluggingDemonstration } from '../../respiratory-medicine/demo/useBronchiectasisMucusPluggingDemonstration';
+import { supportsBronchiectasisMucusPluggingDemonstration } from '../../respiratory-medicine/demo/bronchiectasis-mucus-plugging-reassessment-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -477,6 +479,7 @@ export function Cockpit({
   const apeSupportDemoSupported = supportsApeSupportDemonstration(scenario);
   const postTensionPneumothoraxDemoSupported = supportsPostTensionPneumothoraxDemonstration(scenario);
   const largePleuralEffusionDemoSupported = supportsLargePleuralEffusionDemonstration(scenario);
+  const bronchiectasisMucusPluggingDemoSupported = supportsBronchiectasisMucusPluggingDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -565,6 +568,7 @@ export function Cockpit({
     || apeSupportDemoSupported
     || postTensionPneumothoraxDemoSupported
     || largePleuralEffusionDemoSupported
+    || bronchiectasisMucusPluggingDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -716,6 +720,12 @@ export function Cockpit({
     active: demonstrating && termTransitionDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.neonatologyTermTransitionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const bronchiectasisMucusPluggingDemonstration = useBronchiectasisMucusPluggingDemonstration({
+    active: demonstrating && bronchiectasisMucusPluggingDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.bronchiectasisMucusPluggingAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const largePleuralEffusionDemonstration = useLargePleuralEffusionDemonstration({
@@ -1223,6 +1233,7 @@ export function Cockpit({
     : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
     : neonatalApneaDemoSupported ? neonatalApneaDemonstration
     : termTransitionDemoSupported ? termTransitionDemonstration
+    : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
     : apeSupportDemoSupported ? apeSupportDemonstration
@@ -2107,6 +2118,8 @@ export function Cockpit({
           postTensionPneumothoraxDemonstrating={demonstrating && postTensionPneumothoraxDemoSupported}
           largePleuralEffusionGuidance={session.guidance}
           largePleuralEffusionDemonstrating={demonstrating && largePleuralEffusionDemoSupported}
+          bronchiectasisMucusPluggingGuidance={session.guidance}
+          bronchiectasisMucusPluggingDemonstrating={demonstrating && bronchiectasisMucusPluggingDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
