@@ -217,6 +217,7 @@ import { septicShockResuscitationInlinePrompt } from '../../critical-care/tutor/
 import { cardiogenicShockInlinePrompt } from '../../critical-care/tutor/cardiogenic-shock-guidance';
 import { mixedShockInlinePrompt } from '../../critical-care/tutor/mixed-shock-guidance';
 import { rvFailureInlinePrompt } from '../../critical-care/tutor/rv-failure-guidance';
+import { massivePeInlinePrompt } from '../../critical-care/tutor/massive-pe-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3003,6 +3004,7 @@ export interface ActionCockpitProps {
   readonly cardiogenicShockGuidance?: GuidanceLevel;
   readonly mixedShockGuidance?: GuidanceLevel;
   readonly rightVentricularFailureGuidance?: GuidanceLevel;
+  readonly massivePulmonaryEmbolismGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3169,6 +3171,7 @@ export interface ActionCockpitProps {
   readonly cardiogenicShockDemonstrating?: boolean;
   readonly mixedShockDemonstrating?: boolean;
   readonly rightVentricularFailureDemonstrating?: boolean;
+  readonly massivePulmonaryEmbolismDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5587,6 +5590,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasMassivePulmonaryEmbolismResponse && (
               <MassivePulmonaryEmbolismTray
                 assessment={props.resuscitation.massivePulmonaryEmbolismAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.massivePulmonaryEmbolismGuidance}
+                demonstrating={props.massivePulmonaryEmbolismDemonstrating}
                 onAction={props.onMassivePulmonaryEmbolismResponse ?? (() => {})} />
             )}
             {hasUpperGiHemorrhageResponse && (
@@ -9725,8 +9731,11 @@ function RightVentricularFailureTray({ assessment, scenarioVersion, guidance = '
   );
 }
 
-function MassivePulmonaryEmbolismTray({ assessment, onAction }: {
+function MassivePulmonaryEmbolismTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['massivePulmonaryEmbolismAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onMassivePulmonaryEmbolismResponse']>;
 }) {
   const recognized = assessment?.recognitionAtTick != null;
@@ -9734,8 +9743,18 @@ function MassivePulmonaryEmbolismTray({ assessment, onAction }: {
   const support = assessment?.supportAtTick != null;
   const ecmo = assessment?.ecmoAtTick != null;
   const reassessed = assessment?.reassessmentAtTick != null;
+  const prompt = demonstrating ? null
+    : massivePeInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="massive-pe-pattern-title">
         <div id="massive-pe-pattern-title" className="syringe__name">This is the failure state. Mobilize the system.</div>
         <Badge kind="teaching">confirmed PE · refractory shock · ventilatory failure · Category E2R</Badge>
@@ -9747,9 +9766,9 @@ function MassivePulmonaryEmbolismTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={recognized}
-            onClick={() => onAction('recognize-refractory-pe-shock')}>Recognize E2R + activate rescue</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('recognize-refractory-pe-shock') : undefined}>Recognize E2R + activate rescue</Button>
           <Button className="crisis-drug__action" disabled={!recognized || pattern}
-            onClick={() => onAction('review-refractory-pe-pattern')}>Review PE + RV rescue context</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-refractory-pe-pattern') : undefined}>Review PE + RV rescue context</Button>
         </div>
         <p className="field__hint">The diagnosis is already confirmed. Recheck the physiology and dangerous alternatives without making rescue wait for another diagnostic lap.</p>
       </section>
@@ -9765,14 +9784,15 @@ function MassivePulmonaryEmbolismTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!pattern || support}
-            onClick={() => onAction('record-refractory-pe-support')}>Record RV-sensitive support</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-refractory-pe-support') : undefined}>Record RV-sensitive support</Button>
           <Button className="crisis-drug__action" disabled={!support || ecmo}
-            onClick={() => onAction('activate-pe-ecmo-bridge')}>Activate resource-ready VA-ECMO</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('activate-pe-ecmo-bridge') : undefined}>Activate resource-ready VA-ECMO</Button>
           <Button className="crisis-drug__action" disabled={!ecmo || reassessed}
-            onClick={() => onAction('reassess-pe-ecmo-trajectory')}>Review bridge + clot strategy</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-pe-ecmo-trajectory') : undefined}>Review bridge + clot strategy</Button>
         </div>
         <p className="field__hint">VA-ECMO can restore perfusion and oxygenation. It does not remove clot, prove candidacy, or make adjunctive reperfusion automatically beneficial.</p>
       </section>
+      </div>
     </div>
   );
 }

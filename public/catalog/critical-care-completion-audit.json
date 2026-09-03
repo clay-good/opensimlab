@@ -1433,23 +1433,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "massive-pe-fixtures.ts binds seed 8933 and content 0.1.0 to expert, straight-to-the-bridge error, recovery, and no-action paths. The imaging-confirmed saddle pulmonary embolism in an intubated patient still hypotensive despite reported parenteral anticoagulation and three vasoactive infusions, the MAP of 50 mmHg with HR 132/min, capillary refill 6 seconds, mottled cool extremities, no command following, urine 5 mL/h and a lactate rising from 5.2 to 8.1 mmol/L, the 82% on FiO2 1.0 with continuous capnography and reported bilateral ventilation, the fixed CT reporting acute central pulmonary emboli, and the fixed echo reporting severe RV dilation and hypokinesis, septal flattening, a small LV, no effusion, no tension pneumothorax and no active external bleeding pattern are authored constants; no thrombus, ECMO or reperfusion model is claimed, and no outcome follows from any choice. tests/integration/massive-pe-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is two narratives with no non-narrative state event. The progression lives in the engine's four order refusals, and this chain is deliberately short-tempered because the patient is the sickest in the module: the rescue teams are activated in step one, before the imaging review, since the diagnosis is already made and repeating it costs him time. What the later refusals protect is the distinction the lesson turns on — a bridge that supports his circulation is not treatment of his clot — by keeping the support review and the bridge activation in separate steps so neither can stand in for the other. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions recognize refractory PE shock and activate PERT plus ECMO-capable rescue; integrate the fixed PE, RV, ventilation, perfusion and alternate-cause findings without delaying rescue for repeated diagnosis and while keeping bleeding risk visible; record RV-sensitive perfusion, oxygenation, ventilation, rhythm and anticoagulation review without blind fluid loading; activate resource- and candidacy-dependent VA-ECMO as a stabilization bridge rather than clot treatment or a universal device rule; and reassess perfusion and oxygenation after the authored bridge while individualizing any additional reperfusion strategy. The lesson examines nobody, acquires or interprets no monitoring, CT, echo, laboratory or haemodynamic data, diagnoses nothing, delivers no oxygen, ventilation, anticoagulation, fluid or drug, obtains no access, selects no dose, performs no CPR, cannulation, ECMO, thrombectomy, thrombolysis or embolectomy, transfers and dispositions nobody, and predicts no outcome."
           ]
         },
         {
@@ -1461,23 +1461,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded trajectory reassessment on an authored bridge response that improves. Later actions cannot restart an ended branch, and the ending is explicit about what the improvement is: a circulation being carried rather than a clot being treated, with the obstruction exactly where it was. Whether any additional advanced reperfusion is warranted stays open, because its usefulness in a patient already on VA-ECMO is not established — so neither doing it nor withholding it is the automatic answer, and no thrombus resolution, adjunctive benefit or outcome is claimed."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step, because this lesson has no unordered lane. The first reflex it works against is the urge to keep diagnosing: everything about this patient invites another study, and the diagnosis is already in his notes, so the pattern beat is explicit that the most expensive thing anybody could do now is order another one to be sure. The recognition beat justifies why team activation comes before the review — the people who can help take time to assemble and he has none — and names the category without hiding behind it. The support beat sharpens the fluid argument the previous lesson made: this ventricle is obstructed at its outflow, so volume distends the one chamber keeping him alive, and it adds the ventilation point, that the pressures which recruit a lung are the pressures that raise the afterload he is failing against. The bridge beat is where the lesson's real claim sits: VA-ECMO takes over the circulation the obstruction defeated and does not touch the clot, and it is resource- and candidacy-dependent rather than a rule. The reassessment beat says the improvement is a circulation being carried rather than a clot being treated, and notes that this is the moment the distinction is easiest to lose. Worked example 0.1.0 drives the ordinary controls through the real engine to the reassessment and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere cannulates, names a dose or an anticoagulant, or claims the clot has been treated. tests/unit/massive-pe-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/critical-care-massive-pe.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the one a dying patient with an obvious answer invites: the common-error path recognises the failure state and jumps to the bridge, skipping the review that keeps the bleeding risk visible and the support that protects the ventricle in the meantime, and meets one of five because the engine gates the bridge behind both. The recovery path reviews before the failure state has been named and is refused, reaches for the bridge before the support and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -1496,23 +1496,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "massive-pe-fixtures.ts binds exact-content expert, straight-to-the-bridge error, recovery, and no-action pathways to seed 8933 for deterministic replay through the shared engine, including all four order refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
