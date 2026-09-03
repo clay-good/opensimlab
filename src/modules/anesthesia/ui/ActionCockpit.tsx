@@ -235,6 +235,7 @@ import { upperGiHemorrhageInlinePrompt } from '../../critical-care/tutor/upper-g
 import { akiFluidOverloadInlinePrompt } from '../../critical-care/tutor/aki-fluid-overload-guidance';
 import { tubeMigrationInlinePrompt } from '../../critical-care/tutor/tube-migration-guidance';
 import { icuHandoffInlinePrompt } from '../../critical-care/tutor/icu-handoff-guidance';
+import { pulseOximeterArtifactInlinePrompt } from '../../critical-care/tutor/pulse-oximeter-artifact-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3039,6 +3040,7 @@ export interface ActionCockpitProps {
   readonly akiFluidOverloadGuidance?: GuidanceLevel;
   readonly endotrachealTubeMigrationGuidance?: GuidanceLevel;
   readonly icuHiddenDeteriorationHandoffGuidance?: GuidanceLevel;
+  readonly pulseOximeterArtifactGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3223,6 +3225,7 @@ export interface ActionCockpitProps {
   readonly akiFluidOverloadDemonstrating?: boolean;
   readonly endotrachealTubeMigrationDemonstrating?: boolean;
   readonly icuHiddenDeteriorationHandoffDemonstrating?: boolean;
+  readonly pulseOximeterArtifactDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5740,6 +5743,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasPulseOximeterArtifactResponse && (
               <PulseOximeterArtifactTray
                 assessment={props.resuscitation.pulseOximeterArtifactAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.pulseOximeterArtifactGuidance}
+                demonstrating={props.pulseOximeterArtifactDemonstrating}
                 onAction={props.onPulseOximeterArtifactResponse ?? (() => {})} />
             )}
             {hasEndotrachealTubeMigrationResponse && (
@@ -10591,8 +10597,11 @@ function DelayedVasopressorDeliveryTray({ assessment, scenarioVersion, guidance 
   );
 }
 
-function PulseOximeterArtifactTray({ assessment, onAction }: {
+function PulseOximeterArtifactTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['pulseOximeterArtifactAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onPulseOximeterArtifactResponse']>;
 }) {
   const discordance = assessment?.discordanceAtTick != null;
@@ -10600,8 +10609,18 @@ function PulseOximeterArtifactTray({ assessment, onAction }: {
   const probe = assessment?.probePerfusionAtTick != null;
   const corroborated = assessment?.corroboratedAtTick != null;
   const reassessed = assessment?.reassessedAtTick != null;
+  const prompt = demonstrating ? null
+    : pulseOximeterArtifactInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="pulse-ox-signal-title">
         <div id="pulse-ox-signal-title" className="syringe__name">Trust the signal, not just the number.</div>
         <Badge kind="teaching">display · pleth · pulse · perfusion · patient</Badge>
@@ -10614,11 +10633,11 @@ function PulseOximeterArtifactTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={discordance}
-            onClick={() => onAction('recognize-pulse-oximeter-discordance')}>Separate display from patient</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('recognize-pulse-oximeter-discordance') : undefined}>Separate display from patient</Button>
           <Button className="crisis-drug__action" disabled={!discordance || pleth}
-            onClick={() => onAction('inspect-pleth-and-pulse-rate-coherence')}>Inspect pleth + pulse-rate match</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('inspect-pleth-and-pulse-rate-coherence') : undefined}>Inspect pleth + pulse-rate match</Button>
           <Button className="crisis-drug__action" disabled={!pleth || probe}
-            onClick={() => onAction('review-probe-motion-and-perfusion')}>Review probe + motion + perfusion</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-probe-motion-and-perfusion') : undefined}>Review probe + motion + perfusion</Button>
         </div>
         <p className="field__hint">Signal confidence is part of the vital sign. Poor coherence lowers confidence; it does not diagnose artifact.</p>
       </section>
@@ -10633,12 +10652,13 @@ function PulseOximeterArtifactTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!probe || corroborated}
-            onClick={() => onAction('corroborate-oxygenation-independently')}>Cross-check patient + arterial oxygenation</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('corroborate-oxygenation-independently') : undefined}>Cross-check patient + arterial oxygenation</Button>
           <Button className="crisis-drug__action" disabled={!corroborated || reassessed}
-            onClick={() => onAction('reassess-pulse-oximeter-signal')}>Reassess display + signal coherence</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-pulse-oximeter-signal') : undefined}>Reassess display + signal coherence</Button>
         </div>
         <p className="field__hint">If the patient is unstable, support and escalate in parallel. These controls inspect nothing and deliver no care.</p>
       </section>
+      </div>
     </div>
   );
 }

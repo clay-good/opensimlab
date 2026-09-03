@@ -343,6 +343,8 @@ import { useTubeMigrationDemonstration } from '../../critical-care/demo/useTubeM
 import { supportsTubeMigrationDemonstration } from '../../critical-care/demo/tube-migration-demonstration';
 import { useIcuHandoffDemonstration } from '../../critical-care/demo/useIcuHandoffDemonstration';
 import { supportsIcuHandoffDemonstration } from '../../critical-care/demo/icu-handoff-demonstration';
+import { usePulseOximeterArtifactDemonstration } from '../../critical-care/demo/usePulseOximeterArtifactDemonstration';
+import { supportsPulseOximeterArtifactDemonstration } from '../../critical-care/demo/pulse-oximeter-artifact-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -666,6 +668,7 @@ export function Cockpit({
   const akiFluidOverloadDemoSupported = supportsAkiFluidOverloadDemonstration(scenario);
   const tubeMigrationDemoSupported = supportsTubeMigrationDemonstration(scenario);
   const icuHandoffDemoSupported = supportsIcuHandoffDemonstration(scenario);
+  const pulseOximeterArtifactDemoSupported = supportsPulseOximeterArtifactDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -817,6 +820,7 @@ export function Cockpit({
     || akiFluidOverloadDemoSupported
     || tubeMigrationDemoSupported
     || icuHandoffDemoSupported
+    || pulseOximeterArtifactDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1172,6 +1176,12 @@ export function Cockpit({
     active: demonstrating && icuHandoffDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.icuHiddenDeteriorationHandoffAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const pulseOximeterArtifactDemonstration = usePulseOximeterArtifactDemonstration({
+    active: demonstrating && pulseOximeterArtifactDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.pulseOximeterArtifactAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const stableNarrowTachycardiaDemonstration = useStableNarrowTachycardiaDemonstration({
@@ -1915,6 +1925,7 @@ export function Cockpit({
     : akiFluidOverloadDemoSupported ? akiFluidOverloadDemonstration
     : tubeMigrationDemoSupported ? tubeMigrationDemonstration
     : icuHandoffDemoSupported ? icuHandoffDemonstration
+    : pulseOximeterArtifactDemoSupported ? pulseOximeterArtifactDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2926,6 +2937,8 @@ export function Cockpit({
           endotrachealTubeMigrationDemonstrating={demonstrating && tubeMigrationDemoSupported}
           icuHiddenDeteriorationHandoffGuidance={session.guidance}
           icuHiddenDeteriorationHandoffDemonstrating={demonstrating && icuHandoffDemoSupported}
+          pulseOximeterArtifactGuidance={session.guidance}
+          pulseOximeterArtifactDemonstrating={demonstrating && pulseOximeterArtifactDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

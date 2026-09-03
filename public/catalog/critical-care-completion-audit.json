@@ -2693,23 +2693,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "pulse-oximeter-artifact-fixtures.ts binds seed 3067 and content 0.1.0 to expert, clean-site-before-the-panel error, recovery, and no-action paths. The shivering patient whose oximeter displays 82% and pulse 132/min against an ECG rate of 86/min, with an irregular low-amplitude pleth at a cool finger while she is awake, speaking clearly, breathing 16/min without distress at MAP 76 mmHg and EtCO2 37 mmHg on unchanged oxygen, the canonical modeled SpO2 of 97%, the fixed arterial panel of SaO2 97% and PaO2 94 mmHg, and the clean-site reassessment at SpO2 97% with pulse 86/min and a regular stronger pleth are authored constants; no oximetry, optical or gas-exchange model is claimed, and no outcome follows from any choice. tests/integration/pulse-oximeter-artifact-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
           "status": "satisfied",
           "evidence": [
-            "The timeline contains at least one non-narrative state event."
+            "The shared audit records this requirement as missing because the timeline's only non-narrative event is the artifact that begins the motion. The progression lives in the engine's four order refusals, and the corroboration step carries the lesson: every step before it builds a persuasive case that the signal is bad, and the engine refuses to accept the clean-site reading until oxygenation has been measured independently, so that \"artifact\" is a conclusion from evidence rather than from a story that fit. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions separate the isolated 82% display and oximeter pulse of 132/min from the ECG rate of 86/min, the whole patient and the canonical modeled oxygenation, keeping display, signal, alarm, perfusion and patient as distinct states; inspect pleth quality and pulse-rate coherence as a reason for lower confidence rather than a diagnosis of artifact; review the declared probe contact, motion, skin temperature and local perfusion without inspecting or moving anything; corroborate oxygenation independently against the whole patient and the fixed arterial panel while noting that a clean capnogram supports ventilation without excluding hypoxaemia; and record the clean-site reassessment with true hypoxaemia, dyshaemoglobinaemia, optical interference, venous pulsation, probe fault and evolving illness all left open. The lesson inspects and moves no probe, examines no perfusion, samples no blood, delivers no oxygen or treatment, configures no monitor, diagnoses neither artifact nor hypoxaemia, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -2721,23 +2721,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded clean-site reassessment displaying SpO2 97% and pulse 86/min with a regular stronger pleth and unchanged patient physiology. Later actions cannot restart an ended branch, and the ending is careful with the verb: motion artifact is supported in this authored state rather than proven, the agreeing pulse rates are what close the loop because the mismatch was the first thing that was wrong, and the alternatives reopen the moment the evidence stops agreeing. The lesson also states that an unstable patient receives support and escalation while the signal is being checked."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step, because this lesson has no unordered lane. It works against two opposite reflexes: treating the number, which turns 82% on a screen into an airway trolley for a woman who is talking, and the more dangerous one of deciding it is artifact because it looks like artifact. The discordance beat makes the pulse-rate mismatch the first real evidence — an oximeter that cannot agree with the ECG about heart rate is not in a position to report what the blood is carrying — while insisting that recognising a discordance is not deciding it is artifact. The pleth beat sizes its own claim: a poor waveform lowers confidence in the arithmetic and does not diagnose anything, because a genuinely hypoxaemic patient with shut-down fingers also has a bad pleth. The probe beat supplies the mechanism that makes the explanation specific to her, and states the honest limit that nothing here inspects or moves anything. The corroboration beat is what the chain exists for: the arterial panel is independent, the clean capnogram supports ventilation without excluding hypoxaemia, and an unstable patient gets support and escalation while the signal is checked. Worked example 0.1.0 drives the ordinary controls through the real engine to the reassessment and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere gives oxygen, moves the probe, calls for intubation, or declares the reading artifact. tests/unit/pulse-oximeter-artifact-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/critical-care-pulse-oximeter-artifact.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the one a persuasive story invites: the common-error path recognises the discordance, inspects the pleth, and jumps to the clean-site reading, skipping the probe path and the independent arterial measurement that separates a diagnosis from an opinion, and meets two of five because the engine gates the rest. The recovery path reaches for the pleth before the discordance has been recognised and is refused, reaches for the clean-site reading before oxygenation has been corroborated and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -2756,23 +2756,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "pulse-oximeter-artifact-fixtures.ts binds exact-content expert, clean-site-before-the-panel error, recovery, and no-action pathways to seed 3067 for deterministic replay through the shared engine, including all four order refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
