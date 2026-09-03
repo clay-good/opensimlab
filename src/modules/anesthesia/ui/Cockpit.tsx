@@ -327,6 +327,8 @@ import { useSevereAcidemiaDemonstration } from '../../critical-care/demo/useSeve
 import { supportsSevereAcidemiaDemonstration } from '../../critical-care/demo/severe-acidemia-demonstration';
 import { useDelayedVasopressorDeliveryDemonstration } from '../../critical-care/demo/useDelayedVasopressorDeliveryDemonstration';
 import { supportsDelayedVasopressorDeliveryDemonstration } from '../../critical-care/demo/delayed-vasopressor-delivery-demonstration';
+import { useIntracranialHypertensionDemonstration } from '../../critical-care/demo/useIntracranialHypertensionDemonstration';
+import { supportsIntracranialHypertensionDemonstration } from '../../critical-care/demo/intracranial-hypertension-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -642,6 +644,7 @@ export function Cockpit({
   const postIntubationHypotensionDemoSupported = supportsPostIntubationHypotensionDemonstration(scenario);
   const severeAcidemiaDemoSupported = supportsSevereAcidemiaDemonstration(scenario);
   const delayedVasopressorDeliveryDemoSupported = supportsDelayedVasopressorDeliveryDemonstration(scenario);
+  const intracranialHypertensionDemoSupported = supportsIntracranialHypertensionDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -785,6 +788,7 @@ export function Cockpit({
     || postIntubationHypotensionDemoSupported
     || severeAcidemiaDemoSupported
     || delayedVasopressorDeliveryDemoSupported
+    || intracranialHypertensionDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1092,6 +1096,12 @@ export function Cockpit({
     active: demonstrating && delayedVasopressorDeliveryDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.delayedVasopressorDeliveryAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const intracranialHypertensionDemonstration = useIntracranialHypertensionDemonstration({
+    active: demonstrating && intracranialHypertensionDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.intracranialHypertensionAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const stableNarrowTachycardiaDemonstration = useStableNarrowTachycardiaDemonstration({
@@ -1827,6 +1837,7 @@ export function Cockpit({
     : postIntubationHypotensionDemoSupported ? postIntubationHypotensionDemonstration
     : severeAcidemiaDemoSupported ? severeAcidemiaDemonstration
     : delayedVasopressorDeliveryDemoSupported ? delayedVasopressorDeliveryDemonstration
+    : intracranialHypertensionDemoSupported ? intracranialHypertensionDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2822,6 +2833,8 @@ export function Cockpit({
           severeAcidemiaDemonstrating={demonstrating && severeAcidemiaDemoSupported}
           delayedVasopressorDeliveryGuidance={session.guidance}
           delayedVasopressorDeliveryDemonstrating={demonstrating && delayedVasopressorDeliveryDemoSupported}
+          intracranialHypertensionGuidance={session.guidance}
+          intracranialHypertensionDemonstrating={demonstrating && intracranialHypertensionDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

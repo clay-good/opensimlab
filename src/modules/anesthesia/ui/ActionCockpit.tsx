@@ -227,6 +227,7 @@ import { circuitDisconnectionInlinePrompt } from '../../critical-care/tutor/circ
 import { postIntubationHypotensionInlinePrompt } from '../../critical-care/tutor/post-intubation-hypotension-guidance';
 import { severeAcidemiaInlinePrompt } from '../../critical-care/tutor/severe-acidemia-guidance';
 import { delayedVasopressorDeliveryInlinePrompt } from '../../critical-care/tutor/delayed-vasopressor-delivery-guidance';
+import { intracranialHypertensionInlinePrompt } from '../../critical-care/tutor/intracranial-hypertension-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3023,6 +3024,7 @@ export interface ActionCockpitProps {
   readonly postIntubationHypotensionGuidance?: GuidanceLevel;
   readonly severeAcidemiaGuidance?: GuidanceLevel;
   readonly delayedVasopressorDeliveryGuidance?: GuidanceLevel;
+  readonly intracranialHypertensionGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3199,6 +3201,7 @@ export interface ActionCockpitProps {
   readonly postIntubationHypotensionDemonstrating?: boolean;
   readonly severeAcidemiaDemonstrating?: boolean;
   readonly delayedVasopressorDeliveryDemonstrating?: boolean;
+  readonly intracranialHypertensionDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5658,6 +5661,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasIntracranialHypertensionResponse && (
               <IntracranialHypertensionTray
                 assessment={props.resuscitation.intracranialHypertensionAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.intracranialHypertensionGuidance}
+                demonstrating={props.intracranialHypertensionDemonstrating}
                 onAction={props.onIntracranialHypertensionResponse ?? (() => {})} />
             )}
             {hasAkiFluidOverloadResponse && (
@@ -10091,8 +10097,11 @@ function PostArrestTemperatureTray({ assessment, onAction }: {
   );
 }
 
-function IntracranialHypertensionTray({ assessment, onAction }: {
+function IntracranialHypertensionTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['intracranialHypertensionAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onIntracranialHypertensionResponse']>;
 }) {
   const recognized = assessment?.recognitionAtTick != null;
@@ -10100,8 +10109,18 @@ function IntracranialHypertensionTray({ assessment, onAction }: {
   const protectedBrain = assessment?.protectionAtTick != null;
   const rescued = assessment?.rescueAtTick != null;
   const reassessed = assessment?.reassessmentAtTick != null;
+  const prompt = demonstrating ? null
+    : intracranialHypertensionInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="intracranial-hypertension-context-title">
         <div id="intracranial-hypertension-context-title" className="syringe__name">Lower pressure. Preserve perfusion.</div>
         <Badge kind="teaching">ICP 28 · CPP 54 · threshold &gt;22 · contextualize with exam + CT</Badge>
@@ -10113,9 +10132,9 @@ function IntracranialHypertensionTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={recognized}
-            onClick={() => onAction('recognize-intracranial-hypertension')}>Recognize ICP crisis + activate help</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('recognize-intracranial-hypertension') : undefined}>Recognize ICP crisis + activate help</Button>
           <Button className="crisis-drug__action" disabled={!recognized || context}
-            onClick={() => onAction('review-intracranial-hypertension-context')}>Review monitor + whole context</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-intracranial-hypertension-context') : undefined}>Review monitor + whole context</Button>
         </div>
         <p className="field__hint">ICP, CPP, examination, imaging, and systemic physiology belong in one decision.</p>
       </section>
@@ -10131,14 +10150,15 @@ function IntracranialHypertensionTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!context || protectedBrain}
-            onClick={() => onAction('activate-first-tier-brain-protection')}>Activate first-tier brain protection</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('activate-first-tier-brain-protection') : undefined}>Activate first-tier brain protection</Button>
           <Button className="crisis-drug__action" disabled={!protectedBrain || rescued}
-            onClick={() => onAction('activate-individualized-hyperosmolar-rescue')}>Activate individualized hyperosmolar rescue</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('activate-individualized-hyperosmolar-rescue') : undefined}>Activate individualized hyperosmolar rescue</Button>
           <Button className="crisis-drug__action" disabled={!rescued || reassessed}
-            onClick={() => onAction('reassess-intracranial-hypertension-trajectory')}>Review ICP + CPP trajectory</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-intracranial-hypertension-trajectory') : undefined}>Review ICP + CPP trajectory</Button>
         </div>
         <p className="field__hint">An immediate pressure response does not prove durable control, recovery, or outcome.</p>
       </section>
+      </div>
     </div>
   );
 }
