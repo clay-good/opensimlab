@@ -255,6 +255,8 @@ import { stemiInlinePrompt } from '../../emergency-medicine/tutor/stemi-guidance
 import { traumaPrimarySurveyInlinePrompt } from '../../emergency-medicine/tutor/trauma-primary-survey-guidance';
 import { unstableBradycardiaInlinePrompt } from '../../emergency-medicine/tutor/unstable-bradycardia-guidance';
 import { unstableNarrowTachycardiaInlinePrompt } from '../../emergency-medicine/tutor/unstable-narrow-complex-tachycardia-guidance';
+import { obstructivePleuralShockInlinePrompt } from '../../emergency-medicine/tutor/obstructive-shock-tension-pneumothorax-guidance';
+import { supportsObstructivePleuralShock, obstructivePleuralShockProgress } from '../../emergency-medicine/obstructive-shock-tension-pneumothorax';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3079,6 +3081,7 @@ export interface ActionCockpitProps {
   readonly traumaPrimarySurveyGuidance?: GuidanceLevel;
   readonly unstableBradycardiaGuidance?: GuidanceLevel;
   readonly emergencySvtGuidance?: GuidanceLevel;
+  readonly obstructivePleuralShockGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3283,6 +3286,7 @@ export interface ActionCockpitProps {
   readonly traumaPrimarySurveyDemonstrating?: boolean;
   readonly unstableBradycardiaDemonstrating?: boolean;
   readonly emergencySvtDemonstrating?: boolean;
+  readonly obstructivePleuralShockDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5495,6 +5499,16 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasPneumothoraxResponse && (
               <PneumothoraxResponseTray
+                prompt={props.obstructivePleuralShockDemonstrating
+                  || !supportsObstructivePleuralShock(props.scenario) ? null
+                  : obstructivePleuralShockInlinePrompt(
+                    props.obstructivePleuralShockGuidance ?? 'unassisted',
+                    { scenarioVersion: props.scenario.metadata.version,
+                      patient: obstructivePleuralShockProgress({
+                        resuscitation: props.resuscitation, ventilator: props.ventilator,
+                        airway: { helpRequestedAtTick: props.helpRequestedAtTick },
+                      } as never) })}
+                demonstrating={props.obstructivePleuralShockDemonstrating}
                 fraction={props.resuscitation.tensionPneumothoraxFraction ?? 0}
                 assessed={props.resuscitation.pneumothoraxAssessedAtTick !== null
                   && props.resuscitation.pneumothoraxAssessedAtTick !== undefined}
@@ -7779,8 +7793,15 @@ function VenousAirEmbolismTray({
 
 function PneumothoraxResponseTray({
   fraction, assessed, decompressed, helpRequested, focusedEmergency, oxygenReady,
-  onCallForHelp, onAction, onOxygen,
+  onCallForHelp, onAction, onOxygen, prompt = null, demonstrating = false,
 }: {
+  /**
+   * The emergency obstructive-shock lesson's tutor line, already resolved by
+   * the caller. This tray is shared with the anaesthesia pneumothorax lesson,
+   * which passes null, so the tray itself stays unaware of either lesson.
+   */
+  prompt?: { readonly suggestion: string; readonly because: string } | null;
+  demonstrating?: boolean;
   fraction: number;
   assessed: boolean;
   decompressed: boolean;
@@ -7794,7 +7815,14 @@ function PneumothoraxResponseTray({
   const [confirmingDecompression, setConfirmingDecompression] = useState(false);
   const active = fraction > 0.05 || decompressed;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="pleural-pattern-title">
         <div id="pleural-pattern-title" className="syringe__name">Breathing + circulation</div>
         <Badge kind="teaching">Focused crisis</Badge>
@@ -7848,6 +7876,7 @@ function PneumothoraxResponseTray({
           stay outside this lab. Reassess the live monitor after the accepted action.
         </p>
       </section>
+      </div>
     </div>
   );
 }

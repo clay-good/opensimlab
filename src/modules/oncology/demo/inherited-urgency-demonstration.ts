@@ -2,6 +2,18 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import { supportsInheritedUrgency, type InheritedUrgencyAction } from '../inherited-urgency';
+import { inheritedUrgencyInlinePrompt } from '../inherited-urgency-tutor';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: InheritedUrgencySnapshot): string {
+  const prompt = inheritedUrgencyInlinePrompt('guided', { scenarioVersion: '0.1.0', inheritedUrgency: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const INHERITED_URGENCY_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -49,7 +61,7 @@ export function inheritedUrgencyDemonstrationStep(
   }
   if (patient.treatmentIntentAtTick === null) {
     return { id: 'intent', focus: 'actions', progress: 0.44, action: 'record-bounded-treatment-intent',
-      narration: 'Record bounded treatment intent and start nothing. Which treatment, when, and whether anything happens before the tissue are decisions for the teams who will hold the result.' };
+      narration: narrate(patient) };
   }
   if (patient.boundariesReviewedAtTick === null) {
     return { id: 'boundaries', focus: 'actions', progress: 0.55, action: 'review-boundaries',
@@ -68,5 +80,5 @@ export function inheritedUrgencyDemonstrationStep(
       narration: 'Take a current assessment now acute oncology has accepted him and the biopsy is booked and flagged. Whether the emergency findings have appeared is the thing that would change any of this, and only a current look answers it.' };
   }
   return { id: 'handoff', focus: 'actions', progress: 0.96, action: 'handoff',
-    narration: 'Hand off with the diagnosis unmade and the pathway owned. Histology, staging and a treatment decision are not handoff gates. What travels is which findings would make this an emergency, that they are absent, and who now owns the biopsy.' };
+    narration: narrate(patient) };
 }

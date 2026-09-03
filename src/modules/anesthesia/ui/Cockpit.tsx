@@ -383,6 +383,9 @@ import { useUnstableBradycardiaDemonstration } from '../../emergency-medicine/de
 import { supportsUnstableBradycardiaDemonstration } from '../../emergency-medicine/demo/unstable-bradycardia-demonstration';
 import { useUnstableNarrowTachycardiaDemonstration as useEmergencyUnstableNarrowTachycardiaDemonstration } from '../../emergency-medicine/demo/useUnstableNarrowTachycardiaDemonstration';
 import { supportsUnstableNarrowTachycardiaDemonstration } from '../../emergency-medicine/demo/unstable-narrow-complex-tachycardia-demonstration';
+import { useObstructivePleuralShockDemonstration } from '../../emergency-medicine/demo/useObstructivePleuralShockDemonstration';
+import { supportsObstructivePleuralShockDemonstration } from '../../emergency-medicine/demo/obstructive-shock-tension-pneumothorax-demonstration';
+import { obstructivePleuralShockProgress } from '../../emergency-medicine/obstructive-shock-tension-pneumothorax';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -726,6 +729,7 @@ export function Cockpit({
   const traumaPrimarySurveyDemoSupported = supportsTraumaPrimarySurveyDemonstration(scenario);
   const unstableBradycardiaDemoSupported = supportsUnstableBradycardiaDemonstration(scenario);
   const emergencySvtDemoSupported = supportsUnstableNarrowTachycardiaDemonstration(scenario);
+  const obstructivePleuralShockDemoSupported = supportsObstructivePleuralShockDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -897,6 +901,7 @@ export function Cockpit({
     || traumaPrimarySurveyDemoSupported
     || unstableBradycardiaDemoSupported
     || emergencySvtDemoSupported
+    || obstructivePleuralShockDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1282,6 +1287,12 @@ export function Cockpit({
     active: demonstrating && acutePulmonaryEdemaDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.acutePulmonaryEdemaAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const obstructivePleuralShockDemonstration = useObstructivePleuralShockDemonstration({
+    active: demonstrating && obstructivePleuralShockDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment ? obstructivePleuralShockProgress(session.equipment) : undefined,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const emergencySvtDemonstration = useEmergencyUnstableNarrowTachycardiaDemonstration({
@@ -2135,6 +2146,7 @@ export function Cockpit({
     : traumaPrimarySurveyDemoSupported ? traumaPrimarySurveyDemonstration
     : unstableBradycardiaDemoSupported ? unstableBradycardiaDemonstration
     : emergencySvtDemoSupported ? emergencySvtDemonstration
+    : obstructivePleuralShockDemoSupported ? obstructivePleuralShockDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -3186,6 +3198,8 @@ export function Cockpit({
           unstableBradycardiaDemonstrating={demonstrating && unstableBradycardiaDemoSupported}
           emergencySvtGuidance={session.guidance}
           emergencySvtDemonstrating={demonstrating && emergencySvtDemoSupported}
+          obstructivePleuralShockGuidance={session.guidance}
+          obstructivePleuralShockDemonstrating={demonstrating && obstructivePleuralShockDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

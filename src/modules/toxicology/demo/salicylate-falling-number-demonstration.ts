@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsSalicylate, type SalicylateAction, type SalicylateProgress,
 } from '../salicylate-falling-number';
+import { salicylateInlinePrompt } from '../tutor/salicylate-falling-number-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: SalicylateProgress): string {
+  const prompt = salicylateInlinePrompt('guided', { scenarioVersion: '0.1.0', salicylate: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const SALICYLATE_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -48,7 +60,7 @@ export function salicylateDemonstrationStep(
   }
   if (patient.supportAtTick === null) {
     return { id: 'support', focus: 'actions', progress: 0.4, action: 'activate-toxicology-salicylate-poison-center-emergency-critical-care-nephrology-and-safety-ownership',
-      narration: 'Call everyone who might be needed later, now. Poison center or medical toxicology, emergency and critical care, nephrology early rather than at the point of decision, the laboratory for serial testing, and compassionate nonjudgmental safety ownership. Nephrology being available is not the same as dialysis being chosen, and getting them late is the failure mode.' };
+      narration: narrate(patient) };
   }
   if (patient.evidenceAtTick === null) {
     return { id: 'evidence', focus: 'monitor', progress: 0.56, action: 'review-toxicology-salicylate-supplied-serial-level-acid-base-volume-electrolyte-and-airway-boundary',

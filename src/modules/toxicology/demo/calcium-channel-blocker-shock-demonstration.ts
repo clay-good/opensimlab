@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsCalciumChannelBlocker, type CalciumChannelBlockerAction, type CalciumChannelBlockerProgress,
 } from '../calcium-channel-blocker-shock';
+import { calciumChannelBlockerInlinePrompt } from '../tutor/calcium-channel-blocker-shock-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: CalciumChannelBlockerProgress): string {
+  const prompt = calciumChannelBlockerInlinePrompt('guided', { scenarioVersion: '0.1.0', calciumChannelBlocker: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const CALCIUM_CHANNEL_BLOCKER_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -48,7 +60,7 @@ export function calciumChannelBlockerDemonstrationStep(
   }
   if (patient.supportAtTick === null) {
     return { id: 'support', focus: 'actions', progress: 0.4, action: 'activate-toxicology-calcium-channel-blocker-poison-center-resuscitation-cardiac-metabolic-airway-and-safety-ownership',
-      narration: 'Build a room for a long night rather than for the next fifteen minutes. Poison center or medical toxicology, emergency and critical care, nursing and pharmacy for infusions that will need titrating, cardiac and perfusion owners, someone watching the glucose and potassium, an airway-capable clinician, and compassionate nonjudgmental safety ownership. Atropine and an initial vasopressor have already been tried without success, and the drug is still being absorbed.' };
+      narration: narrate(patient) };
   }
   if (patient.evidenceAtTick === null) {
     return { id: 'evidence', focus: 'monitor', progress: 0.56, action: 'review-toxicology-calcium-channel-blocker-supplied-ecg-perfusion-contractility-glucose-electrolyte-prior-care-and-rescue-boundary',

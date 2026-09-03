@@ -425,23 +425,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "obstructive-shock-tension-pneumothorax-fixtures.ts binds seed 6521 and content 0.1.0 to expert, correct-but-late error, recovery, and no-action paths. Unlike every other emergency-medicine lesson these transcripts are whole dispatches rather than control ids, because the lab runs on the generic resuscitation mechanics: a pneumothorax-response assessment, a call-for-help with the tension-pneumothorax context, a ventilator setting of inspired fraction 1.0, and a pneumothorax-response decompression. The twenty-nine-year-old woman of 64 kg with penetrating left-chest trauma speaking in short phrases with no tracheal tube, the arrival tension-pneumothorax event on the left pleural space at value 0.9, and the authored bilateral finding of markedly reduced left air entry with the right present are authored constants. The post-decompression recovery is the shared engine trajectory, declared in the scenario as a teaching trajectory rather than an individual prognosis. tests/integration/emergency-obstructive-pleural-shock-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
           "status": "satisfied",
           "evidence": [
-            "The timeline contains at least one non-narrative state event."
+            "This lesson is graded on elapsed time rather than on order, which is what separates it from the other seventeen in the module. src/modules/anesthesia/ui/Debrief.tsx credits the bilateral assessment and the help request at 30 seconds from the modelled pleural event and partly at 60, high-concentration oxygen inside 60, and the decompression intent at 60 and partly at 120, all measured from the event rather than from each other. The engine refuses the assessment and the help request outright while the pleural event is inactive, and refuses a duplicate decompression; a reference transcript exercises each. The correct-but-late transcript records all four steps in a defensible order and still scores worse, which is the progression the lesson exists to make visible."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Four recorded decisions against five declared objectives: assess bilateral ventilation and find markedly reduced left air entry against a present right side; request pleural-crisis help in parallel rather than afterwards; set inspired oxygen to 1.0 by facemask; and record immediate left-chest decompression intent without imaging. The fifth objective is the authored recovery trajectory that follows an accepted decompression. None of the four is gated against another by the engine, so the order the worked example takes is a defensible one rather than an enforced one and the lesson says so. It examines nobody, acquires no ultrasound or radiograph, delivers no oxygen, calls nobody, selects no needle, site or equipment, performs no decompression or later drainage, adjudicates no differential, and predicts no outcome."
           ]
         },
         {
@@ -453,23 +453,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends when an accepted decompression intent is followed by the authored recovery: oxygen saturation of at least 94% and mean arterial pressure of at least 65 mmHg. Later actions cannot restart an ended branch, and a duplicate decompression is refused rather than double-counted. The scenario declares that response as a teaching trajectory and the debrief repeats it in the learner-visible finding, so the ending hands over a bounded improvement rather than a prognosis; later drainage, recurrence, differential diagnosis and outcome are explicitly outside the vignette."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Four observed-state prompts at version 0.1.0 read the learner's own recorded steps — and they read the ordinary published engine state rather than a bespoke assessment block, because this lab has none. The reflex the lesson works against is not doing the wrong thing but doing the right thing at a comfortable pace, so every beat names the window it is being measured against. The assessment beat makes the finding a comparison between sides and says plainly that this lab asks how long you took rather than what order you used. The help beat reads the shared 30-second credit as evidence that calling is meant to happen alongside rather than next, and notes that a request you can stand down costs nothing. The oxygen beat says why the usual ceiling does not apply in a young trauma patient and, in the same breath, that oxygen will not fix this — it re-expands no lung. The decompression beat gives the mechanical reason the windows are so short, names a radiograph in an unstable patient as a request to spend the minute that mattered, and states the asymmetry of the error: being wrong costs a drain in someone who needed one less than you thought, while being right and slow costs the arrest. Worked example 0.1.0 drives the ordinary controls through the real engine — the first worked example in this module whose beats each carry their own dispatch, because the four steps go through four different action types — and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere waits for imaging, names a needle or a site, claims the lung is re-expanded, or offers a prognosis. tests/unit/emergency-obstructive-pleural-shock-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/emergency-obstructive-pleural-shock.test.tsx verifies the tutor panel, silence when unassisted, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps the declared objectives to accepted engine events and to the recorded history; the no-action path meets none and the expert path meets all five. The counterfactual here is not a wrong action but a slow one: the common-error path records the assessment, the help request and the oxygen promptly and then reaches the chest at tick 1300, a little over two minutes after the modelled event, which falls outside even the partly-met window. Nothing in that run is out of order, and it is the only counterfactual in the module that fails purely on elapsed time. The recovery path is refused twice for acting before the pleural event is active and once for a duplicate decompression, and still meets every objective from the same positions."
           ]
         },
         {
@@ -488,23 +488,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "obstructive-shock-tension-pneumothorax-fixtures.ts binds exact-content expert, correct-but-late error, recovery, and no-action pathways to seed 6521 for deterministic replay through the shared engine, including the inactive-event refusals and the duplicate-decompression refusal."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

@@ -9,6 +9,14 @@ interface ObservedStep {
   readonly focus: DemonstrationBeat['focus'];
   readonly progress: number;
   readonly action?: string;
+  /**
+   * A beat that does not go through this lesson's single `actionType` carries
+   * its own dispatch. Lessons scored against the generic resuscitation
+   * mechanics need this: one beat is a `pneumothorax-response`, the next a
+   * `call-for-help`, the next a `ventilator` setting. Lessons with one action
+   * type never set it and keep the original behaviour exactly.
+   */
+  readonly dispatch?: Omit<LearnerAction, 'tick'>;
   readonly finished?: boolean;
 }
 
@@ -33,7 +41,7 @@ export function useObservedDemonstration({ active, running, step, actionType, ac
   const generation = latest.current.generation
     + Number(latest.current.active !== active || latest.current.step.id !== step.id);
   latest.current = { active, step, generation };
-  const pending = active && !!step.action && submittedStep !== step.id;
+  const pending = active && !!(step.action ?? step.dispatch) && submittedStep !== step.id;
 
   useEffect(() => {
     mounted.current = true;
@@ -57,9 +65,9 @@ export function useObservedDemonstration({ active, running, step, actionType, ac
   const onAdvance = pending ? () => {
     // A double click or a retained callback after takeover cannot act again.
     if (!mounted.current || !latest.current.active || latest.current.generation !== generation || latest.current.step.id !== step.id
-      || submitted.current === step.id || !step.action) return;
+      || submitted.current === step.id || !(step.action ?? step.dispatch)) return;
     submitted.current = step.id; setSubmittedStep(step.id);
-    act({ type: actionType, payload: { action: step.action } });
+    act(step.dispatch ?? { type: actionType, payload: { action: step.action! } });
     play();
   } : undefined;
   return {

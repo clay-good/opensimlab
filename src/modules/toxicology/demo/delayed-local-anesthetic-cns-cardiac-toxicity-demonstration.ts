@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsDelayedLast, type DelayedLastAction, type DelayedLastProgress,
 } from '../delayed-local-anesthetic-cns-cardiac-toxicity';
+import { delayedLastInlinePrompt } from '../tutor/delayed-local-anesthetic-cns-cardiac-toxicity-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: DelayedLastProgress): string {
+  const prompt = delayedLastInlinePrompt('guided', { scenarioVersion: '0.1.0', delayedLast: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const DELAYED_LAST_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -44,11 +56,11 @@ export function delayedLastDemonstrationStep(
   }
   if (patient.recognitionAtTick === null) {
     return { id: 'recognize', focus: 'actions', progress: 0.24, action: 'recognize-toxicology-delayed-last-coupled-pattern-without-classic-sequence-clock-symptom-or-ecg-only-closure',
-      narration: 'Name the CNS and the cardiac phases as one event, and refuse the four ways this gets closed early. No classic sequence, no clock, no single symptom, no seizure and no ECG interval diagnoses or grades her alone — and the tidy textbook order is the thing least worth relying on, because presentations vary and hers is already past the excitatory part. A wide QRS of 124 ms with bradycardia and ectopy is the cardiac phase, not an incidental interval. Epilepsy, stroke, infection, metabolic causes, other sodium-channel blockers and a coingestion all stay open.' };
+      narration: narrate(patient) };
   }
   if (patient.supportAtTick === null) {
     return { id: 'support', focus: 'actions', progress: 0.4, action: 'activate-toxicology-delayed-last-source-airway-seizure-cardiac-toxicology-lipid-and-refractory-rescue-ownership',
-      narration: 'Give source cessation an owner in the same breath as the airway and the lipid. Everything else here is somebody’s reflex: the airway, the seizure, the rhythm, the pressure. Stopping the infusion is nobody’s by default, and it is the only step that changes how much drug she is still receiving. Qualified source cessation, airway, seizure, cardiac, poison-center, lipid-rescue and extracorporeal-support ownership all start together, and the catheter itself stays qualified-team work.' };
+      narration: narrate(patient) };
   }
   if (patient.evidenceAtTick === null) {
     return { id: 'evidence', focus: 'monitor', progress: 0.56, action: 'review-toxicology-delayed-last-supplied-source-delivery-cns-ecg-perfusion-acid-base-electrolyte-and-differential-boundary',

@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsDelirium, type DeliriumAction, type DeliriumProgress,
 } from '../acute-delirium-reversible-causes';
+import { deliriumInlinePrompt } from '../tutor/acute-delirium-reversible-causes-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: DeliriumProgress): string {
+  const prompt = deliriumInlinePrompt('guided', { scenarioVersion: '0.1.0', delirium: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const DELIRIUM_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -42,11 +54,11 @@ export function deliriumDemonstrationStep(
   }
   if (patient.recognitionAtTick === null) {
     return { id: 'recognition', focus: 'actions', progress: 0.26, action: 'recognize-neurology-delirium-indicators-and-qualified-assessment-boundary-without-dementia-or-single-cause-closure',
-      narration: 'Name delirium against that baseline, and refuse both easy closures. A 4AT of 8 from the recorded fluctuation, attention failure and orientation errors supports the assessment a qualified clinician has already made — it is not a diagnosis you calculate, a severity scale, a cause finder, a capacity test, or a dementia label. And it is not one cause either: infection, respiratory, circulatory, metabolic, medication, pain, urinary, bowel, neurological, psychiatric and environmental contributors all stay open for serial review.' };
+      narration: narrate(patient) };
   }
   if (patient.ownershipAtTick === null) {
     return { id: 'ownership', focus: 'actions', progress: 0.46, action: 'activate-neurology-delirium-qualified-medical-nursing-pharmacy-family-safety-capacity-and-mobility-ownership',
-      narration: 'Bring in the people whose work actually treats this, and that is mostly not medical. Nursing, pharmacy, family, falls, capacity, mobility, pain, nutrition, bladder, bowel, sensory, sleep and safeguarding ownership are the intervention here — the medicine review, the familiar face, the hearing aids, the walk to the toilet. Her daughter is part of the care rather than a visitor, because familiar reorientation from someone she knows does something no member of staff can.' };
+      narration: narrate(patient) };
   }
   if (patient.boundaryAtTick === null) {
     return { id: 'boundary', focus: 'monitor', progress: 0.64, action: 'review-neurology-delirium-reversible-contributors-communication-environment-deescalation-and-treatment-boundary',

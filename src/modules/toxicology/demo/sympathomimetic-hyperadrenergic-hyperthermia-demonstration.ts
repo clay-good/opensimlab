@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsSympathomimetic, type SympathomimeticAction, type SympathomimeticProgress,
 } from '../sympathomimetic-hyperadrenergic-hyperthermia';
+import { sympathomimeticInlinePrompt } from '../tutor/sympathomimetic-hyperadrenergic-hyperthermia-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: SympathomimeticProgress): string {
+  const prompt = sympathomimeticInlinePrompt('guided', { scenarioVersion: '0.1.0', sympathomimetic: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const SYMPATHOMIMETIC_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -43,11 +55,11 @@ export function sympathomimeticDemonstrationStep(
   }
   if (patient.recognitionAtTick === null) {
     return { id: 'recognize', focus: 'actions', progress: 0.24, action: 'recognize-toxicology-sympathomimetic-coupled-pattern-without-screen-pupil-pressure-temperature-or-agitation-only-closure',
-      narration: 'Name the pattern before the room mobilizes, and refuse the five ways it gets closed early. Exposure plus mental state plus autonomic findings are one pattern, and no toxicology screen, pupil, pressure, temperature, pulse or behavior diagnoses or grades him alone. The wet skin and the busy gut with no clonus, no hyperreflexia and no rising tone are the discriminators worth having — they sit between the serotonergic bedside and the dry, quiet anticholinergic one — and they exclude nothing on their own, with head injury, hypoglycemia, infection, withdrawal, environmental exposure and coingestion all still open.' };
+      narration: narrate(patient) };
   }
   if (patient.supportAtTick === null) {
     return { id: 'support', focus: 'actions', progress: 0.4, action: 'activate-toxicology-sympathomimetic-deescalation-resuscitation-cooling-airway-toxicology-monitoring-and-compassionate-safety-ownership',
-      narration: 'Make the room calmer and cooler in the same beat, and give both an owner. De-escalation, sedation and rapid cooling are one intervention here rather than three: the calm is what lowers the pressure, the rate and the heat, and prolonged struggle adds to all three. Cardiac, airway, renal, monitoring, psychiatric, the poison center and compassionate safety ownership start together with it. A frightened man is not a security problem.' };
+      narration: narrate(patient) };
   }
   if (patient.evidenceAtTick === null) {
     return { id: 'evidence', focus: 'monitor', progress: 0.56, action: 'review-toxicology-sympathomimetic-supplied-mental-autonomic-cardiac-temperature-renal-ck-and-differential-boundary',
