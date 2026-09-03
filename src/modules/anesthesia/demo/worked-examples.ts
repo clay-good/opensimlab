@@ -152,6 +152,7 @@ import { supportsHypertensiveEmergencyDemonstration } from '../../cardiology/dem
 import { supportsPacemakerCaptureFailureDemonstration } from '../../cardiology/demo/pacemaker-capture-failure-demonstration';
 import { supportsTranscutaneousPacingCaptureDemonstration } from '../../cardiology/demo/transcutaneous-pacing-capture-demonstration';
 import { supportsSepticShockResuscitationDemonstration } from '../../critical-care/demo/septic-shock-resuscitation-demonstration';
+import { supportsCardiogenicShockDemonstration } from '../../critical-care/demo/cardiogenic-shock-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -345,6 +346,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
   ],
   'critical-care': [
     supportsSepticShockResuscitationDemonstration,
+    supportsCardiogenicShockDemonstration,
   ],
 };
 

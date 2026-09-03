@@ -214,6 +214,7 @@ import { hypertensiveEmergencyInlinePrompt } from '../../cardiology/tutor/hypert
 import { pacemakerCaptureFailureInlinePrompt } from '../../cardiology/tutor/pacemaker-capture-failure-guidance';
 import { transcutaneousPacingCaptureInlinePrompt } from '../../cardiology/tutor/transcutaneous-pacing-capture-guidance';
 import { septicShockResuscitationInlinePrompt } from '../../critical-care/tutor/septic-shock-resuscitation-guidance';
+import { cardiogenicShockInlinePrompt } from '../../critical-care/tutor/cardiogenic-shock-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2997,6 +2998,7 @@ export interface ActionCockpitProps {
   readonly pacemakerCaptureFailureGuidance?: GuidanceLevel;
   readonly transcutaneousPacingCaptureGuidance?: GuidanceLevel;
   readonly septicShockResuscitationGuidance?: GuidanceLevel;
+  readonly cardiogenicShockGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3160,6 +3162,7 @@ export interface ActionCockpitProps {
   readonly pacemakerCaptureFailureDemonstrating?: boolean;
   readonly transcutaneousPacingCaptureDemonstrating?: boolean;
   readonly septicShockResuscitationDemonstrating?: boolean;
+  readonly cardiogenicShockDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5555,6 +5558,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasCardiogenicShockResponse && (
               <CardiogenicShockTray assessment={props.resuscitation.cardiogenicShockAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.cardiogenicShockGuidance}
+                demonstrating={props.cardiogenicShockDemonstrating}
                 onAction={props.onCardiogenicShockResponse ?? (() => {})} />
             )}
             {hasMixedShockResponse && (
@@ -9510,8 +9516,11 @@ function PostIntubationHypotensionTray({ assessment, onAction }: {
   );
 }
 
-function CardiogenicShockTray({ assessment, onAction }: {
+function CardiogenicShockTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['cardiogenicShockAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onCardiogenicShockResponse']>;
 }) {
   const recognized = assessment?.recognitionAtTick != null;
@@ -9519,8 +9528,18 @@ function CardiogenicShockTray({ assessment, onAction }: {
   const bridge = assessment?.bridgeAtTick != null;
   const causeControl = assessment?.causeControlAtTick != null;
   const reassessed = assessment?.reassessmentAtTick != null;
+  const prompt = demonstrating ? null
+    : cardiogenicShockInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="cardiogenic-perfusion-title">
         <div id="cardiogenic-perfusion-title" className="syringe__name">Pressure is a clue. Perfusion is the verdict.</div>
         <Badge kind="teaching">brain · skin · kidney · lactate · trajectory</Badge>
@@ -9532,9 +9551,9 @@ function CardiogenicShockTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={recognized}
-            onClick={() => onAction('recognize-cardiogenic-shock-trajectory')}>Recognize shock + activate teams</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('recognize-cardiogenic-shock-trajectory') : undefined}>Recognize shock + activate teams</Button>
           <Button className="crisis-drug__action" disabled={!recognized || phenotype}
-            onClick={() => onAction('review-cardiogenic-shock-cause-and-phenotype')}>Review cause + phenotype + threats</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-cardiogenic-shock-cause-and-phenotype') : undefined}>Review cause + phenotype + threats</Button>
         </div>
         <p className="field__hint">Do not wait for one pressure threshold. Stage the trajectory, phenotype the pump, and keep mechanical, rhythm, right-heart, and noncardiac causes visible.</p>
       </section>
@@ -9549,14 +9568,15 @@ function CardiogenicShockTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!phenotype || bridge}
-            onClick={() => onAction('record-cardiogenic-shock-bridge')}>Record perfusion-linked bridge</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-cardiogenic-shock-bridge') : undefined}>Record perfusion-linked bridge</Button>
           <Button className="crisis-drug__action" disabled={!bridge || causeControl}
-            onClick={() => onAction('escalate-cardiogenic-shock-cause-control')}>Prioritize culprit revascularization</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('escalate-cardiogenic-shock-cause-control') : undefined}>Prioritize culprit revascularization</Button>
           <Button className="crisis-drug__action" disabled={!causeControl || reassessed}
-            onClick={() => onAction('reassess-cardiogenic-shock-trajectory')}>Review 10-minute trajectory</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-cardiogenic-shock-trajectory') : undefined}>Review 10-minute trajectory</Button>
         </div>
         <p className="field__hint">Support buys time; it does not repair the infarct. Further hemodynamics, inotrope, transfer, and temporary support remain expert and trajectory dependent.</p>
       </section>
+      </div>
     </div>
   );
 }
