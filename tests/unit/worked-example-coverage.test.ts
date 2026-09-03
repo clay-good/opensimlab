@@ -155,7 +155,9 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
     if (covered === RESPIRATORY_MEDICINE_SCENARIOS.length) {
       // The part-finished sentence is not allowed to linger once it is untrue.
       expect(uncovered(RESPIRATORY_MEDICINE_SCENARIOS, 'respiratory-medicine')).toEqual([]);
-      expect(readme).not.toContain('medicine has started');
+      // Named in full: the bare 'medicine has started' also matched the sentence
+      // emergency medicine earned when it started, which is a different module.
+      expect(readme).not.toContain('Respiratory medicine has started');
       return;
     }
     expect(readme).toContain(`with ${COUNT_WORDS[covered]} of its`);
@@ -204,13 +206,27 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
     expect(readme).not.toContain('of its twenty-four labs done');
   });
 
-  it('names the two modules that have not started, rather than assuming them', () => {
-    // The sentence claims anesthesia and emergency medicine have not started.
-    // That is derived here so it cannot rot the first time one of them does.
-    expect(coveredCount(ANESTHESIA_SCENARIOS, 'anesthesia')).toBe(0);
-    expect(coveredCount(EMERGENCY_MEDICINE_SCENARIOS, 'emergency-medicine')).toBe(0);
+  it('counts the finished emergency-medicine labs rather than trusting the sentence', () => {
+    expect(EMERGENCY_MEDICINE_SCENARIOS).toHaveLength(25);
+    const covered = coveredCount(EMERGENCY_MEDICINE_SCENARIOS, 'emergency-medicine');
+    expect(covered).toBeGreaterThan(0);
     const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');
-    expect(readme).toContain('Anesthesia and emergency medicine\nhave not started.');
+    if (covered === EMERGENCY_MEDICINE_SCENARIOS.length) {
+      // The part-finished sentence is not allowed to linger once it is untrue.
+      expect(uncovered(EMERGENCY_MEDICINE_SCENARIOS, 'emergency-medicine')).toEqual([]);
+      expect(readme).not.toContain('Emergency medicine has started');
+      return;
+    }
+    expect(readme).toContain(`with ${COUNT_WORDS[covered]} of its`);
+    expect(readme).toContain(`${COUNT_WORDS[EMERGENCY_MEDICINE_SCENARIOS.length]} labs done.`);
+  });
+
+  it('names the module that has not started, rather than assuming it', () => {
+    // Anesthesia is asserted to be at zero rather than assumed, so the sentence
+    // breaks the first time it gains a lesson.
+    expect(coveredCount(ANESTHESIA_SCENARIOS, 'anesthesia')).toBe(0);
+    const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');
+    expect(readme).toContain('Anesthesia has not started.');
   });
 
   it('claims only what those thirteen modules support', () => {

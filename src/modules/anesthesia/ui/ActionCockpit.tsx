@@ -237,6 +237,7 @@ import { tubeMigrationInlinePrompt } from '../../critical-care/tutor/tube-migrat
 import { icuHandoffInlinePrompt } from '../../critical-care/tutor/icu-handoff-guidance';
 import { pulseOximeterArtifactInlinePrompt } from '../../critical-care/tutor/pulse-oximeter-artifact-guidance';
 import { ardsLungProtectiveInlinePrompt } from '../../critical-care/tutor/ards-lung-protective-guidance';
+import { acuteAorticSyndromeInlinePrompt } from '../../emergency-medicine/tutor/acute-aortic-syndrome-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3043,6 +3044,7 @@ export interface ActionCockpitProps {
   readonly icuHiddenDeteriorationHandoffGuidance?: GuidanceLevel;
   readonly pulseOximeterArtifactGuidance?: GuidanceLevel;
   readonly ardsLungProtectiveGuidance?: GuidanceLevel;
+  readonly acuteAorticSyndromeGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3229,6 +3231,7 @@ export interface ActionCockpitProps {
   readonly icuHiddenDeteriorationHandoffDemonstrating?: boolean;
   readonly pulseOximeterArtifactDemonstrating?: boolean;
   readonly ardsLungProtectiveDemonstrating?: boolean;
+  readonly acuteAorticSyndromeDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5583,6 +5586,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasAcuteAorticSyndromeResponse && (
               <AcuteAorticSyndromeTray assessment={props.resuscitation.acuteAorticSyndromeAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.acuteAorticSyndromeGuidance}
+                demonstrating={props.acuteAorticSyndromeDemonstrating}
                 onAction={props.onAcuteAorticSyndromeResponse ?? (() => {})} />
             )}
             {hasArdsLungProtectiveResponse && (
@@ -9181,8 +9187,11 @@ function TraumaPrimarySurveyTray({ assessment, onAction }: {
   );
 }
 
-function AcuteAorticSyndromeTray({ assessment, onAction }: {
+function AcuteAorticSyndromeTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['acuteAorticSyndromeAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onAcuteAorticSyndromeResponse']>;
 }) {
   const initial = assessment?.initialReviewedAtTick != null;
@@ -9191,8 +9200,18 @@ function AcuteAorticSyndromeTray({ assessment, onAction }: {
   const antiImpulse = assessment?.antiImpulseAtTick != null;
   const imaging = assessment?.imagingAtTick != null;
   const handedOff = assessment?.handedOffAtTick != null;
+  const prompt = demonstrating ? null
+    : acuteAorticSyndromeInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="aortic-drift-title">
         <div id="aortic-drift-title" className="syringe__name">The first exam is a timestamp.</div>
         <Badge kind="teaching">pain · pressure · pulse · perfusion · brain</Badge>
@@ -9205,11 +9224,11 @@ function AcuteAorticSyndromeTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={initial}
-            onClick={() => onAction('review-aortic-initial-pattern')}>Review pain + ECG + symmetric baseline</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-aortic-initial-pattern') : undefined}>Review pain + ECG + symmetric baseline</Button>
           <Button className="crisis-drug__action" disabled={!initial || evolution}
-            onClick={() => onAction('repeat-aortic-asymmetry-exam')}>Repeat both arms + pulses + brain</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('repeat-aortic-asymmetry-exam') : undefined}>Repeat both arms + pulses + brain</Button>
           <Button className="crisis-drug__action" disabled={!evolution || escalated}
-            onClick={() => onAction('activate-aortic-pathway')}>Escalate aortic concern + pause defaults</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('activate-aortic-pathway') : undefined}>Escalate aortic concern + pause defaults</Button>
         </div>
         <p className="field__hint">A normal first pulse or neurologic exam does not stay normal by promise. Recheck discordant territories when the story changes.</p>
       </section>
@@ -9225,14 +9244,15 @@ function AcuteAorticSyndromeTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!escalated || antiImpulse}
-            onClick={() => onAction('record-aortic-anti-impulse-intent')}>Analgesia + rate-first anti-impulse</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-aortic-anti-impulse-intent') : undefined}>Analgesia + rate-first anti-impulse</Button>
           <Button className="crisis-drug__action" disabled={!antiImpulse || imaging}
-            onClick={() => onAction('prioritize-aortic-imaging')}>Prioritize definitive aortic imaging</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('prioritize-aortic-imaging') : undefined}>Prioritize definitive aortic imaging</Button>
           <Button className="crisis-drug__action" disabled={!imaging || handedOff}
-            onClick={() => onAction('repeat-and-handoff-aortic-evolution')}>Repeat territories + hand off uncertainty</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('repeat-and-handoff-aortic-evolution') : undefined}>Repeat territories + hand off uncertainty</Button>
         </div>
         <p className="field__hint">CT is the authored first imaging intent while transportable; TEE or MRI may fit another context. This lesson ends before any result or operative choice.</p>
       </section>
+      </div>
     </div>
   );
 }

@@ -48,8 +48,8 @@ point, and a private tutor that reads only what you have actually done. The tuto
 unless you ask for it, says nothing at all on the unassisted setting, and never supplies the
 diagnosis a lesson exists to leave open. Every renal, oncology, endocrine, nursing,
 infectious-disease, neonatology, toxicology, neurology, obstetrics, respiratory-medicine,
-pediatrics, cardiology, and critical-care lab has both. Anesthesia and emergency medicine
-have not started.
+pediatrics, cardiology, and critical-care lab has both. Emergency medicine has started,
+with one of its twenty-five labs done. Anesthesia has not started.
 
 ## How it works
 

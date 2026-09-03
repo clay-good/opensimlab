@@ -347,6 +347,8 @@ import { usePulseOximeterArtifactDemonstration } from '../../critical-care/demo/
 import { supportsPulseOximeterArtifactDemonstration } from '../../critical-care/demo/pulse-oximeter-artifact-demonstration';
 import { useArdsLungProtectiveDemonstration } from '../../critical-care/demo/useArdsLungProtectiveDemonstration';
 import { supportsArdsLungProtectiveDemonstration } from '../../critical-care/demo/ards-lung-protective-demonstration';
+import { useAcuteAorticSyndromeDemonstration } from '../../emergency-medicine/demo/useAcuteAorticSyndromeDemonstration';
+import { supportsAcuteAorticSyndromeDemonstration } from '../../emergency-medicine/demo/acute-aortic-syndrome-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -672,6 +674,7 @@ export function Cockpit({
   const icuHandoffDemoSupported = supportsIcuHandoffDemonstration(scenario);
   const pulseOximeterArtifactDemoSupported = supportsPulseOximeterArtifactDemonstration(scenario);
   const ardsLungProtectiveDemoSupported = supportsArdsLungProtectiveDemonstration(scenario);
+  const acuteAorticSyndromeDemoSupported = supportsAcuteAorticSyndromeDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -825,6 +828,7 @@ export function Cockpit({
     || icuHandoffDemoSupported
     || pulseOximeterArtifactDemoSupported
     || ardsLungProtectiveDemoSupported
+    || acuteAorticSyndromeDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1192,6 +1196,12 @@ export function Cockpit({
     active: demonstrating && ardsLungProtectiveDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.ardsLungProtectiveAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const acuteAorticSyndromeDemonstration = useAcuteAorticSyndromeDemonstration({
+    active: demonstrating && acuteAorticSyndromeDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.acuteAorticSyndromeAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const stableNarrowTachycardiaDemonstration = useStableNarrowTachycardiaDemonstration({
@@ -1937,6 +1947,7 @@ export function Cockpit({
     : icuHandoffDemoSupported ? icuHandoffDemonstration
     : pulseOximeterArtifactDemoSupported ? pulseOximeterArtifactDemonstration
     : ardsLungProtectiveDemoSupported ? ardsLungProtectiveDemonstration
+    : acuteAorticSyndromeDemoSupported ? acuteAorticSyndromeDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2952,6 +2963,8 @@ export function Cockpit({
           pulseOximeterArtifactDemonstrating={demonstrating && pulseOximeterArtifactDemoSupported}
           ardsLungProtectiveGuidance={session.guidance}
           ardsLungProtectiveDemonstrating={demonstrating && ardsLungProtectiveDemoSupported}
+          acuteAorticSyndromeGuidance={session.guidance}
+          acuteAorticSyndromeDemonstrating={demonstrating && acuteAorticSyndromeDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
