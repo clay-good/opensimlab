@@ -249,6 +249,7 @@ import { exertionalHeatStrokeInlinePrompt } from '../../emergency-medicine/tutor
 import { hyperkalemiaWithEcgChangeInlinePrompt } from '../../emergency-medicine/tutor/hyperkalemia-with-ecg-change-guidance';
 import { intracranialHemorrhageInlinePrompt } from '../../emergency-medicine/tutor/intracranial-hemorrhage-deterioration-guidance';
 import { opioidToxicityInlinePrompt } from '../../emergency-medicine/tutor/opioid-toxicity-guidance';
+import { pulmonaryEmbolismInlinePrompt } from '../../emergency-medicine/tutor/pulmonary-embolism-deterioration-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3067,6 +3068,7 @@ export interface ActionCockpitProps {
   readonly hyperkalemiaEcgGuidance?: GuidanceLevel;
   readonly intracranialHemorrhageGuidance?: GuidanceLevel;
   readonly opioidToxicityGuidance?: GuidanceLevel;
+  readonly pulmonaryEmbolismGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3265,6 +3267,7 @@ export interface ActionCockpitProps {
   readonly hyperkalemiaEcgDemonstrating?: boolean;
   readonly intracranialHemorrhageDemonstrating?: boolean;
   readonly opioidToxicityDemonstrating?: boolean;
+  readonly pulmonaryEmbolismDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5574,6 +5577,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasPulmonaryEmbolismResponse && (
               <PulmonaryEmbolismTray
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.pulmonaryEmbolismGuidance}
+                demonstrating={props.pulmonaryEmbolismDemonstrating}
                 assessment={props.resuscitation.pulmonaryEmbolismAssessment}
                 onAction={props.onPulmonaryEmbolismResponse ?? (() => {})}
               />
@@ -8595,8 +8601,11 @@ function AcutePulmonaryEdemaTray({ assessment, scenarioVersion, guidance = 'unas
   );
 }
 
-function PulmonaryEmbolismTray({ assessment, onAction }: {
+function PulmonaryEmbolismTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['pulmonaryEmbolismAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onPulmonaryEmbolismResponse']>;
 }) {
   const reviewed = assessment?.severityReviewedAtTick != null;
@@ -8604,8 +8613,18 @@ function PulmonaryEmbolismTray({ assessment, onAction }: {
   const anticoagulated = assessment?.anticoagulationAtTick != null;
   const deteriorated = assessment?.deteriorationAtTick != null;
   const escalated = assessment?.escalationAtTick != null;
+  const prompt = demonstrating ? null
+    : pulmonaryEmbolismInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="pe-severity-title">
         <div id="pe-severity-title" className="syringe__name">Read the right ventricle, lungs, and circulation together</div>
         <Badge kind="teaching">Fixed confirmed PE</Badge>
@@ -8616,15 +8635,15 @@ function PulmonaryEmbolismTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={reviewed}
-            onClick={() => onAction('review-confirmed-pe-severity')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-confirmed-pe-severity') : undefined}>
             Review confirmed PE + severity
           </Button>
           <Button className="crisis-drug__action" disabled={!reviewed || oxygen}
-            onClick={() => onAction('record-titrated-oxygen')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-titrated-oxygen') : undefined}>
             Record titrated oxygen intent
           </Button>
           <Button className="crisis-drug__action" disabled={!reviewed || anticoagulated}
-            onClick={() => onAction('record-therapeutic-anticoagulation-intent')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-therapeutic-anticoagulation-intent') : undefined}>
             Record therapeutic anticoagulation intent
           </Button>
         </div>
@@ -8642,16 +8661,17 @@ function PulmonaryEmbolismTray({ assessment, onAction }: {
         <div className="syringe__presets">
           <Button className="crisis-drug__action"
             disabled={!oxygen || !anticoagulated || deteriorated}
-            onClick={() => onAction('reassess-for-deterioration')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-for-deterioration') : undefined}>
             Reassess pressure + perfusion
           </Button>
           <Button className="crisis-drug__action" disabled={!deteriorated || escalated}
-            onClick={() => onAction('activate-pert-and-record-reperfusion-intent')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('activate-pert-and-record-reperfusion-intent') : undefined}>
             Activate PERT + reperfusion intent
           </Button>
         </div>
         <p className="field__hint">No anticoagulant or reperfusion dose, contraindication decision, airway technique, procedure selection, transfer, disposition, or outcome is offered.</p>
       </section>
+      </div>
     </div>
   );
 }

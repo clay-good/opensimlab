@@ -1181,23 +1181,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "pulmonary-embolism-deterioration-fixtures.ts binds seed 5936 and content 0.1.0 to expert, never-looked-again error, recovery, and no-action paths. The sudden dyspnoea and pleuritic pain with HR 124/min, RR 30/min, SpO2 90%, BP 112/70 mmHg, alert mentation and warm perfused extremities; the authored CT pulmonary angiogram confirming bilateral main and lobar emboli, the focused echocardiogram showing right-ventricular enlargement and systolic dysfunction without effusion, the elevated troponin and BNP and lactate of 1.8 mmol/L; and the authored deterioration panel of persistent BP 78/50 mmHg, HR 138/min, cool mottled extremities, delayed refill, new confusion and lactate 4.8 mmol/L with oxygenation improved to 92% are authored constants. No clot, right-ventricular, anticoagulation or reperfusion response model is claimed, and no outcome follows from any choice. tests/integration/emergency-pulmonary-embolism-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is a single narrative boundary with no non-narrative state event. The progression lives in the engine's gates across five recorded steps, and the shape of them is the lesson: the severity review is gated ahead of everything, the two initial intents are gated against each other not at all, the reassessment sits behind both plus one further engine tick, and the escalation sits behind the reassessment — so the authored deterioration must actually be looked for before it can be acted on. The category the learner assigns at the start is superseded by the engine at the reassessment. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five recorded decisions against four declared objectives: review the confirmed embolism with its severity markers, pressure and perfusion; record titrated supplemental oxygen, with deep sedation and mechanical ventilation deliberately not selected because acute right-ventricular dysfunction decompensates when sympathetic tone and preload are lost; record immediate therapeutic anticoagulation for a confirmed embolism with no authored absolute contraindication; reassess and recognise the authored progression to cardiopulmonary failure with cardiogenic shock; and activate the response team with an urgent reperfusion-strategy intent. The two initial intents are unordered because neither is a prerequisite for the other. The lesson acquires no test, selects no agent, dose or renal adjustment, manages no airway, adjudicates no contraindication, performs and prefers no reperfusion modality, transfers nobody, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -1209,23 +1209,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded team activation and reperfusion-strategy intent for Category E1, with the patient in cardiogenic shock rather than improved. Later actions cannot restart an ended branch. The engine event states that systemic thrombolysis, catheter therapy, mechanical thrombectomy and surgical embolectomy all require real contraindication review, local expertise and individualised selection, and that none is performed or preferred here — so the ending hands over an unresolved patient and a decision that belongs to a team."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps. The reflex the lesson works against is treating a category as a conclusion: this patient arrives normotensive with right-ventricular strain, which is the band people file under \"not the emergency\", and his pressure falls while the correct treatment is running. The severity beat says a normal blood pressure in a failing right ventricle is evidence of compensation rather than of health, which is a different and much more temporary statement. Because the two initial intents are unordered, the claim the lesson turns on lives in the beat for the state where neither has been recorded — what the oxygen control quietly records is that sedation and mechanical ventilation are not being selected, because induction removes the sympathetic tone and positive pressure removes the preload that are jointly holding this circulation up, making the airway intervention the more dangerous choice. The anticoagulation beat says the interval spent deciding is an interval in which more clot forms, and separates stopping propagation from removing what is already there. The reassessment beat names the trap in miniature: the oxygenation improved to 92% while the pressure fell, so the number being watched got better and the patient got worse. The escalation beat treats not choosing a reperfusion modality as the point, since the delay in these cases is usually in the assembling rather than the procedure. Worked example 0.1.0 drives the ordinary controls through the real engine and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere intubates the patient, names an agent or dose, prefers a reperfusion modality, or claims the embolism is treated. tests/unit/emergency-pulmonary-embolism-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/emergency-pulmonary-embolism.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding alongside the pre-existing tests/ui/pulmonary-embolism-deterioration.test.tsx."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps the declared objectives to accepted engine events; the no-action path meets none and the expert path meets all four. The counterfactual is the one that treats a category as a conclusion: the common-error path reviews severity, records oxygen and anticoagulation, and reaches straight for the escalation without ever looking again, so it never sees the pressure fall. It is refused, and the two objectives that turn on the deterioration stay unmet. The recovery path reaches for oxygen before the confirmed severity has been read and is refused, reassesses on the same tick as the last intent and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -1244,23 +1244,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "pulmonary-embolism-deterioration-fixtures.ts binds exact-content expert, never-looked-again error, recovery, and no-action pathways to seed 5936 for deterministic replay through the shared engine, including both order refusals and the time-gated reassessment refusal."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

@@ -371,6 +371,8 @@ import { useIntracranialHemorrhageDemonstration } from '../../emergency-medicine
 import { supportsIntracranialHemorrhageDemonstration } from '../../emergency-medicine/demo/intracranial-hemorrhage-deterioration-demonstration';
 import { useOpioidToxicityDemonstration } from '../../emergency-medicine/demo/useOpioidToxicityDemonstration';
 import { supportsOpioidToxicityDemonstration } from '../../emergency-medicine/demo/opioid-toxicity-demonstration';
+import { usePulmonaryEmbolismDemonstration } from '../../emergency-medicine/demo/usePulmonaryEmbolismDemonstration';
+import { supportsPulmonaryEmbolismDemonstration } from '../../emergency-medicine/demo/pulmonary-embolism-deterioration-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -708,6 +710,7 @@ export function Cockpit({
   const hyperkalemiaEcgDemoSupported = supportsHyperkalemiaWithEcgChangeDemonstration(scenario);
   const intracranialHemorrhageDemoSupported = supportsIntracranialHemorrhageDemonstration(scenario);
   const opioidToxicityDemoSupported = supportsOpioidToxicityDemonstration(scenario);
+  const pulmonaryEmbolismDemoSupported = supportsPulmonaryEmbolismDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -873,6 +876,7 @@ export function Cockpit({
     || hyperkalemiaEcgDemoSupported
     || intracranialHemorrhageDemoSupported
     || opioidToxicityDemoSupported
+    || pulmonaryEmbolismDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1258,6 +1262,12 @@ export function Cockpit({
     active: demonstrating && acutePulmonaryEdemaDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.acutePulmonaryEdemaAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const pulmonaryEmbolismDemonstration = usePulmonaryEmbolismDemonstration({
+    active: demonstrating && pulmonaryEmbolismDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.pulmonaryEmbolismAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const opioidToxicityDemonstration = useOpioidToxicityDemonstration({
@@ -2069,6 +2079,7 @@ export function Cockpit({
     : hyperkalemiaEcgDemoSupported ? hyperkalemiaEcgDemonstration
     : intracranialHemorrhageDemoSupported ? intracranialHemorrhageDemonstration
     : opioidToxicityDemoSupported ? opioidToxicityDemonstration
+    : pulmonaryEmbolismDemoSupported ? pulmonaryEmbolismDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -3108,6 +3119,8 @@ export function Cockpit({
           intracranialHemorrhageDemonstrating={demonstrating && intracranialHemorrhageDemoSupported}
           opioidToxicityGuidance={session.guidance}
           opioidToxicityDemonstrating={demonstrating && opioidToxicityDemoSupported}
+          pulmonaryEmbolismGuidance={session.guidance}
+          pulmonaryEmbolismDemonstrating={demonstrating && pulmonaryEmbolismDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

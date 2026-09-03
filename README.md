@@ -49,7 +49,7 @@ unless you ask for it, says nothing at all on the unassisted setting, and never 
 diagnosis a lesson exists to leave open. Every renal, oncology, endocrine, nursing,
 infectious-disease, neonatology, toxicology, neurology, obstetrics, respiratory-medicine,
 pediatrics, cardiology, and critical-care lab has both. Emergency medicine has started,
-with twelve of its twenty-five labs done. Anesthesia has not started.
+with thirteen of its twenty-five labs done. Anesthesia has not started.
 
 ## How it works
 
