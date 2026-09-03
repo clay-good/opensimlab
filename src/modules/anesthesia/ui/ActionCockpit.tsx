@@ -218,6 +218,7 @@ import { cardiogenicShockInlinePrompt } from '../../critical-care/tutor/cardioge
 import { mixedShockInlinePrompt } from '../../critical-care/tutor/mixed-shock-guidance';
 import { rvFailureInlinePrompt } from '../../critical-care/tutor/rv-failure-guidance';
 import { massivePeInlinePrompt } from '../../critical-care/tutor/massive-pe-guidance';
+import { autoPeepInlinePrompt } from '../../critical-care/tutor/auto-peep-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3005,6 +3006,7 @@ export interface ActionCockpitProps {
   readonly mixedShockGuidance?: GuidanceLevel;
   readonly rightVentricularFailureGuidance?: GuidanceLevel;
   readonly massivePulmonaryEmbolismGuidance?: GuidanceLevel;
+  readonly autoPeepGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3172,6 +3174,7 @@ export interface ActionCockpitProps {
   readonly mixedShockDemonstrating?: boolean;
   readonly rightVentricularFailureDemonstrating?: boolean;
   readonly massivePulmonaryEmbolismDemonstrating?: boolean;
+  readonly autoPeepDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5544,6 +5547,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasAutoPeepResponse && (
               <AutoPeepTray assessment={props.resuscitation.autoPeepAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.autoPeepGuidance}
+                demonstrating={props.autoPeepDemonstrating}
                 onAction={props.onAutoPeepResponse ?? (() => {})} />
             )}
             {hasMucusPluggingResponse && (
@@ -9277,8 +9283,11 @@ function VentilatorDyssynchronyTray({ assessment, onAction }: {
   );
 }
 
-function AutoPeepTray({ assessment, onAction }: {
+function AutoPeepTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['autoPeepAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onAutoPeepResponse']>;
 }) {
   const flow = assessment?.flowAtTick != null;
@@ -9286,8 +9295,18 @@ function AutoPeepTray({ assessment, onAction }: {
   const classification = assessment?.classificationAtTick != null;
   const correction = assessment?.correctionAtTick != null;
   const reassessment = assessment?.reassessmentAtTick != null;
+  const prompt = demonstrating ? null
+    : autoPeepInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="auto-peep-watch-title">
         <div id="auto-peep-watch-title" className="syringe__name">Watch the breath leave.</div>
         <Badge kind="teaching">flow · time · total PEEP · pressure</Badge>
@@ -9299,11 +9318,11 @@ function AutoPeepTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={flow}
-            onClick={() => onAction('review-auto-peep-patient-and-flow')}>Review patient + expiratory flow</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-auto-peep-patient-and-flow') : undefined}>Review patient + expiratory flow</Button>
           <Button className="crisis-drug__action" disabled={!flow || measurement}
-            onClick={() => onAction('measure-auto-peep')}>Review passive expiratory hold</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('measure-auto-peep') : undefined}>Review passive expiratory hold</Button>
           <Button className="crisis-drug__action" disabled={!measurement || classification}
-            onClick={() => onAction('classify-auto-peep-pattern')}>Classify the bounded pattern</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('classify-auto-peep-pattern') : undefined}>Classify the bounded pattern</Button>
         </div>
         <p className="field__hint">Flow that misses zero is a clue. Effort, airway closure, and uneven emptying can make one hold value incomplete.</p>
       </section>
@@ -9318,12 +9337,13 @@ function AutoPeepTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!classification || correction}
-            onClick={() => onAction('record-auto-peep-correction-intent')}>Treat resistance + preserve exhalation</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-auto-peep-correction-intent') : undefined}>Treat resistance + preserve exhalation</Button>
           <Button className="crisis-drug__action" disabled={!correction || reassessment}
-            onClick={() => onAction('reassess-auto-peep-response')}>Review 10-minute response</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-auto-peep-response') : undefined}>Review 10-minute response</Button>
         </div>
         <p className="field__hint">External PEEP is individualized. Recheck flow, mechanics, triggering, gas exchange, and circulation after any change.</p>
       </section>
+      </div>
     </div>
   );
 }

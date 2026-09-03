@@ -309,6 +309,8 @@ import { useRvFailureDemonstration } from '../../critical-care/demo/useRvFailure
 import { supportsRvFailureDemonstration } from '../../critical-care/demo/rv-failure-demonstration';
 import { useMassivePeDemonstration } from '../../critical-care/demo/useMassivePeDemonstration';
 import { supportsMassivePeDemonstration } from '../../critical-care/demo/massive-pe-demonstration';
+import { useAutoPeepDemonstration } from '../../critical-care/demo/useAutoPeepDemonstration';
+import { supportsAutoPeepDemonstration } from '../../critical-care/demo/auto-peep-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -615,6 +617,7 @@ export function Cockpit({
   const mixedShockDemoSupported = supportsMixedShockDemonstration(scenario);
   const rvFailureDemoSupported = supportsRvFailureDemonstration(scenario);
   const massivePeDemoSupported = supportsMassivePeDemonstration(scenario);
+  const autoPeepDemoSupported = supportsAutoPeepDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -749,6 +752,7 @@ export function Cockpit({
     || mixedShockDemoSupported
     || rvFailureDemoSupported
     || massivePeDemoSupported
+    || autoPeepDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1002,6 +1006,12 @@ export function Cockpit({
     active: demonstrating && massivePeDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.massivePulmonaryEmbolismAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const autoPeepDemonstration = useAutoPeepDemonstration({
+    active: demonstrating && autoPeepDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.autoPeepAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const stableNarrowTachycardiaDemonstration = useStableNarrowTachycardiaDemonstration({
@@ -1728,6 +1738,7 @@ export function Cockpit({
     : mixedShockDemoSupported ? mixedShockDemonstration
     : rvFailureDemoSupported ? rvFailureDemonstration
     : massivePeDemoSupported ? massivePeDemonstration
+    : autoPeepDemoSupported ? autoPeepDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2705,6 +2716,8 @@ export function Cockpit({
           rightVentricularFailureDemonstrating={demonstrating && rvFailureDemoSupported}
           massivePulmonaryEmbolismGuidance={session.guidance}
           massivePulmonaryEmbolismDemonstrating={demonstrating && massivePeDemoSupported}
+          autoPeepGuidance={session.guidance}
+          autoPeepDemonstrating={demonstrating && autoPeepDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

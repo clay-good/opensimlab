@@ -425,23 +425,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "auto-peep-fixtures.ts binds seed 3517 and content 0.1.0 to expert, correct-before-you-measure error, recovery, and no-action paths. The intubated COPD patient on volume control at 480 mL and 28/min with set PEEP 5 cm H2O and FiO2 0.40, the expiratory flow still below zero when each next breath begins, the peak pressure of 35 cm H2O against a passive plateau of 22 cm H2O, the visible efforts that fail to trigger, the SpO2 of 92%, HR 112/min, MAP 62 mmHg, pH 7.24 and PaCO2 64 mmHg, the brief authored passive window, and the expiratory-hold panel giving a total PEEP of 16 cm H2O against a set 5 cm H2O for an intrinsic 11 cm H2O are authored constants; no respiratory-mechanics, bronchodilator or gas-exchange model is claimed, and no outcome follows from any choice. tests/integration/auto-peep-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is two narratives with no non-narrative state event. The progression lives in the engine's four order refusals, and the chain separates three things a learner tends to collapse into one: what the waveform shows, what the expiratory hold measures, and what either of those means. Seeing flow that has not reached zero is not the same as knowing the intrinsic PEEP is 11 cm H2O, and neither is the same as having established dynamic hyperinflation as the reason her MAP is 62 mmHg. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions integrate the patient with the expiratory flow-time graphic, the delivered breathing pattern, the pressures, gas exchange and circulation; use a valid passive expiratory-hold proxy to distinguish set, total and intrinsic PEEP; classify the bounded obstructive dynamic-hyperinflation pattern with its trigger, pressure and haemodynamic consequences without treating one graphic as universal proof; record respiratory-therapy and senior-review intent to treat the obstruction and preserve more expiratory time while retaining protective guardrails and avoiding universal settings or a reflex external-PEEP claim; and reassess flow, total and intrinsic PEEP, pressures, triggering, gas exchange and circulation. The lesson examines nobody, acquires no waveform or mechanics, handles no airway or equipment, diagnoses nothing, selects no ventilator mode or setting, titrates no external PEEP, prescribes or delivers no drug, sedates and paralyses nobody, samples no blood, performs no procedure, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -453,23 +453,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded reassessment on an authored 10-minute response showing less trapping with bounded hypercapnia. Later actions cannot restart an ended branch, and the ending names that hypercapnia as the trade rather than a setback: giving her more time to exhale means fewer breaths, and the rising carbon dioxide is the treatment working. No universal endpoint is claimed and no setting was ever selected."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step, because this lesson has no unordered lane. Two reflexes are named. The first is the peak pressure: 35 cm H2O looks like the problem and invites turning the tidal volume down, and the plateau of 22 cm H2O says that gap is resistance rather than stiff lungs, so the peak is not measuring what it appears to. The second is the rate: she is ventilated at 28/min and cannot finish exhaling, so the setting that looks like it is helping her carbon dioxide is the one causing the trapping that is dropping her pressure — and the correction beat says so directly. The flow beat reads the missed triggering as a consequence rather than a separate fault: a patient has to undo trapped pressure before the ventilator notices she is trying. The measurement beat insists the hold is only valid in a passive window and holds set, total and intrinsic apart, with intrinsic as the part nobody chose. The classification beat links 11 cm H2O of unrelievable pressure to a MAP of 62 mmHg while refusing to make one graphic universal proof. The correction beat withholds every number, including any reflex claim about external PEEP, which has both a real role in triggering and a real capacity to make things worse. The reassessment beat accepts the hypercapnia as the trade. Worked example 0.1.0 drives the ordinary controls through the real engine to the reassessment and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere names a rate, a tidal volume, a PEEP setting, or a bronchodilator dose. tests/unit/auto-peep-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/critical-care-auto-peep.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the one a peak pressure of 35 cm H2O invites: the common-error path reviews the flow and goes straight to a correction, without the hold that quantifies the trapping or the classification that links it to her blood pressure, and meets one of five because the engine gates the correction behind both. The recovery path reaches for the hold before the patient and the flow have been read together and is refused, reaches for the correction before the pattern has been classified and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -488,23 +488,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "auto-peep-fixtures.ts binds exact-content expert, correct-before-you-measure error, recovery, and no-action pathways to seed 3517 for deterministic replay through the shared engine, including all four order refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
