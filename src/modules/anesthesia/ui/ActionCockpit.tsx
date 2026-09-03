@@ -207,6 +207,7 @@ import { stableWideTachycardiaInlinePrompt } from '../../cardiology/tutor/stable
 import { symptomaticBradycardiaInlinePrompt } from '../../cardiology/tutor/symptomatic-bradycardia-guidance';
 import { completeHeartBlockInlinePrompt } from '../../cardiology/tutor/complete-heart-block-guidance';
 import { torsadesInlinePrompt } from '../../cardiology/tutor/torsades-guidance';
+import { hyperkalemicConductionInlinePrompt } from '../../cardiology/tutor/hyperkalemic-conduction-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2983,6 +2984,7 @@ export interface ActionCockpitProps {
   readonly symptomaticBradycardiaGuidance?: GuidanceLevel;
   readonly completeHeartBlockGuidance?: GuidanceLevel;
   readonly torsadesGuidance?: GuidanceLevel;
+  readonly hyperkalemicConductionGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3139,6 +3141,7 @@ export interface ActionCockpitProps {
   readonly symptomaticBradycardiaDemonstrating?: boolean;
   readonly completeHeartBlockDemonstrating?: boolean;
   readonly torsadesDemonstrating?: boolean;
+  readonly hyperkalemicConductionDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5691,6 +5694,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasHyperkalemicConductionResponse && (
               <HyperkalemicConductionTray
                 assessment={props.resuscitation.hyperkalemicConductionAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.hyperkalemicConductionGuidance}
+                demonstrating={props.hyperkalemicConductionDemonstrating}
                 onAction={props.onHyperkalemicConductionResponse ?? (() => {})} />
             )}
             {hasPericardialTamponadeResponse && (
@@ -10711,8 +10717,11 @@ function TorsadesTray({ assessment, scenarioVersion, guidance = 'unassisted', de
   </div>;
 }
 
-function HyperkalemicConductionTray({ assessment, onAction }: {
+function HyperkalemicConductionTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['hyperkalemicConductionAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onHyperkalemicConductionResponse']>;
 }) {
   const trajectory = assessment?.reconciledAtTick != null;
@@ -10721,16 +10730,26 @@ function HyperkalemicConductionTray({ assessment, onAction }: {
   const removal = assessment?.removalDeviceAtTick != null;
   const laterPanel = assessment?.laterPanelAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : hyperkalemicConductionInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="hyperkalemic-conduction-protection-title">
       <div id="hyperkalemic-conduction-protection-title" className="syringe__name">The rhythm changed. Check the chemistry.</div>
       <Badge kind="out-of-range">conduction change · reported hyperkalemia pathway</Badge>
       <div className="syringe__meta">serial ECG + potassium · pressure + perfusion · glucose</div>
       <p className="syringe__remaining" role="status">{calcium && shift ? 'Membrane response + shifting surveillance reviewed' : shift ? 'Shifting surveillance reviewed · calcium-response reasoning remains' : calcium ? 'Membrane response reviewed · shifting surveillance remains' : trajectory ? 'Trajectory reconciled · three review lanes are open' : 'Read the serial rhythm, potassium, and whole-patient trajectory'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={trajectory} onClick={() => onAction('reconcile-hyperkalemic-conduction-trajectory')}>Reconcile rhythm + potassium trajectory</Button>
-        <Button className="crisis-drug__action" disabled={!trajectory || calcium} onClick={() => onAction('review-hyperkalemic-conduction-calcium-response')}>Review reported calcium response</Button>
-        <Button className="crisis-drug__action" disabled={!trajectory || shift} onClick={() => onAction('review-hyperkalemic-conduction-shift-surveillance')}>Review shifting + glucose surveillance</Button>
+        <Button className="crisis-drug__action" disabled={trajectory} aria-disabled={demonstrating} onClick={act ? () => act('reconcile-hyperkalemic-conduction-trajectory') : undefined}>Reconcile rhythm + potassium trajectory</Button>
+        <Button className="crisis-drug__action" disabled={!trajectory || calcium} aria-disabled={demonstrating} onClick={act ? () => act('review-hyperkalemic-conduction-calcium-response') : undefined}>Review reported calcium response</Button>
+        <Button className="crisis-drug__action" disabled={!trajectory || shift} aria-disabled={demonstrating} onClick={act ? () => act('review-hyperkalemic-conduction-shift-surveillance') : undefined}>Review shifting + glucose surveillance</Button>
       </div>
       <p className="field__hint">These are authored case reports. Calcium does not lower potassium, and ECG appearance does not reliably quantify potassium severity.</p>
     </section>
@@ -10740,12 +10759,13 @@ function HyperkalemicConductionTray({ assessment, onAction }: {
       <div className="syringe__meta">renal pathway · pacing backup · serial ECG + labs</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Reversible contribution preserved · risk + ownership remain' : laterPanel ? 'Later ECG + potassium panel reviewed · handoff due' : calcium && shift && removal ? 'All review lanes complete · allow the later panel' : removal ? 'Removal + device restraint reviewed · other lanes remain' : trajectory ? 'Removal, calcium-response, and shifting review can proceed in parallel' : 'Reconcile the trajectory first'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={!trajectory || removal} onClick={() => onAction('review-hyperkalemic-conduction-removal-and-device-restraint')}>Review removal + device restraint</Button>
-        <Button className="crisis-drug__action" disabled={!calcium || !shift || !removal || laterPanel} onClick={() => onAction('review-hyperkalemic-conduction-later-panel')}>Review later ECG + potassium panel</Button>
-        <Button className="crisis-drug__action" disabled={!laterPanel || handoff} onClick={() => onAction('handoff-hyperkalemic-conduction-reassessment')}>Hand off rhythm + rebound plan</Button>
+        <Button className="crisis-drug__action" disabled={!trajectory || removal} aria-disabled={demonstrating} onClick={act ? () => act('review-hyperkalemic-conduction-removal-and-device-restraint') : undefined}>Review removal + device restraint</Button>
+        <Button className="crisis-drug__action" disabled={!calcium || !shift || !removal || laterPanel} aria-disabled={demonstrating} onClick={act ? () => act('review-hyperkalemic-conduction-later-panel') : undefined}>Review later ECG + potassium panel</Button>
+        <Button className="crisis-drug__action" disabled={!laterPanel || handoff} aria-disabled={demonstrating} onClick={act ? () => act('handoff-hyperkalemic-conduction-reassessment') : undefined}>Hand off rhythm + rebound plan</Button>
       </div>
       <p className="field__hint">Pacing does not treat hyperkalemia. No drug, dialysis, pacing, or device is delivered or selected. Improvement does not prove one exclusive cause or permanent resolution.</p>
     </section>
+    </div>
   </div>;
 }
 

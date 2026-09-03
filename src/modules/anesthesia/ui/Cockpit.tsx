@@ -287,6 +287,8 @@ import { useCompleteHeartBlockDemonstration } from '../../cardiology/demo/useCom
 import { supportsCompleteHeartBlockDemonstration } from '../../cardiology/demo/complete-heart-block-demonstration';
 import { useTorsadesDemonstration } from '../../cardiology/demo/useTorsadesDemonstration';
 import { supportsTorsadesDemonstration } from '../../cardiology/demo/torsades-demonstration';
+import { useHyperkalemicConductionDemonstration } from '../../cardiology/demo/useHyperkalemicConductionDemonstration';
+import { supportsHyperkalemicConductionDemonstration } from '../../cardiology/demo/hyperkalemic-conduction-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -582,6 +584,7 @@ export function Cockpit({
   const symptomaticBradycardiaDemoSupported = supportsSymptomaticBradycardiaDemonstration(scenario);
   const completeHeartBlockDemoSupported = supportsCompleteHeartBlockDemonstration(scenario);
   const torsadesDemoSupported = supportsTorsadesDemonstration(scenario);
+  const hyperkalemicConductionDemoSupported = supportsHyperkalemicConductionDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -705,6 +708,7 @@ export function Cockpit({
     || symptomaticBradycardiaDemoSupported
     || completeHeartBlockDemoSupported
     || torsadesDemoSupported
+    || hyperkalemicConductionDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -892,6 +896,12 @@ export function Cockpit({
     active: demonstrating && torsadesDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.torsadesAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const hyperkalemicConductionDemonstration = useHyperkalemicConductionDemonstration({
+    active: demonstrating && hyperkalemicConductionDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.hyperkalemicConductionAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const stableNarrowTachycardiaDemonstration = useStableNarrowTachycardiaDemonstration({
@@ -1607,6 +1617,7 @@ export function Cockpit({
     : symptomaticBradycardiaDemoSupported ? symptomaticBradycardiaDemonstration
     : completeHeartBlockDemoSupported ? completeHeartBlockDemonstration
     : torsadesDemoSupported ? torsadesDemonstration
+    : hyperkalemicConductionDemoSupported ? hyperkalemicConductionDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2562,6 +2573,8 @@ export function Cockpit({
           completeHeartBlockDemonstrating={demonstrating && completeHeartBlockDemoSupported}
           torsadesGuidance={session.guidance}
           torsadesDemonstrating={demonstrating && torsadesDemoSupported}
+          hyperkalemicConductionGuidance={session.guidance}
+          hyperkalemicConductionDemonstrating={demonstrating && hyperkalemicConductionDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

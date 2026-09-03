@@ -109,6 +109,7 @@ import { stableWideTachycardiaCompletionEvidence } from '../../cardiology/stable
 import { symptomaticBradycardiaCompletionEvidence } from '../../cardiology/symptomatic-bradycardia-completion';
 import { completeHeartBlockCompletionEvidence } from '../../cardiology/complete-heart-block-completion';
 import { torsadesCompletionEvidence } from '../../cardiology/torsades-completion';
+import { hyperkalemicConductionCompletionEvidence } from '../../cardiology/hyperkalemic-conduction-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -357,6 +358,7 @@ export function auditClinicalScenario(
     ...symptomaticBradycardiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...completeHeartBlockCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...torsadesCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...hyperkalemicConductionCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

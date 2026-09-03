@@ -1433,23 +1433,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "hyperkalemic-conduction-fixtures.ts binds seed 5284 and content 0.1.0 to expert, narrower-QRS-ends-the-review error, recovery, and no-action paths. The rhythm-change event, the pretreatment nonhemolyzed potassium of 6.9 mmol/L with a rate of 38/min, attenuated P waves and a QRS of 154 ms, the reported intravenous calcium and the insulin-glucose and adjunct shifting path already underway, the current report of 52/min with clearer P waves, a QRS of 112 ms, 118/70 mmHg, 97% on room air and an unchanged potassium of 6.9 mmol/L, and the authored later panel of potassium 5.8 mmol/L, glucose 92 mg/dL, sinus rhythm at 62/min, QRS 98 ms and preserved perfusion are authored constants; no potassium, insulin, glucose or conduction kinetics are modelled, and no outcome follows from any choice. tests/integration/hyperkalemic-conduction-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
           "status": "satisfied",
           "evidence": [
-            "The timeline contains at least one non-narrative state event."
+            "This is the only lesson in the cardiology module with three parallel review lanes rather than two. After the trajectory is reconciled, the calcium response, the shifting surveillance and the removal-and-device-restraint work are all available at once and in any order; the later panel refuses until all three have landed and a tick has passed, and the handoff refuses until a tick has passed after that. Two time gates therefore separate the three columns of the record — before, since, and later — which is the structure the lesson is teaching a learner to hold apart."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions reconcile the confirmed pretreatment hyperkalemia and conduction disturbance with the reported emergency treatment and the current stable state without claiming one sole cause; review the authored post-calcium conduction change without mistaking membrane stabilization for potassium removal; review the reported shifting treatment and the serial potassium, glucose, hypoglycemia and rebound surveillance it obliges; review kidney, medication, illness, removal and owner context while deferring permanent-device conclusions during correction of a reversible metabolic disturbance; review the elapsed later panel as a serial report rather than a result; and hand off the continued surveillance, contributors, device reevaluation and ownership. The lesson examines nobody, acquires or interprets no specimen, ECG, monitoring or imaging data, diagnoses no cause, delivers no calcium, insulin, glucose, beta-agonist, binder, dialysis, medication or rescue, selects no dose, route or target, models no live kinetics, decides no pacing eligibility, chooses, implants or programs no device, assesses no capture, determines no disposition or prognosis, and predicts no recurrence or outcome."
           ]
         },
         {
@@ -1461,23 +1461,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded surveillance handoff on an authored later panel that is better in every column and normal in none. Later actions cannot restart an ended branch, and the ending certifies initialPulsePresent true with treatmentDeliveredByLearner, pacingDelivered, captureAssessed and permanentDeviceSelected all false — every treatment in this lesson was reported by somebody else, the potassium has been moved rather than removed, and the conduction question is deliberately left open because nobody has seen this heart at a normal potassium."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Seven observed-state prompts at version 0.1.0 read the learner's own recorded steps — seven rather than six because the unordered triple needs a beat for the state where none of the three has been taken. The reflex the tutor works against is the ECG getting better: the QRS narrowed from 154 to 112 ms, the P waves came back, and her potassium is exactly 6.9 where it started, because calcium protects the membrane and removes nothing. The opening beat asks for three timepoints rather than one and names them before, since and now. The calcium beat states the change and its limit in the same breath and says plainly that the team has bought time rather than ended the emergency. The shifting beat gives the two consequences that bite later — rebound, because potassium moved into cells comes back, and hypoglycemia, because the insulin outlasts the glucose. The removal beat pairs the treatment that actually lowers potassium with the restraint that matters most here: a slow wide rhythm in the middle of a metabolic disturbance under correction is not a heart anybody has seen at a normal potassium, so the device question is deferred and written down as a trigger rather than forgotten. The panel beat reads 5.8 as one point on a line rather than a result. The handoff beat hands off the watching and not a conclusion. Worked example 0.1.0 drives the ordinary controls through the real engine to the handoff, and its narration is generated from the tutor's own prose so the two cannot drift apart. A test asserts that no beat anywhere names a dose, claims the potassium fell after calcium, or selects a device. tests/unit/hyperkalemic-conduction-demonstration.test.ts verifies the unordered triple and every beat against the real engine, and tests/ui/cardiology-hyperkalemic-conduction.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. The counterfactual is the one a better-looking monitor invites: the common-error path reconciles the trajectory and reads the calcium response correctly, then reaches for the later panel as though a narrower QRS had finished the review, meeting two of six — the engine refuses, because the panel is gated behind all three lanes, and the handoff never becomes available. The recovery path reviews before reconciling and is refused, takes the three lanes in a different order — which the engine accepts without comment — walks into both elapsed-time gates before clearing them, and still completes from the same positions."
           ]
         },
         {
@@ -1496,23 +1496,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "hyperkalemic-conduction-fixtures.ts binds exact-content expert, narrower-QRS-ends-the-review error, recovery, and no-action pathways to seed 5284 for deterministic replay through the shared engine, including the opening order refusal, the all-three-lanes refusal on the later panel, and both elapsed-time refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
