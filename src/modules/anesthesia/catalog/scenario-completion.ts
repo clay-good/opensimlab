@@ -138,6 +138,7 @@ import { akiFluidOverloadCompletionEvidence } from '../../critical-care/aki-flui
 import { tubeMigrationCompletionEvidence } from '../../critical-care/tube-migration-completion';
 import { icuHandoffCompletionEvidence } from '../../critical-care/icu-handoff-completion';
 import { pulseOximeterArtifactCompletionEvidence } from '../../critical-care/pulse-oximeter-artifact-completion';
+import { ardsLungProtectiveCompletionEvidence } from '../../critical-care/ards-lung-protective-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -415,6 +416,7 @@ export function auditClinicalScenario(
     ...tubeMigrationCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...icuHandoffCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...pulseOximeterArtifactCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...ardsLungProtectiveCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

@@ -345,6 +345,8 @@ import { useIcuHandoffDemonstration } from '../../critical-care/demo/useIcuHando
 import { supportsIcuHandoffDemonstration } from '../../critical-care/demo/icu-handoff-demonstration';
 import { usePulseOximeterArtifactDemonstration } from '../../critical-care/demo/usePulseOximeterArtifactDemonstration';
 import { supportsPulseOximeterArtifactDemonstration } from '../../critical-care/demo/pulse-oximeter-artifact-demonstration';
+import { useArdsLungProtectiveDemonstration } from '../../critical-care/demo/useArdsLungProtectiveDemonstration';
+import { supportsArdsLungProtectiveDemonstration } from '../../critical-care/demo/ards-lung-protective-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -669,6 +671,7 @@ export function Cockpit({
   const tubeMigrationDemoSupported = supportsTubeMigrationDemonstration(scenario);
   const icuHandoffDemoSupported = supportsIcuHandoffDemonstration(scenario);
   const pulseOximeterArtifactDemoSupported = supportsPulseOximeterArtifactDemonstration(scenario);
+  const ardsLungProtectiveDemoSupported = supportsArdsLungProtectiveDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -821,6 +824,7 @@ export function Cockpit({
     || tubeMigrationDemoSupported
     || icuHandoffDemoSupported
     || pulseOximeterArtifactDemoSupported
+    || ardsLungProtectiveDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1182,6 +1186,12 @@ export function Cockpit({
     active: demonstrating && pulseOximeterArtifactDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.pulseOximeterArtifactAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const ardsLungProtectiveDemonstration = useArdsLungProtectiveDemonstration({
+    active: demonstrating && ardsLungProtectiveDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.ardsLungProtectiveAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const stableNarrowTachycardiaDemonstration = useStableNarrowTachycardiaDemonstration({
@@ -1926,6 +1936,7 @@ export function Cockpit({
     : tubeMigrationDemoSupported ? tubeMigrationDemonstration
     : icuHandoffDemoSupported ? icuHandoffDemonstration
     : pulseOximeterArtifactDemoSupported ? pulseOximeterArtifactDemonstration
+    : ardsLungProtectiveDemoSupported ? ardsLungProtectiveDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2939,6 +2950,8 @@ export function Cockpit({
           icuHiddenDeteriorationHandoffDemonstrating={demonstrating && icuHandoffDemoSupported}
           pulseOximeterArtifactGuidance={session.guidance}
           pulseOximeterArtifactDemonstrating={demonstrating && pulseOximeterArtifactDemoSupported}
+          ardsLungProtectiveGuidance={session.guidance}
+          ardsLungProtectiveDemonstrating={demonstrating && ardsLungProtectiveDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

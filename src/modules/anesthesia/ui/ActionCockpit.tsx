@@ -236,6 +236,7 @@ import { akiFluidOverloadInlinePrompt } from '../../critical-care/tutor/aki-flui
 import { tubeMigrationInlinePrompt } from '../../critical-care/tutor/tube-migration-guidance';
 import { icuHandoffInlinePrompt } from '../../critical-care/tutor/icu-handoff-guidance';
 import { pulseOximeterArtifactInlinePrompt } from '../../critical-care/tutor/pulse-oximeter-artifact-guidance';
+import { ardsLungProtectiveInlinePrompt } from '../../critical-care/tutor/ards-lung-protective-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3041,6 +3042,7 @@ export interface ActionCockpitProps {
   readonly endotrachealTubeMigrationGuidance?: GuidanceLevel;
   readonly icuHiddenDeteriorationHandoffGuidance?: GuidanceLevel;
   readonly pulseOximeterArtifactGuidance?: GuidanceLevel;
+  readonly ardsLungProtectiveGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3226,6 +3228,7 @@ export interface ActionCockpitProps {
   readonly endotrachealTubeMigrationDemonstrating?: boolean;
   readonly icuHiddenDeteriorationHandoffDemonstrating?: boolean;
   readonly pulseOximeterArtifactDemonstrating?: boolean;
+  readonly ardsLungProtectiveDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5584,6 +5587,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasArdsLungProtectiveResponse && (
               <ArdsLungProtectiveTray assessment={props.resuscitation.ardsLungProtectiveAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.ardsLungProtectiveGuidance}
+                demonstrating={props.ardsLungProtectiveDemonstrating}
                 onAction={props.onArdsLungProtectiveResponse ?? (() => {})} />
             )}
             {hasEscalatingHypoxemiaResponse && (
@@ -9231,8 +9237,11 @@ function AcuteAorticSyndromeTray({ assessment, onAction }: {
   );
 }
 
-function ArdsLungProtectiveTray({ assessment, onAction }: {
+function ArdsLungProtectiveTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['ardsLungProtectiveAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onArdsLungProtectiveResponse']>;
 }) {
   const baseline = assessment?.baselineAtTick != null;
@@ -9240,8 +9249,18 @@ function ArdsLungProtectiveTray({ assessment, onAction }: {
   const protection = assessment?.protectionAtTick != null;
   const reassessment = assessment?.reassessmentAtTick != null;
   const escalation = assessment?.escalationAtTick != null;
+  const prompt = demonstrating ? null
+    : ardsLungProtectiveInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="ards-size-title">
         <div id="ards-size-title" className="syringe__name">Size the breath to the lung.</div>
         <Badge kind="teaching">height + sex → PBW · never actual weight</Badge>
@@ -9253,11 +9272,11 @@ function ArdsLungProtectiveTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={baseline}
-            onClick={() => onAction('review-ards-baseline')}>Review gas + mechanics + circulation</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-ards-baseline') : undefined}>Review gas + mechanics + circulation</Button>
           <Button className="crisis-drug__action" disabled={!baseline || pbw}
-            onClick={() => onAction('calculate-ards-pbw')}>Calculate height-based PBW</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('calculate-ards-pbw') : undefined}>Calculate height-based PBW</Button>
           <Button className="crisis-drug__action" disabled={!pbw || protection}
-            onClick={() => onAction('record-ards-protective-settings')}>Set 370 mL + plateau guardrail</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-ards-protective-settings') : undefined}>Set 370 mL + plateau guardrail</Button>
         </div>
         <p className="field__hint">A reassuring pH does not make a plateau pressure of 32 safe. Protect first, then measure what the change costs.</p>
       </section>
@@ -9272,12 +9291,13 @@ function ArdsLungProtectiveTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!protection || reassessment}
-            onClick={() => onAction('reassess-ards-protection')}>Review 30-minute response</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-ards-protection') : undefined}>Review 30-minute response</Button>
           <Button className="crisis-drug__action" disabled={!reassessment || escalation}
-            onClick={() => onAction('record-ards-peep-prone-escalation')}>PEEP/FiO₂ + prolonged prone team</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-ards-peep-prone-escalation') : undefined}>PEEP/FiO₂ + prolonged prone team</Button>
         </div>
         <p className="field__hint">Accept bounded hypercapnia only with serial pH and whole-patient review. Proning is a trained-team procedure, not a button skill.</p>
       </section>
+      </div>
     </div>
   );
 }

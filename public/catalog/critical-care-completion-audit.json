@@ -47,23 +47,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "ards-lung-protective-fixtures.ts binds seed 5734 and content 0.1.0 to expert, volume-before-the-basis error, recovery, and no-action paths. The forty-seven-year-old woman of height 170 cm and actual weight 92 kg intubated for authored pneumonia-associated moderate-severe ARDS, ventilated at 500 mL and 24/min with PEEP 8 cm H2O and FiO2 0.70 at SpO2 90%, the fixed arterial panel of pH 7.36, PaCO2 42 mmHg and PaO2 64 mmHg, the authored plateau pressure of 32 cm H2O with passive synchrony and MAP 72 mmHg, the predicted body weight of 61.5 kg making 500 mL equal to 8.1 mL/kg, the 370 mL intent at about 6 mL/kg, and the authored 30-minute response of delivered 370 mL, plateau 27 cm H2O, SpO2 91%, PaO2 66 mmHg, pH 7.29, PaCO2 52 mmHg and MAP 70 mmHg are authored constants; no respiratory-mechanics, gas-exchange or recruitment model is claimed, and no outcome follows from any choice. tests/integration/ards-lung-protective-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is two narratives with no non-narrative state event. The progression lives in the engine's four order refusals, and the predicted-body-weight step carries the lesson: the engine refuses to record any tidal-volume intent until the height-and-sex basis exists, because setting a volume first turns the basis into a justification for it. This is also the second lesson in the module whose control ids differ from its declared objectives, so the identity guard compares ARDS_LUNG_PROTECTIVE_OBJECTIVES rather than the action array and a test asserts it fails closed on the action strings. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions review oxygenation, mechanics, support, synchrony and circulation without sampling gas, verifying an airway, measuring the ventilator or diagnosing ARDS; establish predicted body weight of 61.5 kg from height and sex and state that the actual 92 kg is not the tidal-volume basis; record a 370 mL intent at about 6 mL/kg predicted body weight with a plateau limit below 30 cm H2O and the respiratory rate delegated to local protocol and pH response; reassess the authored 30-minute response and accept the bounded hypercapnia while pH, mechanics, synchrony and circulation stay under review; and record local protocolized PEEP/FiO2 adjustment with pressure, oxygen-toxicity, barotrauma and haemodynamic surveillance plus an experienced-team prolonged prone-positioning intent of more than 12 hours daily. The lesson programs no ventilator, performs no recruitment manoeuvre or inspiratory hold, sedates, paralyses and turns nobody, and predicts no outcome."
           ]
         },
         {
@@ -75,23 +75,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded escalation intent after an authored 30-minute response of delivered 370 mL, plateau 27 cm H2O, SpO2 91%, PaO2 66 mmHg, pH 7.29, PaCO2 52 mmHg, passive synchrony and MAP 70 mmHg. Later actions cannot restart an ended branch. The ending is explicit that she is still hypoxaemic on an already-protective setting, so the escalation is about oxygenation rather than about undoing the protection, and that recruitment manoeuvres, sedation, paralysis, the physical turn, complications, ECMO, the later course and the outcome are all outside the lesson."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step, because this lesson has no unordered lane. The reflex it works against is the weight on the chart: 500 mL looks like a modest breath against 92 kg and is 8.1 mL/kg of the lung her 170 cm predicts, because lung size tracks height and fat does not add alveoli. The baseline beat explains what a plateau of 32 means — the pressure the alveoli see at the end of a breath — and reads a PaO2 of 64 on 0.70 as oxygen going in and not arriving. The protection beat insists on both halves, because a small volume in a stiff enough lung can still generate a high plateau, and explains why the rate is delegated: dropping the volume by a quarter has to go somewhere. The reassessment beat carries the second reflex, which arrives when the pH falls to 7.29 — the plateau went 32 to 27, that is the injury removed, and putting the volume back to fix the pH trades a number you can see for lung injury you cannot. The escalation beat notes that more PEEP is not free, since it can raise the plateau and drop venous return at a MAP of 70, and makes the prone duration the load-bearing detail. Worked example 0.1.0 drives the ordinary controls through the real engine to the escalation and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere programs the ventilator, gives a PEEP number to set, orders paralysis, or claims the ARDS is improving. tests/unit/ards-lung-protective-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/critical-care-ards-lung-protective.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the one the chart weight invites: the common-error path reviews the baseline and records a tidal-volume intent immediately, without the predicted-body-weight basis that turns 500 mL into 8.1 mL/kg, and meets one of five because the engine gates it. The recovery path reaches for the predicted body weight before the baseline has been read and is refused, reaches for the escalation before the protective settings have been reassessed and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -110,23 +110,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "ards-lung-protective-fixtures.ts binds exact-content expert, volume-before-the-basis error, recovery, and no-action pathways to seed 5734 for deterministic replay through the shared engine, including all four order refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

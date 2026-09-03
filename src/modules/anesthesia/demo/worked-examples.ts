@@ -174,6 +174,7 @@ import { supportsAkiFluidOverloadDemonstration } from '../../critical-care/demo/
 import { supportsTubeMigrationDemonstration } from '../../critical-care/demo/tube-migration-demonstration';
 import { supportsIcuHandoffDemonstration } from '../../critical-care/demo/icu-handoff-demonstration';
 import { supportsPulseOximeterArtifactDemonstration } from '../../critical-care/demo/pulse-oximeter-artifact-demonstration';
+import { supportsArdsLungProtectiveDemonstration } from '../../critical-care/demo/ards-lung-protective-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -389,6 +390,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsTubeMigrationDemonstration,
     supportsIcuHandoffDemonstration,
     supportsPulseOximeterArtifactDemonstration,
+    supportsArdsLungProtectiveDemonstration,
   ],
 };
 
