@@ -337,6 +337,8 @@ import { useTargetedTemperatureManagementDemonstration } from '../../critical-ca
 import { supportsTargetedTemperatureManagementDemonstration } from '../../critical-care/demo/targeted-temperature-management-demonstration';
 import { useUpperGiHemorrhageDemonstration } from '../../critical-care/demo/useUpperGiHemorrhageDemonstration';
 import { supportsUpperGiHemorrhageDemonstration } from '../../critical-care/demo/upper-gi-hemorrhage-demonstration';
+import { useAkiFluidOverloadDemonstration } from '../../critical-care/demo/useAkiFluidOverloadDemonstration';
+import { supportsAkiFluidOverloadDemonstration } from '../../critical-care/demo/aki-fluid-overload-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -657,6 +659,7 @@ export function Cockpit({
   const criticalCareStatusEpilepticusDemoSupported = supportsCriticalCareStatusEpilepticusDemonstration(scenario);
   const postArrestTemperatureDemoSupported = supportsTargetedTemperatureManagementDemonstration(scenario);
   const upperGiHemorrhageDemoSupported = supportsUpperGiHemorrhageDemonstration(scenario);
+  const akiFluidOverloadDemoSupported = supportsAkiFluidOverloadDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -805,6 +808,7 @@ export function Cockpit({
     || criticalCareStatusEpilepticusDemoSupported
     || postArrestTemperatureDemoSupported
     || upperGiHemorrhageDemoSupported
+    || akiFluidOverloadDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1142,6 +1146,12 @@ export function Cockpit({
     active: demonstrating && upperGiHemorrhageDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.upperGiHemorrhageAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const akiFluidOverloadDemonstration = useAkiFluidOverloadDemonstration({
+    active: demonstrating && akiFluidOverloadDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.akiFluidOverloadAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const stableNarrowTachycardiaDemonstration = useStableNarrowTachycardiaDemonstration({
@@ -1882,6 +1892,7 @@ export function Cockpit({
     : criticalCareStatusEpilepticusDemoSupported ? criticalCareStatusEpilepticusDemonstration
     : postArrestTemperatureDemoSupported ? postArrestTemperatureDemonstration
     : upperGiHemorrhageDemoSupported ? upperGiHemorrhageDemonstration
+    : akiFluidOverloadDemoSupported ? akiFluidOverloadDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2887,6 +2898,8 @@ export function Cockpit({
           postArrestTemperatureDemonstrating={demonstrating && postArrestTemperatureDemoSupported}
           upperGiHemorrhageGuidance={session.guidance}
           upperGiHemorrhageDemonstrating={demonstrating && upperGiHemorrhageDemoSupported}
+          akiFluidOverloadGuidance={session.guidance}
+          akiFluidOverloadDemonstrating={demonstrating && akiFluidOverloadDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

@@ -232,6 +232,7 @@ import { spontaneousBreathingTrialInlinePrompt } from '../../critical-care/tutor
 import { statusEpilepticusInlinePrompt as criticalCareStatusEpilepticusInlinePrompt } from '../../critical-care/tutor/status-epilepticus-guidance';
 import { targetedTemperatureManagementInlinePrompt } from '../../critical-care/tutor/targeted-temperature-management-guidance';
 import { upperGiHemorrhageInlinePrompt } from '../../critical-care/tutor/upper-gi-hemorrhage-guidance';
+import { akiFluidOverloadInlinePrompt } from '../../critical-care/tutor/aki-fluid-overload-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3033,6 +3034,7 @@ export interface ActionCockpitProps {
   readonly criticalCareStatusEpilepticusGuidance?: GuidanceLevel;
   readonly postArrestTemperatureGuidance?: GuidanceLevel;
   readonly upperGiHemorrhageGuidance?: GuidanceLevel;
+  readonly akiFluidOverloadGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3214,6 +3216,7 @@ export interface ActionCockpitProps {
   readonly criticalCareStatusEpilepticusDemonstrating?: boolean;
   readonly postArrestTemperatureDemonstrating?: boolean;
   readonly upperGiHemorrhageDemonstrating?: boolean;
+  readonly akiFluidOverloadDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5692,6 +5695,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasAkiFluidOverloadResponse && (
               <AkiFluidOverloadTray assessment={props.resuscitation.akiFluidOverloadAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.akiFluidOverloadGuidance}
+                demonstrating={props.akiFluidOverloadDemonstrating}
                 onAction={props.onAkiFluidOverloadResponse ?? (() => {})} />
             )}
             {hasSevereAcidemiaResponse && (
@@ -10243,8 +10249,11 @@ function IntracranialHypertensionTray({ assessment, scenarioVersion, guidance = 
   );
 }
 
-function AkiFluidOverloadTray({ assessment, onAction }: {
+function AkiFluidOverloadTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['akiFluidOverloadAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onAkiFluidOverloadResponse']>;
 }) {
   const recognized = assessment?.recognitionAtTick != null;
@@ -10252,8 +10261,18 @@ function AkiFluidOverloadTray({ assessment, onAction }: {
   const fluidPlan = assessment?.fluidPlanAtTick != null;
   const support = assessment?.supportAtTick != null;
   const reassessed = assessment?.reassessmentAtTick != null;
+  const prompt = demonstrating ? null
+    : akiFluidOverloadInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="aki-fluid-burden-title">
         <div id="aki-fluid-burden-title" className="syringe__name">See the burden. Protect the organs.</div>
         <Badge kind="teaching">+8.2 L · +9 kg · urine 0.15 mL/kg/h · pulmonary edema</Badge>
@@ -10265,9 +10284,9 @@ function AkiFluidOverloadTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={recognized}
-            onClick={() => onAction('recognize-aki-fluid-overload')}>Recognize harmful fluid burden + activate help</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('recognize-aki-fluid-overload') : undefined}>Recognize harmful fluid burden + activate help</Button>
           <Button className="crisis-drug__action" disabled={!recognized || context}
-            onClick={() => onAction('review-aki-fluid-overload-context')}>Review causes + urgent complications</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-aki-fluid-overload-context') : undefined}>Review causes + urgent complications</Button>
         </div>
         <p className="field__hint">Urine, balance, weight, lungs, perfusion, electrolytes, acid-base state, and symptoms travel together.</p>
       </section>
@@ -10283,14 +10302,15 @@ function AkiFluidOverloadTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!context || fluidPlan}
-            onClick={() => onAction('limit-fluid-and-review-diuretic-response')}>Limit fluid + review diuretic response</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('limit-fluid-and-review-diuretic-response') : undefined}>Limit fluid + review diuretic response</Button>
           <Button className="crisis-drug__action" disabled={!fluidPlan || support}
-            onClick={() => onAction('activate-individualized-kidney-support-pathway')}>Activate individualized kidney-support planning</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('activate-individualized-kidney-support-pathway') : undefined}>Activate individualized kidney-support planning</Button>
           <Button className="crisis-drug__action" disabled={!support || reassessed}
-            onClick={() => onAction('reassess-aki-fluid-overload-trajectory')}>Review fluid + organ trajectory</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-aki-fluid-overload-trajectory') : undefined}>Review fluid + organ trajectory</Button>
         </div>
         <p className="field__hint">A better balance is an immediate process signal, not proof of kidney recovery or outcome.</p>
       </section>
+      </div>
     </div>
   );
 }
