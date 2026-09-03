@@ -357,6 +357,8 @@ import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAd
 import { supportsAdultAsthmaDemonstration } from '../../emergency-medicine/demo/adult-asthma-demonstration';
 import { useEmergencyAnaphylaxisDemonstration } from '../../emergency-medicine/demo/useEmergencyAnaphylaxisDemonstration';
 import { supportsEmergencyAnaphylaxisDemonstration } from '../../emergency-medicine/demo/emergency-anaphylaxis-demonstration';
+import { useCardiacTamponadeDemonstration } from '../../emergency-medicine/demo/useCardiacTamponadeDemonstration';
+import { supportsCardiacTamponadeDemonstration } from '../../emergency-medicine/demo/cardiac-tamponade-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -687,6 +689,7 @@ export function Cockpit({
   const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
   const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
   const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
+  const cardiacTamponadeDemoSupported = supportsCardiacTamponadeDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -845,6 +848,7 @@ export function Cockpit({
     || acutePulmonaryEdemaDemoSupported
     || adultAsthmaDemoSupported
     || emergencyAnaphylaxisDemoSupported
+    || cardiacTamponadeDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1230,6 +1234,12 @@ export function Cockpit({
     active: demonstrating && acutePulmonaryEdemaDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.acutePulmonaryEdemaAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const cardiacTamponadeDemonstration = useCardiacTamponadeDemonstration({
+    active: demonstrating && cardiacTamponadeDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.cardiacTamponadeAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const emergencyAnaphylaxisDemonstration = useEmergencyAnaphylaxisDemonstration({
@@ -1992,6 +2002,7 @@ export function Cockpit({
     : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
     : adultAsthmaDemoSupported ? adultAsthmaDemonstration
     : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration
+    : cardiacTamponadeDemoSupported ? cardiacTamponadeDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -3017,6 +3028,8 @@ export function Cockpit({
           adultAsthmaDemonstrating={demonstrating && adultAsthmaDemoSupported}
           emergencyAnaphylaxisGuidance={session.guidance}
           emergencyAnaphylaxisDemonstrating={demonstrating && emergencyAnaphylaxisDemoSupported}
+          cardiacTamponadeGuidance={session.guidance}
+          cardiacTamponadeDemonstrating={demonstrating && cardiacTamponadeDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

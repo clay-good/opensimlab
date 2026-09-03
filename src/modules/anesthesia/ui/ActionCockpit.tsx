@@ -242,6 +242,7 @@ import { acuteIschemicStrokeInlinePrompt } from '../../emergency-medicine/tutor/
 import { acutePulmonaryEdemaInlinePrompt } from '../../emergency-medicine/tutor/acute-pulmonary-edema-guidance';
 import { adultAsthmaInlinePrompt } from '../../emergency-medicine/tutor/adult-asthma-guidance';
 import { emergencyAnaphylaxisInlinePrompt } from '../../emergency-medicine/tutor/emergency-anaphylaxis-guidance';
+import { cardiacTamponadeInlinePrompt } from '../../emergency-medicine/tutor/cardiac-tamponade-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3053,6 +3054,7 @@ export interface ActionCockpitProps {
   readonly acutePulmonaryEdemaGuidance?: GuidanceLevel;
   readonly adultAsthmaGuidance?: GuidanceLevel;
   readonly emergencyAnaphylaxisGuidance?: GuidanceLevel;
+  readonly cardiacTamponadeGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3244,6 +3246,7 @@ export interface ActionCockpitProps {
   readonly acutePulmonaryEdemaDemonstrating?: boolean;
   readonly adultAsthmaDemonstrating?: boolean;
   readonly emergencyAnaphylaxisDemonstrating?: boolean;
+  readonly cardiacTamponadeDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5507,6 +5510,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasCardiacTamponadeResponse && (
               <CardiacTamponadeTray
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.cardiacTamponadeGuidance}
+                demonstrating={props.cardiacTamponadeDemonstrating}
                 fraction={props.resuscitation.cardiacTamponadeFraction ?? 0}
                 assessment={props.resuscitation.cardiacTamponadeAssessment}
                 onAction={props.onCardiacTamponadeAssessment ?? (() => {})}
@@ -8171,17 +8177,30 @@ function HemorrhagicShockTray({ assessment, onAction }: {
   );
 }
 
-function CardiacTamponadeTray({ fraction, assessment, onAction }: {
+function CardiacTamponadeTray({ fraction, assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   fraction: number;
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['cardiacTamponadeAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onCardiacTamponadeAssessment']>;
 }) {
   const reviewed = assessment?.contextReviewedAtTick != null;
   const pocus = assessment?.pocusReviewedAtTick != null;
   const control = assessment?.definitiveControlAtTick != null;
   const reassessed = assessment?.reassessedAtTick != null;
+  const prompt = demonstrating ? null
+    : cardiacTamponadeInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="tamponade-recognition-title">
         <div id="tamponade-recognition-title" className="syringe__name">Recognize obstructed filling</div>
         <Badge kind="teaching">Fixed trauma vignette</Badge>
@@ -8193,11 +8212,11 @@ function CardiacTamponadeTray({ fraction, assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={reviewed}
-            onClick={() => onAction('review-context-and-perfusion')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-context-and-perfusion') : undefined}>
             Review context + perfusion
           </Button>
           <Button className="crisis-drug__action" disabled={!reviewed || pocus}
-            onClick={() => onAction('review-fixed-pocus')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-fixed-pocus') : undefined}>
             Review fixed POCUS finding
           </Button>
         </div>
@@ -8213,16 +8232,17 @@ function CardiacTamponadeTray({ fraction, assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!pocus || control}
-            onClick={() => onAction('record-definitive-control-intent')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-definitive-control-intent') : undefined}>
             Record immediate definitive-control intent
           </Button>
           <Button className="crisis-drug__action" disabled={!control || reassessed}
-            onClick={() => onAction('reassess-perfusion')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-perfusion') : undefined}>
             Reassess unresolved perfusion
           </Button>
         </div>
         <p className="field__hint">The click mobilizes care; it does not relieve tamponade. No pericardiocentesis or thoracotomy technique, equipment, transport, technical success, complication, or outcome is offered.</p>
       </section>
+      </div>
     </div>
   );
 }
