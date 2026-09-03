@@ -142,6 +142,7 @@ import { ardsLungProtectiveCompletionEvidence } from '../../critical-care/ards-l
 import { acuteAorticSyndromeCompletionEvidence } from '../../emergency-medicine/acute-aortic-syndrome-completion';
 import { acuteIschemicStrokeCompletionEvidence } from '../../emergency-medicine/acute-ischemic-stroke-completion';
 import { acutePulmonaryEdemaCompletionEvidence } from '../../emergency-medicine/acute-pulmonary-edema-completion';
+import { adultAsthmaCompletionEvidence } from '../../emergency-medicine/adult-asthma-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -423,6 +424,7 @@ export function auditClinicalScenario(
     ...acuteAorticSyndromeCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...acuteIschemicStrokeCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...acutePulmonaryEdemaCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...adultAsthmaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

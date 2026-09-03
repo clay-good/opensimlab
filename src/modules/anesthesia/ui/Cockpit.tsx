@@ -353,6 +353,8 @@ import { useAcuteIschemicStrokeDemonstration } from '../../emergency-medicine/de
 import { supportsAcuteIschemicStrokeDemonstration } from '../../emergency-medicine/demo/acute-ischemic-stroke-demonstration';
 import { useAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/useAcutePulmonaryEdemaDemonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
+import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAdultAsthmaDemonstration';
+import { supportsAdultAsthmaDemonstration } from '../../emergency-medicine/demo/adult-asthma-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -681,6 +683,7 @@ export function Cockpit({
   const acuteAorticSyndromeDemoSupported = supportsAcuteAorticSyndromeDemonstration(scenario);
   const acuteIschemicStrokeDemoSupported = supportsAcuteIschemicStrokeDemonstration(scenario);
   const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
+  const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -837,6 +840,7 @@ export function Cockpit({
     || acuteAorticSyndromeDemoSupported
     || acuteIschemicStrokeDemoSupported
     || acutePulmonaryEdemaDemoSupported
+    || adultAsthmaDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1222,6 +1226,12 @@ export function Cockpit({
     active: demonstrating && acutePulmonaryEdemaDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.acutePulmonaryEdemaAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const adultAsthmaDemonstration = useAdultAsthmaDemonstration({
+    active: demonstrating && adultAsthmaDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.adultAsthmaAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const stableNarrowTachycardiaDemonstration = useStableNarrowTachycardiaDemonstration({
@@ -1970,6 +1980,7 @@ export function Cockpit({
     : acuteAorticSyndromeDemoSupported ? acuteAorticSyndromeDemonstration
     : acuteIschemicStrokeDemoSupported ? acuteIschemicStrokeDemonstration
     : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
+    : adultAsthmaDemoSupported ? adultAsthmaDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2991,6 +3002,8 @@ export function Cockpit({
           acuteIschemicStrokeDemonstrating={demonstrating && acuteIschemicStrokeDemoSupported}
           acutePulmonaryEdemaGuidance={session.guidance}
           acutePulmonaryEdemaDemonstrating={demonstrating && acutePulmonaryEdemaDemoSupported}
+          adultAsthmaGuidance={session.guidance}
+          adultAsthmaDemonstrating={demonstrating && adultAsthmaDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

@@ -240,6 +240,7 @@ import { ardsLungProtectiveInlinePrompt } from '../../critical-care/tutor/ards-l
 import { acuteAorticSyndromeInlinePrompt } from '../../emergency-medicine/tutor/acute-aortic-syndrome-guidance';
 import { acuteIschemicStrokeInlinePrompt } from '../../emergency-medicine/tutor/acute-ischemic-stroke-guidance';
 import { acutePulmonaryEdemaInlinePrompt } from '../../emergency-medicine/tutor/acute-pulmonary-edema-guidance';
+import { adultAsthmaInlinePrompt } from '../../emergency-medicine/tutor/adult-asthma-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3049,6 +3050,7 @@ export interface ActionCockpitProps {
   readonly acuteAorticSyndromeGuidance?: GuidanceLevel;
   readonly acuteIschemicStrokeGuidance?: GuidanceLevel;
   readonly acutePulmonaryEdemaGuidance?: GuidanceLevel;
+  readonly adultAsthmaGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3238,6 +3240,7 @@ export interface ActionCockpitProps {
   readonly acuteAorticSyndromeDemonstrating?: boolean;
   readonly acuteIschemicStrokeDemonstrating?: boolean;
   readonly acutePulmonaryEdemaDemonstrating?: boolean;
+  readonly adultAsthmaDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5515,6 +5518,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasAdultAsthmaResponse && (
               <AdultAsthmaTray
                 assessment={props.resuscitation.adultAsthmaAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.adultAsthmaGuidance}
+                demonstrating={props.adultAsthmaDemonstrating}
                 onAction={props.onAdultAsthmaResponse ?? (() => {})}
               />
             )}
@@ -8282,8 +8288,11 @@ function EmergencyAnaphylaxisTray({ assessment, onAction }: {
   );
 }
 
-function AdultAsthmaTray({ assessment, onAction }: {
+function AdultAsthmaTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['adultAsthmaAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onAdultAsthmaResponse']>;
 }) {
   const reviewed = assessment?.severityReviewedAtTick != null;
@@ -8291,8 +8300,18 @@ function AdultAsthmaTray({ assessment, onAction }: {
   const bronchodilators = assessment?.bronchodilatorBundleAtTick != null;
   const corticosteroid = assessment?.corticosteroidIntentAtTick != null;
   const reassessed = assessment?.reassessedAtTick != null;
+  const prompt = demonstrating ? null
+    : adultAsthmaInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="adult-asthma-assessment-title">
         <div id="adult-asthma-assessment-title" className="syringe__name">Read severity, not wheeze alone</div>
         <Badge kind="teaching">Fixed ED vignette</Badge>
@@ -8304,11 +8323,11 @@ function AdultAsthmaTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={reviewed}
-            onClick={() => onAction('review-severity-and-mimics')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-severity-and-mimics') : undefined}>
             Review severity + immediate mimics
           </Button>
           <Button className="crisis-drug__action" disabled={!reviewed || oxygen}
-            onClick={() => onAction('record-controlled-oxygen')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-controlled-oxygen') : undefined}>
             Target controlled oxygen · 92–95%
           </Button>
         </div>
@@ -8324,21 +8343,22 @@ function AdultAsthmaTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!reviewed || bronchodilators}
-            onClick={() => onAction('give-fixed-inhaled-bronchodilators')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('give-fixed-inhaled-bronchodilators') : undefined}>
             Give fixed pMDI + spacer bundle
           </Button>
           <Button className="crisis-drug__action" disabled={!reviewed || corticosteroid}
-            onClick={() => onAction('record-early-corticosteroid-intent')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-early-corticosteroid-intent') : undefined}>
             Record early corticosteroid intent
           </Button>
           <Button className="crisis-drug__action"
             disabled={!oxygen || !bronchodilators || !corticosteroid || reassessed}
-            onClick={() => onAction('reassess-after-initial-treatment')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-after-initial-treatment') : undefined}>
             Reassess symptoms + PEF
           </Button>
         </div>
         <p className="field__hint">No inhaler technique, individualized dose, repeat cycle, toxicity, magnesium, ventilatory support, disposition, discharge prescription, or prevention plan is offered.</p>
       </section>
+      </div>
     </div>
   );
 }

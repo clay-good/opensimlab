@@ -178,6 +178,7 @@ import { supportsArdsLungProtectiveDemonstration } from '../../critical-care/dem
 import { supportsAcuteAorticSyndromeDemonstration } from '../../emergency-medicine/demo/acute-aortic-syndrome-demonstration';
 import { supportsAcuteIschemicStrokeDemonstration } from '../../emergency-medicine/demo/acute-ischemic-stroke-demonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
+import { supportsAdultAsthmaDemonstration } from '../../emergency-medicine/demo/adult-asthma-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -399,6 +400,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsAcuteAorticSyndromeDemonstration,
     supportsAcuteIschemicStrokeDemonstration,
     supportsAcutePulmonaryEdemaDemonstration,
+    supportsAdultAsthmaDemonstration,
   ],
 };
 
