@@ -205,6 +205,7 @@ import { postInfarctionShockInlinePrompt } from '../../cardiology/tutor/post-inf
 import { stableNarrowTachycardiaInlinePrompt } from '../../cardiology/tutor/stable-narrow-tachycardia-guidance';
 import { stableWideTachycardiaInlinePrompt } from '../../cardiology/tutor/stable-wide-tachycardia-guidance';
 import { symptomaticBradycardiaInlinePrompt } from '../../cardiology/tutor/symptomatic-bradycardia-guidance';
+import { completeHeartBlockInlinePrompt } from '../../cardiology/tutor/complete-heart-block-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2979,6 +2980,7 @@ export interface ActionCockpitProps {
   readonly stableNarrowTachycardiaGuidance?: GuidanceLevel;
   readonly stableWideTachycardiaGuidance?: GuidanceLevel;
   readonly symptomaticBradycardiaGuidance?: GuidanceLevel;
+  readonly completeHeartBlockGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3133,6 +3135,7 @@ export interface ActionCockpitProps {
   readonly stableNarrowTachycardiaDemonstrating?: boolean;
   readonly stableWideTachycardiaDemonstrating?: boolean;
   readonly symptomaticBradycardiaDemonstrating?: boolean;
+  readonly completeHeartBlockDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5670,6 +5673,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasCompleteHeartBlockResponse && (
               <CompleteHeartBlockTray assessment={props.resuscitation.completeHeartBlockAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.completeHeartBlockGuidance}
+                demonstrating={props.completeHeartBlockDemonstrating}
                 onAction={props.onCompleteHeartBlockResponse ?? (() => {})} />
             )}
             {hasTorsadesResponse && (
@@ -10597,8 +10603,11 @@ function SymptomaticBradycardiaTray({ assessment, scenarioVersion, guidance = 'u
   </div>;
 }
 
-function CompleteHeartBlockTray({ assessment, onAction }: {
+function CompleteHeartBlockTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['completeHeartBlockAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onCompleteHeartBlockResponse']>;
 }) {
   const stability = assessment?.stabilityAtTick != null;
@@ -10606,15 +10615,25 @@ function CompleteHeartBlockTray({ assessment, onAction }: {
   const pathway = assessment?.pathwayAtTick != null;
   const reassessed = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : completeHeartBlockInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="complete-heart-block-first-title">
       <div id="complete-heart-block-first-title" className="syringe__name">Two rhythms. One patient.</div>
       <Badge kind="teaching">fixed complete AV block · stable now</Badge>
       <div className="syringe__meta">atria 82/min · escape 34/min · BP 116/70</div>
       <p className="syringe__remaining" role="status">{context ? 'Context reviewed · complete block remains authored' : stability ? 'Stable now · context and escalation can proceed together' : 'Read the fixed block through the whole patient'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={stability} onClick={() => onAction('reconcile-complete-heart-block-stability')}>Reconcile block + stability</Button>
-        <Button className="crisis-drug__action" disabled={!stability || context} onClick={() => onAction('review-complete-heart-block-context')}>Review causes + escape rhythm</Button>
+        <Button className="crisis-drug__action" disabled={stability} aria-disabled={demonstrating} onClick={act ? () => act('reconcile-complete-heart-block-stability') : undefined}>Reconcile block + stability</Button>
+        <Button className="crisis-drug__action" disabled={!stability || context} aria-disabled={demonstrating} onClick={act ? () => act('review-complete-heart-block-context') : undefined}>Review causes + escape rhythm</Button>
       </div>
       <p className="field__hint">The fixed diagnostic report establishes AV dissociation. The teaching monitor illustrates it; stable does not mean low risk.</p>
     </section>
@@ -10624,12 +10643,13 @@ function CompleteHeartBlockTray({ assessment, onAction }: {
       <div className="syringe__meta">deterioration plan · definitive evaluation · handoff</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Pacing evaluation + owner + handoff recorded' : reassessed ? 'Persistent block · definitive evaluation due' : context && pathway ? 'Context + escalation aligned · allow reassessment time' : pathway ? 'Pacing-capable care active · cause review continues' : context ? 'Context ready · activate pacing-capable care' : 'Whole-patient review opens monitored escalation'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={!stability || pathway} onClick={() => onAction('activate-complete-heart-block-pathway')}>Activate monitored pacing pathway</Button>
-        <Button className="crisis-drug__action" disabled={!context || !pathway || reassessed} onClick={() => onAction('reassess-complete-heart-block-trajectory')}>Reassess block + perfusion</Button>
-        <Button className="crisis-drug__action" disabled={!reassessed || handoff} onClick={() => onAction('handoff-complete-heart-block-pacing-plan')}>Record pacing evaluation + handoff</Button>
+        <Button className="crisis-drug__action" disabled={!stability || pathway} aria-disabled={demonstrating} onClick={act ? () => act('activate-complete-heart-block-pathway') : undefined}>Activate monitored pacing pathway</Button>
+        <Button className="crisis-drug__action" disabled={!context || !pathway || reassessed} aria-disabled={demonstrating} onClick={act ? () => act('reassess-complete-heart-block-trajectory') : undefined}>Reassess block + perfusion</Button>
+        <Button className="crisis-drug__action" disabled={!reassessed || handoff} aria-disabled={demonstrating} onClick={act ? () => act('handoff-complete-heart-block-pacing-plan') : undefined}>Record pacing evaluation + handoff</Button>
       </div>
       <p className="field__hint">No routine oxygen, atropine gate, pacing, capture check, device choice, or implantation occurs here. New compromise opens acute rescue care.</p>
     </section>
+    </div>
   </div>;
 }
 

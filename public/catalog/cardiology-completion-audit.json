@@ -1181,9 +1181,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "complete-heart-block-fixtures.ts binds seed 3318 and content 0.1.0 to expert, workup-without-the-phone-call error, recovery, and no-action paths. The rhythm-change event, the two brief presyncopal episodes, the fixed diagnostic 12-lead report describing complete atrioventricular block with an atrial rate of 82/min, a regular ventricular escape of 34/min, P waves marching independently through the QRS complexes and a QRS of 146 ms, the physiology at 116/70 with 98% on room air, the fixed initial panel reporting no AV-nodal-blocking medication, drug toxicity, hypothermia, electrolyte or thyroid explanation or acute STEMI pattern, and the persistence of the block at the later check are authored constants; no conduction, escape-rhythm or pacing model is claimed, and no outcome follows from any choice. tests/integration/complete-heart-block-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -1195,9 +1195,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions reconcile the fixed AV-dissociation report, the mechanical escape pulse, the recent presyncope and current whole-patient stability without letting stability read as low risk; review the fixed reversible, physiologic, ischemic, infectious, inflammatory, toxic, medication, procedural and structural context without declaring a cause or reading an unremarkable initial panel as proof of absence; activate monitored pacing-capable care, cardiology and electrophysiology consultation and a deterioration contingency; reassess the persistent block after elapsed time; and hand off guideline-supported permanent-pacing evaluation with shared decisions, open causes, owners and acute-change triggers. The cause review and the escalation are an unordered pair, which is the lesson rather than a convenience: the engine accepts either order and refuses the reassessment until both have landed, so escalating before the workup is complete is recorded as correct rather than premature. The lesson examines nobody, acquires or interprets no ECG, monitor, laboratory or imaging data, diagnoses no cause, delivers no oxygen, atropine, medication or infusion, paces nothing, selects no rate, current, energy, sedation, temporary or permanent device, assesses no capture, implants or programs nothing, determines no disposition or prognosis, and predicts no outcome."
           ]
         },
         {
@@ -1209,23 +1209,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded pacing-evaluation handoff carrying shared goals and tradeoffs, current perfusion, the causes still open, a monitored contingency, named owners and acute-change triggers. Later actions cannot restart an ended branch, and the ending certifies hemodynamicallyStable true, pacingDelivered false and captureAssessed false — the block persists, nothing was paced, no capture was claimed, and the patient is exactly as well as she was at the start, which is the point rather than the reassurance."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps — six rather than five because the unordered pair needs a beat for the state where neither lane has been taken, and that beat exists to say the two do not queue. The reflex the tutor works against is stability itself, and the module makes that trap concrete: the symptomatic-bradycardia lesson rewards exactly the observation that a well-looking patient can be evaluated as an outpatient, and here the same observation is a reason to move faster, because the escape rhythm keeping her well is the part that can stop. The stability beat insists on the difference between complete block and a slow sinus rhythm before anything else. The context beat treats an unremarkable initial panel as the trap it is, and names Lyme disease as the reversible cause whose epidemiology matters. The escalation beat gives the reason it cannot wait for instability in one sentence about the escape rhythm. The reassessment beat says an uneventful hour is the thing most likely to talk a team out of the urgency it correctly felt. The handoff beat lists what the evaluation contains and the long list of conclusions it must not reach. Worked example 0.1.0 drives the ordinary controls through the real engine to the handoff, escalating before reviewing the cause — a deliberate choice, because the phone call is the half a learner defers — and its narration is generated from the tutor's own prose so the two cannot drift apart. A test asserts that no beat anywhere paces, names a device or an energy, claims capture, or declares a cause. tests/unit/complete-heart-block-demonstration.test.ts verifies both orderings and every beat against the real engine, and tests/ui/cardiology-complete-heart-block.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the one stability invites: the common-error path reads the block correctly and reviews the cause, then reaches for the reassessment with no escalation recorded, meeting two of five — the reassessment refuses because src/modules/anesthesia/ui/Debrief.tsx and the engine both require the escalation lane, and the handoff never becomes available. The recovery path reviews the context before the two rhythms have been reconciled and is refused, takes the pair in the other order — which the engine accepts without comment — walks into the elapsed-time gate before clearing it, and still completes from the same positions."
           ]
         },
         {
@@ -1244,23 +1244,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "complete-heart-block-fixtures.ts binds exact-content expert, workup-without-the-phone-call error, recovery, and no-action pathways to seed 3318 for deterministic replay through the shared engine, including the opening order refusal, the combined both-lanes refusal on the reassessment, and the elapsed-time refusal."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
