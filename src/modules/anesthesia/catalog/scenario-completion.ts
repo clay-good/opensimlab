@@ -111,6 +111,7 @@ import { completeHeartBlockCompletionEvidence } from '../../cardiology/complete-
 import { torsadesCompletionEvidence } from '../../cardiology/torsades-completion';
 import { hyperkalemicConductionCompletionEvidence } from '../../cardiology/hyperkalemic-conduction-completion';
 import { pericardialTamponadeCompletionEvidence } from '../../cardiology/pericardial-tamponade-completion';
+import { rightVentricularInfarctionCompletionEvidence } from '../../cardiology/right-ventricular-infarction-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -361,6 +362,7 @@ export function auditClinicalScenario(
     ...torsadesCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...hyperkalemicConductionCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...pericardialTamponadeCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...rightVentricularInfarctionCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

@@ -1685,23 +1685,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "right-ventricular-infarction-fixtures.ts binds seed 8156 and content 0.1.0 to expert, clock-nobody-restarted error, recovery, and no-action paths. The 55 minutes of ongoing chest pressure with an already activated primary-PCI pathway, the fixed 12-lead and right-sided reports of inferior ST elevation with reciprocal lateral depression and 1.5 mm of ST elevation in V4R, the physiology at 54/min sinus, 86/60 mmHg, RR 18/min and 96% on room air with an elevated JVP, clear lungs and capillary refill of two seconds, the focused-echo report of moderate RV dilation and reduced RV systolic function with a small underfilled LV, and the authored later report of persisting chest pressure at 52/min and 88/62 mmHg are authored constants; no ischemic, preload or reperfusion model is claimed, and no outcome follows from any choice. tests/integration/right-ventricular-infarction-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is three narratives with no non-narrative state event. That is a correct reading of the timeline and the wrong conclusion about this lesson, whose progression lives in the engine's refusals. The structure is the argument: after the trajectory is reconciled the RV phenotype review and the reperfusion-readiness lane are available in either order, the support guardrails require the phenotype, and the handoff requires reperfusion and support together. The reperfusion lane is therefore never a prerequisite for anything except the ending — a learner can go phenotype, support, reperfusion and finish — which is exactly the point: the right-sided thinking runs alongside reperfusion and can never be a reason to delay it. One time gate separates the handoff from the later of the two closing lanes."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions reconcile the acute inferior-STEMI trajectory with current pressure, perfusion, oxygenation, rhythm and congestion, separating preload-sensitive hypotension from declared multi-organ shock while keeping pulmonary embolism, evolving mechanical disease, bradyarrhythmia and block, bleeding and medication effects open; review the fixed right-sided ECG and echocardiographic reports as an acute ischemic RV phenotype without claiming test acquisition or one-sign certainty; keep the activated primary-PCI pathway and the rhythm, conduction and defibrillation readiness active; record patient-specific RV-support guardrails with no nitrate, no reflex diuretic, no fixed fluid volume, no blind fluid loading, no universal target and no universal prohibition; and hand off the unresolved ischemia, perfusion, rhythm, conduction, mechanical, reperfusion and treatment-selection work. The lesson examines nobody, acquires or interprets no ECG, echo, monitoring, laboratory or catheter data, diagnoses no real patient, prescribes or delivers no fluid, nitrate, diuretic, vasopressor, inotrope, antithrombotic, oxygen or other treatment, performs no PCI or other procedure, determines no disposition or prognosis, and predicts no outcome."
           ]
         },
         {
@@ -1713,23 +1713,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded handoff on an authored later report in which the chest pressure persists and every number is essentially where it started. Later actions cannot restart an ended branch, and the ending certifies initialPulsePresent true with twelve restraint flags all false — including nitrateSelected, diureticSelected, blindFluidLoading, fixedFluidVolumeSelected, pciPerformed and reperfusionCompleted. Unchanged is the honest word for the ending: nothing was delivered, so the stable interval is explicitly not a treatment response."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps — six rather than five because the unordered pair needs a beat for the state where neither lane has been taken. The tutor works against two reflexes. The first is the treatment a hypotensive chest-pain patient usually gets: a nitrate and a diuretic are the two drugs most likely to be reached for and the two most likely to do harm, because a dilated dysfunctional right ventricle is filling a small underfilled left one and both take preload away — and the support beat says so without substituting an opposite recipe, since no fixed volume, blind loading, universal target or universal prohibition replaces a decision that needs verified congestion, verified filling and serial response. The second reflex is subtler and is the reason the pair is unordered: the right-sided thinking is interesting enough to become a reason to slow down, and the PCI pathway is already running. The opening beat asks the learner to name preload-sensitive hypotension rather than shock, because the two are managed almost oppositely. The phenotype beat calls the findings a phenotype rather than a diagnosis and carries the small underfilled LV forward as the reason the pressure is what it is. The handoff beat insists that unchanged is not a response, because nothing was given. Worked example 0.1.0 drives the ordinary controls through the real engine to the handoff, taking the reperfusion lane first and the phenotype second — a pointed choice — and its narration is generated from the tutor's own prose so the two cannot drift apart. A test asserts that no beat anywhere selects a nitrate, a diuretic, a fluid volume or a pressure target, or claims reperfusion. tests/unit/right-ventricular-infarction-demonstration.test.ts verifies both orderings and every beat against the real engine, and tests/ui/cardiology-right-ventricular-infarction.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the one the interesting half invites: the common-error path reconciles the trajectory, reads the phenotype and records the support guardrails — all correct — with the reperfusion lane never recorded, so the handoff refuses and the path meets three of five. That is the lesson's failure mode made concrete: everything the learner did was right and the clock ran while they did it. The recovery path reaches for support before the phenotype that must precede it and is refused, takes the unordered pair the other way round — which the engine accepts without comment — walks into the elapsed-time gate before clearing it, and still completes from the same positions."
           ]
         },
         {
@@ -1748,23 +1748,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "right-ventricular-infarction-fixtures.ts binds exact-content expert, clock-nobody-restarted error, recovery, and no-action pathways to seed 8156 for deterministic replay through the shared engine, including the opening order refusal, the phenotype-before-support refusal, the both-lanes refusal on the handoff, and the elapsed-time refusal."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

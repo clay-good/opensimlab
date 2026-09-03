@@ -147,6 +147,7 @@ import { supportsCompleteHeartBlockDemonstration } from '../../cardiology/demo/c
 import { supportsTorsadesDemonstration } from '../../cardiology/demo/torsades-demonstration';
 import { supportsHyperkalemicConductionDemonstration } from '../../cardiology/demo/hyperkalemic-conduction-demonstration';
 import { supportsPericardialTamponadeDemonstration } from '../../cardiology/demo/pericardial-tamponade-demonstration';
+import { supportsRightVentricularInfarctionDemonstration } from '../../cardiology/demo/right-ventricular-infarction-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -333,6 +334,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsTorsadesDemonstration,
     supportsHyperkalemicConductionDemonstration,
     supportsPericardialTamponadeDemonstration,
+    supportsRightVentricularInfarctionDemonstration,
   ],
 };
 
