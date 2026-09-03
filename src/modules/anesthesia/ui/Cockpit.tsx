@@ -363,6 +363,8 @@ import { useCopdExacerbationDemonstration } from '../../emergency-medicine/demo/
 import { supportsCopdExacerbationDemonstration } from '../../emergency-medicine/demo/copd-exacerbation-demonstration';
 import { useDiabeticKetoacidosisDemonstration } from '../../emergency-medicine/demo/useDiabeticKetoacidosisDemonstration';
 import { supportsDiabeticKetoacidosisDemonstration } from '../../emergency-medicine/demo/diabetic-ketoacidosis-demonstration';
+import { useExertionalHeatStrokeDemonstration } from '../../emergency-medicine/demo/useExertionalHeatStrokeDemonstration';
+import { supportsExertionalHeatStrokeDemonstration } from '../../emergency-medicine/demo/exertional-heat-stroke-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -696,6 +698,7 @@ export function Cockpit({
   const cardiacTamponadeDemoSupported = supportsCardiacTamponadeDemonstration(scenario);
   const copdExacerbationDemoSupported = supportsCopdExacerbationDemonstration(scenario);
   const diabeticKetoacidosisDemoSupported = supportsDiabeticKetoacidosisDemonstration(scenario);
+  const exertionalHeatStrokeDemoSupported = supportsExertionalHeatStrokeDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -857,6 +860,7 @@ export function Cockpit({
     || cardiacTamponadeDemoSupported
     || copdExacerbationDemoSupported
     || diabeticKetoacidosisDemoSupported
+    || exertionalHeatStrokeDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1242,6 +1246,12 @@ export function Cockpit({
     active: demonstrating && acutePulmonaryEdemaDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.acutePulmonaryEdemaAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const exertionalHeatStrokeDemonstration = useExertionalHeatStrokeDemonstration({
+    active: demonstrating && exertionalHeatStrokeDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.heatStrokeAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const diabeticKetoacidosisDemonstration = useDiabeticKetoacidosisDemonstration({
@@ -2025,6 +2035,7 @@ export function Cockpit({
     : cardiacTamponadeDemoSupported ? cardiacTamponadeDemonstration
     : copdExacerbationDemoSupported ? copdExacerbationDemonstration
     : diabeticKetoacidosisDemoSupported ? diabeticKetoacidosisDemonstration
+    : exertionalHeatStrokeDemoSupported ? exertionalHeatStrokeDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -3056,6 +3067,8 @@ export function Cockpit({
           copdExacerbationDemonstrating={demonstrating && copdExacerbationDemoSupported}
           diabeticKetoacidosisGuidance={session.guidance}
           diabeticKetoacidosisDemonstrating={demonstrating && diabeticKetoacidosisDemoSupported}
+          exertionalHeatStrokeGuidance={session.guidance}
+          exertionalHeatStrokeDemonstrating={demonstrating && exertionalHeatStrokeDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

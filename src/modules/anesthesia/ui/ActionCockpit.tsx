@@ -245,6 +245,7 @@ import { emergencyAnaphylaxisInlinePrompt } from '../../emergency-medicine/tutor
 import { cardiacTamponadeInlinePrompt } from '../../emergency-medicine/tutor/cardiac-tamponade-guidance';
 import { copdExacerbationInlinePrompt } from '../../emergency-medicine/tutor/copd-exacerbation-guidance';
 import { diabeticKetoacidosisInlinePrompt } from '../../emergency-medicine/tutor/diabetic-ketoacidosis-guidance';
+import { exertionalHeatStrokeInlinePrompt } from '../../emergency-medicine/tutor/exertional-heat-stroke-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3059,6 +3060,7 @@ export interface ActionCockpitProps {
   readonly cardiacTamponadeGuidance?: GuidanceLevel;
   readonly copdExacerbationGuidance?: GuidanceLevel;
   readonly diabeticKetoacidosisGuidance?: GuidanceLevel;
+  readonly exertionalHeatStrokeGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3253,6 +3255,7 @@ export interface ActionCockpitProps {
   readonly cardiacTamponadeDemonstrating?: boolean;
   readonly copdExacerbationDemonstrating?: boolean;
   readonly diabeticKetoacidosisDemonstrating?: boolean;
+  readonly exertionalHeatStrokeDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5620,6 +5623,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasHeatStrokeResponse && (
               <HeatStrokeTray assessment={props.resuscitation.heatStrokeAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.exertionalHeatStrokeGuidance}
+                demonstrating={props.exertionalHeatStrokeDemonstrating}
                 onAction={props.onHeatStrokeResponse ?? (() => {})} />
             )}
             {hasTraumaPrimarySurveyResponse && (
@@ -9219,8 +9225,11 @@ function OpioidToxicityTray({ assessment, onAction }: {
   );
 }
 
-function HeatStrokeTray({ assessment, onAction }: {
+function HeatStrokeTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['heatStrokeAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onHeatStrokeResponse']>;
 }) {
   const reviewed = assessment?.patternReviewedAtTick != null;
@@ -9228,8 +9237,18 @@ function HeatStrokeTray({ assessment, onAction }: {
   const cooling = assessment?.coolingAtTick != null;
   const target = assessment?.targetAtTick != null;
   const surveillance = assessment?.surveillanceAtTick != null;
+  const prompt = demonstrating ? null
+    : exertionalHeatStrokeInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="heat-cool-title">
         <div id="heat-cool-title" className="syringe__name">Hot brain. Cool now.</div>
         <Badge kind="teaching">Rectal 41.3°C · confused · HR 146</Badge>
@@ -9243,13 +9262,13 @@ function HeatStrokeTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={reviewed}
-            onClick={() => onAction('review-heat-stroke-pattern')}>Review brain + rectal core + mimics</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-heat-stroke-pattern') : undefined}>Review brain + rectal core + mimics</Button>
           <Button className="crisis-drug__action" disabled={!reviewed || supported}
-            onClick={() => onAction('record-heat-stroke-support')}>Support ABCs + strip + prepare</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-heat-stroke-support') : undefined}>Support ABCs + strip + prepare</Button>
           <Button className="crisis-drug__action" disabled={!supported || cooling}
-            onClick={() => onAction('record-cold-water-immersion')}>Immerse + monitor core + coordinate</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-cold-water-immersion') : undefined}>Immerse + monitor core + coordinate</Button>
           <Button className="crisis-drug__action" disabled={!cooling || target}
-            onClick={() => onAction('reassess-heat-stroke-cooling-target')}>Review cooling target</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-heat-stroke-cooling-target') : undefined}>Review cooling target</Button>
         </div>
         <p className="field__hint">Whole-body cold-water immersion is the fastest cooling path. Preserve airway access, monitor rectal core continuously, and organize transport around cooling.</p>
       </section>
@@ -9263,10 +9282,11 @@ function HeatStrokeTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!target || surveillance}
-            onClick={() => onAction('record-heat-stroke-organ-surveillance')}>Watch kidney + liver + clotting + muscle</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-heat-stroke-organ-surveillance') : undefined}>Watch kidney + liver + clotting + muscle</Button>
         </div>
         <p className="field__hint">Temperature recovery does not exclude delayed injury. Antipyretics and dantrolene do not treat heat stroke and are outside this path.</p>
       </section>
+      </div>
     </div>
   );
 }
