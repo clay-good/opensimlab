@@ -2063,23 +2063,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "acute-ischemic-stroke-fixtures.ts binds seed 6842 and content 0.1.0 to expert, transfer-waiting-on-the-drug error, recovery, and no-action paths. The sixty-eight-year-old woman of 80 kg with witnessed sudden aphasia and right facial and arm weakness, last known well 70 minutes ago, glucose 112 mg/dL, BP 168/94 mmHg, a protected airway and spontaneous breathing; the authored noncontrast CT showing no intracranial haemorrhage and CTA showing a left M1 large-vessel occlusion with no authored contraindication; the local-protocol tenecteplase 20 mg intent from a 0.25 mg/kg teaching calculation capped at 25 mg; and the fixed surveillance handoff at BP 168/94 mmHg with no overt bleeding are authored constants. No stroke, imaging, pharmacologic or reperfusion model is claimed, no treatment response is produced, and no outcome follows from any choice. tests/integration/emergency-acute-ischemic-stroke-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is two narratives with no non-narrative state event. The progression lives in the engine's five order refusals across six recorded steps, and the fifth carries the lesson: the thrombectomy transfer is its own gated action, taken explicitly without waiting for a thrombolysis response, so the two reperfusion pathways cannot collapse into a sequence. The imaging review is gated ahead of any reperfusion intent, and the handoff behind the transfer. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six recorded decisions against five declared objectives: review the disabling deficit, witnessed last-known-well time, glucose, pressure, airway and breathing without examining or scoring severity; activate the stroke system, monitoring, vascular access, laboratory workflow and parallel noncontrast CT plus CTA; review the authored CT, CTA, pressure and contraindication findings without interpreting images or adjudicating real eligibility; record a local-protocol tenecteplase 20 mg intent within 4.5 hours from a 0.25 mg/kg teaching calculation capped at 25 mg; activate the endovascular pathway and immediate thrombectomy-capable-centre transfer for the authored left M1 occlusion without waiting for thrombolysis response; and record fixed surveillance and a handoff carrying the last-known-well, activation, imaging, thrombolysis-intent and transfer clocks. The lesson examines nobody, scores no severity, acquires and interprets no image, prepares and delivers no drug, transfers nobody, performs no procedure, diagnoses nothing, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -2091,23 +2091,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded surveillance and handoff: airway still protected, breathing spontaneous, BP 168/94 mmHg and no overt bleeding authored. Later actions cannot restart an ended branch. Deficits are deliberately not re-scored and no treatment response is claimed, so the ending hands over a set of clocks rather than a judgement about whether anything worked."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step. The reflex the lesson works against is sequence: thrombolysis reads like the treatment and thrombectomy like the fallback, so the transfer waits on a response that takes longer to declare itself than the transfer takes to arrange, and a clot in an M1 is often too big for a drug to clear. The presentation beat makes \"witnessed\" the reason the clock is a fact rather than an estimate and names the glucose as the mimic not to miss on the way to a reperfusion pathway. The activation beat argues for CT and CTA as one trip rather than two and says how this race is lost — serially, with each sensible step waiting for the one before it. The imaging beat treats the noncontrast CT as a permission rather than a diagnosis, since an early ischaemic stroke often looks normal on it, and names the CTA finding as what makes this a two-pathway problem. The thrombolysis beat points at the 25 mg cap as where weight-based dosing stops being weight-based. The handoff beat explains why the deficits are deliberately not re-scored, and why a set of times is a more useful handover than a label. Worked example 0.1.0 drives the ordinary controls through the real engine to the handoff and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere pushes the drug, reads the images itself, lowers the blood pressure, or claims a reperfusion result. tests/unit/emergency-acute-ischemic-stroke-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/emergency-acute-ischemic-stroke.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps the declared objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the one that turns two parallel pathways into a queue: the common-error path records the presentation, activation, imaging and thrombolysis intent and then reaches for the handoff with the transfer still outstanding, and is refused because the engine gates the handoff behind the transfer. The recovery path reaches for activation before the presentation has been reviewed and is refused, reaches for the thrombolysis intent before the imaging that permits it and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -2126,23 +2126,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "acute-ischemic-stroke-fixtures.ts binds exact-content expert, transfer-waiting-on-the-drug error, recovery, and no-action pathways to seed 6842 for deterministic replay through the shared engine, including all five order refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

@@ -238,6 +238,7 @@ import { icuHandoffInlinePrompt } from '../../critical-care/tutor/icu-handoff-gu
 import { pulseOximeterArtifactInlinePrompt } from '../../critical-care/tutor/pulse-oximeter-artifact-guidance';
 import { ardsLungProtectiveInlinePrompt } from '../../critical-care/tutor/ards-lung-protective-guidance';
 import { acuteAorticSyndromeInlinePrompt } from '../../emergency-medicine/tutor/acute-aortic-syndrome-guidance';
+import { acuteIschemicStrokeInlinePrompt } from '../../emergency-medicine/tutor/acute-ischemic-stroke-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3045,6 +3046,7 @@ export interface ActionCockpitProps {
   readonly pulseOximeterArtifactGuidance?: GuidanceLevel;
   readonly ardsLungProtectiveGuidance?: GuidanceLevel;
   readonly acuteAorticSyndromeGuidance?: GuidanceLevel;
+  readonly acuteIschemicStrokeGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3232,6 +3234,7 @@ export interface ActionCockpitProps {
   readonly pulseOximeterArtifactDemonstrating?: boolean;
   readonly ardsLungProtectiveDemonstrating?: boolean;
   readonly acuteAorticSyndromeDemonstrating?: boolean;
+  readonly acuteIschemicStrokeDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5552,6 +5555,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasAcuteIschemicStrokeResponse && (
               <AcuteIschemicStrokeTray
                 assessment={props.resuscitation.acuteIschemicStrokeAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.acuteIschemicStrokeGuidance}
+                demonstrating={props.acuteIschemicStrokeDemonstrating}
                 onAction={props.onAcuteIschemicStrokeResponse ?? (() => {})} />
             )}
             {hasIntracranialHemorrhageResponse && (
@@ -8747,8 +8753,11 @@ function StatusEpilepticusTray({ assessment, seizureActivityFraction, onAction }
   );
 }
 
-function AcuteIschemicStrokeTray({ assessment, onAction }: {
+function AcuteIschemicStrokeTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['acuteIschemicStrokeAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onAcuteIschemicStrokeResponse']>;
 }) {
   const reviewed = assessment?.presentationReviewedAtTick != null;
@@ -8757,8 +8766,18 @@ function AcuteIschemicStrokeTray({ assessment, onAction }: {
   const tenecteplase = assessment?.tenecteplaseAtTick != null;
   const thrombectomy = assessment?.thrombectomyActivatedAtTick != null;
   const reassessed = assessment?.reassessedAtTick != null;
+  const prompt = demonstrating ? null
+    : acuteIschemicStrokeInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="acute-stroke-recognition-title">
         <div id="acute-stroke-recognition-title" className="syringe__name">Time is tissue. Facts before treatment.</div>
         <Badge kind="teaching">Disabling deficit · 70-minute clock</Badge>
@@ -8771,11 +8790,11 @@ function AcuteIschemicStrokeTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={reviewed}
-            onClick={() => onAction('review-stroke-presentation')}>Review deficit + clock</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-stroke-presentation') : undefined}>Review deficit + clock</Button>
           <Button className="crisis-drug__action" disabled={!reviewed || activated}
-            onClick={() => onAction('activate-stroke-system')}>Activate stroke system</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('activate-stroke-system') : undefined}>Activate stroke system</Button>
           <Button className="crisis-drug__action" disabled={!activated || imaging}
-            onClick={() => onAction('review-stroke-imaging-and-eligibility')}>Review CT + CTA + eligibility</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-stroke-imaging-and-eligibility') : undefined}>Review CT + CTA + eligibility</Button>
         </div>
         <p className="field__hint">The findings are authored. This screen does not examine the patient, calculate a stroke score, interpret imaging, or adjudicate a real contraindication.</p>
       </section>
@@ -8790,14 +8809,15 @@ function AcuteIschemicStrokeTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!imaging || tenecteplase}
-            onClick={() => onAction('record-tenecteplase-20-mg-intent')}>Record tenecteplase 20 mg IV intent</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-tenecteplase-20-mg-intent') : undefined}>Record tenecteplase 20 mg IV intent</Button>
           <Button className="crisis-drug__action" disabled={!tenecteplase || thrombectomy}
-            onClick={() => onAction('activate-thrombectomy-transfer')}>Activate thrombectomy transfer</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('activate-thrombectomy-transfer') : undefined}>Activate thrombectomy transfer</Button>
           <Button className="crisis-drug__action" disabled={!thrombectomy || reassessed}
-            onClick={() => onAction('reassess-and-handoff-stroke')}>Reassess + hand off with clocks</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-and-handoff-stroke') : undefined}>Reassess + hand off with clocks</Button>
         </div>
         <p className="field__hint">No drug delivery, neurologic improvement, thrombectomy, reperfusion, complication, disposition, or outcome is simulated.</p>
       </section>
+      </div>
     </div>
   );
 }

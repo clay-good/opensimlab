@@ -176,6 +176,7 @@ import { supportsIcuHandoffDemonstration } from '../../critical-care/demo/icu-ha
 import { supportsPulseOximeterArtifactDemonstration } from '../../critical-care/demo/pulse-oximeter-artifact-demonstration';
 import { supportsArdsLungProtectiveDemonstration } from '../../critical-care/demo/ards-lung-protective-demonstration';
 import { supportsAcuteAorticSyndromeDemonstration } from '../../emergency-medicine/demo/acute-aortic-syndrome-demonstration';
+import { supportsAcuteIschemicStrokeDemonstration } from '../../emergency-medicine/demo/acute-ischemic-stroke-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -395,6 +396,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
   ],
   'emergency-medicine': [
     supportsAcuteAorticSyndromeDemonstration,
+    supportsAcuteIschemicStrokeDemonstration,
   ],
 };
 
