@@ -1811,23 +1811,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "targeted-temperature-management-fixtures.ts binds seed 9375 and content 0.1.0 to expert, protocol-before-the-review error, recovery, and no-action paths. The sixty-one-year-old intubated woman 32 minutes from ROSC after a witnessed VF arrest who does not follow verbal commands, at core temperature 38.3°C and rising, HR 98/min, MAP 68 mmHg on reported vasoactive support, SpO2 96% on FiO2 0.40, EtCO2 36 mmHg, urine 20 mL/h and lactate 5.1 mmol/L, the reported equal reactive pupils, absent clinical and electrographic seizure and perfusing sinus rhythm, the recorded 32°C to 37.5°C range for at least 36 hours, the 0.5°C/h rewarming ceiling, and the authored 45-minute response at 37.4°C with MAP 70 mmHg, HR 92/min, SpO2 97% and EtCO2 36 mmHg are authored constants; no thermoregulatory, cooling-device or post-arrest neurologic model is claimed, and no outcome follows from any choice. tests/integration/targeted-temperature-management-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is two narratives with no non-narrative state event. The progression lives in the engine's four order refusals, and the protocol step carries the lesson: a generation was taught a single number, and what the engine records instead is a range in which no temperature is declared superior, so the decision becomes controlling temperature deliberately and avoiding fever rather than reaching a figure. The context review is gated ahead of the protocol so no isolated sign becomes a prognosis on the way there, and the guardrails are gated behind the protocol so they guard something that exists. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions recognize eligibility for deliberate protocolized temperature control in an adult who does not follow commands after ROSC and activate post-arrest, cardiac, neurologic, nursing, pharmacy and temperature-control help without making a neurologic prognosis; review the neurologic, temperature, perfusion, oxygenation, ventilation, seizure and cause context with no isolated sign used prognostically; activate an individualized local protocol maintaining 32°C to 37.5°C for at least 36 hours while avoiding fever, with no temperature in the range treated as universally superior; record continuous core-temperature, shivering, sedation, ventilation, oxygenation, perfusion, rhythm, electrolyte, glucose, skin, device and organ guardrails while declining routine rapid cold intravenous fluid loading and rewarming faster than 0.5°C/h; and reassess the authored response without claiming durable control or recovery. The lesson measures nothing, selects no device, fluid, medication or target-selection rule, cools and warms nobody, treats no shivering, diagnoses nothing, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -1839,23 +1839,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded reassessment on an authored 45-minute response at a core temperature of 37.4°C inside the selected range, with MAP 70 mmHg, HR 92/min, SpO2 97% and EtCO2 36 mmHg, and with command following still absent. Later actions cannot restart an ended branch, and the ending is explicit that the unchanged examination is the same finding it was at the start and is far too early to mean anything: temperature durability, shivering, the cause of the arrest, seizures, cardiac function, organ recovery, neurologic recovery, neuroprognostication and outcome all remain open."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step, because this lesson has no unordered lane. The reflex it works against is the remembered number: if you learned \"cool to 33\", the protocol beat says so directly, notes that the evidence moved, and names what survived it — deliberate control and fever avoidance — while leaving the figure inside the range a local, individualized choice. The second reflex runs through the whole lesson: not following commands 32 minutes after an arrest is what makes her eligible and is not what tells you how she does, and the context beat's discipline is its last clause, that no isolated sign is used for prognosis. That beat also reads the lactate and the oliguria as the arrest still being paid for, calls the reactive pupils reassuring and proof of nothing, and notes that absent seizures matter because a seizing brain is a hotter brain. The guardrails beat names the two classic harms as harms: routine rapid cold intravenous fluid loading is a large volume into a heart that just arrested, and rewarming faster than 0.5°C/h undoes the point of having gone down. Worked example 0.1.0 drives the ordinary controls through the real engine to the reassessment and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere names a target temperature to set, starts a cooling device, gives cold fluid, treats shivering with a named drug, or makes a neurologic prognosis. tests/unit/targeted-temperature-management-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/critical-care-targeted-temperature-management.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the one a remembered number invites: the common-error path recognises eligibility and activates a protocol immediately, skipping the review that holds the neurologic, seizure, perfusion and cause context together and refuses to let any single sign carry a prognosis, and meets one of five because the engine gates it. The recovery path reaches for the context before eligibility has been recognised and is refused, reaches for the guardrails before there is a protocol for them to guard and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -1874,23 +1874,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "targeted-temperature-management-fixtures.ts binds exact-content expert, protocol-before-the-review error, recovery, and no-action pathways to seed 9375 for deterministic replay through the shared engine, including all four order refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

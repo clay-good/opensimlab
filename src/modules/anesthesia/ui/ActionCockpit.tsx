@@ -230,6 +230,7 @@ import { delayedVasopressorDeliveryInlinePrompt } from '../../critical-care/tuto
 import { intracranialHypertensionInlinePrompt } from '../../critical-care/tutor/intracranial-hypertension-guidance';
 import { spontaneousBreathingTrialInlinePrompt } from '../../critical-care/tutor/spontaneous-breathing-trial-guidance';
 import { statusEpilepticusInlinePrompt as criticalCareStatusEpilepticusInlinePrompt } from '../../critical-care/tutor/status-epilepticus-guidance';
+import { targetedTemperatureManagementInlinePrompt } from '../../critical-care/tutor/targeted-temperature-management-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3029,6 +3030,7 @@ export interface ActionCockpitProps {
   readonly intracranialHypertensionGuidance?: GuidanceLevel;
   readonly spontaneousBreathingTrialGuidance?: GuidanceLevel;
   readonly criticalCareStatusEpilepticusGuidance?: GuidanceLevel;
+  readonly postArrestTemperatureGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3208,6 +3210,7 @@ export interface ActionCockpitProps {
   readonly intracranialHypertensionDemonstrating?: boolean;
   readonly spontaneousBreathingTrialDemonstrating?: boolean;
   readonly criticalCareStatusEpilepticusDemonstrating?: boolean;
+  readonly postArrestTemperatureDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5668,6 +5671,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasPostArrestTemperatureResponse && (
               <PostArrestTemperatureTray
                 assessment={props.resuscitation.postArrestTemperatureAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.postArrestTemperatureGuidance}
+                demonstrating={props.postArrestTemperatureDemonstrating}
                 onAction={props.onPostArrestTemperatureResponse ?? (() => {})} />
             )}
             {hasIntracranialHypertensionResponse && (
@@ -10085,8 +10091,11 @@ function CriticalCareStatusEpilepticusTray({ assessment, scenarioVersion, guidan
   );
 }
 
-function PostArrestTemperatureTray({ assessment, onAction }: {
+function PostArrestTemperatureTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['postArrestTemperatureAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onPostArrestTemperatureResponse']>;
 }) {
   const recognized = assessment?.recognitionAtTick != null;
@@ -10094,8 +10103,18 @@ function PostArrestTemperatureTray({ assessment, onAction }: {
   const protocol = assessment?.protocolAtTick != null;
   const guardrails = assessment?.guardrailsAtTick != null;
   const reassessed = assessment?.reassessmentAtTick != null;
+  const prompt = demonstrating ? null
+    : targetedTemperatureManagementInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="post-arrest-temperature-context-title">
         <div id="post-arrest-temperature-context-title" className="syringe__name">Control temperature. No early prognosis.</div>
         <Badge kind="teaching">32 min after ROSC · no command following · temperature 38.3°C and rising</Badge>
@@ -10107,9 +10126,9 @@ function PostArrestTemperatureTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={recognized}
-            onClick={() => onAction('recognize-post-arrest-temperature-control')}>Recognize indication + activate help</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('recognize-post-arrest-temperature-control') : undefined}>Recognize indication + activate help</Button>
           <Button className="crisis-drug__action" disabled={!recognized || context}
-            onClick={() => onAction('review-post-arrest-temperature-context')}>Review brain + systemic context</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-post-arrest-temperature-context') : undefined}>Review brain + systemic context</Button>
         </div>
         <p className="field__hint">Absent command following opens a temperature-control pathway. It does not settle neurologic prognosis.</p>
       </section>
@@ -10125,14 +10144,15 @@ function PostArrestTemperatureTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!context || protocol}
-            onClick={() => onAction('activate-post-arrest-temperature-protocol')}>Activate individualized temperature protocol</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('activate-post-arrest-temperature-protocol') : undefined}>Activate individualized temperature protocol</Button>
           <Button className="crisis-drug__action" disabled={!protocol || guardrails}
-            onClick={() => onAction('record-temperature-control-guardrails')}>Record cooling + rewarming guardrails</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-temperature-control-guardrails') : undefined}>Record cooling + rewarming guardrails</Button>
           <Button className="crisis-drug__action" disabled={!guardrails || reassessed}
-            onClick={() => onAction('reassess-post-arrest-temperature-trajectory')}>Review temperature + organ trajectory</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-post-arrest-temperature-trajectory') : undefined}>Review temperature + organ trajectory</Button>
         </div>
         <p className="field__hint">Reaching the range is an immediate process signal, not proof of neurologic recovery or benefit.</p>
       </section>
+      </div>
     </div>
   );
 }
