@@ -1307,23 +1307,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "rv-failure-fixtures.ts binds seed 7208 and content 0.1.0 to expert, support-before-the-filling-pressures error, recovery, and no-action paths. The pulmonary arterial hypertension with worsening oedema and abdominal distension after several days of poor intake and interrupted pulmonary-vascular therapy, the MAP of 58 mmHg with HR 116/min, capillary refill 5 seconds, cool extremities, slowing mentation, urine 12 mL/h and a lactate risen from 2.8 to 4.3 mmol/L, the elevated JVP with no reported B-lines at 91% on supplemental oxygen, the echo reporting a severely dilated right ventricle with reduced systolic function, systolic septal flattening, a small underfilled left ventricle and no effusion or acute severe left-sided valve lesion, and the panel reporting a central venous pressure of 18 mmHg, a wedge of 10 mmHg and a cardiac index of 1.8 L/min/m2 are authored constants; no haemodynamic, pulmonary-vascular or diuretic model is claimed, and no outcome follows from any choice. tests/integration/rv-failure-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is two narratives with no non-narrative state event. The progression lives in the engine's four order refusals, and the chain puts the phenotype ahead of the support for a specific reason: this is the lesson where both of the obvious moves are wrong, and the two filling pressures are what establish that. A learner who records support before reading a central venous pressure of 18 against a wedge of 10 is choosing between a diuretic and a bolus without the finding that rules out both reflexes. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions recognize right-ventricular failure from congestion and underperfusion together and activate specialist shock help; integrate the fixed echo and haemodynamic pattern while keeping acute triggers and dangerous alternatives open and without treating one value as diagnostic; record an expert-selected support intent that protects systemic perfusion, oxygenation, acid-base balance, rhythm and the pressure-loaded right ventricle while avoiding indiscriminate fluid, automatic decongestion and universal targets; keep the reversible-precipitant and specialist pulmonary-vascular therapy pathways active; and reassess perfusion, congestion, rhythm, oxygenation, the right-ventricular pattern, filling pressure, output and organ trajectory. The lesson examines nobody, acquires or interprets no monitoring, ECG, laboratory, echo, catheter or imaging data, calculates and diagnoses nothing, changes no oxygen or ventilation, delivers no fluid, diuresis or drug, obtains no access, selects no dose, performs no procedure, provides no mechanical support, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -1335,23 +1335,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded trajectory reassessment on an authored response that improves. Later actions cannot restart an ended branch, and the ending claims neither resolution nor a universal endpoint: she is still congested, still underperfused, and still off the therapy that was interrupted. The reassessment is deliberately plural because a patient whose problem is a pressure-loaded ventricle can look better on one axis while another is quietly worse."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step, because this lesson has no unordered lane. The reflex it works against is whichever one the learner reaches for first, because this patient invites two opposite ones and punishes both: she is grossly congested, which asks for a diuretic, and hypotensive and underperfused, which asks for fluid. The recognition beat makes congestion without pulmonary oedema in a patient who is not perfusing the finding that locates the problem on the right, and names the interrupted therapy as the part of the history most likely to explain why now. The phenotype beat reads the two filling pressures against each other — 18 on the right and 10 on the left is where the congestion is and where it is not — and says the small left ventricle is small because the right one is not delivering to it rather than because she is dry, with the septal flattening as the same fact seen a second way. The support beat states plainly that neither reflex is forbidden as a matter of principle and that what is excluded is doing either automatically. The triggers beat notes that hypoxia and acidosis are both consequences of her state and causes of it worsening, and that restarting interrupted pulmonary-vascular therapy is a specialist decision rather than a resumption. Worked example 0.1.0 drives the ordinary controls through the real engine to the reassessment and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere names a diuretic, a fluid volume, a pressure target, or a pulmonary-vascular agent. tests/unit/rv-failure-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/critical-care-rv-failure.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the one her appearance invites: the common-error path recognises the trajectory and records support without reading the two filling pressures that decide which reflex would have been wrong, and meets one of five because the engine gates support behind the phenotype review. The recovery path reads the phenotype before the trajectory has been named and is refused, reaches for the triggers before the support they are reviewed alongside and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -1370,23 +1370,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "rv-failure-fixtures.ts binds exact-content expert, support-before-the-filling-pressures error, recovery, and no-action pathways to seed 7208 for deterministic replay through the shared engine, including all four order refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

@@ -216,6 +216,7 @@ import { transcutaneousPacingCaptureInlinePrompt } from '../../cardiology/tutor/
 import { septicShockResuscitationInlinePrompt } from '../../critical-care/tutor/septic-shock-resuscitation-guidance';
 import { cardiogenicShockInlinePrompt } from '../../critical-care/tutor/cardiogenic-shock-guidance';
 import { mixedShockInlinePrompt } from '../../critical-care/tutor/mixed-shock-guidance';
+import { rvFailureInlinePrompt } from '../../critical-care/tutor/rv-failure-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3001,6 +3002,7 @@ export interface ActionCockpitProps {
   readonly septicShockResuscitationGuidance?: GuidanceLevel;
   readonly cardiogenicShockGuidance?: GuidanceLevel;
   readonly mixedShockGuidance?: GuidanceLevel;
+  readonly rightVentricularFailureGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3166,6 +3168,7 @@ export interface ActionCockpitProps {
   readonly septicShockResuscitationDemonstrating?: boolean;
   readonly cardiogenicShockDemonstrating?: boolean;
   readonly mixedShockDemonstrating?: boolean;
+  readonly rightVentricularFailureDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5576,6 +5579,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasRightVentricularFailureResponse && (
               <RightVentricularFailureTray
                 assessment={props.resuscitation.rightVentricularFailureAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.rightVentricularFailureGuidance}
+                demonstrating={props.rightVentricularFailureDemonstrating}
                 onAction={props.onRightVentricularFailureResponse ?? (() => {})} />
             )}
             {hasMassivePulmonaryEmbolismResponse && (
@@ -9653,8 +9659,11 @@ function MixedShockTray({ assessment, scenarioVersion, guidance = 'unassisted', 
   );
 }
 
-function RightVentricularFailureTray({ assessment, onAction }: {
+function RightVentricularFailureTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['rightVentricularFailureAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onRightVentricularFailureResponse']>;
 }) {
   const recognized = assessment?.recognitionAtTick != null;
@@ -9662,8 +9671,18 @@ function RightVentricularFailureTray({ assessment, onAction }: {
   const support = assessment?.supportAtTick != null;
   const triggers = assessment?.triggersAtTick != null;
   const reassessed = assessment?.reassessmentAtTick != null;
+  const prompt = demonstrating ? null
+    : rvFailureInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="rv-pattern-title">
         <div id="rv-pattern-title" className="syringe__name">Read the ventricle, not just the pressure.</div>
         <Badge kind="teaching">congestion · perfusion · RV shape · septum · output</Badge>
@@ -9675,9 +9694,9 @@ function RightVentricularFailureTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={recognized}
-            onClick={() => onAction('recognize-rv-failure-trajectory')}>Recognize trajectory + call teams</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('recognize-rv-failure-trajectory') : undefined}>Recognize trajectory + call teams</Button>
           <Button className="crisis-drug__action" disabled={!recognized || phenotype}
-            onClick={() => onAction('review-rv-failure-phenotype')}>Review RV pattern in context</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-rv-failure-phenotype') : undefined}>Review RV pattern in context</Button>
         </div>
         <p className="field__hint">A high CVP is not a fluid prescription. Read filling pressure beside output, congestion, the septum, and treatment response.</p>
       </section>
@@ -9693,14 +9712,15 @@ function RightVentricularFailureTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!phenotype || support}
-            onClick={() => onAction('record-rv-failure-support')}>Record individualized RV support</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-rv-failure-support') : undefined}>Record individualized RV support</Button>
           <Button className="crisis-drug__action" disabled={!support || triggers}
-            onClick={() => onAction('address-rv-failure-triggers')}>Keep reversible triggers open</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('address-rv-failure-triggers') : undefined}>Keep reversible triggers open</Button>
           <Button className="crisis-drug__action" disabled={!triggers || reassessed}
-            onClick={() => onAction('reassess-rv-failure-trajectory')}>Review 10-minute trajectory</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-rv-failure-trajectory') : undefined}>Review 10-minute trajectory</Button>
         </div>
         <p className="field__hint">Support is a moving balance, not a recipe. Specialist therapy, ventilation, diuresis, inotropy, and temporary support remain cause and trajectory dependent.</p>
       </section>
+      </div>
     </div>
   );
 }

@@ -154,6 +154,7 @@ import { supportsTranscutaneousPacingCaptureDemonstration } from '../../cardiolo
 import { supportsSepticShockResuscitationDemonstration } from '../../critical-care/demo/septic-shock-resuscitation-demonstration';
 import { supportsCardiogenicShockDemonstration } from '../../critical-care/demo/cardiogenic-shock-demonstration';
 import { supportsMixedShockDemonstration } from '../../critical-care/demo/mixed-shock-demonstration';
+import { supportsRvFailureDemonstration } from '../../critical-care/demo/rv-failure-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -349,6 +350,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsSepticShockResuscitationDemonstration,
     supportsCardiogenicShockDemonstration,
     supportsMixedShockDemonstration,
+    supportsRvFailureDemonstration,
   ],
 };
 
