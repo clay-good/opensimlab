@@ -222,6 +222,8 @@ import { autoPeepInlinePrompt } from '../../critical-care/tutor/auto-peep-guidan
 import { dyssynchronyInlinePrompt } from '../../critical-care/tutor/dyssynchrony-guidance';
 import { mucusPluggingInlinePrompt } from '../../critical-care/tutor/mucus-plugging-guidance';
 import { escalatingHypoxemiaInlinePrompt } from '../../critical-care/tutor/escalating-hypoxemia-guidance';
+import { unplannedExtubationInlinePrompt } from '../../critical-care/tutor/unplanned-extubation-guidance';
+import { circuitDisconnectionInlinePrompt } from '../../critical-care/tutor/circuit-disconnection-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3013,6 +3015,8 @@ export interface ActionCockpitProps {
   readonly ventilatorDyssynchronyGuidance?: GuidanceLevel;
   readonly mucusPluggingGuidance?: GuidanceLevel;
   readonly escalatingHypoxemiaGuidance?: GuidanceLevel;
+  readonly unplannedExtubationGuidance?: GuidanceLevel;
+  readonly ventilatorCircuitDisconnectionGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3184,6 +3188,8 @@ export interface ActionCockpitProps {
   readonly ventilatorDyssynchronyDemonstrating?: boolean;
   readonly mucusPluggingDemonstrating?: boolean;
   readonly escalatingHypoxemiaDemonstrating?: boolean;
+  readonly unplannedExtubationDemonstrating?: boolean;
+  readonly ventilatorCircuitDisconnectionDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5577,6 +5583,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasUnplannedExtubationResponse && (
               <UnplannedExtubationTray
                 assessment={props.resuscitation.unplannedExtubationAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.unplannedExtubationGuidance}
+                demonstrating={props.unplannedExtubationDemonstrating}
                 onAction={props.onUnplannedExtubationResponse ?? (() => {})} />
             )}
             {hasSpontaneousBreathingTrialResponse && (
@@ -5655,6 +5664,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasVentilatorCircuitDisconnectionResponse && (
               <VentilatorCircuitDisconnectionTray
                 assessment={props.resuscitation.ventilatorCircuitDisconnectionAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.ventilatorCircuitDisconnectionGuidance}
+                demonstrating={props.ventilatorCircuitDisconnectionDemonstrating}
                 onAction={props.onVentilatorCircuitDisconnectionResponse ?? (() => {})} />
             )}
             {hasDelayedVasopressorDeliveryResponse && (
@@ -9459,8 +9471,11 @@ function MucusPluggingTray({ assessment, scenarioVersion, guidance = 'unassisted
   );
 }
 
-function UnplannedExtubationTray({ assessment, onAction }: {
+function UnplannedExtubationTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['unplannedExtubationAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onUnplannedExtubationResponse']>;
 }) {
   const support = assessment?.supportAtTick != null;
@@ -9468,8 +9483,18 @@ function UnplannedExtubationTray({ assessment, onAction }: {
   const failure = assessment?.failureAtTick != null;
   const planned = assessment?.airwayPlanAtTick != null;
   const reassessed = assessment?.reassessmentAtTick != null;
+  const prompt = demonstrating ? null
+    : unplannedExtubationInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="unplanned-read-title">
         <div id="unplanned-read-title" className="syringe__name">The tube is out. Read the patient.</div>
         <Badge kind="teaching">airway · effort · gas · brain · circulation</Badge>
@@ -9482,11 +9507,11 @@ function UnplannedExtubationTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={support}
-            onClick={() => onAction('support-unplanned-extubation-and-call-help')}>Oxygenate + call airway help</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('support-unplanned-extubation-and-call-help') : undefined}>Oxygenate + call airway help</Button>
           <Button className="crisis-drug__action" disabled={!support || assessed}
-            onClick={() => onAction('assess-unplanned-extubation-tolerance')}>Read the whole-patient panel</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('assess-unplanned-extubation-tolerance') : undefined}>Read the whole-patient panel</Button>
           <Button className="crisis-drug__action" disabled={!assessed || failure}
-            onClick={() => onAction('classify-unplanned-extubation-failure')}>Classify this trajectory as failing</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('classify-unplanned-extubation-failure') : undefined}>Classify this trajectory as failing</Button>
         </div>
         <p className="field__hint">The event alone does not decide. Airway protection, work, oxygenation, ventilation, alertness, and trend do.</p>
       </section>
@@ -9501,12 +9526,13 @@ function UnplannedExtubationTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!failure || planned}
-            onClick={() => onAction('record-unplanned-extubation-airway-plan')}>Record prompt reintubation plan</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-unplanned-extubation-airway-plan') : undefined}>Record prompt reintubation plan</Button>
           <Button className="crisis-drug__action" disabled={!planned || reassessed}
-            onClick={() => onAction('reassess-unplanned-extubation-response')}>Prove placement + hand off learning</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-unplanned-extubation-response') : undefined}>Prove placement + hand off learning</Button>
         </div>
         <p className="field__hint">Noninvasive support must not delay this failing airway. The controls record intent and reported response, never airway performance.</p>
       </section>
+      </div>
     </div>
   );
 }
@@ -10241,8 +10267,11 @@ function IcuHiddenDeteriorationHandoffTray({ assessment, onAction }: {
   );
 }
 
-function VentilatorCircuitDisconnectionTray({ assessment, onAction }: {
+function VentilatorCircuitDisconnectionTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['ventilatorCircuitDisconnectionAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onVentilatorCircuitDisconnectionResponse']>;
 }) {
   const recognized = assessment?.recognizedAtTick != null;
@@ -10250,8 +10279,18 @@ function VentilatorCircuitDisconnectionTray({ assessment, onAction }: {
   const inspected = assessment?.inspectedAtTick != null;
   const restored = assessment?.restoredAtTick != null;
   const reassessed = assessment?.reassessedAtTick != null;
+  const prompt = demonstrating ? null
+    : circuitDisconnectionInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="ventilator-disconnection-breath-title">
         <div id="ventilator-disconnection-breath-title" className="syringe__name">Follow the breath, not the setting.</div>
         <Badge kind="teaching">commanded 420 mL · exhaled 0 · pressure lost</Badge>
@@ -10264,11 +10303,11 @@ function VentilatorCircuitDisconnectionTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={recognized}
-            onClick={() => onAction('recognize-ventilator-circuit-disconnection')}>Recognize loss of delivered ventilation</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('recognize-ventilator-circuit-disconnection') : undefined}>Recognize loss of delivered ventilation</Button>
           <Button className="crisis-drug__action" disabled={!recognized || bridged}
-            onClick={() => onAction('bridge-ventilator-circuit-disconnection')}>Call help + bridge oxygenation</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('bridge-ventilator-circuit-disconnection') : undefined}>Call help + bridge oxygenation</Button>
           <Button className="crisis-drug__action" disabled={!bridged || inspected}
-            onClick={() => onAction('inspect-ventilator-circuit-disconnection')}>Trace patient → airway → circuit → source</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('inspect-ventilator-circuit-disconnection') : undefined}>Trace patient → airway → circuit → source</Button>
         </div>
         <p className="field__hint">The alarm earns attention. Independent patient and delivery signals establish the problem.</p>
       </section>
@@ -10283,12 +10322,13 @@ function VentilatorCircuitDisconnectionTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!inspected || restored}
-            onClick={() => onAction('restore-ventilator-circuit-support')}>Restore continuity + established support</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('restore-ventilator-circuit-support') : undefined}>Restore continuity + established support</Button>
           <Button className="crisis-drug__action" disabled={!restored || reassessed}
-            onClick={() => onAction('reassess-ventilator-circuit-response')}>Prove delivered breaths + patient response</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-ventilator-circuit-response') : undefined}>Prove delivered breaths + patient response</Button>
         </div>
         <p className="field__hint">These controls record authored intent. They do not handle equipment, ventilate, or predict a person’s oxygen reserve.</p>
       </section>
+      </div>
     </div>
   );
 }

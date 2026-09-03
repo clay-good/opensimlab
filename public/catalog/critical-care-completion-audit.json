@@ -677,23 +677,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "unplanned-extubation-fixtures.ts binds seed 9375 and content 0.1.0 to expert, right-answer-without-the-panel error, recovery, and no-action paths. The disconnect alarm after repositioning with the tracheal tube visibly outside the mouth, the respiratory rate of 36/min with accessory-muscle use, hoarse weak voice, weak cough and pooled secretions, the SpO2 of 86% despite face-mask oxygen, the authored arterial panel at pH 7.27 and PaCO2 58 mmHg, the new drowsiness, the HR of 116/min and MAP of 78 mmHg, and the absence of any continuous exhaled-carbon-dioxide signal without an airway are authored constants; no airway, oxygenation or reintubation model is claimed, and no outcome follows from any choice. tests/integration/unplanned-extubation-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is two narratives with no non-narrative state event. The progression lives in the engine's four order refusals, and the tolerance assessment sits between the support and the airway plan for a specific reason: a large share of unplanned extubations never need reintubation, this one does, and the engine makes the learner establish which kind it is before the plan so that a correct decision is a conclusion rather than a reflex that happened to land. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions support oxygenation and call experienced ICU and airway help after the unplanned extubation; assess airway patency, work of breathing, oxygenation, ventilation, mental status, secretions and circulation rather than assuming every unplanned extubation fails; recognize the convergent post-extubation respiratory failure and choose prompt reintubation; record experienced-team preoxygenation and reintubation intent without using noninvasive support to delay a failing airway; and confirm the reported new airway, reassess the patient and hand off a prevention review. The lesson examines nobody, acquires no monitoring, delivers no oxygen, ventilates nobody by mask, gives no drug, handles no airway equipment, intubates nobody, images nothing, diagnoses nothing, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -705,23 +705,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded reassessment carrying reported placement evidence, the whole-patient response, and a securement, sedation, mobility, staffing and communication review handed off as intent. Later actions cannot restart an ended branch. Placement evidence comes first and is reported rather than assumed, which is the point in a patient who has just demonstrated what happens when everyone believes an airway is secure, and a correctly placed tube in a patient who is not improving is still a problem."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step, because this lesson has no unordered lane. The reflex it works against is not the wrong answer but arriving at the right one without looking, and the assessment beat defends that step explicitly: a team that reintubates on the phrase rather than on the patient will also reintubate the ones who would have been fine. The support beat treats announcing the event as a step rather than a courtesy, since the people who need to know cannot infer it from an alarm, and notes what was lost with the tube — there is no continuous exhaled carbon dioxide without one. The classification beat counts four independent axes converging, with the trajectory as the one that decides it. The plan beat names the more dangerous opposite mistake: noninvasive support in a failing airway makes the numbers look better for a while in a patient who cannot protect his airway and is getting drowsier, and the time it buys is taken from the intubation that will happen anyway, under worse conditions — while being clear that noninvasive support has a real place in the patients this panel does not describe. The reassessment beat puts placement evidence first because this is the patient who has just demonstrated what happens when an airway is assumed secure. Worked example 0.1.0 drives the ordinary controls through the real engine to the reassessment and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere intubates, names a drug or a blade, or claims noninvasive support has no place. tests/unit/unplanned-extubation-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/critical-care-unplanned-extubation.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual here is unusual and deliberate: the common-error path reaches the *correct* decision — prompt reintubation — without ever reading the panel that establishes it, and meets one of five because the engine gates the airway plan behind the tolerance assessment and the classification. That is the same reflex that reintubates the patients who would have been fine, so the lesson refuses to reward it. The recovery path reaches for the tolerance panel before anybody has called for help and is refused, reaches for the airway plan before the trajectory has been classified and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -740,23 +740,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "unplanned-extubation-fixtures.ts binds exact-content expert, right-answer-without-the-panel error, recovery, and no-action pathways to seed 9375 for deterministic replay through the shared engine, including all four order refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
@@ -2441,23 +2441,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "circuit-disconnection-fixtures.ts binds seed 1264 and content 0.1.0 to expert, straight-to-the-circuit error, recovery, and no-action paths. The high-priority disconnect alarm after its declared 10-second teaching delay, the ventilator still commanded to volume control at 420 mL, 20/min, PEEP 8 cm H2O and FiO2 0.45 with exhaled tidal volume and minute ventilation at 0, airway pressure and measured PEEP collapsed to 0 cm H2O and an absent capnogram, the unchanged tube depth and securement, the coherent pleth showing SpO2 falling from 96% to 88% with HR 108/min, MAP 76 mmHg and no spontaneous effort, and the authored 2-minute response of exhaled 410 mL, 8.2 L/min, peak 27 cm H2O, PEEP 8 cm H2O, EtCO2 36 mmHg with a continuous waveform, 94% on unchanged FiO2 0.45, HR 98/min and MAP 77 mmHg are authored constants; no circuit, alarm-timing or oxygen-reserve model is claimed, and no outcome follows from any choice. tests/integration/circuit-disconnection-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is two narratives with no non-narrative state event. The progression lives in the engine's four order refusals, and the position of the bridge is the entire lesson: it sits second, before the inspection, so the engine refuses to let a learner trace a circuit while a patient with no delivered ventilation and a falling saturation goes unoxygenated. That the cause really is a disconnection and reconnecting it really is the fix is what makes the refusal necessary rather than pedantic. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions recognize lost delivered ventilation despite unchanged commanded settings by integrating the alarm, exhaled volume, pressure, capnography, patient, pleth and saturation; call for help and record immediate alternative oxygenation and ventilation intent without waiting for a definitive equipment label; trace the patient, airway, circuit, ventilator and gas source while keeping tube displacement or obstruction, pneumothorax, equipment failure, apnoea and monitor failure open; record restoration of circuit continuity and the established support; and prove delivered breaths before reassessing oxygenation, ventilation, pressures, capnography and circulation. The lesson examines nobody, acquires no monitoring, handles no equipment or airway, ventilates nobody, delivers no oxygen or drug, diagnoses nothing, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -2469,23 +2469,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded reassessment requiring a fixed whole-system response rather than the disappearance of one alarm. Later actions cannot restart an ended branch. Each figure in that response does a job — exhaled volume and minute ventilation prove gas moved, pressure and PEEP prove the circuit holds, the continuous capnogram proves it reached the lungs and returned, and the saturation and circulation prove it reached the rest of him — because an alarm that has stopped sounding says only that a threshold is no longer being crossed. The alarm timing, oxygen reserve and response are authored and explicitly do not transfer."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step, because this lesson has no unordered lane. The reflex it works against is fixing the thing that is broken: the answer genuinely is a disconnected circuit and reconnecting it genuinely is the treatment, which is exactly why the pull to go straight there is so strong and why the bridge beat calls itself the step everybody skips. The recognition beat separates two facts that share a screen — the settings are unchanged, and nothing is being delivered — and insists the name is lost delivered ventilation rather than a disconnect, which is a conclusion not yet earned. It counts four independent agreeing signals and notes the unchanged tube depth as what begins to separate this from a displaced airway. The inspection beat gives the direction and the reason: starting at the machine is how a team spends a minute on a device that is working perfectly. The restoration beat observes that the settings never changed, so there is nothing to invent and nothing to improve while reconnecting. The reassessment beat assigns each figure in the response a job and states plainly that a quiet alarm proves only that a threshold is no longer crossed. Worked example 0.1.0 drives the ordinary controls through the real engine to the reassessment and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere reconnects, handles equipment, names a bag or a setting, or closes on the alarm. tests/unit/circuit-disconnection-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/critical-care-circuit-disconnection.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the one an obvious fix invites: the common-error path recognises the loss of delivered ventilation and goes straight to tracing the circuit, leaving a patient with a falling saturation unventilated while the join is hunted for, and meets one of five because the engine gates the inspection behind the bridge. The recovery path reaches for the bridge before the loss has been recognised and is refused, reaches for restoration before the source-to-patient trace and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -2504,23 +2504,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "circuit-disconnection-fixtures.ts binds exact-content expert, straight-to-the-circuit error, recovery, and no-action pathways to seed 1264 for deterministic replay through the shared engine, including all four order refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

@@ -160,6 +160,8 @@ import { supportsAutoPeepDemonstration } from '../../critical-care/demo/auto-pee
 import { supportsDyssynchronyDemonstration } from '../../critical-care/demo/dyssynchrony-demonstration';
 import { supportsMucusPluggingDemonstration } from '../../critical-care/demo/mucus-plugging-demonstration';
 import { supportsEscalatingHypoxemiaDemonstration } from '../../critical-care/demo/escalating-hypoxemia-demonstration';
+import { supportsUnplannedExtubationDemonstration } from '../../critical-care/demo/unplanned-extubation-demonstration';
+import { supportsCircuitDisconnectionDemonstration } from '../../critical-care/demo/circuit-disconnection-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -361,6 +363,8 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsDyssynchronyDemonstration,
     supportsMucusPluggingDemonstration,
     supportsEscalatingHypoxemiaDemonstration,
+    supportsUnplannedExtubationDemonstration,
+    supportsCircuitDisconnectionDemonstration,
   ],
 };
 

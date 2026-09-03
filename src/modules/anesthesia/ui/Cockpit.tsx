@@ -317,6 +317,10 @@ import { useMucusPluggingDemonstration } from '../../critical-care/demo/useMucus
 import { supportsMucusPluggingDemonstration } from '../../critical-care/demo/mucus-plugging-demonstration';
 import { useEscalatingHypoxemiaDemonstration } from '../../critical-care/demo/useEscalatingHypoxemiaDemonstration';
 import { supportsEscalatingHypoxemiaDemonstration } from '../../critical-care/demo/escalating-hypoxemia-demonstration';
+import { useUnplannedExtubationDemonstration } from '../../critical-care/demo/useUnplannedExtubationDemonstration';
+import { supportsUnplannedExtubationDemonstration } from '../../critical-care/demo/unplanned-extubation-demonstration';
+import { useCircuitDisconnectionDemonstration } from '../../critical-care/demo/useCircuitDisconnectionDemonstration';
+import { supportsCircuitDisconnectionDemonstration } from '../../critical-care/demo/circuit-disconnection-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -627,6 +631,8 @@ export function Cockpit({
   const dyssynchronyDemoSupported = supportsDyssynchronyDemonstration(scenario);
   const mucusPluggingDemoSupported = supportsMucusPluggingDemonstration(scenario);
   const escalatingHypoxemiaDemoSupported = supportsEscalatingHypoxemiaDemonstration(scenario);
+  const unplannedExtubationDemoSupported = supportsUnplannedExtubationDemonstration(scenario);
+  const circuitDisconnectionDemoSupported = supportsCircuitDisconnectionDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -765,6 +771,8 @@ export function Cockpit({
     || dyssynchronyDemoSupported
     || mucusPluggingDemoSupported
     || escalatingHypoxemiaDemoSupported
+    || unplannedExtubationDemoSupported
+    || circuitDisconnectionDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1042,6 +1050,18 @@ export function Cockpit({
     active: demonstrating && escalatingHypoxemiaDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.escalatingHypoxemiaAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const unplannedExtubationDemonstration = useUnplannedExtubationDemonstration({
+    active: demonstrating && unplannedExtubationDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.unplannedExtubationAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const circuitDisconnectionDemonstration = useCircuitDisconnectionDemonstration({
+    active: demonstrating && circuitDisconnectionDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.ventilatorCircuitDisconnectionAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const stableNarrowTachycardiaDemonstration = useStableNarrowTachycardiaDemonstration({
@@ -1772,6 +1792,8 @@ export function Cockpit({
     : dyssynchronyDemoSupported ? dyssynchronyDemonstration
     : mucusPluggingDemoSupported ? mucusPluggingDemonstration
     : escalatingHypoxemiaDemoSupported ? escalatingHypoxemiaDemonstration
+    : unplannedExtubationDemoSupported ? unplannedExtubationDemonstration
+    : circuitDisconnectionDemoSupported ? circuitDisconnectionDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2757,6 +2779,10 @@ export function Cockpit({
           mucusPluggingDemonstrating={demonstrating && mucusPluggingDemoSupported}
           escalatingHypoxemiaGuidance={session.guidance}
           escalatingHypoxemiaDemonstrating={demonstrating && escalatingHypoxemiaDemoSupported}
+          unplannedExtubationGuidance={session.guidance}
+          unplannedExtubationDemonstrating={demonstrating && unplannedExtubationDemoSupported}
+          ventilatorCircuitDisconnectionGuidance={session.guidance}
+          ventilatorCircuitDisconnectionDemonstrating={demonstrating && circuitDisconnectionDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
