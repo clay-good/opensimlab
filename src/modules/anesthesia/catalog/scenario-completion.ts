@@ -130,6 +130,7 @@ import { postIntubationHypotensionCompletionEvidence } from '../../critical-care
 import { severeAcidemiaCompletionEvidence } from '../../critical-care/severe-acidemia-completion';
 import { delayedVasopressorDeliveryCompletionEvidence } from '../../critical-care/delayed-vasopressor-delivery-completion';
 import { intracranialHypertensionCompletionEvidence } from '../../critical-care/intracranial-hypertension-completion';
+import { spontaneousBreathingTrialCompletionEvidence } from '../../critical-care/spontaneous-breathing-trial-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -399,6 +400,7 @@ export function auditClinicalScenario(
     ...severeAcidemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...delayedVasopressorDeliveryCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...intracranialHypertensionCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...spontaneousBreathingTrialCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

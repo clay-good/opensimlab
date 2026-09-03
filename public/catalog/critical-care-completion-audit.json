@@ -803,23 +803,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "spontaneous-breathing-trial-fixtures.ts binds seed 7132 and content 0.1.0 to expert, trial-before-the-assessment error, recovery, and no-action paths. The sixty-three-year-old woman on ventilator day 4 for improving pneumonia — awake, following commands, initiating breaths, SpO2 95% on FiO2 0.35 with PEEP 5 cm H2O, HR 94/min, MAP 73 mmHg without escalating vasopressor support, moderate cough and manageable secretions — the authored 30-minute intolerance panel of respiratory rate 36/min, tidal volume 220 mL, accessory use, diaphoresis, distress, SpO2 88%, HR 124/min and MAP 68 mmHg, and the 10-minute recovery panel of rate 20/min, tidal volume 420 mL, SpO2 95%, HR 101/min and MAP 72 mmHg are authored constants; no respiratory-mechanics, weaning or extubation model is claimed, and no outcome follows from any choice. tests/integration/spontaneous-breathing-trial-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is two narratives with no non-narrative state event. The progression lives in the engine's four order refusals, and the chain is the argument: the trial cannot start before readiness has been reviewed, so a trial is never run on a patient nobody assessed; the intolerance panel cannot be read before a trial exists; the trial cannot be stopped before intolerance has been recognized; and the reversible-cause plan cannot be recorded before the patient is back on support. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions review a standardized readiness panel and record that a rapid shallow breathing index is not required to offer a trial; record a bounded local 30-minute trial at pressure support 5 cm H2O with FiO2 unchanged at 0.35 and continuous patient-centred monitoring, noting that trials run with or without pressure support and no universal method is prescribed; recognize convergent intolerance across work, breathing pattern, oxygenation, circulation, comfort and trajectory rather than one threshold; stop the failed trial and restore prior support; and hand off respiratory load, weakness, fluid and cardiac load, pain, anxiety, sedation, nutrition, electrolytes, sleep and secretions for review before another standardized daily assessment. The lesson examines nobody, calculates no index, programs no ventilator, doses and delivers nothing, extubates nobody, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -831,23 +831,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded reversible-cause and reassessment plan, on an authored recovery that says only that the failure was tolerated. Later actions cannot restart an ended branch. The ending is explicit that extubation was not recorded and would not have been on a passed trial either: tolerating a trial says the breathing works and says nothing about airway protection, secretion clearance, neurologic state, post-extubation failure risk, goals of care, or the support that would follow."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step, because this lesson has no unordered lane. It is the only lab in this module whose worked example ends in a failure, and the reflex it works against is reading that failure as a verdict rather than as a list. The readiness beat declines the index gate and says why: gatekeeping behind a ratio delays extubation more often than it prevents one. The start beat makes two things deliberate — the FiO2 does not rise for the trial, because raising it hides the oxygenation change being tested for, and the method is local because the evidence does not crown one. The failure beat refuses single thresholds by taking the panel apart: a rate of 36 alone might be anxiety and an 88% might be a probe, and it is the convergence across work, pattern, oxygenation, circulation, comfort and direction that makes this failure. The recovery beat argues for stopping early rather than late, because a failing trial pushed further buys fatigue and fatigue makes tomorrow's trial worse. The plan beat carries the opposite-end error: extubation is not recorded and would not have been on a good trial either. Worked example 0.1.0 drives the ordinary controls through the real engine to the plan and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere extubates, sets a ventilator target, names a sedation dose, calculates an index, or claims she will come off. tests/unit/spontaneous-breathing-trial-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/critical-care-spontaneous-breathing-trial.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the one enthusiasm invites: the common-error path starts the trial on a patient nobody assessed, is refused, and meets none of five, because a trial run without a readiness review teaches nothing except that she failed. The recovery path reaches for the intolerance panel before anyone has been assessed and is refused, reaches for the plan before the failed trial has been stopped and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -866,23 +866,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "spontaneous-breathing-trial-fixtures.ts binds exact-content expert, trial-before-the-assessment error, recovery, and no-action pathways to seed 7132 for deterministic replay through the shared engine, including all four order refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

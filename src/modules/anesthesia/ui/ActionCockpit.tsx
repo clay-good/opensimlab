@@ -228,6 +228,7 @@ import { postIntubationHypotensionInlinePrompt } from '../../critical-care/tutor
 import { severeAcidemiaInlinePrompt } from '../../critical-care/tutor/severe-acidemia-guidance';
 import { delayedVasopressorDeliveryInlinePrompt } from '../../critical-care/tutor/delayed-vasopressor-delivery-guidance';
 import { intracranialHypertensionInlinePrompt } from '../../critical-care/tutor/intracranial-hypertension-guidance';
+import { spontaneousBreathingTrialInlinePrompt } from '../../critical-care/tutor/spontaneous-breathing-trial-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3025,6 +3026,7 @@ export interface ActionCockpitProps {
   readonly severeAcidemiaGuidance?: GuidanceLevel;
   readonly delayedVasopressorDeliveryGuidance?: GuidanceLevel;
   readonly intracranialHypertensionGuidance?: GuidanceLevel;
+  readonly spontaneousBreathingTrialGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3202,6 +3204,7 @@ export interface ActionCockpitProps {
   readonly severeAcidemiaDemonstrating?: boolean;
   readonly delayedVasopressorDeliveryDemonstrating?: boolean;
   readonly intracranialHypertensionDemonstrating?: boolean;
+  readonly spontaneousBreathingTrialDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5603,6 +5606,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasSpontaneousBreathingTrialResponse && (
               <SpontaneousBreathingTrialTray
                 assessment={props.resuscitation.spontaneousBreathingTrialAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.spontaneousBreathingTrialGuidance}
+                demonstrating={props.spontaneousBreathingTrialDemonstrating}
                 onAction={props.onSpontaneousBreathingTrialResponse ?? (() => {})} />
             )}
             {hasPostIntubationHypotensionResponse && (
@@ -9561,8 +9567,11 @@ function UnplannedExtubationTray({ assessment, scenarioVersion, guidance = 'unas
   );
 }
 
-function SpontaneousBreathingTrialTray({ assessment, onAction }: {
+function SpontaneousBreathingTrialTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['spontaneousBreathingTrialAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onSpontaneousBreathingTrialResponse']>;
 }) {
   const ready = assessment?.readinessAtTick != null;
@@ -9570,8 +9579,18 @@ function SpontaneousBreathingTrialTray({ assessment, onAction }: {
   const failed = assessment?.failureAtTick != null;
   const recovered = assessment?.recoveryAtTick != null;
   const planned = assessment?.planAtTick != null;
+  const prompt = demonstrating ? null
+    : spontaneousBreathingTrialInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="sbt-earn-title">
         <div id="sbt-earn-title" className="syringe__name">Earn the trial, not a number.</div>
         <Badge kind="teaching">cause · oxygen · circulation · wakefulness · effort</Badge>
@@ -9583,11 +9602,11 @@ function SpontaneousBreathingTrialTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={ready}
-            onClick={() => onAction('review-sbt-readiness')}>Review readiness without RSBI</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-sbt-readiness') : undefined}>Review readiness without RSBI</Button>
           <Button className="crisis-drug__action" disabled={!ready || started}
-            onClick={() => onAction('start-bounded-sbt')}>Start SBT · keep FiO₂ unchanged</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('start-bounded-sbt') : undefined}>Start SBT · keep FiO₂ unchanged</Button>
           <Button className="crisis-drug__action" disabled={!started || failed}
-            onClick={() => onAction('recognize-sbt-failure')}>Review 30-minute tolerance</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('recognize-sbt-failure') : undefined}>Review 30-minute tolerance</Button>
         </div>
         <p className="field__hint">Supported and unsupported SBT methods can be valid. Standardize the local method and watch the patient, not one index.</p>
       </section>
@@ -9602,12 +9621,13 @@ function SpontaneousBreathingTrialTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!failed || recovered}
-            onClick={() => onAction('stop-failed-sbt-and-recover')}>Stop trial + restore prior support</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('stop-failed-sbt-and-recover') : undefined}>Stop trial + restore prior support</Button>
           <Button className="crisis-drug__action" disabled={!recovered || planned}
-            onClick={() => onAction('plan-after-failed-sbt')}>Review drivers + plan reassessment</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('plan-after-failed-sbt') : undefined}>Review drivers + plan reassessment</Button>
         </div>
         <p className="field__hint">Do not push through failure. Even a future successful SBT still owes you a separate extubation-readiness decision.</p>
       </section>
+      </div>
     </div>
   );
 }

@@ -166,6 +166,7 @@ import { supportsPostIntubationHypotensionDemonstration } from '../../critical-c
 import { supportsSevereAcidemiaDemonstration } from '../../critical-care/demo/severe-acidemia-demonstration';
 import { supportsDelayedVasopressorDeliveryDemonstration } from '../../critical-care/demo/delayed-vasopressor-delivery-demonstration';
 import { supportsIntracranialHypertensionDemonstration } from '../../critical-care/demo/intracranial-hypertension-demonstration';
+import { supportsSpontaneousBreathingTrialDemonstration } from '../../critical-care/demo/spontaneous-breathing-trial-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -373,6 +374,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsSevereAcidemiaDemonstration,
     supportsDelayedVasopressorDeliveryDemonstration,
     supportsIntracranialHypertensionDemonstration,
+    supportsSpontaneousBreathingTrialDemonstration,
   ],
 };
 
