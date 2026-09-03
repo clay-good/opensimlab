@@ -248,6 +248,7 @@ import { diabeticKetoacidosisInlinePrompt } from '../../emergency-medicine/tutor
 import { exertionalHeatStrokeInlinePrompt } from '../../emergency-medicine/tutor/exertional-heat-stroke-guidance';
 import { hyperkalemiaWithEcgChangeInlinePrompt } from '../../emergency-medicine/tutor/hyperkalemia-with-ecg-change-guidance';
 import { intracranialHemorrhageInlinePrompt } from '../../emergency-medicine/tutor/intracranial-hemorrhage-deterioration-guidance';
+import { opioidToxicityInlinePrompt } from '../../emergency-medicine/tutor/opioid-toxicity-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3065,6 +3066,7 @@ export interface ActionCockpitProps {
   readonly exertionalHeatStrokeGuidance?: GuidanceLevel;
   readonly hyperkalemiaEcgGuidance?: GuidanceLevel;
   readonly intracranialHemorrhageGuidance?: GuidanceLevel;
+  readonly opioidToxicityGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3262,6 +3264,7 @@ export interface ActionCockpitProps {
   readonly exertionalHeatStrokeDemonstrating?: boolean;
   readonly hyperkalemiaEcgDemonstrating?: boolean;
   readonly intracranialHemorrhageDemonstrating?: boolean;
+  readonly opioidToxicityDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5631,6 +5634,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasOpioidToxicityResponse && (
               <OpioidToxicityTray assessment={props.resuscitation.opioidToxicityAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.opioidToxicityGuidance}
+                demonstrating={props.opioidToxicityDemonstrating}
                 onAction={props.onOpioidToxicityResponse ?? (() => {})} />
             )}
             {hasHeatStrokeResponse && (
@@ -9209,8 +9215,11 @@ function HyponatremiaTray({ assessment, onAction }: {
   );
 }
 
-function OpioidToxicityTray({ assessment, onAction }: {
+function OpioidToxicityTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['opioidToxicityAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onOpioidToxicityResponse']>;
 }) {
   const reviewed = assessment?.patternReviewedAtTick != null;
@@ -9219,8 +9228,18 @@ function OpioidToxicityTray({ assessment, onAction }: {
   const initial = assessment?.initialReassessmentAtTick != null;
   const recurrence = assessment?.recurrenceReviewedAtTick != null;
   const plan = assessment?.recurrencePlanAtTick != null;
+  const prompt = demonstrating ? null
+    : opioidToxicityInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="opioid-breathe-title">
         <div id="opioid-breathe-title" className="syringe__name">Breathe first. Antidote without delay.</div>
         <Badge kind="teaching">Pulse 58 · RR 4 · SpO₂ 78% · ETCO₂ 68</Badge>
@@ -9234,13 +9253,13 @@ function OpioidToxicityTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={reviewed}
-            onClick={() => onAction('review-opioid-toxicity-pattern')}>Review pulse + breathing + pattern</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-opioid-toxicity-pattern') : undefined}>Review pulse + breathing + pattern</Button>
           <Button className="crisis-drug__action" disabled={!reviewed || ventilated}
-            onClick={() => onAction('record-opioid-ventilation-support')}>Open airway + oxygen + ventilate</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-opioid-ventilation-support') : undefined}>Open airway + oxygen + ventilate</Button>
           <Button className="crisis-drug__action" disabled={!ventilated || antagonist}
-            onClick={() => onAction('record-opioid-naloxone-intent')}>Record naloxone toward breathing</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-opioid-naloxone-intent') : undefined}>Record naloxone toward breathing</Button>
           <Button className="crisis-drug__action" disabled={!antagonist || initial}
-            onClick={() => onAction('reassess-opioid-initial-response')}>Recheck breathing + CO₂ + pulse</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-opioid-initial-response') : undefined}>Recheck breathing + CO₂ + pulse</Button>
         </div>
         <p className="field__hint">Ventilation does not wait for naloxone. Normal spontaneous breathing and airway reflexes are the endpoint; full arousal is not required.</p>
       </section>
@@ -9255,12 +9274,13 @@ function OpioidToxicityTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!initial || recurrence}
-            onClick={() => onAction('review-opioid-recurrence')}>Review 25-minute recurrence</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-opioid-recurrence') : undefined}>Review 25-minute recurrence</Button>
           <Button className="crisis-drug__action" disabled={!recurrence || plan}
-            onClick={() => onAction('record-opioid-recurrence-and-safety-plan')}>Ventilate again + repeat + observe</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-opioid-recurrence-and-safety-plan') : undefined}>Ventilate again + repeat + observe</Button>
         </div>
         <p className="field__hint">Keep co-exposures and complications open. Eventual discharge requires low recurrence risk, normal consciousness and vital signs, antagonist access with instruction, and treatment linkage.</p>
       </section>
+      </div>
     </div>
   );
 }
