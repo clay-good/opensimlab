@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsEncephalitis, type EncephalitisAction, type EncephalitisProgress,
 } from '../suspected-herpes-simplex-encephalitis';
+import { encephalitisInlinePrompt } from '../tutor/suspected-herpes-simplex-encephalitis-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: EncephalitisProgress): string {
+  const prompt = encephalitisInlinePrompt('guided', { scenarioVersion: '0.1.0', encephalitis: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const ENCEPHALITIS_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -38,11 +50,11 @@ export function encephalitisDemonstrationStep(
   }
   if (patient.trajectoryAtTick === null) {
     return { id: 'trajectory', focus: 'monitor', progress: 0.08, action: 'reconcile-neurology-encephalitis-clock-cognition-language-focal-seizure-and-whole-patient',
-      narration: 'Put the fever and the new mind in the same sentence, and add the seizure. Thirty hours of fever and headache, then twelve hours of irritability, repeating the same question, forgetting recent events and reaching for words — and two hours ago a ninety-second behavioural arrest with right facial twitching that stopped on its own. Fever plus new behaviour, memory and language, plus a focal seizure, is an encephalitic syndrome. Any one of those alone is a different conversation; together they are this one.' };
+      narration: narrate(patient) };
   }
   if (patient.ownershipAtTick === null) {
     return { id: 'ownership', focus: 'actions', progress: 0.26, action: 'activate-neurology-encephalitis-qualified-neurocritical-infection-airway-and-seizure-ownership',
-      narration: 'Get neurology, infection, seizure and airway-capable owners in immediately. He is GCS 14 and rousable now, and he has already had one focal seizure that stopped without treatment. That combination is the reason airway capability and seizure ownership belong here from the start rather than when something changes. Critical care and infection come with them, because the next two decisions — what to start and what to look at — should not be one person’s to make alone.' };
+      narration: narrate(patient) };
   }
   if (patient.treatmentAtTick === null) {
     return { id: 'treatment', focus: 'actions', progress: 0.46, action: 'activate-neurology-encephalitis-qualified-immediate-empiric-antiviral-pathway-without-test-delay',

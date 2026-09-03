@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsHerniation, type HerniationAction, type HerniationProgress,
 } from '../acute-transtentorial-herniation-pattern';
+import { herniationInlinePrompt } from '../tutor/acute-transtentorial-herniation-pattern-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: HerniationProgress): string {
+  const prompt = herniationInlinePrompt('guided', { scenarioVersion: '0.1.0', herniation: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const HERNIATION_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -39,7 +51,7 @@ export function herniationDemonstrationStep(
   }
   if (patient.trajectoryAtTick === null) {
     return { id: 'trajectory', focus: 'monitor', progress: 0.08, action: 'reconcile-neurology-herniation-clock-consciousness-pupils-motor-physiology-and-whole-patient',
-      narration: 'Say all four changes and the twelve minutes they happened in. Conversant at GCS 14 down to GCS 9, a new right pupil at 6 mm and nonreactive against a reactive left 3 mm, new left-arm extension while the right arm still localizes, and a heart rate of 54 with a pressure of 168/111. Each of those in isolation has a long differential. All of them moving in the same direction inside twelve minutes, in a man with a known right temporal mass, has one.' };
+      narration: narrate(patient) };
   }
   if (patient.recognitionAtTick === null) {
     return { id: 'recognition', focus: 'actions', progress: 0.26, action: 'recognize-neurology-converging-transtentorial-herniation-pattern-without-isolated-pupil-or-complete-triad',
@@ -47,7 +59,7 @@ export function herniationDemonstrationStep(
   }
   if (patient.ownershipAtTick === null) {
     return { id: 'ownership', focus: 'actions', progress: 0.46, action: 'activate-neurology-herniation-qualified-airway-neurocritical-neurosurgical-and-brain-rescue-ownership',
-      narration: 'Call airway, neurocritical care, neurosurgery and the operating room in one breath. He is breathing at 14 and no longer reliably protecting his airway, so the airway team belongs with the rescue rather than after it. Neurosurgery and the operating-room pathway are part of the same call because the only thing that fixes this is removing what is causing it, and that takes longer to arrange than anything else on the list. Nursing, respiratory, pharmacy and imaging come with them.' };
+      narration: narrate(patient) };
   }
   if (patient.boundaryAtTick === null) {
     return { id: 'boundary', focus: 'monitor', progress: 0.64, action: 'review-neurology-herniation-immediate-systemic-brain-rescue-imaging-and-definitive-source-control-boundary',

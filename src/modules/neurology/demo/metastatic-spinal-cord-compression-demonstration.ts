@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsMscc, type MsccAction, type MsccProgress,
 } from '../metastatic-spinal-cord-compression';
+import { msccInlinePrompt } from '../tutor/metastatic-spinal-cord-compression-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: MsccProgress): string {
+  const prompt = msccInlinePrompt('guided', { scenarioVersion: '0.1.0', mscc: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const MSCC_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -46,7 +58,7 @@ export function msccDemonstrationStep(
   }
   if (patient.ownershipAtTick === null) {
     return { id: 'ownership', focus: 'actions', progress: 0.46, action: 'activate-neurology-mscc-qualified-spinal-oncology-radiology-nursing-and-rehabilitation-ownership',
-      narration: 'Start the referral chain, because it is longer here than almost anywhere. Spinal surgery and radiotherapy both have to look at this before anyone knows which one it is, and oncology, radiology, nursing, pharmacy, rehabilitation, pain, bladder, skin and thrombosis prevention all have work that starts today rather than later. Deciding what should happen is not the same as arranging for it to happen, and in this illness the arranging is the slow part.' };
+      narration: narrate(patient) };
   }
   if (patient.boundaryAtTick === null) {
     return { id: 'boundary', focus: 'monitor', progress: 0.64, action: 'review-neurology-mscc-stability-movement-whole-spine-mri-corticosteroid-and-definitive-care-boundary',

@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsAsah, type AsahAction, type AsahProgress,
 } from '../aneurysmal-subarachnoid-hemorrhage-deterioration';
+import { asahInlinePrompt } from '../tutor/aneurysmal-subarachnoid-hemorrhage-deterioration-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: AsahProgress): string {
+  const prompt = asahInlinePrompt('guided', { scenarioVersion: '0.1.0', asah: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const ASAH_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -40,7 +52,7 @@ export function asahDemonstrationStep(
   }
   if (patient.trajectoryAtTick === null) {
     return { id: 'trajectory', focus: 'monitor', progress: 0.08, action: 'reconcile-neurology-asah-day-aneurysm-status-new-deficit-and-whole-patient',
-      narration: 'Say the day out loud, because it is the part that makes this expected. Day 7 after an aneurysmal subarachnoid hemorrhage, coiled on day 1 with no residual filling and nimodipine uninterrupted. She was alert, fluent and without a deficit this morning; thirty-five minutes ago she developed slowed responses, left neglect, mild left facial weakness and left arm drift. A new focal deficit at this point in the course is the thing the whole week has been watched for.' };
+      narration: narrate(patient) };
   }
   if (patient.evidenceAtTick === null) {
     return { id: 'evidence', focus: 'monitor', progress: 0.24, action: 'review-neurology-asah-rebleeding-hydrocephalus-seizure-metabolic-and-perfusion-evidence',
@@ -48,7 +60,7 @@ export function asahDemonstrationStep(
   }
   if (patient.boundaryAtTick === null) {
     return { id: 'boundary', focus: 'actions', progress: 0.44, action: 'recognize-neurology-asah-possible-dci-without-imaging-alone',
-      narration: 'Call it possible delayed cerebral ischemia, and refuse both shortcuts. The new M1 and proximal M2 narrowing and the delayed right-MCA perfusion without an established core support this and cannot establish it — imaging is not what makes this diagnosis, and a deficit with no other explanation on day 7 is. The other shortcut is the clock: the one-hour duration in the research definition exists so studies can count cases, and treating it as a waiting period is a misreading that costs her the interval.' };
+      narration: narrate(patient) };
   }
   if (patient.ownershipAtTick === null) {
     return { id: 'ownership', focus: 'actions', progress: 0.62, action: 'activate-neurology-asah-qualified-neurocritical-neurovascular-and-rescue-ownership',

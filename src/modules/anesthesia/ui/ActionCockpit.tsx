@@ -246,6 +246,7 @@ import { cardiacTamponadeInlinePrompt } from '../../emergency-medicine/tutor/car
 import { copdExacerbationInlinePrompt } from '../../emergency-medicine/tutor/copd-exacerbation-guidance';
 import { diabeticKetoacidosisInlinePrompt } from '../../emergency-medicine/tutor/diabetic-ketoacidosis-guidance';
 import { exertionalHeatStrokeInlinePrompt } from '../../emergency-medicine/tutor/exertional-heat-stroke-guidance';
+import { hyperkalemiaWithEcgChangeInlinePrompt } from '../../emergency-medicine/tutor/hyperkalemia-with-ecg-change-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3061,6 +3062,7 @@ export interface ActionCockpitProps {
   readonly copdExacerbationGuidance?: GuidanceLevel;
   readonly diabeticKetoacidosisGuidance?: GuidanceLevel;
   readonly exertionalHeatStrokeGuidance?: GuidanceLevel;
+  readonly hyperkalemiaEcgGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3256,6 +3258,7 @@ export interface ActionCockpitProps {
   readonly copdExacerbationDemonstrating?: boolean;
   readonly diabeticKetoacidosisDemonstrating?: boolean;
   readonly exertionalHeatStrokeDemonstrating?: boolean;
+  readonly hyperkalemiaEcgDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5611,6 +5614,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasHyperkalemiaResponse && (
               <HyperkalemiaTray assessment={props.resuscitation.hyperkalemiaAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.hyperkalemiaEcgGuidance}
+                demonstrating={props.hyperkalemiaEcgDemonstrating}
                 onAction={props.onHyperkalemiaResponse ?? (() => {})} />
             )}
             {hasSevereHyponatremiaResponse && (
@@ -9058,8 +9064,11 @@ function DiabeticKetoacidosisTray({ assessment, scenarioVersion, guidance = 'una
   );
 }
 
-function HyperkalemiaTray({ assessment, onAction }: {
+function HyperkalemiaTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['hyperkalemiaAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onHyperkalemiaResponse']>;
 }) {
   const reviewed = assessment?.patternReviewedAtTick != null;
@@ -9069,8 +9078,18 @@ function HyperkalemiaTray({ assessment, onAction }: {
   const betaAgonist = assessment?.betaAgonistAtTick != null;
   const removal = assessment?.removalAtTick != null;
   const reassessed = assessment?.reassessedAtTick != null;
+  const prompt = demonstrating ? null
+    : hyperkalemiaWithEcgChangeInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="hyperkalemia-heart-title">
         <div id="hyperkalemia-heart-title" className="syringe__name">Protect the heart first.</div>
         <Badge kind="teaching">K 7.1 · ECG toxicity · no arrest</Badge>
@@ -9083,11 +9102,11 @@ function HyperkalemiaTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={reviewed}
-            onClick={() => onAction('review-hyperkalemia-pattern')}>Review K + ECG + drivers</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-hyperkalemia-pattern') : undefined}>Review K + ECG + drivers</Button>
           <Button className="crisis-drug__action" disabled={!reviewed || calcium}
-            onClick={() => onAction('record-hyperkalemia-calcium-intent')}>Record IV calcium-salt intent</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-hyperkalemia-calcium-intent') : undefined}>Record IV calcium-salt intent</Button>
           <Button className="crisis-drug__action" disabled={!calcium || postCalcium}
-            onClick={() => onAction('review-hyperkalemia-post-calcium-ecg')}>Review post-team ECG</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-hyperkalemia-post-calcium-ecg') : undefined}>Review post-team ECG</Button>
         </div>
         <p className="field__hint">Calcium protects the myocardium; it does not lower potassium. Salt, dose, access, delivery, and repeat dosing follow local protocol and are not simulated.</p>
       </section>
@@ -9103,16 +9122,17 @@ function HyperkalemiaTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!calcium || insulin}
-            onClick={() => onAction('record-hyperkalemia-insulin-glucose')}>Record insulin-glucose + surveillance</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-hyperkalemia-insulin-glucose') : undefined}>Record insulin-glucose + surveillance</Button>
           <Button className="crisis-drug__action" disabled={!calcium || betaAgonist}
-            onClick={() => onAction('record-hyperkalemia-beta-agonist')}>Record adjunct beta-2 shift</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-hyperkalemia-beta-agonist') : undefined}>Record adjunct beta-2 shift</Button>
           <Button className="crisis-drug__action" disabled={!calcium || removal}
-            onClick={() => onAction('record-hyperkalemia-removal-and-cause-control')}>Remove K + stop drivers + renal help</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-hyperkalemia-removal-and-cause-control') : undefined}>Remove K + stop drivers + renal help</Button>
           <Button className="crisis-drug__action" disabled={!postCalcium || !insulin || !betaAgonist || !removal || reassessed}
-            onClick={() => onAction('reassess-hyperkalemia')}>Recheck ECG + K + glucose</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-hyperkalemia') : undefined}>Recheck ECG + K + glucose</Button>
         </div>
         <p className="field__hint">No ECG reading, dose, delivery, potassium kinetics, glucose complication, binder, diuresis, dialysis, recurrence, disposition, or outcome is simulated.</p>
       </section>
+      </div>
     </div>
   );
 }

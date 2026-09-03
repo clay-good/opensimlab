@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsCerebellarIch, type CerebellarIchAction, type CerebellarIchProgress,
 } from '../spontaneous-cerebellar-intracerebral-hemorrhage';
+import { cerebellarIchInlinePrompt } from '../tutor/spontaneous-cerebellar-intracerebral-hemorrhage-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: CerebellarIchProgress): string {
+  const prompt = cerebellarIchInlinePrompt('guided', { scenarioVersion: '0.1.0', cerebellarIch: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const CEREBELLAR_ICH_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -40,7 +52,7 @@ export function cerebellarIchDemonstrationStep(
   }
   if (patient.trajectoryAtTick === null) {
     return { id: 'trajectory', focus: 'monitor', progress: 0.08, action: 'reconcile-neurology-cerebellar-ich-clock-deficit-alertness-and-whole-patient',
-      narration: 'Say that she is fully alert and cannot sit up, and let the second half carry the weight. Seventy-five minutes ago: witnessed abrupt vertigo, vomiting, dysarthria and severe truncal ataxia, in a previously independent 67-year-old. She is awake, oriented and conversational — and she cannot sit or stand unsupported. An intact conversation is the most reassuring thing at this bedside and the least predictive; being unable to hold your own trunk up is the finding that says where the problem is.' };
+      narration: narrate(patient) };
   }
   if (patient.imagingAtTick === null) {
     return { id: 'imaging', focus: 'monitor', progress: 0.24, action: 'review-neurology-cerebellar-ich-imaging-location-causes-and-immediate-threats',
@@ -48,7 +60,7 @@ export function cerebellarIchDemonstrationStep(
   }
   if (patient.boundaryAtTick === null) {
     return { id: 'boundary', focus: 'actions', progress: 0.42, action: 'recognize-neurology-cerebellar-ich-posterior-fossa-escalation-boundary',
-      narration: 'Name the escalation boundary now, while she still looks well. The first scan reports no hydrocephalus, no brainstem compression and no herniation — read those as a clock reading rather than a reassurance, because they describe one minute and nothing else. A confined posterior-fossa hemorrhage with an effaced fourth ventricle in an alert patient is exactly the moment the boundary is meant to be named, not the moment to wait for it to declare itself.' };
+      narration: narrate(patient) };
   }
   if (patient.ownershipAtTick === null) {
     return { id: 'ownership', focus: 'actions', progress: 0.6, action: 'activate-neurology-cerebellar-ich-qualified-neurocritical-neurosurgical-and-airway-ownership',
