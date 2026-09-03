@@ -303,6 +303,8 @@ import { useSepticShockResuscitationDemonstration } from '../../critical-care/de
 import { supportsSepticShockResuscitationDemonstration } from '../../critical-care/demo/septic-shock-resuscitation-demonstration';
 import { useCardiogenicShockDemonstration } from '../../critical-care/demo/useCardiogenicShockDemonstration';
 import { supportsCardiogenicShockDemonstration } from '../../critical-care/demo/cardiogenic-shock-demonstration';
+import { useMixedShockDemonstration } from '../../critical-care/demo/useMixedShockDemonstration';
+import { supportsMixedShockDemonstration } from '../../critical-care/demo/mixed-shock-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -606,6 +608,7 @@ export function Cockpit({
   const transcutaneousPacingCaptureDemoSupported = supportsTranscutaneousPacingCaptureDemonstration(scenario);
   const septicShockResuscitationDemoSupported = supportsSepticShockResuscitationDemonstration(scenario);
   const cardiogenicShockDemoSupported = supportsCardiogenicShockDemonstration(scenario);
+  const mixedShockDemoSupported = supportsMixedShockDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -737,6 +740,7 @@ export function Cockpit({
     || transcutaneousPacingCaptureDemoSupported
     || septicShockResuscitationDemoSupported
     || cardiogenicShockDemoSupported
+    || mixedShockDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -972,6 +976,12 @@ export function Cockpit({
     active: demonstrating && cardiogenicShockDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.cardiogenicShockAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const mixedShockDemonstration = useMixedShockDemonstration({
+    active: demonstrating && mixedShockDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.mixedShockAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const stableNarrowTachycardiaDemonstration = useStableNarrowTachycardiaDemonstration({
@@ -1695,6 +1705,7 @@ export function Cockpit({
     : transcutaneousPacingCaptureDemoSupported ? transcutaneousPacingCaptureDemonstration
     : septicShockResuscitationDemoSupported ? septicShockResuscitationDemonstration
     : cardiogenicShockDemoSupported ? cardiogenicShockDemonstration
+    : mixedShockDemoSupported ? mixedShockDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2666,6 +2677,8 @@ export function Cockpit({
           septicShockResuscitationDemonstrating={demonstrating && septicShockResuscitationDemoSupported}
           cardiogenicShockGuidance={session.guidance}
           cardiogenicShockDemonstrating={demonstrating && cardiogenicShockDemoSupported}
+          mixedShockGuidance={session.guidance}
+          mixedShockDemonstrating={demonstrating && mixedShockDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

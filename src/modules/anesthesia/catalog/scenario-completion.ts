@@ -117,6 +117,7 @@ import { pacemakerCaptureFailureCompletionEvidence } from '../../cardiology/pace
 import { transcutaneousPacingCaptureCompletionEvidence } from '../../cardiology/transcutaneous-pacing-capture-completion';
 import { septicShockResuscitationCompletionEvidence } from '../../critical-care/septic-shock-resuscitation-completion';
 import { cardiogenicShockCompletionEvidence } from '../../critical-care/cardiogenic-shock-completion';
+import { mixedShockCompletionEvidence } from '../../critical-care/mixed-shock-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -373,6 +374,7 @@ export function auditClinicalScenario(
     ...transcutaneousPacingCaptureCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...septicShockResuscitationCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...cardiogenicShockCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...mixedShockCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

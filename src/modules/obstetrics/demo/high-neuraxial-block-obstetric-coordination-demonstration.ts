@@ -3,6 +3,20 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsHighNeuraxial, type HighNeuraxialAction, type HighNeuraxialProgress,
 } from '../high-neuraxial-block-obstetric-coordination';
+import { highNeuraxialInlinePrompt } from '../tutor/high-neuraxial-block-obstetric-coordination-guidance';
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied. Every lesson's prose used to ship twice inside the
+ * cockpit bundle — once in the tutor and once as a duplicated string literal
+ * here — and gzip cannot reach across that distance to dedupe it. Deriving it
+ * also makes "the two cannot drift apart" structural rather than a property
+ * maintained by regenerating this file.
+ */
+function narrate(patient: HighNeuraxialProgress): string {
+  const prompt = highNeuraxialInlinePrompt('guided', { scenarioVersion: '0.1.0', highNeuraxial: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const HIGH_NEURAXIAL_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -35,24 +49,24 @@ export function highNeuraxialDemonstrationStep(
   }
   if (patient.supportAtTick === null) {
     return { id: 'support', focus: 'actions', progress: 0.08, action: 'activate-obstetrics-high-neuraxial-block-airway-anesthesia-obstetric-theatre-newborn-and-support-response',
-      narration: 'Call for airway-capable help now, and have someone stay at her head. A block that reached C6 in ninety seconds has not stopped there, so any level you establish is the one it has already passed. Anesthesia, obstetrics, theatre, the newborn team and support ownership start now. Someone staying with her and talking to her is not a courtesy here: she is fully awake, her voice is failing, and she can feel herself losing the ability to breathe.' };
+      narration: narrate(patient) };
   }
   if (patient.contextAtTick === null) {
     return { id: 'context', focus: 'monitor', progress: 0.28, action: 'reconcile-obstetrics-high-neuraxial-block-injection-clock-level-breathing-arms-circulation-fetus-and-whole-person',
-      narration: 'Read the clock, the level and the arms as one ascending line. An epidural top-up four minutes ago, then ninety seconds of ascending numbness, weakening arms, a weak voice and difficulty breathing, with a supplied sensory level at C6 and worsening grip. The arms are the useful sign — hand weakness means the block is at the level that runs the diaphragm. Alongside that: a heart rate of 52, a pressure of 78/42, and a fetal baseline of 90. Every one of those is the same event.' };
+      narration: narrate(patient) };
   }
   if (patient.uncertaintyAtTick === null) {
     return { id: 'uncertainty', focus: 'actions', progress: 0.46, action: 'review-obstetrics-high-neuraxial-block-rapid-progression-awareness-and-alternative-cause-boundaries',
-      narration: 'Hold the high block as the leading explanation without letting it close the rest. Rapid ascent after a top-up makes a high block the obvious reading, but a vasovagal event, aortocaval compression, local-anesthetic systemic toxicity, an embolic event, hemorrhage and a cardiopulmonary cause all present into this same picture and stay open. The product, concentration, dose, catheter position and true block extent are unresolved, and being awake and frightened is part of the presentation rather than a detail beside it.' };
+      narration: narrate(patient) };
   }
   if (patient.readinessAtTick === null) {
     return { id: 'readiness', focus: 'actions', progress: 0.64, action: 'review-obstetrics-high-neuraxial-block-parallel-airway-ventilation-circulation-uterine-displacement-fetal-birth-and-support-readiness',
-      narration: 'Let the airway, the circulation and the birth readiness run at once. Airway and ventilation support, circulatory support, the manual uterine displacement that qualified staff have already begun, fetal surveillance at a baseline of 90, the birth that may have to happen anyway, and continuous reassurance all belong to the same moment rather than a sequence. If she needs her airway secured she may also need an anesthetic she can no longer tell you about, which is why the awareness question is raised now rather than afterwards.' };
+      narration: narrate(patient) };
   }
   if (patient.reassessmentAtTick === null) {
     return { id: 'reassess', focus: 'monitor', progress: 0.82, action: 'review-obstetrics-high-neuraxial-block-fixed-four-minute-qualified-support-report',
-      narration: 'Read the fixed 4-minute report as partial support rather than resolution. No airway, oxygen, ventilation, position, fluid, drug, dose, anesthetic or birth plan is chosen here. It is a contrast rather than a predicted trajectory, and nothing here says how any individual block recedes.' };
+      narration: narrate(patient) };
   }
   return { id: 'handoff', focus: 'actions', progress: 0.92, action: 'handoff-obstetrics-high-neuraxial-block-airway-circulation-block-fetal-birth-awareness-support-and-outcome-risk',
-    narration: 'Nothing here establishes block recession, fetal recovery, a treatment effect, a safe newborn, or that she was unaware of any of it. Hand off the airway and respiratory risk, the circulation, the block level, the fetal status, the birth decision, the awareness question, what she has just experienced while fully conscious, and the disposition.' };
+    narration: narrate(patient) };
 }

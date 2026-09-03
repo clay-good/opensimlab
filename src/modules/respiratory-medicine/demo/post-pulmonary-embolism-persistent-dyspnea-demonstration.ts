@@ -3,6 +3,20 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsPostPeDyspnea, type PostPeDyspneaAction, type PostPeDyspneaProgress,
 } from '../post-pulmonary-embolism-persistent-dyspnea';
+import { postPeDyspneaInlinePrompt } from '../tutor/post-pulmonary-embolism-persistent-dyspnea-guidance';
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied. Every lesson's prose used to ship twice inside the
+ * cockpit bundle — once in the tutor and once as a duplicated string literal
+ * here — and gzip cannot reach across that distance to dedupe it. Deriving it
+ * also makes "the two cannot drift apart" structural rather than a property
+ * maintained by regenerating this file.
+ */
+function narrate(patient: PostPeDyspneaProgress): string {
+  const prompt = postPeDyspneaInlinePrompt('guided', { scenarioVersion: '0.1.0', postPeDyspnea: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const POST_PE_DYSPNEA_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -35,20 +49,20 @@ export function postPeDyspneaDemonstrationStep(
   }
   if (patient.trajectoryAtTick === null) {
     return { id: 'trajectory', focus: 'monitor', progress: 0.1, action: 'reconcile-post-pe-symptoms-and-anticoagulation-course',
-      narration: 'Put her old exercise tolerance next to her current one, and take the anticoagulation as given. Two miles and two flights without stopping before the embolism; 150 metres or one flight now, four months later. The record documents continuous therapeutic anticoagulation for those four months with no missed doses, no major bleeding and no early discontinuation — that is verified history rather than something to prescribe or re-check. So this is not a treatment failure question. It is a question about why someone properly treated is still this limited.' };
+      narration: narrate(patient) };
   }
   if (patient.safetyAtTick === null) {
     return { id: 'safety', focus: 'monitor', progress: 0.32, action: 'review-post-pe-functional-limitation-and-current-safety',
-      narration: 'Establish that she is safe today before you interpret anything. Comfortable at rest, a pulse of 88, a room-air saturation of 96%, warm and well perfused, and a supervised six-minute walk of 280 metres with the saturation falling only to 91% and no syncope or chest pain. No hypotension, no rest hypoxemia, no hemoptysis, no new leg swelling, no bleeding. That is a chronic limitation rather than an emergency — and none of it permanently excludes a recurrence, which is why it is established rather than assumed.' };
+      narration: narrate(patient) };
   }
   if (patient.evidenceAtTick === null) {
     return { id: 'evidence', focus: 'monitor', progress: 0.55, action: 'review-post-pe-ctepd-evidence-and-alternatives',
-      narration: 'Read the two reports as a reason to refer, not as a diagnosis. Mild right ventricular enlargement with reduced RV systolic function and a tricuspid-regurgitation velocity of 3.2 m/s, alongside multiple bilateral segmental mismatched perfusion defects on V/Q SPECT. That combination raises chronic thromboembolic disease, and a mismatched-defect pattern is what makes the perfusion scan the right test for this question. It does not diagnose CTEPD or CTEPH: there is no right-heart catheterization, no anatomic adjudication and no expert conclusion here. Left-heart disease, parenchymal lung disease, anemia, deconditioning and a recurrence all stay open.' };
+      narration: narrate(patient) };
   }
   if (patient.referralAtTick === null) {
     return { id: 'referral', focus: 'actions', progress: 0.78, action: 'activate-post-pe-pulmonary-vascular-referral',
-      narration: 'Refer to pulmonary vascular expertise and say who holds the anticoagulation until then. This is the step the lesson exists for. Chronic thromboembolic pulmonary hypertension is the potentially curable cause of persistent post-PE dyspnea, it is diagnosed by a multidisciplinary assessment rather than by a clinic, and the way it gets missed is that nobody makes the referral. Anticoagulation continues under named ownership while that evaluation is arranged, because the interval before an appointment is exactly when ownership goes missing.' };
+      narration: narrate(patient) };
   }
   return { id: 'handoff', focus: 'actions', progress: 0.92, action: 'handoff-post-pe-persistent-dyspnea-reassessment',
-    narration: 'Nothing here establishes CTEPD, a treatment, a procedure or an outcome. Hand off the gap between what she could do and what she can, the current safety and what it does not exclude, the two reports and what they raise rather than settle, the referral and who is chasing it, and the anticoagulation ownership until somebody with the right expertise has seen her.' };
+    narration: narrate(patient) };
 }

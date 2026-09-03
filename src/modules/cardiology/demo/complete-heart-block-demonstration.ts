@@ -4,6 +4,20 @@ import {
   supportsCompleteHeartBlock, type CompleteHeartBlockAction,
   type CompleteHeartBlockProgress,
 } from '../complete-heart-block';
+import { completeHeartBlockInlinePrompt } from '../tutor/complete-heart-block-guidance';
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied. Every lesson's prose used to ship twice inside the
+ * cockpit bundle — once in the tutor and once as a duplicated string literal
+ * here — and gzip cannot reach across that distance to dedupe it. Deriving it
+ * also makes "the two cannot drift apart" structural rather than a property
+ * maintained by regenerating this file.
+ */
+function narrate(patient: CompleteHeartBlockProgress): string {
+  const prompt = completeHeartBlockInlinePrompt('guided', { scenarioVersion: '0.1.0', patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const COMPLETE_HEART_BLOCK_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -43,20 +57,20 @@ export function completeHeartBlockDemonstrationStep(
   }
   if (patient.stabilityAtTick === null) {
     return { id: 'stability', focus: 'monitor', progress: 0.12, action: 'reconcile-complete-heart-block-stability',
-      narration: 'Two rhythms, one patient. Say what the report actually shows before anything else. A seventy-six-year-old woman referred after two brief presyncopal episodes, and a fixed diagnostic report of complete atrioventricular block: atria at 82, a regular wide ventricular escape at 34, P waves marching independently through the QRS complexes, and a QRS of 146 ms. That is not a slow sinus rhythm, and the difference matters more than the rate does — her atria and her ventricles have stopped talking to each other, and what is keeping her perfused is an escape rhythm. She has a palpable pulse, 116/70, 98% on air, and she is alert and warm, with no current hypotension, altered mentation, shock, ischemic discomfort, acute heart failure or syncope. She is stable now. Recording that is not the same as calling the block low risk.' };
+      narration: narrate(patient) };
   }
   if (patient.pathwayAtTick === null) {
     return { id: 'parallel', focus: 'actions', progress: 0.3, action: 'activate-complete-heart-block-pathway',
-      narration: 'Two things need doing and they do not queue. Start with either. One is the cause: whether anything reversible is driving this. The other is getting her somewhere pacing-capable with the people who do this. The engine refuses the reassessment until both have landed and does not care which came first, because in a real unit they happen at the same time — the escalation is not a reward for finishing the workup, and the workup is not a reason to delay the phone call. If you find yourself wanting to complete one before starting the other, that instinct is the one this lesson is built to interrupt.' };
+      narration: narrate(patient) };
   }
   if (patient.contextAtTick === null) {
     return { id: 'context', focus: 'monitor', progress: 0.5, action: 'review-complete-heart-block-context',
-      narration: 'Escalation is running. Now go looking for a cause — and be careful what you conclude from not finding one. The fixed initial record reports no AV-nodal-blocking medication, no drug toxicity, no hypothermia, no electrolyte or thyroid explanation and no acute STEMI pattern. That is a panel that came back unremarkable, and the mistake available here is to read it as an answer. Ischemic, infectious — including Lyme disease, where the epidemiology matters and the block can be reversible — inflammatory, toxic, structural and post-procedural contributors are all still open. A reversible cause changes what happens next completely, so the review continues rather than closing. The panel did not prove absence; it just did not find anything yet.' };
+      narration: narrate(patient) };
   }
   if (patient.reassessmentAtTick === null) {
     return { id: 'reassessment', focus: 'monitor', progress: 0.72, action: 'reassess-complete-heart-block-trajectory',
-      narration: 'Let time pass, then look again — and expect nothing to have changed. At the later check the fixed report is the same: complete block, escape at 34, a palpable pulse, 116/70, alert, warm, 98% on air. Recording an uneventful reassessment feels like bookkeeping and is the opposite. An hour of stability is the thing most likely to talk a team out of the urgency it correctly felt at the start, and nothing in that hour has restored conduction. Nothing here is paced, no rhythm is captured, and no treatment is delivered — what elapsed time establishes is persistence, not resolution.' };
+      narration: narrate(patient) };
   }
   return { id: 'handoff', focus: 'actions', progress: 0.9, action: 'handoff-complete-heart-block-pacing-plan',
-    narration: 'Hand off a pacing evaluation, an owner, and the causes still open. Acquired complete AV block with no identified reversible or physiologic cause is what guideline-supported permanent-pacing evaluation exists for, and that is what gets recorded — the evaluation, the shared goals and tradeoffs, her current perfusion, the causes that are still open, the monitored contingency, named owners and the acute-change triggers. What does not get recorded is a conclusion: no eligibility adjudication, no device, no mode, no lead, no implant, no programming, no capture claim, no disposition, no promised benefit and no outcome. Nothing in this lesson examines her, acquires or interprets an ECG, monitor, laboratory or imaging result, diagnoses a cause, delivers oxygen, atropine, medication or an infusion, paces, selects a rate, current, energy, sedation or device, assesses capture, implants or programs anything, determines disposition or prognosis, or predicts outcome.' };
+    narration: narrate(patient) };
 }

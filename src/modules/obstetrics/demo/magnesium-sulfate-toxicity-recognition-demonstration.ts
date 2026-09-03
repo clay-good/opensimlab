@@ -3,6 +3,20 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsMagnesiumToxicity, type MagnesiumToxicityAction, type MagnesiumToxicityProgress,
 } from '../magnesium-sulfate-toxicity-recognition';
+import { magnesiumToxicityInlinePrompt } from '../tutor/magnesium-sulfate-toxicity-recognition-guidance';
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied. Every lesson's prose used to ship twice inside the
+ * cockpit bundle — once in the tutor and once as a duplicated string literal
+ * here — and gzip cannot reach across that distance to dedupe it. Deriving it
+ * also makes "the two cannot drift apart" structural rather than a property
+ * maintained by regenerating this file.
+ */
+function narrate(patient: MagnesiumToxicityProgress): string {
+  const prompt = magnesiumToxicityInlinePrompt('guided', { scenarioVersion: '0.1.0', magnesiumToxicity: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const MAGNESIUM_TOXICITY_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -35,24 +49,24 @@ export function magnesiumToxicityDemonstrationStep(
   }
   if (patient.supportAtTick === null) {
     return { id: 'support', focus: 'actions', progress: 0.08, action: 'activate-obstetrics-magnesium-toxicity-airway-anesthesia-critical-care-pharmacy-and-support-response',
-      narration: 'Get someone who can manage an airway here now, before you work anything out. A respiratory rate of nine with absent reflexes is respiratory failure arriving quietly, and the thing that makes magnesium toxicity dangerous is that it does not look dramatic until it is very late. Airway-capable anesthesia, obstetrics, critical care, pharmacy and support ownership all start now, while the assessment continues around them rather than before them.' };
+      narration: narrate(patient) };
   }
   if (patient.contextAtTick === null) {
     return { id: 'context', focus: 'monitor', progress: 0.28, action: 'reconcile-obstetrics-magnesium-toxicity-exposure-renal-respiratory-reflex-neurologic-and-whole-person',
-      narration: 'Read the exposure and the kidneys together — that is the whole mechanism. She had a 4 g load and has been running 2 g an hour for twelve hours, and magnesium is cleared almost entirely by the kidneys. Her urine output has fallen to 70 mL in four hours and her creatinine has gone from 0.8 to 1.9. The dose never changed; her ability to remove it did. Over thirty-five minutes that has produced drowsiness, slurred speech, weakness, absent patellar reflexes and a respiratory rate of nine.' };
+      narration: narrate(patient) };
   }
   if (patient.uncertaintyAtTick === null) {
     return { id: 'uncertainty', focus: 'actions', progress: 0.46, action: 'review-obstetrics-magnesium-toxicity-multisignal-level-unit-and-alternative-cause-boundaries',
-      narration: 'Let the clinical signs lead and treat the number as a supporting document. Magnesium levels are reported in three different units — 11.8 mg/dL is the same as 4.85 mmol/L and 9.7 mEq/L — and mixing them up is a documented source of error, so a number without its unit means nothing. This one was also drawn before the infusion was stopped, so it describes a moment that has already passed. The reflexes and the breathing are the assessment. And magnesium is not the only possible explanation: postpartum complications, other medicines, an airway or neurological cause, a metabolic derangement and a cardiopulmonary event all stay open.' };
+      narration: narrate(patient) };
   }
   if (patient.readinessAtTick === null) {
     return { id: 'readiness', focus: 'actions', progress: 0.64, action: 'review-obstetrics-magnesium-toxicity-source-stop-airway-ventilation-antidote-monitoring-newborn-and-support-readiness',
-      narration: 'Hold the source-stop, the airway and the antidote as one parallel readiness. The infusion is already stopped and isolated by qualified staff, which removes the cause but not the magnesium already in her. Airway and ventilation readiness, the calcium antidote, continuous monitoring of breathing and reflexes rather than intermittent checks, the newborn who is somewhere else, and support for her all belong to the same moment. Stopping the drug is the beginning of this rather than the end of it.' };
+      narration: narrate(patient) };
   }
   if (patient.reassessmentAtTick === null) {
     return { id: 'reassess', focus: 'monitor', progress: 0.82, action: 'review-obstetrics-magnesium-toxicity-fixed-five-minute-qualified-response-report',
-      narration: 'Read the fixed 5-minute report as a partial response rather than a reversal. No infusion, airway maneuver, oxygen, ventilation, calcium, drug, dose or rate is chosen here. It is a contrast rather than a predicted trajectory, and nothing here says how any individual magnesium level falls once the infusion stops.' };
+      narration: narrate(patient) };
   }
   return { id: 'handoff', focus: 'actions', progress: 0.92, action: 'handoff-obstetrics-magnesium-toxicity-respiratory-renal-preeclampsia-medication-newborn-support-and-outcome-risk',
-    narration: 'A partial response is not a reversal: nothing here establishes complete recovery, cleared magnesium, recovered kidneys, a treatment effect, or a safe newborn. Hand off the respiratory and neurologic risk, the renal function that caused this, the severe preeclampsia she still has and the seizure prophylaxis question it raises, the medication review, the newborn, what she has just been through, and the disposition.' };
+    narration: narrate(patient) };
 }

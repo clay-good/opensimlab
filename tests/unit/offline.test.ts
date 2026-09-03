@@ -294,6 +294,24 @@ describe('Requirement: Everything The Offline Claim Names Is Actually Precached'
     // of headroom under this ceiling is worth about thirty-five of them rather than
     // the six it would have been. The next thing to measure if this binds again is the
     // one remaining engine copy, not another raise.
+    //
+    // It bound again, at 2.0030 MiB, and the engine copy turned out to be the wrong
+    // place to look: the engine ships exactly once, in solver.worker, and the test
+    // below pins that. What had quietly grown instead was a second copy of every
+    // lesson's PROSE. Each demonstration module stored its beat narrations as string
+    // literals that were verbatim copies of the corresponding tutor prompts, so the
+    // cockpit bundle carried the same paragraphs twice. gzip does not rescue this:
+    // measured, the demo copy costs its full 208 KB compressed even when concatenated
+    // next to the tutor sources, because the two are far outside the 32 KB window.
+    //
+    // Eighteen demonstration modules now ask the tutor for the narration instead of
+    // storing it, which took AnesthesiaRoute from 599.5 to 581.6 KB gz and this graph
+    // back to 1.9855 MiB. Roughly 1.3 KB gz per converted lesson.
+    //
+    // The remaining ~86 demonstration modules still hold a duplicate copy, worth an
+    // estimated 80-100 KB gz. They were left alone because each differs from its tutor
+    // by a beat or two and a blind conversion would silently change what a learner is
+    // shown. That is where to look next, one lesson at a time, before any raise.
     const files = precache
       .filter((url) => url.startsWith('/assets/') || url.startsWith('/fonts/'))
       .map((url) => readFileSync(join(process.cwd(), 'dist', url)));

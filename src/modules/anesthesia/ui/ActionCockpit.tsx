@@ -215,6 +215,7 @@ import { pacemakerCaptureFailureInlinePrompt } from '../../cardiology/tutor/pace
 import { transcutaneousPacingCaptureInlinePrompt } from '../../cardiology/tutor/transcutaneous-pacing-capture-guidance';
 import { septicShockResuscitationInlinePrompt } from '../../critical-care/tutor/septic-shock-resuscitation-guidance';
 import { cardiogenicShockInlinePrompt } from '../../critical-care/tutor/cardiogenic-shock-guidance';
+import { mixedShockInlinePrompt } from '../../critical-care/tutor/mixed-shock-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2999,6 +3000,7 @@ export interface ActionCockpitProps {
   readonly transcutaneousPacingCaptureGuidance?: GuidanceLevel;
   readonly septicShockResuscitationGuidance?: GuidanceLevel;
   readonly cardiogenicShockGuidance?: GuidanceLevel;
+  readonly mixedShockGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3163,6 +3165,7 @@ export interface ActionCockpitProps {
   readonly transcutaneousPacingCaptureDemonstrating?: boolean;
   readonly septicShockResuscitationDemonstrating?: boolean;
   readonly cardiogenicShockDemonstrating?: boolean;
+  readonly mixedShockDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5565,6 +5568,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasMixedShockResponse && (
               <MixedShockTray assessment={props.resuscitation.mixedShockAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.mixedShockGuidance}
+                demonstrating={props.mixedShockDemonstrating}
                 onAction={props.onMixedShockResponse ?? (() => {})} />
             )}
             {hasRightVentricularFailureResponse && (
@@ -9581,8 +9587,11 @@ function CardiogenicShockTray({ assessment, scenarioVersion, guidance = 'unassis
   );
 }
 
-function MixedShockTray({ assessment, onAction }: {
+function MixedShockTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['mixedShockAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onMixedShockResponse']>;
 }) {
   const recognized = assessment?.recognitionAtTick != null;
@@ -9590,8 +9599,18 @@ function MixedShockTray({ assessment, onAction }: {
   const support = assessment?.supportAtTick != null;
   const causes = assessment?.causesAtTick != null;
   const reassessed = assessment?.reassessmentAtTick != null;
+  const prompt = demonstrating ? null
+    : mixedShockInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="mixed-pattern-title">
         <div id="mixed-pattern-title" className="syringe__name">When clues disagree, believe the pattern.</div>
         <Badge kind="teaching">output · tone · filling pressure · perfusion · context</Badge>
@@ -9603,9 +9622,9 @@ function MixedShockTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={recognized}
-            onClick={() => onAction('recognize-mixed-shock-discordance')}>Recognize discordance + call teams</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('recognize-mixed-shock-discordance') : undefined}>Recognize discordance + call teams</Button>
           <Button className="crisis-drug__action" disabled={!recognized || hemodynamics}
-            onClick={() => onAction('classify-mixed-shock-hemodynamics')}>Review hemodynamics in context</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('classify-mixed-shock-hemodynamics') : undefined}>Review hemodynamics in context</Button>
         </div>
         <p className="field__hint">Numbers should make you reconsider the model, not stop thinking. Vasoactive treatment changes both output and vascular-resistance interpretation.</p>
       </section>
@@ -9621,14 +9640,15 @@ function MixedShockTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!hemodynamics || support}
-            onClick={() => onAction('record-mixed-shock-support')}>Record tone + output support review</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-mixed-shock-support') : undefined}>Record tone + output support review</Button>
           <Button className="crisis-drug__action" disabled={!support || causes}
-            onClick={() => onAction('address-mixed-shock-causes')}>Keep both cause pathways active</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('address-mixed-shock-causes') : undefined}>Keep both cause pathways active</Button>
           <Button className="crisis-drug__action" disabled={!causes || reassessed}
-            onClick={() => onAction('reassess-mixed-shock-trajectory')}>Review 10-minute trajectory</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-mixed-shock-trajectory') : undefined}>Review 10-minute trajectory</Button>
         </div>
         <p className="field__hint">A mixed label is a beginning, not a destination. Reassess perfusion, congestion, infection, cardiac function, and treatment effect together.</p>
       </section>
+      </div>
     </div>
   );
 }
