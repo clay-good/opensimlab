@@ -331,6 +331,8 @@ import { useIntracranialHypertensionDemonstration } from '../../critical-care/de
 import { supportsIntracranialHypertensionDemonstration } from '../../critical-care/demo/intracranial-hypertension-demonstration';
 import { useSpontaneousBreathingTrialDemonstration } from '../../critical-care/demo/useSpontaneousBreathingTrialDemonstration';
 import { supportsSpontaneousBreathingTrialDemonstration } from '../../critical-care/demo/spontaneous-breathing-trial-demonstration';
+import { useStatusEpilepticusDemonstration as useCriticalCareStatusEpilepticusDemonstration } from '../../critical-care/demo/useStatusEpilepticusDemonstration';
+import { supportsStatusEpilepticusDemonstration as supportsCriticalCareStatusEpilepticusDemonstration } from '../../critical-care/demo/status-epilepticus-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -648,6 +650,7 @@ export function Cockpit({
   const delayedVasopressorDeliveryDemoSupported = supportsDelayedVasopressorDeliveryDemonstration(scenario);
   const intracranialHypertensionDemoSupported = supportsIntracranialHypertensionDemonstration(scenario);
   const spontaneousBreathingTrialDemoSupported = supportsSpontaneousBreathingTrialDemonstration(scenario);
+  const criticalCareStatusEpilepticusDemoSupported = supportsCriticalCareStatusEpilepticusDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -793,6 +796,7 @@ export function Cockpit({
     || delayedVasopressorDeliveryDemoSupported
     || intracranialHypertensionDemoSupported
     || spontaneousBreathingTrialDemoSupported
+    || criticalCareStatusEpilepticusDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1112,6 +1116,12 @@ export function Cockpit({
     active: demonstrating && spontaneousBreathingTrialDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.spontaneousBreathingTrialAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const criticalCareStatusEpilepticusDemonstration = useCriticalCareStatusEpilepticusDemonstration({
+    active: demonstrating && criticalCareStatusEpilepticusDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.criticalCareStatusEpilepticusAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const stableNarrowTachycardiaDemonstration = useStableNarrowTachycardiaDemonstration({
@@ -1849,6 +1859,7 @@ export function Cockpit({
     : delayedVasopressorDeliveryDemoSupported ? delayedVasopressorDeliveryDemonstration
     : intracranialHypertensionDemoSupported ? intracranialHypertensionDemonstration
     : spontaneousBreathingTrialDemoSupported ? spontaneousBreathingTrialDemonstration
+    : criticalCareStatusEpilepticusDemoSupported ? criticalCareStatusEpilepticusDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2848,6 +2859,8 @@ export function Cockpit({
           intracranialHypertensionDemonstrating={demonstrating && intracranialHypertensionDemoSupported}
           spontaneousBreathingTrialGuidance={session.guidance}
           spontaneousBreathingTrialDemonstrating={demonstrating && spontaneousBreathingTrialDemoSupported}
+          criticalCareStatusEpilepticusGuidance={session.guidance}
+          criticalCareStatusEpilepticusDemonstrating={demonstrating && criticalCareStatusEpilepticusDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

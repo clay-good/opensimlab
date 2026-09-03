@@ -1685,23 +1685,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "status-epilepticus-fixtures.ts binds seed 8264 and content 0.1.0 to expert, anesthetic-before-the-body error, recovery, and no-action paths. The fifty-two-year-old intubated man unresponsive after reported adequate lorazepam and levetiracetam, whose visible convulsions stopped 12 minutes ago while the authored continuous EEG reports recurrent evolving electrographic seizures without recovery between them, at HR 118/min, MAP 62 mmHg, SpO2 94% on FiO2 0.40, temperature 38.1°C, urine 18 mL/h and lactate 4.2 mmol/L, and the authored 10-minute response of no electrographic seizure with MAP 68 mmHg, HR 102/min, SpO2 96% and temperature 37.9°C are authored constants; no EEG is acquired or interpreted, no seizure or anesthetic model is claimed, and no outcome follows from any choice. tests/integration/status-epilepticus-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is two narratives with no non-narrative state event. The progression lives in the engine's four order refusals, and the recognition step carries the lesson: the convulsions stopped 12 minutes ago, absent movement never established seizure control, and the pattern review is gated behind that recognition so nobody reads stillness as improvement. The continuous-anesthetic pathway is in turn gated behind the pattern review, so a drug that lowers blood pressure is not started before anyone has looked at a MAP of 62. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions recognize refractory electrographic status after two reported lines of therapy and activate neurocritical-care, epilepsy, EEG, pharmacy, airway and critical-care help; review the authored EEG report alongside the secured airway, reported bilateral ventilation and capnography, MAP 62 mmHg, HR 118/min, SpO2 94%, temperature 38.1°C, oliguria and lactate 4.2 mmol/L while glucose, electrolytes, medication delivery and dangerous mimics stay open; activate an expert-selected continuous-anesthetic pathway with continuous EEG, ventilation, oxygenation, pressure, perfusion, temperature and organ-support guardrails and no universal agent, dose, depth, burst-suppression target or duration; keep metabolic, glucose, electrolyte, toxic, medication, infectious, structural, vascular and immune causes active alongside suppression with immediate treatment of any confirmed time-critical reversible cause; and reassess a brief authored window without claiming durable control. The lesson acquires and interprets no EEG, examines nobody, takes no specimen, orders no imaging or lumbar puncture, doses and delivers nothing, diagnoses nothing, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -1713,23 +1713,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded reassessment on an authored 10-minute window reporting no electrographic seizure, at MAP 68 mmHg, HR 102/min, SpO2 96% and temperature 37.9°C. Later actions cannot restart an ended branch, and the ending is precise that ten minutes is a window rather than a trend: durable control, recurrence on weaning, EEG background, consciousness, anesthetic adverse effects, the cause, organ recovery, prognosis and outcome all remain unknown."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step, because this lesson has no unordered lane. The reflex it works against is the stillness: a patient who stopped shaking looks like a treated patient, and that is the picture refractory status hides behind. The recognition beat says so directly and names why this is not a bedside call — two lines have failed, so it is refractory by definition. The pattern beat reads the lactate and the oliguria as the seizure showing up in organs that are not the brain, and makes the point that reported adequate is not delivered adequate: a benzodiazepine that never arrived looks identical to one that failed. The pathway beat makes the guardrails the content — titrating an anesthetic against seizures nobody can see is guessing, and a man at a MAP of 62 is about to be given a drug that lowers it further, which is a reason to have the team ready rather than to hesitate — while declining every universal dose, depth and burst-suppression target. The cause beat keeps the search open next to a plausible old traumatic brain injury, because a plausible story is the thing most likely to end a search early, and says that a hypoglycaemia is not something you suppress your way past. The closing beat is precise that ten quiet minutes is a window and not a trend. Worked example 0.1.0 drives the ordinary controls through the real engine to the reassessment and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere names an anesthetic dose or burst-suppression target, interprets the EEG, orders a lumbar puncture, or claims the seizures are controlled. tests/unit/status-epilepticus-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/critical-care-status-epilepticus.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the one urgency invites: the common-error path recognises the refractory pattern and reaches straight for the continuous-anesthetic pathway, skipping the review that shows what the seizures are costing the rest of him and that a drug which lowers blood pressure is about to be started at a MAP of 62, and meets one of five because the engine gates it. The recovery path reaches for the pattern review before the pattern has been recognised and is refused, reaches for the cause work before the pathway that buys time for it and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -1748,23 +1748,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "status-epilepticus-fixtures.ts binds exact-content expert, anesthetic-before-the-body error, recovery, and no-action pathways to seed 8264 for deterministic replay through the shared engine, including all four order refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

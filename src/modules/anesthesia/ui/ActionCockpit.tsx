@@ -229,6 +229,7 @@ import { severeAcidemiaInlinePrompt } from '../../critical-care/tutor/severe-aci
 import { delayedVasopressorDeliveryInlinePrompt } from '../../critical-care/tutor/delayed-vasopressor-delivery-guidance';
 import { intracranialHypertensionInlinePrompt } from '../../critical-care/tutor/intracranial-hypertension-guidance';
 import { spontaneousBreathingTrialInlinePrompt } from '../../critical-care/tutor/spontaneous-breathing-trial-guidance';
+import { statusEpilepticusInlinePrompt as criticalCareStatusEpilepticusInlinePrompt } from '../../critical-care/tutor/status-epilepticus-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3027,6 +3028,7 @@ export interface ActionCockpitProps {
   readonly delayedVasopressorDeliveryGuidance?: GuidanceLevel;
   readonly intracranialHypertensionGuidance?: GuidanceLevel;
   readonly spontaneousBreathingTrialGuidance?: GuidanceLevel;
+  readonly criticalCareStatusEpilepticusGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3205,6 +3207,7 @@ export interface ActionCockpitProps {
   readonly delayedVasopressorDeliveryDemonstrating?: boolean;
   readonly intracranialHypertensionDemonstrating?: boolean;
   readonly spontaneousBreathingTrialDemonstrating?: boolean;
+  readonly criticalCareStatusEpilepticusDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5657,6 +5660,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasCriticalCareStatusEpilepticusResponse && (
               <CriticalCareStatusEpilepticusTray
                 assessment={props.resuscitation.criticalCareStatusEpilepticusAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.criticalCareStatusEpilepticusGuidance}
+                demonstrating={props.criticalCareStatusEpilepticusDemonstrating}
                 onAction={props.onCriticalCareStatusEpilepticusResponse ?? (() => {})} />
             )}
             {hasPostArrestTemperatureResponse && (
@@ -10013,8 +10019,11 @@ function UpperGiHemorrhageTray({ assessment, onAction }: {
   );
 }
 
-function CriticalCareStatusEpilepticusTray({ assessment, onAction }: {
+function CriticalCareStatusEpilepticusTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['criticalCareStatusEpilepticusAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onCriticalCareStatusEpilepticusResponse']>;
 }) {
   const recognized = assessment?.recognitionAtTick != null;
@@ -10022,8 +10031,18 @@ function CriticalCareStatusEpilepticusTray({ assessment, onAction }: {
   const pathway = assessment?.pathwayAtTick != null;
   const causes = assessment?.causesAtTick != null;
   const reassessed = assessment?.reassessmentAtTick != null;
+  const prompt = demonstrating ? null
+    : criticalCareStatusEpilepticusInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="critical-care-status-pattern-title">
         <div id="critical-care-status-pattern-title" className="syringe__name">Movement stopped. The seizure did not.</div>
         <Badge kind="teaching">reported benzodiazepine + urgent load · no recovery · EEG seizures persist</Badge>
@@ -10035,9 +10054,9 @@ function CriticalCareStatusEpilepticusTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={recognized}
-            onClick={() => onAction('recognize-refractory-status-epilepticus')}>Recognize refractory status + activate help</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('recognize-refractory-status-epilepticus') : undefined}>Recognize refractory status + activate help</Button>
           <Button className="crisis-drug__action" disabled={!recognized || pattern}
-            onClick={() => onAction('review-refractory-status-pattern')}>Review EEG + systemic context</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-refractory-status-pattern') : undefined}>Review EEG + systemic context</Button>
         </div>
         <p className="field__hint">The EEG report is an authored fact. This surface does not teach acquisition or interpretation.</p>
       </section>
@@ -10053,14 +10072,15 @@ function CriticalCareStatusEpilepticusTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!pattern || pathway}
-            onClick={() => onAction('activate-refractory-status-pathway')}>Activate continuous therapy + EEG</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('activate-refractory-status-pathway') : undefined}>Activate continuous therapy + EEG</Button>
           <Button className="crisis-drug__action" disabled={!pathway || causes}
-            onClick={() => onAction('address-refractory-status-causes')}>Keep reversible causes active</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('address-refractory-status-causes') : undefined}>Keep reversible causes active</Button>
           <Button className="crisis-drug__action" disabled={!causes || reassessed}
-            onClick={() => onAction('reassess-refractory-status-trajectory')}>Review EEG + organ trajectory</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-refractory-status-trajectory') : undefined}>Review EEG + organ trajectory</Button>
         </div>
         <p className="field__hint">A seizure-free window is a response signal, not proof of durable control or recovery.</p>
       </section>
+      </div>
     </div>
   );
 }
