@@ -325,6 +325,8 @@ import { usePostIntubationHypotensionDemonstration } from '../../critical-care/d
 import { supportsPostIntubationHypotensionDemonstration } from '../../critical-care/demo/post-intubation-hypotension-demonstration';
 import { useSevereAcidemiaDemonstration } from '../../critical-care/demo/useSevereAcidemiaDemonstration';
 import { supportsSevereAcidemiaDemonstration } from '../../critical-care/demo/severe-acidemia-demonstration';
+import { useDelayedVasopressorDeliveryDemonstration } from '../../critical-care/demo/useDelayedVasopressorDeliveryDemonstration';
+import { supportsDelayedVasopressorDeliveryDemonstration } from '../../critical-care/demo/delayed-vasopressor-delivery-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -639,6 +641,7 @@ export function Cockpit({
   const circuitDisconnectionDemoSupported = supportsCircuitDisconnectionDemonstration(scenario);
   const postIntubationHypotensionDemoSupported = supportsPostIntubationHypotensionDemonstration(scenario);
   const severeAcidemiaDemoSupported = supportsSevereAcidemiaDemonstration(scenario);
+  const delayedVasopressorDeliveryDemoSupported = supportsDelayedVasopressorDeliveryDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -781,6 +784,7 @@ export function Cockpit({
     || circuitDisconnectionDemoSupported
     || postIntubationHypotensionDemoSupported
     || severeAcidemiaDemoSupported
+    || delayedVasopressorDeliveryDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1082,6 +1086,12 @@ export function Cockpit({
     active: demonstrating && severeAcidemiaDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.severeAcidemiaAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const delayedVasopressorDeliveryDemonstration = useDelayedVasopressorDeliveryDemonstration({
+    active: demonstrating && delayedVasopressorDeliveryDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.delayedVasopressorDeliveryAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const stableNarrowTachycardiaDemonstration = useStableNarrowTachycardiaDemonstration({
@@ -1816,6 +1826,7 @@ export function Cockpit({
     : circuitDisconnectionDemoSupported ? circuitDisconnectionDemonstration
     : postIntubationHypotensionDemoSupported ? postIntubationHypotensionDemonstration
     : severeAcidemiaDemoSupported ? severeAcidemiaDemonstration
+    : delayedVasopressorDeliveryDemoSupported ? delayedVasopressorDeliveryDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2809,6 +2820,8 @@ export function Cockpit({
           postIntubationHypotensionDemonstrating={demonstrating && postIntubationHypotensionDemoSupported}
           severeAcidemiaGuidance={session.guidance}
           severeAcidemiaDemonstrating={demonstrating && severeAcidemiaDemoSupported}
+          delayedVasopressorDeliveryGuidance={session.guidance}
+          delayedVasopressorDeliveryDemonstrating={demonstrating && delayedVasopressorDeliveryDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

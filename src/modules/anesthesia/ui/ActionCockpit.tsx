@@ -226,6 +226,7 @@ import { unplannedExtubationInlinePrompt } from '../../critical-care/tutor/unpla
 import { circuitDisconnectionInlinePrompt } from '../../critical-care/tutor/circuit-disconnection-guidance';
 import { postIntubationHypotensionInlinePrompt } from '../../critical-care/tutor/post-intubation-hypotension-guidance';
 import { severeAcidemiaInlinePrompt } from '../../critical-care/tutor/severe-acidemia-guidance';
+import { delayedVasopressorDeliveryInlinePrompt } from '../../critical-care/tutor/delayed-vasopressor-delivery-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3021,6 +3022,7 @@ export interface ActionCockpitProps {
   readonly ventilatorCircuitDisconnectionGuidance?: GuidanceLevel;
   readonly postIntubationHypotensionGuidance?: GuidanceLevel;
   readonly severeAcidemiaGuidance?: GuidanceLevel;
+  readonly delayedVasopressorDeliveryGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3196,6 +3198,7 @@ export interface ActionCockpitProps {
   readonly ventilatorCircuitDisconnectionDemonstrating?: boolean;
   readonly postIntubationHypotensionDemonstrating?: boolean;
   readonly severeAcidemiaDemonstrating?: boolean;
+  readonly delayedVasopressorDeliveryDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5684,6 +5687,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasDelayedVasopressorDeliveryResponse && (
               <DelayedVasopressorDeliveryTray
                 assessment={props.resuscitation.delayedVasopressorDeliveryAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.delayedVasopressorDeliveryGuidance}
+                demonstrating={props.delayedVasopressorDeliveryDemonstrating}
                 onAction={props.onDelayedVasopressorDeliveryResponse ?? (() => {})} />
             )}
             {hasPulseOximeterArtifactResponse && (
@@ -10373,8 +10379,11 @@ function VentilatorCircuitDisconnectionTray({ assessment, scenarioVersion, guida
   );
 }
 
-function DelayedVasopressorDeliveryTray({ assessment, onAction }: {
+function DelayedVasopressorDeliveryTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['delayedVasopressorDeliveryAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onDelayedVasopressorDeliveryResponse']>;
 }) {
   const discordance = assessment?.discordanceAtTick != null;
@@ -10382,8 +10391,18 @@ function DelayedVasopressorDeliveryTray({ assessment, onAction }: {
   const classified = assessment?.classifiedAtTick != null;
   const protocol = assessment?.protocolAtTick != null;
   const reassessed = assessment?.reassessedAtTick != null;
+  const prompt = demonstrating ? null
+    : delayedVasopressorDeliveryInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="vasopressor-delivery-truth-title">
         <div id="vasopressor-delivery-truth-title" className="syringe__name">Running is not arriving.</div>
         <Badge kind="teaching">commanded · in transit · delivered · effect</Badge>
@@ -10396,11 +10415,11 @@ function DelayedVasopressorDeliveryTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={discordance}
-            onClick={() => onAction('review-vasopressor-command-delivery-discordance')}>Separate command from delivery</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-vasopressor-command-delivery-discordance') : undefined}>Separate command from delivery</Button>
           <Button className="crisis-drug__action" disabled={!discordance || path}
-            onClick={() => onAction('trace-vasopressor-source-to-patient-path')}>Trace syringe → pump → line → patient</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('trace-vasopressor-source-to-patient-path') : undefined}>Trace syringe → pump → line → patient</Button>
           <Button className="crisis-drug__action" disabled={!path || classified}
-            onClick={() => onAction('classify-vasopressor-dead-space-startup-delay')}>Classify dead-space + startup delay</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('classify-vasopressor-dead-space-startup-delay') : undefined}>Classify dead-space + startup delay</Button>
         </div>
         <p className="field__hint">A bright RUNNING label describes the pump command, not arrival at the catheter tip.</p>
       </section>
@@ -10415,12 +10434,13 @@ function DelayedVasopressorDeliveryTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!classified || protocol}
-            onClick={() => onAction('activate-vasopressor-startup-safety-plan')}>Activate local safe-start protocol</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('activate-vasopressor-startup-safety-plan') : undefined}>Activate local safe-start protocol</Button>
           <Button className="crisis-drug__action" disabled={!protocol || reassessed}
-            onClick={() => onAction('reassess-vasopressor-delivery-and-perfusion')}>Prove delivery + perfusion response</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-vasopressor-delivery-and-perfusion') : undefined}>Prove delivery + perfusion response</Button>
         </div>
         <p className="field__hint">This records a bounded protocol intent. It never calculates, primes, flushes, programs, or delivers a drug.</p>
       </section>
+      </div>
     </div>
   );
 }

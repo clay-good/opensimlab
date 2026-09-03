@@ -164,6 +164,7 @@ import { supportsUnplannedExtubationDemonstration } from '../../critical-care/de
 import { supportsCircuitDisconnectionDemonstration } from '../../critical-care/demo/circuit-disconnection-demonstration';
 import { supportsPostIntubationHypotensionDemonstration } from '../../critical-care/demo/post-intubation-hypotension-demonstration';
 import { supportsSevereAcidemiaDemonstration } from '../../critical-care/demo/severe-acidemia-demonstration';
+import { supportsDelayedVasopressorDeliveryDemonstration } from '../../critical-care/demo/delayed-vasopressor-delivery-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -369,6 +370,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsCircuitDisconnectionDemonstration,
     supportsPostIntubationHypotensionDemonstration,
     supportsSevereAcidemiaDemonstration,
+    supportsDelayedVasopressorDeliveryDemonstration,
   ],
 };
 

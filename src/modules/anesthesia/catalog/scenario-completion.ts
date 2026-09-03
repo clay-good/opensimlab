@@ -128,6 +128,7 @@ import { unplannedExtubationCompletionEvidence } from '../../critical-care/unpla
 import { circuitDisconnectionCompletionEvidence } from '../../critical-care/circuit-disconnection-completion';
 import { postIntubationHypotensionCompletionEvidence } from '../../critical-care/post-intubation-hypotension-completion';
 import { severeAcidemiaCompletionEvidence } from '../../critical-care/severe-acidemia-completion';
+import { delayedVasopressorDeliveryCompletionEvidence } from '../../critical-care/delayed-vasopressor-delivery-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -395,6 +396,7 @@ export function auditClinicalScenario(
     ...circuitDisconnectionCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...postIntubationHypotensionCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...severeAcidemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...delayedVasopressorDeliveryCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),
