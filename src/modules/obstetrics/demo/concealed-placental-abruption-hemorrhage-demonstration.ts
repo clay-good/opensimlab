@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsConcealedAbruption, type ConcealedAbruptionAction, type ConcealedAbruptionProgress,
 } from '../concealed-placental-abruption-hemorrhage';
+import { concealedAbruptionInlinePrompt } from '../tutor/concealed-placental-abruption-hemorrhage-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: ConcealedAbruptionProgress): string {
+  const prompt = concealedAbruptionInlinePrompt('guided', { scenarioVersion: '0.1.0', concealedAbruption: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const CONCEALED_ABRUPTION_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -36,11 +48,11 @@ export function concealedAbruptionDemonstrationStep(
   }
   if (patient.trajectoryAtTick === null) {
     return { id: 'trajectory', focus: 'monitor', progress: 0.08, action: 'reconcile-obstetrics-abruption-pain-visible-blood-maternal-physiology-fetal-context-and-whole-person',
-      narration: 'Believe the physiology over the eighty millilitres in the bowl. Thirty-five minutes of abrupt constant pain at 36 weeks and 4 days, a tense tender uterus, pallor and restlessness, a heart rate of 126 and a pressure of 92/56 — and a fetal baseline of 170 with minimal variability and recurrent late decelerations. Two people are showing you the same bleed. The blood that has been collected is the only part of it anyone can see.' };
+      narration: narrate(patient) };
   }
   if (patient.recognitionAtTick === null) {
     return { id: 'recognition', focus: 'actions', progress: 0.26, action: 'recognize-obstetrics-abruption-concealed-hemorrhage-pattern-without-visible-volume-ultrasound-or-single-cause-closure',
-      narration: 'Call it a concealed hemorrhage now, and do not send for a scan to be sure. In an abruption most of the loss can stay behind the placenta, so visible volume is not total loss and a small amount of dark blood is consistent with a very large one. Ultrasound detects an abruption often enough to be useful and misses it often enough that a normal scan excludes nothing. Naming it also closes nothing — rupture, previa, vasa previa, labor, trauma and non-obstetric causes stay open behind the name, and the supplied prior placental-location record is one piece of history rather than an exclusion.' };
+      narration: narrate(patient) };
   }
   if (patient.supportAtTick === null) {
     return { id: 'support', focus: 'actions', progress: 0.46, action: 'activate-obstetrics-abruption-hemorrhage-anesthesia-blood-bank-operating-room-neonatal-and-dignity-ownership',
@@ -48,7 +60,7 @@ export function concealedAbruptionDemonstrationStep(
   }
   if (patient.evidenceAtTick === null) {
     return { id: 'evidence', focus: 'monitor', progress: 0.64, action: 'review-obstetrics-abruption-supplied-perfusion-uterine-fetal-coagulation-placental-and-competing-cause-boundary',
-      narration: 'Read the coagulation as part of the bleed rather than a laboratory result. A fibrinogen of 1.5 g/L is not merely low; late in pregnancy it is usually well above 4, so this is a value that has already fallen a long way, alongside platelets of 112 and an INR of 1.4. That pattern belongs to the hemorrhage rather than sitting beside it. None of the supplied evidence identifies how much blood has been lost, and none of it excludes the competing causes.' };
+      narration: narrate(patient) };
   }
   if (patient.reassessmentAtTick === null) {
     return { id: 'reassess', focus: 'monitor', progress: 0.82, action: 'record-obstetrics-abruption-bounded-qualified-resuscitation-coagulation-and-urgent-delivery-intent-with-strict-later-review',

@@ -2945,23 +2945,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "trauma-primary-survey-fixtures.ts binds seed 2244 and content 0.1.0 to expert, started-at-A error, recovery, and no-action paths. The thirty-five-minute high-energy mechanism with failed direct pressure on a life-threatening left lower-leg haemorrhage; the A and B review with coherent speech, RR 26/min, SpO2 96% on oxygen and bilateral breath sounds with no authored tension pattern; the persistent HR 124/min and BP 88/56 mmHg with an authored unstable pelvis and an eFAST showing free fluid in the right upper quadrant; the D and E review with confusion following commands, equal pupils, glucose 118 mg/dL, no second catastrophic external bleed and a core temperature of 35.6 C; and the repeat survey at HR 112/min, BP 100/62 mmHg, SpO2 97% and 35.8 C are authored constants. No haemorrhage, transfusion, binder or warming response model is claimed, and no outcome follows from any choice. tests/integration/emergency-trauma-primary-survey-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is two narratives with no non-narrative state event. The progression lives in the engine's five order refusals across six recorded steps in one strict chain with no time gates, and the order is the lesson: the airway and breathing review is refused until the catastrophic external haemorrhage is controlled, which is the C that sits in front of ABCDE, and the repeat survey is refused until disability and exposure are complete. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six recorded decisions against five declared objectives: receive the structured handoff, activate the trauma and major-haemorrhage responses and declare an explicit <C>ABCDE sequence with a repeat-survey plan; record a local-protocol tourniquet intent proximal to the haemorrhage with application time and distal-limb handoff after failed direct pressure; review airway and breathing under in-line spinal-motion precautions; record the pelvic binder, warmed blood components, early tranexamic acid, calcium and coagulation surveillance and immediate definitive-control intent for shock persisting after external control; review disability, glucose, full exposure with a posterior-surface review and heat-loss prevention; and repeat the whole survey before handing over. The lesson examines nobody, applies no tourniquet or binder, protects no spine, selects no product or dose, delivers nothing, acquires no imaging, log-rolls nobody, performs no procedure, arranges no transport, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -2973,23 +2973,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a repeated primary survey handed directly to the definitive-control team, with the abdominal and pelvic concern and the positive eFAST explicitly unresolved. Later actions cannot restart an ended branch. Times, trends, interventions and remaining uncertainties are named rather than smoothed over, and no procedure, transport, later deterioration, disposition or outcome is simulated — so the ending hands over a patient who still needs an operation."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step. The reflex the lesson works against is the alphabet: everyone starts at A, and this patient has a leg that has not stopped bleeding after direct pressure. The haemorrhage beat says why the refusal is the teaching — exsanguination from a limb can empty a circulation faster than an obstructed airway empties it of oxygen, and the airway of a patient who has bled out is not a problem anyone gets to solve — and why the application time is written down, since the clock on a tourniquet starts when it is tight and the person removing it needs to know when that was. The activation beat says a handoff interrupted is a handoff repeated, and that the detail people talk over here is \"failed direct pressure\". The airway beat reads coherent speech as the fastest airway assessment there is, and says why bilateral findings are stated rather than assumed. The circulation beat reads shock persisting after external control as the bleeding being internal, argues for warmed blood rather than crystalloid because dilution and cooling both cost clotting, and treats the eFAST as a pointer rather than a clearance. The exposure beat puts glucose on the list because hypoglycaemia is a treatable cause of confusion a head injury will be blamed for, says a second catastrophic bleed hides in a back nobody has turned over, and treats re-covering as treatment because cold blood does not clot. The repeat beat says a primary survey done once is a photograph. Worked example 0.1.0 drives the ordinary controls through the real engine and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere starts at the airway, gives clear fluid, clears the abdomen on a negative scan, or claims the bleeding is stopped. tests/unit/emergency-trauma-primary-survey-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/emergency-trauma-primary-survey.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding alongside the pre-existing tests/ui/trauma-primary-survey.test.tsx."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps the declared objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the one the alphabet invites: the common-error path receives the handoff and goes straight to the airway and breathing review with a leg still bleeding after failed direct pressure. It is refused with the reason named, and the four objectives downstream stay unmet. The recovery path reaches for the tourniquet before the handoff has been received and is refused, reaches for the repeat survey before disability and exposure are complete and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -3008,23 +3008,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "trauma-primary-survey-fixtures.ts binds exact-content expert, started-at-A error, recovery, and no-action pathways to seed 2244 for deterministic replay through the shared engine, including all five order refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsBasilarLvo, type BasilarLvoAction, type BasilarLvoProgress,
 } from '../basilar-artery-occlusion-escalation';
+import { basilarLvoInlinePrompt } from '../tutor/basilar-artery-occlusion-escalation-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: BasilarLvoProgress): string {
+  const prompt = basilarLvoInlinePrompt('guided', { scenarioVersion: '0.1.0', basilarLvo: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const BASILAR_LVO_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -40,15 +52,15 @@ export function basilarLvoDemonstrationStep(
   }
   if (patient.trajectoryAtTick === null) {
     return { id: 'trajectory', focus: 'monitor', progress: 0.08, action: 'reconcile-neurology-basilar-lvo-clock-posterior-syndrome-and-whole-patient',
-      narration: 'Read ten hours as a reason to hurry, not as a door that has closed. Witnessed abrupt diplopia, vertigo, severe dysarthria and left-sided weakness ten hours ago, now drowsy but following commands, with impaired horizontal eye movements and marked ataxia. The supplied NIHSS is 14 against a prestroke Rankin of 0 — a man who was fully independent this morning. A posterior syndrome is the one that gets filed under something benign, and the clock that would settle the question elsewhere does not settle it here.' };
+      narration: narrate(patient) };
   }
   if (patient.imagingAtTick === null) {
     return { id: 'imaging', focus: 'monitor', progress: 0.24, action: 'review-neurology-basilar-lvo-imaging-selection-and-open-mimics',
-      narration: 'Read the two imaging facts that make this a live question rather than a late one. Noncontrast CT reports no hemorrhage and a pc-ASPECTS of 8, and the CTA reports a mid-basilar occlusion. Those are selection facts, not a mechanism and not a verdict — and the authored absences of seizure, trauma, fever, hypoglycemia and intoxication are snapshots taken once, so mimics, etiology, bleeding context and deterioration all stay open.' };
+      narration: narrate(patient) };
   }
   if (patient.boundaryAtTick === null) {
     return { id: 'boundary', focus: 'actions', progress: 0.42, action: 'recognize-neurology-basilar-lvo-thrombectomy-escalation-boundary',
-      narration: 'Name the escalation boundary as something that has already been met. The supplied boundary describes a disabling posterior deficit with a demonstrated basilar occlusion and preserved posterior tissue. Saying it out loud is what converts a set of facts into a reason to move — and it is a description of the case rather than a decision about his eligibility, which stays with the qualified teams.' };
+      narration: narrate(patient) };
   }
   if (patient.activationAtTick === null) {
     return { id: 'activation', focus: 'actions', progress: 0.6, action: 'activate-neurology-basilar-lvo-qualified-endovascular-and-airway-capable-ownership',

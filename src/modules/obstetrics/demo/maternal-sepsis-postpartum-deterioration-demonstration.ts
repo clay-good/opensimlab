@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsMaternalSepsis, type MaternalSepsisAction, type MaternalSepsisProgress,
 } from '../maternal-sepsis-postpartum-deterioration';
+import { maternalSepsisInlinePrompt } from '../tutor/maternal-sepsis-postpartum-deterioration-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: MaternalSepsisProgress): string {
+  const prompt = maternalSepsisInlinePrompt('guided', { scenarioVersion: '0.1.0', maternalSepsis: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const MATERNAL_SEPSIS_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -36,11 +48,11 @@ export function maternalSepsisDemonstrationStep(
   }
   if (patient.trajectoryAtTick === null) {
     return { id: 'trajectory', focus: 'monitor', progress: 0.08, action: 'reconcile-obstetrics-sepsis-postpartum-clock-infection-organ-dysfunction-and-whole-person',
-      narration: 'Put the infection and the failing organs in the same view before anything else. Thirty-eight hours after a cesarean birth that followed a day of ruptured membranes: 39.1°C, a heart rate of 132, a pressure of 88/52, breathing at 28, a tender uterus and malodorous lochia — and, separately, slowed responses, falling urine output, a creatinine that has doubled to 1.4, and a lactate of 4.2. The infection is the easy half. The organ dysfunction is the half that says how little time there is.' };
+      narration: narrate(patient) };
   }
   if (patient.recognitionAtTick === null) {
     return { id: 'recognition', focus: 'actions', progress: 0.26, action: 'recognize-obstetrics-maternal-sepsis-emergency-without-fever-score-source-or-single-value-closure',
-      narration: 'Call it a maternal-sepsis emergency now, and do not wait for a score or a source. Suspected infection plus organ dysfunction nothing else explains is the whole definition; a screening score exists to compare populations rather than to permit treatment, and the source is frequently not identified until later or at all. Naming it also closes nothing — pulmonary embolism, concealed hemorrhage, a hypertensive disorder and a medication effect can all present like this and stay open behind the name.' };
+      narration: narrate(patient) };
   }
   if (patient.supportAtTick === null) {
     return { id: 'support', focus: 'actions', progress: 0.46, action: 'activate-obstetrics-sepsis-obstetric-critical-care-anesthesia-nursing-pharmacy-microbiology-source-newborn-and-dignity-ownership',
@@ -48,7 +60,7 @@ export function maternalSepsisDemonstrationStep(
   }
   if (patient.evidenceAtTick === null) {
     return { id: 'evidence', focus: 'monitor', progress: 0.64, action: 'review-obstetrics-sepsis-supplied-infectious-noninfectious-culture-lactate-perfusion-and-source-boundary',
-      narration: 'Read the supplied evidence as a boundary rather than an answer. The temperature, the white count, the tender uterus and the lochia point at an obstetric source; the creatinine and the lactate say organs are involved. None of that identifies the source, and none of it excludes the noninfectious causes. Cultures are drawn without delaying anything, and no single value here is a decision.' };
+      narration: narrate(patient) };
   }
   if (patient.reassessmentAtTick === null) {
     return { id: 'reassess', focus: 'monitor', progress: 0.82, action: 'record-obstetrics-sepsis-bounded-qualified-immediate-care-source-control-intent-and-strict-later-review',

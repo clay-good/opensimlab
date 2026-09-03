@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsMeningitis, type MeningitisAction, type MeningitisProgress,
 } from '../acute-bacterial-meningitis-first-hour';
+import { meningitisInlinePrompt } from '../tutor/acute-bacterial-meningitis-first-hour-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: MeningitisProgress): string {
+  const prompt = meningitisInlinePrompt('guided', { scenarioVersion: '0.1.0', meningitis: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const MENINGITIS_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -39,7 +51,7 @@ export function meningitisDemonstrationStep(
   }
   if (patient.trajectoryAtTick === null) {
     return { id: 'trajectory', focus: 'monitor', progress: 0.08, action: 'reconcile-neurology-meningitis-clock-meningeal-infection-neurologic-and-whole-patient',
-      narration: 'Say how fast this arrived, and say what she still has intact. Fourteen hours of worsening headache and fever, then six hours of photophobia, repeated vomiting and painful neck movement, at 39.3°C with a heart rate of 118. And she is GCS 15, oriented in four domains, with clear speech, equal reactive pupils, a symmetric examination and no rash. Both halves matter: the first says how little time there is, and the second is what makes the next few minutes simple rather than complicated.' };
+      narration: narrate(patient) };
   }
   if (patient.ownershipAtTick === null) {
     return { id: 'ownership', focus: 'actions', progress: 0.26, action: 'activate-neurology-meningitis-qualified-time-critical-infection-neurologic-resuscitation-and-precaution-ownership',
@@ -47,7 +59,7 @@ export function meningitisDemonstrationStep(
   }
   if (patient.diagnosticsAtTick === null) {
     return { id: 'diagnostics', focus: 'monitor', progress: 0.46, action: 'review-neurology-meningitis-lp-safety-no-routine-imaging-and-parallel-diagnostic-boundary',
-      narration: 'Check the list that would justify a scan, and notice she is not on it. Routine pre-puncture imaging is for altered consciousness, focal deficit, abnormal pupils, posturing, uncontrolled seizure, bleeding risk, extensive purpura, severe immunocompromise or rapid decline — and this supplied state has none of them, which is what supports a prompt qualified lumbar puncture here. That is a judgement about this minute rather than a permanent clearance, and continuous reassessment can reopen it. Meanwhile no blood marker settles the question: the leukocytes, the CRP and the procalcitonin are consistent with bacterial meningitis and exclude nothing.' };
+      narration: narrate(patient) };
   }
   if (patient.treatmentAtTick === null) {
     return { id: 'treatment', focus: 'actions', progress: 0.64, action: 'activate-neurology-meningitis-qualified-early-empiric-antimicrobial-and-adjunct-pathway-without-diagnostic-delay',

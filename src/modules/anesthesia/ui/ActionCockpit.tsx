@@ -252,6 +252,7 @@ import { opioidToxicityInlinePrompt } from '../../emergency-medicine/tutor/opioi
 import { pulmonaryEmbolismInlinePrompt } from '../../emergency-medicine/tutor/pulmonary-embolism-deterioration-guidance';
 import { severeHyponatremiaInlinePrompt } from '../../emergency-medicine/tutor/severe-hyponatremia-with-seizure-guidance';
 import { stemiInlinePrompt } from '../../emergency-medicine/tutor/stemi-guidance';
+import { traumaPrimarySurveyInlinePrompt } from '../../emergency-medicine/tutor/trauma-primary-survey-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3073,6 +3074,7 @@ export interface ActionCockpitProps {
   readonly pulmonaryEmbolismGuidance?: GuidanceLevel;
   readonly severeHyponatremiaGuidance?: GuidanceLevel;
   readonly emergencyStemiGuidance?: GuidanceLevel;
+  readonly traumaPrimarySurveyGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3274,6 +3276,7 @@ export interface ActionCockpitProps {
   readonly pulmonaryEmbolismDemonstrating?: boolean;
   readonly severeHyponatremiaDemonstrating?: boolean;
   readonly emergencyStemiDemonstrating?: boolean;
+  readonly traumaPrimarySurveyDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5665,7 +5668,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 onAction={props.onHeatStrokeResponse ?? (() => {})} />
             )}
             {hasTraumaPrimarySurveyResponse && (
-              <TraumaPrimarySurveyTray assessment={props.resuscitation.traumaPrimarySurveyAssessment}
+              <TraumaPrimarySurveyTray
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.traumaPrimarySurveyGuidance}
+                demonstrating={props.traumaPrimarySurveyDemonstrating} assessment={props.resuscitation.traumaPrimarySurveyAssessment}
                 onAction={props.onTraumaPrimarySurveyResponse ?? (() => {})} />
             )}
             {hasAcuteAorticSyndromeResponse && (
@@ -9411,8 +9417,11 @@ function HeatStrokeTray({ assessment, scenarioVersion, guidance = 'unassisted', 
   );
 }
 
-function TraumaPrimarySurveyTray({ assessment, onAction }: {
+function TraumaPrimarySurveyTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['traumaPrimarySurveyAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onTraumaPrimarySurveyResponse']>;
 }) {
   const activated = assessment?.activatedAtTick != null;
@@ -9421,8 +9430,18 @@ function TraumaPrimarySurveyTray({ assessment, onAction }: {
   const circulation = assessment?.circulationAtTick != null;
   const disabilityExposure = assessment?.disabilityExposureAtTick != null;
   const repeated = assessment?.repeatedAtTick != null;
+  const prompt = demonstrating ? null
+    : traumaPrimarySurveyInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="trauma-sweep-title">
         <div id="trauma-sweep-title" className="syringe__name">Stop the leak. Keep the sweep moving.</div>
         <Badge kind="teaching">&lt;C&gt; · A · B</Badge>
@@ -9435,11 +9454,11 @@ function TraumaPrimarySurveyTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={activated}
-            onClick={() => onAction('activate-trauma-primary-survey')}>Receive handoff + activate + declare sweep</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('activate-trauma-primary-survey') : undefined}>Receive handoff + activate + declare sweep</Button>
           <Button className="crisis-drug__action" disabled={!activated || hemorrhage}
-            onClick={() => onAction('control-trauma-catastrophic-hemorrhage')}>Control limb bleed + record time</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('control-trauma-catastrophic-hemorrhage') : undefined}>Control limb bleed + record time</Button>
           <Button className="crisis-drug__action" disabled={!hemorrhage || airwayBreathing}
-            onClick={() => onAction('review-trauma-airway-and-breathing')}>Review airway + spine + breathing</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-trauma-airway-and-breathing') : undefined}>Review airway + spine + breathing</Button>
         </div>
         <p className="field__hint">Catastrophic hemorrhage comes first. A currently patent airway and bilateral breathing are findings to recheck, not permission to skip A or B.</p>
       </section>
@@ -9455,14 +9474,15 @@ function TraumaPrimarySurveyTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!airwayBreathing || circulation}
-            onClick={() => onAction('record-trauma-circulation-response')}>Pelvis + blood + TXA + control</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-trauma-circulation-response') : undefined}>Pelvis + blood + TXA + control</Button>
           <Button className="crisis-drug__action" disabled={!circulation || disabilityExposure}
-            onClick={() => onAction('review-trauma-disability-and-exposure')}>Review brain + glucose + back + warmth</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-trauma-disability-and-exposure') : undefined}>Review brain + glucose + back + warmth</Button>
           <Button className="crisis-drug__action" disabled={!disabilityExposure || repeated}
-            onClick={() => onAction('repeat-trauma-primary-survey')}>Repeat sweep + hand off change</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('repeat-trauma-primary-survey') : undefined}>Repeat sweep + hand off change</Button>
         </div>
         <p className="field__hint">Use only imaging that directs intervention in persistent instability. A negative FAST would not exclude bleeding; the authored positive statement does not replace definitive control.</p>
       </section>
+      </div>
     </div>
   );
 }

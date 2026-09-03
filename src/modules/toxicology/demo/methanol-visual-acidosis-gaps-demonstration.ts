@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsMethanol, type MethanolAction, type MethanolProgress,
 } from '../methanol-visual-acidosis-gaps';
+import { methanolInlinePrompt } from '../tutor/methanol-visual-acidosis-gaps-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: MethanolProgress): string {
+  const prompt = methanolInlinePrompt('guided', { scenarioVersion: '0.1.0', methanol: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const METHANOL_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -44,11 +56,11 @@ export function methanolDemonstrationStep(
   }
   if (patient.recognitionAtTick === null) {
     return { id: 'recognize', focus: 'actions', progress: 0.24, action: 'recognize-toxicology-methanol-coupled-pattern-without-source-vision-anion-osmolar-or-level-only-closure',
-      narration: 'Read the two gaps as a pair on a clock, and refuse the five ways this gets closed early. Neither the source report, the vision, the anion gap, the osmolar gap nor a concentration diagnoses or grades him alone. The pair is the useful part: the osmolar gap is the parent alcohol and shrinks as it is metabolized, while the anion gap is what it becomes and grows — so both being wide at fourteen hours is worth saying out loud, and a narrow osmolar gap later would exclude nothing. Ketoacidosis, uremia, lactic acidosis, salicylate, ethylene glycol, isopropanol and coingestion all stay open.' };
+      narration: narrate(patient) };
   }
   if (patient.supportAtTick === null) {
     return { id: 'support', focus: 'actions', progress: 0.4, action: 'activate-toxicology-methanol-resuscitation-airway-antidote-extracorporeal-toxicology-laboratory-and-vision-ownership',
-      narration: 'Find the antidote, extracorporeal, airway and ophthalmic owners now rather than after a number. Blocking further metabolism and removing what has already been made are two different jobs with two different owners, and only one of them is quick to arrange. Waiting on a concentration before calling anyone spends the interval in which the acid is still being produced. Emergency, critical care, nursing, pharmacy, the poison center, the laboratory, nephrology and ophthalmology start together.' };
+      narration: narrate(patient) };
   }
   if (patient.evidenceAtTick === null) {
     return { id: 'evidence', focus: 'monitor', progress: 0.56, action: 'review-toxicology-methanol-supplied-acid-base-osmolar-electrolyte-renal-visual-coingestion-and-differential-boundary',

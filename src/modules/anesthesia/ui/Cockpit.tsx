@@ -377,6 +377,8 @@ import { useSevereHyponatremiaDemonstration } from '../../emergency-medicine/dem
 import { supportsSevereHyponatremiaDemonstration } from '../../emergency-medicine/demo/severe-hyponatremia-with-seizure-demonstration';
 import { useStemiDemonstration } from '../../emergency-medicine/demo/useStemiDemonstration';
 import { supportsStemiDemonstration } from '../../emergency-medicine/demo/stemi-demonstration';
+import { useTraumaPrimarySurveyDemonstration } from '../../emergency-medicine/demo/useTraumaPrimarySurveyDemonstration';
+import { supportsTraumaPrimarySurveyDemonstration } from '../../emergency-medicine/demo/trauma-primary-survey-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -717,6 +719,7 @@ export function Cockpit({
   const pulmonaryEmbolismDemoSupported = supportsPulmonaryEmbolismDemonstration(scenario);
   const severeHyponatremiaDemoSupported = supportsSevereHyponatremiaDemonstration(scenario);
   const emergencyStemiDemoSupported = supportsStemiDemonstration(scenario);
+  const traumaPrimarySurveyDemoSupported = supportsTraumaPrimarySurveyDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -885,6 +888,7 @@ export function Cockpit({
     || pulmonaryEmbolismDemoSupported
     || severeHyponatremiaDemoSupported
     || emergencyStemiDemoSupported
+    || traumaPrimarySurveyDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1270,6 +1274,12 @@ export function Cockpit({
     active: demonstrating && acutePulmonaryEdemaDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.acutePulmonaryEdemaAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const traumaPrimarySurveyDemonstration = useTraumaPrimarySurveyDemonstration({
+    active: demonstrating && traumaPrimarySurveyDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.traumaPrimarySurveyAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const emergencyStemiDemonstration = useStemiDemonstration({
@@ -2102,6 +2112,7 @@ export function Cockpit({
     : pulmonaryEmbolismDemoSupported ? pulmonaryEmbolismDemonstration
     : severeHyponatremiaDemoSupported ? severeHyponatremiaDemonstration
     : emergencyStemiDemoSupported ? emergencyStemiDemonstration
+    : traumaPrimarySurveyDemoSupported ? traumaPrimarySurveyDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -3147,6 +3158,8 @@ export function Cockpit({
           severeHyponatremiaDemonstrating={demonstrating && severeHyponatremiaDemoSupported}
           emergencyStemiGuidance={session.guidance}
           emergencyStemiDemonstrating={demonstrating && emergencyStemiDemoSupported}
+          traumaPrimarySurveyGuidance={session.guidance}
+          traumaPrimarySurveyDemonstrating={demonstrating && traumaPrimarySurveyDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

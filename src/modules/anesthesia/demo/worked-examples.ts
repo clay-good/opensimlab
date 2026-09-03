@@ -190,6 +190,7 @@ import { supportsOpioidToxicityDemonstration } from '../../emergency-medicine/de
 import { supportsPulmonaryEmbolismDemonstration } from '../../emergency-medicine/demo/pulmonary-embolism-deterioration-demonstration';
 import { supportsSevereHyponatremiaDemonstration } from '../../emergency-medicine/demo/severe-hyponatremia-with-seizure-demonstration';
 import { supportsStemiDemonstration } from '../../emergency-medicine/demo/stemi-demonstration';
+import { supportsTraumaPrimarySurveyDemonstration } from '../../emergency-medicine/demo/trauma-primary-survey-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -423,6 +424,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsPulmonaryEmbolismDemonstration,
     supportsSevereHyponatremiaDemonstration,
     supportsStemiDemonstration,
+    supportsTraumaPrimarySurveyDemonstration,
   ],
 };
 

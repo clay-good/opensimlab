@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsRaisedIcp, type RaisedIcpAction, type RaisedIcpProgress,
 } from '../raised-intracranial-pressure-visual-threat';
+import { raisedIcpInlinePrompt } from '../tutor/raised-intracranial-pressure-visual-threat-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: RaisedIcpProgress): string {
+  const prompt = raisedIcpInlinePrompt('guided', { scenarioVersion: '0.1.0', raisedIcp: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const RAISED_ICP_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -40,15 +52,15 @@ export function raisedIcpDemonstrationStep(
   }
   if (patient.trajectoryAtTick === null) {
     return { id: 'trajectory', focus: 'monitor', progress: 0.08, action: 'reconcile-neurology-raised-icp-headache-visual-tinnitus-diplopia-and-whole-patient',
-      narration: 'Read the headache as the background and the three-day-old diplopia as the change. Five weeks of daily pressure headache, worse on waking and with coughing, with pulse-synchronous tinnitus and seconds-long greying of vision on standing — and horizontal diplopia that started three days ago. The abduction deficit is a sixth-nerve palsy, which in raised pressure is a false localizing sign rather than a lesion in the nerve: it tells you the pressure is high, not where anything is.' };
+      narration: narrate(patient) };
   }
   if (patient.ownershipAtTick === null) {
     return { id: 'ownership', focus: 'actions', progress: 0.26, action: 'activate-neurology-raised-icp-qualified-neurology-neuro-ophthalmology-imaging-and-procedure-ownership',
-      narration: 'Get neurology, neuro-ophthalmology, imaging and procedure ownership involved together. Neuro-ophthalmology is not a follow-up appointment in this presentation — it holds the measurement that decides urgency, and imaging and the procedure team are needed on the same timeline because what they find determines whether this is idiopathic at all. Assembling them together is what lets the next two reviews happen in hours rather than in clinic.' };
+      narration: narrate(patient) };
   }
   if (patient.eyesAtTick === null) {
     return { id: 'eyes', focus: 'monitor', progress: 0.46, action: 'review-neurology-raised-icp-confirmed-papilledema-visual-function-and-pseudopapilledema-boundary',
-      narration: 'Look at the fields, and do not be reassured by the acuity. The specialist has confirmed true bilateral papilledema rather than pseudopapilledema, using stereoscopic examination, fundus photography and OCT — that distinction is the whole basis for everything that follows. And she reads 20/20 in each eye with full colour plates and no afferent defect, while reliable perimetry already shows enlarged blind spots with early inferior-nasal depression. In this disease acuity is the last thing to go, so the field is the clock and the letters on the chart are not.' };
+      narration: narrate(patient) };
   }
   if (patient.diagnosticsAtTick === null) {
     return { id: 'diagnostics', focus: 'monitor', progress: 0.64, action: 'review-neurology-raised-icp-mri-venography-lp-secondary-cause-and-diagnostic-boundary',
