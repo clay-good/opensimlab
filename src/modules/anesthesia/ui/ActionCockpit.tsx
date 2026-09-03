@@ -239,6 +239,7 @@ import { pulseOximeterArtifactInlinePrompt } from '../../critical-care/tutor/pul
 import { ardsLungProtectiveInlinePrompt } from '../../critical-care/tutor/ards-lung-protective-guidance';
 import { acuteAorticSyndromeInlinePrompt } from '../../emergency-medicine/tutor/acute-aortic-syndrome-guidance';
 import { acuteIschemicStrokeInlinePrompt } from '../../emergency-medicine/tutor/acute-ischemic-stroke-guidance';
+import { acutePulmonaryEdemaInlinePrompt } from '../../emergency-medicine/tutor/acute-pulmonary-edema-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3047,6 +3048,7 @@ export interface ActionCockpitProps {
   readonly ardsLungProtectiveGuidance?: GuidanceLevel;
   readonly acuteAorticSyndromeGuidance?: GuidanceLevel;
   readonly acuteIschemicStrokeGuidance?: GuidanceLevel;
+  readonly acutePulmonaryEdemaGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3235,6 +3237,7 @@ export interface ActionCockpitProps {
   readonly ardsLungProtectiveDemonstrating?: boolean;
   readonly acuteAorticSyndromeDemonstrating?: boolean;
   readonly acuteIschemicStrokeDemonstrating?: boolean;
+  readonly acutePulmonaryEdemaDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5524,6 +5527,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasAcutePulmonaryEdemaResponse && (
               <AcutePulmonaryEdemaTray
                 assessment={props.resuscitation.acutePulmonaryEdemaAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.acutePulmonaryEdemaGuidance}
+                demonstrating={props.acutePulmonaryEdemaDemonstrating}
                 onAction={props.onAcutePulmonaryEdemaResponse ?? (() => {})}
               />
             )}
@@ -8404,8 +8410,11 @@ function CopdExacerbationTray({ assessment, onAction }: {
   );
 }
 
-function AcutePulmonaryEdemaTray({ assessment, onAction }: {
+function AcutePulmonaryEdemaTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['acutePulmonaryEdemaAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onAcutePulmonaryEdemaResponse']>;
 }) {
   const reviewed = assessment?.patternReviewedAtTick != null;
@@ -8413,8 +8422,18 @@ function AcutePulmonaryEdemaTray({ assessment, onAction }: {
   const diuretic = assessment?.diureticIntentAtTick != null;
   const vasodilator = assessment?.vasodilatorIntentAtTick != null;
   const reassessed = assessment?.reassessedAtTick != null;
+  const prompt = demonstrating ? null
+    : acutePulmonaryEdemaInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="pulmonary-edema-pattern-title">
         <div id="pulmonary-edema-pattern-title" className="syringe__name">See lungs, pressure, and perfusion together</div>
         <Badge kind="teaching">Fixed ED vignette</Badge>
@@ -8426,11 +8445,11 @@ function AcutePulmonaryEdemaTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={reviewed}
-            onClick={() => onAction('review-pattern-mimics-and-precipitants')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-pattern-mimics-and-precipitants') : undefined}>
             Review pattern + mimics + precipitants
           </Button>
           <Button className="crisis-drug__action" disabled={!reviewed || niv}
-            onClick={() => onAction('record-niv-and-titrated-oxygen')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-niv-and-titrated-oxygen') : undefined}>
             Start NIV + titrated oxygen intent
           </Button>
         </div>
@@ -8446,21 +8465,22 @@ function AcutePulmonaryEdemaTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!reviewed || diuretic}
-            onClick={() => onAction('record-loop-diuretic-intent')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-loop-diuretic-intent') : undefined}>
             Record IV loop-diuretic intent
           </Button>
           <Button className="crisis-drug__action" disabled={!reviewed || vasodilator}
-            onClick={() => onAction('record-vasodilator-intent')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-vasodilator-intent') : undefined}>
             Record IV vasodilator intent · SBP &gt;110
           </Button>
           <Button className="crisis-drug__action"
             disabled={!niv || !diuretic || !vasodilator || reassessed}
-            onClick={() => onAction('reassess-breathing-pressure-and-perfusion')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-breathing-pressure-and-perfusion') : undefined}>
             Reassess breathing + BP + perfusion
           </Button>
         </div>
         <p className="field__hint">No NIV technique, drug dose or titration, urine output, precipitant treatment, intubation, shock pathway, disposition, or outcome is offered.</p>
       </section>
+      </div>
     </div>
   );
 }
