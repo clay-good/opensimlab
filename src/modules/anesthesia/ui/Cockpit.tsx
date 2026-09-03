@@ -355,6 +355,8 @@ import { useAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/de
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
 import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAdultAsthmaDemonstration';
 import { supportsAdultAsthmaDemonstration } from '../../emergency-medicine/demo/adult-asthma-demonstration';
+import { useEmergencyAnaphylaxisDemonstration } from '../../emergency-medicine/demo/useEmergencyAnaphylaxisDemonstration';
+import { supportsEmergencyAnaphylaxisDemonstration } from '../../emergency-medicine/demo/emergency-anaphylaxis-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -684,6 +686,7 @@ export function Cockpit({
   const acuteIschemicStrokeDemoSupported = supportsAcuteIschemicStrokeDemonstration(scenario);
   const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
   const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
+  const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -841,6 +844,7 @@ export function Cockpit({
     || acuteIschemicStrokeDemoSupported
     || acutePulmonaryEdemaDemoSupported
     || adultAsthmaDemoSupported
+    || emergencyAnaphylaxisDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1226,6 +1230,12 @@ export function Cockpit({
     active: demonstrating && acutePulmonaryEdemaDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.acutePulmonaryEdemaAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const emergencyAnaphylaxisDemonstration = useEmergencyAnaphylaxisDemonstration({
+    active: demonstrating && emergencyAnaphylaxisDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.emergencyAnaphylaxisAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const adultAsthmaDemonstration = useAdultAsthmaDemonstration({
@@ -1981,6 +1991,7 @@ export function Cockpit({
     : acuteIschemicStrokeDemoSupported ? acuteIschemicStrokeDemonstration
     : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
     : adultAsthmaDemoSupported ? adultAsthmaDemonstration
+    : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -3004,6 +3015,8 @@ export function Cockpit({
           acutePulmonaryEdemaDemonstrating={demonstrating && acutePulmonaryEdemaDemoSupported}
           adultAsthmaGuidance={session.guidance}
           adultAsthmaDemonstrating={demonstrating && adultAsthmaDemoSupported}
+          emergencyAnaphylaxisGuidance={session.guidance}
+          emergencyAnaphylaxisDemonstrating={demonstrating && emergencyAnaphylaxisDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

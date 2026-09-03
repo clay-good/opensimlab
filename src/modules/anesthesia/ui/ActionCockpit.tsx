@@ -241,6 +241,7 @@ import { acuteAorticSyndromeInlinePrompt } from '../../emergency-medicine/tutor/
 import { acuteIschemicStrokeInlinePrompt } from '../../emergency-medicine/tutor/acute-ischemic-stroke-guidance';
 import { acutePulmonaryEdemaInlinePrompt } from '../../emergency-medicine/tutor/acute-pulmonary-edema-guidance';
 import { adultAsthmaInlinePrompt } from '../../emergency-medicine/tutor/adult-asthma-guidance';
+import { emergencyAnaphylaxisInlinePrompt } from '../../emergency-medicine/tutor/emergency-anaphylaxis-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3051,6 +3052,7 @@ export interface ActionCockpitProps {
   readonly acuteIschemicStrokeGuidance?: GuidanceLevel;
   readonly acutePulmonaryEdemaGuidance?: GuidanceLevel;
   readonly adultAsthmaGuidance?: GuidanceLevel;
+  readonly emergencyAnaphylaxisGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3241,6 +3243,7 @@ export interface ActionCockpitProps {
   readonly acuteIschemicStrokeDemonstrating?: boolean;
   readonly acutePulmonaryEdemaDemonstrating?: boolean;
   readonly adultAsthmaDemonstrating?: boolean;
+  readonly emergencyAnaphylaxisDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5512,6 +5515,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasEmergencyAnaphylaxisResponse && (
               <EmergencyAnaphylaxisTray
                 assessment={props.resuscitation.emergencyAnaphylaxisAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.emergencyAnaphylaxisGuidance}
+                demonstrating={props.emergencyAnaphylaxisDemonstrating}
                 onAction={props.onEmergencyAnaphylaxisResponse ?? (() => {})}
               />
             )}
@@ -8221,8 +8227,11 @@ function CardiacTamponadeTray({ fraction, assessment, onAction }: {
   );
 }
 
-function EmergencyAnaphylaxisTray({ assessment, onAction }: {
+function EmergencyAnaphylaxisTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['emergencyAnaphylaxisAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onEmergencyAnaphylaxisResponse']>;
 }) {
   const reviewed = assessment?.patternReviewedAtTick != null;
@@ -8231,8 +8240,18 @@ function EmergencyAnaphylaxisTray({ assessment, onAction }: {
   const oxygen = assessment?.oxygenAtTick != null;
   const fluid = assessment?.crystalloidAtTick != null;
   const reassessed = assessment?.reassessedAtTick != null;
+  const prompt = demonstrating ? null
+    : emergencyAnaphylaxisInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="ed-anaphylaxis-recognition-title">
         <div id="ed-anaphylaxis-recognition-title" className="syringe__name">Recognize and lead</div>
         <Badge kind="teaching">Fixed community vignette</Badge>
@@ -8245,15 +8264,15 @@ function EmergencyAnaphylaxisTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={reviewed}
-            onClick={() => onAction('review-systemic-pattern')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-systemic-pattern') : undefined}>
             Review systemic pattern
           </Button>
           <Button className="crisis-drug__action" disabled={!reviewed || positioned}
-            onClick={() => onAction('position-and-call-for-help')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('position-and-call-for-help') : undefined}>
             Position + call for help
           </Button>
           <Button className="crisis-drug__action" disabled={!positioned || epinephrine}
-            onClick={() => onAction('give-im-epinephrine')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('give-im-epinephrine') : undefined}>
             Give 500 µg epinephrine IM
           </Button>
         </div>
@@ -8270,20 +8289,21 @@ function EmergencyAnaphylaxisTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!epinephrine || oxygen}
-            onClick={() => onAction('give-high-flow-oxygen')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('give-high-flow-oxygen') : undefined}>
             Record high-flow oxygen
           </Button>
           <Button className="crisis-drug__action" disabled={!epinephrine || fluid}
-            onClick={() => onAction('begin-fixed-crystalloid')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('begin-fixed-crystalloid') : undefined}>
             Begin fixed 1,500 mL crystalloid
           </Button>
           <Button className="crisis-drug__action" disabled={!oxygen || !fluid || reassessed}
-            onClick={() => onAction('reassess-response')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-response') : undefined}>
             Reassess airway + perfusion
           </Button>
         </div>
         <p className="field__hint">No repeat-dose clock, refractory infusion, bronchodilator, antihistamine, steroid, airway procedure, observation, discharge, referral, or outcome is offered.</p>
       </section>
+      </div>
     </div>
   );
 }
