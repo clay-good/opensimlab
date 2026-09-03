@@ -243,6 +243,7 @@ import { acutePulmonaryEdemaInlinePrompt } from '../../emergency-medicine/tutor/
 import { adultAsthmaInlinePrompt } from '../../emergency-medicine/tutor/adult-asthma-guidance';
 import { emergencyAnaphylaxisInlinePrompt } from '../../emergency-medicine/tutor/emergency-anaphylaxis-guidance';
 import { cardiacTamponadeInlinePrompt } from '../../emergency-medicine/tutor/cardiac-tamponade-guidance';
+import { copdExacerbationInlinePrompt } from '../../emergency-medicine/tutor/copd-exacerbation-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3055,6 +3056,7 @@ export interface ActionCockpitProps {
   readonly adultAsthmaGuidance?: GuidanceLevel;
   readonly emergencyAnaphylaxisGuidance?: GuidanceLevel;
   readonly cardiacTamponadeGuidance?: GuidanceLevel;
+  readonly copdExacerbationGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3247,6 +3249,7 @@ export interface ActionCockpitProps {
   readonly adultAsthmaDemonstrating?: boolean;
   readonly emergencyAnaphylaxisDemonstrating?: boolean;
   readonly cardiacTamponadeDemonstrating?: boolean;
+  readonly copdExacerbationDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5539,6 +5542,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasCopdExacerbationResponse && (
               <CopdExacerbationTray
                 assessment={props.resuscitation.copdExacerbationAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.copdExacerbationGuidance}
+                demonstrating={props.copdExacerbationDemonstrating}
                 onAction={props.onCopdExacerbationResponse ?? (() => {})}
               />
             )}
@@ -8403,8 +8409,11 @@ function AdultAsthmaTray({ assessment, scenarioVersion, guidance = 'unassisted',
   );
 }
 
-function CopdExacerbationTray({ assessment, onAction }: {
+function CopdExacerbationTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['copdExacerbationAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onCopdExacerbationResponse']>;
 }) {
   const reviewed = assessment?.severityReviewedAtTick != null;
@@ -8413,8 +8422,18 @@ function CopdExacerbationTray({ assessment, onAction }: {
   const corticosteroid = assessment?.corticosteroidIntentAtTick != null;
   const antibiotic = assessment?.antibioticIntentAtTick != null;
   const reassessed = assessment?.reassessedAtTick != null;
+  const prompt = demonstrating ? null
+    : copdExacerbationInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="copd-assessment-title">
         <div id="copd-assessment-title" className="syringe__name">Read the whole respiratory story</div>
         <Badge kind="teaching">Fixed ED vignette</Badge>
@@ -8426,11 +8445,11 @@ function CopdExacerbationTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={reviewed}
-            onClick={() => onAction('review-severity-and-mimics')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-severity-and-mimics') : undefined}>
             Review severity + blood gas + mimics
           </Button>
           <Button className="crisis-drug__action" disabled={!reviewed || oxygen}
-            onClick={() => onAction('record-controlled-oxygen')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-controlled-oxygen') : undefined}>
             Target controlled oxygen · 88–92%
           </Button>
         </div>
@@ -8447,25 +8466,26 @@ function CopdExacerbationTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!reviewed || bronchodilators}
-            onClick={() => onAction('give-air-driven-bronchodilators')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('give-air-driven-bronchodilators') : undefined}>
             Give air-driven SABA + SAMA intent
           </Button>
           <Button className="crisis-drug__action" disabled={!reviewed || corticosteroid}
-            onClick={() => onAction('record-five-day-corticosteroid-intent')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-five-day-corticosteroid-intent') : undefined}>
             Record 5-day corticosteroid intent
           </Button>
           <Button className="crisis-drug__action" disabled={!reviewed || antibiotic}
-            onClick={() => onAction('record-antibiotic-indication')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-antibiotic-indication') : undefined}>
             Record antibiotic indication · purulence
           </Button>
           <Button className="crisis-drug__action"
             disabled={!oxygen || !bronchodilators || !corticosteroid || !antibiotic || reassessed}
-            onClick={() => onAction('reassess-and-review-ventilatory-support')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-and-review-ventilatory-support') : undefined}>
             Reassess blood gas + ventilatory need
           </Button>
         </div>
         <p className="field__hint">No device technique, individualized or repeat dose, toxicity, antibiotic selection, NIV setup, disposition, maintenance plan, or outcome is offered.</p>
       </section>
+      </div>
     </div>
   );
 }

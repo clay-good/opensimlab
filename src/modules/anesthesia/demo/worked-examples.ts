@@ -181,6 +181,7 @@ import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medici
 import { supportsAdultAsthmaDemonstration } from '../../emergency-medicine/demo/adult-asthma-demonstration';
 import { supportsEmergencyAnaphylaxisDemonstration } from '../../emergency-medicine/demo/emergency-anaphylaxis-demonstration';
 import { supportsCardiacTamponadeDemonstration } from '../../emergency-medicine/demo/cardiac-tamponade-demonstration';
+import { supportsCopdExacerbationDemonstration } from '../../emergency-medicine/demo/copd-exacerbation-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -405,6 +406,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsAdultAsthmaDemonstration,
     supportsEmergencyAnaphylaxisDemonstration,
     supportsCardiacTamponadeDemonstration,
+    supportsCopdExacerbationDemonstration,
   ],
 };
 
