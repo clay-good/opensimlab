@@ -321,6 +321,8 @@ import { useUnplannedExtubationDemonstration } from '../../critical-care/demo/us
 import { supportsUnplannedExtubationDemonstration } from '../../critical-care/demo/unplanned-extubation-demonstration';
 import { useCircuitDisconnectionDemonstration } from '../../critical-care/demo/useCircuitDisconnectionDemonstration';
 import { supportsCircuitDisconnectionDemonstration } from '../../critical-care/demo/circuit-disconnection-demonstration';
+import { usePostIntubationHypotensionDemonstration } from '../../critical-care/demo/usePostIntubationHypotensionDemonstration';
+import { supportsPostIntubationHypotensionDemonstration } from '../../critical-care/demo/post-intubation-hypotension-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -633,6 +635,7 @@ export function Cockpit({
   const escalatingHypoxemiaDemoSupported = supportsEscalatingHypoxemiaDemonstration(scenario);
   const unplannedExtubationDemoSupported = supportsUnplannedExtubationDemonstration(scenario);
   const circuitDisconnectionDemoSupported = supportsCircuitDisconnectionDemonstration(scenario);
+  const postIntubationHypotensionDemoSupported = supportsPostIntubationHypotensionDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -773,6 +776,7 @@ export function Cockpit({
     || escalatingHypoxemiaDemoSupported
     || unplannedExtubationDemoSupported
     || circuitDisconnectionDemoSupported
+    || postIntubationHypotensionDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1062,6 +1066,12 @@ export function Cockpit({
     active: demonstrating && circuitDisconnectionDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.ventilatorCircuitDisconnectionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const postIntubationHypotensionDemonstration = usePostIntubationHypotensionDemonstration({
+    active: demonstrating && postIntubationHypotensionDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.postIntubationHypotensionAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const stableNarrowTachycardiaDemonstration = useStableNarrowTachycardiaDemonstration({
@@ -1794,6 +1804,7 @@ export function Cockpit({
     : escalatingHypoxemiaDemoSupported ? escalatingHypoxemiaDemonstration
     : unplannedExtubationDemoSupported ? unplannedExtubationDemonstration
     : circuitDisconnectionDemoSupported ? circuitDisconnectionDemonstration
+    : postIntubationHypotensionDemoSupported ? postIntubationHypotensionDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2783,6 +2794,8 @@ export function Cockpit({
           unplannedExtubationDemonstrating={demonstrating && unplannedExtubationDemoSupported}
           ventilatorCircuitDisconnectionGuidance={session.guidance}
           ventilatorCircuitDisconnectionDemonstrating={demonstrating && circuitDisconnectionDemoSupported}
+          postIntubationHypotensionGuidance={session.guidance}
+          postIntubationHypotensionDemonstrating={demonstrating && postIntubationHypotensionDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

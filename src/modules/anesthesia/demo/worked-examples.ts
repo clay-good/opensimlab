@@ -162,6 +162,7 @@ import { supportsMucusPluggingDemonstration } from '../../critical-care/demo/muc
 import { supportsEscalatingHypoxemiaDemonstration } from '../../critical-care/demo/escalating-hypoxemia-demonstration';
 import { supportsUnplannedExtubationDemonstration } from '../../critical-care/demo/unplanned-extubation-demonstration';
 import { supportsCircuitDisconnectionDemonstration } from '../../critical-care/demo/circuit-disconnection-demonstration';
+import { supportsPostIntubationHypotensionDemonstration } from '../../critical-care/demo/post-intubation-hypotension-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -365,6 +366,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsEscalatingHypoxemiaDemonstration,
     supportsUnplannedExtubationDemonstration,
     supportsCircuitDisconnectionDemonstration,
+    supportsPostIntubationHypotensionDemonstration,
   ],
 };
 

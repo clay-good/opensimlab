@@ -929,23 +929,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "post-intubation-hypotension-fixtures.ts binds seed 7530 and content 0.1.0 to expert, story-that-fits error, recovery, and no-action paths. The two minutes since ICU intubation for pneumonia and septic shock, the invasive MAP falling from 68 to 46 mmHg with a pulsatile arterial waveform, the HR of 120/min in sinus with capillary refill 5 seconds and warm extremities, the SpO2 of 95% with a continuous exhaled-carbon-dioxide waveform and reported bilateral ventilation, the peak of 27 cm H2O against a plateau of 21 cm H2O with expiratory flow reaching zero, the absence of external bleeding, rash, wheeze or facial swelling, and the fixed passive-leg-raise proxy raising stroke volume from 48 to 57 mL with clear lungs are authored constants; no haemodynamic, fluid-kinetic or vasopressor model is claimed, and no outcome follows from any choice. tests/integration/post-intubation-hypotension-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is two narratives with no non-narrative state event. The progression lives in the engine's four order refusals, and the danger review sits between validating the pressure and classifying the mechanism because two items on that list kill in minutes: a tension pneumothorax and a displaced or oesophageal tube both present as hypotension two minutes after intubation, and both are excluded here by present evidence rather than by the plausibility of the septic-shock story the learner already holds. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions validate the severe hypotension, assess perfusion and call experienced ICU help; review the airway, ventilation, pressures, rhythm, bleeding, allergy, perfusion and timing so the immediate dangerous alternatives are actively checked; recognize a mixed vasodilated and preload-sensitive pattern from the fixed dynamic response while keeping pump and obstructive causes open; record concurrent vasopressor and cautious bounded balanced-crystalloid challenge intent with a MAP guardrail and immediate reassessment; and reassess pressure, perfusion, dynamic response, lungs, gas exchange and ongoing shock needs. The lesson examines nobody, acquires no pressure, performs no ultrasound or passive leg raise, delivers no fluid or drug, selects no dose, changes no ventilator or sedation setting, diagnoses nothing, treats no source, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -957,23 +957,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded reassessment on an authored response that improves without closing the underlying septic-shock work. Later actions cannot restart an ended branch, and the ending says why that distinction matters: peri-intubation hypotension is a complication of the treatment rather than the disease, so fixing it returns the learner to the pneumonia, the source control, the antimicrobials and the resuscitation none of which this lesson touched. The fluid challenge is bounded at 250 mL with a defined moment to look again, and the lesson states explicitly that this is not a universal fluid-versus-vasopressor answer."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step, because this lesson has no unordered lane. The reflex it works against is the explanation already in hand: he was intubated for septic shock, so sedation and positive pressure explain hypotension two minutes later, and that story is probably right — which is exactly why the danger beat exists, because a tension pneumothorax and a displaced tube fit the same facts and kill faster. That beat lists the evidence as present rather than assumed: a continuous capnography waveform, reported bilateral ventilation, a peak of 27 cm H2O against a plateau of 21 cm H2O with flow reaching zero. The pressure beat makes the pulsatile arterial waveform the thing that turns a reading into a pressure, since a damped line gives the same panic for nothing, and calls warm-and-underperfused a finding rather than a contradiction. The mechanism beat uses the leg-raise measurement rather than an impression and holds pump and obstructive causes open with a deliberate \"while\" — the same discipline as the mixed-shock lesson arriving from a different direction. The support beat declines the fluid-versus-vasopressor argument entirely: both, concurrently, with 250 mL and a defined moment to look again doing the bounding work. Worked example 0.1.0 drives the ordinary controls through the real engine to the reassessment and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere names a vasopressor dose, gives fluid, decompresses a chest, or claims the septic shock is treated. tests/unit/post-intubation-hypotension-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/critical-care-post-intubation-hypotension.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the one an explanation-in-hand invites: the common-error path validates the pressure and goes straight to classifying the mechanism on the strength of a story that fits, skipping the danger review that would have found a tension pneumothorax or a misplaced tube, and meets one of five because the engine gates the classification behind it. The recovery path reaches for the danger review before the pressure has been validated and is refused, reaches for support before the pattern has been classified and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -992,23 +992,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "post-intubation-hypotension-fixtures.ts binds exact-content expert, story-that-fits error, recovery, and no-action pathways to seed 7530 for deterministic replay through the shared engine, including all four order refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

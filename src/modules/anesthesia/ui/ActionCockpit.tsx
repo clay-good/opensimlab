@@ -224,6 +224,7 @@ import { mucusPluggingInlinePrompt } from '../../critical-care/tutor/mucus-plugg
 import { escalatingHypoxemiaInlinePrompt } from '../../critical-care/tutor/escalating-hypoxemia-guidance';
 import { unplannedExtubationInlinePrompt } from '../../critical-care/tutor/unplanned-extubation-guidance';
 import { circuitDisconnectionInlinePrompt } from '../../critical-care/tutor/circuit-disconnection-guidance';
+import { postIntubationHypotensionInlinePrompt } from '../../critical-care/tutor/post-intubation-hypotension-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3017,6 +3018,7 @@ export interface ActionCockpitProps {
   readonly escalatingHypoxemiaGuidance?: GuidanceLevel;
   readonly unplannedExtubationGuidance?: GuidanceLevel;
   readonly ventilatorCircuitDisconnectionGuidance?: GuidanceLevel;
+  readonly postIntubationHypotensionGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3190,6 +3192,7 @@ export interface ActionCockpitProps {
   readonly escalatingHypoxemiaDemonstrating?: boolean;
   readonly unplannedExtubationDemonstrating?: boolean;
   readonly ventilatorCircuitDisconnectionDemonstrating?: boolean;
+  readonly postIntubationHypotensionDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5596,6 +5599,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasPostIntubationHypotensionResponse && (
               <PostIntubationHypotensionTray
                 assessment={props.resuscitation.postIntubationHypotensionAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.postIntubationHypotensionGuidance}
+                demonstrating={props.postIntubationHypotensionDemonstrating}
                 onAction={props.onPostIntubationHypotensionResponse ?? (() => {})} />
             )}
             {hasCardiogenicShockResponse && (
@@ -9588,8 +9594,11 @@ function SpontaneousBreathingTrialTray({ assessment, onAction }: {
   );
 }
 
-function PostIntubationHypotensionTray({ assessment, onAction }: {
+function PostIntubationHypotensionTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['postIntubationHypotensionAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onPostIntubationHypotensionResponse']>;
 }) {
   const pressure = assessment?.pressureAtTick != null;
@@ -9597,8 +9606,18 @@ function PostIntubationHypotensionTray({ assessment, onAction }: {
   const mechanism = assessment?.mechanismAtTick != null;
   const support = assessment?.supportAtTick != null;
   const reassessed = assessment?.reassessmentAtTick != null;
+  const prompt = demonstrating ? null
+    : postIntubationHypotensionInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="post-intubation-prove-title">
         <div id="post-intubation-prove-title" className="syringe__name">First, prove the pressure.</div>
         <Badge kind="teaching">waveform · pulse · perfusion · trend</Badge>
@@ -9611,11 +9630,11 @@ function PostIntubationHypotensionTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={pressure}
-            onClick={() => onAction('validate-post-intubation-pressure-and-call-help')}>Validate pressure + call help</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('validate-post-intubation-pressure-and-call-help') : undefined}>Validate pressure + call help</Button>
           <Button className="crisis-drug__action" disabled={!pressure || danger}
-            onClick={() => onAction('review-post-intubation-danger-pattern')}>Check airway + lungs + rhythm + bleeding</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-post-intubation-danger-pattern') : undefined}>Check airway + lungs + rhythm + bleeding</Button>
           <Button className="crisis-drug__action" disabled={!danger || mechanism}
-            onClick={() => onAction('classify-post-intubation-hemodynamics')}>Review dynamic response + classify</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('classify-post-intubation-hemodynamics') : undefined}>Review dynamic response + classify</Button>
         </div>
         <p className="field__hint">Timing narrows the search; it does not name the cause. Keep preload, tone, pump, obstruction, bleeding, allergy, drugs, and equipment visible.</p>
       </section>
@@ -9630,12 +9649,13 @@ function PostIntubationHypotensionTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!mechanism || support}
-            onClick={() => onAction('record-post-intubation-support-intent')}>Record concurrent bounded support</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-post-intubation-support-intent') : undefined}>Record concurrent bounded support</Button>
           <Button className="crisis-drug__action" disabled={!support || reassessed}
-            onClick={() => onAction('reassess-post-intubation-hypotension')}>Review 5-minute whole-patient response</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-post-intubation-hypotension') : undefined}>Review 5-minute whole-patient response</Button>
         </div>
         <p className="field__hint">This is not a universal fluid-versus-vasopressor answer. Dynamic response and repeated lung, gas, pressure, and perfusion checks constrain both.</p>
       </section>
+      </div>
     </div>
   );
 }
