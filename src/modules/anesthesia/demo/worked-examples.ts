@@ -194,6 +194,7 @@ import { supportsTraumaPrimarySurveyDemonstration } from '../../emergency-medici
 import { supportsUnstableBradycardiaDemonstration } from '../../emergency-medicine/demo/unstable-bradycardia-demonstration';
 import { supportsUnstableNarrowTachycardiaDemonstration } from '../../emergency-medicine/demo/unstable-narrow-complex-tachycardia-demonstration';
 import { supportsObstructivePleuralShockDemonstration } from '../../emergency-medicine/demo/obstructive-shock-tension-pneumothorax-demonstration';
+import { supportsStatusEpilepticusDemonstration } from '../../emergency-medicine/demo/status-epilepticus-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -431,6 +432,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsUnstableBradycardiaDemonstration,
     supportsUnstableNarrowTachycardiaDemonstration,
     supportsObstructivePleuralShockDemonstration,
+    supportsStatusEpilepticusDemonstration,
   ],
 };
 

@@ -256,6 +256,7 @@ import { traumaPrimarySurveyInlinePrompt } from '../../emergency-medicine/tutor/
 import { unstableBradycardiaInlinePrompt } from '../../emergency-medicine/tutor/unstable-bradycardia-guidance';
 import { unstableNarrowTachycardiaInlinePrompt } from '../../emergency-medicine/tutor/unstable-narrow-complex-tachycardia-guidance';
 import { obstructivePleuralShockInlinePrompt } from '../../emergency-medicine/tutor/obstructive-shock-tension-pneumothorax-guidance';
+import { statusEpilepticusInlinePrompt } from '../../emergency-medicine/tutor/status-epilepticus-guidance';
 import { supportsObstructivePleuralShock, obstructivePleuralShockProgress } from '../../emergency-medicine/obstructive-shock-tension-pneumothorax';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
@@ -3082,6 +3083,7 @@ export interface ActionCockpitProps {
   readonly unstableBradycardiaGuidance?: GuidanceLevel;
   readonly emergencySvtGuidance?: GuidanceLevel;
   readonly obstructivePleuralShockGuidance?: GuidanceLevel;
+  readonly statusEpilepticusGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3287,6 +3289,7 @@ export interface ActionCockpitProps {
   readonly unstableBradycardiaDemonstrating?: boolean;
   readonly emergencySvtDemonstrating?: boolean;
   readonly obstructivePleuralShockDemonstrating?: boolean;
+  readonly statusEpilepticusDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5637,6 +5640,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasStatusEpilepticusResponse && (
               <StatusEpilepticusTray
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.statusEpilepticusGuidance}
+                demonstrating={props.statusEpilepticusDemonstrating}
                 assessment={props.resuscitation.statusEpilepticusAssessment}
                 seizureActivityFraction={props.resuscitation.seizureActivityFraction ?? 0}
                 onAction={props.onStatusEpilepticusResponse ?? (() => {})} />
@@ -8948,7 +8954,10 @@ function UnstableBradycardiaTray({ assessment, scenarioVersion, guidance = 'unas
   );
 }
 
-function StatusEpilepticusTray({ assessment, seizureActivityFraction, onAction }: {
+function StatusEpilepticusTray({ assessment, seizureActivityFraction, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['statusEpilepticusAssessment']>;
   seizureActivityFraction: number;
   onAction: NonNullable<ActionCockpitProps['onStatusEpilepticusResponse']>;
@@ -8957,8 +8966,18 @@ function StatusEpilepticusTray({ assessment, seizureActivityFraction, onAction }
   const supported = assessment?.supportedAtTick != null;
   const lorazepam = assessment?.lorazepamAtTick != null;
   const reassessed = assessment?.reassessedAtTick != null;
+  const prompt = demonstrating ? null
+    : statusEpilepticusInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="status-epilepticus-recognition-title">
         <div id="status-epilepticus-recognition-title" className="syringe__name">Five minutes changes the name</div>
         <Badge kind="teaching">Generalized convulsive status</Badge>
@@ -8970,11 +8989,11 @@ function StatusEpilepticusTray({ assessment, seizureActivityFraction, onAction }
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={reviewed}
-            onClick={() => onAction('review-convulsive-status')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-convulsive-status') : undefined}>
             Review seizure + clock
           </Button>
           <Button className="crisis-drug__action" disabled={!reviewed || supported}
-            onClick={() => onAction('record-status-stabilization')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-status-stabilization') : undefined}>
             Stabilize + check glucose
           </Button>
         </div>
@@ -8990,16 +9009,17 @@ function StatusEpilepticusTray({ assessment, seizureActivityFraction, onAction }
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!supported || lorazepam}
-            onClick={() => onAction('give-lorazepam-4-mg-iv')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('give-lorazepam-4-mg-iv') : undefined}>
             Give lorazepam 4 mg IV
           </Button>
           <Button className="crisis-drug__action" disabled={!lorazepam || reassessed}
-            onClick={() => onAction('reassess-after-lorazepam')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-after-lorazepam') : undefined}>
             Reassess seizure + airway
           </Button>
         </div>
         <p className="field__hint">Visible seizure signal: {seizureActivityFraction > 0 ? 'active' : 'stopped'}. Persistent or recurrent seizure needs prompt second-line therapy. No repeat dose, alternate route, second-line loading, EEG, airway procedure, cause, recurrence, disposition, or outcome is offered.</p>
       </section>
+      </div>
     </div>
   );
 }

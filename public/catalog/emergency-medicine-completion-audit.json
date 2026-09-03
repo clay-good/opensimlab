@@ -1937,23 +1937,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "status-epilepticus-fixtures.ts binds seed 5240 and content 0.1.0 to expert, drug-before-the-bundle error, recovery, and no-action paths. The generalised bilateral convulsive activity continuing six minutes twenty seconds without recovery, the airway patent between movements with spontaneous breathing, SpO2 92% on room air and a pulse present with the glucose not yet known; the point-of-care glucose of 118 mg/dL returned by the stabilisation bundle; the fixed 4 mg intravenous lorazepam action; and the post-treatment panel of stopped convulsions with spontaneous ventilation, a pulse and SpO2 96% with support are authored constants. No seizure, receptor, benzodiazepine or respiratory-depression model is claimed beyond the shared status-epilepticus event present on arrival, the cause is deliberately not diagnosed, and no outcome follows from any choice. tests/integration/emergency-status-epilepticus-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
           "status": "satisfied",
           "evidence": [
-            "The timeline contains at least one non-narrative state event."
+            "The progression lives in the engine's three refusals across four recorded steps in one strict chain: the seizure-type, duration, recovery, airway, breathing, circulation and glucose review is gated ahead of everything, the stabilisation bundle with its point-of-care glucose ahead of the medication action, and the reassessment one further engine tick behind the drug because the modelled convulsions stop on the next physiology update rather than on the click. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Four recorded decisions against four declared objectives: review the ongoing convulsions past the five-minute operational threshold together with airway, breathing, circulation and glucose status; record airway positioning, suction readiness, titrated oxygen, cardiorespiratory and blood-pressure monitoring, vascular access, help and a point-of-care glucose in parallel, with protection from injury and without restraint; accept the fixed 4 mg intravenous lorazepam action; and reassess after a further tick while retaining a clear second-line boundary. The lesson examines nobody, positions no airway, suctions nothing, draws no specimen, prepares and delivers no drug, chooses no dose or agent, records no EEG, performs no airway procedure, diagnoses no cause, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -1965,23 +1965,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded post-treatment reassessment: convulsions stopped, ventilation spontaneous, pulse present, saturation 96% with support, and airway and ventilation surveillance explicitly continuing. Later actions cannot restart an ended branch. The engine event names the boundary the lesson refuses to cross — persistent or recurrent seizure would require prompt second-line antiseizure therapy — and places EEG, causal evaluation, repeat or alternate medication, airway procedures, recurrence, disposition and outcome outside it, so the ending hands over a patient who has stopped fitting and is still being watched."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Four observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step. The reflex the lesson works against is under-dosing the clock rather than the drug: everyone knows the benzodiazepine, and what gets skipped in the thirty seconds before it is the glucose, the suction and the position. The recognition beat says why five minutes is an operational rather than a biological threshold — self-sustaining seizures grow harder to stop as the receptors the drug works on are internalised, so the useful question is how long this has already run. The stabilisation beat gives the gate its strongest single justification: hypoglycaemia is a cause of convulsive status that a benzodiazepine suppresses without correcting, producing a patient who stops fitting and stays hypoglycaemic, which is the worst kind of apparent success. It also notes that a benzodiazepine in a patient already at 92% will make the breathing worse before it makes the seizure better, and that holding a convulsing limb breaks it. The medication beat names the commonest benzodiazepine error as an underdose followed by a wait, which produces a seizure that continues and a patient who is now also sedated. The reassessment beat keeps surveillance running because the twenty minutes after a benzodiazepine is when people are found apnoeic, and holds the second-line boundary: a persistent seizure needs a different drug rather than a longer wait. Worked example 0.1.0 drives the ordinary controls through the real engine and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere gives the drug before the bundle, names a second dose of the same benzodiazepine as the answer to persistence, restrains the patient, or claims the seizure is cured. tests/unit/emergency-status-epilepticus-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/emergency-status-epilepticus.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding alongside the pre-existing tests/ui/status-epilepticus.test.tsx."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps the declared objectives to accepted engine events; the no-action path meets none and the expert path meets all four. The counterfactual is the one the word \"treatment\" invites: the common-error path reviews the convulsive pattern and records the lorazepam with nobody having positioned the airway, put suction to hand, or asked for a glucose. It is refused with the glucose named in the refusal, and the two objectives downstream stay unmet. The recovery path reaches for the stabilisation bundle before anyone established that this is status rather than a self-limiting fit and is refused, reaches for the reassessment on the same tick as the drug and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -2000,23 +2000,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "status-epilepticus-fixtures.ts binds exact-content expert, drug-before-the-bundle error, recovery, and no-action pathways to seed 5240 for deterministic replay through the shared engine, including both order refusals and the time-gated reassessment refusal."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
