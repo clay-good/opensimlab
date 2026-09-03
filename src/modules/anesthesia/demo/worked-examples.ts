@@ -171,6 +171,7 @@ import { supportsStatusEpilepticusDemonstration as supportsCriticalCareStatusEpi
 import { supportsTargetedTemperatureManagementDemonstration } from '../../critical-care/demo/targeted-temperature-management-demonstration';
 import { supportsUpperGiHemorrhageDemonstration } from '../../critical-care/demo/upper-gi-hemorrhage-demonstration';
 import { supportsAkiFluidOverloadDemonstration } from '../../critical-care/demo/aki-fluid-overload-demonstration';
+import { supportsTubeMigrationDemonstration } from '../../critical-care/demo/tube-migration-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -383,6 +384,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsTargetedTemperatureManagementDemonstration,
     supportsUpperGiHemorrhageDemonstration,
     supportsAkiFluidOverloadDemonstration,
+    supportsTubeMigrationDemonstration,
   ],
 };
 

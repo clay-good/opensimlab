@@ -2819,23 +2819,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "tube-migration-fixtures.ts binds seed 6193 and content 0.1.0 to expert, panel-before-the-oxygen error, recovery, and no-action paths. The sixty-one-year-old intubated woman turned in the ICU, with volume control still commanding 420 mL at 18/min on FiO2 0.50 against an exhaled 310 mL, peak pressure risen from 26 to 36 cm H2O with plateau 22, markedly reduced left ventilation with right ventilation persisting, continuous capnography at EtCO2 45 mmHg, SpO2 fallen from 97% to 89%, HR 104/min, MAP 75 mmHg, and a documented 22 cm pre-turn mark now reading 25 cm with intact securement and unchanged cuff, plus the authored 3-minute response at 22 cm with bilateral ventilation, exhaled volume 410 mL, peak 27 cm H2O, plateau 21, PEEP 8, EtCO2 39 mmHg, SpO2 96% on an unchanged FiO2 0.50, HR 94/min and MAP 77 mmHg, are authored constants; no airway, respiratory-mechanics or gas-exchange model is claimed, and no outcome follows from any choice. tests/integration/tube-migration-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is two narratives with no non-narrative state event. The progression lives in the engine's four order refusals, and the second step is why the chain reads unusually: support and experienced help are gated ahead of the position panel rather than after it, so a patient at 89% gets oxygen and hands before she gets a name. The correction is then gated behind the panel so the alternatives — mucus plugging, pneumothorax, atelectasis, consolidation, circuit and ventilator causes — are still open when the obvious answer is acted on. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions recognize the immediate post-turn fall in exhaled volume and oxygenation, rise in peak pressure and EtCO2, persistent capnogram and new unilateral ventilation without assigning a cause; record respiratory-therapy, senior-ICU and experienced-airway help with immediate oxygenation and ventilation support intent before classification; integrate the 22 cm pre-turn against 25 cm current mark, intact securement, unchanged cuff, reduced left with preserved right ventilation, exhaled volume 310 mL and peak 36 cm H2O as supporting right-mainstem migration while keeping every alternative open; record experienced-airway correction and resecurement intent with 22 cm stated as a case fact rather than a universal target; and reassess the authored response. The lesson examines and inspects nothing, touches or moves no tube, changes no ventilator setting, orders no image, delivers nothing, diagnoses nothing, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -2847,23 +2847,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded reassessment on an authored 3-minute response — tube mark 22 cm, typed tracheal position, bilateral ventilation, exhaled volume 410 mL, peak 27 cm H2O against plateau 21, PEEP 8, continuous EtCO2 39 mmHg, SpO2 96% on an unchanged FiO2 0.50, HR 94/min and MAP 77 mmHg. Later actions cannot restart an ended branch, and the ending is specific about which parts are evidence: the peak falling back toward the plateau and the exhaled volume returning to what was commanded say the resistance that appeared at the turn has gone, and the unchanged FiO2 means the oxygenation was not bought. Physical correction, imaging, durability, diagnosis and outcome stay outside the model."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step, because this lesson has no unordered lane. The reflex it works against is diagnosing before supporting, and the support beat says why it sits where it does: whatever this turns out to be, the first minute of a migrated tube, a mucus plug and a post-turn pneumothorax looks the same and is treated the same. The recognition beat reads the peak-to-plateau gap as a resistance problem rather than a stiff lung, and treats the persistent capnogram as taking oesophageal placement off the table immediately. The position beat explains why the depth change is persuasive rather than decisive: securement being intact means the tube moved relative to a carina that also moved, since flexing the neck advances the tip, and a mark is a proxy for a position. The correction beat states that 22 cm is this woman's documented pre-turn depth on her anatomy and not a number to carry to the next patient, because \"pull back to 22\" as a habit is how a tube ends up above the cords. The closing beat names which findings are actually proof. Worked example 0.1.0 drives the ordinary controls through the real engine to the reassessment and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere withdraws the tube, names a depth to set for any patient, changes a ventilator setting, orders an image, or claims the migration is confirmed. tests/unit/tube-migration-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/critical-care-tube-migration.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the one a recognisable picture invites: the common-error path recognises the change and goes straight to reading the position panel, skipping the help and oxygen a patient at 89% needs before she needs a name, and meets one of five because the engine gates it. The recovery path reaches for the support before the change has been recognised and is refused, reaches for the correction before the panel that keeps the alternatives open and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -2882,23 +2882,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "tube-migration-fixtures.ts binds exact-content expert, panel-before-the-oxygen error, recovery, and no-action pathways to seed 6193 for deterministic replay through the shared engine, including all four order refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

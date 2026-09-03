@@ -233,6 +233,7 @@ import { statusEpilepticusInlinePrompt as criticalCareStatusEpilepticusInlinePro
 import { targetedTemperatureManagementInlinePrompt } from '../../critical-care/tutor/targeted-temperature-management-guidance';
 import { upperGiHemorrhageInlinePrompt } from '../../critical-care/tutor/upper-gi-hemorrhage-guidance';
 import { akiFluidOverloadInlinePrompt } from '../../critical-care/tutor/aki-fluid-overload-guidance';
+import { tubeMigrationInlinePrompt } from '../../critical-care/tutor/tube-migration-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3035,6 +3036,7 @@ export interface ActionCockpitProps {
   readonly postArrestTemperatureGuidance?: GuidanceLevel;
   readonly upperGiHemorrhageGuidance?: GuidanceLevel;
   readonly akiFluidOverloadGuidance?: GuidanceLevel;
+  readonly endotrachealTubeMigrationGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3217,6 +3219,7 @@ export interface ActionCockpitProps {
   readonly postArrestTemperatureDemonstrating?: boolean;
   readonly upperGiHemorrhageDemonstrating?: boolean;
   readonly akiFluidOverloadDemonstrating?: boolean;
+  readonly endotrachealTubeMigrationDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5736,6 +5739,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasEndotrachealTubeMigrationResponse && (
               <EndotrachealTubeMigrationTray
                 assessment={props.resuscitation.endotrachealTubeMigrationAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.endotrachealTubeMigrationGuidance}
+                demonstrating={props.endotrachealTubeMigrationDemonstrating}
                 onAction={props.onEndotrachealTubeMigrationResponse ?? (() => {})} />
             )}
             {hasSepticShockResuscitationResponse && (
@@ -10617,8 +10623,11 @@ function PulseOximeterArtifactTray({ assessment, onAction }: {
   );
 }
 
-function EndotrachealTubeMigrationTray({ assessment, onAction }: {
+function EndotrachealTubeMigrationTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['endotrachealTubeMigrationAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onEndotrachealTubeMigrationResponse']>;
 }) {
   const recognized = assessment?.recognizedAtTick != null;
@@ -10626,8 +10635,18 @@ function EndotrachealTubeMigrationTray({ assessment, onAction }: {
   const positionReviewed = assessment?.positionReviewedAtTick != null;
   const correction = assessment?.correctionAtTick != null;
   const reassessed = assessment?.reassessedAtTick != null;
+  const prompt = demonstrating ? null
+    : tubeMigrationInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="tube-migration-recognition-title">
         <div id="tube-migration-recognition-title" className="syringe__name">After every move, earn the airway again.</div>
         <Badge kind="teaching">movement · depth · bilateral ventilation · pressure</Badge>
@@ -10640,11 +10659,11 @@ function EndotrachealTubeMigrationTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={recognized}
-            onClick={() => onAction('recognize-post-repositioning-ventilation-change')}>Recognize the post-turn change</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('recognize-post-repositioning-ventilation-change') : undefined}>Recognize the post-turn change</Button>
           <Button className="crisis-drug__action" disabled={!recognized || supported}
-            onClick={() => onAction('bridge-post-repositioning-oxygenation')}>Bridge oxygenation + escalate</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('bridge-post-repositioning-oxygenation') : undefined}>Bridge oxygenation + escalate</Button>
           <Button className="crisis-drug__action" disabled={!supported || positionReviewed}
-            onClick={() => onAction('integrate-tube-depth-and-bilateral-ventilation')}>Integrate depth + bilateral ventilation</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('integrate-tube-depth-and-bilateral-ventilation') : undefined}>Integrate depth + bilateral ventilation</Button>
         </div>
         <p className="field__hint">Continuous capnography supports tracheal placement; it does not prove correct depth or bilateral ventilation.</p>
       </section>
@@ -10659,12 +10678,13 @@ function EndotrachealTubeMigrationTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!positionReviewed || correction}
-            onClick={() => onAction('record-experienced-tube-correction-intent')}>Record experienced correction intent</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-experienced-tube-correction-intent') : undefined}>Record experienced correction intent</Button>
           <Button className="crisis-drug__action" disabled={!correction || reassessed}
-            onClick={() => onAction('reassess-tube-position-and-gas-exchange')}>Reassess position + gas exchange</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-tube-position-and-gas-exchange') : undefined}>Reassess position + gas exchange</Button>
         </div>
         <p className="field__hint">Exact depth is a case fact, not a target. These controls inspect, auscultate, image, or manipulate nothing.</p>
       </section>
+      </div>
     </div>
   );
 }

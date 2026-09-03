@@ -339,6 +339,8 @@ import { useUpperGiHemorrhageDemonstration } from '../../critical-care/demo/useU
 import { supportsUpperGiHemorrhageDemonstration } from '../../critical-care/demo/upper-gi-hemorrhage-demonstration';
 import { useAkiFluidOverloadDemonstration } from '../../critical-care/demo/useAkiFluidOverloadDemonstration';
 import { supportsAkiFluidOverloadDemonstration } from '../../critical-care/demo/aki-fluid-overload-demonstration';
+import { useTubeMigrationDemonstration } from '../../critical-care/demo/useTubeMigrationDemonstration';
+import { supportsTubeMigrationDemonstration } from '../../critical-care/demo/tube-migration-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -660,6 +662,7 @@ export function Cockpit({
   const postArrestTemperatureDemoSupported = supportsTargetedTemperatureManagementDemonstration(scenario);
   const upperGiHemorrhageDemoSupported = supportsUpperGiHemorrhageDemonstration(scenario);
   const akiFluidOverloadDemoSupported = supportsAkiFluidOverloadDemonstration(scenario);
+  const tubeMigrationDemoSupported = supportsTubeMigrationDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -809,6 +812,7 @@ export function Cockpit({
     || postArrestTemperatureDemoSupported
     || upperGiHemorrhageDemoSupported
     || akiFluidOverloadDemoSupported
+    || tubeMigrationDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1152,6 +1156,12 @@ export function Cockpit({
     active: demonstrating && akiFluidOverloadDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.akiFluidOverloadAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const tubeMigrationDemonstration = useTubeMigrationDemonstration({
+    active: demonstrating && tubeMigrationDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.endotrachealTubeMigrationAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const stableNarrowTachycardiaDemonstration = useStableNarrowTachycardiaDemonstration({
@@ -1893,6 +1903,7 @@ export function Cockpit({
     : postArrestTemperatureDemoSupported ? postArrestTemperatureDemonstration
     : upperGiHemorrhageDemoSupported ? upperGiHemorrhageDemonstration
     : akiFluidOverloadDemoSupported ? akiFluidOverloadDemonstration
+    : tubeMigrationDemoSupported ? tubeMigrationDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2900,6 +2911,8 @@ export function Cockpit({
           upperGiHemorrhageDemonstrating={demonstrating && upperGiHemorrhageDemoSupported}
           akiFluidOverloadGuidance={session.guidance}
           akiFluidOverloadDemonstrating={demonstrating && akiFluidOverloadDemoSupported}
+          endotrachealTubeMigrationGuidance={session.guidance}
+          endotrachealTubeMigrationDemonstrating={demonstrating && tubeMigrationDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
