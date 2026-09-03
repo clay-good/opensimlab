@@ -234,6 +234,7 @@ import { targetedTemperatureManagementInlinePrompt } from '../../critical-care/t
 import { upperGiHemorrhageInlinePrompt } from '../../critical-care/tutor/upper-gi-hemorrhage-guidance';
 import { akiFluidOverloadInlinePrompt } from '../../critical-care/tutor/aki-fluid-overload-guidance';
 import { tubeMigrationInlinePrompt } from '../../critical-care/tutor/tube-migration-guidance';
+import { icuHandoffInlinePrompt } from '../../critical-care/tutor/icu-handoff-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3037,6 +3038,7 @@ export interface ActionCockpitProps {
   readonly upperGiHemorrhageGuidance?: GuidanceLevel;
   readonly akiFluidOverloadGuidance?: GuidanceLevel;
   readonly endotrachealTubeMigrationGuidance?: GuidanceLevel;
+  readonly icuHiddenDeteriorationHandoffGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3220,6 +3222,7 @@ export interface ActionCockpitProps {
   readonly upperGiHemorrhageDemonstrating?: boolean;
   readonly akiFluidOverloadDemonstrating?: boolean;
   readonly endotrachealTubeMigrationDemonstrating?: boolean;
+  readonly icuHiddenDeteriorationHandoffDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5713,6 +5716,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasIcuHiddenDeteriorationHandoffResponse && (
               <IcuHiddenDeteriorationHandoffTray
                 assessment={props.resuscitation.icuHiddenDeteriorationHandoffAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.icuHiddenDeteriorationHandoffGuidance}
+                demonstrating={props.icuHiddenDeteriorationHandoffDemonstrating}
                 onAction={props.onIcuHiddenDeteriorationHandoffResponse ?? (() => {})} />
             )}
             {hasVentilatorCircuitDisconnectionResponse && (
@@ -10387,8 +10393,11 @@ function SevereAcidemiaTray({ assessment, scenarioVersion, guidance = 'unassiste
   );
 }
 
-function IcuHiddenDeteriorationHandoffTray({ assessment, onAction }: {
+function IcuHiddenDeteriorationHandoffTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['icuHiddenDeteriorationHandoffAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onIcuHiddenDeteriorationHandoffResponse']>;
 }) {
   const ready = assessment?.readinessAtTick != null;
@@ -10396,8 +10405,18 @@ function IcuHiddenDeteriorationHandoffTray({ assessment, onAction }: {
   const crossChecked = assessment?.crossCheckAtTick != null;
   const escalated = assessment?.escalationAtTick != null;
   const accepted = assessment?.acceptanceAtTick != null;
+  const prompt = demonstrating ? null
+    : icuHandoffInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="icu-hidden-handoff-truth-title">
         <div id="icu-hidden-handoff-truth-title" className="syringe__name">Receive the story. Check the patient.</div>
         <Badge kind="teaching">“stable” · support rising · perfusion falling</Badge>
@@ -10410,11 +10429,11 @@ function IcuHiddenDeteriorationHandoffTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={ready}
-            onClick={() => onAction('establish-icu-handoff-readiness')}>Establish readiness + bedside coverage</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('establish-icu-handoff-readiness') : undefined}>Establish readiness + bedside coverage</Button>
           <Button className="crisis-drug__action" disabled={!ready || content}
-            onClick={() => onAction('receive-icu-handoff-content')}>Receive severity + support + pending work</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('receive-icu-handoff-content') : undefined}>Receive severity + support + pending work</Button>
           <Button className="crisis-drug__action" disabled={!content || crossChecked}
-            onClick={() => onAction('cross-check-hidden-deterioration')}>Cross-check patient + trends + devices</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('cross-check-hidden-deterioration') : undefined}>Cross-check patient + trends + devices</Button>
         </div>
         <p className="field__hint">The outgoing label is a claim. Dated physiology and source-to-patient support are the cross-check.</p>
       </section>
@@ -10429,12 +10448,13 @@ function IcuHiddenDeteriorationHandoffTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!crossChecked || escalated}
-            onClick={() => onAction('escalate-icu-handoff-deterioration')}>Escalate + assign triggers + owners</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('escalate-icu-handoff-deterioration') : undefined}>Escalate + assign triggers + owners</Button>
           <Button className="crisis-drug__action" disabled={!escalated || accepted}
-            onClick={() => onAction('synthesize-accept-and-reassess-icu-handoff')}>Synthesize + accept + reassess</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('synthesize-accept-and-reassess-icu-handoff') : undefined}>Synthesize + accept + reassess</Button>
         </div>
         <p className="field__hint">Acceptance records a teaching-state transition, not real communication, staffing, treatment, or transfer.</p>
       </section>
+      </div>
     </div>
   );
 }

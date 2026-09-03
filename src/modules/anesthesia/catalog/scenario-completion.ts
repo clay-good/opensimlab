@@ -136,6 +136,7 @@ import { targetedTemperatureManagementCompletionEvidence } from '../../critical-
 import { upperGiHemorrhageCompletionEvidence } from '../../critical-care/upper-gi-hemorrhage-completion';
 import { akiFluidOverloadCompletionEvidence } from '../../critical-care/aki-fluid-overload-completion';
 import { tubeMigrationCompletionEvidence } from '../../critical-care/tube-migration-completion';
+import { icuHandoffCompletionEvidence } from '../../critical-care/icu-handoff-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -411,6 +412,7 @@ export function auditClinicalScenario(
     ...upperGiHemorrhageCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...akiFluidOverloadCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...tubeMigrationCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...icuHandoffCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

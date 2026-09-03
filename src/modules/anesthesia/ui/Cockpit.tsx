@@ -341,6 +341,8 @@ import { useAkiFluidOverloadDemonstration } from '../../critical-care/demo/useAk
 import { supportsAkiFluidOverloadDemonstration } from '../../critical-care/demo/aki-fluid-overload-demonstration';
 import { useTubeMigrationDemonstration } from '../../critical-care/demo/useTubeMigrationDemonstration';
 import { supportsTubeMigrationDemonstration } from '../../critical-care/demo/tube-migration-demonstration';
+import { useIcuHandoffDemonstration } from '../../critical-care/demo/useIcuHandoffDemonstration';
+import { supportsIcuHandoffDemonstration } from '../../critical-care/demo/icu-handoff-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -663,6 +665,7 @@ export function Cockpit({
   const upperGiHemorrhageDemoSupported = supportsUpperGiHemorrhageDemonstration(scenario);
   const akiFluidOverloadDemoSupported = supportsAkiFluidOverloadDemonstration(scenario);
   const tubeMigrationDemoSupported = supportsTubeMigrationDemonstration(scenario);
+  const icuHandoffDemoSupported = supportsIcuHandoffDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -813,6 +816,7 @@ export function Cockpit({
     || upperGiHemorrhageDemoSupported
     || akiFluidOverloadDemoSupported
     || tubeMigrationDemoSupported
+    || icuHandoffDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1162,6 +1166,12 @@ export function Cockpit({
     active: demonstrating && tubeMigrationDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.endotrachealTubeMigrationAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const icuHandoffDemonstration = useIcuHandoffDemonstration({
+    active: demonstrating && icuHandoffDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.icuHiddenDeteriorationHandoffAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const stableNarrowTachycardiaDemonstration = useStableNarrowTachycardiaDemonstration({
@@ -1904,6 +1914,7 @@ export function Cockpit({
     : upperGiHemorrhageDemoSupported ? upperGiHemorrhageDemonstration
     : akiFluidOverloadDemoSupported ? akiFluidOverloadDemonstration
     : tubeMigrationDemoSupported ? tubeMigrationDemonstration
+    : icuHandoffDemoSupported ? icuHandoffDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2913,6 +2924,8 @@ export function Cockpit({
           akiFluidOverloadDemonstrating={demonstrating && akiFluidOverloadDemoSupported}
           endotrachealTubeMigrationGuidance={session.guidance}
           endotrachealTubeMigrationDemonstrating={demonstrating && tubeMigrationDemoSupported}
+          icuHiddenDeteriorationHandoffGuidance={session.guidance}
+          icuHiddenDeteriorationHandoffDemonstrating={demonstrating && icuHandoffDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
