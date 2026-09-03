@@ -1811,23 +1811,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "hypertensive-emergency-fixtures.ts binds seed 2465 and content 0.1.0 to expert, treat-the-number error, recovery, and no-action paths. The three-week refill interruption with three days of headache and bilateral blurred vision, the initial 238/134 mmHg and the repeated post-conditions readings of 236/132 mmHg right and 232/130 mmHg left, the physiology at 86/min sinus, RR 16/min, 98% on room air and 36.8°C, the fundus report of bilateral flame hemorrhages, cotton-wool spots and optic-disc edema, the creatinine of 2.1 mg/dL against 0.9 mg/dL six months earlier with 2+ protein and microscopic hematuria, the ECG and echo reports, and the authored 45-minute panel at 212/122 mmHg and 3-hour panel at 188/106 mmHg with a urine output of 38 mL/h and an unchanged creatinine are authored constants; no pressure, drug-effect or autoregulation model is claimed, and no outcome follows from any choice. tests/integration/hypertensive-emergency-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is four narratives with no non-narrative state event. The progression lives in the engine's refusals instead, and its shape carries the argument. The opening is a strict chain of two — the measurement must be verified before the organ injury is reviewed, because a number taken badly is the commonest reason a patient is treated for an emergency they do not have, and the organ injury is the only thing that makes this one. Afterwards the phenotype-and-causes review and the controlled-reduction intent are an unordered pair, and the later panel refuses until both have landed and a tick has passed, with the handoff refusing a tick after that. Both elapsed-time gates and every order refusal are exercised by reference transcripts."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six declared decisions verify the authored measurement conditions and reconcile the repeated pressure, symptoms, medication interruption and whole-patient trajectory; identify the acute renal and retinal target-organ injury while screening the other current organ emergencies and their deterioration triggers; review the renal-retinal phenotype, the medication interruption and the open primary and secondary contributors without assigning one cause; record prompt monitored syndrome-specific pressure-control intent without a drug, dose, infusion rate, fixed percentage, universal target or rapid normalization; review the authored 45-minute panel without claiming a learner-delivered response; and hand off the 3-hour renal-retinal, pressure, symptom, cause, treatment and ownership trajectory. The lesson examines nobody, performs no fundoscopy, collects no specimen, acquires or interprets no test, diagnoses no cause, selects or delivers no drug, dose, rate, percentage or target, performs no procedure, determines no disposition or prognosis, and predicts no outcome."
           ]
         },
         {
@@ -1839,23 +1839,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded handoff on an authored 3-hour report of 188/106 mmHg with an improved headache, vision not worse, a urine output of 38 mL/h and a creatinine still 2.1 mg/dL. Later actions cannot restart an ended branch. The ending certifies initialPulsePresent and acuteTargetOrganDamage both true — this patient genuinely has an emergency, which is the half of the lesson a restraint-heavy design could easily lose — alongside nine restraint flags all false, including drugSelected, doseSelected, infusionRateSelected, universalTargetSelected and rapidNormalizationSelected. Vision not worse is explicitly not vision better, and an unchanged creatinine is explicitly not a resolved injury."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Seven observed-state prompts at version 0.1.0 read the learner's own recorded steps — seven rather than six because the unordered pair needs a beat for the state where neither lane has been taken. The reflex the tutor works against is 238/134: a number that large asks to be treated on sight, and the lesson makes the learner earn it twice. The measurement beat explains why documented rest, a correctly sized cuff and both arms are not administrative — a small cuff on a large arm is the commonest way a patient is treated for an emergency they do not have, and the two-arm comparison is how a pressure difference that would change the whole pathway is found. The organ beat states plainly that the retinal and renal injury rather than the 236 is what makes this an emergency, and that the distinction runs both ways: this patient needs urgent treatment and a patient with the same numbers and no injury does not. The phenotype beat names the emergency by naming the ones it is not, each with its own pathway and its own targets, and refuses to close the cause on the obvious refill gap. The reduction beat gives the reason a fast fall is its own injury — organs adapted to living at 236 lose perfusion at pressures unremarkable in somebody else — and supplies no numbers in either direction. The panel beat notices what has not moved: the easing headache is the most reassuring and least specific symptom, and the persistent visual symptoms belong to the injury. The handoff beat reads an adequate urine output and an unchanged creatinine together. Worked example 0.1.0 drives the ordinary controls through the real engine to the handoff, recording the reduction intent before reviewing the phenotype because the injury is happening while the review is being written, and its narration is generated from the tutor's own prose so the two cannot drift apart. A test asserts that no beat anywhere names a drug, a dose, a rate, a percentage or a target. tests/unit/hypertensive-emergency-demonstration.test.ts verifies both orderings and every beat against the real engine, and tests/ui/cardiology-hypertensive-emergency.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all six objectives to accepted engine events; the no-action path meets none and the expert path meets all six. The counterfactual is the one the number invites: the common-error path verifies the measurement and then goes straight for controlled reduction and the phenotype review, skipping the organ injury that is the only thing making this an emergency, and meets one of six — the engine refuses both, because everything after the opening is gated behind the organ-injury review, and the rest of the lesson never becomes available. The recovery path reviews the injury before the measurement has been verified and is refused, takes the closing pair in the other order — which the engine accepts without comment — walks into both elapsed-time gates before clearing them, and still completes from the same positions."
           ]
         },
         {
@@ -1874,23 +1874,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "hypertensive-emergency-fixtures.ts binds exact-content expert, treat-the-number error, recovery, and no-action pathways to seed 2465 for deterministic replay through the shared engine, including the opening order refusal, the organ-injury-before-everything refusal, the both-lanes refusal on the later panel, and both elapsed-time refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
