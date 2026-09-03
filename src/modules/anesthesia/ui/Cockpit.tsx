@@ -299,6 +299,8 @@ import { usePacemakerCaptureFailureDemonstration } from '../../cardiology/demo/u
 import { supportsPacemakerCaptureFailureDemonstration } from '../../cardiology/demo/pacemaker-capture-failure-demonstration';
 import { useTranscutaneousPacingCaptureDemonstration } from '../../cardiology/demo/useTranscutaneousPacingCaptureDemonstration';
 import { supportsTranscutaneousPacingCaptureDemonstration } from '../../cardiology/demo/transcutaneous-pacing-capture-demonstration';
+import { useSepticShockResuscitationDemonstration } from '../../critical-care/demo/useSepticShockResuscitationDemonstration';
+import { supportsSepticShockResuscitationDemonstration } from '../../critical-care/demo/septic-shock-resuscitation-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -600,6 +602,7 @@ export function Cockpit({
   const hypertensiveEmergencyDemoSupported = supportsHypertensiveEmergencyDemonstration(scenario);
   const pacemakerCaptureFailureDemoSupported = supportsPacemakerCaptureFailureDemonstration(scenario);
   const transcutaneousPacingCaptureDemoSupported = supportsTranscutaneousPacingCaptureDemonstration(scenario);
+  const septicShockResuscitationDemoSupported = supportsSepticShockResuscitationDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -729,6 +732,7 @@ export function Cockpit({
     || hypertensiveEmergencyDemoSupported
     || pacemakerCaptureFailureDemoSupported
     || transcutaneousPacingCaptureDemoSupported
+    || septicShockResuscitationDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -952,6 +956,12 @@ export function Cockpit({
     active: demonstrating && transcutaneousPacingCaptureDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.transcutaneousPacingCaptureAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const septicShockResuscitationDemonstration = useSepticShockResuscitationDemonstration({
+    active: demonstrating && septicShockResuscitationDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.septicShockResuscitationAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const stableNarrowTachycardiaDemonstration = useStableNarrowTachycardiaDemonstration({
@@ -1673,6 +1683,7 @@ export function Cockpit({
     : hypertensiveEmergencyDemoSupported ? hypertensiveEmergencyDemonstration
     : pacemakerCaptureFailureDemoSupported ? pacemakerCaptureFailureDemonstration
     : transcutaneousPacingCaptureDemoSupported ? transcutaneousPacingCaptureDemonstration
+    : septicShockResuscitationDemoSupported ? septicShockResuscitationDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2640,6 +2651,8 @@ export function Cockpit({
           pacemakerCaptureFailureDemonstrating={demonstrating && pacemakerCaptureFailureDemoSupported}
           transcutaneousPacingCaptureGuidance={session.guidance}
           transcutaneousPacingCaptureDemonstrating={demonstrating && transcutaneousPacingCaptureDemoSupported}
+          septicShockResuscitationGuidance={session.guidance}
+          septicShockResuscitationDemonstrating={demonstrating && septicShockResuscitationDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

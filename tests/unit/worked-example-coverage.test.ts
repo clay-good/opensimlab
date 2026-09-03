@@ -46,10 +46,12 @@ import { RESPIRATORY_MEDICINE_SCENARIOS } from '../../src/modules/respiratory-me
 import { OBSTETRICS_SCENARIOS } from '../../src/modules/obstetrics/scenarios';
 import { PEDIATRICS_SCENARIOS } from '../../src/modules/pediatrics/scenarios';
 import { CARDIOLOGY_SCENARIOS } from '../../src/modules/cardiology/scenarios';
+import { CRITICAL_CARE_SCENARIOS } from '../../src/modules/critical-care/scenarios';
 
 const COUNT_WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight',
   'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen',
-  'seventeen'] as const;
+  'seventeen', 'eighteen', 'nineteen', 'twenty', 'twenty-one', 'twenty-two',
+  'twenty-three', 'twenty-four', 'twenty-five'] as const;
 
 function uncovered(scenarios: Parameters<typeof buildModuleCompletionCatalog>[0], moduleId: string) {
   const catalog = buildModuleCompletionCatalog(scenarios, ENGINE_VERSION, moduleId, 'ward');
@@ -179,6 +181,21 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
     }
     expect(readme).toContain(`with ${COUNT_WORDS[covered]} of its`);
     expect(readme).toContain(`${COUNT_WORDS[CARDIOLOGY_SCENARIOS.length]} labs done.`);
+  });
+
+  it('counts the finished critical-care labs rather than trusting the sentence', () => {
+    expect(CRITICAL_CARE_SCENARIOS).toHaveLength(24);
+    const covered = coveredCount(CRITICAL_CARE_SCENARIOS, 'critical-care');
+    expect(covered).toBeGreaterThan(0);
+    const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');
+    if (covered === CRITICAL_CARE_SCENARIOS.length) {
+      // The part-finished sentence is not allowed to linger once it is untrue.
+      expect(uncovered(CRITICAL_CARE_SCENARIOS, 'critical-care')).toEqual([]);
+      expect(readme).not.toContain('Critical care has started');
+      return;
+    }
+    expect(readme).toContain(`with ${COUNT_WORDS[covered]} of its`);
+    expect(readme).toContain(`${COUNT_WORDS[CRITICAL_CARE_SCENARIOS.length]} labs done.`);
   });
 
   it('claims only what those twelve modules support', () => {

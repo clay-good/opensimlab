@@ -213,6 +213,7 @@ import { rightVentricularInfarctionInlinePrompt } from '../../cardiology/tutor/r
 import { hypertensiveEmergencyInlinePrompt } from '../../cardiology/tutor/hypertensive-emergency-guidance';
 import { pacemakerCaptureFailureInlinePrompt } from '../../cardiology/tutor/pacemaker-capture-failure-guidance';
 import { transcutaneousPacingCaptureInlinePrompt } from '../../cardiology/tutor/transcutaneous-pacing-capture-guidance';
+import { septicShockResuscitationInlinePrompt } from '../../critical-care/tutor/septic-shock-resuscitation-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2995,6 +2996,7 @@ export interface ActionCockpitProps {
   readonly hypertensiveEmergencyGuidance?: GuidanceLevel;
   readonly pacemakerCaptureFailureGuidance?: GuidanceLevel;
   readonly transcutaneousPacingCaptureGuidance?: GuidanceLevel;
+  readonly septicShockResuscitationGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3157,6 +3159,7 @@ export interface ActionCockpitProps {
   readonly hypertensiveEmergencyDemonstrating?: boolean;
   readonly pacemakerCaptureFailureDemonstrating?: boolean;
   readonly transcutaneousPacingCaptureDemonstrating?: boolean;
+  readonly septicShockResuscitationDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5624,6 +5627,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasSepticShockResuscitationResponse && (
               <SepticShockResuscitationTray
                 assessment={props.resuscitation.septicShockResuscitationAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.septicShockResuscitationGuidance}
+                demonstrating={props.septicShockResuscitationDemonstrating}
                 onAction={props.onSepticShockResuscitationResponse ?? (() => {})} />
             )}
             {hasStableChestPainResponse && (
@@ -10283,8 +10289,11 @@ function EndotrachealTubeMigrationTray({ assessment, onAction }: {
   );
 }
 
-function SepticShockResuscitationTray({ assessment, onAction }: {
+function SepticShockResuscitationTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['septicShockResuscitationAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onSepticShockResuscitationResponse']>;
 }) {
   const context = assessment?.contextAtTick != null;
@@ -10292,8 +10301,18 @@ function SepticShockResuscitationTray({ assessment, onAction }: {
   const fluidResponse = assessment?.fluidResponseAtTick != null;
   const planned = assessment?.planAtTick != null;
   const reassessed = assessment?.reassessedAtTick != null;
+  const prompt = demonstrating ? null
+    : septicShockResuscitationInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="septic-resuscitation-loop-title">
         <div id="septic-resuscitation-loop-title" className="syringe__name">Resuscitation is a loop, not a liter count.</div>
         <Badge kind="teaching">delivery · pressure · brain · skin · kidney · trend</Badge>
@@ -10305,11 +10324,11 @@ function SepticShockResuscitationTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={context}
-            onClick={() => onAction('reconcile-septic-shock-resuscitation-so-far')}>Reconcile care + response</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reconcile-septic-shock-resuscitation-so-far') : undefined}>Reconcile care + response</Button>
           <Button className="crisis-drug__action" disabled={!context || perfusion}
-            onClick={() => onAction('reassess-septic-shock-perfusion')}>Reassess multi-organ perfusion</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-septic-shock-perfusion') : undefined}>Reassess multi-organ perfusion</Button>
           <Button className="crisis-drug__action" disabled={!perfusion || fluidResponse}
-            onClick={() => onAction('test-septic-shock-fluid-responsiveness')}>Review dynamic response + lungs</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('test-septic-shock-fluid-responsiveness') : undefined}>Review dynamic response + lungs</Button>
         </div>
         <p className="field__hint">Lactate is interpreted in context. A pressure target, one value, or one trend does not prove recovery.</p>
       </section>
@@ -10325,12 +10344,13 @@ function SepticShockResuscitationTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!fluidResponse || planned}
-            onClick={() => onAction('individualize-septic-shock-support-and-source-control')}>Individualize support + source control</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('individualize-septic-shock-support-and-source-control') : undefined}>Individualize support + source control</Button>
           <Button className="crisis-drug__action" disabled={!planned || reassessed}
-            onClick={() => onAction('reassess-septic-shock-trajectory')}>Review 10-minute trajectory</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-septic-shock-trajectory') : undefined}>Review 10-minute trajectory</Button>
         </div>
         <p className="field__hint">The +2% response and B-lines are case facts, not universal cutoffs. This screen gives no fluid or drug and performs no drainage.</p>
       </section>
+      </div>
     </div>
   );
 }
