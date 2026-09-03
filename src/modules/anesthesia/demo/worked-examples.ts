@@ -188,6 +188,7 @@ import { supportsHyperkalemiaWithEcgChangeDemonstration } from '../../emergency-
 import { supportsIntracranialHemorrhageDemonstration } from '../../emergency-medicine/demo/intracranial-hemorrhage-deterioration-demonstration';
 import { supportsOpioidToxicityDemonstration } from '../../emergency-medicine/demo/opioid-toxicity-demonstration';
 import { supportsPulmonaryEmbolismDemonstration } from '../../emergency-medicine/demo/pulmonary-embolism-deterioration-demonstration';
+import { supportsSevereHyponatremiaDemonstration } from '../../emergency-medicine/demo/severe-hyponatremia-with-seizure-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -419,6 +420,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsIntracranialHemorrhageDemonstration,
     supportsOpioidToxicityDemonstration,
     supportsPulmonaryEmbolismDemonstration,
+    supportsSevereHyponatremiaDemonstration,
   ],
 };
 

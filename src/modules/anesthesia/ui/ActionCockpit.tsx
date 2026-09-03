@@ -250,6 +250,7 @@ import { hyperkalemiaWithEcgChangeInlinePrompt } from '../../emergency-medicine/
 import { intracranialHemorrhageInlinePrompt } from '../../emergency-medicine/tutor/intracranial-hemorrhage-deterioration-guidance';
 import { opioidToxicityInlinePrompt } from '../../emergency-medicine/tutor/opioid-toxicity-guidance';
 import { pulmonaryEmbolismInlinePrompt } from '../../emergency-medicine/tutor/pulmonary-embolism-deterioration-guidance';
+import { severeHyponatremiaInlinePrompt } from '../../emergency-medicine/tutor/severe-hyponatremia-with-seizure-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3069,6 +3070,7 @@ export interface ActionCockpitProps {
   readonly intracranialHemorrhageGuidance?: GuidanceLevel;
   readonly opioidToxicityGuidance?: GuidanceLevel;
   readonly pulmonaryEmbolismGuidance?: GuidanceLevel;
+  readonly severeHyponatremiaGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3268,6 +3270,7 @@ export interface ActionCockpitProps {
   readonly intracranialHemorrhageDemonstrating?: boolean;
   readonly opioidToxicityDemonstrating?: boolean;
   readonly pulmonaryEmbolismDemonstrating?: boolean;
+  readonly severeHyponatremiaDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5635,7 +5638,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 onAction={props.onHyperkalemiaResponse ?? (() => {})} />
             )}
             {hasSevereHyponatremiaResponse && (
-              <HyponatremiaTray assessment={props.resuscitation.hyponatremiaAssessment}
+              <HyponatremiaTray
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.severeHyponatremiaGuidance}
+                demonstrating={props.severeHyponatremiaDemonstrating} assessment={props.resuscitation.hyponatremiaAssessment}
                 onAction={props.onHyponatremiaResponse ?? (() => {})} />
             )}
             {hasOpioidToxicityResponse && (
@@ -9183,8 +9189,11 @@ function HyperkalemiaTray({ assessment, scenarioVersion, guidance = 'unassisted'
   );
 }
 
-function HyponatremiaTray({ assessment, onAction }: {
+function HyponatremiaTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['hyponatremiaAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onHyponatremiaResponse']>;
 }) {
   const reviewed = assessment?.patternReviewedAtTick != null;
@@ -9192,8 +9201,18 @@ function HyponatremiaTray({ assessment, onAction }: {
   const hypertonic = assessment?.hypertonicAtTick != null;
   const reassessed = assessment?.reassessedAtTick != null;
   const guardrails = assessment?.guardrailsAtTick != null;
+  const prompt = demonstrating ? null
+    : severeHyponatremiaInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="hyponatremia-brain-title">
         <div id="hyponatremia-brain-title" className="syringe__name">Treat the brain, not the number.</div>
         <Badge kind="teaching">Seizure ended · Na 112 · deeply somnolent</Badge>
@@ -9206,11 +9225,11 @@ function HyponatremiaTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={reviewed}
-            onClick={() => onAction('review-hyponatremia-pattern')}>Review seizure + Na + exclusions</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-hyponatremia-pattern') : undefined}>Review seizure + Na + exclusions</Button>
           <Button className="crisis-drug__action" disabled={!reviewed || stabilized}
-            onClick={() => onAction('record-hyponatremia-stabilization')}>Protect + support + monitor + call</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-hyponatremia-stabilization') : undefined}>Protect + support + monitor + call</Button>
           <Button className="crisis-drug__action" disabled={!stabilized || hypertonic}
-            onClick={() => onAction('record-hypertonic-saline-intent')}>Record hypertonic bolus + 5 target</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-hypertonic-saline-intent') : undefined}>Record hypertonic bolus + 5 target</Button>
         </div>
         <p className="field__hint">Treat severe symptoms before the full cause is settled. Concentration, bolus volume, access, preparation, and delivery follow local protocol and are not simulated.</p>
       </section>
@@ -9225,12 +9244,13 @@ function HyponatremiaTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!hypertonic || reassessed}
-            onClick={() => onAction('reassess-hyponatremia-first-hour')}>Review first-hour brain + Na + urine</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-hyponatremia-first-hour') : undefined}>Review first-hour brain + Na + urine</Button>
           <Button className="crisis-drug__action" disabled={!reassessed || guardrails}
-            onClick={() => onAction('record-hyponatremia-guardrails-and-cause-plan')}>Stop rescue + set ceiling + find cause</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-hyponatremia-guardrails-and-cause-plan') : undefined}>Stop rescue + set ceiling + find cause</Button>
         </div>
         <p className="field__hint">This authored path stops after +5 mmol/L improvement, caps total rise at 10 mmol/L in the first 24 hours and 8 mmol/L per day after, and keeps a specialist overcorrection plan visible.</p>
       </section>
+      </div>
     </div>
   );
 }

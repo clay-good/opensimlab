@@ -152,6 +152,7 @@ import { hyperkalemiaWithEcgChangeCompletionEvidence } from '../../emergency-med
 import { intracranialHemorrhageCompletionEvidence } from '../../emergency-medicine/intracranial-hemorrhage-deterioration-completion';
 import { opioidToxicityCompletionEvidence } from '../../emergency-medicine/opioid-toxicity-completion';
 import { pulmonaryEmbolismCompletionEvidence } from '../../emergency-medicine/pulmonary-embolism-deterioration-completion';
+import { severeHyponatremiaCompletionEvidence } from '../../emergency-medicine/severe-hyponatremia-with-seizure-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -443,6 +444,7 @@ export function auditClinicalScenario(
     ...intracranialHemorrhageCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...opioidToxicityCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...pulmonaryEmbolismCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...severeHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),
