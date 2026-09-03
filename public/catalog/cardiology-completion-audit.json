@@ -2063,9 +2063,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "transcutaneous-pacing-capture-fixtures.ts binds seed 3062 and content 0.1.0 to expert, causes-before-compressions error, recovery, and no-action paths. The reported complete AV block deteriorating to a rate and central pulse of 24/min at 70/40 mmHg, the experienced team's initiation of transcutaneous pacing, the fixed ten-second report of stimuli at 70/min each followed by a broad QRS and distinct T wave, the rhythm-change event carrying paced electrical activity without a mechanical pulse, and the fixed assessment of absent carotid and femoral pulses with a nonpulsatile arterial line, nonpulsatile pleth and unobtainable pressure are authored constants; no pacing, capture, output or circulation model is claimed, and no outcome follows from any choice. tests/integration/transcutaneous-pacing-capture-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -2077,9 +2077,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Four declared decisions reconcile the fixed pacing artifacts, paced QRS and T-wave complexes, central pulse assessment, pleth, arterial waveform, pressure and perfusion; activate the nonshockable pulseless response immediately without waiting for pacing or cause review; review the open reversible causes and the future pacing-bridge question while pulseless care continues; and hand off the active resuscitation, capture findings, open causes and bridge ownership. This is the only lesson in the module with no unordered lane anywhere, and the absence is the design: every other cardiology lesson has somewhere a learner may legitimately go first, and this one has a patient with no pulse. The lesson examines nobody, palpates no pulse, acquires or interprets no ECG, monitoring, laboratory or imaging data, places no pads, operates no pacer, selects no rate, output, current, pulse width, energy, drug, dose, sedation or modality, delivers no pacing, CPR or treatment, performs no procedure, determines no disposition or prognosis, and predicts no outcome."
           ]
         },
         {
@@ -2091,23 +2091,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends inside an ongoing resuscitation. Later actions cannot restart an ended branch, and the ending certifies initialPulsePresent false — the only lesson in this module where that is so — with electricalCaptureAuthored and mechanicalCaptureAbsent both true, roscReported and outcomePredicted both false, and pacingDeliveredByLearner, captureAssessedByLearner, cprDeliveredByLearner, treatmentDeliveredByLearner and procedurePerformedByLearner all false. Return of circulation, subsequent perfusion, neurologic status, disposition, prognosis and outcome are intentionally unreported: a lesson about not reading a patient off a screen does not close by telling the learner how the patient did."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Four observed-state prompts at version 0.1.0 read the learner's own recorded steps — four rather than the five or six the rest of the module needs, because there is no unordered lane and therefore no state where the tutor has to name a choice. The reflex it works against is a screen that looks like it is working: the pacer is capturing electrically at 70/min, every stimulus is followed by a broad QRS and a distinct T wave, and she has no pulse, so the monitor shows a treated bradycardia while the patient is in pulseless electrical activity. The recognition beat counts the four independent signals saying there is no circulation and states the physiology in one line — electrical capture means the myocardium depolarised and says nothing about whether it ejected. The pulseless beat names the specific harm the whole lesson is built around: the minutes a team spends adjusting a pacer that is already capturing are minutes without compressions. The causes beat holds the word while, so the review runs alongside uninterrupted arrest care rather than instead of it, and keeps the bridge a question rather than a plan. The handoff beat says out loud that the missing ending is a choice. Worked example 0.1.0 drives the ordinary controls through the real engine to the handoff and stops inside a resuscitation that is still running, and its narration is generated from the tutor's own prose so the two cannot drift apart. A test asserts that no beat anywhere names an output, a current, a pad placement, a drug, or a return of circulation. tests/unit/transcutaneous-pacing-capture-worked-example.test.ts verifies every beat and both refusals against the real engine, and tests/ui/cardiology-transcutaneous-pacing-capture.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all four objectives to accepted engine events; the no-action path meets none and the expert path meets all four. The counterfactual is the exact thinking the lesson exists to prevent: the common-error path reconciles the capture evidence correctly and then moves to the causes and the pacing bridge with the arrest never activated, meeting one of four — the engine refuses both, because everything after the recognition is gated behind the pulseless response. The recovery path attempts the arrest before the capture evidence has been reconciled and is refused, attempts the causes before the arrest has been opened and is refused again, walks into the elapsed-time gate before clearing it, and still completes from the same positions."
           ]
         },
         {
@@ -2126,23 +2126,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "transcutaneous-pacing-capture-fixtures.ts binds exact-content expert, causes-before-compressions error, recovery, and no-action pathways to seed 3062 for deterministic replay through the shared engine, including both order refusals and the elapsed-time refusal."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

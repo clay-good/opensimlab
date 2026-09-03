@@ -181,11 +181,11 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
     expect(readme).toContain(`${COUNT_WORDS[CARDIOLOGY_SCENARIOS.length]} labs done.`);
   });
 
-  it('claims only what those eleven modules support', () => {
+  it('claims only what those twelve modules support', () => {
     const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');
     expect(readme).toContain('Every renal, oncology, endocrine, nursing,');
-    expect(readme).toContain('infectious-disease, neonatology, toxicology, neurology, obstetrics, respiratory-medicine, and');
-    expect(readme).toContain('pediatrics lab has both.');
+    expect(readme).toContain('infectious-disease, neonatology, toxicology, neurology, obstetrics, respiratory-medicine,');
+    expect(readme).toContain('pediatrics, and cardiology lab has both.');
     // The hedge this sentence used to carry belongs to a state the audit has
     // left behind. If it comes back, one of the three tests above is failing too.
     expect(readme).not.toContain('and most\nendocrine ones');

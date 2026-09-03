@@ -212,6 +212,7 @@ import { pericardialTamponadeInlinePrompt } from '../../cardiology/tutor/pericar
 import { rightVentricularInfarctionInlinePrompt } from '../../cardiology/tutor/right-ventricular-infarction-guidance';
 import { hypertensiveEmergencyInlinePrompt } from '../../cardiology/tutor/hypertensive-emergency-guidance';
 import { pacemakerCaptureFailureInlinePrompt } from '../../cardiology/tutor/pacemaker-capture-failure-guidance';
+import { transcutaneousPacingCaptureInlinePrompt } from '../../cardiology/tutor/transcutaneous-pacing-capture-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2993,6 +2994,7 @@ export interface ActionCockpitProps {
   readonly rightVentricularInfarctionGuidance?: GuidanceLevel;
   readonly hypertensiveEmergencyGuidance?: GuidanceLevel;
   readonly pacemakerCaptureFailureGuidance?: GuidanceLevel;
+  readonly transcutaneousPacingCaptureGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3154,6 +3156,7 @@ export interface ActionCockpitProps {
   readonly rightVentricularInfarctionDemonstrating?: boolean;
   readonly hypertensiveEmergencyDemonstrating?: boolean;
   readonly pacemakerCaptureFailureDemonstrating?: boolean;
+  readonly transcutaneousPacingCaptureDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5746,6 +5749,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasTranscutaneousPacingCaptureResponse && (
               <TranscutaneousPacingCaptureTray
                 assessment={props.resuscitation.transcutaneousPacingCaptureAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.transcutaneousPacingCaptureGuidance}
+                demonstrating={props.transcutaneousPacingCaptureDemonstrating}
                 onAction={props.onTranscutaneousPacingCaptureResponse ?? (() => {})} />
             )}
             {hasAcuteSevereAsthmaResponse && (
@@ -10997,23 +11003,36 @@ function PacemakerCaptureFailureTray({ assessment, scenarioVersion, guidance = '
   </div>;
 }
 
-function TranscutaneousPacingCaptureTray({ assessment, onAction }: {
+function TranscutaneousPacingCaptureTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['transcutaneousPacingCaptureAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onTranscutaneousPacingCaptureResponse']>;
 }) {
   const recognized = assessment?.recognitionAtTick != null;
   const pulselessResponse = assessment?.pulselessResponseAtTick != null;
   const causesBridge = assessment?.causesBridgeAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : transcutaneousPacingCaptureInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="transcutaneous-pacing-capture-title">
       <div id="transcutaneous-pacing-capture-title" className="syringe__name">A QRS can still have no pulse.</div>
       <Badge kind="teaching">paced electrical capture · no mechanical output · PEA</Badge>
       <div className="syringe__meta">spike → broad QRS + T · flat pressure · nonpulsatile pleth</div>
       <p className="syringe__remaining" role="status">{pulselessResponse ? 'Pulse loss recognized · nonshockable pathway active' : recognized ? 'Electrical capture reconciled · act on pulse loss now' : 'Match each electrical complex to mechanical output'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={recognized} onClick={() => onAction('reconcile-transcutaneous-pacing-electrical-and-mechanical-capture')}>Reconcile electrical + mechanical capture</Button>
-        <Button className="crisis-drug__action" disabled={!recognized || pulselessResponse} onClick={() => onAction('activate-transcutaneous-pacing-pulseless-response')}>Activate pulseless response</Button>
+        <Button className="crisis-drug__action" disabled={recognized} aria-disabled={demonstrating} onClick={act ? () => act('reconcile-transcutaneous-pacing-electrical-and-mechanical-capture') : undefined}>Reconcile electrical + mechanical capture</Button>
+        <Button className="crisis-drug__action" disabled={!recognized || pulselessResponse} aria-disabled={demonstrating} onClick={act ? () => act('activate-transcutaneous-pacing-pulseless-response') : undefined}>Activate pulseless response</Button>
       </div>
       <p className="field__hint">The fixed report, not a learner examination, confirms every pacing artifact has a broad QRS and T wave while pulse, arterial, pleth, and pressure checks show no circulation. The live trace represents this paced electrical activity with flat mechanical signals.</p>
     </section>
@@ -11023,11 +11042,12 @@ function TranscutaneousPacingCaptureTray({ assessment, onAction }: {
       <div className="syringe__meta">no pacing-as-arrest-treatment · ROSC unreported · active ownership</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Active resuscitation + unresolved causes handed off' : causesBridge ? 'Causes + pacing boundary reviewed · allow later handoff' : pulselessResponse ? 'Review causes and the pacing-bridge boundary' : 'Activate the pulseless response first'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={!pulselessResponse || causesBridge} onClick={() => onAction('review-transcutaneous-pacing-open-causes-and-bridge')}>Review open causes + bridge</Button>
-        <Button className="crisis-drug__action" disabled={!causesBridge || handoff} onClick={() => onAction('handoff-transcutaneous-pacing-reassessment')}>Hand off active resuscitation</Button>
+        <Button className="crisis-drug__action" disabled={!pulselessResponse || causesBridge} aria-disabled={demonstrating} onClick={act ? () => act('review-transcutaneous-pacing-open-causes-and-bridge') : undefined}>Review open causes + bridge</Button>
+        <Button className="crisis-drug__action" disabled={!causesBridge || handoff} aria-disabled={demonstrating} onClick={act ? () => act('handoff-transcutaneous-pacing-reassessment') : undefined}>Hand off active resuscitation</Button>
       </div>
       <p className="field__hint">No pulse palpation, ECG interpretation, CPR mechanics, oxygen, airway, drug, shock, pad placement, rate, output, pulse width, pacing delivery, transvenous procedure, ROSC, disposition, prognosis, or outcome is selected.</p>
     </section>
+    </div>
   </div>;
 }
 

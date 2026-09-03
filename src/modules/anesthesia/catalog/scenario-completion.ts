@@ -114,6 +114,7 @@ import { pericardialTamponadeCompletionEvidence } from '../../cardiology/pericar
 import { rightVentricularInfarctionCompletionEvidence } from '../../cardiology/right-ventricular-infarction-completion';
 import { hypertensiveEmergencyCompletionEvidence } from '../../cardiology/hypertensive-emergency-completion';
 import { pacemakerCaptureFailureCompletionEvidence } from '../../cardiology/pacemaker-capture-failure-completion';
+import { transcutaneousPacingCaptureCompletionEvidence } from '../../cardiology/transcutaneous-pacing-capture-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -367,6 +368,7 @@ export function auditClinicalScenario(
     ...rightVentricularInfarctionCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...hypertensiveEmergencyCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...pacemakerCaptureFailureCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...transcutaneousPacingCaptureCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),
