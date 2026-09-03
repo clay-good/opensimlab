@@ -253,6 +253,7 @@ import { pulmonaryEmbolismInlinePrompt } from '../../emergency-medicine/tutor/pu
 import { severeHyponatremiaInlinePrompt } from '../../emergency-medicine/tutor/severe-hyponatremia-with-seizure-guidance';
 import { stemiInlinePrompt } from '../../emergency-medicine/tutor/stemi-guidance';
 import { traumaPrimarySurveyInlinePrompt } from '../../emergency-medicine/tutor/trauma-primary-survey-guidance';
+import { unstableBradycardiaInlinePrompt } from '../../emergency-medicine/tutor/unstable-bradycardia-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3075,6 +3076,7 @@ export interface ActionCockpitProps {
   readonly severeHyponatremiaGuidance?: GuidanceLevel;
   readonly emergencyStemiGuidance?: GuidanceLevel;
   readonly traumaPrimarySurveyGuidance?: GuidanceLevel;
+  readonly unstableBradycardiaGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3277,6 +3279,7 @@ export interface ActionCockpitProps {
   readonly severeHyponatremiaDemonstrating?: boolean;
   readonly emergencyStemiDemonstrating?: boolean;
   readonly traumaPrimarySurveyDemonstrating?: boolean;
+  readonly unstableBradycardiaDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5606,7 +5609,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 onAction={props.onUnstableNarrowTachycardiaResponse ?? (() => {})} />
             )}
             {hasUnstableBradycardiaResponse && (
-              <UnstableBradycardiaTray assessment={props.resuscitation.unstableBradycardiaAssessment}
+              <UnstableBradycardiaTray
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.unstableBradycardiaGuidance}
+                demonstrating={props.unstableBradycardiaDemonstrating} assessment={props.resuscitation.unstableBradycardiaAssessment}
                 onAction={props.onUnstableBradycardiaResponse ?? (() => {})} />
             )}
             {hasStatusEpilepticusResponse && (
@@ -8824,16 +8830,29 @@ function UnstableNarrowTachycardiaTray({ assessment, onAction }: {
   );
 }
 
-function UnstableBradycardiaTray({ assessment, onAction }: {
+function UnstableBradycardiaTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['unstableBradycardiaAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onUnstableBradycardiaResponse']>;
 }) {
   const reviewed = assessment?.reviewedAtTick != null;
   const supported = assessment?.supportedAtTick != null;
   const atropine = assessment?.atropineAtTick != null;
   const reassessed = assessment?.reassessedAtTick != null;
+  const prompt = demonstrating ? null
+    : unstableBradycardiaInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="unstable-bradycardia-recognition-title">
         <div id="unstable-bradycardia-recognition-title" className="syringe__name">Read the rate through the patient</div>
         <Badge kind="teaching">Fixed unstable bradycardia</Badge>
@@ -8845,11 +8864,11 @@ function UnstableBradycardiaTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={reviewed}
-            onClick={() => onAction('review-bradycardia-and-compromise')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-bradycardia-and-compromise') : undefined}>
             Review bradycardia + compromise
           </Button>
           <Button className="crisis-drug__action" disabled={!reviewed || supported}
-            onClick={() => onAction('record-bradycardia-support')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-bradycardia-support') : undefined}>
             Record immediate support + access
           </Button>
         </div>
@@ -8865,16 +8884,17 @@ function UnstableBradycardiaTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!supported || atropine}
-            onClick={() => onAction('record-atropine-intent')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-atropine-intent') : undefined}>
             Record atropine 1 mg IV intent
           </Button>
           <Button className="crisis-drug__action" disabled={!atropine || reassessed}
-            onClick={() => onAction('reassess-bradycardia-response')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-bradycardia-response') : undefined}>
             Reassess rhythm + whole-patient perfusion
           </Button>
         </div>
         <p className="field__hint">No medication delivery, repeat dose, pacing, capture, adrenergic infusion, definitive cause, procedure, recurrence, disposition, or outcome is offered.</p>
       </section>
+      </div>
     </div>
   );
 }

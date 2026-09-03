@@ -1559,23 +1559,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "unstable-bradycardia-fixtures.ts binds seed 3846 and content 0.1.0 to expert, straight-to-the-drug error, recovery, and no-action paths. The regular sinus bradycardia at 38/min with a palpable pulse, BP 78/46 mmHg, drowsiness, ischaemic chest discomfort, cool mottled extremities, delayed capillary refill and SpO2 91% on room air with a patent airway and spontaneous breathing; the fixed 1 mg intravenous atropine intent; and the post-atropine panel of sinus rhythm at 68/min, BP 112/70 mmHg, SpO2 96%, alert mentation, resolving discomfort, warm extremities and improved refill are authored constants. No conduction, vagal, atropine or perfusion response model is claimed beyond the shared rhythm-change event present on arrival, the cause is deliberately not diagnosed, and no outcome follows from any choice. tests/integration/emergency-unstable-bradycardia-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
           "status": "satisfied",
           "evidence": [
-            "The timeline contains at least one non-narrative state event."
+            "The progression lives in the engine's three refusals across four recorded steps in one strict chain: the rate, rhythm, pulse and compromise review is gated ahead of everything, the support bundle ahead of the atropine intent, and the reassessment one further engine tick behind the drug. That last gate is the honest one — a rhythm asked about at the instant an intent is recorded reports the clock rather than the patient. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Four recorded decisions against four declared objectives: review the rate, rhythm, palpable pulse and the cardiopulmonary compromise that makes the rate matter; confirm the patent airway and spontaneous breathing and record oxygen, help, continuous cardiorespiratory and pulse monitoring and vascular access, with positive-pressure ventilation deliberately not selected because breathing remains adequate; record a fixed 1 mg intravenous atropine intent for persistent bradycardia with compromise; and reassess after a further tick. The lesson examines nobody, delivers no oxygen, drug or fluid, places no line, operates no equipment, paces nobody, gives no adrenergic infusion, diagnoses no cause, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -1587,23 +1587,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded reassessment showing an improved rate, pressure, mentation and perfusion — and the engine event states in the same breath that reversible-cause evaluation and escalation remain necessary, with repeated atropine, pacing, adrenergic infusions, definitive diagnosis, recurrence, disposition and outcome all outside the lesson. Later actions cannot restart an ended branch. The ending hands over a patient who is better and undiagnosed rather than a resolution."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Four observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step. The reflex the lesson works against is treating the number: a rate of 38 in a sleeping endurance athlete is a normal finding and the same number here is an emergency, and the entire difference is in the pressure, the drowsiness and the skin. The support beat gives a better reason than order for the gate the engine enforces — hypoxia is itself a cause of bradycardia and this patient is at 91% on room air, so the oxygen may be treating the rhythm rather than accompanying it, and a bradycardia that improves on oxygen alone tells you something no dose of atropine could. It also names what is deliberately not selected: positive-pressure ventilation, because his breathing is adequate and ventilating him here costs preload he cannot spare. The atropine beat says what the drug buys — vagal blockade at the sinus and atrioventricular nodes, unreliable when the block is below the node or the myocardium is ischaemic — and that arranging pacing and adrenergic infusions is the thing to do while giving it. The reassessment beat reads the panel through mentation and skin rather than the rate, says why it waits a tick, and says a good panel is not permission to stop because the cause was never diagnosed. Worked example 0.1.0 drives the ordinary controls through the real engine and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere gives the drug before the support, ventilates an adequately breathing patient, names a cause, or calls the episode resolved. tests/unit/emergency-unstable-bradycardia-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/emergency-unstable-bradycardia.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding alongside the pre-existing tests/ui/unstable-bradycardia.test.tsx."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps the declared objectives to accepted engine events; the no-action path meets none and the expert path meets all four. The counterfactual is the one that treats the number: the common-error path reviews the rate and the compromise and reaches straight for atropine with no oxygen, no monitor and no access recorded. It is refused, and the two objectives downstream stay unmet. The recovery path reaches for the support bundle before anyone established that the rate is the problem and is refused, reaches for the reassessment on the same tick as the atropine and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -1622,23 +1622,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "unstable-bradycardia-fixtures.ts binds exact-content expert, straight-to-the-drug error, recovery, and no-action pathways to seed 3846 for deterministic replay through the shared engine, including both order refusals and the time-gated reassessment refusal."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

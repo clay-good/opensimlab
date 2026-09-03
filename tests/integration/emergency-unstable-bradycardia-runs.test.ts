@@ -1,0 +1,157 @@
+/**
+ * Reference transcripts for the emergency unstable-bradycardia lesson,
+ * replayed through the real engine.
+ *
+ * The assertion this file exists for is that the atropine is gated behind the
+ * support bundle: hypoxia causes bradycardia, and at 91% on room air the oxygen
+ * may be treating the rhythm rather than accompanying it.
+ */
+import { createHash } from 'node:crypto';
+import { describe, expect, it } from 'vitest';
+import { AnesthesiaEngine, ENGINE_VERSION } from '@anesthesia/engine';
+import { auditClinicalScenario } from '@anesthesia/catalog/scenario-completion';
+import { objectiveFindings } from '@anesthesia/ui/Debrief';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
+import type { EngineEvent, LearnerAction } from '@platform/kernel/protocol';
+import { UNSTABLE_BRADYCARDIA as SCENARIO } from '../../src/modules/emergency-medicine/scenarios/unstable-bradycardia';
+import { UNSTABLE_BRADYCARDIA_FIXTURES as FIXTURES } from '../../src/modules/emergency-medicine/unstable-bradycardia-fixtures';
+import {
+  UNSTABLE_BRADYCARDIA_ACTIONS, UNSTABLE_BRADYCARDIA_OBJECTIVES,
+  supportsUnstableBradycardia, type UnstableBradycardiaAction,
+} from '../../src/modules/emergency-medicine/unstable-bradycardia';
+import { unstableBradycardiaCompletionEvidence } from '../../src/modules/emergency-medicine/unstable-bradycardia-completion';
+import { unstableBradycardiaInlinePrompt } from '../../src/modules/emergency-medicine/tutor/unstable-bradycardia-guidance';
+
+type Choices = readonly (readonly [number, UnstableBradycardiaAction])[];
+const create = (region: 'US' | 'GB' = 'US') => new AnesthesiaEngine({ scenario: SCENARIO, seed: FIXTURES.seed, practiceRegion: region });
+const choice = (tick: number, action: UnstableBradycardiaAction): LearnerAction => ({ tick, type: 'unstable-bradycardia-response', payload: { action } });
+const findings = (events: readonly EngineEvent[]) => objectiveFindings(SCENARIO, [], 0, 0, [], events);
+
+function run(actions: Choices, until: number, level: GuidanceLevel = 'unassisted', region: 'US' | 'GB' = 'US') {
+  const engine = create(region); const hash = createHash('sha256'); const events: EngineEvent[] = [];
+  let next = 0;
+  for (let tick = 0; tick <= until; tick += 1) {
+    while (actions[next]?.[0] === tick) { engine.apply(choice(tick, actions[next]![1])); next += 1; }
+    const frame = engine.step(); events.push(...frame.events);
+    hash.update(JSON.stringify(frame));
+    const before = JSON.stringify(frame.equipment.resuscitation.unstableBradycardiaAssessment);
+    const prompt = unstableBradycardiaInlinePrompt(level, { scenarioVersion: SCENARIO.metadata.version,
+      patient: frame.equipment.resuscitation.unstableBradycardiaAssessment });
+    if (level === 'unassisted') expect(prompt).toBeNull();
+    expect(JSON.stringify(frame.equipment.resuscitation.unstableBradycardiaAssessment)).toBe(before);
+  }
+  expect(next).toBe(actions.length);
+  return { events, hash: hash.digest('hex'), patient: engine.equipment().resuscitation.unstableBradycardiaAssessment! };
+}
+
+describe('Emergency unstable bradycardia transcripts through the real engine and debrief', () => {
+  it('binds exact content and observed state without upgrading pending clinical evidence', () => {
+    expect(SCENARIO.metadata).toMatchObject({ version: '0.1.0', maturity: 'preview' });
+    expect(SCENARIO.metadata.clinicalReview.reviewer).toBe('UNSIGNED');
+    expect(FIXTURES.scenarioId).toBe(SCENARIO.metadata.id);
+    expect(UNSTABLE_BRADYCARDIA_ACTIONS).toHaveLength(4);
+    expect(SCENARIO.metadata.objectives).toHaveLength(4);
+    expect(SCENARIO.timeline).toHaveLength(2);
+    expect(supportsUnstableBradycardia(SCENARIO)).toBe(true);
+    expect(supportsUnstableBradycardia({
+      ...SCENARIO, timeline: SCENARIO.timeline.filter((event) => event.type !== 'rhythm-change'),
+    })).toBe(false);
+    expect(unstableBradycardiaCompletionEvidence(SCENARIO, ENGINE_VERSION, 'emergency-medicine')).toHaveLength(9);
+    expect(unstableBradycardiaCompletionEvidence(SCENARIO, ENGINE_VERSION, 'cardiology')).toEqual([]);
+    expect(unstableBradycardiaCompletionEvidence(SCENARIO, 'changed', 'emergency-medicine')).toEqual([]);
+    expect(unstableBradycardiaCompletionEvidence({ ...SCENARIO, patient: { ...SCENARIO.patient, weightKg: 9 } }, ENGINE_VERSION, 'emergency-medicine')).toEqual([]);
+    const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'emergency-medicine', 'emergency-department', 'state_transition');
+    expect(audit.complete).toBe(false);
+    expect(audit.requirements.filter(({ status }) => status === 'missing').map(({ id }) => id))
+      .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
+  });
+
+  it('guards on the declared objectives, which are not the control ids', () => {
+    expect(SCENARIO.metadata.objectives.map(({ id }) => id)).toEqual([...UNSTABLE_BRADYCARDIA_OBJECTIVES]);
+    expect([...UNSTABLE_BRADYCARDIA_OBJECTIVES]).not.toEqual([...UNSTABLE_BRADYCARDIA_ACTIONS]);
+    expect(supportsUnstableBradycardia({
+      ...SCENARIO,
+      metadata: {
+        ...SCENARIO.metadata,
+        objectives: UNSTABLE_BRADYCARDIA_OBJECTIVES.map((_, index) => ({
+          ...SCENARIO.metadata.objectives[index]!, id: UNSTABLE_BRADYCARDIA_ACTIONS[index]!,
+        })),
+      },
+    })).toBe(false);
+  });
+
+  it.each(['expert', 'commonError', 'recovery', 'noAction'] as const)('replays every %s frame identically across guidance levels and regions', (path) => {
+    const actions: Choices = FIXTURES[path];
+    const until = (actions.at(-1)?.[0] ?? 0) + 2;
+    const reference = run(actions, until);
+    for (const level of ['guided', 'coached'] as const) {
+      expect(run(actions, until, level).hash).toBe(reference.hash);
+    }
+    expect(run(actions, until, 'unassisted', 'GB').hash).toBe(reference.hash);
+  });
+
+  it('meets every objective on the expert path and none with no action', () => {
+    const expert = run(FIXTURES.expert, FIXTURES.expert.at(-1)![0] + 2);
+    expect(findings(expert.events).map(({ outcome }) => outcome))
+      .toEqual(['met', 'met', 'met', 'met']);
+    expect(expert.patient.reassessedAtTick).not.toBeNull();
+    const idle = run(FIXTURES.noAction, 8);
+    expect(findings(idle.events).map(({ outcome }) => outcome))
+      .toEqual(['not-met', 'not-met', 'not-met', 'not-met']);
+    expect(idle.patient.reviewedAtTick).toBeNull();
+  });
+
+  it('leaves positive-pressure ventilation unselected and the cause undiagnosed', () => {
+    const expert = run(FIXTURES.expert, FIXTURES.expert.at(-1)![0] + 2);
+    const text = JSON.stringify(expert.events);
+    expect(text).toContain('Positive-pressure ventilation was not selected because breathing remained adequate');
+    expect(text).toContain('definitive cause is not diagnosed');
+    expect(text).toContain('Reversible-cause evaluation and escalation remain necessary');
+  });
+
+  it('refuses the atropine when nobody recorded oxygen, monitoring or access', () => {
+    const errored = run(FIXTURES.commonError, FIXTURES.commonError.at(-1)![0] + 2);
+    expect(errored.patient.reviewedAtTick).not.toBeNull();
+    expect(errored.patient).toMatchObject({
+      supportedAtTick: null, atropineAtTick: null, reassessedAtTick: null,
+    });
+    expect(JSON.stringify(errored.events))
+      .toContain('Record immediate assessment and support before atropine intent.');
+    expect(findings(errored.events).map(({ outcome }) => outcome))
+      .toEqual(['met', 'not-met', 'not-met', 'not-met']);
+  });
+
+  it('refuses the skipped review and the too-early reassessment, and still completes', () => {
+    const recovered = run(FIXTURES.recovery, FIXTURES.recovery.at(-1)![0] + 2);
+    expect(recovered.patient.reassessedAtTick).not.toBeNull();
+    expect(findings(recovered.events).map(({ outcome }) => outcome))
+      .toEqual(['met', 'met', 'met', 'met']);
+    const transcript = JSON.stringify(recovered.events);
+    expect(transcript).toContain('Review the rate, rhythm, pulse, and cardiopulmonary compromise before treatment.');
+    expect(transcript).toContain('then allow the next engine tick before reassessment');
+    expect(recovered.patient.reviewedAtTick).toBeLessThan(recovered.patient.supportedAtTick!);
+    expect(recovered.patient.supportedAtTick).toBeLessThan(recovered.patient.atropineAtTick!);
+    expect(recovered.patient.atropineAtTick).toBeLessThan(recovered.patient.reassessedAtTick!);
+  });
+
+  it('refuses every later step before the rate and the compromise are reviewed', () => {
+    for (const action of UNSTABLE_BRADYCARDIA_ACTIONS.slice(1)) {
+      const refused = run([[0, action]], 2);
+      expect(JSON.stringify(refused.events), action)
+        .toContain('Review the rate, rhythm, pulse, and cardiopulmonary compromise before treatment.');
+      expect(refused.patient.reviewedAtTick).toBeNull();
+    }
+  });
+
+  it('refuses a reassessment recorded on the same tick as the atropine', () => {
+    const early = run([
+      [0, 'review-bradycardia-and-compromise'],
+      [1, 'record-bradycardia-support'],
+      [2, 'record-atropine-intent'],
+      [2, 'reassess-bradycardia-response'],
+    ], 4);
+    expect(early.patient.reassessedAtTick).toBeNull();
+    expect(JSON.stringify(early.events))
+      .toContain('then allow the next engine tick before reassessment');
+  });
+});

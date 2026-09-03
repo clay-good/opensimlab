@@ -379,6 +379,8 @@ import { useStemiDemonstration } from '../../emergency-medicine/demo/useStemiDem
 import { supportsStemiDemonstration } from '../../emergency-medicine/demo/stemi-demonstration';
 import { useTraumaPrimarySurveyDemonstration } from '../../emergency-medicine/demo/useTraumaPrimarySurveyDemonstration';
 import { supportsTraumaPrimarySurveyDemonstration } from '../../emergency-medicine/demo/trauma-primary-survey-demonstration';
+import { useUnstableBradycardiaDemonstration } from '../../emergency-medicine/demo/useUnstableBradycardiaDemonstration';
+import { supportsUnstableBradycardiaDemonstration } from '../../emergency-medicine/demo/unstable-bradycardia-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -720,6 +722,7 @@ export function Cockpit({
   const severeHyponatremiaDemoSupported = supportsSevereHyponatremiaDemonstration(scenario);
   const emergencyStemiDemoSupported = supportsStemiDemonstration(scenario);
   const traumaPrimarySurveyDemoSupported = supportsTraumaPrimarySurveyDemonstration(scenario);
+  const unstableBradycardiaDemoSupported = supportsUnstableBradycardiaDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -889,6 +892,7 @@ export function Cockpit({
     || severeHyponatremiaDemoSupported
     || emergencyStemiDemoSupported
     || traumaPrimarySurveyDemoSupported
+    || unstableBradycardiaDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1274,6 +1278,12 @@ export function Cockpit({
     active: demonstrating && acutePulmonaryEdemaDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.acutePulmonaryEdemaAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const unstableBradycardiaDemonstration = useUnstableBradycardiaDemonstration({
+    active: demonstrating && unstableBradycardiaDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.unstableBradycardiaAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const traumaPrimarySurveyDemonstration = useTraumaPrimarySurveyDemonstration({
@@ -2113,6 +2123,7 @@ export function Cockpit({
     : severeHyponatremiaDemoSupported ? severeHyponatremiaDemonstration
     : emergencyStemiDemoSupported ? emergencyStemiDemonstration
     : traumaPrimarySurveyDemoSupported ? traumaPrimarySurveyDemonstration
+    : unstableBradycardiaDemoSupported ? unstableBradycardiaDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -3160,6 +3171,8 @@ export function Cockpit({
           emergencyStemiDemonstrating={demonstrating && emergencyStemiDemoSupported}
           traumaPrimarySurveyGuidance={session.guidance}
           traumaPrimarySurveyDemonstrating={demonstrating && traumaPrimarySurveyDemoSupported}
+          unstableBradycardiaGuidance={session.guidance}
+          unstableBradycardiaDemonstrating={demonstrating && unstableBradycardiaDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

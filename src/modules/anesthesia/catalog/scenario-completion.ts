@@ -155,6 +155,7 @@ import { pulmonaryEmbolismCompletionEvidence } from '../../emergency-medicine/pu
 import { severeHyponatremiaCompletionEvidence } from '../../emergency-medicine/severe-hyponatremia-with-seizure-completion';
 import { stemiCompletionEvidence } from '../../emergency-medicine/stemi-completion';
 import { traumaPrimarySurveyCompletionEvidence } from '../../emergency-medicine/trauma-primary-survey-completion';
+import { unstableBradycardiaCompletionEvidence } from '../../emergency-medicine/unstable-bradycardia-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -449,6 +450,7 @@ export function auditClinicalScenario(
     ...severeHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...stemiCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...traumaPrimarySurveyCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...unstableBradycardiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),
