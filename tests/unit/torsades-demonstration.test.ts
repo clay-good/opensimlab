@@ -87,6 +87,9 @@ describe('Requirement: The Example Shocks Before It Explains', () => {
     expect(parallel).toContain('The emergency is over');
     expect(parallel).toContain('either can go first');
     expect(parallel).toContain('there is now time to think, and that is the only reason these come second');
+    // The example never reaches the beat for the lane it took, so the refusal
+    // to pick a single cause has to survive here.
+    expect(parallel).toContain('every one of which contributes and none of which is the cause');
   });
 
   it('holds the boundary that makes magnesium appropriate here and not everywhere', () => {

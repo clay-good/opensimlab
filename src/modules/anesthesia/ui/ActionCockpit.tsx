@@ -208,6 +208,7 @@ import { symptomaticBradycardiaInlinePrompt } from '../../cardiology/tutor/sympt
 import { completeHeartBlockInlinePrompt } from '../../cardiology/tutor/complete-heart-block-guidance';
 import { torsadesInlinePrompt } from '../../cardiology/tutor/torsades-guidance';
 import { hyperkalemicConductionInlinePrompt } from '../../cardiology/tutor/hyperkalemic-conduction-guidance';
+import { pericardialTamponadeInlinePrompt } from '../../cardiology/tutor/pericardial-tamponade-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2985,6 +2986,7 @@ export interface ActionCockpitProps {
   readonly completeHeartBlockGuidance?: GuidanceLevel;
   readonly torsadesGuidance?: GuidanceLevel;
   readonly hyperkalemicConductionGuidance?: GuidanceLevel;
+  readonly pericardialTamponadeGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3142,6 +3144,7 @@ export interface ActionCockpitProps {
   readonly completeHeartBlockDemonstrating?: boolean;
   readonly torsadesDemonstrating?: boolean;
   readonly hyperkalemicConductionDemonstrating?: boolean;
+  readonly pericardialTamponadeDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5702,6 +5705,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasPericardialTamponadeResponse && (
               <PericardialTamponadeTray
                 assessment={props.resuscitation.pericardialTamponadeAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.pericardialTamponadeGuidance}
+                demonstrating={props.pericardialTamponadeDemonstrating}
                 onAction={props.onPericardialTamponadeResponse ?? (() => {})} />
             )}
             {hasRightVentricularInfarctionResponse && (
@@ -10769,8 +10775,11 @@ function HyperkalemicConductionTray({ assessment, scenarioVersion, guidance = 'u
   </div>;
 }
 
-function PericardialTamponadeTray({ assessment, onAction }: {
+function PericardialTamponadeTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['pericardialTamponadeAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onPericardialTamponadeResponse']>;
 }) {
   const trajectory = assessment?.trajectoryAtTick != null;
@@ -10778,15 +10787,25 @@ function PericardialTamponadeTray({ assessment, onAction }: {
   const etiology = assessment?.etiologyAtTick != null;
   const surveillance = assessment?.surveillanceAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : pericardialTamponadeInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="pericardial-tamponade-response-title">
       <div id="pericardial-tamponade-response-title" className="syringe__name">Drainage changed the curve.</div>
       <Badge kind="teaching">reported drainage · serial circulation</Badge>
       <div className="syringe__meta">pulse + pressure · perfusion + symptoms · authored echo</div>
       <p className="syringe__remaining" role="status">{drainage ? 'Immediate response reviewed · two follow-up lanes are open' : trajectory ? 'Serial circulation reconciled · reported drainage response ready' : 'Begin with the pre- and post-drainage circulation'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={trajectory} onClick={() => onAction('reconcile-pericardial-tamponade-trajectory')}>Reconcile serial circulation</Button>
-        <Button className="crisis-drug__action" disabled={!trajectory || drainage} onClick={() => onAction('review-pericardial-tamponade-drainage-response')}>Review reported drainage response</Button>
+        <Button className="crisis-drug__action" disabled={trajectory} aria-disabled={demonstrating} onClick={act ? () => act('reconcile-pericardial-tamponade-trajectory') : undefined}>Reconcile serial circulation</Button>
+        <Button className="crisis-drug__action" disabled={!trajectory || drainage} aria-disabled={demonstrating} onClick={act ? () => act('review-pericardial-tamponade-drainage-response') : undefined}>Review reported drainage response</Button>
       </div>
       <p className="field__hint">The drainage and echo statements are authored team reports. Response supports the working physiology without proving exclusive cause, imaging skill, procedural skill, or durable resolution.</p>
     </section>
@@ -10796,12 +10815,13 @@ function PericardialTamponadeTray({ assessment, onAction }: {
       <div className="syringe__meta">medications + bleeding · pathology · serial examination + echo</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Cause, recurrence risk, and owners handed off' : etiology && surveillance ? 'Both follow-up lanes complete · handoff ready' : etiology ? 'Etiology reviewed · surveillance remains' : surveillance ? 'Surveillance reviewed · etiology remains' : drainage ? 'Etiology and surveillance can proceed in parallel' : 'Review the reported drainage response first'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={!drainage || etiology} onClick={() => onAction('review-pericardial-tamponade-etiology')}>Review etiology + contributors</Button>
-        <Button className="crisis-drug__action" disabled={!drainage || surveillance} onClick={() => onAction('review-pericardial-tamponade-surveillance')}>Review recurrence surveillance</Button>
-        <Button className="crisis-drug__action" disabled={!etiology || !surveillance || handoff} onClick={() => onAction('handoff-pericardial-tamponade-reassessment')}>Hand off open risks</Button>
+        <Button className="crisis-drug__action" disabled={!drainage || etiology} aria-disabled={demonstrating} onClick={act ? () => act('review-pericardial-tamponade-etiology') : undefined}>Review etiology + contributors</Button>
+        <Button className="crisis-drug__action" disabled={!drainage || surveillance} aria-disabled={demonstrating} onClick={act ? () => act('review-pericardial-tamponade-surveillance') : undefined}>Review recurrence surveillance</Button>
+        <Button className="crisis-drug__action" disabled={!etiology || !surveillance || handoff} aria-disabled={demonstrating} onClick={act ? () => act('handoff-pericardial-tamponade-reassessment') : undefined}>Hand off open risks</Button>
       </div>
       <p className="field__hint">No fluid or vasoactive recipe, image acquisition, drainage route, catheter manipulation, device choice, technical success, disposition, or outcome is supplied.</p>
     </section>
+    </div>
   </div>;
 }
 

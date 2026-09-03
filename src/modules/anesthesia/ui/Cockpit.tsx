@@ -289,6 +289,8 @@ import { useTorsadesDemonstration } from '../../cardiology/demo/useTorsadesDemon
 import { supportsTorsadesDemonstration } from '../../cardiology/demo/torsades-demonstration';
 import { useHyperkalemicConductionDemonstration } from '../../cardiology/demo/useHyperkalemicConductionDemonstration';
 import { supportsHyperkalemicConductionDemonstration } from '../../cardiology/demo/hyperkalemic-conduction-demonstration';
+import { usePericardialTamponadeDemonstration } from '../../cardiology/demo/usePericardialTamponadeDemonstration';
+import { supportsPericardialTamponadeDemonstration } from '../../cardiology/demo/pericardial-tamponade-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -585,6 +587,7 @@ export function Cockpit({
   const completeHeartBlockDemoSupported = supportsCompleteHeartBlockDemonstration(scenario);
   const torsadesDemoSupported = supportsTorsadesDemonstration(scenario);
   const hyperkalemicConductionDemoSupported = supportsHyperkalemicConductionDemonstration(scenario);
+  const pericardialTamponadeDemoSupported = supportsPericardialTamponadeDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -709,6 +712,7 @@ export function Cockpit({
     || completeHeartBlockDemoSupported
     || torsadesDemoSupported
     || hyperkalemicConductionDemoSupported
+    || pericardialTamponadeDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -902,6 +906,12 @@ export function Cockpit({
     active: demonstrating && hyperkalemicConductionDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.hyperkalemicConductionAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const pericardialTamponadeDemonstration = usePericardialTamponadeDemonstration({
+    active: demonstrating && pericardialTamponadeDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.pericardialTamponadeAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const stableNarrowTachycardiaDemonstration = useStableNarrowTachycardiaDemonstration({
@@ -1618,6 +1628,7 @@ export function Cockpit({
     : completeHeartBlockDemoSupported ? completeHeartBlockDemonstration
     : torsadesDemoSupported ? torsadesDemonstration
     : hyperkalemicConductionDemoSupported ? hyperkalemicConductionDemonstration
+    : pericardialTamponadeDemoSupported ? pericardialTamponadeDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2575,6 +2586,8 @@ export function Cockpit({
           torsadesDemonstrating={demonstrating && torsadesDemoSupported}
           hyperkalemicConductionGuidance={session.guidance}
           hyperkalemicConductionDemonstrating={demonstrating && hyperkalemicConductionDemoSupported}
+          pericardialTamponadeGuidance={session.guidance}
+          pericardialTamponadeDemonstrating={demonstrating && pericardialTamponadeDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

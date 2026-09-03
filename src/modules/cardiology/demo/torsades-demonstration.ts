@@ -53,7 +53,7 @@ export function torsadesDemonstrationStep(
   }
   if (patient.contextAtTick === null) {
     return { id: 'parallel', focus: 'monitor', progress: 0.6, action: 'review-torsades-long-qt-context',
-      narration: 'The emergency is over. Two lanes are open now, and either can go first. One is the cause: what made her QT long enough to do this. The other is what stops it happening again in the next hour. The engine accepts them in either order and refuses the handoff until both have landed, which is a fair model of a real unit — somebody is on the phone about the dofetilide while somebody else is drawing up magnesium. What has changed since the opening is that there is now time to think, and that is the only reason these come second.' };
+      narration: 'The emergency is over. Two lanes are open now, and either can go first. One is the cause: what made her QT long enough to do this — five contributors, every one of which contributes and none of which is the cause. The other is what stops it happening again in the next hour. The engine accepts them in either order and refuses the handoff until both have landed, which is a fair model of a real unit — somebody is on the phone about the dofetilide while somebody else is drawing up magnesium. What has changed since the opening is that there is now time to think, and that is the only reason these come second.' };
   }
   if (patient.recurrenceIntentAtTick === null) {
     return { id: 'recurrence', focus: 'actions', progress: 0.78, action: 'record-torsades-recurrence-suppression-intent',

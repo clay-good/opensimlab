@@ -1559,23 +1559,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "pericardial-tamponade-fixtures.ts binds seed 6903 and content 0.1.0 to expert, comfortable-patient-is-a-finished-review error, recovery, and no-action paths. The pretreatment record of ten days of progressive dyspnea and orthopnea with 116/min, 88/64 mmHg, RR 24/min, 96% on room air, cool extremities, elevated JVP and pulsus paradoxus 16 mmHg, the echo report of a 30 mm circumferential effusion with right-atrial systolic and right-ventricular early-diastolic collapse and a plethoric IVC, the reported 420 mL of serosanguineous fluid and retained catheter, the current 88/min, 116/72 mmHg, RR 18/min, 97% on room air with an 8 mm residual effusion and no chamber collapse, and the authored later report of 90/min, 114/70 mmHg, 55 mL of additional catheter output and a 9 mm residual effusion are authored constants; no drainage, effusion or hemodynamic model is claimed, and no outcome follows from any choice. tests/integration/pericardial-tamponade-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline declares three narratives and no non-narrative state event. That is a correct reading of the timeline and the wrong conclusion about this lesson: the emergency happened before the learner arrived, so there is no state for a rhythm-change to represent, and the progression lives entirely in the engine's refusals. Five recorded steps run as a chain and then a fork — the trajectory must be reconciled before anything else, the reported drainage response before either review lane, and the handoff refuses until both lanes have landed and a tick has passed. Every one of those refusals is exercised by a reference transcript in tests/integration/pericardial-tamponade-runs.test.ts."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions reconcile the authored pre-drainage clinical and echocardiographic tamponade pattern with the current stable state without turning one finding into a universal rule; review the reported urgent drainage and its immediate response without inferring procedure skill, sole causation or durable resolution; review malignant, infectious, inflammatory, systemic, renal, iatrogenic and other etiologies while the selected fluid studies remain pending; review serial perfusion, respiratory, rhythm, catheter, output, imaging, recurrence and complication surveillance without manipulating or removing the drain; and hand off pending results, recurrence and deterioration triggers and named Cardiology and oncology ownership. The etiology and surveillance lanes are unordered and the handoff waits for both. The lesson examines nobody, acquires or interprets no ECG, monitoring, imaging, catheter, output or specimen data, diagnoses no etiology, selects or delivers no fluid, medication, drainage, surgery or other treatment, manipulates or removes no catheter, manages no complication, determines no disposition or prognosis, and predicts no outcome."
           ]
         },
         {
@@ -1587,23 +1587,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded handoff on an authored later report that is stable in every column, with 55 mL of additional catheter output and a residual effusion that has gone from 8 mm to 9 mm. Later actions cannot restart an ended branch, and the ending certifies initialPulsePresent true with treatmentDeliveredByLearner, imageAcquiredByLearner, procedurePerformedByLearner and catheterManipulatedByLearner all false — the drainage was somebody else's prior care, the catheter is never touched, and a quiet two hours with a drain in place is explicitly not durable resolution."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps — six rather than five because the closing unordered pair needs a beat for the state where neither lane has been taken. The tutor works against two reflexes. The first is the obvious answer: a woman with active lung adenocarcinoma, a large effusion and serosanguineous fluid looks like malignant pericardial disease, everybody in the room has already decided that, and the etiology beat says why it is not established — the cytology and microbiology are pending, a first cytology can be negative in disease that is really there, and among the alternatives still open are ones treated completely differently and one that is curable. The second is improvement: she was drained two hours ago and looks well, and the drainage beat names the three separate things a good response does not establish, including that this lesson infers no procedure skill from an outcome. The surveillance beat lists the triggers and states plainly that the catheter is never touched and that no output volume, effusion size or quiet interval is a threshold. The handoff beat asks for two owners rather than one, because a patient whose cause is unknown and whose cancer is active needs both. Worked example 0.1.0 drives the ordinary controls through the real engine to the handoff, and its narration is generated from the tutor's own prose so the two cannot drift apart. A test asserts that no beat anywhere diagnoses the etiology, touches the catheter, or turns a number into a threshold. tests/unit/pericardial-tamponade-demonstration.test.ts verifies both closing orderings and every beat against the real engine, and tests/ui/cardiology-pericardial-tamponade.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the one improvement invites: the common-error path reconciles the trajectory and reads the drainage response correctly, then reaches for the handoff as though a comfortable patient with a drain in place were a finished review, meeting two of five — the engine refuses, because the handoff is gated behind both open lanes. The recovery path skips each of the two ordered steps in turn and is refused for both, takes the closing pair in the other order — which the engine accepts without comment — walks into the elapsed-time gate before clearing it, and still completes from the same positions."
           ]
         },
         {
@@ -1622,23 +1622,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "pericardial-tamponade-fixtures.ts binds exact-content expert, comfortable-patient-is-a-finished-review error, recovery, and no-action pathways to seed 6903 for deterministic replay through the shared engine, including both opening order refusals, the both-lanes refusal on the handoff, and the elapsed-time refusal."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
