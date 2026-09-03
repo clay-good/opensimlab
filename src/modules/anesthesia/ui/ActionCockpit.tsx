@@ -211,6 +211,7 @@ import { hyperkalemicConductionInlinePrompt } from '../../cardiology/tutor/hyper
 import { pericardialTamponadeInlinePrompt } from '../../cardiology/tutor/pericardial-tamponade-guidance';
 import { rightVentricularInfarctionInlinePrompt } from '../../cardiology/tutor/right-ventricular-infarction-guidance';
 import { hypertensiveEmergencyInlinePrompt } from '../../cardiology/tutor/hypertensive-emergency-guidance';
+import { pacemakerCaptureFailureInlinePrompt } from '../../cardiology/tutor/pacemaker-capture-failure-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -2991,6 +2992,7 @@ export interface ActionCockpitProps {
   readonly pericardialTamponadeGuidance?: GuidanceLevel;
   readonly rightVentricularInfarctionGuidance?: GuidanceLevel;
   readonly hypertensiveEmergencyGuidance?: GuidanceLevel;
+  readonly pacemakerCaptureFailureGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3151,6 +3153,7 @@ export interface ActionCockpitProps {
   readonly pericardialTamponadeDemonstrating?: boolean;
   readonly rightVentricularInfarctionDemonstrating?: boolean;
   readonly hypertensiveEmergencyDemonstrating?: boolean;
+  readonly pacemakerCaptureFailureDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5735,6 +5738,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasPacemakerCaptureFailureResponse && (
               <PacemakerCaptureFailureTray
                 assessment={props.resuscitation.pacemakerCaptureFailureAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.pacemakerCaptureFailureGuidance}
+                demonstrating={props.pacemakerCaptureFailureDemonstrating}
                 onAction={props.onPacemakerCaptureFailureResponse ?? (() => {})} />
             )}
             {hasTranscutaneousPacingCaptureResponse && (
@@ -10939,8 +10945,11 @@ function HypertensiveEmergencyTray({ assessment, scenarioVersion, guidance = 'un
   </div>;
 }
 
-function PacemakerCaptureFailureTray({ assessment, onAction }: {
+function PacemakerCaptureFailureTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['pacemakerCaptureFailureAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onPacemakerCaptureFailureResponse']>;
 }) {
   const recognized = assessment?.recognitionAtTick != null;
@@ -10949,16 +10958,26 @@ function PacemakerCaptureFailureTray({ assessment, onAction }: {
   const causes = assessment?.causesAtTick != null;
   const laterPanel = assessment?.laterPanelAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
-  return <div className="tray-grid">
+  const prompt = demonstrating ? null
+    : pacemakerCaptureFailureInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
+  return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+    {prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
+    <div className="tray-grid">
     <section className="syringe" aria-labelledby="pacemaker-capture-failure-pattern-title">
       <div id="pacemaker-capture-failure-pattern-title" className="syringe__name">A spike is not a heartbeat.</div>
       <Badge kind="teaching">electrical noncapture · intrinsic pulse · device dependent</Badge>
       <div className="syringe__meta">artifact → QRS · pulse + perfusion · lead + generator trends</div>
       <p className="syringe__remaining" role="status">{deviceSystem && causes ? 'Device system + contributors reviewed' : deviceSystem ? 'Device trends reviewed · contributor screen remains' : causes ? 'Contributors reviewed · device trends remain' : recognized ? 'Rescue and two review lanes are open' : 'Match pacing artifacts to QRS complexes and pulse'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={recognized} onClick={() => onAction('reconcile-pacemaker-capture-failure-pulse-and-pattern')}>Reconcile pulse + capture pattern</Button>
-        <Button className="crisis-drug__action" disabled={!recognized || deviceSystem} onClick={() => onAction('review-pacemaker-capture-failure-device-system')}>Review device + lead system</Button>
-        <Button className="crisis-drug__action" disabled={!recognized || causes} onClick={() => onAction('review-pacemaker-capture-failure-causes')}>Review reversible causes</Button>
+        <Button className="crisis-drug__action" disabled={recognized} aria-disabled={demonstrating} onClick={act ? () => act('reconcile-pacemaker-capture-failure-pulse-and-pattern') : undefined}>Reconcile pulse + capture pattern</Button>
+        <Button className="crisis-drug__action" disabled={!recognized || deviceSystem} aria-disabled={demonstrating} onClick={act ? () => act('review-pacemaker-capture-failure-device-system') : undefined}>Review device + lead system</Button>
+        <Button className="crisis-drug__action" disabled={!recognized || causes} aria-disabled={demonstrating} onClick={act ? () => act('review-pacemaker-capture-failure-causes') : undefined}>Review reversible causes</Button>
       </div>
       <p className="field__hint">The fixed report includes pacing artifacts not followed by QRS complexes; intrinsic escape and captured complexes still produce a pulse. The live trace does not simulate initial pacemaker noncapture or a learner-performed capture test.</p>
     </section>
@@ -10968,12 +10987,13 @@ function PacemakerCaptureFailureTray({ assessment, onAction }: {
       <div className="syringe__meta">pulse-loss trigger · experienced-team response · durable work open</div>
       <p className="syringe__remaining" role="status">{handoff ? 'Capture interval + unresolved device work handed off' : laterPanel ? 'Experienced-team response reviewed · later handoff due' : rescue && deviceSystem && causes ? 'Rescue + review lanes complete · allow the later panel' : rescue ? 'Rescue active · device and cause review continue' : recognized ? 'Activate pacing-capable rescue now' : 'Reconcile pulse and pattern first'}</p>
       <div className="syringe__presets">
-        <Button className="crisis-drug__action" disabled={!recognized || rescue} onClick={() => onAction('activate-pacemaker-capture-failure-rescue-pathway')}>Activate pacing-capable rescue</Button>
-        <Button className="crisis-drug__action" disabled={!rescue || !deviceSystem || !causes || laterPanel} onClick={() => onAction('review-pacemaker-capture-failure-later-panel')}>Review later capture panel</Button>
-        <Button className="crisis-drug__action" disabled={!laterPanel || handoff} onClick={() => onAction('handoff-pacemaker-capture-failure-reassessment')}>Hand off capture-failure plan</Button>
+        <Button className="crisis-drug__action" disabled={!recognized || rescue} aria-disabled={demonstrating} onClick={act ? () => act('activate-pacemaker-capture-failure-rescue-pathway') : undefined}>Activate pacing-capable rescue</Button>
+        <Button className="crisis-drug__action" disabled={!rescue || !deviceSystem || !causes || laterPanel} aria-disabled={demonstrating} onClick={act ? () => act('review-pacemaker-capture-failure-later-panel') : undefined}>Review later capture panel</Button>
+        <Button className="crisis-drug__action" disabled={!laterPanel || handoff} aria-disabled={demonstrating} onClick={act ? () => act('handoff-pacemaker-capture-failure-reassessment') : undefined}>Hand off capture-failure plan</Button>
       </div>
       <p className="field__hint">No magnet, drug, pad placement, rate, output, pulse width, mode, sedation, access, pacing delivery, interrogation, programming, lead procedure, repair, disposition, prognosis, or outcome is selected.</p>
     </section>
+    </div>
   </div>;
 }
 
