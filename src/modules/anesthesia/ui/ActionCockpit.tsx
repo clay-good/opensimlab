@@ -244,6 +244,7 @@ import { adultAsthmaInlinePrompt } from '../../emergency-medicine/tutor/adult-as
 import { emergencyAnaphylaxisInlinePrompt } from '../../emergency-medicine/tutor/emergency-anaphylaxis-guidance';
 import { cardiacTamponadeInlinePrompt } from '../../emergency-medicine/tutor/cardiac-tamponade-guidance';
 import { copdExacerbationInlinePrompt } from '../../emergency-medicine/tutor/copd-exacerbation-guidance';
+import { diabeticKetoacidosisInlinePrompt } from '../../emergency-medicine/tutor/diabetic-ketoacidosis-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3057,6 +3058,7 @@ export interface ActionCockpitProps {
   readonly emergencyAnaphylaxisGuidance?: GuidanceLevel;
   readonly cardiacTamponadeGuidance?: GuidanceLevel;
   readonly copdExacerbationGuidance?: GuidanceLevel;
+  readonly diabeticKetoacidosisGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3250,6 +3252,7 @@ export interface ActionCockpitProps {
   readonly emergencyAnaphylaxisDemonstrating?: boolean;
   readonly cardiacTamponadeDemonstrating?: boolean;
   readonly copdExacerbationDemonstrating?: boolean;
+  readonly diabeticKetoacidosisDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5597,6 +5600,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasDiabeticKetoacidosisResponse && (
               <DiabeticKetoacidosisTray
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.diabeticKetoacidosisGuidance}
+                demonstrating={props.diabeticKetoacidosisDemonstrating}
                 assessment={props.resuscitation.diabeticKetoacidosisAssessment}
                 onAction={props.onDiabeticKetoacidosisResponse ?? (() => {})} />
             )}
@@ -8977,8 +8983,11 @@ function IntracranialHemorrhageTray({ assessment, onAction }: {
   );
 }
 
-function DiabeticKetoacidosisTray({ assessment, onAction }: {
+function DiabeticKetoacidosisTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['diabeticKetoacidosisAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onDiabeticKetoacidosisResponse']>;
 }) {
   const reviewed = assessment?.presentationReviewedAtTick != null;
@@ -8987,8 +8996,18 @@ function DiabeticKetoacidosisTray({ assessment, onAction }: {
   const insulin = assessment?.insulinAtTick != null;
   const dextrose = assessment?.dextroseAtTick != null;
   const transitioned = assessment?.transitionAtTick != null;
+  const prompt = demonstrating ? null
+    : diabeticKetoacidosisInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="dka-foundation-title">
         <div id="dka-foundation-title" className="syringe__name">Three signals name the crisis.</div>
         <Badge kind="teaching">Glucose + ketones + acidosis</Badge>
@@ -9001,11 +9020,11 @@ function DiabeticKetoacidosisTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={reviewed}
-            onClick={() => onAction('review-dka-presentation')}>Review DKA triad + cause</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-dka-presentation') : undefined}>Review DKA triad + cause</Button>
           <Button className="crisis-drug__action" disabled={!reviewed || fluids}
-            onClick={() => onAction('record-dka-fluids-and-monitoring')}>Record fluids + serial monitoring</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-dka-fluids-and-monitoring') : undefined}>Record fluids + serial monitoring</Button>
           <Button className="crisis-drug__action" disabled={!fluids || potassium}
-            onClick={() => onAction('record-dka-potassium-replacement')}>Replace K + recheck before insulin</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-dka-potassium-replacement') : undefined}>Replace K + recheck before insulin</Button>
         </div>
         <p className="field__hint">Potassium 3.2 mmol/L keeps insulin locked. The screen does not examine, sample, choose a fluid or electrolyte dose, or deliver treatment.</p>
       </section>
@@ -9020,14 +9039,15 @@ function DiabeticKetoacidosisTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!potassium || insulin}
-            onClick={() => onAction('record-dka-insulin-intent')}>Record IV insulin protocol intent</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-dka-insulin-intent') : undefined}>Record IV insulin protocol intent</Button>
           <Button className="crisis-drug__action" disabled={!insulin || dextrose}
-            onClick={() => onAction('add-dextrose-and-continue-insulin')}>Add dextrose + continue insulin</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('add-dextrose-and-continue-insulin') : undefined}>Add dextrose + continue insulin</Button>
           <Button className="crisis-drug__action" disabled={!dextrose || transitioned}
-            onClick={() => onAction('confirm-dka-resolution-and-transition')}>Confirm resolution + transition safely</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('confirm-dka-resolution-and-transition') : undefined}>Confirm resolution + transition safely</Button>
         </div>
         <p className="field__hint">Resolution uses plasma ketone plus pH or bicarbonate, not anion gap or urine ketones alone. No infusion, lab kinetics, complication, disposition, or outcome is simulated.</p>
       </section>
+      </div>
     </div>
   );
 }

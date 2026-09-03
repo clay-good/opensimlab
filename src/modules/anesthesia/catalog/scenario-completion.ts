@@ -146,6 +146,7 @@ import { adultAsthmaCompletionEvidence } from '../../emergency-medicine/adult-as
 import { emergencyAnaphylaxisCompletionEvidence } from '../../emergency-medicine/emergency-anaphylaxis-completion';
 import { cardiacTamponadeCompletionEvidence } from '../../emergency-medicine/cardiac-tamponade-completion';
 import { copdExacerbationCompletionEvidence } from '../../emergency-medicine/copd-exacerbation-completion';
+import { diabeticKetoacidosisCompletionEvidence } from '../../emergency-medicine/diabetic-ketoacidosis-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -431,6 +432,7 @@ export function auditClinicalScenario(
     ...emergencyAnaphylaxisCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...cardiacTamponadeCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...copdExacerbationCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...diabeticKetoacidosisCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

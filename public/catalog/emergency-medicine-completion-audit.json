@@ -2315,23 +2315,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "diabetic-ketoacidosis-fixtures.ts binds seed 9314 and content 0.1.0 to expert, insulin-before-potassium error, recovery, and no-action paths. The twenty-nine-year-old with type 1 diabetes, eighteen hours of polyuria, thirst, vomiting and weakness, alert with deep breathing, dry mucosa, HR 118/min and BP 98/64 mmHg, and a kinked insulin-pump infusion set as the authored precipitant with no infection and no mixed hyperosmolar state; the arrival panel of glucose 486 mg/dL, beta-hydroxybutyrate 5.4 mmol/L, venous pH 7.16, bicarbonate 11 mmol/L and potassium 3.2 mmol/L; the authored repeat potassium of 3.7 mmol/L that opens the insulin gate; the interval panel of glucose 238 mg/dL, beta-hydroxybutyrate 2.2 mmol/L, pH 7.24, bicarbonate 15 mmol/L and potassium 4.1 mmol/L; and the resolution panel of glucose 186 mg/dL, beta-hydroxybutyrate 0.4 mmol/L, pH 7.32, bicarbonate 19 mmol/L and potassium 4.0 mmol/L are authored constants. No fluid, electrolyte, insulin, glucose-fall or ketone-clearance kinetic model is claimed, and no outcome follows from any choice. tests/integration/emergency-diabetic-ketoacidosis-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is two narratives with no non-narrative state event. The progression lives in the engine's five order refusals across six recorded steps in one strict chain with no time gates, and the third refusal carries the lesson: the insulin intent is locked while potassium is 3.2 mmol/L and opens only once replacement and the authored 3.7 mmol/L repeat are recorded. The mirror refusal sits at the other end — the resolution transition is gated behind the dextrose-and-continued-insulin step, so nobody can declare this over on the strength of an improved glucose. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six recorded decisions against five declared objectives: review the three biochemical domains that establish DKA together with the severity, the potassium and the authored precipitant; record initial isotonic fluid with the access, urine-output, hourly-glucose and four-hourly panel schedule; record potassium replacement and the recheck while insulin stays withheld; record a local-protocol intravenous insulin infusion intent once the gate opens; add dextrose and continue insulin through an interval panel where glucose has improved and ketoacidosis has not; and confirm resolution against plasma ketone plus pH or bicarbonate before recording a safe subcutaneous overlap, replacement of the failed infusion set, sick-day education, supply access and follow-up. The lesson examines nobody, draws no specimen, selects no fluid, no electrolyte product and no insulin dose, programmes no pump, delivers nothing, tests no device, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -2343,23 +2343,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded resolution and transition against an authored panel: beta-hydroxybutyrate 0.4 mmol/L with venous pH 7.32 and bicarbonate 19 mmol/L, criteria met, anion gap and urine ketones explicitly not used alone. Later actions cannot restart an ended branch. Every panel is an authored constant rather than a modelled response, and the ending hands over a handoff — overlap, the replaced infusion set, sick-day rules, supply access and follow-up — rather than a claim about outcome or recurrence."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step. The reflex the lesson works against is the word that follows DKA: insulin is the treatment, and in this patient it is the treatment that has to wait. The potassium beat says why a serum potassium that is already low means the total-body deficit is severe, and that insulin here does not risk hypokalaemia but produces it. The insulin beat says why an infusion rather than a bolus — a steady low rate suppresses ketogenesis, while a bolus buys a faster glucose fall and a larger potassium shift in the patient just corrected. The dextrose beat reads the interval panel as two stories moving at different speeds and names stopping insulin on an improved glucose as the commonest error after the potassium. The presentation beat treats the kinked infusion set as a precipitant you can name and therefore a recurrence you can prevent. The fluid beat says why volume precedes both drugs. The transition beat says why not the anion gap, which can stay open on hyperchloraemia from the saline, and why not urine ketones, which lag and measure the wrong ketone — and why the subcutaneous insulin must overlap the infusion, since the infusion has no reservoir behind it. Worked example 0.1.0 drives the ordinary controls through the real engine and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere boluses the insulin, names a unit dose or an infusion rate, stops insulin at the improved glucose, or claims a resolution the panels have not shown. tests/unit/emergency-diabetic-ketoacidosis-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/emergency-diabetic-ketoacidosis.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps the declared objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the one the diagnosis's own name invites: the common-error path reviews the presentation, records fluid and monitoring, and then reaches for the insulin intent with potassium still at 3.2 mmol/L. It is refused with the potassium named in the refusal, and the three objectives downstream stay unmet. The recovery path reaches for fluid before the panel that establishes what this is and is refused, reaches for the resolution transition before the interval panel has been worked through and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -2378,23 +2378,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "diabetic-ketoacidosis-fixtures.ts binds exact-content expert, insulin-before-potassium error, recovery, and no-action pathways to seed 9314 for deterministic replay through the shared engine, including all five order refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

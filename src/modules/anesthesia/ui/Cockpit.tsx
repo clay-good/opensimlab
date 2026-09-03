@@ -361,6 +361,8 @@ import { useCardiacTamponadeDemonstration } from '../../emergency-medicine/demo/
 import { supportsCardiacTamponadeDemonstration } from '../../emergency-medicine/demo/cardiac-tamponade-demonstration';
 import { useCopdExacerbationDemonstration } from '../../emergency-medicine/demo/useCopdExacerbationDemonstration';
 import { supportsCopdExacerbationDemonstration } from '../../emergency-medicine/demo/copd-exacerbation-demonstration';
+import { useDiabeticKetoacidosisDemonstration } from '../../emergency-medicine/demo/useDiabeticKetoacidosisDemonstration';
+import { supportsDiabeticKetoacidosisDemonstration } from '../../emergency-medicine/demo/diabetic-ketoacidosis-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -693,6 +695,7 @@ export function Cockpit({
   const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
   const cardiacTamponadeDemoSupported = supportsCardiacTamponadeDemonstration(scenario);
   const copdExacerbationDemoSupported = supportsCopdExacerbationDemonstration(scenario);
+  const diabeticKetoacidosisDemoSupported = supportsDiabeticKetoacidosisDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -853,6 +856,7 @@ export function Cockpit({
     || emergencyAnaphylaxisDemoSupported
     || cardiacTamponadeDemoSupported
     || copdExacerbationDemoSupported
+    || diabeticKetoacidosisDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1238,6 +1242,12 @@ export function Cockpit({
     active: demonstrating && acutePulmonaryEdemaDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.acutePulmonaryEdemaAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const diabeticKetoacidosisDemonstration = useDiabeticKetoacidosisDemonstration({
+    active: demonstrating && diabeticKetoacidosisDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.diabeticKetoacidosisAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const copdExacerbationDemonstration = useCopdExacerbationDemonstration({
@@ -2014,6 +2024,7 @@ export function Cockpit({
     : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration
     : cardiacTamponadeDemoSupported ? cardiacTamponadeDemonstration
     : copdExacerbationDemoSupported ? copdExacerbationDemonstration
+    : diabeticKetoacidosisDemoSupported ? diabeticKetoacidosisDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -3043,6 +3054,8 @@ export function Cockpit({
           cardiacTamponadeDemonstrating={demonstrating && cardiacTamponadeDemoSupported}
           copdExacerbationGuidance={session.guidance}
           copdExacerbationDemonstrating={demonstrating && copdExacerbationDemoSupported}
+          diabeticKetoacidosisGuidance={session.guidance}
+          diabeticKetoacidosisDemonstrating={demonstrating && diabeticKetoacidosisDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
