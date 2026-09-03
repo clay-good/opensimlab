@@ -2189,23 +2189,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "severe-acidemia-fixtures.ts binds seed 3941 and content 0.1.0 to expert, ventilate-before-the-arithmetic error, recovery, and no-action paths. The intubated patient with septic shock at HR 122/min, MAP 61 mmHg on reported vasoactive support, SpO2 95% on FiO2 0.40 and 38.4°C, the repeated arterial sample reporting pH 7.09, PaCO2 48 mmHg, bicarbonate 14 mmol/L, lactate 8.1 mmol/L, sodium 139 mmol/L, chloride 103 mmol/L, albumin 2.5 g/dL, potassium 5.7 mmol/L without ECG change and creatinine 3.0 mg/dL from 1.2 mg/dL, and the reported expected PaCO2 of approximately 29 ±2 mmHg for a bicarbonate of 14 mmol/L are authored constants; no acid-base, buffer or kidney-support model is claimed, and no outcome follows from any choice. tests/integration/severe-acidemia-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is two narratives with no non-narrative state event. The progression lives in the engine's four order refusals, and the analysis step carries the lesson: a pH of 7.09 invites a treatment, and the expected-compensation arithmetic is what turns it into a diagnosis — bicarbonate 14 mmol/L predicts a PaCO2 near 29 mmHg, the actual is 48 mmHg, and that gap is a superimposed respiratory acidosis rather than a lung doing its best. The engine refuses every stabilization choice until that has been established. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions recognize severe mixed acidemia with its cardiovascular, respiratory, electrolyte and kidney risk and activate the full team; confirm the gas and distinguish metabolic acid accumulation from inadequate respiratory compensation using the corrected anion gap, lactate, expected compensation and cause review; restore safe ventilatory compensation while checking mechanics and auto-PEEP risk and avoiding normalization by force; activate cause-directed shock and infection care with individualized buffer and kidney-support planning; and reassess the gas, perfusion, ventilation, potassium, kidney and cause trajectories separately. The lesson examines nobody, acquires or interprets no gas, calculates and diagnoses nothing, delivers no fluid, buffer, vasopressor, electrolyte or antidote, selects no dose, changes no ventilator setting, starts no kidney support, treats no source, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -2217,23 +2217,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded reassessment on an authored response that improves pH and perfusion while claiming no acid clearance, source control, kidney recovery or outcome. Later actions cannot restart an ended branch, and the ending is precise about what an improved pH is evidence of: it is consistent with better ventilation alone, which would be a real improvement in the half that was never the underlying problem. The gas, perfusion, ventilation, potassium, kidney and cause are therefore read as separate trajectories rather than one."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step, because this lesson has no unordered lane. The reflex it works against is treating the number: a pH of 7.09 asks to be corrected, and correcting it is not a treatment, because the acid is coming from somewhere and the two things that would move it are ventilation that is currently inadequate and a source nobody has controlled. The recognition beat reads the values as different organs saying the same thing and notes that the potassium of 5.7 mmol/L is an arrhythmia risk that currently has no ECG signature. The analysis beat does the arithmetic out loud and explains why the anion gap needs correcting at an albumin of 2.5 g/dL — an uncorrected gap would understate the acid. The ventilation beat makes \"safe\" the constraint and points at the module's own auto-PEEP lesson: chasing a number with volume and rate stacks breaths in a patient who cannot exhale, and drops the pressure of a man whose MAP is already 61 mmHg. The cause beat declines to pick a side on bicarbonate because the evidence does not: the 2026 guideline conditionally suggests it for septic shock at pH ≤7.2 with moderate-to-severe kidney injury at very low certainty and suggests against it purely for haemodynamics in hypoperfusion-induced lactic acidaemia, and BICARICU-2 found no 90-day mortality benefit — so it is a live individualized decision, while a life-threatening disturbance keeps urgent kidney-support assessment on the table. Worked example 0.1.0 drives the ordinary controls through the real engine to the reassessment and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere gives bicarbonate, names a dose or a ventilator setting, starts kidney support, or claims the acid is cleared. tests/unit/severe-acidemia-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/critical-care-severe-acidemia.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the one a pH of 7.09 invites: the common-error path recognises the severity and goes straight to stabilizing the ventilation, skipping the compensation arithmetic that shows the respiratory half is a second disorder, and meets one of five because the engine gates every stabilization choice behind the analysis. The recovery path reaches for the analysis before the severity has been recognised and is refused, reaches for the cause plan before the ventilation that buys time for it and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -2252,23 +2252,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "severe-acidemia-fixtures.ts binds exact-content expert, ventilate-before-the-arithmetic error, recovery, and no-action pathways to seed 3941 for deterministic replay through the shared engine, including all four order refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

@@ -225,6 +225,7 @@ import { escalatingHypoxemiaInlinePrompt } from '../../critical-care/tutor/escal
 import { unplannedExtubationInlinePrompt } from '../../critical-care/tutor/unplanned-extubation-guidance';
 import { circuitDisconnectionInlinePrompt } from '../../critical-care/tutor/circuit-disconnection-guidance';
 import { postIntubationHypotensionInlinePrompt } from '../../critical-care/tutor/post-intubation-hypotension-guidance';
+import { severeAcidemiaInlinePrompt } from '../../critical-care/tutor/severe-acidemia-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3019,6 +3020,7 @@ export interface ActionCockpitProps {
   readonly unplannedExtubationGuidance?: GuidanceLevel;
   readonly ventilatorCircuitDisconnectionGuidance?: GuidanceLevel;
   readonly postIntubationHypotensionGuidance?: GuidanceLevel;
+  readonly severeAcidemiaGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3193,6 +3195,7 @@ export interface ActionCockpitProps {
   readonly unplannedExtubationDemonstrating?: boolean;
   readonly ventilatorCircuitDisconnectionDemonstrating?: boolean;
   readonly postIntubationHypotensionDemonstrating?: boolean;
+  readonly severeAcidemiaDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5660,6 +5663,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasSevereAcidemiaResponse && (
               <SevereAcidemiaTray assessment={props.resuscitation.severeAcidemiaAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.severeAcidemiaGuidance}
+                demonstrating={props.severeAcidemiaDemonstrating}
                 onAction={props.onSevereAcidemiaResponse ?? (() => {})} />
             )}
             {hasIcuHiddenDeteriorationHandoffResponse && (
@@ -10183,8 +10189,11 @@ function AkiFluidOverloadTray({ assessment, onAction }: {
   );
 }
 
-function SevereAcidemiaTray({ assessment, onAction }: {
+function SevereAcidemiaTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['severeAcidemiaAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onSevereAcidemiaResponse']>;
 }) {
   const recognized = assessment?.recognitionAtTick != null;
@@ -10192,8 +10201,18 @@ function SevereAcidemiaTray({ assessment, onAction }: {
   const ventilation = assessment?.ventilationAtTick != null;
   const causePlan = assessment?.causePlanAtTick != null;
   const reassessed = assessment?.reassessmentAtTick != null;
+  const prompt = demonstrating ? null
+    : severeAcidemiaInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="severe-acidemia-pattern-title">
         <div id="severe-acidemia-pattern-title" className="syringe__name">Read the system, not pH alone.</div>
         <Badge kind="teaching">pH 7.09 · HCO₃ 14 · PaCO₂ 48 · lactate 8.1</Badge>
@@ -10205,9 +10224,9 @@ function SevereAcidemiaTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={recognized}
-            onClick={() => onAction('recognize-severe-acidemia')}>Recognize severe mixed acidemia + activate help</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('recognize-severe-acidemia') : undefined}>Recognize severe mixed acidemia + activate help</Button>
           <Button className="crisis-drug__action" disabled={!recognized || analyzed}
-            onClick={() => onAction('analyze-severe-acidemia-context')}>Confirm gas + map the disorder</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('analyze-severe-acidemia-context') : undefined}>Confirm gas + map the disorder</Button>
         </div>
         <p className="field__hint">Gas, perfusion, potassium, ECG, ventilation, kidney function, and causes travel together.</p>
       </section>
@@ -10223,14 +10242,15 @@ function SevereAcidemiaTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!analyzed || ventilation}
-            onClick={() => onAction('protect-severe-acidemia-ventilation')}>Restore safe ventilatory compensation</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('protect-severe-acidemia-ventilation') : undefined}>Restore safe ventilatory compensation</Button>
           <Button className="crisis-drug__action" disabled={!ventilation || causePlan}
-            onClick={() => onAction('activate-severe-acidemia-cause-plan')}>Activate cause-directed + buffer/KRT planning</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('activate-severe-acidemia-cause-plan') : undefined}>Activate cause-directed + buffer/KRT planning</Button>
           <Button className="crisis-drug__action" disabled={!causePlan || reassessed}
-            onClick={() => onAction('reassess-severe-acidemia-trajectory')}>Review gas + organ trajectory</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-severe-acidemia-trajectory') : undefined}>Review gas + organ trajectory</Button>
         </div>
         <p className="field__hint">A better pH is an immediate process signal, not proof of acid clearance or recovery.</p>
       </section>
+      </div>
     </div>
   );
 }
