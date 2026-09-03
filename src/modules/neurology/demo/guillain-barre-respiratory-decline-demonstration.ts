@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsGbs, type GbsAction, type GbsProgress,
 } from '../guillain-barre-respiratory-decline';
+import { gbsInlinePrompt } from '../tutor/guillain-barre-respiratory-decline-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: GbsProgress): string {
+  const prompt = gbsInlinePrompt('guided', { scenarioVersion: '0.1.0', gbs: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const GBS_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -40,19 +52,19 @@ export function gbsDemonstrationStep(
   }
   if (patient.trajectoryAtTick === null) {
     return { id: 'trajectory', focus: 'monitor', progress: 0.08, action: 'reconcile-neurology-gbs-clock-ascending-weakness-bulbar-respiratory-autonomic-and-whole-patient',
-      narration: 'Measure this in days rather than in findings, because the speed is the risk. He walked yesterday morning, needed two people last night, and now cannot stand or lift either arm — forty-eight hours of ascending symmetric weakness after diarrhoea a fortnight ago. Facial diplegia, neck flexion weakness, mild dysphagia, short-phrase speech and a weak cough put the bulbar muscles in it too, and a rate of 112 with shallow breathing at 24 belongs to the same picture. How fast this has climbed is what predicts where it goes next.' };
+      narration: narrate(patient) };
   }
   if (patient.evidenceAtTick === null) {
     return { id: 'evidence', focus: 'monitor', progress: 0.26, action: 'review-neurology-gbs-supportive-evidence-mimics-and-diagnostic-boundary',
-      narration: 'Ask what else does this, before the obvious answer is allowed to close. A CSF protein of 86 with 3 cells and a demyelinating nerve-conduction pattern support the picture and do not make any one test diagnostic. The mimic that matters is a cord lesion, because ascending weakness with absent reflexes is also what that looks like — and what argues against it here is worth saying out loud: sensation preserved enough for him to report tingling, no sensory level, no extensor plantar. Brainstem, junctional, motor-neuron, toxic, metabolic, infectious and inflammatory causes all stay open.' };
+      narration: narrate(patient) };
   }
   if (patient.recognitionAtTick === null) {
     return { id: 'recognition', focus: 'actions', progress: 0.46, action: 'recognize-neurology-gbs-high-risk-respiratory-decline-without-score-or-single-cutoff',
-      narration: 'Call this a high-risk respiratory decline while the saturation is still 98%. The vital capacity has gone from 3.6 to 2.4 litres, the single-breath count from 28 to 18, and the maximal inspiratory pressure from -45 to -30, all in twelve hours — and the blood gas is entirely normal, because in neuromuscular failure it is normal until it is not. No score and no single cutoff carries this decision: what carries it is the slope, plus a cough and a swallow that are already failing.' };
+      narration: narrate(patient) };
   }
   if (patient.ownershipAtTick === null) {
     return { id: 'ownership', focus: 'actions', progress: 0.64, action: 'activate-neurology-gbs-qualified-neurocritical-respiratory-airway-and-cardiac-ownership',
-      narration: 'Bring neurocritical care, respiratory, an airway-capable owner and cardiac monitoring in together. The cardiac piece is the part that gets left off. A monitored hour with sinus rates from 58 to 126 and pressures from 96/58 to 176/104 is labile autonomic function, which is its own cause of death in this disease and is a reason to watch him continuously rather than a set of readings to correct one by one. Provoking or automatically treating each value is the failure mode; ownership and monitoring are the response.' };
+      narration: narrate(patient) };
   }
   if (patient.laterAtTick === null) {
     return { id: 'later', focus: 'monitor', progress: 0.82, action: 'review-neurology-gbs-strict-later-respiratory-bulbar-and-autonomic-trajectory',

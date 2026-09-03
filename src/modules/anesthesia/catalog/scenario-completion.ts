@@ -149,6 +149,7 @@ import { copdExacerbationCompletionEvidence } from '../../emergency-medicine/cop
 import { diabeticKetoacidosisCompletionEvidence } from '../../emergency-medicine/diabetic-ketoacidosis-completion';
 import { exertionalHeatStrokeCompletionEvidence } from '../../emergency-medicine/exertional-heat-stroke-completion';
 import { hyperkalemiaWithEcgChangeCompletionEvidence } from '../../emergency-medicine/hyperkalemia-with-ecg-change-completion';
+import { intracranialHemorrhageCompletionEvidence } from '../../emergency-medicine/intracranial-hemorrhage-deterioration-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -437,6 +438,7 @@ export function auditClinicalScenario(
     ...diabeticKetoacidosisCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...exertionalHeatStrokeCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...hyperkalemiaWithEcgChangeCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...intracranialHemorrhageCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

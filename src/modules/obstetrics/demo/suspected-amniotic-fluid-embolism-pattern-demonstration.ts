@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsAfe, type AfeAction, type AfeProgress,
 } from '../suspected-amniotic-fluid-embolism-pattern';
+import { afeInlinePrompt } from '../tutor/suspected-amniotic-fluid-embolism-pattern-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: AfeProgress): string {
+  const prompt = afeInlinePrompt('guided', { scenarioVersion: '0.1.0', afe: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const AFE_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -35,19 +47,19 @@ export function afeDemonstrationStep(
   }
   if (patient.supportAtTick === null) {
     return { id: 'support', focus: 'actions', progress: 0.08, action: 'activate-obstetrics-afe-coordinated-obstetric-anesthesia-critical-care-cardiopulmonary-hemorrhage-newborn-and-dignity-response',
-      narration: 'Call everyone first, before you have worked out what this is. This lesson puts the activation ahead of the understanding, and that is the teaching rather than an accident of ordering. There is no confirmatory test for amniotic fluid embolism; it is recognized clinically and settled only afterwards, so the minutes spent deciding are minutes she does not have. Obstetrics, anesthesia, critical care, oxygenation and ventilation, hemodynamic and cardiopulmonary support, nursing, pharmacy, coagulation and hemorrhage, blood bank, operating room, arrest readiness, newborn care, communication and dignity-centered ownership all start now.' };
+      narration: narrate(patient) };
   }
   if (patient.trajectoryAtTick === null) {
     return { id: 'trajectory', focus: 'monitor', progress: 0.28, action: 'reconcile-obstetrics-afe-birth-clock-symptom-order-cardiorespiratory-state-bleeding-coagulation-newborn-and-whole-person',
-      narration: 'Now put the events in the order they actually happened. Twelve minutes after a term birth and placental delivery: eight minutes ago she abruptly could not breathe, went cyanotic, confused and profoundly hypotensive — and the major visible bleeding started after that. She has a central pulse, a rate of 132, a pressure of 74/42, a saturation of 78%, one-word answers and cool mottled skin, with a firm midline uterus and 180 mL measured. The sequence is the finding.' };
+      narration: narrate(patient) };
   }
   if (patient.recognitionAtTick === null) {
     return { id: 'recognition', focus: 'actions', progress: 0.46, action: 'recognize-obstetrics-afe-rapid-maternal-collapse-and-coagulopathy-pattern-without-diagnostic-closure',
-      narration: 'Name the collapse-then-coagulopathy pattern without closing the diagnosis. Cardiorespiratory collapse followed by diffuse bleeding is the pattern that makes amniotic fluid embolism the leading suspicion here, and in a hemorrhage the order runs the other way — the bleeding comes first and the circulation follows it. A firm uterus and 180 mL do not explain a pressure of 74/42. But suspicion is not closure: high spinal or anesthetic complication, anaphylaxis, pulmonary or air embolism, a cardiac event, sepsis, and a bleeding cause nobody has found yet all stay open.' };
+      narration: narrate(patient) };
   }
   if (patient.evidenceAtTick === null) {
     return { id: 'evidence', focus: 'monitor', progress: 0.64, action: 'review-obstetrics-afe-supplied-cardiac-pulmonary-hemorrhage-coagulation-uterine-anesthetic-thrombotic-infectious-allergic-and-competing-cause-boundary',
-      narration: 'Read the coagulation as the second act of one event. A fibrinogen of 105 mg/dL down from 430 and platelets of 68 down from 221, at a measured loss of 240 mL, is not dilution and is not consumption from bleeding — that much fibrinogen has gone somewhere else. Coupled to the hypoxemia, the shock and the timing, it belongs to the same event rather than to a separate problem. None of it identifies the cause, excludes the alternatives, or establishes eligibility for anything.' };
+      narration: narrate(patient) };
   }
   if (patient.reassessmentAtTick === null) {
     return { id: 'reassess', focus: 'monitor', progress: 0.82, action: 'review-obstetrics-afe-fixed-later-breathing-circulation-bleeding-coagulation-and-support-report',

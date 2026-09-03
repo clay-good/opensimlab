@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsMaternalArrest, type MaternalArrestAction, type MaternalArrestProgress,
 } from '../maternal-cardiac-arrest-coordinated-response';
+import { maternalArrestInlinePrompt } from '../tutor/maternal-cardiac-arrest-coordinated-response-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: MaternalArrestProgress): string {
+  const prompt = maternalArrestInlinePrompt('guided', { scenarioVersion: '0.1.0', maternalArrest: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const MATERNAL_ARREST_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -35,19 +47,19 @@ export function maternalArrestDemonstrationStep(
   }
   if (patient.supportAtTick === null) {
     return { id: 'support', focus: 'actions', progress: 0.08, action: 'activate-obstetrics-maternal-arrest-prepared-resuscitation-obstetric-anesthesia-delivery-newborn-and-dignity-response-now',
-      narration: 'Start the prepared response and the clock before you look at anything. The resuscitation is already running — someone is compressing on a firm surface and calling for help — so what this activation adds is everything a pregnancy adds: obstetric and anesthesia ownership, in-place delivery readiness, newborn care, hemorrhage readiness, communication, dignity, and support for the family and the staff. The clock matters because the delivery decision in a maternal arrest is timed from the arrest rather than from anyone arriving.' };
+      narration: narrate(patient) };
   }
   if (patient.contextAtTick === null) {
     return { id: 'context', focus: 'monitor', progress: 0.28, action: 'reconcile-obstetrics-maternal-arrest-clock-responsiveness-breathing-pulse-rhythm-pregnancy-and-whole-person',
-      narration: 'Take the arrest facts as given and add the one that changes the response. Thirty seconds ago she became unresponsive at 32 weeks and 4 days. Qualified staff report no normal breathing and no central pulse on a simultaneous ten-second check, with organized narrow-complex activity at 48 on the monitor and no mechanical circulation. None of that needs rechecking. The fact that changes what happens next is the fundal height above the umbilicus, because a uterus that size compresses the vena cava and limits what compressions can return.' };
+      narration: narrate(patient) };
   }
   if (patient.modificationsAtTick === null) {
     return { id: 'modifications', focus: 'actions', progress: 0.46, action: 'review-obstetrics-maternal-arrest-supplied-pregnancy-modifications-and-airway-priority-boundary',
-      narration: 'Review what pregnancy adds without letting it interrupt the resuscitation. Continuous manual displacement of the uterus to the patient’s left, hands in the standard position rather than higher, the same defibrillation energy as anyone else, and an airway managed early because pregnancy makes both hypoxemia and difficult intubation more likely. These are additions to a standard resuscitation rather than a different one, and none of them is a reason to pause compressions.' };
+      narration: narrate(patient) };
   }
   if (patient.readinessAtTick === null) {
     return { id: 'readiness', focus: 'actions', progress: 0.64, action: 'review-obstetrics-maternal-arrest-reversible-causes-delivery-newborn-and-hemorrhage-readiness-boundary',
-      narration: 'Get the delivery and the newborn ready here, in this room. If resuscitation has not restored circulation, delivery is part of the maternal resuscitation rather than a separate obstetric decision, and it happens where she is — moving an arrested patient to an operating room costs the minutes that make it worth doing. The causes stay open in parallel: hemorrhage, embolism, anesthetic complication, cardiac disease, sepsis, magnesium, hypoxia and everything on the general list. The newborn team and the hemorrhage response both need to be standing there before anyone needs them.' };
+      narration: narrate(patient) };
   }
   if (patient.reassessmentAtTick === null) {
     return { id: 'reassess', focus: 'monitor', progress: 0.82, action: 'review-obstetrics-maternal-arrest-fixed-minute-four-active-resuscitation-and-delivery-readiness-report',

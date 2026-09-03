@@ -367,6 +367,8 @@ import { useExertionalHeatStrokeDemonstration } from '../../emergency-medicine/d
 import { supportsExertionalHeatStrokeDemonstration } from '../../emergency-medicine/demo/exertional-heat-stroke-demonstration';
 import { useHyperkalemiaWithEcgChangeDemonstration } from '../../emergency-medicine/demo/useHyperkalemiaWithEcgChangeDemonstration';
 import { supportsHyperkalemiaWithEcgChangeDemonstration } from '../../emergency-medicine/demo/hyperkalemia-with-ecg-change-demonstration';
+import { useIntracranialHemorrhageDemonstration } from '../../emergency-medicine/demo/useIntracranialHemorrhageDemonstration';
+import { supportsIntracranialHemorrhageDemonstration } from '../../emergency-medicine/demo/intracranial-hemorrhage-deterioration-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -702,6 +704,7 @@ export function Cockpit({
   const diabeticKetoacidosisDemoSupported = supportsDiabeticKetoacidosisDemonstration(scenario);
   const exertionalHeatStrokeDemoSupported = supportsExertionalHeatStrokeDemonstration(scenario);
   const hyperkalemiaEcgDemoSupported = supportsHyperkalemiaWithEcgChangeDemonstration(scenario);
+  const intracranialHemorrhageDemoSupported = supportsIntracranialHemorrhageDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -865,6 +868,7 @@ export function Cockpit({
     || diabeticKetoacidosisDemoSupported
     || exertionalHeatStrokeDemoSupported
     || hyperkalemiaEcgDemoSupported
+    || intracranialHemorrhageDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1250,6 +1254,12 @@ export function Cockpit({
     active: demonstrating && acutePulmonaryEdemaDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.acutePulmonaryEdemaAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const intracranialHemorrhageDemonstration = useIntracranialHemorrhageDemonstration({
+    active: demonstrating && intracranialHemorrhageDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.intracranialHemorrhageAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const hyperkalemiaEcgDemonstration = useHyperkalemiaWithEcgChangeDemonstration({
@@ -2047,6 +2057,7 @@ export function Cockpit({
     : diabeticKetoacidosisDemoSupported ? diabeticKetoacidosisDemonstration
     : exertionalHeatStrokeDemoSupported ? exertionalHeatStrokeDemonstration
     : hyperkalemiaEcgDemoSupported ? hyperkalemiaEcgDemonstration
+    : intracranialHemorrhageDemoSupported ? intracranialHemorrhageDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -3082,6 +3093,8 @@ export function Cockpit({
           exertionalHeatStrokeDemonstrating={demonstrating && exertionalHeatStrokeDemoSupported}
           hyperkalemiaEcgGuidance={session.guidance}
           hyperkalemiaEcgDemonstrating={demonstrating && hyperkalemiaEcgDemoSupported}
+          intracranialHemorrhageGuidance={session.guidance}
+          intracranialHemorrhageDemonstrating={demonstrating && intracranialHemorrhageDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

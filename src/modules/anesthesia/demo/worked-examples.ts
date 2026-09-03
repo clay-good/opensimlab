@@ -185,6 +185,7 @@ import { supportsCopdExacerbationDemonstration } from '../../emergency-medicine/
 import { supportsDiabeticKetoacidosisDemonstration } from '../../emergency-medicine/demo/diabetic-ketoacidosis-demonstration';
 import { supportsExertionalHeatStrokeDemonstration } from '../../emergency-medicine/demo/exertional-heat-stroke-demonstration';
 import { supportsHyperkalemiaWithEcgChangeDemonstration } from '../../emergency-medicine/demo/hyperkalemia-with-ecg-change-demonstration';
+import { supportsIntracranialHemorrhageDemonstration } from '../../emergency-medicine/demo/intracranial-hemorrhage-deterioration-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -413,6 +414,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsDiabeticKetoacidosisDemonstration,
     supportsExertionalHeatStrokeDemonstration,
     supportsHyperkalemiaWithEcgChangeDemonstration,
+    supportsIntracranialHemorrhageDemonstration,
   ],
 };
 

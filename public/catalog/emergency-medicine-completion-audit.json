@@ -2189,23 +2189,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "intracranial-hemorrhage-deterioration-fixtures.ts binds seed 8620 and content 0.1.0 to expert, pressure-before-reversal error, recovery, and no-action paths. The sudden headache, vomiting, dysarthria and left-sided weakness with eye opening and coherent speech decreasing over fifteen minutes; BP 202/112 mmHg, glucose 126 mg/dL, SpO2 96% on room air, spontaneous breathing and secretions currently handled; the authored CT showing a 28 mL right thalamic haemorrhage with intraventricular extension and early hydrocephalus and no authored herniation; warfarin last taken the previous evening with an INR of 3.2; and the recorded systolic target of 140 mmHg within a 130 to 150 mmHg range are authored constants. No haematoma-expansion, coagulation, reversal or pressure-response model is claimed, and no outcome follows from any choice. tests/integration/emergency-intracranial-hemorrhage-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is two narratives with no non-narrative state event. The progression lives in the engine's five order refusals across six recorded steps in one strict chain with no time gates, and the fourth refusal carries the lesson: the pressure strategy is gated behind the reversal intent, so nobody can spend the next several minutes titrating a blood pressure while a bleeding brain stays anticoagulated. The imaging and coagulopathy review is gated ahead of any treatment intent, and the escalation behind the pressure plan. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six recorded decisions against five declared objectives: review the serial neurologic change together with airway, breathing, circulation, glucose and pressure; activate the haemorrhage pathway with head elevation, nil by mouth, monitoring, access, laboratory workflow and airway-equipment readiness; review the authored CT, the anticoagulant, its last-dose timing and the INR; stop warfarin and record urgent four-factor prothrombin complex concentrate with intravenous vitamin K without waiting for a repeat coagulation result; record smooth sustained systolic control toward 140 mmHg within 130 to 150 mmHg; and escalate to neurocritical and neurosurgical capability with a handoff of times. The lesson examines nobody, scores no level of consciousness, interprets no image, estimates no expansion, selects no product or dose, prepares and delivers nothing, manages no airway, drains no ventricle, operates on nobody, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -2217,23 +2217,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded escalation and handoff naming its three reasons: worsening alertness, intraventricular extension, and early hydrocephalus. Later actions cannot restart an ended branch. Nothing is claimed to have improved — the handoff carries onset, the fifteen-minute deterioration, continuing airway surveillance, the CT, warfarin timing, INR, reversal intent and pressure plan, while airway intervention, ventricular drainage, surgery, expansion, complications, disposition and outcome remain explicitly outside the lesson."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step. The reflex the lesson works against is the visible number: a systolic of 202 is on the monitor and has a target, so titrating it feels like treatment, while the thing enlarging the haematoma is an INR of 3.2 that nobody can see. The recognition beat makes the change rather than the deficit the finding — one snapshot of consciousness says little and two fifteen minutes apart say almost everything — and reads \"secretions handled for now\" as the whole airway assessment, since at this rate of change the airway is a trajectory rather than a status. The pathway beat argues for head elevation precisely because it is trivial and free. The findings beat reads the scan and the drug chart as one document and names intraventricular extension with early hydrocephalus as what makes this neurosurgical as well as neurocritical. The reversal beat says why both agents rather than one: concentrate replaces the missing factors within minutes and then wears off as they are consumed, while vitamin K takes hours to restore the liver's own production, so concentrate alone lets the INR climb back in a brain that is still bleeding. The pressure beat says the manner of the lowering is itself the treatment, that swings and overshoot are worse than a slightly higher steady pressure, and why there is a floor at 130. Worked example 0.1.0 drives the ordinary controls through the real engine and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere names a product dose, drops the pressure below the floor, waits for a repeat INR, or claims the bleed has stopped. tests/unit/emergency-intracranial-hemorrhage-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/emergency-intracranial-hemorrhage.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding alongside the pre-existing tests/ui/intracranial-hemorrhage-deterioration.test.tsx."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps the declared objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the one that treats the visible number as the emergency: the common-error path reviews the deterioration, activates the pathway, reads the CT and the INR, and then reaches for the pressure strategy with the warfarin still working. It is refused, and the objectives from reversal onward stay unmet. The recovery path reaches for the pathway before anyone has looked at what changed and is refused, reaches for the reversal before the CT and INR that name what to reverse and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -2252,23 +2252,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "intracranial-hemorrhage-deterioration-fixtures.ts binds exact-content expert, pressure-before-reversal error, recovery, and no-action pathways to seed 8620 for deterministic replay through the shared engine, including all five order refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

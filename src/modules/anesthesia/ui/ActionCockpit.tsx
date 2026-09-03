@@ -247,6 +247,7 @@ import { copdExacerbationInlinePrompt } from '../../emergency-medicine/tutor/cop
 import { diabeticKetoacidosisInlinePrompt } from '../../emergency-medicine/tutor/diabetic-ketoacidosis-guidance';
 import { exertionalHeatStrokeInlinePrompt } from '../../emergency-medicine/tutor/exertional-heat-stroke-guidance';
 import { hyperkalemiaWithEcgChangeInlinePrompt } from '../../emergency-medicine/tutor/hyperkalemia-with-ecg-change-guidance';
+import { intracranialHemorrhageInlinePrompt } from '../../emergency-medicine/tutor/intracranial-hemorrhage-deterioration-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3063,6 +3064,7 @@ export interface ActionCockpitProps {
   readonly diabeticKetoacidosisGuidance?: GuidanceLevel;
   readonly exertionalHeatStrokeGuidance?: GuidanceLevel;
   readonly hyperkalemiaEcgGuidance?: GuidanceLevel;
+  readonly intracranialHemorrhageGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3259,6 +3261,7 @@ export interface ActionCockpitProps {
   readonly diabeticKetoacidosisDemonstrating?: boolean;
   readonly exertionalHeatStrokeDemonstrating?: boolean;
   readonly hyperkalemiaEcgDemonstrating?: boolean;
+  readonly intracranialHemorrhageDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5601,6 +5604,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasIntracranialHemorrhageResponse && (
               <IntracranialHemorrhageTray
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.intracranialHemorrhageGuidance}
+                demonstrating={props.intracranialHemorrhageDemonstrating}
                 assessment={props.resuscitation.intracranialHemorrhageAssessment}
                 onAction={props.onIntracranialHemorrhageResponse ?? (() => {})} />
             )}
@@ -8940,8 +8946,11 @@ function AcuteIschemicStrokeTray({ assessment, scenarioVersion, guidance = 'unas
   );
 }
 
-function IntracranialHemorrhageTray({ assessment, onAction }: {
+function IntracranialHemorrhageTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['intracranialHemorrhageAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onIntracranialHemorrhageResponse']>;
 }) {
   const reviewed = assessment?.deteriorationReviewedAtTick != null;
@@ -8950,8 +8959,18 @@ function IntracranialHemorrhageTray({ assessment, onAction }: {
   const reversal = assessment?.reversalAtTick != null;
   const pressure = assessment?.pressureControlAtTick != null;
   const escalated = assessment?.escalatedAtTick != null;
+  const prompt = demonstrating ? null
+    : intracranialHemorrhageInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="ich-deterioration-title">
         <div id="ich-deterioration-title" className="syringe__name">Notice the change. Protect the next minute.</div>
         <Badge kind="teaching">Worsening alertness · airway watch</Badge>
@@ -8964,11 +8983,11 @@ function IntracranialHemorrhageTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={reviewed}
-            onClick={() => onAction('review-ich-deterioration')}>Review serial deterioration</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-ich-deterioration') : undefined}>Review serial deterioration</Button>
           <Button className="crisis-drug__action" disabled={!reviewed || activated}
-            onClick={() => onAction('activate-ich-pathway')}>Activate ICH pathway + support</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('activate-ich-pathway') : undefined}>Activate ICH pathway + support</Button>
           <Button className="crisis-drug__action" disabled={!activated || findings}
-            onClick={() => onAction('review-ich-findings-and-coagulopathy')}>Review CT + warfarin + INR</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-ich-findings-and-coagulopathy') : undefined}>Review CT + warfarin + INR</Button>
         </div>
         <p className="field__hint">Airway protection can fail despite adequate oxygenation. The screen does not examine, score consciousness, interpret CT, or operate airway equipment.</p>
       </section>
@@ -8983,14 +9002,15 @@ function IntracranialHemorrhageTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!findings || reversal}
-            onClick={() => onAction('record-warfarin-reversal-intent')}>Stop warfarin + record reversal intent</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-warfarin-reversal-intent') : undefined}>Stop warfarin + record reversal intent</Button>
           <Button className="crisis-drug__action" disabled={!reversal || pressure}
-            onClick={() => onAction('record-smooth-ich-pressure-control')}>Record smooth SBP control</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-smooth-ich-pressure-control') : undefined}>Record smooth SBP control</Button>
           <Button className="crisis-drug__action" disabled={!pressure || escalated}
-            onClick={() => onAction('escalate-ich-neurocritical-care')}>Escalate + hand off serial findings</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('escalate-ich-neurocritical-care') : undefined}>Escalate + hand off serial findings</Button>
         </div>
         <p className="field__hint">No dose, drug delivery, pressure response, hematoma expansion, airway procedure, ventricular drain, evacuation, complication, disposition, or outcome is simulated.</p>
       </section>
+      </div>
     </div>
   );
 }

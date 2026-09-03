@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsPostpartumPreeclampsia, type PostpartumPreeclampsiaAction, type PostpartumPreeclampsiaProgress,
 } from '../postpartum-severe-preeclampsia-warning-signs';
+import { postpartumPreeclampsiaInlinePrompt } from '../tutor/postpartum-severe-preeclampsia-warning-signs-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: PostpartumPreeclampsiaProgress): string {
+  const prompt = postpartumPreeclampsiaInlinePrompt('guided', { scenarioVersion: '0.1.0', postpartumPreeclampsia: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const POSTPARTUM_PREECLAMPSIA_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -38,19 +50,19 @@ export function postpartumPreeclampsiaDemonstrationStep(
   }
   if (patient.trajectoryAtTick === null) {
     return { id: 'trajectory', focus: 'monitor', progress: 0.08, action: 'reconcile-obstetrics-postpartum-preeclampsia-clock-symptoms-pressure-organs-newborn-and-whole-person',
-      narration: 'Start from what she has been telling you for four hours. Six days after a term birth, with no antepartum hypertension: a severe headache, flashing visual spots, and severe right upper-quadrant pain that the supplied history does not account for. Beside her own account sit two correctly obtained pressures of 178/114 and 174/112 fifteen minutes apart, platelets of 88, a creatinine that has risen from 0.7 to 1.2, and transaminases at more than twice the local upper limit. She is alert, conversant, and holding a six-day-old — none of which makes this less urgent.' };
+      narration: narrate(patient) };
   }
   if (patient.recognitionAtTick === null) {
     return { id: 'recognition', focus: 'actions', progress: 0.26, action: 'recognize-obstetrics-persistent-severe-postpartum-hypertension-and-supplied-preeclampsia-pattern-without-waiting-for-proteinuria',
-      narration: 'Call it an emergency on the two readings, and do not wait for the urine protein. Two properly obtained severe-range pressures fifteen minutes apart are the whole trigger, and the clock to treatment runs sixty minutes from the first of them. Proteinuria is not required to recognize preeclampsia with severe features and could not settle it either way — these symptoms and this organ evidence are already the severe features. Naming it closes nothing: hemorrhage, infection, a thrombotic microangiopathy, a vascular event and a medication effect all stay open behind the name.' };
+      narration: narrate(patient) };
   }
   if (patient.supportAtTick === null) {
     return { id: 'support', focus: 'actions', progress: 0.46, action: 'activate-obstetrics-postpartum-severe-hypertension-protocol-qualified-obstetric-response-and-patient-centered-support-now',
-      narration: 'Start the protocol now, and let the cause work run beside it rather than before it. The severe-hypertension protocol, the qualified obstetric response and the seizure-prevention assessment begin now, while measurement quality, brain, vision, lung, platelet, liver, kidney, urine, medication and competing-cause evaluation continues in parallel. Nothing about the parallel work is allowed to move the treatment later. She is six days postpartum with her newborn and her chosen support person beside her, so the feeding, the support person and the trauma-informed care are part of the response rather than courtesies added to it.' };
+      narration: narrate(patient) };
   }
   if (patient.evidenceAtTick === null) {
     return { id: 'evidence', focus: 'monitor', progress: 0.64, action: 'review-obstetrics-postpartum-preeclampsia-supplied-neurologic-pulmonary-hematologic-renal-hepatic-medication-and-competing-cause-boundary',
-      narration: 'Read the organ evidence as severe features rather than as a pending workup. Platelets of 88, transaminases at twice the local ceiling, a creatinine that has nearly doubled, and a headache and visual symptoms that persist are four organs speaking at once. The urine ratio and the hemolysis evaluation are pending and stay pending; nothing here identifies which cause this is, excludes the alternatives, or establishes eligibility for anything.' };
+      narration: narrate(patient) };
   }
   if (patient.reassessmentAtTick === null) {
     return { id: 'reassess', focus: 'monitor', progress: 0.82, action: 'review-obstetrics-postpartum-preeclampsia-fixed-later-pressure-symptom-organ-and-support-report',
