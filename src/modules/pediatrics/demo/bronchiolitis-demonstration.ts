@@ -3,6 +3,17 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsBronchiolitis, type BronchiolitisAction, type BronchiolitisProgress,
 } from '../bronchiolitis';
+import { bronchiolitisInlinePrompt } from '../tutor/bronchiolitis-guidance';
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: BronchiolitisProgress): string {
+  const prompt = bronchiolitisInlinePrompt('guided', { scenarioVersion: '0.1.0', patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const BRONCHIOLITIS_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -37,24 +48,24 @@ export function bronchiolitisDemonstrationStep(
   }
   if (patient.recognitionAtTick === null) {
     return { id: 'recognition', focus: 'monitor', progress: 0.1, action: 'reconcile-bronchiolitis-risk-and-trajectory',
-      narration: 'Take in the whole infant, and the feeding history with it. A previously well twelve-month-old, ten kilos, day four of his first coryzal illness. He is awake and interactive, with nasal congestion, diffuse crackles and wheeze, moderate subcostal recession and equal air entry. Heart rate 156, respiratory rate 58, temperature 38.0, and a persistent 88% on air with a clean pleth — warm, strong pulses, refill of two seconds, no apnea, grunting, exhaustion or cyanosis. And the part that is easy to leave out of the summary: intake at about 40% of usual over twenty-four hours, with two wet diapers, feeds interrupted by coughing and fatigue. In an infant this age, how he is feeding is a vital sign.' };
+      narration: narrate(patient) };
   }
   if (patient.patternAtTick === null) {
     return { id: 'pattern', focus: 'monitor', progress: 0.28, action: 'recognize-bronchiolitis-supportive-care-pattern',
-      narration: 'Name it as the supportive-care pattern it is. Recording that this is typical bronchiolitis is what makes the rest of the lesson coherent: it is a disease that gets better with oxygen, feeding, hydration and watching, and worse with enthusiasm. The fixed absences — no focal asymmetry, choking, bark, stridor, drooling, urticaria, facial swelling, prior wheeze, prematurity, chronic cardiopulmonary disease or immunodeficiency — narrow the field, and they do not permanently exclude another diagnosis or a bacterial coinfection.' };
+      narration: narrate(patient) };
   }
   if (patient.supportAtTick === null) {
     return { id: 'support', focus: 'actions', progress: 0.46, action: 'activate-bronchiolitis-oxygenation-and-monitoring',
-      narration: 'Get experienced supportive-care ownership and monitoring around him. Oxygenation and continuous monitoring, owned by people qualified to choose the specifics — because at 88% he does need oxygen, and none of the details are yours here. No device, flow, fraction or target is selected, nothing is suctioned or delivered by you, and no drug, ventilation or procedure happens. What you are recording is that he is being watched properly by people who can act.' };
+      narration: narrate(patient) };
   }
   if (patient.feedingHydrationAtTick === null) {
     return { id: 'feeding', focus: 'monitor', progress: 0.64, action: 'review-bronchiolitis-feeding-and-hydration',
-      narration: 'Let time pass, then take the feeding as seriously as the breathing. It is a fixed report and cannot be read before simulated time has passed. Forty percent of usual intake and two wet diapers in twenty-four hours is the finding that decides where this infant spends tonight, more often than the saturation does — an infant who cannot feed because he cannot breathe and cannot breathe well because he is dehydrated is on a loop that support interrupts. The route and the volume belong to the team, not to you: nothing here selects or delivers a feed, a fluid route or a fluid.' };
+      narration: narrate(patient) };
   }
   if (patient.laterResponseAtTick === null) {
     return { id: 'later', focus: 'monitor', progress: 0.8, action: 'review-bronchiolitis-later-response',
-      narration: 'Allow more time, then read the later report as a whole infant again. Fixed and strictly later. Look at his work of breathing, his feeding, his hydration, his alertness and his oxygenation together, and ask which way the group is moving. Whatever it says, it is a report on where he is now rather than a verdict on where he ends up — no recovery is proven here and no discharge readiness is established.' };
+      narration: narrate(patient) };
   }
   return { id: 'handoff', focus: 'actions', progress: 0.92, action: 'handoff-bronchiolitis-active-risk',
-    narration: 'Hand off an infant whose illness has probably not peaked. What travels is the day-four timing and what that means for the days after it, the whole-infant severity rather than the saturation alone, the feeding and hydration numbers, the support that was activated, both reviews and the direction between them, the apnea risk, and what stays open — another diagnosis and bacterial coinfection both, which the fixed absences narrowed and did not exclude. Nothing here confirms a diagnosis, identifies a virus, proves recovery or discharge readiness, determines disposition, or predicts an outcome.' };
+    narration: narrate(patient) };
 }

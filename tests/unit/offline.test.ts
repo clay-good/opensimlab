@@ -304,14 +304,17 @@ describe('Requirement: Everything The Offline Claim Names Is Actually Precached'
     // measured, the demo copy costs its full 208 KB compressed even when concatenated
     // next to the tutor sources, because the two are far outside the 32 KB window.
     //
-    // Eighteen demonstration modules now ask the tutor for the narration instead of
-    // storing it, which took AnesthesiaRoute from 599.5 to 581.6 KB gz and this graph
-    // back to 1.9855 MiB. Roughly 1.3 KB gz per converted lesson.
+    // Fifty-two demonstration modules now ask the tutor for the narration instead of
+    // storing it, which took AnesthesiaRoute from 599.5 to 541.9 KB gz and this graph
+    // to 1.9467 MiB. Roughly 1.1 KB gz per converted lesson.
     //
-    // The remaining ~86 demonstration modules still hold a duplicate copy, worth an
-    // estimated 80-100 KB gz. They were left alone because each differs from its tutor
-    // by a beat or two and a blind conversion would silently change what a learner is
-    // shown. That is where to look next, one lesson at a time, before any raise.
+    // Those fifty-two are the ones where every beat's stored narration was byte-identical
+    // to a `${suggestion} ${because}` pair the tutor actually produces, checked by
+    // equality rather than by a prefix. About thirty modules still hold a partial
+    // duplicate — some of their beats match and some do not — worth an estimated 30 KB.
+    // A blind conversion there would silently change what a learner is shown, so they
+    // want doing one beat at a time against that lesson's own demonstration test. That
+    // is where to look next, before any raise.
     const files = precache
       .filter((url) => url.startsWith('/assets/') || url.startsWith('/fonts/'))
       .map((url) => readFileSync(join(process.cwd(), 'dist', url)));

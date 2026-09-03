@@ -3,6 +3,17 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsPediatricSepsis, type PediatricSepsisAction, type PediatricSepsisProgress,
 } from '../pediatric-sepsis';
+import { pediatricSepsisInlinePrompt } from '../tutor/pediatric-sepsis-guidance';
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: PediatricSepsisProgress): string {
+  const prompt = pediatricSepsisInlinePrompt('guided', { scenarioVersion: '0.1.0', patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const PEDIATRIC_SEPSIS_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -38,24 +49,24 @@ export function pediatricSepsisDemonstrationStep(
   }
   if (patient.patternAtTick === null) {
     return { id: 'pattern', focus: 'monitor', progress: 0.1, action: 'reconcile-pediatric-sepsis-infection-and-organ-dysfunction',
-      narration: 'He does not look like the emergency his blood results say he is. Start there. A previously well six-year-old, 20 kg, thirty hours of fever with dysuria and right-flank discomfort, reduced intake and vomiting. He arrived tired but awake and fully interactive, warm, with normal-volume pulses, a refill of two seconds and a blood pressure of 106/64. A qualified examination supports a probable urinary source, and neither the source nor the pathogen is confirmed. What makes this sepsis rather than a febrile illness is not the fever and not the heart rate — it is the organ dysfunction underneath: platelets of 82,000 and an INR of 1.5, with a lactate of 2.6. Fever and tachycardia are the context you read that finding in, not a shortcut to it.' };
+      narration: narrate(patient) };
   }
   if (patient.shockBoundaryAtTick === null) {
     return { id: 'shockBoundary', focus: 'monitor', progress: 0.28, action: 'distinguish-pediatric-sepsis-without-shock',
-      narration: 'Say what this is and what it is not, in both directions. The supplied expert report assigns two coagulation points and zero cardiovascular, respiratory and neurological points: authored sepsis, and no current shock. You do not calculate that score and Phoenix is not an early screening tool — it is a classification handed to you. Both halves of the sentence carry weight. No shock now means no routine fluid bolus is authored for him, because a bolus given to a child who is not shocked buys nothing and costs something. And preserved pressure, refill, pulse quality, mentation, breathing and room-air oxygenation do not establish low risk — they describe this minute. The reason the next check stays close is precisely that this boundary can move.' };
+      narration: narrate(patient) };
   }
   if (patient.careAtTick === null) {
     return { id: 'care', focus: 'actions', progress: 0.46, action: 'confirm-pediatric-sepsis-qualified-care-ownership',
-      narration: 'Name who owns the care that is already running. The record you were handed is a good one: blood culture and source-directed specimens obtained without materially delaying anything, a lactate measured, and local empiric broad-spectrum antimicrobial therapy delivered by the experienced team at minute twenty-five. None of that was yours to choose, and the agent, the dose, the concentration, the route, the interval, the access, the fluids and the oxygen all stay theirs. What you are recording is that pediatric, nursing, pharmacy, laboratory and escalation ownership continues — for the evaluation, the antimicrobial care, the unresolved source work and the frequent reassessment. Care that nobody owns is care that quietly stops.' };
+      narration: narrate(patient) };
   }
   if (patient.sourceReviewAtTick === null) {
     return { id: 'source', focus: 'actions', progress: 0.64, action: 'review-pediatric-sepsis-source-organs-and-alternatives',
-      narration: 'Keep the source work and the organ work running side by side. The urinary source is probable, not proven, and the cultures are pending. Waiting for every result before thinking again is how a wrong source survives the afternoon, and claiming the source is how the alternative gets missed. Hold both: coagulation and bleeding, mentation, breathing, circulation, urine, lactate, whether the empiric choice still fits, and whether the access is adequate — alongside the alternatives that thirty hours of fever could still turn out to be. None of this delays the care that is already delivered. It is what tells you when the boundary you just drew has stopped being true.' };
+      narration: narrate(patient) };
   }
   if (patient.laterResponseAtTick === null) {
     return { id: 'later', focus: 'monitor', progress: 0.8, action: 'review-pediatric-sepsis-later-response',
-      narration: 'Let time pass, then read the fixed report against what has not moved. At minute 120 he is alert and interactive, cooler at 38.3°C, slower at 126 and 24, still warm and well-perfused with a refill of two seconds, passing 1.2 mL/kg/h of urine, and his lactate has come down to 1.9. That is a real improvement and it is worth saying so. Now read the other column: platelets 80,000 and an INR of 1.5, essentially unchanged. The physiology got better and the organ dysfunction did not. Improvement of that shape does not prove the antimicrobial is right, does not prove the source is controlled, does not establish durable recovery, and does not determine where he goes next.' };
+      narration: narrate(patient) };
   }
   return { id: 'handoff', focus: 'actions', progress: 0.92, action: 'handoff-pediatric-sepsis-active-risk',
-    narration: 'Hand off a boy who is better and still actively at risk. What travels is the suspected infection and the unconfirmed urinary source, the persistent coagulation dysfunction and the bleeding surveillance that goes with it, the current no-shock findings together with the shock surveillance that has not stopped, the pending cultures and source-directed work, the qualified treatment review, the organ trends, the alternatives still open, the caregiver context, and the named pediatric, nursing, pharmacy, laboratory and escalation owners. Nothing here identifies a source or a pathogen, diagnoses, scores, treats, determines disposition or prognosis, or predicts an outcome.' };
+    narration: narrate(patient) };
 }

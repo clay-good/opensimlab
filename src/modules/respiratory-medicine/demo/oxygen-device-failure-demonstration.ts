@@ -4,6 +4,17 @@ import {
   supportsOxygenDeviceFailure, type OxygenDeviceFailureAction,
   type OxygenDeviceFailureProgress,
 } from '../oxygen-device-failure';
+import { oxygenDeviceFailureInlinePrompt } from '../tutor/oxygen-device-failure-guidance';
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: OxygenDeviceFailureProgress): string {
+  const prompt = oxygenDeviceFailureInlinePrompt('guided', { scenarioVersion: '0.1.1', patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const OXYGEN_DEVICE_FAILURE_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -39,24 +50,24 @@ export function oxygenDeviceFailureDemonstrationStep(
   }
   if (patient.reconciledAtTick === null) {
     return { id: 'reconcile', focus: 'monitor', progress: 0.1, action: 'reconcile-oxygen-device-failure-patient-signal-and-delivery',
-      narration: 'Believe the person and the pleth before you believe the equipment. Four minutes ago she was alert in full sentences at 93% on her established low-flow pathway. She is now frightened and dyspneic in short sentences, 30 breaths a minute, heart rate 106, and 84% with a strong regular pleth behind it. The cannula is in place and the selector reads the same 4 L/min it always did. That is the trap: an attached interface and a chosen number are not evidence of delivered oxygen. The monitor’s FiO₂ 0.40 is a display proxy, not a dose she is receiving.' };
+      narration: narrate(patient) };
   }
   if (patient.bridgeAtTick === null) {
     return { id: 'bridge', focus: 'actions', progress: 0.28, action: 'activate-oxygen-device-failure-immediate-bridge-and-help',
-      narration: 'Call for help and get oxygen from somewhere else, now. A separate verified source is the whole intervention at this moment. You do not yet know what has failed and you do not need to: the label on the fault can wait, and she cannot. Bridging is not repairing — no cylinder, valve, regulator, flowmeter, tubing or cannula is inspected, opened, attached, replaced or operated by you, and no flow, FiO₂ or target is selected. Qualified staff own all of that. What you are recording is that she gets oxygen from a source that works, while somebody more experienced is on the way.' };
+      narration: narrate(patient) };
   }
   if (patient.pathAtTick === null) {
     return { id: 'path', focus: 'monitor', progress: 0.46, action: 'review-oxygen-device-failure-source-to-patient-path',
-      narration: 'Now trace it, from the source all the way to her nose. With a bridge running there is time to find out what actually failed, and the qualified review reports it: the cannula is correctly positioned, the tubing and cannula are patent and unkinked, and there is no remaining pressure at the portable source and no downstream flow despite where the selector is pointing. The cylinder is empty. Bilateral breathing is unchanged, with no apnea, arrest, shock, new unilateral pain, airway-obstruction claim or monitor incoherence — which localizes this to a delivery interruption without permanently excluding another cause if she does not recover fully.' };
+      narration: narrate(patient) };
   }
   if (patient.restorationAtTick === null) {
     return { id: 'restoration', focus: 'actions', progress: 0.64, action: 'record-oxygen-device-failure-restoration-and-backup-intent',
-      narration: 'Restore her established pathway properly, and put a backup behind it. A checked replacement source, her own prescribed low-flow pathway, and independent backup so that the next failure is an inconvenience rather than a repeat of this. The restoration is qualified work, not yours: you are recording the intent and the standard it has to meet. Nothing here selects a device, source, interface, flow, FiO₂, target or prescription, and nothing here repairs anything.' };
+      narration: narrate(patient) };
   }
   if (patient.responseAtTick === null) {
     return { id: 'response', focus: 'monitor', progress: 0.8, action: 'review-oxygen-device-failure-delivery-and-patient-response',
-      narration: 'Give it time, then check the delivery and the person separately. The three-minute report is fixed and cannot be read before simulated time has passed. Two things need to be true, and they are not the same thing: that oxygen is now actually being delivered, and that she is actually better — her speech, her rate, her distress and her saturation together. A restored number on a device is not a recovered patient, and this is the lesson where confusing the two is exactly the error being taught.' };
+      narration: narrate(patient) };
   }
   return { id: 'handoff', focus: 'actions', progress: 0.92, action: 'handoff-oxygen-device-failure-reassessment',
-    narration: 'Hand off an equipment failure that had a patient attached to it. What travels is her established pathway and her baseline, what she looked like when the delivery failed, the bridge, the source-to-patient findings that localized it, the restoration and its backup, the three-minute response, and what stays open — because a delivery interruption explains this episode without permanently excluding another cause if her recovery is incomplete. Nothing here proves durable restoration, decides transport readiness or disposition, or predicts an outcome. And this belongs in whatever process reviews the cylinder that arrived empty.' };
+    narration: narrate(patient) };
 }

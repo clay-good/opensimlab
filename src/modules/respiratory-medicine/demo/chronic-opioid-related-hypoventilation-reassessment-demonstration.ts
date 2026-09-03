@@ -3,6 +3,17 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsChronicOpioidHypoventilation, type ChronicOpioidHypoventilationAction, type ChronicOpioidHypoventilationProgress,
 } from '../chronic-opioid-related-hypoventilation-reassessment';
+import { chronicOpioidHypoventilationInlinePrompt } from '../tutor/chronic-opioid-related-hypoventilation-reassessment-guidance';
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: ChronicOpioidHypoventilationProgress): string {
+  const prompt = chronicOpioidHypoventilationInlinePrompt('guided', { scenarioVersion: '0.1.0', chronicOpioidHypoventilation: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const CHRONIC_OPIOID_HYPOVENTILATION_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -35,20 +46,20 @@ export function chronicOpioidHypoventilationDemonstrationStep(
   }
   if (patient.trajectoryAtTick === null) {
     return { id: 'trajectory', focus: 'monitor', progress: 0.1, action: 'reconcile-chronic-opioid-related-hypoventilation-exposure-and-trajectory',
-      narration: 'Read eight years of stable therapy against six months of new symptoms. Prescribed opioids for chronic noncancer pain for eight years, with no recent dose escalation, no illicit exposure, no postoperative recovery and no acute intoxication. What is new is six months old: her partner has noticed shallow irregular breathing in sleep, and she has morning headaches, unrefreshing sleep and increasing daytime sleepiness. She is comfortable in clinic at 94% on room air, breathing ten times a minute. This is not an overdose and it is not an emergency — it is a chronic pattern that has been developing while everyone watched the dose stay the same.' };
+      narration: narrate(patient) };
   }
   if (patient.evidenceAtTick === null) {
     return { id: 'evidence', focus: 'monitor', progress: 0.32, action: 'review-chronic-opioid-related-hypoventilation-awake-and-sleep-evidence',
-      narration: 'Let the sleep study say what the daytime numbers cannot. Her awake gas is essentially normal — pH 7.39, PaCO₂ 44, bicarbonate 26 — and one awake saturation of 94% says nothing about the eight hours nobody was watching. The attended study with transcutaneous CO₂ is where the finding lives: a rise from 46 awake to 58 during sleep, sustained for twenty-four minutes, with desaturation and separately reported central and obstructive events. The sleep specialist calls it a sleep-related hypoventilation pattern requiring integrated review, which is a description rather than a diagnosis.' };
+      narration: narrate(patient) };
   }
   if (patient.alternativesAtTick === null) {
     return { id: 'alternatives', focus: 'monitor', progress: 0.55, action: 'review-chronic-opioid-related-hypoventilation-contributors-and-alternatives',
-      narration: 'Refuse the obvious cause, and notice what the negatives do not cover. Chronic opioid exposure is a contributor, not a proven cause. Her BMI is 23.7 and the spirometry shows no obstruction and the examination no focal weakness — but those findings do not exclude upper-airway obstruction, central sleep apnea, chest-wall or neuromuscular disease, cardiac or endocrine causes, or medication interactions. The nighttime gabapentin is in that last category and is easy to overlook because it is not the opioid, and alcohol, nonprescribed substances and other sedatives still need a patient-centered conversation rather than an assumption.' };
+      narration: narrate(patient) };
   }
   if (patient.coordinatedPlanAtTick === null) {
     return { id: 'plan', focus: 'actions', progress: 0.78, action: 'coordinate-chronic-opioid-related-hypoventilation-prescriber-sleep-and-respiratory-plan',
-      narration: 'Name every owner, and do not let this clinic change her analgesia. Prescriber, sleep, respiratory, pharmacy and primary care, around her pain goals as well as her breathing. Both failure modes here are real: leaving a hypoventilating patient on unchanged therapy because nobody owns the question, and stopping or tapering eight years of analgesia in a single visit on the strength of a pattern that has not been attributed yet. The education, the diagnostic work still outstanding and the reassessment interval are part of the plan rather than things that follow it.' };
+      narration: narrate(patient) };
   }
   return { id: 'handoff', focus: 'actions', progress: 0.92, action: 'handoff-chronic-opioid-related-hypoventilation-reassessment',
-    narration: 'Hand off a pattern that has been described and not attributed. Nothing here establishes causality, a diagnosis, a medication change, a device or an outcome. What travels is the eight-year exposure and the six-month change, the awake and sleep evidence and the gap between them, the contributors that stay open including the ones that are not the opioid, the safety concerns, the work still to be done, and the name against each part of it.' };
+    narration: narrate(patient) };
 }

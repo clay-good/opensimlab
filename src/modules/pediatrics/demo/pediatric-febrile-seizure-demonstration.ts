@@ -4,6 +4,17 @@ import {
   supportsPediatricFebrileSeizure, type PediatricFebrileSeizureAction,
   type PediatricFebrileSeizureProgress,
 } from '../pediatric-febrile-seizure';
+import { pediatricFebrileSeizureInlinePrompt } from '../tutor/pediatric-febrile-seizure-guidance';
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: PediatricFebrileSeizureProgress): string {
+  const prompt = pediatricFebrileSeizureInlinePrompt('guided', { scenarioVersion: '0.1.0', patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const PEDIATRIC_FEBRILE_SEIZURE_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -42,24 +53,24 @@ export function pediatricFebrileSeizureDemonstrationStep(
   }
   if (patient.trajectoryAtTick === null) {
     return { id: 'trajectory', focus: 'monitor', progress: 0.1, action: 'reconcile-pediatric-febrile-seizure-event-recovery-and-fever',
-      narration: 'Read the event, then read the child in front of you. A previously well, developmentally typical two-year-old, 12 kg, immunizations current including Hib and pneumococcal. Twelve hours of fever, rhinorrhea and slightly less drinking, then a first bilateral generalized convulsion of about three minutes, witnessed by his caregiver, which stopped on its own before this surface opened. No rescue medicine was given, and no focal onset, asymmetry or recurrence is reported. Now: sleepy and clingy, but he opens his eyes to his caregiver\'s voice, makes eye contact, cries appropriately, and moves and reaches symmetrically. Temperature 39.0°C, heart rate 150, saturation 98% on air, refill two seconds. Note what you were not given — no routine glucose, no other test — because that absence is deliberate rather than an oversight.' };
+      narration: narrate(patient) };
   }
   if (patient.recognitionAtTick === null) {
     return { id: 'recognition', focus: 'monitor', progress: 0.28, action: 'recognize-pediatric-febrile-seizure-pattern-and-danger-boundary',
-      narration: 'Say the careful version: simple features to date. That phrase is doing real work, and both halves matter. The features are simple so far — generalized, about three minutes, one event, a child recovering in front of you — which is what makes an aggressive workup the wrong reflex here. And "to date" is not a formality: it does not settle the fever source, and it does not exclude central-nervous-system infection, serious infection, another seizure cause, deterioration or recurrence during this illness. The authored absences — no nonblanching rash, no meningism, no bulging fontanelle, no persistent focal deficit, no shock, no trauma, no known ingestion, no prior afebrile seizure, no developmental regression — are fixed snapshots of this minute. You are not diagnosing or classifying anything.' };
+      narration: narrate(patient) };
   }
   if (patient.careAtTick === null) {
     return { id: 'care', focus: 'actions', progress: 0.46, action: 'activate-pediatric-febrile-seizure-qualified-care-ownership',
-      narration: 'Two things run together: looking after him, and keeping looking. Start with the care ownership. Experienced pediatric and nursing teams take comfort, hydration and intake context, observation, repeated whole-child and neurological reassessment, airway and recurrence contingencies, fever-source evaluation, escalation, and the conversation with his caregiver. Two things this lesson will not let you reach for: an antipyretic may be considered by that team for distress, and it does not prevent febrile seizures; routine prophylactic antiseizure medicine is not modeled here at all. You choose no drug, dose, route, fluid, device or test.' };
+      narration: narrate(patient) };
   }
   if (patient.safetyAtTick === null) {
     return { id: 'safety', focus: 'actions', progress: 0.64, action: 'review-pediatric-febrile-seizure-infection-recurrence-and-alternatives',
-      narration: 'He is being looked after. Now keep the dangerous things open. This is the half that reassurance closes too early. Experienced teams keep serial appearance and interaction, neurological state, meningism and focal findings, breathing, circulation, hydration, rash, the fever source, immunization and medicine context, recurrence, the triggers that would make this prolonged or focal, and infection, ingestion, trauma and metabolic alternatives. Current negative findings are snapshots and not permanent exclusions — a child who looks well at minute ten can look different at minute forty, which is the entire reason somebody keeps watching rather than deciding.' };
+      narration: narrate(patient) };
   }
   if (patient.laterResponseAtTick === null) {
     return { id: 'later', focus: 'monitor', progress: 0.8, action: 'review-pediatric-febrile-seizure-later-response',
-      narration: 'Let time pass, then check him again rather than concluding. The fixed later report has him awake and interactive, recognizing his caregiver, using age-appropriate words and play, moving and reaching symmetrically, mildly tired, with no recurrent seizure and no focal finding. Temperature 38.7°C, heart rate 126, saturation 99%, refill two seconds. That is a genuinely reassuring half-hour and it is worth saying to the family. It still does not finally prove a simple or benign event, does not establish the fever source, does not exclude central-nervous-system or serious infection, does not prove durable recovery, and does not rule out another seizure during this illness. Reassurance with boundaries is more useful to this family than reassurance without them.' };
+      narration: narrate(patient) };
   }
   return { id: 'handoff', focus: 'actions', progress: 0.92, action: 'handoff-pediatric-febrile-seizure-active-risk',
-    narration: 'Hand off the safety net, not a verdict. What travels is the event and its description — first, generalized, about three minutes, stopped on its own, no rescue medicine — the recovery from it and the later checkpoint, the fever and its unidentified source, the immunization context, the pattern described as simple features to date rather than as a diagnosis, what stays open including CNS and serious infection, recurrence during this illness and complex features, who owns the observation and how often, and the caregiver guidance: what to watch for, what to do if it happens again, and that this is frightening to see and does not mean what people fear it means. Nothing here claims a diagnosis, a cause, an exclusion, durable recovery, freedom from recurrence, disposition, prognosis or outcome.' };
+    narration: narrate(patient) };
 }
