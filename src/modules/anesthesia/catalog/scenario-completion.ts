@@ -133,6 +133,7 @@ import { intracranialHypertensionCompletionEvidence } from '../../critical-care/
 import { spontaneousBreathingTrialCompletionEvidence } from '../../critical-care/spontaneous-breathing-trial-completion';
 import { statusEpilepticusCompletionEvidence as criticalCareStatusEpilepticusCompletionEvidence } from '../../critical-care/status-epilepticus-completion';
 import { targetedTemperatureManagementCompletionEvidence } from '../../critical-care/targeted-temperature-management-completion';
+import { upperGiHemorrhageCompletionEvidence } from '../../critical-care/upper-gi-hemorrhage-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -405,6 +406,7 @@ export function auditClinicalScenario(
     ...spontaneousBreathingTrialCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...criticalCareStatusEpilepticusCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...targetedTemperatureManagementCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...upperGiHemorrhageCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

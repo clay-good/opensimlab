@@ -335,6 +335,8 @@ import { useStatusEpilepticusDemonstration as useCriticalCareStatusEpilepticusDe
 import { supportsStatusEpilepticusDemonstration as supportsCriticalCareStatusEpilepticusDemonstration } from '../../critical-care/demo/status-epilepticus-demonstration';
 import { useTargetedTemperatureManagementDemonstration } from '../../critical-care/demo/useTargetedTemperatureManagementDemonstration';
 import { supportsTargetedTemperatureManagementDemonstration } from '../../critical-care/demo/targeted-temperature-management-demonstration';
+import { useUpperGiHemorrhageDemonstration } from '../../critical-care/demo/useUpperGiHemorrhageDemonstration';
+import { supportsUpperGiHemorrhageDemonstration } from '../../critical-care/demo/upper-gi-hemorrhage-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -654,6 +656,7 @@ export function Cockpit({
   const spontaneousBreathingTrialDemoSupported = supportsSpontaneousBreathingTrialDemonstration(scenario);
   const criticalCareStatusEpilepticusDemoSupported = supportsCriticalCareStatusEpilepticusDemonstration(scenario);
   const postArrestTemperatureDemoSupported = supportsTargetedTemperatureManagementDemonstration(scenario);
+  const upperGiHemorrhageDemoSupported = supportsUpperGiHemorrhageDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -801,6 +804,7 @@ export function Cockpit({
     || spontaneousBreathingTrialDemoSupported
     || criticalCareStatusEpilepticusDemoSupported
     || postArrestTemperatureDemoSupported
+    || upperGiHemorrhageDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1132,6 +1136,12 @@ export function Cockpit({
     active: demonstrating && postArrestTemperatureDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.postArrestTemperatureAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const upperGiHemorrhageDemonstration = useUpperGiHemorrhageDemonstration({
+    active: demonstrating && upperGiHemorrhageDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.upperGiHemorrhageAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const stableNarrowTachycardiaDemonstration = useStableNarrowTachycardiaDemonstration({
@@ -1871,6 +1881,7 @@ export function Cockpit({
     : spontaneousBreathingTrialDemoSupported ? spontaneousBreathingTrialDemonstration
     : criticalCareStatusEpilepticusDemoSupported ? criticalCareStatusEpilepticusDemonstration
     : postArrestTemperatureDemoSupported ? postArrestTemperatureDemonstration
+    : upperGiHemorrhageDemoSupported ? upperGiHemorrhageDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2874,6 +2885,8 @@ export function Cockpit({
           criticalCareStatusEpilepticusDemonstrating={demonstrating && criticalCareStatusEpilepticusDemoSupported}
           postArrestTemperatureGuidance={session.guidance}
           postArrestTemperatureDemonstrating={demonstrating && postArrestTemperatureDemoSupported}
+          upperGiHemorrhageGuidance={session.guidance}
+          upperGiHemorrhageDemonstrating={demonstrating && upperGiHemorrhageDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

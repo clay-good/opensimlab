@@ -231,6 +231,7 @@ import { intracranialHypertensionInlinePrompt } from '../../critical-care/tutor/
 import { spontaneousBreathingTrialInlinePrompt } from '../../critical-care/tutor/spontaneous-breathing-trial-guidance';
 import { statusEpilepticusInlinePrompt as criticalCareStatusEpilepticusInlinePrompt } from '../../critical-care/tutor/status-epilepticus-guidance';
 import { targetedTemperatureManagementInlinePrompt } from '../../critical-care/tutor/targeted-temperature-management-guidance';
+import { upperGiHemorrhageInlinePrompt } from '../../critical-care/tutor/upper-gi-hemorrhage-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3031,6 +3032,7 @@ export interface ActionCockpitProps {
   readonly spontaneousBreathingTrialGuidance?: GuidanceLevel;
   readonly criticalCareStatusEpilepticusGuidance?: GuidanceLevel;
   readonly postArrestTemperatureGuidance?: GuidanceLevel;
+  readonly upperGiHemorrhageGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3211,6 +3213,7 @@ export interface ActionCockpitProps {
   readonly spontaneousBreathingTrialDemonstrating?: boolean;
   readonly criticalCareStatusEpilepticusDemonstrating?: boolean;
   readonly postArrestTemperatureDemonstrating?: boolean;
+  readonly upperGiHemorrhageDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5658,6 +5661,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasUpperGiHemorrhageResponse && (
               <UpperGiHemorrhageTray
                 assessment={props.resuscitation.upperGiHemorrhageAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.upperGiHemorrhageGuidance}
+                demonstrating={props.upperGiHemorrhageDemonstrating}
                 onAction={props.onUpperGiHemorrhageResponse ?? (() => {})} />
             )}
             {hasCriticalCareStatusEpilepticusResponse && (
@@ -9973,8 +9979,11 @@ function MassivePulmonaryEmbolismTray({ assessment, scenarioVersion, guidance = 
   );
 }
 
-function UpperGiHemorrhageTray({ assessment, onAction }: {
+function UpperGiHemorrhageTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['upperGiHemorrhageAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onUpperGiHemorrhageResponse']>;
 }) {
   const recognized = assessment?.recognitionAtTick != null;
@@ -9982,8 +9991,18 @@ function UpperGiHemorrhageTray({ assessment, onAction }: {
   const resuscitation = assessment?.resuscitationAtTick != null;
   const hemostasis = assessment?.hemostasisAtTick != null;
   const reassessed = assessment?.reassessmentAtTick != null;
+  const prompt = demonstrating ? null
+    : upperGiHemorrhageInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="upper-gi-hemorrhage-pattern-title">
         <div id="upper-gi-hemorrhage-pattern-title" className="syringe__name">The trend spoke before the pressure fell.</div>
         <Badge kind="teaching">recurrent hematemesis · melena · falling flow · prior ulcer hemostasis</Badge>
@@ -9995,9 +10014,9 @@ function UpperGiHemorrhageTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={recognized}
-            onClick={() => onAction('recognize-recurrent-upper-gi-hemorrhage')}>Recognize recurrence + activate help</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('recognize-recurrent-upper-gi-hemorrhage') : undefined}>Recognize recurrence + activate help</Button>
           <Button className="crisis-drug__action" disabled={!recognized || pattern}
-            onClick={() => onAction('review-upper-gi-hemorrhage-pattern')}>Review bleed + perfusion context</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-upper-gi-hemorrhage-pattern') : undefined}>Review bleed + perfusion context</Button>
         </div>
         <p className="field__hint">Hemoglobin belongs in the trajectory. It is not the perfusion exam and not the only reason to act.</p>
       </section>
@@ -10013,14 +10032,15 @@ function UpperGiHemorrhageTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!pattern || resuscitation}
-            onClick={() => onAction('record-upper-gi-hemorrhage-resuscitation')}>Record individualized resuscitation</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-upper-gi-hemorrhage-resuscitation') : undefined}>Record individualized resuscitation</Button>
           <Button className="crisis-drug__action" disabled={!resuscitation || hemostasis}
-            onClick={() => onAction('activate-repeat-endoscopy-pathway')}>Activate repeat endoscopy pathway</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('activate-repeat-endoscopy-pathway') : undefined}>Activate repeat endoscopy pathway</Button>
           <Button className="crisis-drug__action" disabled={!hemostasis || reassessed}
-            onClick={() => onAction('reassess-upper-gi-hemorrhage-trajectory')}>Review bridge + bleeding trajectory</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-upper-gi-hemorrhage-trajectory') : undefined}>Review bridge + bleeding trajectory</Button>
         </div>
         <p className="field__hint">A better pressure is a bridge signal, not proof that the ulcer stopped bleeding.</p>
       </section>
+      </div>
     </div>
   );
 }

@@ -1559,23 +1559,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "upper-gi-hemorrhage-fixtures.ts binds seed 4586 and content 0.1.0 to expert, resuscitate-before-the-review error, recovery, and no-action paths. The sixty-eight-year-old woman in the ICU after successful endoscopic therapy for a bleeding duodenal ulcer, with two new episodes of haematemesis and melena at MAP 55 mmHg, HR 122/min, capillary refill 5 seconds, cool extremities, urine 10 mL/h, lactate rising from 2.1 to 4.6 mmol/L and haemoglobin falling from 8.4 to 6.8 g/dL, the reported soft nontender abdomen with no cirrhosis or known varices, and the authored post-bridge response of MAP 68 mmHg, HR 104/min, 3-second refill and clearer mentation with no further haematemesis in a brief window are authored constants; no bleeding, transfusion or hemostasis model is claimed, and no outcome follows from any choice. tests/integration/upper-gi-hemorrhage-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is two narratives with no non-narrative state event. The progression lives in the engine's four order refusals, and the resuscitation step carries the lesson: the haemoglobin of 6.8 is the number everyone looks at and the last one to arrive, while the lactate, the refill and the pressure had already said this, and the engine records restrictive transfusion intent individualized to active bleeding with 7 g/dL explicitly not a universal trigger. The pattern review is gated ahead of that so the airway, the coagulation and the alternate sources stay open, and the repeat endoscopy is gated behind it so hemostasis is reopened alongside a resuscitation that exists. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions recognize recurrent bleeding on an impaired-perfusion trajectory and activate GI, hemorrhage, critical-care and blood-bank help together; review the fixed bleeding, perfusion, airway, medication, coagulation, comorbidity and alternate-source context with haemoglobin explicitly not treated as a stand-alone perfusion measure; record hemodynamic support, large-bore access, serial laboratory, type-and-crossmatch and blood-bank review with restrictive transfusion intent individualized to active bleeding rather than a universal 7 g/dL trigger; activate repeat endoscopy alongside continuing resuscitation while preserving transcatheter angiographic embolization after failed repeat endoscopic hemostasis and surgery when embolization is unavailable or fails; and reassess the authored bridge without claiming hemostasis. The lesson examines nobody, places no access, takes no specimen, transfuses and doses nothing, scopes, embolizes and operates on nobody, diagnoses nothing, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -1587,23 +1587,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded reassessment on an authored post-bridge response — MAP 68 mmHg, HR 104/min, capillary refill 3 seconds, clearer mentation and no further haematemesis during a brief window — that explicitly does not prove hemostasis. Later actions cannot restart an ended branch, and the ending names the specific danger: a bleed that is still going looks exactly like this until it does not, so the repeat endoscopy stands and the serial haemoglobin, lactate, urine output, medication decisions, organ trajectory and failure pathways all remain open."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step, because this lesson has no unordered lane. The reflex it works against is waiting for the haemoglobin: the recognition beat reads the presenting list in order and says the perfusion findings and the lactate are the recurrence while the count is the last to arrive and the easiest to argue with, and notes that recurrent bleeding after hemostasis is a different problem from a first bleed because the treated lesion has failed. The pattern beat names why absent cirrhosis and varices matter — a variceal bleed is a different pathway entirely — keeps the airway open as an aspiration risk this screen does not manage, and carries the line that haemoglobin is a number in a tube rather than a measurement of whether organs are getting blood. The resuscitation beat makes the transfusion distinction explicit: a restrictive threshold comes from trials of stable patients and she is actively bleeding at a MAP of 55 with a lactate of 4.6, so restrictive is a default to reason from rather than a rule to hide behind. The hemostasis beat insists the endoscopy runs alongside the resuscitation rather than after it, because the bleeding is why she is unstable, and names the two failure pathways in advance because deciding them after a second failed endoscopy is how a delay happens. The closing beat separates a bridge signal from hemostasis. Worked example 0.1.0 drives the ordinary controls through the real engine to the reassessment and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere orders units, names a transfusion trigger to obey, performs an endoscopy or embolization, or claims the bleeding has stopped. tests/unit/upper-gi-hemorrhage-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/critical-care-upper-gi-hemorrhage.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the one urgency invites: the common-error path recognises the recurrence and records resuscitation immediately, skipping the review that keeps the airway, the coagulation and the alternate sources open and separates a variceal bleed from this one, and meets one of five because the engine gates it. The recovery path reaches for the pattern review before the recurrence has been recognised and is refused, reaches for the endoscopy pathway before the resuscitation it runs alongside and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -1622,23 +1622,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "upper-gi-hemorrhage-fixtures.ts binds exact-content expert, resuscitate-before-the-review error, recovery, and no-action pathways to seed 4586 for deterministic replay through the shared engine, including all four order refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

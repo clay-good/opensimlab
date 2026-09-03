@@ -169,6 +169,7 @@ import { supportsIntracranialHypertensionDemonstration } from '../../critical-ca
 import { supportsSpontaneousBreathingTrialDemonstration } from '../../critical-care/demo/spontaneous-breathing-trial-demonstration';
 import { supportsStatusEpilepticusDemonstration as supportsCriticalCareStatusEpilepticusDemonstration } from '../../critical-care/demo/status-epilepticus-demonstration';
 import { supportsTargetedTemperatureManagementDemonstration } from '../../critical-care/demo/targeted-temperature-management-demonstration';
+import { supportsUpperGiHemorrhageDemonstration } from '../../critical-care/demo/upper-gi-hemorrhage-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -379,6 +380,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsSpontaneousBreathingTrialDemonstration,
     supportsCriticalCareStatusEpilepticusDemonstration,
     supportsTargetedTemperatureManagementDemonstration,
+    supportsUpperGiHemorrhageDemonstration,
   ],
 };
 
