@@ -121,6 +121,7 @@ import { mixedShockCompletionEvidence } from '../../critical-care/mixed-shock-co
 import { rvFailureCompletionEvidence } from '../../critical-care/rv-failure-completion';
 import { massivePeCompletionEvidence } from '../../critical-care/massive-pe-completion';
 import { autoPeepCompletionEvidence } from '../../critical-care/auto-peep-completion';
+import { dyssynchronyCompletionEvidence } from '../../critical-care/dyssynchrony-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -381,6 +382,7 @@ export function auditClinicalScenario(
     ...rvFailureCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...massivePeCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...autoPeepCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...dyssynchronyCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

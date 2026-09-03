@@ -219,6 +219,7 @@ import { mixedShockInlinePrompt } from '../../critical-care/tutor/mixed-shock-gu
 import { rvFailureInlinePrompt } from '../../critical-care/tutor/rv-failure-guidance';
 import { massivePeInlinePrompt } from '../../critical-care/tutor/massive-pe-guidance';
 import { autoPeepInlinePrompt } from '../../critical-care/tutor/auto-peep-guidance';
+import { dyssynchronyInlinePrompt } from '../../critical-care/tutor/dyssynchrony-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3007,6 +3008,7 @@ export interface ActionCockpitProps {
   readonly rightVentricularFailureGuidance?: GuidanceLevel;
   readonly massivePulmonaryEmbolismGuidance?: GuidanceLevel;
   readonly autoPeepGuidance?: GuidanceLevel;
+  readonly ventilatorDyssynchronyGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3175,6 +3177,7 @@ export interface ActionCockpitProps {
   readonly rightVentricularFailureDemonstrating?: boolean;
   readonly massivePulmonaryEmbolismDemonstrating?: boolean;
   readonly autoPeepDemonstrating?: boolean;
+  readonly ventilatorDyssynchronyDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5543,6 +5546,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasVentilatorDyssynchronyResponse && (
               <VentilatorDyssynchronyTray
                 assessment={props.resuscitation.ventilatorDyssynchronyAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.ventilatorDyssynchronyGuidance}
+                demonstrating={props.ventilatorDyssynchronyDemonstrating}
                 onAction={props.onVentilatorDyssynchronyResponse ?? (() => {})} />
             )}
             {hasAutoPeepResponse && (
@@ -9232,8 +9238,11 @@ function EscalatingHypoxemiaTray({ assessment, onAction }: {
   );
 }
 
-function VentilatorDyssynchronyTray({ assessment, onAction }: {
+function VentilatorDyssynchronyTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['ventilatorDyssynchronyAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onVentilatorDyssynchronyResponse']>;
 }) {
   const graphics = assessment?.graphicsAtTick != null;
@@ -9241,8 +9250,18 @@ function VentilatorDyssynchronyTray({ assessment, onAction }: {
   const classification = assessment?.classificationAtTick != null;
   const correction = assessment?.correctionAtTick != null;
   const reassessment = assessment?.reassessmentAtTick != null;
+  const prompt = demonstrating ? null
+    : dyssynchronyInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="dyssynchrony-read-title">
         <div id="dyssynchrony-read-title" className="syringe__name">Read the person and the breath.</div>
         <Badge kind="teaching">effort · pressure · flow · volume</Badge>
@@ -9254,11 +9273,11 @@ function VentilatorDyssynchronyTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={graphics}
-            onClick={() => onAction('review-dyssynchrony-patient-and-graphics')}>Read patient + pressure + flow + volume</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-dyssynchrony-patient-and-graphics') : undefined}>Read patient + pressure + flow + volume</Button>
           <Button className="crisis-drug__action" disabled={!graphics || drivers}
-            onClick={() => onAction('review-dyssynchrony-drivers')}>Review pain + drive + airway + mechanics</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-dyssynchrony-drivers') : undefined}>Review pain + drive + airway + mechanics</Button>
           <Button className="crisis-drug__action" disabled={!drivers || classification}
-            onClick={() => onAction('classify-dyssynchrony-pattern')}>Classify the bounded pattern</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('classify-dyssynchrony-pattern') : undefined}>Classify the bounded pattern</Button>
         </div>
         <p className="field__hint">Irregularity is a clue, not a diagnosis. Name the phase and mechanism only after you read the patient.</p>
       </section>
@@ -9273,12 +9292,13 @@ function VentilatorDyssynchronyTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!classification || correction}
-            onClick={() => onAction('record-dyssynchrony-correction-intent')}>Analgesia first + match flow and cycle</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-dyssynchrony-correction-intent') : undefined}>Analgesia first + match flow and cycle</Button>
           <Button className="crisis-drug__action" disabled={!correction || reassessment}
-            onClick={() => onAction('reassess-dyssynchrony-response')}>Review 10-minute response</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-dyssynchrony-response') : undefined}>Review 10-minute response</Button>
         </div>
         <p className="field__hint">A quieter waveform is not enough. Recheck comfort, effort, delivered volume, pressure, gas, and circulation.</p>
       </section>
+      </div>
     </div>
   );
 }
