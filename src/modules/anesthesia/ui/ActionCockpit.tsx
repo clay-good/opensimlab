@@ -254,6 +254,7 @@ import { severeHyponatremiaInlinePrompt } from '../../emergency-medicine/tutor/s
 import { stemiInlinePrompt } from '../../emergency-medicine/tutor/stemi-guidance';
 import { traumaPrimarySurveyInlinePrompt } from '../../emergency-medicine/tutor/trauma-primary-survey-guidance';
 import { unstableBradycardiaInlinePrompt } from '../../emergency-medicine/tutor/unstable-bradycardia-guidance';
+import { unstableNarrowTachycardiaInlinePrompt } from '../../emergency-medicine/tutor/unstable-narrow-complex-tachycardia-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3077,6 +3078,7 @@ export interface ActionCockpitProps {
   readonly emergencyStemiGuidance?: GuidanceLevel;
   readonly traumaPrimarySurveyGuidance?: GuidanceLevel;
   readonly unstableBradycardiaGuidance?: GuidanceLevel;
+  readonly emergencySvtGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3280,6 +3282,7 @@ export interface ActionCockpitProps {
   readonly emergencyStemiDemonstrating?: boolean;
   readonly traumaPrimarySurveyDemonstrating?: boolean;
   readonly unstableBradycardiaDemonstrating?: boolean;
+  readonly emergencySvtDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5605,6 +5608,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasUnstableNarrowTachycardiaResponse && (
               <UnstableNarrowTachycardiaTray
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.emergencySvtGuidance}
+                demonstrating={props.emergencySvtDemonstrating}
                 assessment={props.resuscitation.unstableNarrowTachycardiaAssessment}
                 onAction={props.onUnstableNarrowTachycardiaResponse ?? (() => {})} />
             )}
@@ -8775,16 +8781,29 @@ function StemiTray({ assessment, scenarioVersion, guidance = 'unassisted', demon
   );
 }
 
-function UnstableNarrowTachycardiaTray({ assessment, onAction }: {
+function UnstableNarrowTachycardiaTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['unstableNarrowTachycardiaAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onUnstableNarrowTachycardiaResponse']>;
 }) {
   const reviewed = assessment?.reviewedAtTick != null;
   const prepared = assessment?.preparedAtTick != null;
   const cardioverted = assessment?.cardiovertedAtTick != null;
   const reassessed = assessment?.reassessedAtTick != null;
+  const prompt = demonstrating ? null
+    : unstableNarrowTachycardiaInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="unstable-nct-recognition-title">
         <div id="unstable-nct-recognition-title" className="syringe__name">Read the rhythm through the patient</div>
         <Badge kind="teaching">Fixed unstable NCT</Badge>
@@ -8796,11 +8815,11 @@ function UnstableNarrowTachycardiaTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={reviewed}
-            onClick={() => onAction('review-rhythm-and-instability')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-rhythm-and-instability') : undefined}>
             Review rhythm + instability
           </Button>
           <Button className="crisis-drug__action" disabled={!reviewed || prepared}
-            onClick={() => onAction('prepare-synchronized-cardioversion')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('prepare-synchronized-cardioversion') : undefined}>
             Prepare support + synchronized pads
           </Button>
         </div>
@@ -8816,16 +8835,17 @@ function UnstableNarrowTachycardiaTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!prepared || cardioverted}
-            onClick={() => onAction('record-synchronized-cardioversion-intent')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-synchronized-cardioversion-intent') : undefined}>
             Record synchronized cardioversion intent
           </Button>
           <Button className="crisis-drug__action" disabled={!cardioverted || reassessed}
-            onClick={() => onAction('reassess-rhythm-and-perfusion')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-rhythm-and-perfusion') : undefined}>
             Reassess rhythm + whole-patient perfusion
           </Button>
         </div>
         <p className="field__hint">SpO₂ is 94%, so routine oxygen is not selected. No energy, sedation drug, device operation, shock technique, adenosine, refractory pathway, recurrence, disposition, or outcome is offered.</p>
       </section>
+      </div>
     </div>
   );
 }

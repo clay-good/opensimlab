@@ -1433,23 +1433,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "unstable-narrow-complex-tachycardia-fixtures.ts binds seed 1889 and content 0.1.0 to expert, shock-without-preparation error, recovery, and no-action paths. The abrupt persistent regular tachycardia at 188/min with an authored twelve-lead showing a QRS of 0.08 second and no clearly visible preceding P waves; BP 76/48 mmHg with drowsiness, ischaemic chest discomfort, cool mottled extremities, delayed capillary refill, SpO2 94% and no acute heart failure; and the post-cardioversion panel of sinus rhythm at 92/min, BP 118/72 mmHg, alert mentation, resolving discomfort, warm extremities and improved refill are authored constants. No re-entry, conduction, sedation or shock-response model is claimed beyond the shared rhythm-change event present on arrival, the mechanism is deliberately not named, and no outcome follows from any choice. tests/integration/emergency-unstable-narrow-tachycardia-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
           "status": "satisfied",
           "evidence": [
-            "The timeline contains at least one non-narrative state event."
+            "The progression lives in the engine's three refusals across four recorded steps in one strict chain: the rhythm and instability review is gated ahead of everything, the preparation and pad placement ahead of the cardioversion intent, and the reassessment one further engine tick behind the shock. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Four recorded decisions against four declared objectives: review the narrow regular rhythm features together with the whole-patient instability the tachycardia is authored to be causing; confirm airway and breathing and record help, continuous rhythm, pressure and oximetry monitoring, intravenous access and synchronised-cardioversion pad preparation, with routine oxygen deliberately not selected at a saturation of 94%; record a prompt synchronised-cardioversion intent with sedation only if feasible and without delaying the shock; and reassess rhythm and perfusion after a further tick. The lesson examines nobody, places no pad or line, selects no energy or sedative, operates no device, verifies no synchronisation marker, delivers no shock, offers no adenosine or vagal manoeuvre, names no mechanism, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -1461,23 +1461,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded post-cardioversion reassessment showing sinus rhythm and restored perfusion, with the engine event placing refractory or recurrent tachycardia, causal investigation, medication therapy, anticoagulation questions, disposition and outcome outside the vignette. Later actions cannot restart an ended branch. The mechanism the rhythm question would have chased is never answered, and the lesson says so — the ending hands over a patient who is better and undiagnosed."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Four observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step. The reflex the lesson works against is the diagnostic detour: a regular narrow-complex tachycardia at 188 invites a mechanism question, and a pressure of 76/48 with a drowsy patient makes that question a luxury. The recognition beat frames it as two questions of which only one has to be answered now, and notes that the bedside teaching waveform does not encode atrial mechanism and is not a diagnostic strip — the twelve-lead is what was read. The preparation beat says why the engine gates the shock behind it: the difference between a synchronised shock and an unsynchronised one is a setting somebody has to select and a marker somebody has to see on the complexes, and neither happens while the machine is still in its bag. It also names the routine oxygen deliberately not selected at 94%. The cardioversion beat treats the sedation clause honestly — the drugs that would sedate him also drop a pressure already at 76/48, and finding and titrating them costs minutes spent in shock, so \"if feasible\" is a judgement about the next thirty seconds — and says the absence of adenosine from the screen is deliberate, because in an unstable patient the vagal manoeuvre and the drug are the detour. The reassessment beat reads perfusion before rate, says why it waits a tick, and names the questions the lesson leaves open. Worked example 0.1.0 drives the ordinary controls through the real engine and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere gives adenosine, tries a vagal manoeuvre, shocks before preparing, names an energy, or names the mechanism. tests/unit/emergency-unstable-narrow-tachycardia-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/emergency-unstable-narrow-tachycardia.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding alongside the pre-existing tests/ui/unstable-narrow-complex-tachycardia.test.tsx."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps the declared objectives to accepted engine events; the no-action path meets none and the expert path meets all four. The counterfactual is the one that reaches for the shock with nobody prepared to deliver it: the common-error path reviews the rhythm and the instability and records the cardioversion intent with no help called, no monitoring, no access and no pads. It is refused, and the two objectives downstream stay unmet. The recovery path reaches for the preparation before anyone said why this patient needs it and is refused, reaches for the reassessment on the same tick as the shock and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -1496,23 +1496,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "unstable-narrow-complex-tachycardia-fixtures.ts binds exact-content expert, shock-without-preparation error, recovery, and no-action pathways to seed 1889 for deterministic replay through the shared engine, including both order refusals and the time-gated reassessment refusal."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

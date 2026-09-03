@@ -192,6 +192,7 @@ import { supportsSevereHyponatremiaDemonstration } from '../../emergency-medicin
 import { supportsStemiDemonstration } from '../../emergency-medicine/demo/stemi-demonstration';
 import { supportsTraumaPrimarySurveyDemonstration } from '../../emergency-medicine/demo/trauma-primary-survey-demonstration';
 import { supportsUnstableBradycardiaDemonstration } from '../../emergency-medicine/demo/unstable-bradycardia-demonstration';
+import { supportsUnstableNarrowTachycardiaDemonstration } from '../../emergency-medicine/demo/unstable-narrow-complex-tachycardia-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -427,6 +428,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsStemiDemonstration,
     supportsTraumaPrimarySurveyDemonstration,
     supportsUnstableBradycardiaDemonstration,
+    supportsUnstableNarrowTachycardiaDemonstration,
   ],
 };
 
