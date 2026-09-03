@@ -551,23 +551,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "mucus-plugging-fixtures.ts binds seed 2806 and content 0.1.0 to expert, straight-to-suction error, recovery, and no-action paths. The intubated patient with pneumonia developing coarse central breath sounds, visible thick secretion in the tracheal tube and a new sawtooth expiratory-flow pattern, the peak pressure risen from 27 to 38 cm H2O against a passive plateau holding at 23 cm H2O, the reduced left-base air entry, the SpO2 of 87% on FiO2 0.45, the ETCO2 of 46 mmHg with a continuous capnogram, HR 108/min and MAP 74 mmHg, the unchanged tube depth and cuff state with a connected circuit, and the authored post-suction response showing partial central improvement with persistent left-base concern are authored constants; no secretion, suction or atelectasis model is claimed, and no outcome follows from any choice. tests/integration/mucus-plugging-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is two narratives with no non-narrative state event. The progression lives in the engine's four order refusals, and this is the only lesson in the module whose first step is treatment rather than assessment: support and experienced help precede the indicator review, because he is at 87% with an abrupt rise in airway resistance and oxygen does not require a diagnosis. The rest of the chain then establishes the indicators before the intervention and the response before the escalation. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions support oxygenation and call respiratory-therapy and senior help while assessing the abrupt airway resistance; integrate breath sounds, visible secretion, flow waveform, peak-to-plateau pressure, tube, circuit, gas exchange and circulation without treating any of them as diagnostic proof; record preoxygenated, as-needed artificial-airway suction intent with routine saline avoided; reassess secretions, graphics, pressures, oxygenation, ventilation, breath sounds and circulation; and escalate the persistent focal collapse for imaging and experienced airway evaluation while keeping tube migration, pneumothorax, atelectasis, consolidation, blood, foreign body and equipment problems open and without making routine bronchoscopy the default. The lesson examines nobody, checks no equipment, acquires no waveform or mechanics, suctions or removes nothing, images nothing, performs no bronchoscopy, diagnoses nothing, programs no ventilator, delivers no drug, performs no procedure, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -579,23 +579,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded escalation on an authored response that improved the central airway and left the left base unchanged. Later actions cannot restart an ended branch, and the ending is explicit about why the lesson does not stop at the improvement: a partial response confirms the learner was partly right and is therefore the most persuasive reason to stop looking, while the part that did not respond is exactly the part that was never a central plug. No diagnosis is made and routine bronchoscopy is not established as a default."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step, because this lesson has no unordered lane. Two reflexes are named. The first is the obvious answer being obviously right: there is visible secretion in the tube, so of course this is a plug, and the indicator beat points out that the visible secretion is the most persuasive item on the screen and the least specific, because a patient with pneumonia has secretions whether or not they are today's problem. It also notes that the unchanged tube depth, cuff and circuit are themselves findings — the two commonest equipment causes of this exact picture have been looked at rather than assumed. The second reflex is stopping when the treatment works, and the reassessment beat states it as the most important sentence in the lesson: a partial response is more persuasive than no response, because it confirms you were partly right and makes it easy to stop, and the part that did not respond is the part that was never a central plug. The support beat justifies treatment-before-assessment in one line — oxygen does not require a diagnosis, and calling help while you look is free. The suction beat holds three boundaries: as-needed rather than scheduled, preoxygenated because the procedure desaturates people who are already at 87%, and no routine saline, which is a habit rather than a treatment. Worked example 0.1.0 drives the ordinary controls through the real engine to the escalation and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere suctions, instils saline, names a catheter, or diagnoses the left base. tests/unit/mucus-plugging-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/critical-care-mucus-plugging.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the one visible secretion invites: the common-error path arranges oxygen and help and then goes straight to suction, skipping the indicator review that would have kept a migrated tube and a pneumothorax on the list, and meets one of five because the engine gates the suction intent behind it. The recovery path reaches for the indicators before oxygen and help have been arranged and is refused, reaches for the escalation before the response that justifies it and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -614,23 +614,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "mucus-plugging-fixtures.ts binds exact-content expert, straight-to-suction error, recovery, and no-action pathways to seed 2806 for deterministic replay through the shared engine, including all four order refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

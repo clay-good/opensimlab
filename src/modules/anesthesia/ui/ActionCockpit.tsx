@@ -220,6 +220,7 @@ import { rvFailureInlinePrompt } from '../../critical-care/tutor/rv-failure-guid
 import { massivePeInlinePrompt } from '../../critical-care/tutor/massive-pe-guidance';
 import { autoPeepInlinePrompt } from '../../critical-care/tutor/auto-peep-guidance';
 import { dyssynchronyInlinePrompt } from '../../critical-care/tutor/dyssynchrony-guidance';
+import { mucusPluggingInlinePrompt } from '../../critical-care/tutor/mucus-plugging-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3009,6 +3010,7 @@ export interface ActionCockpitProps {
   readonly massivePulmonaryEmbolismGuidance?: GuidanceLevel;
   readonly autoPeepGuidance?: GuidanceLevel;
   readonly ventilatorDyssynchronyGuidance?: GuidanceLevel;
+  readonly mucusPluggingGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3178,6 +3180,7 @@ export interface ActionCockpitProps {
   readonly massivePulmonaryEmbolismDemonstrating?: boolean;
   readonly autoPeepDemonstrating?: boolean;
   readonly ventilatorDyssynchronyDemonstrating?: boolean;
+  readonly mucusPluggingDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5560,6 +5563,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasMucusPluggingResponse && (
               <MucusPluggingTray assessment={props.resuscitation.mucusPluggingAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.mucusPluggingGuidance}
+                demonstrating={props.mucusPluggingDemonstrating}
                 onAction={props.onMucusPluggingResponse ?? (() => {})} />
             )}
             {hasUnplannedExtubationResponse && (
@@ -9368,8 +9374,11 @@ function AutoPeepTray({ assessment, scenarioVersion, guidance = 'unassisted', de
   );
 }
 
-function MucusPluggingTray({ assessment, onAction }: {
+function MucusPluggingTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['mucusPluggingAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onMucusPluggingResponse']>;
 }) {
   const support = assessment?.supportAtTick != null;
@@ -9377,8 +9386,18 @@ function MucusPluggingTray({ assessment, onAction }: {
   const suction = assessment?.suctionAtTick != null;
   const reassessment = assessment?.reassessmentAtTick != null;
   const escalation = assessment?.escalationAtTick != null;
+  const prompt = demonstrating ? null
+    : mucusPluggingInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="mucus-listen-title">
         <div id="mucus-listen-title" className="syringe__name">Listen to the resistance.</div>
         <Badge kind="teaching">sounds · secretions · flow · pressure</Badge>
@@ -9390,9 +9409,9 @@ function MucusPluggingTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={support}
-            onClick={() => onAction('support-mucus-plugging-and-call-help')}>Support oxygenation + call help</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('support-mucus-plugging-and-call-help') : undefined}>Support oxygenation + call help</Button>
           <Button className="crisis-drug__action" disabled={!support || indicators}
-            onClick={() => onAction('review-mucus-plugging-indicators')}>Review airway + graphics + mechanics</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-mucus-plugging-indicators') : undefined}>Review airway + graphics + mechanics</Button>
         </div>
         <p className="field__hint">No single sign diagnoses a plug. Keep tube, circuit, pleural, parenchymal, blood, and foreign-body causes open.</p>
       </section>
@@ -9407,14 +9426,15 @@ function MucusPluggingTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!indicators || suction}
-            onClick={() => onAction('record-indicated-airway-suction-intent')}>Record indicated suction intent</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-indicated-airway-suction-intent') : undefined}>Record indicated suction intent</Button>
           <Button className="crisis-drug__action" disabled={!suction || reassessment}
-            onClick={() => onAction('reassess-mucus-plugging-response')}>Review post-clearance response</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-mucus-plugging-response') : undefined}>Review post-clearance response</Button>
           <Button className="crisis-drug__action" disabled={!reassessment || escalation}
-            onClick={() => onAction('escalate-persistent-mucus-plugging')}>Escalate persistent focal concern</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('escalate-persistent-mucus-plugging') : undefined}>Escalate persistent focal concern</Button>
         </div>
         <p className="field__hint">Routine bronchoscopy is not the answer. Persistent focal physiology still earns imaging and experienced evaluation.</p>
       </section>
+      </div>
     </div>
   );
 }

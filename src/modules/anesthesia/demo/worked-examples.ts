@@ -158,6 +158,7 @@ import { supportsRvFailureDemonstration } from '../../critical-care/demo/rv-fail
 import { supportsMassivePeDemonstration } from '../../critical-care/demo/massive-pe-demonstration';
 import { supportsAutoPeepDemonstration } from '../../critical-care/demo/auto-peep-demonstration';
 import { supportsDyssynchronyDemonstration } from '../../critical-care/demo/dyssynchrony-demonstration';
+import { supportsMucusPluggingDemonstration } from '../../critical-care/demo/mucus-plugging-demonstration';
 
 /**
  * Which lessons have a worked example, asked in one place.
@@ -357,6 +358,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsMassivePeDemonstration,
     supportsAutoPeepDemonstration,
     supportsDyssynchronyDemonstration,
+    supportsMucusPluggingDemonstration,
   ],
 };
 
