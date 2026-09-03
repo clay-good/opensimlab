@@ -315,6 +315,8 @@ import { useDyssynchronyDemonstration } from '../../critical-care/demo/useDyssyn
 import { supportsDyssynchronyDemonstration } from '../../critical-care/demo/dyssynchrony-demonstration';
 import { useMucusPluggingDemonstration } from '../../critical-care/demo/useMucusPluggingDemonstration';
 import { supportsMucusPluggingDemonstration } from '../../critical-care/demo/mucus-plugging-demonstration';
+import { useEscalatingHypoxemiaDemonstration } from '../../critical-care/demo/useEscalatingHypoxemiaDemonstration';
+import { supportsEscalatingHypoxemiaDemonstration } from '../../critical-care/demo/escalating-hypoxemia-demonstration';
 import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
 import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
 import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
@@ -624,6 +626,7 @@ export function Cockpit({
   const autoPeepDemoSupported = supportsAutoPeepDemonstration(scenario);
   const dyssynchronyDemoSupported = supportsDyssynchronyDemonstration(scenario);
   const mucusPluggingDemoSupported = supportsMucusPluggingDemonstration(scenario);
+  const escalatingHypoxemiaDemoSupported = supportsEscalatingHypoxemiaDemonstration(scenario);
   const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
   const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
   const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
@@ -761,6 +764,7 @@ export function Cockpit({
     || autoPeepDemoSupported
     || dyssynchronyDemoSupported
     || mucusPluggingDemoSupported
+    || escalatingHypoxemiaDemoSupported
     || termTransitionDemoSupported
     || neonatalApneaDemoSupported
     || ineffectiveVentilationDemoSupported
@@ -1032,6 +1036,12 @@ export function Cockpit({
     active: demonstrating && mucusPluggingDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.mucusPluggingAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const escalatingHypoxemiaDemonstration = useEscalatingHypoxemiaDemonstration({
+    active: demonstrating && escalatingHypoxemiaDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.escalatingHypoxemiaAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const stableNarrowTachycardiaDemonstration = useStableNarrowTachycardiaDemonstration({
@@ -1761,6 +1771,7 @@ export function Cockpit({
     : autoPeepDemoSupported ? autoPeepDemonstration
     : dyssynchronyDemoSupported ? dyssynchronyDemonstration
     : mucusPluggingDemoSupported ? mucusPluggingDemonstration
+    : escalatingHypoxemiaDemoSupported ? escalatingHypoxemiaDemonstration
     : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
     : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
     : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
@@ -2744,6 +2755,8 @@ export function Cockpit({
           ventilatorDyssynchronyDemonstrating={demonstrating && dyssynchronyDemoSupported}
           mucusPluggingGuidance={session.guidance}
           mucusPluggingDemonstrating={demonstrating && mucusPluggingDemoSupported}
+          escalatingHypoxemiaGuidance={session.guidance}
+          escalatingHypoxemiaDemonstrating={demonstrating && escalatingHypoxemiaDemoSupported}
           lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
           oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
           lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}

@@ -221,6 +221,7 @@ import { massivePeInlinePrompt } from '../../critical-care/tutor/massive-pe-guid
 import { autoPeepInlinePrompt } from '../../critical-care/tutor/auto-peep-guidance';
 import { dyssynchronyInlinePrompt } from '../../critical-care/tutor/dyssynchrony-guidance';
 import { mucusPluggingInlinePrompt } from '../../critical-care/tutor/mucus-plugging-guidance';
+import { escalatingHypoxemiaInlinePrompt } from '../../critical-care/tutor/escalating-hypoxemia-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3011,6 +3012,7 @@ export interface ActionCockpitProps {
   readonly autoPeepGuidance?: GuidanceLevel;
   readonly ventilatorDyssynchronyGuidance?: GuidanceLevel;
   readonly mucusPluggingGuidance?: GuidanceLevel;
+  readonly escalatingHypoxemiaGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3181,6 +3183,7 @@ export interface ActionCockpitProps {
   readonly autoPeepDemonstrating?: boolean;
   readonly ventilatorDyssynchronyDemonstrating?: boolean;
   readonly mucusPluggingDemonstrating?: boolean;
+  readonly escalatingHypoxemiaDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5544,6 +5547,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasEscalatingHypoxemiaResponse && (
               <EscalatingHypoxemiaTray
                 assessment={props.resuscitation.escalatingHypoxemiaAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.escalatingHypoxemiaGuidance}
+                demonstrating={props.escalatingHypoxemiaDemonstrating}
                 onAction={props.onEscalatingHypoxemiaResponse ?? (() => {})} />
             )}
             {hasVentilatorDyssynchronyResponse && (
@@ -9192,8 +9198,11 @@ function ArdsLungProtectiveTray({ assessment, onAction }: {
   );
 }
 
-function EscalatingHypoxemiaTray({ assessment, onAction }: {
+function EscalatingHypoxemiaTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['escalatingHypoxemiaAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onEscalatingHypoxemiaResponse']>;
 }) {
   const signal = assessment?.signalAtTick != null;
@@ -9201,8 +9210,18 @@ function EscalatingHypoxemiaTray({ assessment, onAction }: {
   const deliveryPath = assessment?.deliveryPathAtTick != null;
   const bedsidePattern = assessment?.bedsidePatternAtTick != null;
   const escalation = assessment?.escalationAtTick != null;
+  const prompt = demonstrating ? null
+    : escalatingHypoxemiaInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="hypoxemia-signal-title">
         <div id="hypoxemia-signal-title" className="syringe__name">Believe the drop. Verify the signal.</div>
         <Badge kind="teaching">pleth · trend · patient · arterial panel</Badge>
@@ -9214,9 +9233,9 @@ function EscalatingHypoxemiaTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={signal}
-            onClick={() => onAction('validate-hypoxemia-signal')}>Corroborate the decline</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('validate-hypoxemia-signal') : undefined}>Corroborate the decline</Button>
           <Button className="crisis-drug__action" disabled={!signal || support}
-            onClick={() => onAction('support-hypoxemia-and-call-help')}>Support oxygenation + call help</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('support-hypoxemia-and-call-help') : undefined}>Support oxygenation + call help</Button>
         </div>
         <p className="field__hint">A good pleth earns attention, not certainty. Treat urgency and verify the story in parallel.</p>
       </section>
@@ -9232,14 +9251,15 @@ function EscalatingHypoxemiaTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!support || deliveryPath}
-            onClick={() => onAction('trace-hypoxemia-delivery-path')}>Trace source → circuit → tube</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('trace-hypoxemia-delivery-path') : undefined}>Trace source → circuit → tube</Button>
           <Button className="crisis-drug__action" disabled={!deliveryPath || bedsidePattern}
-            onClick={() => onAction('integrate-hypoxemia-bedside-pattern')}>Integrate chest + pressure + flow</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('integrate-hypoxemia-bedside-pattern') : undefined}>Integrate chest + pressure + flow</Button>
           <Button className="crisis-drug__action" disabled={!bedsidePattern || escalation}
-            onClick={() => onAction('escalate-and-reassess-hypoxemia')}>Escalate + review 15-min response</Button>
+            aria-disabled={demonstrating} onClick={act ? () => act('escalate-and-reassess-hypoxemia') : undefined}>Escalate + review 15-min response</Button>
         </div>
         <p className="field__hint">A passed check narrows the field; it never makes tube, pleural, embolic, or equipment danger impossible.</p>
       </section>
+      </div>
     </div>
   );
 }

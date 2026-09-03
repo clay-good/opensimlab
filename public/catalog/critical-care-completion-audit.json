@@ -173,23 +173,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "escalating-hypoxemia-fixtures.ts binds seed 4059 and content 0.1.0 to expert, straight-to-the-chest error, recovery, and no-action paths. The intubated patient with bilateral inflammatory lung opacities deteriorating after a routine turn, the unchanged volume-control support of 430 mL at 22/min with PEEP 10 cm H2O and FiO2 0.50, the SpO2 falling from 94% to 84% over six minutes with a strong regular pleth, the fixed arterial panel reporting PaO2 51 mmHg, pH 7.33 and PaCO2 47 mmHg, and the HR of 106/min with MAP 75 mmHg are authored constants; no gas-exchange, shunt or recruitment model is claimed, and no outcome follows from any choice. tests/integration/escalating-hypoxemia-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is two narratives with no non-narrative state event. The progression lives in the engine's four order refusals, and the order encodes the discipline the lesson teaches: validate the signal, support the patient, then trace the oxygen path from the wall inwards before looking at the lungs. That sequence exists because the equipment causes are the ones fixed in seconds and the ones a sick-lung story makes invisible, and a team that starts at the parenchyma rarely goes back to check the circuit. Every refusal is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five declared decisions treat the saturation decline as urgent while corroborating signal quality, trend and the fixed arterial panel; record immediate oxygen-support and senior plus respiratory-therapy help while troubleshooting proceeds; systematically review oxygen source, circuit, capnography, tracheal-tube depth and the fixed suction-path check in an outside-in sequence; integrate bilateral air entry, pressure changes, capnography and circulation before narrowing the differential; and record urgent gas and imaging intent with protocolized lung-protective support and whole-patient reassessment. The lesson examines nobody, acquires no signal, manipulates no equipment, passes no catheter, samples no blood, images nothing, diagnoses nothing, programs no ventilator, rescues no airway, recruits nothing, performs no bronchoscopy, decompresses nothing, exchanges no tube, prones nobody, cannulates nobody for ECMO, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -201,23 +201,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded escalation and reassessment on an authored response reviewed across the whole patient, implying no universal setting and no outcome. Later actions cannot restart an ended branch. What the ending establishes is narrow and honest: the delivery path was traced and found intact, which is what converts \"his lungs are worse\" from an assumption into a conclusion, and unresolved parenchymal hypoxemia is what remains rather than what was decided at the start — with pneumothorax, collapse, effusion and embolism all still possible."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Five observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step, because this lesson has no unordered lane. The reflex it works against is the diagnosis a sick lung invites: a man with bilateral opacities who desaturates after a turn will be assumed to have worsened, and a disconnected limb, a failing supply or a tube that has slid into a bronchus each produce the same number on the same screen, several of them fixable in seconds. The signal beat holds urgency and verification together rather than in tension — the strong regular pleth separates a real decline from a moved probe, and the PaO2 of 51 mmHg is an independent measurement agreeing with the monitor, because a monitor-only diagnosis is how a team ends up treating a probe. The support beat states that support and cause do not compete, since the cause takes minutes to find and he has no reserve to spend on them. The delivery-path beat gives the direction and the reason for it, and singles out the turn he has just had as what makes tube depth worth checking. The bedside beat is careful that unresolved parenchymal hypoxemia is what remains after an intact path rather than what was assumed, and that it excludes nothing. The escalation beat keeps the support protocolized precisely because a hypoxaemic patient invites somebody to reach for a setting. Worked example 0.1.0 drives the ordinary controls through the real engine to the escalation and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere names a PEEP or FiO2 setting, prones, recruits, or diagnoses the parenchyma. tests/unit/escalating-hypoxemia-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/critical-care-escalating-hypoxemia.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps all five objectives to accepted engine events; the no-action path meets none and the expert path meets all five. The counterfactual is the one a sick lung invites: the common-error path corroborates the decline and arranges support, then goes straight to the chest and never traces the oxygen path — in a patient who has just been turned, which is precisely when a tube migrates — and meets two of five because the engine gates the bedside pattern behind the delivery-path review. The recovery path reaches for support before the signal has been corroborated and is refused, reaches for the chest before the delivery path and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -236,23 +236,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "escalating-hypoxemia-fixtures.ts binds exact-content expert, straight-to-the-chest error, recovery, and no-action pathways to seed 4059 for deterministic replay through the shared engine, including all four order refusals."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

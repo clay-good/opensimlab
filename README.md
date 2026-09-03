@@ -48,7 +48,7 @@ point, and a private tutor that reads only what you have actually done. The tuto
 unless you ask for it, says nothing at all on the unassisted setting, and never supplies the
 diagnosis a lesson exists to leave open. Every renal, oncology, endocrine, nursing,
 infectious-disease, neonatology, toxicology, neurology, obstetrics, respiratory-medicine,
-pediatrics, and cardiology lab has both. Critical care has started, with eight of its twenty-four labs done.
+pediatrics, and cardiology lab has both. Critical care has started, with nine of its twenty-four labs done.
 
 ## How it works
 
