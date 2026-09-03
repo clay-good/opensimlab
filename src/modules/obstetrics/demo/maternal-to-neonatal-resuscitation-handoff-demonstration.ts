@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsMaternalNeonatalHandoff, type MaternalNeonatalHandoffAction, type MaternalNeonatalHandoffProgress,
 } from '../maternal-to-neonatal-resuscitation-handoff';
+import { maternalNeonatalHandoffInlinePrompt } from '../tutor/maternal-to-neonatal-resuscitation-handoff-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: MaternalNeonatalHandoffProgress): string {
+  const prompt = maternalNeonatalHandoffInlinePrompt('guided', { scenarioVersion: '0.1.0', maternalNeonatalHandoff: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const MATERNAL_NEONATAL_HANDOFF_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -34,19 +46,19 @@ export function maternalNeonatalHandoffDemonstrationStep(
   }
   if (patient.supportAtTick === null) {
     return { id: 'support', focus: 'actions', progress: 0.08, action: 'activate-obstetrics-maternal-neonatal-handoff-two-patient-team-and-support-ownership',
-      narration: 'Say out loud who owns the mother and who owns the newborn. Two patients in one room with overlapping teams is exactly where someone stops being watched, and the way that happens is never a decision — it is an assumption that the other team has it. Separate named ownership for her and for the newborn, someone owning the communication, and someone whose job is the family. She is awake and asking whether her baby is breathing, and answering her belongs to a named person rather than to whoever is nearest.' };
+      narration: narrate(patient) };
   }
   if (patient.contextAtTick === null) {
     return { id: 'context', focus: 'monitor', progress: 0.28, action: 'reconcile-obstetrics-maternal-neonatal-handoff-antenatal-intrapartum-birth-resuscitation-and-whole-family-context',
-      narration: 'Put both clocks and the whole family in one view. Thirty-nine weeks, an urgent caesarean for persistent fetal bradycardia, birth at 14:07, a newborn apneic with a heart rate of 70 after initial steps, assisted ventilation begun inside the first minute, and now chest movement and a rate of 118. Her surgery is still going on. No fever, no meconium, no known anomaly is supplied — and the placental findings and cord gases that might explain any of this do not exist yet.' };
+      narration: narrate(patient) };
   }
   if (patient.safetyAtTick === null) {
     return { id: 'safety', focus: 'monitor', progress: 0.46, action: 'review-obstetrics-maternal-neonatal-handoff-ventilation-priority-response-and-uncertainty-boundaries',
-      narration: 'Read the rising heart rate as ventilation working, not as a newborn who is well. A heart rate that climbs from 70 to 118 with visible chest movement is the supplied evidence that effective ventilation is being delivered — which is the single most important thing in newborn resuscitation and also the narrowest claim available. It does not establish a completed transition, a safe respiratory trajectory, a normal neurologic state, a glucose, or a temperature. Whatever is producing that number is being produced continuously, by someone, right now.' };
+      narration: narrate(patient) };
   }
   if (patient.transferAtTick === null) {
     return { id: 'transfer', focus: 'actions', progress: 0.64, action: 'review-obstetrics-maternal-neonatal-handoff-structured-transfer-readback-and-parallel-readiness',
-      narration: 'Hand over in a structure, and make the receiver say it back. Identity, the clocks, the trajectory that got here, what was actually done, how the newborn responded, what remains unresolved, and who owns what next — in that order, once, without interruption. The readback is not a formality: it is the only point at which a mistaken assumption becomes visible while it can still be corrected. Contingency readiness and the family conversation belong to the same moment rather than afterwards.' };
+      narration: narrate(patient) };
   }
   if (patient.reassessmentAtTick === null) {
     return { id: 'reassess', focus: 'monitor', progress: 0.82, action: 'review-obstetrics-maternal-neonatal-handoff-fixed-five-minute-qualified-course-report',

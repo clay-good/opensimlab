@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsMyasthenia, type MyastheniaAction, type MyastheniaProgress,
 } from '../myasthenic-crisis-escalation';
+import { myastheniaInlinePrompt } from '../tutor/myasthenic-crisis-escalation-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: MyastheniaProgress): string {
+  const prompt = myastheniaInlinePrompt('guided', { scenarioVersion: '0.1.0', myasthenia: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const MYASTHENIA_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -40,19 +52,19 @@ export function myastheniaDemonstrationStep(
   }
   if (patient.trajectoryAtTick === null) {
     return { id: 'trajectory', focus: 'monitor', progress: 0.08, action: 'reconcile-neurology-myasthenic-crisis-clock-fatigability-bulbar-respiratory-and-whole-patient',
-      narration: 'Read the direction of travel, not the numbers as they stand. Thirty-six hours of worsening fatigable weakness after three days of fever and productive cough: diplopia, ptosis, nasal speech, head drop, breathlessness while speaking, a weak cough and saliva she cannot clear. The supplied vital capacity has gone from 2.4 to 1.4 litres and the maximal inspiratory pressure from -38 to -22 in six hours. Two of those are bulbar and two are ventilatory, and both sets are moving the same way.' };
+      narration: narrate(patient) };
   }
   if (patient.recognitionAtTick === null) {
     return { id: 'recognition', focus: 'actions', progress: 0.26, action: 'recognize-neurology-impending-myasthenic-crisis-without-spo2-or-single-cutoff-reassurance',
-      narration: 'Call this an impending crisis while the saturation is still normal. A room-air saturation of 97% and a PaCO2 of 41 are exactly what this looks like shortly before it stops looking like anything. Neuromuscular failure holds its oxygenation until it does not, and hypercapnia here is a late sign rather than a warning — so waiting for either is waiting too long. There is no single cutoff to lean on either: no one vital capacity, pressure, count or gas value is a universal threshold, and what decides this is the trajectory plus a bulbar picture that cannot protect an airway.' };
+      narration: narrate(patient) };
   }
   if (patient.ownershipAtTick === null) {
     return { id: 'ownership', focus: 'actions', progress: 0.46, action: 'activate-neurology-myasthenic-crisis-qualified-neurocritical-and-airway-capable-ownership',
-      narration: 'Get neurology, neurocritical care, respiratory and an airway-capable owner in now. This is escalation ahead of the event rather than in response to it, and the people who will manage the airway need to be present before the airway is the problem. Pooled secretions with a barely effective cough is its own emergency running alongside the falling vital capacity — one is about ventilating and the other is about protecting, and neither waits for the other.' };
+      narration: narrate(patient) };
   }
   if (patient.causesAtTick === null) {
     return { id: 'causes', focus: 'monitor', progress: 0.64, action: 'review-neurology-myasthenic-crisis-secretion-aspiration-infection-medication-and-alternative-causes',
-      narration: 'Treat the chest as the trigger, and keep every alternative open. Three days of fever and productive cough with a new right basilar opacity is a precipitant worth chasing, and the radiograph cannot say whether that shadow is infection or aspiration — which matters, because a weak cough and pooled saliva make the second entirely plausible. Medication exposures, test reliability, and metabolic, pulmonary, cardiac, central and other neuromuscular causes all stay open, and this review runs alongside the escalation rather than in front of it.' };
+      narration: narrate(patient) };
   }
   if (patient.laterAtTick === null) {
     return { id: 'later', focus: 'monitor', progress: 0.82, action: 'review-neurology-myasthenic-crisis-strict-later-bulbar-ventilatory-and-supplied-airway-trajectory',

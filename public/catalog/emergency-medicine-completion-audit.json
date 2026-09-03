@@ -1307,23 +1307,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "stemi-fixtures.ts binds seed 3057 and content 0.1.0 to expert, drugs-without-the-call error, recovery, and no-action paths. The forty-five minutes of ongoing central pressure radiating to the left arm with diaphoresis and nausea, HR 104/min, BP 146/92 mmHg, RR 20/min, SpO2 95%, warm perfusion and no heart failure or shock; the authored twelve-lead showing ST elevation in V2-V5 with reciprocal inferior depression; the authored absence of tearing pain, pulse asymmetry, neurologic deficit, pericarditic pattern, pneumothorax pattern and recent PDE5-inhibitor exposure; the 162-325 mg aspirin loading range; and the pre-reperfusion panel with routine oxygen unselected at a saturation of at least 90% are authored constants. No coronary, biomarker, antiplatelet or reperfusion response model is claimed, and no outcome follows from any choice. tests/integration/emergency-stemi-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is a single narrative boundary with no non-narrative state event. The progression lives in the engine's gates across five recorded steps: the pattern review is gated ahead of everything, the three initial lanes are gated against each other not at all, and the handoff sits behind all three plus one further engine tick — so nobody can hand over to a reperfusion team that has not been called. Both the order refusal and the time-gated handoff refusal are exercised by a reference transcript, and a test replays three different orderings of the three lanes to show none is refused."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five recorded decisions against four declared objectives: review the symptom timing, the authored twelve-lead, the haemodynamics, the oxygenation and the immediate alternatives; activate the STEMI pathway, the interventional team and the primary-PCI intent without waiting for a biomarker in this declared PCI-capable setting; record an oral aspirin loading intent within the guideline range after the authored absence of allergy or absolute contraindication; record P2Y12-inhibitor loading and parenteral anticoagulation for the primary-PCI pathway; and reassess and hand over with a time stamp. The three lanes are unordered because none is a prerequisite for the others. The lesson acquires and interprets no tracing, selects no agent, formulation or exact dose, administers nothing, adjudicates no contraindication, arranges no transport, performs no angiography or intervention, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -1335,23 +1335,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded pre-reperfusion reassessment and time-stamped handoff, with pain still ongoing and no reperfusion claimed. Later actions cannot restart an ended branch. The engine event records that routine oxygen remains unselected because the saturation is at least 90%, and places the procedure and outcome outside the lesson — so the ending hands over a patient who is still occluded and a clock that has started."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps. The reflex the lesson works against is the drug tray: three things are open at once and only one of them moves the artery any closer to being open. Because the three are unordered, that claim lives in the beat for the state where none has been recorded — aspirin and a P2Y12 inhibitor stop a clot getting bigger and the anticoagulant makes a catheter safe, but a wire reopens an artery and the only thing on the screen that brings the wire closer is the phone call, which is exactly why it gets made third. The same beat names what is not being waited for: a normal early troponin here means the necrosis has not had time to be measurable, not that the artery is open. The recognition beat says the bedside lead-II monitor is not the diagnostic tracing, and reads the authored absences — tearing pain, pulse asymmetry, neurologic deficit, pericarditis, pneumothorax, recent PDE5 inhibitor — as what makes the antiplatelets and anticoagulant safe rather than catastrophic. The pathway beat says it is the only lane on a clock, since the arrival-to-wire interval is measured from when the team was told. The aspirin beat says why chewed rather than swallowed. The handoff beat treats the absent oxygen mask as a deliberate choice, since supplemental oxygen in a normoxic infarct has been associated with larger infarcts rather than smaller ones. Worked example 0.1.0 drives the ordinary controls through the real engine, takes the call first, and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere waits for a troponin, reads the monitor as a twelve-lead, names an agent or exact dose, puts oxygen on a normoxic patient, or claims reperfusion. tests/unit/emergency-stemi-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/emergency-stemi.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding alongside the pre-existing tests/ui/stemi.test.tsx."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps the declared objectives to accepted engine events; the no-action path meets none and the expert path meets all four. The counterfactual is the one that treats the drug tray as the treatment: the common-error path reviews the pattern, records the aspirin and the P2Y12 with anticoagulation, and reaches for the handoff without anyone having called the cath lab. It is refused, and the reperfusion and handoff objectives stay unmet. The recovery path reaches for the pathway before the twelve-lead has been read and is refused, reaches for the handoff on the same tick as the last intent and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -1370,23 +1370,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "stemi-fixtures.ts binds exact-content expert, drugs-without-the-call error, recovery, and no-action pathways to seed 3057 for deterministic replay through the shared engine, including the order refusal and the time-gated handoff refusal."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

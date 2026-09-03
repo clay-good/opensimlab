@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsUterineRupture, type UterineRuptureAction, type UterineRuptureProgress,
 } from '../suspected-uterine-rupture-recognition';
+import { uterineRuptureInlinePrompt } from '../tutor/suspected-uterine-rupture-recognition-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: UterineRuptureProgress): string {
+  const prompt = uterineRuptureInlinePrompt('guided', { scenarioVersion: '0.1.0', uterineRupture: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const UTERINE_RUPTURE_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -34,19 +46,19 @@ export function uterineRuptureDemonstrationStep(
   }
   if (patient.supportAtTick === null) {
     return { id: 'support', focus: 'actions', progress: 0.08, action: 'activate-obstetrics-suspected-uterine-rupture-category-one-surgery-anesthesia-blood-newborn-and-support-response',
-      narration: 'Call for the theatre on the suspicion, because nothing here will upgrade it. A uterine rupture is confirmed by opening the abdomen and not before, so waiting to be certain means waiting for the operation that the waiting is delaying. Category-1 surgery, anesthesia, blood, the newborn team, a leader, communication and support all start now. She is pale and frightened and asking what is happening; someone whose job is to talk to her is part of this response.' };
+      narration: narrate(patient) };
   }
   if (patient.contextAtTick === null) {
     return { id: 'context', focus: 'monitor', progress: 0.28, action: 'reconcile-obstetrics-suspected-uterine-rupture-scar-pain-fetal-heart-station-activity-bleeding-and-whole-person',
-      narration: 'Read the findings as one coupled pattern rather than a list. One prior low-transverse caesarean, sudden severe pain that persists between contractions, a fetal heart that has fallen to 72, station lost from -1 to -3, efficient uterine activity that simply stopped, 60 mL of new bleeding, scar tenderness, and a mother at 118 and 96/58. Any one of those has other explanations. Together, and appearing together twelve minutes ago, they are the pattern.' };
+      narration: narrate(patient) };
   }
   if (patient.uncertaintyAtTick === null) {
     return { id: 'uncertainty', focus: 'actions', progress: 0.46, action: 'review-obstetrics-suspected-uterine-rupture-multisignal-nonclassic-triad-and-alternative-cause-boundaries',
-      narration: 'Keep it suspected, and keep the alternatives alive while you act on it. The classic triad is neither necessary nor reliable — the abnormal fetal heart rate is the most consistent sign and even it is not specific, and loss of station is suggestive rather than diagnostic. Placental abruption, a fetal or vascular cause, a surgical complication and non-obstetric explanations all stay open. Acting on a suspicion at full urgency and holding it as a suspicion are the same posture here rather than opposite ones.' };
+      narration: narrate(patient) };
   }
   if (patient.readinessAtTick === null) {
     return { id: 'readiness', focus: 'actions', progress: 0.64, action: 'review-obstetrics-suspected-uterine-rupture-parallel-maternal-fetal-surgical-hemorrhage-fertility-and-communication-readiness',
-      narration: 'Let the readiness run in parallel rather than in sequence. Maternal resuscitation and hemorrhage readiness, fetal and newborn readiness, the surgical and anesthetic preparation, and the conversation with her all proceed at once, because arranging any of them after the others costs the same minutes. The fertility question belongs in that conversation before theatre rather than after, since what happens to her uterus may be decided while she is asleep.' };
+      narration: narrate(patient) };
   }
   if (patient.reassessmentAtTick === null) {
     return { id: 'reassess', focus: 'monitor', progress: 0.82, action: 'review-obstetrics-suspected-uterine-rupture-fixed-worsening-and-laparotomy-start-report',

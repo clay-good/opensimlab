@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsFocalMotorStatus, type FocalMotorStatusAction, type FocalMotorStatusProgress,
 } from '../focal-motor-status-epilepticus-escalation';
+import { focalMotorStatusInlinePrompt } from '../tutor/focal-motor-status-epilepticus-escalation-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: FocalMotorStatusProgress): string {
+  const prompt = focalMotorStatusInlinePrompt('guided', { scenarioVersion: '0.1.0', focalMotorStatus: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const FOCAL_MOTOR_STATUS_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -39,19 +51,19 @@ export function focalMotorStatusDemonstrationStep(
   }
   if (patient.trajectoryAtTick === null) {
     return { id: 'trajectory', focus: 'monitor', progress: 0.08, action: 'reconcile-neurology-focal-motor-status-clock-semiology-recovery-and-whole-patient',
-      narration: 'Count this as one event, and start the count where it started. Eighteen minutes of a single continuous evolving event: rhythmic left face and arm clonus that generalised, then became less dramatic after qualified rescue care. Not three episodes and not a seizure followed by a postictal phase — one event, still running, with meaningful responsiveness not yet returned. The heart rate of 118 and the breathing between motor bursts belong to that event too.' };
+      narration: narrate(patient) };
   }
   if (patient.recognitionAtTick === null) {
     return { id: 'recognition', focus: 'actions', progress: 0.26, action: 'recognize-neurology-focal-motor-status-despite-reduced-convulsions',
-      narration: 'Say that quieter is not stopped, before anything else moves. Overt stereotyped left face and arm clonus is still visible and she has not come back. A partial response that removes the most alarming part of the picture is the moment this diagnosis gets missed, because the room relaxes and the clock keeps running. Less dramatic movement is not seizure resolution — that sentence is the whole lesson, and everything after it depends on somebody having said it.' };
+      narration: narrate(patient) };
   }
   if (patient.ownershipAtTick === null) {
     return { id: 'ownership', focus: 'actions', progress: 0.46, action: 'activate-neurology-focal-motor-status-qualified-seizure-and-airway-ownership',
-      narration: 'Escalate on what you can see, without waiting for an EEG to agree. There is no EEG result here and none is needed to act: continuous focal motor seizure activity with no recovery is enough on its own, and qualified seizure, resuscitation and airway-capable ownership start together on it. Waiting for electrographic confirmation before calling anyone converts a visible emergency into a scheduling problem. Nothing about which drug comes next is decided here.' };
+      narration: narrate(patient) };
   }
   if (patient.safetyAtTick === null) {
     return { id: 'safety', focus: 'monitor', progress: 0.64, action: 'review-neurology-focal-motor-status-airway-glucose-causes-and-injury-boundary',
-      narration: 'Run the airway, the glucose and the cause alongside — not instead. The glucose of 104 removes one fast reversible cause and nothing else. Airway risk, injury risk, and the structural, vascular, infectious, immune, toxic, metabolic, medication-related and nonepileptic alternatives all stay open, and the authored absences of trauma, fever and toxin exposure are snapshots rather than exclusions. This review runs in parallel with the escalation, which is why it comes after the call rather than before it.' };
+      narration: narrate(patient) };
   }
   if (patient.laterAtTick === null) {
     return { id: 'later', focus: 'monitor', progress: 0.82, action: 'review-neurology-focal-motor-status-strict-later-visible-motor-trajectory',

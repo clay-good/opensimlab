@@ -251,6 +251,7 @@ import { intracranialHemorrhageInlinePrompt } from '../../emergency-medicine/tut
 import { opioidToxicityInlinePrompt } from '../../emergency-medicine/tutor/opioid-toxicity-guidance';
 import { pulmonaryEmbolismInlinePrompt } from '../../emergency-medicine/tutor/pulmonary-embolism-deterioration-guidance';
 import { severeHyponatremiaInlinePrompt } from '../../emergency-medicine/tutor/severe-hyponatremia-with-seizure-guidance';
+import { stemiInlinePrompt } from '../../emergency-medicine/tutor/stemi-guidance';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
@@ -3071,6 +3072,7 @@ export interface ActionCockpitProps {
   readonly opioidToxicityGuidance?: GuidanceLevel;
   readonly pulmonaryEmbolismGuidance?: GuidanceLevel;
   readonly severeHyponatremiaGuidance?: GuidanceLevel;
+  readonly emergencyStemiGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3271,6 +3273,7 @@ export interface ActionCockpitProps {
   readonly opioidToxicityDemonstrating?: boolean;
   readonly pulmonaryEmbolismDemonstrating?: boolean;
   readonly severeHyponatremiaDemonstrating?: boolean;
+  readonly emergencyStemiDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5588,7 +5591,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
               />
             )}
             {hasStemiResponse && (
-              <StemiTray assessment={props.resuscitation.stemiAssessment}
+              <StemiTray
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.emergencyStemiGuidance}
+                demonstrating={props.emergencyStemiDemonstrating} assessment={props.resuscitation.stemiAssessment}
                 onAction={props.onStemiResponse ?? (() => {})} />
             )}
             {hasUnstableNarrowTachycardiaResponse && (
@@ -8682,8 +8688,11 @@ function PulmonaryEmbolismTray({ assessment, scenarioVersion, guidance = 'unassi
   );
 }
 
-function StemiTray({ assessment, onAction }: {
+function StemiTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['stemiAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onStemiResponse']>;
 }) {
   const reviewed = assessment?.patternReviewedAtTick != null;
@@ -8691,8 +8700,18 @@ function StemiTray({ assessment, onAction }: {
   const aspirin = assessment?.aspirinAtTick != null;
   const antithrombotics = assessment?.additionalAntithromboticsAtTick != null;
   const reassessed = assessment?.reassessedAtTick != null;
+  const prompt = demonstrating ? null
+    : stemiInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="stemi-pattern-title">
         <div id="stemi-pattern-title" className="syringe__name">See the pattern, start the clock</div>
         <Badge kind="teaching">Fixed PCI-capable ED</Badge>
@@ -8704,11 +8723,11 @@ function StemiTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={reviewed}
-            onClick={() => onAction('review-stemi-pattern')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-stemi-pattern') : undefined}>
             Review symptoms + fixed 12-lead
           </Button>
           <Button className="crisis-drug__action" disabled={!reviewed || activated}
-            onClick={() => onAction('activate-stemi-pathway')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('activate-stemi-pathway') : undefined}>
             Activate STEMI pathway + primary PCI
           </Button>
         </div>
@@ -8724,21 +8743,22 @@ function StemiTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!reviewed || aspirin}
-            onClick={() => onAction('record-aspirin-load')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-aspirin-load') : undefined}>
             Record aspirin load · 162–325 mg
           </Button>
           <Button className="crisis-drug__action" disabled={!reviewed || antithrombotics}
-            onClick={() => onAction('record-p2y12-anticoagulation-intent')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-p2y12-anticoagulation-intent') : undefined}>
             Record P2Y12 + anticoagulation intent
           </Button>
           <Button className="crisis-drug__action"
             disabled={!activated || !aspirin || !antithrombotics || reassessed}
-            onClick={() => onAction('reassess-and-handoff')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-and-handoff') : undefined}>
             Reassess + hand off for reperfusion
           </Button>
         </div>
         <p className="field__hint">SpO₂ is 95%, so routine oxygen is not selected. No agent selection, individualized dose, nitrate or opioid pathway, PCI technique, complication treatment, disposition, or outcome is offered.</p>
       </section>
+      </div>
     </div>
   );
 }

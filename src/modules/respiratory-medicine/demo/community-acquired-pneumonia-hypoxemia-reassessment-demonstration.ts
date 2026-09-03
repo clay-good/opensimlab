@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsCapHypoxemia, type CapHypoxemiaAction, type CapHypoxemiaProgress,
 } from '../community-acquired-pneumonia-hypoxemia-reassessment';
+import { capHypoxemiaInlinePrompt } from '../tutor/community-acquired-pneumonia-hypoxemia-reassessment-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: CapHypoxemiaProgress): string {
+  const prompt = capHypoxemiaInlinePrompt('guided', { scenarioVersion: '0.1.0', capHypoxemia: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const CAP_HYPOXEMIA_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -35,19 +47,19 @@ export function capHypoxemiaDemonstrationStep(
   }
   if (patient.supportAtTick === null) {
     return { id: 'support', focus: 'monitor', progress: 0.1, action: 'corroborate-and-support-cap-hypoxemia',
-      narration: 'Confirm the hypoxemia is real and get it answered before anything else. A room-air saturation of 85% on a regular, pulse-coherent trace with a PaO₂ of 51 on the blood gas is the same finding twice, so it is not an artifact. She is alert, warm and normotensive, which is the part that gets people caught: nothing about a pressure of 116/70 makes 85% acceptable. Oxygen and the device belong to the qualified team, and the reasoning that follows happens while she is being supported rather than before.' };
+      narration: narrate(patient) };
   }
   if (patient.evidenceAtTick === null) {
     return { id: 'evidence', focus: 'monitor', progress: 0.32, action: 'reconcile-cap-evidence-and-dangerous-alternatives',
-      narration: 'Read the film and the bloods as consistent, not as conclusive. Right middle- and lower-lobe consolidation with no pneumothorax, no edema pattern and no effusion big enough to explain this, a white count of 14.8, a normal creatinine and a lactate of 1.8. That fits pneumonia and does not settle it: viral and bacterial causes are both unresolved, and the things that present this way and are not pneumonia have to stay on the list while the treatment is planned as though it is.' };
+      narration: narrate(patient) };
   }
   if (patient.severityAtTick === null) {
     return { id: 'severity', focus: 'actions', progress: 0.55, action: 'classify-cap-severity-and-escalation-needs',
-      narration: 'Count the criteria, and do not let them decide where she goes. Three minor severe-CAP features are present — a respiratory rate of at least 30, a PaO₂/FiO₂ no greater than 250, and multilobar infiltrates — with no major criterion, no confusion, no vasopressor requirement, no ventilation, and none of the hematologic or renal features. That supports an urgent higher-acuity judgment. It does not independently determine a location of care, and a score has never been able to.' };
+      narration: narrate(patient) };
   }
   if (patient.treatmentIntentAtTick === null) {
     return { id: 'treatment', focus: 'actions', progress: 0.78, action: 'record-cap-testing-and-empiric-treatment-intent',
-      narration: 'Record what should be sent and started, and choose neither. Cultures and the rest of the testing intent, and empiric coverage appropriate to a severe community-acquired pneumonia, are recorded here as intent rather than selected. What narrows the empiric question is what is absent: no previous respiratory isolation of MRSA or Pseudomonas, and no hospitalization with parenteral antibiotics in the last ninety days. Absent risk factors are a reason not to broaden, which is a decision the qualified team makes with this recorded in front of them.' };
+      narration: narrate(patient) };
   }
   return { id: 'handoff', focus: 'actions', progress: 0.92, action: 'handoff-cap-hypoxemia-reassessment',
     narration: 'Nothing here establishes an organism, a proven diagnosis, a support device, an antimicrobial, a location of care or an outcome. Hand off the oxygen requirement and how it is being met, the evidence that fits without concluding, the severity features and the judgment they support rather than make, the testing and empiric intent, and the alternatives still open.' };

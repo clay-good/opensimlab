@@ -3,6 +3,18 @@ import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsNcse, type NcseAction, type NcseProgress,
 } from '../nonconvulsive-status-epilepticus-recognition';
+import { ncseInlinePrompt } from '../tutor/nonconvulsive-status-epilepticus-recognition-guidance';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: NcseProgress): string {
+  const prompt = ncseInlinePrompt('guided', { scenarioVersion: '0.1.0', ncse: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const NCSE_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -40,19 +52,19 @@ export function ncseDemonstrationStep(
   }
   if (patient.trajectoryAtTick === null) {
     return { id: 'trajectory', focus: 'monitor', progress: 0.08, action: 'reconcile-neurology-ncse-clock-fluctuation-subtle-signs-and-whole-patient',
-      narration: 'Describe the fluctuation in seconds, because that is what separates this from confusion. Ninety-five minutes of alternating short fluent phrases, perseveration, speech arrest lasting twenty to forty seconds, inattention, and rightward gaze deviation for fifteen to twenty-five seconds that comes back toward midline. Delirium waxes over hours; this is the same stereotyped event happening again and again on a scale of seconds, and she has not returned to her usual baseline once in that time.' };
+      narration: narrate(patient) };
   }
   if (patient.suspicionAtTick === null) {
     return { id: 'suspicion', focus: 'actions', progress: 0.26, action: 'recognize-neurology-ncse-suspicion-and-urgent-eeg-boundary-without-clinical-diagnosis',
-      narration: 'Say you suspect a seizure and that this needs an urgent EEG — and stop there. Both halves matter. You cannot make this diagnosis from the bedside, because the whole problem is that there is nothing to watch; and you cannot wait to suspect it, because the recording is what settles it and somebody has to ask for the recording. Gaze deviation that returns toward midline and speech arrest in seconds are what raise it. Naming a suspicion and naming the test is the entire step.' };
+      narration: narrate(patient) };
   }
   if (patient.ownershipAtTick === null) {
     return { id: 'ownership', focus: 'actions', progress: 0.46, action: 'activate-neurology-ncse-qualified-neurology-eeg-and-airway-capable-ownership',
-      narration: 'Get neurology, the EEG service and airway-capable ownership involved together. The EEG is not a test you order and collect later — it needs people, and asking for it is a staffing question as much as a clinical one, which is why the service is called rather than the box requested. Airway capability travels with them: she handles secretions now, and she has not been reliably awake for ninety-five minutes.' };
+      narration: narrate(patient) };
   }
   if (patient.alternativesAtTick === null) {
     return { id: 'alternatives', focus: 'monitor', progress: 0.64, action: 'review-neurology-ncse-airway-glucose-vascular-metabolic-toxic-and-infectious-alternatives',
-      narration: 'Work the alternatives properly — alongside the EEG rather than instead of it. This is where the diagnosis usually gets lost: fluctuating confusion in a seventy-two-year-old becomes a delirium workup and the seizures keep running underneath it. The alternatives are real and stay open — ischemia, a postictal state, delirium, medication, toxic, metabolic, infectious, immune, structural and psychiatric causes — and the CT, CTA, glucose of 108 and sodium of 138 close large things at this minute rather than permanently.' };
+      narration: narrate(patient) };
   }
   if (patient.laterAtTick === null) {
     return { id: 'later', focus: 'monitor', progress: 0.82, action: 'review-neurology-ncse-strict-later-qualified-eeg-and-clinical-trajectory',
