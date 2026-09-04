@@ -257,6 +257,7 @@ import { unstableBradycardiaInlinePrompt } from '../../emergency-medicine/tutor/
 import { unstableNarrowTachycardiaInlinePrompt } from '../../emergency-medicine/tutor/unstable-narrow-complex-tachycardia-guidance';
 import { obstructivePleuralShockInlinePrompt } from '../../emergency-medicine/tutor/obstructive-shock-tension-pneumothorax-guidance';
 import { statusEpilepticusInlinePrompt } from '../../emergency-medicine/tutor/status-epilepticus-guidance';
+import { septicShockInlinePrompt } from '../../emergency-medicine/tutor/septic-shock-guidance';
 import { supportsObstructivePleuralShock, obstructivePleuralShockProgress } from '../../emergency-medicine/obstructive-shock-tension-pneumothorax';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { InheritedUrgencySnapshot } from '@platform/kernel/protocol';
@@ -3084,6 +3085,7 @@ export interface ActionCockpitProps {
   readonly emergencySvtGuidance?: GuidanceLevel;
   readonly obstructivePleuralShockGuidance?: GuidanceLevel;
   readonly statusEpilepticusGuidance?: GuidanceLevel;
+  readonly emergencySepticShockGuidance?: GuidanceLevel;
   readonly renalHypernatremiaGuidance?: GuidanceLevel;
   readonly renalHypocalcemiaGuidance?: GuidanceLevel;
   readonly renalHypermagnesemiaGuidance?: GuidanceLevel;
@@ -3290,6 +3292,7 @@ export interface ActionCockpitProps {
   readonly emergencySvtDemonstrating?: boolean;
   readonly obstructivePleuralShockDemonstrating?: boolean;
   readonly statusEpilepticusDemonstrating?: boolean;
+  readonly emergencySepticShockDemonstrating?: boolean;
   readonly onRenalHyponatremiaTutorSource?: () => void;
   readonly onRenalHypernatremiaTutorSource?: () => void;
   readonly onRenalHypocalcemiaTutorSource?: () => void;
@@ -5551,6 +5554,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasSepticShockResponse && (
               <SepticShockTray
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.emergencySepticShockGuidance}
+                demonstrating={props.emergencySepticShockDemonstrating}
                 assessment={props.resuscitation.septicShockAssessment}
                 onAction={props.onSepticShockAssessment ?? (() => {})}
               />
@@ -8138,7 +8144,10 @@ function UndifferentiatedShockTray({ assessment, onAction }: {
   );
 }
 
-function SepticShockTray({ assessment, onAction }: {
+function SepticShockTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['septicShockAssessment']>;
   onAction: NonNullable<ActionCockpitProps['onSepticShockAssessment']>;
 }) {
@@ -8149,8 +8158,18 @@ function SepticShockTray({ assessment, onAction }: {
   const reassessed = assessment?.postFluidReassessmentAtTick != null;
   const norepinephrine = assessment?.norepinephrineIntentAtTick != null;
   const escalated = assessment?.sourceControlEscalationAtTick != null;
+  const prompt = demonstrating ? null
+    : septicShockInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
+      {prompt && <aside className="syringe" aria-label="Private tutor">
+        <div className="syringe__name">A moment to think</div>
+        <p className="syringe__remaining">{prompt.suggestion}</p>
+        <p className="syringe__remaining">{prompt.because}</p>
+      </aside>}
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="sepsis-recognition-title">
         <div id="sepsis-recognition-title" className="syringe__name">Recognize and treat infection</div>
         <Badge kind="teaching">Fixed ED vignette</Badge>
@@ -8163,15 +8182,15 @@ function SepticShockTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={recognized}
-            onClick={() => onAction('review-infection-and-organ-dysfunction')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('review-infection-and-organ-dysfunction') : undefined}>
             Review infection + organ dysfunction
           </Button>
           <Button className="crisis-drug__action" disabled={!recognized || diagnostics}
-            onClick={() => onAction('obtain-cultures-and-lactate')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('obtain-cultures-and-lactate') : undefined}>
             Record cultures + lactate
           </Button>
           <Button className="crisis-drug__action" disabled={!diagnostics || antimicrobials}
-            onClick={() => onAction('record-immediate-antimicrobial-intent')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('record-immediate-antimicrobial-intent') : undefined}>
             Record immediate antimicrobial intent
           </Button>
         </div>
@@ -8190,24 +8209,25 @@ function SepticShockTray({ assessment, onAction }: {
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!recognized || fluid}
-            onClick={() => onAction('begin-initial-crystalloid')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('begin-initial-crystalloid') : undefined}>
             Begin fixed 2,100 mL crystalloid course
           </Button>
           <Button className="crisis-drug__action" disabled={!fluid || reassessed}
-            onClick={() => onAction('reassess-after-initial-fluid')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('reassess-after-initial-fluid') : undefined}>
             Reassess after initial fluid
           </Button>
           <Button className="crisis-drug__action" disabled={!reassessed || norepinephrine}
-            onClick={() => onAction('start-norepinephrine-intent')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('start-norepinephrine-intent') : undefined}>
             Record norepinephrine intent · MAP 65
           </Button>
           <Button className="crisis-drug__action" disabled={!recognized || escalated}
-            onClick={() => onAction('escalate-source-control')}>
+            aria-disabled={demonstrating} onClick={act ? () => act('escalate-source-control') : undefined}>
             Escalate source control + critical care
           </Button>
         </div>
         <p className="field__hint">No antimicrobial choice, vasopressor dose, procedure, liberal repeat-fluid shortcut, or outcome is offered.</p>
       </section>
+      </div>
     </div>
   );
 }

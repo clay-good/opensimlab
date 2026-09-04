@@ -2,6 +2,18 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import type { LaboratoryTlsSnapshot } from '@platform/kernel/protocol';
 import { supportsLaboratoryTls, type LaboratoryTlsAction } from '../laboratory-tls';
+import { laboratoryTlsInlinePrompt } from '../laboratory-tls-tutor';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: LaboratoryTlsSnapshot): string {
+  const prompt = laboratoryTlsInlinePrompt('guided', { scenarioVersion: '0.1.0', laboratoryTls: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const LABORATORY_TLS_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -74,5 +86,5 @@ export function laboratoryTlsDemonstrationStep(
       narration: 'Take a fresh assessment now the team has answered, accepted the laboratory definition as met and the clinical one as not, and asked to be told if the creatinine moves or the rhythm changes — a different trigger from the next number crossing a line.' };
   }
   return { id: 'handoff', focus: 'actions', progress: 0.96, action: 'handoff',
-    narration: 'Hand off with the label qualified and the treatment theirs. A resolved label, a chosen level of care, and a started treatment are not handoff gates. What travels is which definition is met, what crossed and when, and what would make him cross over.' };
+    narration: narrate(patient) };
 }

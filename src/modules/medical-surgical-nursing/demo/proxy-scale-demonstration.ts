@@ -2,6 +2,18 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import type { ProxyScaleSnapshot } from '@platform/kernel/protocol';
 import { supportsProxyScale, type ProxyScaleAction } from '../proxy-scale';
+import { proxyScaleInlinePrompt } from '../proxy-scale-tutor';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: ProxyScaleSnapshot): string {
+  const prompt = proxyScaleInlinePrompt('guided', { scenarioVersion: '0.1.0', proxyScale: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const PROXY_SCALE_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -56,7 +68,7 @@ export function proxyScaleDemonstrationStep(patient?: ProxyScaleSnapshot): Proxy
   }
   if (!patient.familyArrived) {
     return { id: 'await', focus: 'monitor', progress: 0.64,
-      narration: 'Keep observing while his daughter is on her way. A proxy history is a person who knows him rather than a field on a form, and this authored interval predicts no real arrival time.' };
+      narration: narrate(patient) };
   }
   if (patient.proxyHistoryAtTick === null) {
     return { id: 'proxy', focus: 'actions', progress: 0.74, action: 'seek-the-proxy-history',

@@ -2,6 +2,18 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import type { EndocarditisHeartFailureSnapshot } from '@platform/kernel/protocol';
 import { supportsEndocarditisHeartFailure, type EndocarditisHeartFailureAction } from '../endocarditis-heart-failure';
+import { endocarditisHeartFailureInlinePrompt } from '../endocarditis-heart-failure-tutor';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: EndocarditisHeartFailureSnapshot): string {
+  const prompt = endocarditisHeartFailureInlinePrompt('guided', { scenarioVersion: '0.1.0', endocarditisHeartFailure: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const ENDOCARDITIS_HEART_FAILURE_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -58,7 +70,7 @@ export function endocarditisHeartFailureDemonstrationStep(
   }
   if (patient.decompensationDueInSeconds !== null) {
     return { id: 'observe', focus: 'monitor', progress: 0.8,
-      narration: 'Keep watching while the authored interval runs. It is a contrast rather than a real rate of decompensation, and the referral does not need restating while it passes.' };
+      narration: narrate(patient) };
   }
   if (!patient.decompensationObserved) {
     return { id: 'reassess', focus: 'actions', progress: 0.9, action: 'reassess',

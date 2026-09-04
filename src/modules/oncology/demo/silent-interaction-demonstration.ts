@@ -2,6 +2,18 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import type { SilentInteractionSnapshot } from '@platform/kernel/protocol';
 import { supportsSilentInteraction, type SilentInteractionAction } from '../silent-interaction';
+import { silentInteractionInlinePrompt } from '../silent-interaction-tutor';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: SilentInteractionSnapshot): string {
+  const prompt = silentInteractionInlinePrompt('guided', { scenarioVersion: '0.1.0', silentInteraction: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const SILENT_INTERACTION_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -68,5 +80,5 @@ export function silentInteractionDemonstrationStep(
       narration: 'Take a current assessment now her team has taken it. It is normal, and recording that is the point rather than a formality: the handover here is that a well patient has a real problem, which is harder to pass on than an abnormal one.' };
   }
   return { id: 'handoff', focus: 'actions', progress: 0.96, action: 'handoff',
-    narration: 'Hand off with nothing abnormal and something to do. A measurable level, a demonstrated effect and a changed prescription are not handoff gates. What travels is what she takes, which way the interaction runs, and who now owns it.' };
+    narration: narrate(patient) };
 }

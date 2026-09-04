@@ -2,6 +2,18 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
 import { supportsTrialRule, type TrialRuleAction } from '../trial-rule';
+import { trialRuleInlinePrompt } from '../trial-rule-tutor';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: TrialRuleSnapshot): string {
+  const prompt = trialRuleInlinePrompt('guided', { scenarioVersion: '0.1.0', trialRule: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const TRIAL_RULE_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -68,5 +80,5 @@ export function trialRuleDemonstrationStep(
       narration: 'Take a current assessment now her team has answered and taken ownership. What they need is the trajectory beside the scan, which is the pairing the corridor conversation never had.' };
   }
   return { id: 'handoff', focus: 'actions', progress: 0.96, action: 'handoff',
-    narration: 'Hand off with the decision theirs and the category unclaimed. A confirmed category, a continued or stopped treatment, and a resolved prognosis are not handoff gates. What travels is the trajectory, the scan, and what the criteria actually govern.' };
+    narration: narrate(patient) };
 }

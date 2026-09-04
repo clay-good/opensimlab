@@ -2,6 +2,18 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import type { ObstructedKidneySnapshot } from '@platform/kernel/protocol';
 import { supportsObstructedKidney, type ObstructedKidneyAction } from '../obstructed-kidney';
+import { obstructedKidneyInlinePrompt } from '../obstructed-kidney-tutor';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: ObstructedKidneySnapshot): string {
+  const prompt = obstructedKidneyInlinePrompt('guided', { scenarioVersion: '0.1.0', obstructedKidney: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const OBSTRUCTED_KIDNEY_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -66,7 +78,7 @@ export function obstructedKidneyDemonstrationStep(
   }
   if (patient.decompressionDueInSeconds !== null) {
     return { id: 'observe', focus: 'monitor', progress: 0.82,
-      narration: 'Keep watching while the authored interval runs. It is a contrast rather than a real waiting time, and nothing about the recorded intent needs restating while it passes.' };
+      narration: narrate(patient) };
   }
   if (!patient.untreatedResponseObserved && !patient.decompressedResponseObserved) {
     return { id: 'reassess', focus: 'actions', progress: 0.9, action: 'reassess',

@@ -173,23 +173,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "septic-shock-fixtures.ts binds seed 7409 and content 0.1.0 to expert, source-never-escalated error, recovery, and no-action paths. The fever, rigors, dysuria and right-flank tenderness with new inattention, capillary refill of 5 seconds, oliguria and hypotension; the authored initial lactate of 5.2 mmol/L; the fixed 2,100 mL balanced-crystalloid course computed as 30 mL/kg for this 70 kg vignette with a quarter retained intravascularly by the shared teaching model; the post-fluid panel in which hypotension, delayed refill, inattention and oliguria all persist with no repeat lactate yet; and the norepinephrine target of an initial mean arterial pressure of 65 mmHg are authored constants. No infection, culture, antimicrobial, fluid-distribution or vasopressor kinetic model is claimed beyond the shared sepsis-pattern event present on arrival, and no outcome follows from any choice. tests/integration/emergency-septic-shock-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
           "status": "satisfied",
           "evidence": [
-            "The timeline contains at least one non-narrative state event."
+            "The progression is a partial order rather than a chain, and that shape is the lesson. The infection and organ-dysfunction review gates everything. After it the engine enforces two short chains — cultures before the antimicrobial, and the fluid course then a further engine tick then the reassessment then the vasopressor — and leaves source-control escalation gated by the review alone, so it never waits for either. A reference transcript records source control early to show the engine permits it, and the error transcript completes both chains correctly and never escalates the source at all, which the engine does not refuse. Every refusal, including the inactive-event refusal before the first step, is exercised."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Seven recorded decisions against four declared objectives: review the infection evidence together with the organ dysfunction; record blood cultures and a venous lactate without waiting for results; record immediate empiric antimicrobial intent inside the authored one-hour window; begin the fixed 30 mL/kg balanced-crystalloid course; reassess perfusion after a further tick; record first-line norepinephrine intent toward a mean arterial pressure of 65 mmHg; and escalate urgent evaluation of the suspected obstructed urinary source with senior and critical-care help. The lesson examines nobody, draws no specimen, selects no antimicrobial agent, dose, allergy reconciliation or resistance pattern, hangs no fluid, sets up no pump and titrates nothing, acquires no imaging, drains nothing, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -201,23 +201,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded source-control escalation, with the patient still shocked: the post-fluid panel showed persistent hypotension, delayed refill, inattention and oliguria, the repeat lactate was never available, and the vasopressor is an intent toward a target rather than an achieved pressure. Later actions cannot restart an ended branch. Imaging, drainage, consultation, disposition and outcome are explicitly outside the vignette, so the ending hands over a patient who needs a procedure nobody on this screen can perform."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Seven observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step. The reflex the lesson works against is the bundle as a queue: sepsis care is taught as a list, lists get worked through in order, and the one step the engine deliberately leaves unordered ends up last or not at all. The recognition beat reads sepsis as a conjunction rather than either half, and picks out the flank tenderness as the first hint that this is an obstructed system rather than a simple one. The cultures beat says why before is not instead — a single dose can sterilise a bottle within minutes and cost the organism for the rest of the admission — and notes that the two instructions only conflict if drawing cultures is slow. The antimicrobial beat says drawing first preserved the option of narrowing later rather than licensing a delay. The fluid beat gives the honest reason reassessment is not a formality: three-quarters of the course is going somewhere that does not raise a blood pressure, and in leaky sepsis it is going into lung and gut. The reassessment beat says a patient still shocked after an adequate course is reporting vascular tone rather than volume. The vasopressor beat aims at the lowest pressure that perfuses rather than the nicest number, and points at what the engine does not force. The source beat closes it: an obstructed infected system is the part antimicrobials cannot treat, and the patient stays septic on perfect antibiotics until somebody drains it. Worked example 0.1.0 drives the ordinary controls through the real engine and asks the tutor for its narration rather than storing a copy. A test asserts that no beat anywhere waits for a culture result, names an agent or dose, pours more fluid after the reassessment, or claims the infection is treated. tests/unit/emergency-septic-shock-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/emergency-septic-shock.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding alongside the pre-existing tests/ui/septic-shock.test.tsx."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps the declared objectives to accepted engine events; the no-action path meets none and the expert path meets all four. The counterfactual is unusual for this module because the engine refuses nothing: the common-error path records the review, the cultures, the antimicrobial, the fluid, the reassessment and the vasopressor in a faultless order and simply never escalates the obstructed source. Source control is gated by the review alone, so there is no refusal to catch it — only the fourth objective, which stays unmet. That is the point of the lesson: sepsis care is taught as a list, and the one step that is not in the queue is the one a list loses. The recovery path is refused before the pattern is active, refused again for reaching the antimicrobial before the cultures, refused a third time for reassessing on the same tick as the fluid course, records source control early to show it is permitted, and still meets every objective."
           ]
         },
         {
@@ -236,23 +236,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "septic-shock-fixtures.ts binds exact-content expert, source-never-escalated error, recovery, and no-action pathways to seed 7409 for deterministic replay through the shared engine, including the inactive-event refusal, the cultures-before-antimicrobial refusal and the time-gated reassessment refusal."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

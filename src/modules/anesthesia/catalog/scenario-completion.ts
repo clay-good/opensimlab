@@ -159,6 +159,7 @@ import { unstableBradycardiaCompletionEvidence } from '../../emergency-medicine/
 import { unstableNarrowTachycardiaCompletionEvidence } from '../../emergency-medicine/unstable-narrow-complex-tachycardia-completion';
 import { obstructivePleuralShockCompletionEvidence } from '../../emergency-medicine/obstructive-shock-tension-pneumothorax-completion';
 import { statusEpilepticusCompletionEvidence } from '../../emergency-medicine/status-epilepticus-completion';
+import { septicShockEmergencyCompletionEvidence } from '../../emergency-medicine/septic-shock-completion';
 import { renalHyperkalemiaCompletionEvidence } from '../../renal-electrolyte/hyperkalemia-completion';
 import { renalHypokalemiaCompletionEvidence } from '../../renal-electrolyte/hypokalemia-completion';
 import { renalHyponatremiaCompletionEvidence } from '../../renal-electrolyte/hyponatremia-completion';
@@ -457,6 +458,7 @@ export function auditClinicalScenario(
     ...unstableNarrowTachycardiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...obstructivePleuralShockCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...statusEpilepticusCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...septicShockEmergencyCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyperkalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypokalemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHyponatremiaCompletionEvidence(scenario, capabilityVersion, moduleId),

@@ -2,6 +2,18 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import type { SeverePneumoniaSnapshot } from '@platform/kernel/protocol';
 import { supportsSeverePneumonia, type SeverePneumoniaAction } from '../severe-pneumonia';
+import { severePneumoniaInlinePrompt } from '../severe-pneumonia-tutor';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: SeverePneumoniaSnapshot): string {
+  const prompt = severePneumoniaInlinePrompt('guided', { scenarioVersion: '0.1.0', severePneumonia: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const SEVERE_PNEUMONIA_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -61,7 +73,7 @@ export function severePneumoniaDemonstrationStep(
   }
   if (patient.deteriorationDueInSeconds !== null) {
     return { id: 'observe', focus: 'monitor', progress: 0.86,
-      narration: 'Keep watching while the authored interval runs. It is a contrast rather than a real rate of deterioration, and the request does not need restating while it passes.' };
+      narration: narrate(patient) };
   }
   if (!patient.deteriorationObserved) {
     return { id: 'reassess', focus: 'actions', progress: 0.92, action: 'reassess',

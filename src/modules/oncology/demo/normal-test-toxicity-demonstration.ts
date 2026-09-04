@@ -2,6 +2,18 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import type { NormalTestToxicitySnapshot } from '@platform/kernel/protocol';
 import { supportsNormalTestToxicity, type NormalTestToxicityAction } from '../normal-test-toxicity';
+import { normalTestToxicityInlinePrompt } from '../normal-test-toxicity-tutor';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: NormalTestToxicitySnapshot): string {
+  const prompt = normalTestToxicityInlinePrompt('guided', { scenarioVersion: '0.1.0', normalTestToxicity: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const NORMAL_TEST_TOXICITY_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -74,5 +86,5 @@ export function normalTestToxicityDemonstrationStep(
       narration: 'Take a fresh assessment now the service has answered, confirmed the drug stays stopped, and recorded that a wild-type result does not exclude what is in front of them. The earlier assessment predates both that answer and the dose that fell due.' };
   }
   return { id: 'handoff', focus: 'actions', progress: 0.96, action: 'handoff',
-    narration: 'Hand off with the grade and the restart decision open. A confirmed grade, an enzyme assay, and a restart plan are not handoff gates. What travels is that the drug is stopped, what was seen, and what the normal test did not exclude.' };
+    narration: narrate(patient) };
 }

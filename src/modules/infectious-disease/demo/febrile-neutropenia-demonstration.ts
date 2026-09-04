@@ -2,6 +2,18 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import type { FebrileNeutropeniaSnapshot } from '@platform/kernel/protocol';
 import { supportsFebrileNeutropenia, type FebrileNeutropeniaAction } from '../febrile-neutropenia';
+import { febrileNeutropeniaInlinePrompt } from '../febrile-neutropenia-tutor';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: FebrileNeutropeniaSnapshot): string {
+  const prompt = febrileNeutropeniaInlinePrompt('guided', { scenarioVersion: '0.1.0', febrileNeutropenia: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const FEBRILE_NEUTROPENIA_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -62,7 +74,7 @@ export function febrileNeutropeniaDemonstrationStep(
   }
   if (patient.responseDueInSeconds !== null) {
     return { id: 'observe', focus: 'monitor', progress: 0.82,
-      narration: 'Keep watching while the authored interval runs. It is a contrast rather than a real response time, and nothing about the recorded intent needs restating while it passes.' };
+      narration: narrate(patient) };
   }
   if (!patient.untreatedResponseObserved && !patient.treatedResponseObserved) {
     return { id: 'reassess', focus: 'actions', progress: 0.9, action: 'reassess',

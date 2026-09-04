@@ -2,6 +2,18 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import { supportsLoweringTheCount, type LoweringTheCountAction } from '../lowering-the-count';
+import { loweringTheCountInlinePrompt } from '../lowering-the-count-tutor';
+
+
+/**
+ * The narration for a beat is what the tutor says at that state, asked for
+ * rather than copied, so this lesson's prose ships once instead of twice.
+ * See tests/unit/offline.test.ts for why that matters.
+ */
+function narrate(patient: LoweringTheCountSnapshot): string {
+  const prompt = loweringTheCountInlinePrompt('guided', { scenarioVersion: '0.1.0', loweringTheCount: patient });
+  return prompt ? `${prompt.suggestion} ${prompt.because}` : '';
+}
 
 export const LOWERING_THE_COUNT_DEMONSTRATION_VERSION = '0.1.0';
 
@@ -66,5 +78,5 @@ export function loweringTheCountDemonstrationStep(
       narration: 'Take a current assessment now haematology has answered and accepted clinical leukostasis as the working problem. What they need is the trajectory, which is the half a count cannot carry.' };
   }
   return { id: 'handoff', focus: 'actions', progress: 0.96, action: 'handoff',
-    narration: 'Hand off with the diagnosis clinical and the strategy theirs. A marrow result, a lowered count, and a chosen procedure are not handoff gates. What travels is the picture, how it moved, and what the count does and does not license.' };
+    narration: narrate(patient) };
 }
