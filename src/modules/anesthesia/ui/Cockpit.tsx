@@ -353,6 +353,8 @@ import { useAcuteIschemicStrokeDemonstration } from '../../emergency-medicine/de
 import { supportsAcuteIschemicStrokeDemonstration } from '../../emergency-medicine/demo/acute-ischemic-stroke-demonstration';
 import { useHemorrhagicShockDemonstration } from '../../emergency-medicine/demo/useHemorrhagicShockDemonstration';
 import { supportsHemorrhagicShockDemonstration } from '../../emergency-medicine/demo/hemorrhagic-shock-demonstration';
+import { useUndifferentiatedShockDemonstration } from '../../emergency-medicine/demo/useUndifferentiatedShockDemonstration';
+import { supportsUndifferentiatedShockDemonstration } from '../../emergency-medicine/demo/undifferentiated-shock-demonstration';
 import { useAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/useAcutePulmonaryEdemaDemonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
 import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAdultAsthmaDemonstration';
@@ -720,6 +722,7 @@ export function Cockpit({
   const acuteAorticSyndromeDemoSupported = supportsAcuteAorticSyndromeDemonstration(scenario);
   const acuteIschemicStrokeDemoSupported = supportsAcuteIschemicStrokeDemonstration(scenario);
   const hemorrhagicShockDemoSupported = supportsHemorrhagicShockDemonstration(scenario);
+  const undifferentiatedShockDemoSupported = supportsUndifferentiatedShockDemonstration(scenario);
   const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
   const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
   const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
@@ -895,6 +898,7 @@ export function Cockpit({
     || acuteAorticSyndromeDemoSupported
     || acuteIschemicStrokeDemoSupported
     || hemorrhagicShockDemoSupported
+    || undifferentiatedShockDemoSupported
     || acutePulmonaryEdemaDemoSupported
     || adultAsthmaDemoSupported
     || emergencyAnaphylaxisDemoSupported
@@ -1407,6 +1411,12 @@ export function Cockpit({
     active: demonstrating && adultAsthmaDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.adultAsthmaAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const undifferentiatedShockDemonstration = useUndifferentiatedShockDemonstration({
+    active: demonstrating && undifferentiatedShockDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.undifferentiatedShockAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const hemorrhagicShockDemonstration = useHemorrhagicShockDemonstration({
@@ -2161,6 +2171,7 @@ export function Cockpit({
     : acuteAorticSyndromeDemoSupported ? acuteAorticSyndromeDemonstration
     : acuteIschemicStrokeDemoSupported ? acuteIschemicStrokeDemonstration
     : hemorrhagicShockDemoSupported ? hemorrhagicShockDemonstration
+    : undifferentiatedShockDemoSupported ? undifferentiatedShockDemonstration
     : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
     : adultAsthmaDemoSupported ? adultAsthmaDemonstration
     : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration
@@ -3201,6 +3212,8 @@ export function Cockpit({
           acuteIschemicStrokeDemonstrating={demonstrating && acuteIschemicStrokeDemoSupported}
           hemorrhagicShockGuidance={session.guidance}
           hemorrhagicShockDemonstrating={demonstrating && hemorrhagicShockDemoSupported}
+          undifferentiatedShockGuidance={session.guidance}
+          undifferentiatedShockDemonstrating={demonstrating && undifferentiatedShockDemoSupported}
           acutePulmonaryEdemaGuidance={session.guidance}
           acutePulmonaryEdemaDemonstrating={demonstrating && acutePulmonaryEdemaDemoSupported}
           adultAsthmaGuidance={session.guidance}

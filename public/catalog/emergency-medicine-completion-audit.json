@@ -47,23 +47,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "undifferentiated-shock-fixtures.ts binds seed 7350 and content 0.1.0 to expert, fluid-first error, recovery, and no-action paths. The fifty-eight-year-old woman of 72 kg with heart rate 118, mean arterial pressure 58 mmHg, cool mottled peripheries, slowed attention and anuria; the authored lactate; the authored focused study showing a small vigorous underfilled ventricle with no effusion and no strain; the authored passive-leg-raise rise; and the fixed 500 mL challenge are authored constants. No shock aetiology, ultrasound, fluid-kinetic or treatment-response model is claimed, and no outcome follows from any choice. tests/integration/emergency-undifferentiated-shock-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
           "status": "satisfied",
           "evidence": [
-            "The timeline contains at least one non-narrative state event."
+            "The shared audit records this requirement as missing because the timeline is an arrival pattern and a boundary narrative rather than a staged transition. The progression lives in the engine's order gates across seven recorded steps. The perfusion review and the lactate are an unordered pair and the engine accepts either first; everything after them is a strict chain, and every gate points the same direction — the reversible test before the irreversible one. Focused imaging waits on both opening reviews, the passive leg raise on the imaging, the bounded challenge on the leg raise, the reassessment on the challenge plus an engine tick so it cannot be recorded in the same instant as the fluid it reads, and the escalation on the reassessment. Every gate is exercised by a reference transcript."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Seven recorded decisions against four declared objectives: review the authored skin, attention, urine and pressure evidence without examining or measuring; review the authored lactate; review the authored focused cardiac study, which narrows towards low preload and away from tamponade and right-heart obstruction without diagnosing; record a passive-leg-raise response as the reversible test of fluid responsiveness; record intent to give a bounded 500 mL challenge; reassess the same markers rather than the convenient one; and record that the aetiologic workup is unresolved and continuing. The lesson examines nobody, measures nothing, acquires and interprets no image, infuses no real fluid, names no cause, determines no disposition, and predicts no outcome."
           ]
         },
         {
@@ -75,23 +75,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at a recorded escalation that states the cause is still open. Later actions cannot restart an ended branch. No aetiology, definitive treatment, disposition or outcome is available, so the ending is explicitly an assessment that narrowed a pattern and tested a response rather than a resolution."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Seven observed-state prompts at version 0.1.0 read the learner's own recorded steps — one per recorded step. The reflex the lesson works against is the fluid challenge as an opening move: giving volume and watching the pressure is a test that takes minutes to answer, cannot be taken back, and answers a question a leg raise answers reversibly in seconds. The perfusion beat names skin, brain and kidney as the three organs assessable without a machine and says why a normal pressure buys no reassurance. The lactate beat treats the marker as a second opinion rather than a verdict and names waiting for it as the wrong way round. The imaging beat insists the study has excluded rather than diagnosed. The leg-raise beat gives the argument in one line — the reversible version of the test comes first, because volume given cannot be taken back. The challenge beat says why bounded means bounded. The reassessment beat requires the same markers rather than the convenient one, and names the engine tick that separates the reading from the fluid. The escalation beat says out loud that the cause is still open. Worked example 0.1.0 drives the ordinary controls through the real engine to the escalation and asks the tutor for its narration rather than storing a copy; because the two opening reviews are an unordered pair, the claim that neither is a precondition sits in the closing narration, which every path reaches. A test asserts that no beat anywhere names a cause, hangs a real infusion, or reports an outcome. tests/unit/emergency-undifferentiated-shock-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/emergency-undifferentiated-shock.test.tsx verifies the tray, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps the declared objectives to accepted engine events; the no-action path meets none and the expert path meets all four. The counterfactual is the fluid challenge as an opening move: the common-error path reads the perfusion and the lactate and reaches straight for the 500 mL, which is refused because the reversible test that would justify it has not been done, and its reassessment is then refused too because there is no challenge to read. The recovery path reaches for the leg raise before the imaging and is refused, reaches for the challenge before the leg raise and is refused again, and still completes from the same positions."
           ]
         },
         {
@@ -110,23 +110,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "undifferentiated-shock-fixtures.ts binds exact-content expert, fluid-first error, recovery, and no-action pathways to seed 7350 for deterministic replay through the shared engine, including all four order refusals. Every path starts at tick 1, because the arrival pattern is a tick-0 timeline event and is not active until the engine has stepped once."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

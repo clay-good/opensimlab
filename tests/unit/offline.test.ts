@@ -356,8 +356,14 @@ describe('Requirement: Everything The Offline Claim Names Is Actually Precached'
     // anything does not fit. The second: the JSX-extraction lever is small — 235 copies
     // bought 1 KB — so it is not worth repeating for the sake of bytes alone.
     //
-    // What remains after that lesson is 2,223 bytes. That is genuinely the last of it
-    // at this ceiling, and the product decision above is now the only thing left.
+    // Undifferentiated shock then fit too, at 1,610 bytes gz marginal, leaving 613.
+    // Two lessons landed inside a headroom that had been written off as too small for
+    // one, which is the whole argument for measuring rather than estimating. 613 bytes
+    // is now genuinely the end of it: the two emergency-medicine labs still without a
+    // lesson (pea-arrest and persistent-vf-arrest) need engine cases first, and engine
+    // code lands in the precached solver worker too. The product decision above is the
+    // only thing left, and it should be taken deliberately rather than discovered by a
+    // failing build.
     const files = precache
       .filter((url) => url.startsWith('/assets/') || url.startsWith('/fonts/'))
       .map((url) => readFileSync(join(process.cwd(), 'dist', url)));

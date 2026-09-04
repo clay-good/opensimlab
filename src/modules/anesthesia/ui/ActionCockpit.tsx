@@ -240,6 +240,7 @@ import { ardsLungProtectiveInlinePrompt } from '../../critical-care/tutor/ards-l
 import { acuteAorticSyndromeInlinePrompt } from '../../emergency-medicine/tutor/acute-aortic-syndrome-guidance';
 import { acuteIschemicStrokeInlinePrompt } from '../../emergency-medicine/tutor/acute-ischemic-stroke-guidance';
 import { hemorrhagicShockInlinePrompt } from '../../emergency-medicine/tutor/hemorrhagic-shock-guidance';
+import { undifferentiatedShockInlinePrompt } from '../../emergency-medicine/tutor/undifferentiated-shock-guidance';
 import { acutePulmonaryEdemaInlinePrompt } from '../../emergency-medicine/tutor/acute-pulmonary-edema-guidance';
 import { adultAsthmaInlinePrompt } from '../../emergency-medicine/tutor/adult-asthma-guidance';
 import { emergencyAnaphylaxisInlinePrompt } from '../../emergency-medicine/tutor/emergency-anaphylaxis-guidance';
@@ -3069,6 +3070,7 @@ export interface ActionCockpitProps {
   readonly acuteAorticSyndromeGuidance?: GuidanceLevel;
   readonly acuteIschemicStrokeGuidance?: GuidanceLevel;
   readonly hemorrhagicShockGuidance?: GuidanceLevel;
+  readonly undifferentiatedShockGuidance?: GuidanceLevel;
   readonly acutePulmonaryEdemaGuidance?: GuidanceLevel;
   readonly adultAsthmaGuidance?: GuidanceLevel;
   readonly emergencyAnaphylaxisGuidance?: GuidanceLevel;
@@ -3277,6 +3279,7 @@ export interface ActionCockpitProps {
   readonly acuteAorticSyndromeDemonstrating?: boolean;
   readonly acuteIschemicStrokeDemonstrating?: boolean;
   readonly hemorrhagicShockDemonstrating?: boolean;
+  readonly undifferentiatedShockDemonstrating?: boolean;
   readonly acutePulmonaryEdemaDemonstrating?: boolean;
   readonly adultAsthmaDemonstrating?: boolean;
   readonly emergencyAnaphylaxisDemonstrating?: boolean;
@@ -5552,6 +5555,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasUndifferentiatedShockResponse && (
               <UndifferentiatedShockTray
                 assessment={props.resuscitation.undifferentiatedShockAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.undifferentiatedShockGuidance}
+                demonstrating={props.undifferentiatedShockDemonstrating}
                 onAction={props.onUndifferentiatedShockAssessment ?? (() => {})}
               />
             )}
@@ -8120,8 +8126,11 @@ function PostoperativeHandoffTray({ assessment, onAction }: {
   );
 }
 
-function UndifferentiatedShockTray({ assessment, onAction }: {
+function UndifferentiatedShockTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['undifferentiatedShockAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onUndifferentiatedShockAssessment']>;
 }) {
   const perfusion = assessment?.perfusionReviewedAtTick != null;
@@ -8131,8 +8140,13 @@ function UndifferentiatedShockTray({ assessment, onAction }: {
   const fluid = assessment?.fluidChallengeAtTick != null;
   const reassessed = assessment?.perfusionReassessedAtTick != null;
   const escalated = assessment?.escalationAtTick != null;
+  const prompt = demonstrating ? null : undifferentiatedShockInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      <TutorPanel prompt={prompt} />
+      <WatchingNotice demonstrating={demonstrating} />
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="shock-evidence-title">
         <div id="shock-evidence-title" className="syringe__name">Build the perfusion picture</div>
         <Badge kind="teaching">Fixed ED vignette</Badge>
@@ -8143,12 +8157,12 @@ function UndifferentiatedShockTray({ assessment, onAction }: {
               : 'Serial tissue-perfusion evidence pending'}
         </p>
         <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={perfusion}
-            onClick={() => onAction('review-perfusion')}>Review tissue perfusion</Button>
-          <Button className="crisis-drug__action" disabled={lactate}
-            onClick={() => onAction('review-lactate')}>Review fixed lactate</Button>
-          <Button className="crisis-drug__action" disabled={!perfusion || !lactate || echo}
-            onClick={() => onAction('review-focused-echo')}>Review focused cardiac findings</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} disabled={perfusion}
+            onClick={act ? () => act('review-perfusion') : undefined}>Review tissue perfusion</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} disabled={lactate}
+            onClick={act ? () => act('review-lactate') : undefined}>Review fixed lactate</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} disabled={!perfusion || !lactate || echo}
+            onClick={act ? () => act('review-focused-echo') : undefined}>Review focused cardiac findings</Button>
         </div>
         <p className="field__hint">These are authored findings. The screen does not perform an examination, acquire ultrasound, draw blood, or diagnose the shock cause.</p>
       </section>
@@ -8163,17 +8177,18 @@ function UndifferentiatedShockTray({ assessment, onAction }: {
                   : 'Dynamic fluid-responsiveness evidence pending'}
         </p>
         <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={!echo || plr}
-            onClick={() => onAction('perform-passive-leg-raise')}>Review passive-leg-raise response</Button>
-          <Button className="crisis-drug__action" disabled={!plr || fluid}
-            onClick={() => onAction('give-targeted-fluid-challenge')}>Give bounded 500 mL challenge</Button>
-          <Button className="crisis-drug__action" disabled={!fluid || reassessed}
-            onClick={() => onAction('reassess-perfusion')}>Reassess tissue perfusion</Button>
-          <Button className="crisis-drug__action" disabled={!reassessed || escalated}
-            onClick={() => onAction('escalate-after-reassessment')}>Escalate ongoing shock workup</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} disabled={!echo || plr}
+            onClick={act ? () => act('perform-passive-leg-raise') : undefined}>Review passive-leg-raise response</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} disabled={!plr || fluid}
+            onClick={act ? () => act('give-targeted-fluid-challenge') : undefined}>Give bounded 500 mL challenge</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} disabled={!fluid || reassessed}
+            onClick={act ? () => act('reassess-perfusion') : undefined}>Reassess tissue perfusion</Button>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} disabled={!reassessed || escalated}
+            onClick={act ? () => act('escalate-after-reassessment') : undefined}>Escalate ongoing shock workup</Button>
         </div>
         <p className="field__hint">No liberal repeat-fluid shortcut is offered. Etiologic treatment, vasopressors, procedures, and disposition remain outside this first slice.</p>
       </section>
+      </div>
     </div>
   );
 }
