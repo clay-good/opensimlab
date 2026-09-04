@@ -22,6 +22,17 @@ export const BUDGETS = {
   fullBundle: 8 * 1024 * 1024,
   /** The landing route, budgeted separately so it never pulls in the simulator. */
   landing: 150 * 1024,
+  /**
+   * What a first visit downloads before the service worker reports ready: the
+   * precached scripts, styles and fonts, compressed.
+   *
+   * This is the tightest ceiling in the project and the one that decides whether
+   * another lesson can ship. It is enforced by tests/unit/offline.test.ts, whose
+   * comment block is the decision log for every time it has bound; the number
+   * lives here so `npm run budget` reports it alongside the others rather than
+   * leaving the binding constraint visible only inside a unit test.
+   */
+  precache: 2 * 1024 * 1024,
 } as const;
 
 interface Asset { readonly path: string; readonly rawBytes: number; readonly gzipBytes: number }
@@ -97,6 +108,22 @@ export function measure(): Asset[] {
 
 const format = (bytes: number): string => `${(bytes / 1024).toFixed(1)} KB`;
 
+/**
+ * The scripts, styles and fonts the service worker precaches, read from the
+ * built `sw.js` exactly as tests/unit/offline.test.ts reads them.
+ *
+ * Documents and catalog artifacts are precached too and are not counted here,
+ * for the same reason the offline test does not count them: this ceiling is
+ * about the code and typefaces a first visit must download, and the offline
+ * test's second, looser ceiling covers the stored bytes of everything else.
+ */
+export function precachedAssetPaths(sw: string): string[] {
+  const urls = JSON.parse(/const PRECACHE = (\[[^\]]*\])/.exec(sw)?.[1] ?? '[]') as string[];
+  return urls
+    .filter((url) => url.startsWith('/assets/') || url.startsWith('/fonts/'))
+    .map((url) => url.slice(1));
+}
+
 function main(): void {
   let assets: Asset[];
   let manifest: BuildManifest;
@@ -140,9 +167,17 @@ function main(): void {
 
   const fullBytes = assets.reduce((sum, asset) => sum + asset.gzipBytes, 0);
 
+  const precache = precachedAssetPaths(readFileSync(join(dist, 'sw.js'), 'utf8')).map((path) => {
+    const asset = byPath.get(path);
+    if (!asset) throw new Error(`precache references missing ${path}`);
+    return asset;
+  });
+  const precacheBytes = precache.reduce((sum, asset) => sum + asset.gzipBytes, 0);
+
   const checks: [string, number, number, Asset[]][] = [
     ['landing route', landingBytes, BUDGETS.landing, landing],
     ['interactive cockpit', interactiveBytes, BUDGETS.interactive, interactive],
+    ['first-visit precache', precacheBytes, BUDGETS.precache, precache],
     ['full offline bundle', fullBytes, BUDGETS.fullBundle, assets],
   ];
 

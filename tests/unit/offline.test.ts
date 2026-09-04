@@ -368,8 +368,10 @@ describe('Requirement: Everything The Offline Claim Names Is Actually Precached'
       .filter((url) => url.startsWith('/assets/') || url.startsWith('/fonts/'))
       .map((url) => readFileSync(join(process.cwd(), 'dist', url)));
     const transferred = files.reduce((sum, body) => sum + gzipSync(body, { level: 9 }).length, 0);
+    // The ceiling lives in scripts/check-budgets.ts so `npm run budget` reports
+    // it alongside the others; this test is still what enforces it.
     expect(transferred, `${(transferred / 1024 / 1024).toFixed(2)} MiB compressed`)
-      .toBeLessThan(2 * 1024 * 1024);
+      .toBeLessThan(BUDGETS.precache);
     // A second, deliberately loose ceiling on the stored bytes. Compression
     // ratios hide a blob that inflates on disk, and Cache Storage holds the
     // decoded response, so an accidental data dump must still trip something.
