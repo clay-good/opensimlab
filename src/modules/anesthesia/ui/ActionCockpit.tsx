@@ -7055,6 +7055,38 @@ export function ActionCockpit(props: ActionCockpitProps) {
   );
 }
 
+
+/**
+ * The tutor line every lesson tray renders, held once.
+ *
+ * 151 trays carried this identical markup and 84 carried the watching notice
+ * below it. Each copy is its own jsx() call with its own string literals in the
+ * built chunk, and they sit far apart in a 600 KB file, so gzip could not fold
+ * them together. See tests/unit/offline.test.ts for why that matters.
+ */
+function TutorPanel({ prompt }: {
+  readonly prompt: { readonly suggestion: string; readonly because: string } | null | undefined;
+}) {
+  if (!prompt) return null;
+  return (
+    <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p>
+      <p className="syringe__remaining">{prompt.because}</p>
+    </aside>
+  );
+}
+
+/** Said once, while a worked example drives the ordinary controls. */
+function WatchingNotice({ demonstrating }: { readonly demonstrating?: boolean }) {
+  if (!demonstrating) return null;
+  return (
+    <p className="field__hint" role="status">
+      Watching the worked example. The controls stay visible and do not respond.
+    </p>
+  );
+}
+
 function BreathingCircuitTray({
   status, freshGasFlowLPerMin, onAction, onOpenVentilator,
 }: {
@@ -7828,12 +7860,8 @@ function PneumothoraxResponseTray({
   const active = fraction > 0.05 || decompressed;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="pleural-pattern-title">
         <div id="pleural-pattern-title" className="syringe__name">Breathing + circulation</div>
@@ -8163,12 +8191,8 @@ function SepticShockTray({ assessment, scenarioVersion, guidance = 'unassisted',
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="sepsis-recognition-title">
         <div id="sepsis-recognition-title" className="syringe__name">Recognize and treat infection</div>
@@ -8321,12 +8345,8 @@ function CardiacTamponadeTray({ fraction, assessment, scenarioVersion, guidance 
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="tamponade-recognition-title">
         <div id="tamponade-recognition-title" className="syringe__name">Recognize obstructed filling</div>
@@ -8392,12 +8412,8 @@ function EmergencyAnaphylaxisTray({ assessment, scenarioVersion, guidance = 'una
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="ed-anaphylaxis-recognition-title">
         <div id="ed-anaphylaxis-recognition-title" className="syringe__name">Recognize and lead</div>
@@ -8472,12 +8488,8 @@ function AdultAsthmaTray({ assessment, scenarioVersion, guidance = 'unassisted',
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="adult-asthma-assessment-title">
         <div id="adult-asthma-assessment-title" className="syringe__name">Read severity, not wheeze alone</div>
@@ -8548,12 +8560,8 @@ function CopdExacerbationTray({ assessment, scenarioVersion, guidance = 'unassis
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="copd-assessment-title">
         <div id="copd-assessment-title" className="syringe__name">Read the whole respiratory story</div>
@@ -8628,12 +8636,8 @@ function AcutePulmonaryEdemaTray({ assessment, scenarioVersion, guidance = 'unas
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="pulmonary-edema-pattern-title">
         <div id="pulmonary-edema-pattern-title" className="syringe__name">See lungs, pressure, and perfusion together</div>
@@ -8703,12 +8707,8 @@ function PulmonaryEmbolismTray({ assessment, scenarioVersion, guidance = 'unassi
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="pe-severity-title">
         <div id="pe-severity-title" className="syringe__name">Read the right ventricle, lungs, and circulation together</div>
@@ -8778,12 +8778,8 @@ function StemiTray({ assessment, scenarioVersion, guidance = 'unassisted', demon
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="stemi-pattern-title">
         <div id="stemi-pattern-title" className="syringe__name">See the pattern, start the clock</div>
@@ -8852,12 +8848,8 @@ function UnstableNarrowTachycardiaTray({ assessment, scenarioVersion, guidance =
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="unstable-nct-recognition-title">
         <div id="unstable-nct-recognition-title" className="syringe__name">Read the rhythm through the patient</div>
@@ -8921,12 +8913,8 @@ function UnstableBradycardiaTray({ assessment, scenarioVersion, guidance = 'unas
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="unstable-bradycardia-recognition-title">
         <div id="unstable-bradycardia-recognition-title" className="syringe__name">Read the rate through the patient</div>
@@ -8991,12 +8979,8 @@ function StatusEpilepticusTray({ assessment, seizureActivityFraction, scenarioVe
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="status-epilepticus-recognition-title">
         <div id="status-epilepticus-recognition-title" className="syringe__name">Five minutes changes the name</div>
@@ -9062,12 +9046,8 @@ function AcuteIschemicStrokeTray({ assessment, scenarioVersion, guidance = 'unas
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="acute-stroke-recognition-title">
         <div id="acute-stroke-recognition-title" className="syringe__name">Time is tissue. Facts before treatment.</div>
@@ -9131,12 +9111,8 @@ function IntracranialHemorrhageTray({ assessment, scenarioVersion, guidance = 'u
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="ich-deterioration-title">
         <div id="ich-deterioration-title" className="syringe__name">Notice the change. Protect the next minute.</div>
@@ -9200,12 +9176,8 @@ function DiabeticKetoacidosisTray({ assessment, scenarioVersion, guidance = 'una
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="dka-foundation-title">
         <div id="dka-foundation-title" className="syringe__name">Three signals name the crisis.</div>
@@ -9270,12 +9242,8 @@ function HyperkalemiaTray({ assessment, scenarioVersion, guidance = 'unassisted'
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="hyperkalemia-heart-title">
         <div id="hyperkalemia-heart-title" className="syringe__name">Protect the heart first.</div>
@@ -9341,12 +9309,8 @@ function HyponatremiaTray({ assessment, scenarioVersion, guidance = 'unassisted'
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="hyponatremia-brain-title">
         <div id="hyponatremia-brain-title" className="syringe__name">Treat the brain, not the number.</div>
@@ -9408,12 +9372,8 @@ function OpioidToxicityTray({ assessment, scenarioVersion, guidance = 'unassiste
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="opioid-breathe-title">
         <div id="opioid-breathe-title" className="syringe__name">Breathe first. Antidote without delay.</div>
@@ -9477,12 +9437,8 @@ function HeatStrokeTray({ assessment, scenarioVersion, guidance = 'unassisted', 
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="heat-cool-title">
         <div id="heat-cool-title" className="syringe__name">Hot brain. Cool now.</div>
@@ -9544,12 +9500,8 @@ function TraumaPrimarySurveyTray({ assessment, scenarioVersion, guidance = 'unas
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="trauma-sweep-title">
         <div id="trauma-sweep-title" className="syringe__name">Stop the leak. Keep the sweep moving.</div>
@@ -9614,12 +9566,8 @@ function AcuteAorticSyndromeTray({ assessment, scenarioVersion, guidance = 'unas
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="aortic-drift-title">
         <div id="aortic-drift-title" className="syringe__name">The first exam is a timestamp.</div>
@@ -9683,12 +9631,8 @@ function ArdsLungProtectiveTray({ assessment, scenarioVersion, guidance = 'unass
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="ards-size-title">
         <div id="ards-size-title" className="syringe__name">Size the breath to the lung.</div>
@@ -9748,12 +9692,8 @@ function EscalatingHypoxemiaTray({ assessment, scenarioVersion, guidance = 'unas
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="hypoxemia-signal-title">
         <div id="hypoxemia-signal-title" className="syringe__name">Believe the drop. Verify the signal.</div>
@@ -9814,12 +9754,8 @@ function VentilatorDyssynchronyTray({ assessment, scenarioVersion, guidance = 'u
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="dyssynchrony-read-title">
         <div id="dyssynchrony-read-title" className="syringe__name">Read the person and the breath.</div>
@@ -9879,12 +9815,8 @@ function AutoPeepTray({ assessment, scenarioVersion, guidance = 'unassisted', de
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="auto-peep-watch-title">
         <div id="auto-peep-watch-title" className="syringe__name">Watch the breath leave.</div>
@@ -9944,12 +9876,8 @@ function MucusPluggingTray({ assessment, scenarioVersion, guidance = 'unassisted
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="mucus-listen-title">
         <div id="mucus-listen-title" className="syringe__name">Listen to the resistance.</div>
@@ -10009,12 +9937,8 @@ function UnplannedExtubationTray({ assessment, scenarioVersion, guidance = 'unas
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="unplanned-read-title">
         <div id="unplanned-read-title" className="syringe__name">The tube is out. Read the patient.</div>
@@ -10075,12 +9999,8 @@ function SpontaneousBreathingTrialTray({ assessment, scenarioVersion, guidance =
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="sbt-earn-title">
         <div id="sbt-earn-title" className="syringe__name">Earn the trial, not a number.</div>
@@ -10140,12 +10060,8 @@ function PostIntubationHypotensionTray({ assessment, scenarioVersion, guidance =
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="post-intubation-prove-title">
         <div id="post-intubation-prove-title" className="syringe__name">First, prove the pressure.</div>
@@ -10206,12 +10122,8 @@ function CardiogenicShockTray({ assessment, scenarioVersion, guidance = 'unassis
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="cardiogenic-perfusion-title">
         <div id="cardiogenic-perfusion-title" className="syringe__name">Pressure is a clue. Perfusion is the verdict.</div>
@@ -10271,12 +10183,8 @@ function MixedShockTray({ assessment, scenarioVersion, guidance = 'unassisted', 
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="mixed-pattern-title">
         <div id="mixed-pattern-title" className="syringe__name">When clues disagree, believe the pattern.</div>
@@ -10337,12 +10245,8 @@ function RightVentricularFailureTray({ assessment, scenarioVersion, guidance = '
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="rv-pattern-title">
         <div id="rv-pattern-title" className="syringe__name">Read the ventricle, not just the pressure.</div>
@@ -10403,12 +10307,8 @@ function MassivePulmonaryEmbolismTray({ assessment, scenarioVersion, guidance = 
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="massive-pe-pattern-title">
         <div id="massive-pe-pattern-title" className="syringe__name">This is the failure state. Mobilize the system.</div>
@@ -10469,12 +10369,8 @@ function UpperGiHemorrhageTray({ assessment, scenarioVersion, guidance = 'unassi
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="upper-gi-hemorrhage-pattern-title">
         <div id="upper-gi-hemorrhage-pattern-title" className="syringe__name">The trend spoke before the pressure fell.</div>
@@ -10535,12 +10431,8 @@ function CriticalCareStatusEpilepticusTray({ assessment, scenarioVersion, guidan
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="critical-care-status-pattern-title">
         <div id="critical-care-status-pattern-title" className="syringe__name">Movement stopped. The seizure did not.</div>
@@ -10601,12 +10493,8 @@ function PostArrestTemperatureTray({ assessment, scenarioVersion, guidance = 'un
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="post-arrest-temperature-context-title">
         <div id="post-arrest-temperature-context-title" className="syringe__name">Control temperature. No early prognosis.</div>
@@ -10667,12 +10555,8 @@ function IntracranialHypertensionTray({ assessment, scenarioVersion, guidance = 
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="intracranial-hypertension-context-title">
         <div id="intracranial-hypertension-context-title" className="syringe__name">Lower pressure. Preserve perfusion.</div>
@@ -10733,12 +10617,8 @@ function AkiFluidOverloadTray({ assessment, scenarioVersion, guidance = 'unassis
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="aki-fluid-burden-title">
         <div id="aki-fluid-burden-title" className="syringe__name">See the burden. Protect the organs.</div>
@@ -10799,12 +10679,8 @@ function SevereAcidemiaTray({ assessment, scenarioVersion, guidance = 'unassiste
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="severe-acidemia-pattern-title">
         <div id="severe-acidemia-pattern-title" className="syringe__name">Read the system, not pH alone.</div>
@@ -10865,12 +10741,8 @@ function IcuHiddenDeteriorationHandoffTray({ assessment, scenarioVersion, guidan
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="icu-hidden-handoff-truth-title">
         <div id="icu-hidden-handoff-truth-title" className="syringe__name">Receive the story. Check the patient.</div>
@@ -10931,12 +10803,8 @@ function VentilatorCircuitDisconnectionTray({ assessment, scenarioVersion, guida
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="ventilator-disconnection-breath-title">
         <div id="ventilator-disconnection-breath-title" className="syringe__name">Follow the breath, not the setting.</div>
@@ -10997,12 +10865,8 @@ function DelayedVasopressorDeliveryTray({ assessment, scenarioVersion, guidance 
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="vasopressor-delivery-truth-title">
         <div id="vasopressor-delivery-truth-title" className="syringe__name">Running is not arriving.</div>
@@ -11063,12 +10927,8 @@ function PulseOximeterArtifactTray({ assessment, scenarioVersion, guidance = 'un
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="pulse-ox-signal-title">
         <div id="pulse-ox-signal-title" className="syringe__name">Trust the signal, not just the number.</div>
@@ -11129,12 +10989,8 @@ function EndotrachealTubeMigrationTray({ assessment, scenarioVersion, guidance =
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="tube-migration-recognition-title">
         <div id="tube-migration-recognition-title" className="syringe__name">After every move, earn the airway again.</div>
@@ -11195,12 +11051,8 @@ function SepticShockResuscitationTray({ assessment, scenarioVersion, guidance = 
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-      {prompt && <aside className="syringe" aria-label="Private tutor">
-        <div className="syringe__name">A moment to think</div>
-        <p className="syringe__remaining">{prompt.suggestion}</p>
-        <p className="syringe__remaining">{prompt.because}</p>
-      </aside>}
+      <WatchingNotice demonstrating={demonstrating} />
+      <TutorPanel prompt={prompt} />
       <div className="tray-grid">
       <section className="syringe" aria-labelledby="septic-resuscitation-loop-title">
         <div id="septic-resuscitation-loop-title" className="syringe__name">Resuscitation is a loop, not a liter count.</div>
@@ -11261,12 +11113,8 @@ function ClinicStemiTray({ assessment, scenarioVersion, guidance = 'unassisted',
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
       <section className="syringe" aria-labelledby="clinic-stemi-pattern-title">
         <div id="clinic-stemi-pattern-title" className="syringe__name">Recognize, then open the route.</div>
@@ -11329,12 +11177,8 @@ function NstemiRiskTray({ assessment, scenarioVersion, guidance = 'unassisted', 
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
       <section className="syringe" aria-labelledby="nstemi-trajectory-title">
         <div id="nstemi-trajectory-title" className="syringe__name">Risk is a moving picture.</div>
@@ -11397,12 +11241,8 @@ function StableNarrowTachycardiaTray({ assessment, scenarioVersion, guidance = '
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
       <section className="syringe" aria-labelledby="stable-narrow-first-title">
         <div id="stable-narrow-first-title" className="syringe__name">Fast rhythm. Steady patient.</div>
@@ -11468,12 +11308,8 @@ function StableWideTachycardiaTray({ assessment, scenarioVersion, guidance = 'un
     : stableWideTachycardiaInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="stable-wide-first-title">
       <div id="stable-wide-first-title" className="syringe__name">Wide rhythm. Steady patient.</div>
@@ -11520,12 +11356,8 @@ function SymptomaticBradycardiaTray({ assessment, scenarioVersion, guidance = 'u
     : symptomaticBradycardiaInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="symptomatic-bradycardia-first-title">
       <div id="symptomatic-bradycardia-first-title" className="syringe__name">Slow rhythm. Match the symptom.</div>
@@ -11570,12 +11402,8 @@ function CompleteHeartBlockTray({ assessment, scenarioVersion, guidance = 'unass
     : completeHeartBlockInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="complete-heart-block-first-title">
       <div id="complete-heart-block-first-title" className="syringe__name">Two rhythms. One patient.</div>
@@ -11621,12 +11449,8 @@ function TorsadesTray({ assessment, scenarioVersion, guidance = 'unassisted', de
     : torsadesInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="torsades-rescue-title">
       <div id="torsades-rescue-title" className="syringe__name">Polymorphic means shock now.</div>
@@ -11673,12 +11497,8 @@ function HyperkalemicConductionTray({ assessment, scenarioVersion, guidance = 'u
     : hyperkalemicConductionInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="hyperkalemic-conduction-protection-title">
       <div id="hyperkalemic-conduction-protection-title" className="syringe__name">The rhythm changed. Check the chemistry.</div>
@@ -11724,12 +11544,8 @@ function PericardialTamponadeTray({ assessment, scenarioVersion, guidance = 'una
     : pericardialTamponadeInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="pericardial-tamponade-response-title">
       <div id="pericardial-tamponade-response-title" className="syringe__name">Drainage changed the curve.</div>
@@ -11774,12 +11590,8 @@ function RightVentricularInfarctionTray({ assessment, scenarioVersion, guidance 
     : rightVentricularInfarctionInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="right-ventricular-infarction-pattern-title">
       <div id="right-ventricular-infarction-pattern-title" className="syringe__name">The right side changes the bridge.</div>
@@ -11825,12 +11637,8 @@ function HypertensiveEmergencyTray({ assessment, scenarioVersion, guidance = 'un
     : hypertensiveEmergencyInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="hypertensive-emergency-context-title">
       <div id="hypertensive-emergency-context-title" className="syringe__name">The number needs context.</div>
@@ -11877,12 +11685,8 @@ function PacemakerCaptureFailureTray({ assessment, scenarioVersion, guidance = '
     : pacemakerCaptureFailureInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="pacemaker-capture-failure-pattern-title">
       <div id="pacemaker-capture-failure-pattern-title" className="syringe__name">A spike is not a heartbeat.</div>
@@ -11927,12 +11731,8 @@ function TranscutaneousPacingCaptureTray({ assessment, scenarioVersion, guidance
     : transcutaneousPacingCaptureInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="transcutaneous-pacing-capture-title">
       <div id="transcutaneous-pacing-capture-title" className="syringe__name">A QRS can still have no pulse.</div>
@@ -11976,10 +11776,7 @@ function AcuteSevereAsthmaTray({ assessment, scenarioVersion, onAction, guidance
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="acute-severe-asthma-trajectory-title">
       <div id="acute-severe-asthma-trajectory-title" className="syringe__name">Quieter is not always better.</div>
       <Badge kind="teaching">post-treatment · exhausted · hypercapnic failure</Badge>
@@ -12022,10 +11819,7 @@ function CopdTransitionTray({ assessment, scenarioVersion, onAction, guidance = 
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="copd-transition-readiness-title">
       <div id="copd-transition-readiness-title" className="syringe__name">Better is not the same as ready.</div>
       <Badge kind="teaching">hospital day 3 · improving gas · residual limits</Badge>
@@ -12068,10 +11862,7 @@ function CapHypoxemiaTray({ assessment, scenarioVersion, onAction, guidance = 'u
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="cap-hypoxemia-first-title">
       <div id="cap-hypoxemia-first-title" className="syringe__name">Low oxygen, clear next steps.</div>
       <Badge kind="teaching">SpO₂ 85% room air · RR 32 · focal opacity</Badge>
@@ -12114,10 +11905,7 @@ function PostPeDyspneaTray({ assessment, scenarioVersion, onAction, guidance = '
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="post-pe-dyspnea-trajectory-title">
       <div id="post-pe-dyspnea-trajectory-title" className="syringe__name">Recovery deserves a real comparison.</div>
       <Badge kind="teaching">4 months · 2 miles before · 150 m now</Badge>
@@ -12160,10 +11948,7 @@ function ApeSupportTray({ assessment, scenarioVersion, onAction, guidance = 'una
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="ape-support-failure-title">
       <div id="ape-support-failure-title" className="syringe__name">A quieter breath can be the warning.</div>
       <Badge kind="teaching">30 min after rescue · NIV already active</Badge>
@@ -12206,10 +11991,7 @@ function PostTensionPneumothoraxTray({ assessment, scenarioVersion, onAction, gu
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="post-tension-trajectory-title">
       <div id="post-tension-trajectory-title" className="syringe__name">Relief is the start of the next watch.</div>
       <Badge kind="teaching">6 hours after experienced-team drainage</Badge>
@@ -12253,10 +12035,7 @@ function LargePleuralEffusionTray({ assessment, scenarioVersion, onAction, guida
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="large-effusion-pattern-title">
       <div id="large-effusion-pattern-title" className="syringe__name">The fluid is real. The cause is still open.</div>
       <Badge kind="teaching">large unilateral effusion · stable circulation</Badge>
@@ -12301,10 +12080,7 @@ function BronchiectasisMucusPluggingTray({ assessment, scenarioVersion, onAction
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="bronchiectasis-mucus-pattern-title">
       <div id="bronchiectasis-mucus-pattern-title" className="syringe__name">The image says where. The trajectory says why it matters.</div>
       <Badge kind="teaching">spontaneous breathing · focal collapse · stable circulation</Badge>
@@ -12348,10 +12124,7 @@ function ChronicOpioidHypoventilationTray({ assessment, scenarioVersion, onActio
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="chronic-opioid-hypoventilation-pattern-title">
       <div id="chronic-opioid-hypoventilation-pattern-title" className="syringe__name">Daytime can look quiet. Sleep can tell the fuller story.</div>
       <Badge kind="teaching">longitudinal symptoms · awake snapshot · attended sleep evidence</Badge>
@@ -12395,12 +12168,8 @@ function NeuromuscularRespiratoryFailureTray({ assessment, scenarioVersion, guid
     : neuromuscularRespiratoryFailureInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="neuromuscular-respiratory-failure-pattern-title">
       <div id="neuromuscular-respiratory-failure-pattern-title" className="syringe__name">Muscle strength can fade before saturation tells the story.</div>
@@ -12447,12 +12216,8 @@ function ObesityHypoventilationTray({ assessment, scenarioVersion, guidance = 'u
     : obesityHypoventilationInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="obesity-hypoventilation-evidence-title">
       <div id="obesity-hypoventilation-evidence-title" className="syringe__name">Awake carbon dioxide completes the sleep story.</div>
@@ -12500,12 +12265,8 @@ function NoninvasiveVentilationSelectionTray({ assessment, scenarioVersion, guid
     : noninvasiveVentilationSelectionInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="noninvasive-ventilation-selection-choice-title">
       <div id="noninvasive-ventilation-selection-choice-title" className="syringe__name">Choose support from physiology, not familiarity.</div>
@@ -12577,12 +12338,8 @@ function HighFlowOxygenEscalationTray({ assessment, scenarioVersion, guidance = 
     : highFlowOxygenEscalationInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="high-flow-oxygen-escalation-choice-title">
       <div id="high-flow-oxygen-escalation-choice-title" className="syringe__name">Match the support to the breath.</div>
@@ -12657,12 +12414,8 @@ function OxygenDeviceFailureTray({ assessment, scenarioVersion, guidance = 'unas
     : oxygenDeviceFailureInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="oxygen-device-failure-recognition-title">
       <div id="oxygen-device-failure-recognition-title" className="syringe__name">Confirm the person. Then follow the oxygen.</div>
@@ -12737,12 +12490,8 @@ function AcuteTracheostomyObstructionTray({ assessment, scenarioVersion, guidanc
     : acuteTracheostomyObstructionInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="tracheostomy-obstruction-person-title">
       <div id="tracheostomy-obstruction-person-title" className="syringe__name">The person comes before the tube.</div>
@@ -12817,12 +12566,8 @@ function PediatricRespiratoryDistressTray({ assessment, scenarioVersion, guidanc
     : pediatricRespiratoryDistressInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-distress-whole-child-title">
       <div id="pediatric-distress-whole-child-title" className="syringe__name">Read the whole child.</div>
@@ -12905,12 +12650,8 @@ function BronchiolitisTray({ assessment, scenarioVersion, guidance = 'unassisted
     : bronchiolitisInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="bronchiolitis-pattern-title">
       <div id="bronchiolitis-pattern-title" className="syringe__name">Read the whole infant.</div>
@@ -12996,12 +12737,8 @@ function CroupTray({ assessment, scenarioVersion, guidance = 'unassisted', demon
     : croupInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="croup-pattern-title">
       <div id="croup-pattern-title" className="syringe__name">Make calm part of care.</div>
@@ -13082,12 +12819,8 @@ function PediatricStatusAsthmaticusTray({ assessment, scenarioVersion, guidance 
     : pediatricStatusAsthmaticusInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-status-asthmaticus-pattern-title">
       <div id="pediatric-status-asthmaticus-pattern-title" className="syringe__name">Read the whole child.</div>
@@ -13155,12 +12888,8 @@ function PediatricSepsisTray({ assessment, scenarioVersion, guidance = 'unassist
     : pediatricSepsisInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-sepsis-pattern-title">
       <div id="pediatric-sepsis-pattern-title" className="syringe__name">See the whole pattern.</div>
@@ -13224,12 +12953,8 @@ function PediatricSepticShockTray({ assessment, scenarioVersion, guidance = 'una
     : pediatricSepticShockInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-septic-shock-pattern-title">
       <div id="pediatric-septic-shock-pattern-title" className="syringe__name">More fluid is not automatic.</div>
@@ -13296,12 +13021,8 @@ function PediatricDehydrationTray({ assessment, scenarioVersion, guidance = 'una
     : pediatricDehydrationInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-dehydration-pattern-title">
       <div id="pediatric-dehydration-pattern-title" className="syringe__name">Read losses through the whole child.</div>
@@ -13368,12 +13089,8 @@ function PediatricDiabeticKetoacidosisTray({ assessment, scenarioVersion, guidan
     : pediatricDkaInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-dka-pattern-title">
       <div id="pediatric-dka-pattern-title" className="syringe__name">Read the child, not one number.</div>
@@ -13440,12 +13157,8 @@ function PediatricHypoglycemicSeizureTray({ assessment, scenarioVersion, guidanc
     : pediatricHypoglycemicSeizureInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-hypoglycemia-pattern-title">
       <div id="pediatric-hypoglycemia-pattern-title" className="syringe__name">Read the seizure and the child.</div>
@@ -13512,12 +13225,8 @@ function PediatricFebrileSeizureTray({ assessment, scenarioVersion, guidance = '
     : pediatricFebrileSeizureInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-febrile-seizure-pattern-title">
       <div id="pediatric-febrile-seizure-pattern-title" className="syringe__name">Read the event, then the child.</div>
@@ -13584,12 +13293,8 @@ function PediatricStatusEpilepticusTray({ assessment, scenarioVersion, guidance 
     : pediatricStatusEpilepticusInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-status-epilepticus-pattern-title">
       <div id="pediatric-status-epilepticus-pattern-title" className="syringe__name">Read the clock and the child.</div>
@@ -13656,12 +13361,8 @@ function PediatricAnaphylaxisTray({ assessment, scenarioVersion, guidance = 'una
     : pediatricAnaphylaxisInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-anaphylaxis-pattern-title">
       <div id="pediatric-anaphylaxis-pattern-title" className="syringe__name">See the whole allergic pattern.</div>
@@ -13726,12 +13427,8 @@ function PediatricSupraventricularTachycardiaTray({ assessment, scenarioVersion,
     : pediatricSvtInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-svt-pattern-title">
       <div id="pediatric-svt-pattern-title" className="syringe__name">Read the rhythm through the child.</div>
@@ -13795,12 +13492,8 @@ function PediatricBradycardicArrestTray({ assessment, scenarioVersion, guidance 
     : pediatricBradycardicArrestInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-bradycardic-arrest-pattern-title">
       <div id="pediatric-bradycardic-arrest-pattern-title" className="syringe__name">Read the pulse behind the rate.</div>
@@ -13864,12 +13557,8 @@ function PediatricForeignBodyAirwayObstructionTray({ assessment, scenarioVersion
     : pediatricFbaoInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-fbao-pattern-title">
       <div id="pediatric-fbao-pattern-title" className="syringe__name">Let the child’s sound guide urgency.</div>
@@ -13934,12 +13623,8 @@ function PediatricInjurySafeguardingTray({ assessment, scenarioVersion, guidance
     : pediatricInjurySafeguardingInlinePrompt(guidance, { scenarioVersion, patient: assessment });
   const act = demonstrating ? undefined : onAction;
   return <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
     <section className="syringe" aria-labelledby="pediatric-safeguarding-pattern-title">
       <div id="pediatric-safeguarding-pattern-title" className="syringe__name">Hold concern without closing the story.</div>
@@ -14004,10 +13689,7 @@ function NeurologyMinorStrokeTray({ assessment, scenarioVersion, onAction, guida
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neurology-minor-stroke-function-title">
       <div id="neurology-minor-stroke-function-title" className="syringe__name">Function, not one score.</div>
       <Badge kind="teaching">clock · focal change · patient priorities · imaging · threats · function</Badge>
@@ -14069,10 +13751,7 @@ function NeurologyBasilarLvoTray({ assessment, scenarioVersion, onAction, guidan
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neurology-basilar-lvo-recognition-title">
       <div id="neurology-basilar-lvo-recognition-title" className="syringe__name">Posterior signs still need speed.</div>
       <Badge kind="teaching">clock · posterior syndrome · CT · CTA · selection · airway watch</Badge>
@@ -14134,10 +13813,7 @@ function NeurologyCerebellarIchTray({ assessment, scenarioVersion, onAction, gui
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neurology-cerebellar-ich-location-title">
       <div id="neurology-cerebellar-ich-location-title" className="syringe__name">Location changes the danger.</div>
       <div className="syringe__meta">fixed cerebellar hemorrhage report · supplied neurologic record</div>
@@ -14178,10 +13854,7 @@ function NeurologyAsahDeteriorationTray({ assessment, scenarioVersion, onAction,
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neurology-asah-deficit-title">
       <div id="neurology-asah-deficit-title" className="syringe__name">A new deficit reopens the whole story.</div>
       <div className="syringe__meta">day 7 · right MCA coiling reported · new left neglect + weakness</div>
@@ -14222,10 +13895,7 @@ function NeurologyFocalMotorStatusTray({ assessment, scenarioVersion, onAction, 
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neurology-focal-motor-status-pattern-title">
       <div id="neurology-focal-motor-status-pattern-title" className="syringe__name">Less movement is not over.</div>
       <div className="syringe__meta">58 years · 18-minute evolving seizure · left face + arm clonus · no recovery</div>
@@ -14268,10 +13938,7 @@ function NeurologyNcseTray({ assessment, scenarioVersion, onAction, guidance = '
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neurology-ncse-pattern-title">
       <div id="neurology-ncse-pattern-title" className="syringe__name">Quiet can still mean seizure.</div>
       <div className="syringe__meta">72 years · 95-minute fluctuation · speech arrest + gaze deviation · no convulsion</div>
@@ -14314,10 +13981,7 @@ function NeurologyMyasthenicCrisisTray({ assessment, scenarioVersion, onAction, 
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neurology-myasthenic-crisis-pattern-title">
       <div id="neurology-myasthenic-crisis-pattern-title" className="syringe__name">Watch work, not just oxygen.</div>
       <div className="syringe__meta">45 years · 36-hour decline · weak cough + bulbar fatigue · SpO2 97%</div>
@@ -14360,10 +14024,7 @@ function NeurologyGbsTray({ assessment, scenarioVersion, onAction, guidance = 'u
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neurology-gbs-pattern-title">
       <div id="neurology-gbs-pattern-title" className="syringe__name">Track decline, not saturation.</div>
       <div className="syringe__meta">33 years · 48-hour ascent · weak cough + dysphagia · SpO2 98%</div>
@@ -14406,10 +14067,7 @@ function NeurologyMeningitisTray({ assessment, scenarioVersion, onAction, guidan
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neurology-meningitis-first-hour-title">
       <div id="neurology-meningitis-first-hour-title" className="syringe__name">Protect the hour.</div>
       <div className="syringe__meta">28 years · 14-hour illness · GCS 15 · nonfocal · T 39.3°C</div>
@@ -14452,10 +14110,7 @@ function NeurologyEncephalitisTray({ assessment, scenarioVersion, onAction, guid
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neurology-encephalitis-early-title">
       <div id="neurology-encephalitis-early-title" className="syringe__name">The brain changed first.</div>
       <p className="syringe__remaining">Fever with new memory, language, behavior, and focal-seizure change needs parallel ownership and care.</p>
@@ -14494,10 +14149,7 @@ function NeurologyRaisedIcpTray({ assessment, scenarioVersion, onAction, guidanc
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neurology-raised-icp-early-title">
       <div id="neurology-raised-icp-early-title" className="syringe__name">Protect the whole field.</div>
       <p className="syringe__remaining">Central acuity can stay sharp while papilledema quietly threatens peripheral vision.</p>
@@ -14536,10 +14188,7 @@ function NeurologyHerniationTray({ assessment, scenarioVersion, onAction, guidan
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neurology-herniation-early-title">
       <div id="neurology-herniation-early-title" className="syringe__name">The pattern changed now.</div>
       <p className="syringe__remaining">Consciousness, pupils, movement, physiology, and structure converge. One sign never stands alone.</p>
@@ -14578,10 +14227,7 @@ function NeurologyMsccTray({ assessment, scenarioVersion, onAction, guidance = '
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neurology-mscc-early-title">
       <div id="neurology-mscc-early-title" className="syringe__name">The pattern has a level.</div>
       <p className="syringe__remaining">Pain, pyramidal weakness, sensation, gait, and bladder function converge before the scan.</p>
@@ -14620,10 +14266,7 @@ function NeurologyDeliriumTray({ assessment, scenarioVersion, onAction, guidance
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neurology-delirium-early-title">
       <div id="neurology-delirium-early-title" className="syringe__name">Begin with who she was.</div>
       <p className="syringe__remaining">Baseline, fluctuation, attention, perception, function, and the whole patient belong together.</p>
@@ -14662,10 +14305,7 @@ function NeurologyAutonomicDysreflexiaTray({ assessment, scenarioVersion, onActi
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neurology-autonomic-dysreflexia-early-title">
       <div id="neurology-autonomic-dysreflexia-early-title" className="syringe__name">His usual pressure matters.</div>
       <p className="syringe__remaining">Begin with the lesion, verified baseline, sudden change, symptoms, pulse, and the whole person.</p>
@@ -14704,10 +14344,7 @@ function ToxicologyMethemoglobinemiaTray({ assessment, scenarioVersion, onAction
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="toxicology-methemoglobinemia-early-title">
       <div id="toxicology-methemoglobinemia-early-title" className="syringe__name">The numbers disagree. The patient matters.</div>
       <p className="syringe__remaining">Begin with the exposure, cyanosis, symptoms, pulse trace, arterial oxygen evidence, and the whole person.</p>
@@ -14746,10 +14383,7 @@ function ToxicologyCarbonMonoxideTray({ assessment, scenarioVersion, onAction, g
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="toxicology-carbon-monoxide-early-title">
       <div id="toxicology-carbon-monoxide-early-title" className="syringe__name">A calm monitor can still hide a poisoned patient.</div>
       <p className="syringe__remaining">Begin with the shared exposure, clock, syncope, symptoms, conventional pulse oximetry, and whole person.</p>
@@ -14788,10 +14422,7 @@ function ToxicologyAcetaminophenTray({ assessment, scenarioVersion, onAction, gu
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="toxicology-acetaminophen-early-title">
       <div id="toxicology-acetaminophen-early-title" className="syringe__name">The clock gives the number its meaning.</div>
       <p className="syringe__remaining">Begin with product, ingestion window, exact clock, symptoms, reported-quantity limits, and whole person.</p>
@@ -14830,10 +14461,7 @@ function ToxicologySalicylateTray({ assessment, scenarioVersion, onAction, guida
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="toxicology-salicylate-early-title">
       <div id="toxicology-salicylate-early-title" className="syringe__name">Read the patient and the number together.</div>
       <p className="syringe__remaining">Begin with product, clock, tinnitus, vomiting, breathing, volume clues, units, and whole person.</p>
@@ -14872,10 +14500,7 @@ function ToxicologyTricyclicTray({ assessment, scenarioVersion, onAction, guidan
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="toxicology-tricyclic-early-title">
       <div id="toxicology-tricyclic-early-title" className="syringe__name">The tracing belongs to a whole patient.</div>
       <p className="syringe__remaining">Begin with product, clock, mentation, seizure, perfusion, supplied ECG, oxygenation, and whole person.</p>
@@ -14914,10 +14539,7 @@ function ToxicologyBetaBlockerTray({ assessment, scenarioVersion, onAction, guid
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="toxicology-beta-blocker-early-title">
       <div id="toxicology-beta-blocker-early-title" className="syringe__name">A slow pulse can hide a failing pump.</div>
       <p className="syringe__remaining">Begin with product, clock, pulse, perfusion, mentation, glucose, supplied ECG, and whole person.</p>
@@ -14956,10 +14578,7 @@ function ToxicologyCalciumChannelBlockerTray({ assessment, scenarioVersion, onAc
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="toxicology-calcium-channel-blocker-early-title">
       <div id="toxicology-calcium-channel-blocker-early-title" className="syringe__name">The high glucose belongs beside the slow rhythm.</div>
       <p className="syringe__remaining">Begin with product, formulation, clock, perfusion, conduction, glucose, and whole person.</p>
@@ -14998,10 +14617,7 @@ function ToxicologyDigoxinTray({ assessment, scenarioVersion, onAction, guidance
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="toxicology-digoxin-early-title">
       <div id="toxicology-digoxin-early-title" className="syringe__name">The rhythm and potassium tell one story.</div>
       <p className="syringe__remaining">Begin with product, clock, GI and visual clues, perfusion, rhythm, potassium, and whole person.</p>
@@ -15040,10 +14656,7 @@ function ToxicologyCholinergicTray({ assessment, scenarioVersion, onAction, guid
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="toxicology-cholinergic-early-title">
       <div id="toxicology-cholinergic-early-title" className="syringe__name">Protect the rescuers before the first touch.</div>
       <p className="syringe__remaining">Begin with exposure route, wet clothing, secretions, breathing, weakness, CNS, and whole person.</p>
@@ -15082,10 +14695,7 @@ function ToxicologyAnticholinergicTray({ assessment, scenarioVersion, onAction, 
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="toxicology-anticholinergic-early-title">
       <div id="toxicology-anticholinergic-early-title" className="syringe__name">Cool the patient. Keep the differential warm.</div>
       <p className="syringe__remaining">Begin with product, clock, delirium, temperature, dry surfaces, retention, ECG, and whole person.</p>
@@ -15124,10 +14734,7 @@ function ToxicologySerotoninTray({ assessment, scenarioVersion, onAction, guidan
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="toxicology-serotonin-early-title">
       <div id="toxicology-serotonin-early-title" className="syringe__name">Follow the clonus, not just the thermometer.</div>
       <p className="syringe__remaining">Begin with agents, clock, mind, sweating, bowel activity, clonus, reflexes, tone, temperature, and whole person.</p>
@@ -15166,10 +14773,7 @@ function ToxicologySympathomimeticTray({ assessment, scenarioVersion, onAction, 
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="toxicology-sympathomimetic-early-title">
       <div id="toxicology-sympathomimetic-early-title" className="syringe__name">Lower the heat. Lower the threat.</div>
       <p className="syringe__remaining">Begin with exposure, clock, fear, agitation, sweating, pupils, bowel activity, pressure, pulse, temperature, and whole person.</p>
@@ -15208,10 +14812,7 @@ function ToxicologyMethanolTray({ assessment, scenarioVersion, onAction, guidanc
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="toxicology-methanol-early-title">
       <div id="toxicology-methanol-early-title" className="syringe__name">Two gaps. One whole story.</div>
       <p className="syringe__remaining">Begin with source, clock, vision, breathing, mentation, acid-base state, both supplied gaps, and the whole person.</p>
@@ -15250,10 +14851,7 @@ function ToxicologyDelayedLastTray({ assessment, scenarioVersion, onAction, guid
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="toxicology-delayed-last-early-title">
       <div id="toxicology-delayed-last-early-title" className="syringe__name">The quiet cues were part of the crisis.</div>
       <p className="syringe__remaining">Begin with source, long clock, short prodrome, seizure, breathing, conduction, perfusion, and the whole person.</p>
@@ -15292,10 +14890,7 @@ function ToxicologyOpioidXylazineTray({ assessment, scenarioVersion, onAction, g
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="toxicology-opioid-xylazine-early-title">
       <div id="toxicology-opioid-xylazine-early-title" className="syringe__name">Restore breathing. Keep the differential open.</div>
       <p className="syringe__remaining">Begin with the unknown exposure, bystander rescue, breathing, carbon dioxide, sedation, pupils, perfusion, temperature, and the whole person.</p>
@@ -15334,10 +14929,7 @@ function ObstetricsAtonyTray({ assessment, scenarioVersion, onAction, guidance =
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="obstetrics-atony-early-title">
       <div id="obstetrics-atony-early-title" className="syringe__name">See the bleeding early. Bring calm around it.</div>
       <p className="syringe__remaining">Begin with the birth clock, measured loss, symptoms, perfusion, uterine tone, and the whole person. One clue never gets to close every cause.</p>
@@ -15376,10 +14968,7 @@ function ObstetricsMaternalSepsisTray({ assessment, scenarioVersion, onAction, g
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="maternal-sepsis-now-title">
       <div id="maternal-sepsis-now-title" className="syringe__name">Notice the whole person. Move together.</div>
       <p className="syringe__remaining">The postpartum clock, infection pattern, brain, kidney, circulation, breathing, newborn context, and dignity belong in one calm view.</p>
@@ -15418,10 +15007,7 @@ function ObstetricsConcealedAbruptionTray({ assessment, scenarioVersion, onActio
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="concealed-abruption-now-title">
       <div id="concealed-abruption-now-title" className="syringe__name">Look beyond what you can see.</div>
       <p className="syringe__remaining">Pain, perfusion, uterine tone, fetal context, coagulation, and the whole person tell more than the visible blood alone.</p>
@@ -15460,10 +15046,7 @@ function ObstetricsPostpartumPreeclampsiaTray({ assessment, scenarioVersion, onA
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="postpartum-preeclampsia-now-title">
       <div id="postpartum-preeclampsia-now-title" className="syringe__name">Listen past the pressure.</div>
       <p className="syringe__remaining">The postpartum clock, headache, vision, organs, newborn context, and her priorities belong in the same picture.</p>
@@ -15502,10 +15085,7 @@ function ObstetricsEclampsiaTray({ assessment, scenarioVersion, onAction, guidan
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="eclampsia-now-title">
       <div id="eclampsia-now-title" className="syringe__name">Read the seizure in its pregnancy context.</div>
       <p className="syringe__remaining">Start with the witnessed event, breathing, pulse, glucose, pressure, recovery, pregnancy, fetal report, injury, and whole person.</p>
@@ -15544,10 +15124,7 @@ function ObstetricsAfeTray({ assessment, scenarioVersion, onAction, guidance = '
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="obstetrics-afe-now-title">
       <div id="obstetrics-afe-now-title" className="syringe__name">Connect the sudden whole-body change.</div>
       <p className="syringe__remaining">Qualified help starts first. Then keep birth timing, breathing, circulation, alertness, bleeding, coagulation, the newborn, and her support in one picture.</p>
@@ -15586,10 +15163,7 @@ function ObstetricsMaternalArrestTray({ assessment, scenarioVersion, onAction, g
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="obstetrics-maternal-arrest-now-title">
       <div id="obstetrics-maternal-arrest-now-title" className="syringe__name">Make the whole team ready at once.</div>
       <p className="syringe__remaining">Qualified standard resuscitation is already underway. Add the pregnancy clock, specialized roles, in-place delivery readiness, newborn care, and support without cluttering the learner surface.</p>
@@ -15628,10 +15202,7 @@ function ObstetricsShoulderDystociaTray({ assessment, scenarioVersion, onAction,
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="obstetrics-shoulder-dystocia-now-title">
       <div id="obstetrics-shoulder-dystocia-now-title" className="syringe__name">Slow the room down. Start the clock.</div>
       <p className="syringe__remaining">Name the emergency, bring the right people in, and protect against force. The learner surface keeps every physical maneuver with the qualified birth team.</p>
@@ -15670,10 +15241,7 @@ function ObstetricsCordProlapseTray({ assessment, scenarioVersion, onAction, gui
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="obstetrics-cord-prolapse-now-title">
       <div id="obstetrics-cord-prolapse-now-title" className="syringe__name">Protect oxygen flow. Prepare the whole path.</div>
       <p className="syringe__remaining">Name the emergency, bring theatre and newborn teams close, and keep every physical bridge with the qualified bedside team.</p>
@@ -15712,10 +15280,7 @@ function ObstetricsUterineRuptureTray({ assessment, scenarioVersion, onAction, g
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="obstetrics-uterine-rupture-now-title">
       <div id="obstetrics-uterine-rupture-now-title" className="syringe__name">Act on the pattern. Keep the diagnosis honest.</div>
       <p className="syringe__remaining">Bring surgery, blood, anesthesia, and newborn care together now. The learner surface keeps treatment and every operation with the qualified team.</p>
@@ -15754,10 +15319,7 @@ function ObstetricsMagnesiumToxicityTray({ assessment, scenarioVersion, onAction
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="obstetrics-magnesium-toxicity-now-title">
       <div id="obstetrics-magnesium-toxicity-now-title" className="syringe__name">Notice the quiet change. Bring the whole team close.</div>
       <p className="syringe__remaining">Connect breathing, strength, reflexes, exposure, and clearance. The learner surface keeps every infusion, airway, antidote, and dose with the qualified team.</p>
@@ -15796,10 +15358,7 @@ function ObstetricsHighNeuraxialTray({ assessment, scenarioVersion, onAction, gu
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="obstetrics-high-neuraxial-now-title">
       <div id="obstetrics-high-neuraxial-now-title" className="syringe__name">Stay close. Watch the block, breathing, and circulation together.</div>
       <p className="syringe__remaining">Connect the injection clock, rising block, arms, voice, circulation, fetus, and whole person. Every physical intervention stays with the qualified team.</p>
@@ -15838,10 +15397,7 @@ function ObstetricsFailedIntubationTray({ assessment, scenarioVersion, onAction,
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="obstetrics-failed-intubation-now-title">
       <div id="obstetrics-failed-intubation-now-title" className="syringe__name">Name the failure. Keep oxygenation at the center.</div>
       <p className="syringe__remaining">Connect attempts, rescue ventilation, aspiration, awareness, fetal urgency, and the whole person. Every physical airway action stays with the qualified team.</p>
@@ -15880,10 +15436,7 @@ function ObstetricsMaternalNeonatalHandoffTray({ assessment, scenarioVersion, on
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="obstetrics-maternal-neonatal-handoff-now-title">
       <div id="obstetrics-maternal-neonatal-handoff-now-title" className="syringe__name">Two patients. Two teams. One clear transfer.</div>
       <p className="syringe__remaining">Carry the birth clock, maternal context, newborn trajectory, current support, and open risks together. Every physical intervention stays with the qualified teams.</p>
@@ -15922,10 +15475,7 @@ function ObstetricsOxytocinTachysystoleTray({ assessment, scenarioVersion, onAct
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="obstetrics-oxytocin-tachysystole-now-title">
       <div id="obstetrics-oxytocin-tachysystole-now-title" className="syringe__name">Reduce the uterine load. Keep the whole pair visible.</div>
       <p className="syringe__remaining">Connect oxytocin, contractions, fetal trajectory, maternal state, labour, and preferences. Every physical intervention stays with the qualified team.</p>
@@ -15964,10 +15514,7 @@ function NeonatologyTermTransitionTray({ assessment, scenarioVersion, onAction, 
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neonatology-term-transition-now-title">
       <div id="neonatology-term-transition-now-title" className="syringe__name">Protect the quiet start. Keep the dyad together.</div>
       <p className="syringe__remaining">Connect the shared clock, breathing, tone, heart rate, warmth, position, parent, and preferences. Every physical care step stays with the qualified team.</p>
@@ -16006,10 +15553,7 @@ function NeonatologyApneaTray({ assessment, scenarioVersion, onAction, guidance 
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neonatology-apnea-now-title">
       <div id="neonatology-apnea-now-title" className="syringe__name">Make breathing effective. Watch the heart rate answer.</div>
       <p className="syringe__remaining">Connect the birth clock, completed initial steps, apnea, heart rate, warmth, parent, and whole dyad. Every physical resuscitation step stays with the qualified team.</p>
@@ -16048,10 +15592,7 @@ function NeonatologyIneffectiveVentilationTray({ assessment, scenarioVersion, on
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neonatology-ineffective-ventilation-now-title">
       <div id="neonatology-ineffective-ventilation-now-title" className="syringe__name">Make the ventilation visible. Let the heart rate verify it.</div>
       <p className="syringe__remaining">Connect the clock, interface, chest movement, heart-rate trajectory, oxygenation signal, warmth, parent, and whole dyad. Every physical resuscitation step stays with the qualified team.</p>
@@ -16090,10 +15631,7 @@ function NeonatologyBradycardiaTray({ assessment, scenarioVersion, onAction, gui
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neonatology-bradycardia-now-title">
       <div id="neonatology-bradycardia-now-title" className="syringe__name">Verify the lungs first. Then support the heart together.</div>
       <p className="syringe__remaining">Connect effective lung inflation, the heart-rate trajectory, airway, oxygenation, warmth, parent, and whole dyad. Every physical resuscitation step stays with the qualified team.</p>
@@ -16132,10 +15670,7 @@ function NeonatologyMeconiumTransitionTray({ assessment, scenarioVersion, onActi
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neonatology-meconium-now-title">
       <div id="neonatology-meconium-now-title" className="syringe__name">See the newborn, not just the fluid.</div>
       <p className="syringe__remaining">Connect breathing, tone, heart rate, airway visibility, warmth, parent, and whole dyad. Meconium alone does not decide the next step; every physical care step stays with the qualified team.</p>
@@ -16174,10 +15709,7 @@ function NeonatologyPretermRespiratoryDistressTray({ assessment, scenarioVersion
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neonatology-preterm-respiratory-now-title">
       <div id="neonatology-preterm-respiratory-now-title" className="syringe__name">Support the breaths already there.</div>
       <p className="syringe__remaining">Connect gestation, spontaneous breathing, work, heart rate, preductal oxygenation, warmth, parent, and whole dyad. Every device and physical care step stays with the qualified team.</p>
@@ -16216,10 +15748,7 @@ function NeonatologyHypoglycemiaTray({ assessment, scenarioVersion, onAction, gu
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neonatology-hypoglycemia-now-title">
       <div id="neonatology-hypoglycemia-now-title" className="syringe__name">Read the sign and the number together.</div>
       <p className="syringe__remaining">Connect risk, clock, signs, verified glucose, warmth, feeding, parent, and whole dyad. Thresholds vary; every measurement and treatment stays with the qualified team.</p>
@@ -16258,10 +15787,7 @@ function NeonatologySepsisTray({ assessment, scenarioVersion, onAction, guidance
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neonatology-sepsis-now-title">
       <div id="neonatology-sepsis-now-title" className="syringe__name">Follow the change, not just the risk.</div>
       <p className="syringe__remaining">Connect maternal context, clocks, new multisystem illness, parent, and whole dyad. A score or isolated result never overrules the clinically ill newborn.</p>
@@ -16300,10 +15826,7 @@ function NeonatologyThermoregulationTray({ assessment, scenarioVersion, onAction
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neonatology-thermoregulation-now-title">
       <div id="neonatology-thermoregulation-now-title" className="syringe__name">Warmth is a chain, not a switch.</div>
       <p className="syringe__remaining">Connect gestation, temperatures, environment, transfer, behavior, feeding, physiology, parent, and whole dyad. Keep illness and therapeutic-cooling boundaries open.</p>
@@ -16342,10 +15865,7 @@ function NeonatologyNicuHandoffTray({ assessment, scenarioVersion, onAction, gui
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neonatology-nicu-handoff-now-title">
       <div id="neonatology-nicu-handoff-now-title" className="syringe__name">Transfer the story and the ownership.</div>
       <p className="syringe__remaining">Preserve chronology, response, current state, absent actions, pending data, safety concerns, parent context, named owners, and next steps.</p>
@@ -16384,10 +15904,7 @@ function NeonatologyTensionPneumothoraxTray({ assessment, scenarioVersion, onAct
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neonatology-tension-pneumothorax-now-title">
       <div id="neonatology-tension-pneumothorax-now-title" className="syringe__name">Sudden asymmetry changes the emergency.</div>
       <p className="syringe__remaining">Connect the support, clock, oxygen need, unilateral findings, perfusion, alternatives, parent, and whole dyad. Keep imaging and procedural choices with the qualified team.</p>
@@ -16426,10 +15943,7 @@ function EndocrineDkaResolutionTray({ assessment, scenarioVersion, onAction, gui
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="endocrine-dka-resolution-now-title">
       <div id="endocrine-dka-resolution-now-title" className="syringe__name">Glucose is not the finish line.</div>
       <p className="syringe__remaining">{reassessment ? 'Supplied 4-hour report: glucose 162 mg/dL, ketones 0.4 mmol/L, pH 7.34, bicarbonate 19 mmol/L, potassium 3.8 mmol/L. Basal insulin was reported 2 hours earlier.' : 'Supplied after 8 hours of treatment: glucose 184 mg/dL, ketones 1.2 mmol/L, pH 7.32, bicarbonate 17 mmol/L, potassium 3.6 mmol/L, anion gap 10.'}</p>
@@ -16469,10 +15983,7 @@ function EndocrineHhsTray({ assessment, scenarioVersion, onAction, guidance = 'u
   const handoff = assessment?.handoffAtTick != null;
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="endocrine-hhs-now-title">
       <div id="endocrine-hhs-now-title" className="syringe__name">Follow the whole trajectory.</div>
       <p className="syringe__remaining">{reassessment ? 'Supplied 4-hour report: glucose 540 mg/dL, sodium 149 mmol/L, total osmolality 343 mOsm/kg, potassium 3.8 mmol/L. Urine output 0.4 mL/kg/h; cognition still below baseline.' : 'Supplied presentation: glucose 900 mg/dL, sodium 146 mmol/L, total osmolality 362 mOsm/kg, ketones 1.1 mmol/L, pH 7.36. Dehydration and cognitive change matter together.'}</p>
@@ -16511,12 +16022,8 @@ function PostInfarctionShockTray({ assessment, scenarioVersion, guidance = 'unas
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
       <section className="syringe" aria-labelledby="post-infarction-shock-trajectory-title">
         <div id="post-infarction-shock-trajectory-title" className="syringe__name">Pressure moved. Perfusion did not.</div>
@@ -16577,12 +16084,8 @@ function AfRvrTray({ assessment, scenarioVersion, guidance = 'unassisted', demon
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
       <section className="syringe" aria-labelledby="af-rvr-stability-title">
         <div id="af-rvr-stability-title" className="syringe__name">Treat the patient before the number.</div>
@@ -16644,12 +16147,8 @@ function HeartFailureTray({ assessment, scenarioVersion, guidance = 'unassisted'
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
       <section className="syringe" aria-labelledby="heart-failure-trajectory-title">
         <div id="heart-failure-trajectory-title" className="syringe__name">Decongestion is a trajectory.</div>
@@ -16710,12 +16209,8 @@ function StableChestPainTray({ assessment, scenarioVersion, guidance = 'unassist
   const act = demonstrating ? undefined : onAction;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-    {demonstrating && <p className="field__hint" role="status">Watching the worked example. The controls stay visible and do not respond.</p>}
-    {prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
-      <p className="syringe__remaining">{prompt.suggestion}</p>
-      <p className="syringe__remaining">{prompt.because}</p>
-    </aside>}
+    <WatchingNotice demonstrating={demonstrating} />
+    <TutorPanel prompt={prompt} />
     <div className="tray-grid">
       <section className="syringe" aria-labelledby="stable-chest-pattern-title">
         <div id="stable-chest-pattern-title" className="syringe__name">Stable is a trajectory, not a synonym for safe.</div>
