@@ -351,6 +351,8 @@ import { useAcuteAorticSyndromeDemonstration } from '../../emergency-medicine/de
 import { supportsAcuteAorticSyndromeDemonstration } from '../../emergency-medicine/demo/acute-aortic-syndrome-demonstration';
 import { useAcuteIschemicStrokeDemonstration } from '../../emergency-medicine/demo/useAcuteIschemicStrokeDemonstration';
 import { supportsAcuteIschemicStrokeDemonstration } from '../../emergency-medicine/demo/acute-ischemic-stroke-demonstration';
+import { useHemorrhagicShockDemonstration } from '../../emergency-medicine/demo/useHemorrhagicShockDemonstration';
+import { supportsHemorrhagicShockDemonstration } from '../../emergency-medicine/demo/hemorrhagic-shock-demonstration';
 import { useAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/useAcutePulmonaryEdemaDemonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
 import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAdultAsthmaDemonstration';
@@ -717,6 +719,7 @@ export function Cockpit({
   const ardsLungProtectiveDemoSupported = supportsArdsLungProtectiveDemonstration(scenario);
   const acuteAorticSyndromeDemoSupported = supportsAcuteAorticSyndromeDemonstration(scenario);
   const acuteIschemicStrokeDemoSupported = supportsAcuteIschemicStrokeDemonstration(scenario);
+  const hemorrhagicShockDemoSupported = supportsHemorrhagicShockDemonstration(scenario);
   const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
   const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
   const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
@@ -891,6 +894,7 @@ export function Cockpit({
     || ardsLungProtectiveDemoSupported
     || acuteAorticSyndromeDemoSupported
     || acuteIschemicStrokeDemoSupported
+    || hemorrhagicShockDemoSupported
     || acutePulmonaryEdemaDemoSupported
     || adultAsthmaDemoSupported
     || emergencyAnaphylaxisDemoSupported
@@ -1403,6 +1407,12 @@ export function Cockpit({
     active: demonstrating && adultAsthmaDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.adultAsthmaAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const hemorrhagicShockDemonstration = useHemorrhagicShockDemonstration({
+    active: demonstrating && hemorrhagicShockDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.hemorrhagicShockAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const stableNarrowTachycardiaDemonstration = useStableNarrowTachycardiaDemonstration({
@@ -2150,6 +2160,7 @@ export function Cockpit({
     : ardsLungProtectiveDemoSupported ? ardsLungProtectiveDemonstration
     : acuteAorticSyndromeDemoSupported ? acuteAorticSyndromeDemonstration
     : acuteIschemicStrokeDemoSupported ? acuteIschemicStrokeDemonstration
+    : hemorrhagicShockDemoSupported ? hemorrhagicShockDemonstration
     : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
     : adultAsthmaDemoSupported ? adultAsthmaDemonstration
     : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration
@@ -3188,6 +3199,8 @@ export function Cockpit({
           acuteAorticSyndromeDemonstrating={demonstrating && acuteAorticSyndromeDemoSupported}
           acuteIschemicStrokeGuidance={session.guidance}
           acuteIschemicStrokeDemonstrating={demonstrating && acuteIschemicStrokeDemoSupported}
+          hemorrhagicShockGuidance={session.guidance}
+          hemorrhagicShockDemonstrating={demonstrating && hemorrhagicShockDemoSupported}
           acutePulmonaryEdemaGuidance={session.guidance}
           acutePulmonaryEdemaDemonstrating={demonstrating && acutePulmonaryEdemaDemoSupported}
           adultAsthmaGuidance={session.guidance}

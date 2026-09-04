@@ -141,6 +141,7 @@ import { pulseOximeterArtifactCompletionEvidence } from '../../critical-care/pul
 import { ardsLungProtectiveCompletionEvidence } from '../../critical-care/ards-lung-protective-completion';
 import { acuteAorticSyndromeCompletionEvidence } from '../../emergency-medicine/acute-aortic-syndrome-completion';
 import { acuteIschemicStrokeCompletionEvidence } from '../../emergency-medicine/acute-ischemic-stroke-completion';
+import { hemorrhagicShockCompletionEvidence } from '../../emergency-medicine/hemorrhagic-shock-completion';
 import { acutePulmonaryEdemaCompletionEvidence } from '../../emergency-medicine/acute-pulmonary-edema-completion';
 import { adultAsthmaCompletionEvidence } from '../../emergency-medicine/adult-asthma-completion';
 import { emergencyAnaphylaxisCompletionEvidence } from '../../emergency-medicine/emergency-anaphylaxis-completion';
@@ -440,6 +441,7 @@ export function auditClinicalScenario(
     ...ardsLungProtectiveCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...acuteAorticSyndromeCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...acuteIschemicStrokeCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...hemorrhagicShockCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...acutePulmonaryEdemaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...adultAsthmaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...emergencyAnaphylaxisCompletionEvidence(scenario, capabilityVersion, moduleId),

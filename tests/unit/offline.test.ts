@@ -340,10 +340,24 @@ describe('Requirement: Everything The Offline Claim Names Is Actually Precached'
     // anyone spends a day on a similar hoist.
     //
     // So the honest position for whoever reads this next: every mechanical lever we
-    // know of is exhausted, the graph sits within a few kilobytes of the ceiling, and
-    // the next lesson does not fit. The remaining choices are product ones — raise the
+    // know of in the demonstration prose is exhausted, and the graph sits within a few
+    // kilobytes of the ceiling. The remaining choices are product ones — raise the
     // ceiling deliberately and say why here, or narrow what the offline claim promises
     // so that less has to be precached. Neither should happen quietly.
+    //
+    // Two corrections to the paragraph above, both learned by trying it. The first:
+    // "the next lesson does not fit" was wrong. Extracting the 151 hand-copied tutor
+    // panels and 84 watching notices in ActionCockpit.tsx into one component each
+    // recovered 1,072 bytes gz, and the hemorrhagic-shock lesson then cost 2,114 bytes
+    // gz marginal — against 3,683 for the same four files gzipped on their own. A
+    // lesson's real cost in this bundle is well under half what measuring it in
+    // isolation suggests, because it lands in a stream that already contains twenty-one
+    // lessons written in the same voice. Measure the marginal cost before concluding
+    // anything does not fit. The second: the JSX-extraction lever is small — 235 copies
+    // bought 1 KB — so it is not worth repeating for the sake of bytes alone.
+    //
+    // What remains after that lesson is 2,223 bytes. That is genuinely the last of it
+    // at this ceiling, and the product decision above is now the only thing left.
     const files = precache
       .filter((url) => url.startsWith('/assets/') || url.startsWith('/fonts/'))
       .map((url) => readFileSync(join(process.cwd(), 'dist', url)));

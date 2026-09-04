@@ -239,6 +239,7 @@ import { pulseOximeterArtifactInlinePrompt } from '../../critical-care/tutor/pul
 import { ardsLungProtectiveInlinePrompt } from '../../critical-care/tutor/ards-lung-protective-guidance';
 import { acuteAorticSyndromeInlinePrompt } from '../../emergency-medicine/tutor/acute-aortic-syndrome-guidance';
 import { acuteIschemicStrokeInlinePrompt } from '../../emergency-medicine/tutor/acute-ischemic-stroke-guidance';
+import { hemorrhagicShockInlinePrompt } from '../../emergency-medicine/tutor/hemorrhagic-shock-guidance';
 import { acutePulmonaryEdemaInlinePrompt } from '../../emergency-medicine/tutor/acute-pulmonary-edema-guidance';
 import { adultAsthmaInlinePrompt } from '../../emergency-medicine/tutor/adult-asthma-guidance';
 import { emergencyAnaphylaxisInlinePrompt } from '../../emergency-medicine/tutor/emergency-anaphylaxis-guidance';
@@ -3067,6 +3068,7 @@ export interface ActionCockpitProps {
   readonly ardsLungProtectiveGuidance?: GuidanceLevel;
   readonly acuteAorticSyndromeGuidance?: GuidanceLevel;
   readonly acuteIschemicStrokeGuidance?: GuidanceLevel;
+  readonly hemorrhagicShockGuidance?: GuidanceLevel;
   readonly acutePulmonaryEdemaGuidance?: GuidanceLevel;
   readonly adultAsthmaGuidance?: GuidanceLevel;
   readonly emergencyAnaphylaxisGuidance?: GuidanceLevel;
@@ -3274,6 +3276,7 @@ export interface ActionCockpitProps {
   readonly ardsLungProtectiveDemonstrating?: boolean;
   readonly acuteAorticSyndromeDemonstrating?: boolean;
   readonly acuteIschemicStrokeDemonstrating?: boolean;
+  readonly hemorrhagicShockDemonstrating?: boolean;
   readonly acutePulmonaryEdemaDemonstrating?: boolean;
   readonly adultAsthmaDemonstrating?: boolean;
   readonly emergencyAnaphylaxisDemonstrating?: boolean;
@@ -5564,6 +5567,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasHemorrhagicShockResponse && (
               <HemorrhagicShockTray
                 assessment={props.resuscitation.hemorrhagicShockAssessment}
+                scenarioVersion={props.scenario.metadata.version}
+                guidance={props.hemorrhagicShockGuidance}
+                demonstrating={props.hemorrhagicShockDemonstrating}
                 onAction={props.onHemorrhagicShockAssessment ?? (() => {})}
               />
             )}
@@ -8256,8 +8262,11 @@ function SepticShockTray({ assessment, scenarioVersion, guidance = 'unassisted',
   );
 }
 
-function HemorrhagicShockTray({ assessment, onAction }: {
+function HemorrhagicShockTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['hemorrhagicShockAssessment']>;
+  scenarioVersion: string;
+  guidance?: GuidanceLevel;
+  demonstrating?: boolean;
   onAction: NonNullable<ActionCockpitProps['onHemorrhagicShockAssessment']>;
 }) {
   const recognized = assessment?.mechanismAndPerfusionReviewedAtTick != null;
@@ -8267,8 +8276,13 @@ function HemorrhagicShockTray({ assessment, onAction }: {
   const monitoring = assessment?.coagulationAndTemperatureAtTick != null;
   const reassessed = assessment?.reassessedAtTick != null;
   const definitiveControl = assessment?.definitiveControlEscalatedAtTick != null;
+  const prompt = demonstrating ? null : hemorrhagicShockInlinePrompt(guidance, { scenarioVersion, patient: assessment });
+  const act = demonstrating ? undefined : onAction;
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      <TutorPanel prompt={prompt} />
+      <WatchingNotice demonstrating={demonstrating} />
+      <div className="tray-grid">
       <section className="syringe" aria-labelledby="trauma-control-title">
         <div id="trauma-control-title" className="syringe__name">Recognize and control</div>
         <Badge kind="teaching">Fixed ED vignette</Badge>
@@ -8280,16 +8294,16 @@ function HemorrhagicShockTray({ assessment, onAction }: {
                 : 'Mechanism, injury pattern, and perfusion review pending'}
         </p>
         <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={recognized}
-            onClick={() => onAction('review-mechanism-and-perfusion')}>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} disabled={recognized}
+            onClick={act ? () => act('review-mechanism-and-perfusion') : undefined}>
             Review mechanism + perfusion
           </Button>
-          <Button className="crisis-drug__action" disabled={!recognized || stabilized}
-            onClick={() => onAction('record-pelvic-stabilization')}>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} disabled={!recognized || stabilized}
+            onClick={act ? () => act('record-pelvic-stabilization') : undefined}>
             Record pelvic stabilization
           </Button>
-          <Button className="crisis-drug__action" disabled={!stabilized || definitiveControl}
-            onClick={() => onAction('escalate-definitive-bleeding-control')}>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} disabled={!stabilized || definitiveControl}
+            onClick={act ? () => act('escalate-definitive-bleeding-control') : undefined}>
             Escalate definitive bleeding control
           </Button>
         </div>
@@ -8305,25 +8319,26 @@ function HemorrhagicShockTray({ assessment, onAction }: {
                 : 'Bounded resuscitation bridge pending'}
         </p>
         <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={!recognized || activated}
-            onClick={() => onAction('activate-major-hemorrhage')}>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} disabled={!recognized || activated}
+            onClick={act ? () => act('activate-major-hemorrhage') : undefined}>
             Activate major-hemorrhage response
           </Button>
-          <Button className="crisis-drug__action" disabled={!activated || redCells}
-            onClick={() => onAction('give-two-red-cell-units')}>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} disabled={!activated || redCells}
+            onClick={act ? () => act('give-two-red-cell-units') : undefined}>
             Give fixed 2-unit red-cell bridge
           </Button>
-          <Button className="crisis-drug__action" disabled={!activated || monitoring}
-            onClick={() => onAction('review-coagulation-and-temperature')}>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} disabled={!activated || monitoring}
+            onClick={act ? () => act('review-coagulation-and-temperature') : undefined}>
             Review coagulation + temperature
           </Button>
-          <Button className="crisis-drug__action" disabled={!redCells || !monitoring || reassessed}
-            onClick={() => onAction('reassess-perfusion')}>
+          <Button className="crisis-drug__action" aria-disabled={demonstrating} disabled={!redCells || !monitoring || reassessed}
+            onClick={act ? () => act('reassess-perfusion') : undefined}>
             Reassess perfusion
           </Button>
         </div>
         <p className="field__hint">No TXA, calcium, component ratio, procedure, local protocol, repeat transfusion, or outcome is offered.</p>
       </section>
+      </div>
     </div>
   );
 }
