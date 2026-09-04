@@ -1,4 +1,5 @@
 import type { Scenario } from '@anesthesia/scenarios/types';
+import { PREPARING_NARRATION } from '@anesthesia/demo/demonstration';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsTorsades, type TorsadesAction, type TorsadesProgress,
@@ -47,7 +48,7 @@ export function torsadesDemonstrationStep(
   patient?: TorsadesProgress,
 ): TorsadesDemonstrationStep {
   if (!patient) {
-    return { id: 'preparing', narration: 'Preparing the fictional patient. This example uses the same controls and clock as your practice.', focus: 'none', progress: 0 };
+    return { id: 'preparing', narration: PREPARING_NARRATION, focus: 'none', progress: 0 };
   }
   if (patient.handoffAtTick !== null) {
     return { id: 'finished', focus: 'actions', progress: 1, finished: true,

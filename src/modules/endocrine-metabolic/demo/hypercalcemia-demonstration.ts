@@ -1,4 +1,5 @@
 import type { Scenario } from '@anesthesia/scenarios/types';
+import { PREPARING_NARRATION } from '@anesthesia/demo/demonstration';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import type { HypercalcemiaSnapshot } from '@platform/kernel/protocol';
 import { supportsHypercalcemia, type HypercalcemiaAction } from '../hypercalcemia';
@@ -20,7 +21,7 @@ export interface HypercalcemiaDemonstrationStep {
 
 /** Observe accepted decisions, never dispatch on a wall-clock schedule. */
 export function hypercalcemiaDemonstrationStep(patient?: HypercalcemiaSnapshot): HypercalcemiaDemonstrationStep {
-  if (!patient) return { id: 'preparing', narration: 'Preparing the fictional patient. This example uses the same controls and clock as your practice.', focus: 'none', progress: 0 };
+  if (!patient) return { id: 'preparing', narration: PREPARING_NARRATION, focus: 'none', progress: 0 };
   if (patient.ended) return { id: 'finished', narration: patient.ended === 'handoff'
     ? 'Ongoing calcium treatment, fluid monitoring, and cancer care are handed off. This ends the example, not the illness. Open the debrief to review the decisions.'
     : 'Instructor takeover ended this branch. No clinical outcome is predicted. Open the debrief or restart to rehearse the missed decision.', focus: 'actions', progress: 1, finished: true };

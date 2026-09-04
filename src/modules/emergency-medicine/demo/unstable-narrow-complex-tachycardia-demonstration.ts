@@ -1,4 +1,5 @@
 import type { Scenario } from '@anesthesia/scenarios/types';
+import { PREPARING_NARRATION } from '@anesthesia/demo/demonstration';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsUnstableNarrowTachycardia, type UnstableNarrowTachycardiaAction,
@@ -39,7 +40,7 @@ export function unstableNarrowTachycardiaDemonstrationStep(
   patient?: UnstableNarrowTachycardiaProgress,
 ): UnstableNarrowTachycardiaDemonstrationStep {
   if (!patient) {
-    return { id: 'preparing', narration: 'Preparing the fictional patient. This example uses the same controls and clock as your practice.', focus: 'none', progress: 0 };
+    return { id: 'preparing', narration: PREPARING_NARRATION, focus: 'none', progress: 0 };
   }
   if (patient.reassessedAtTick !== null) {
     return { id: 'finished', focus: 'monitor', progress: 1, finished: true,

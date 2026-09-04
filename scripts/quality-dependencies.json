@@ -36,7 +36,7 @@
       },
       {
         "path": "src/modules/endocrine-metabolic/demo/hypocalcemia-demonstration.ts",
-        "sha256": "a47470b7e26febb797287c95fc4bdb809655a022cd4dd4ab29c9bfa5556ff650"
+        "sha256": "bb9d89ba16067a89887d61879663254f6dc271beb9b54dccf0b777bf5ffc4ca4"
       },
       {
         "path": "src/modules/endocrine-metabolic/hypocalcemia-fixtures.ts",
@@ -558,7 +558,7 @@
       },
       {
         "path": "src/modules/endocrine-metabolic/demo/avp-deficiency-demonstration.ts",
-        "sha256": "cff46539e07fe94cdc77cb139295f7a23dd84f033e611eb6fc53ddd647f7492a"
+        "sha256": "06d76c834c0b64cda2f2ff7b3f7f0fbf02563d7c3d0115c012c9960cca0e347b"
       },
       {
         "path": "src/modules/endocrine-metabolic/demo/useAvpDeficiencyDemonstration.ts",

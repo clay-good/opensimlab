@@ -1,4 +1,5 @@
 import type { Scenario } from '@anesthesia/scenarios/types';
+import { PREPARING_NARRATION } from '@anesthesia/demo/demonstration';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import {
   supportsPostIntubationHypotension, type PostIntubationHypotensionAction,
@@ -40,7 +41,7 @@ export function postIntubationHypotensionDemonstrationStep(
   patient?: PostIntubationHypotensionProgress,
 ): PostIntubationHypotensionDemonstrationStep {
   if (!patient) {
-    return { id: 'preparing', narration: 'Preparing the fictional patient. This example uses the same controls and clock as your practice.', focus: 'none', progress: 0 };
+    return { id: 'preparing', narration: PREPARING_NARRATION, focus: 'none', progress: 0 };
   }
   if (patient.reassessmentAtTick !== null) {
     return { id: 'finished', focus: 'actions', progress: 1, finished: true,

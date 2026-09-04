@@ -1,4 +1,5 @@
 import type { Scenario } from '@anesthesia/scenarios/types';
+import { PREPARING_NARRATION } from '@anesthesia/demo/demonstration';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import type { MyxedemaSnapshot } from '@platform/kernel/protocol';
 import { supportsMyxedema, type MyxedemaAction } from '../myxedema';
@@ -20,7 +21,7 @@ export interface MyxedemaDemonstrationStep {
 
 /** Accepted care and fresh observations determine each learner-paced decision. */
 export function myxedemaDemonstrationStep(patient?: MyxedemaSnapshot): MyxedemaDemonstrationStep {
-  if (!patient) return { id: 'preparing', narration: 'Preparing the fictional patient. This example uses the same controls and clock as your practice.', focus: 'none', progress: 0 };
+  if (!patient) return { id: 'preparing', narration: PREPARING_NARRATION, focus: 'none', progress: 0 };
   if (patient.ended) return { id: 'finished', narration: patient.ended === 'handoff'
     ? 'Ongoing ventilation, endocrine treatment, and unresolved risk are handed off. This ends the example, not the illness. Open the debrief to review the decisions.'
     : 'Instructor takeover ended this branch. No clinical outcome is predicted. Open the debrief or restart to rehearse the missed decision.', focus: 'actions', progress: 1, finished: true };

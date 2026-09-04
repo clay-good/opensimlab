@@ -1,4 +1,5 @@
 import type { Scenario } from '@anesthesia/scenarios/types';
+import { PREPARING_NARRATION } from '@anesthesia/demo/demonstration';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import type { AvpDeficiencySnapshot } from '@platform/kernel/protocol';
 import { supportsAvpDeficiency, type AvpDeficiencyAction } from '../avp-deficiency';
@@ -18,7 +19,7 @@ export interface AvpDeficiencyDemonstrationStep {
 
 /** The example observes before continuing care to teach the contrast, not to impose a clinical gate. */
 export function avpDeficiencyDemonstrationStep(patient?: AvpDeficiencySnapshot): AvpDeficiencyDemonstrationStep {
-  if (!patient) return { id: 'preparing', narration: 'Preparing the fictional patient. This example uses the same controls and clock as your practice.', focus: 'none', progress: 0 };
+  if (!patient) return { id: 'preparing', narration: PREPARING_NARRATION, focus: 'none', progress: 0 };
   if (patient.ended) return { id: 'finished', narration: patient.ended === 'handoff'
     ? 'Continuing water balance, prescribed medication, and surveillance are handed off. The original sodium and observed peak stay in the record. This ends the example, not the illness. Open the debrief to review the decisions.'
     : 'Instructor takeover ended this branch without predicting a patient outcome. Open the debrief or restart to rehearse a different response.', focus: 'actions', progress: 1, finished: true };

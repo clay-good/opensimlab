@@ -157,3 +157,14 @@ export function beatsToFire(from: number, to: number): DemonstrationBeat[] {
     (beat) => beat.action !== undefined && beat.atSecond > from && beat.atSecond <= to,
   );
 }
+
+/**
+ * The opening beat every worked example shares, held once.
+ *
+ * 195 demonstration modules carried this identical sentence as their own
+ * string literal. gzip only dedupes inside a 32 KB window and the copies sit
+ * far apart in a 600 KB chunk, so nearly all ~18.7 KB of it survived
+ * compression into the offline precache. See tests/unit/offline.test.ts.
+ */
+export const PREPARING_NARRATION =
+  'Preparing the fictional patient. This example uses the same controls and clock as your practice.';

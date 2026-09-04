@@ -1,4 +1,5 @@
 import type { Scenario } from '@anesthesia/scenarios/types';
+import { PREPARING_NARRATION } from '@anesthesia/demo/demonstration';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import type { RenalHypermagnesemiaSnapshot } from '@platform/kernel/protocol';
@@ -15,7 +16,7 @@ export interface RenalHypermagnesemiaDemonstrationStep {
   readonly progress: number; readonly action?: RenalHypermagnesemiaAction; readonly finished?: boolean;
 }
 export function renalHypermagnesemiaDemonstrationStep(patient?: RenalHypermagnesemiaSnapshot): RenalHypermagnesemiaDemonstrationStep {
-  if (!patient) return { id: 'preparing', narration: 'Preparing the fictional patient. This example uses the same controls and clock as your practice.', focus: 'none', progress: 0 };
+  if (!patient) return { id: 'preparing', narration: PREPARING_NARRATION, focus: 'none', progress: 0 };
   if (patient.ended) return { id: 'finished', narration: patient.ended === 'handoff'
     ? 'Breathing support, residual weakness, and continuing magnesium and renal review are handed off. This ends the example, not the need for care or proof of durable recovery.'
     : 'Instructor takeover ended this branch without predicting a patient outcome. Open the debrief or restart to rehearse another response.', focus: 'actions', progress: 1, finished: true };

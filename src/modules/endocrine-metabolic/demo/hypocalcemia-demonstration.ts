@@ -1,4 +1,5 @@
 import type { Scenario } from '@anesthesia/scenarios/types';
+import { PREPARING_NARRATION } from '@anesthesia/demo/demonstration';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import type { HypocalcemiaSnapshot } from '@platform/kernel/protocol';
 import { supportsHypocalcemia, type HypocalcemiaAction } from '../hypocalcemia';
@@ -20,7 +21,7 @@ export interface HypocalcemiaDemonstrationStep {
 
 /** Accepted care and requested observations select each learner-paced decision. */
 export function hypocalcemiaDemonstrationStep(patient?: HypocalcemiaSnapshot): HypocalcemiaDemonstrationStep {
-  if (!patient) return { id: 'preparing', narration: 'Preparing the fictional patient. This example uses the same controls and clock as your practice.', focus: 'none', progress: 0 };
+  if (!patient) return { id: 'preparing', narration: PREPARING_NARRATION, focus: 'none', progress: 0 };
   if (patient.ended) return { id: 'finished', narration: patient.ended === 'handoff'
     ? 'Continuing calcium care, magnesium review, and postoperative risk are handed off. This ends the example, not the illness. Open the debrief to review the decisions.'
     : 'Instructor takeover ended this branch. No patient outcome is predicted. Open the debrief or restart to rehearse the missed decision.', focus: 'actions', progress: 1, finished: true };

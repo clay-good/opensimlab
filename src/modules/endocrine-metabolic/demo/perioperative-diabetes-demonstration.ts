@@ -1,4 +1,5 @@
 import type { Scenario } from '@anesthesia/scenarios/types';
+import { PREPARING_NARRATION } from '@anesthesia/demo/demonstration';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import type { PerioperativeDiabetesSnapshot } from '@platform/kernel/protocol';
 import { supportsPerioperativeDiabetes, type PerioperativeDiabetesAction } from '../perioperative-diabetes';
@@ -17,7 +18,7 @@ export interface PerioperativeDiabetesDemonstrationStep {
 }
 
 export function perioperativeDiabetesDemonstrationStep(patient?: PerioperativeDiabetesSnapshot): PerioperativeDiabetesDemonstrationStep {
-  if (!patient) return { id: 'preparing', narration: 'Preparing the fictional patient. This example uses the same controls and clock as your practice.', focus: 'none', progress: 0 };
+  if (!patient) return { id: 'preparing', narration: PREPARING_NARRATION, focus: 'none', progress: 0 };
   if (patient.ended) return { id: 'finished', narration: patient.ended === 'handoff'
     ? 'Insulin continuity and continuing perioperative responsibilities are handed off. Earlier decisions and requested findings remain in the record. This ends the example, not the need for care or the decision about surgery.'
     : 'Instructor takeover ended this branch without predicting a patient outcome. Open the debrief or restart to rehearse a different response.', focus: 'actions', progress: 1, finished: true };

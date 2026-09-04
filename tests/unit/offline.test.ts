@@ -315,6 +315,35 @@ describe('Requirement: Everything The Offline Claim Names Is Actually Precached'
     // A blind conversion there would silently change what a learner is shown, so they
     // want doing one beat at a time against that lesson's own demonstration test. That
     // is where to look next, before any raise.
+    //
+    // 2026-09-03: that estimate is now spent, and the lever with it. Four more
+    // batches converted 38 modules and 89 beats, each selected by matching a stored
+    // narration byte-for-byte against a real prompt(id, urgent, suggestion, because)
+    // argument pair and verified by that lesson's own demonstration and replay tests.
+    // The scan now reports ZERO exact pairs across zero modules. A looser scan — does
+    // the stored beat appear verbatim anywhere in its module's tutor source, which
+    // would catch template-literal prompts and partial matches — also reports zero.
+    // 253,669 bytes of narration remain stored across all demonstration modules and
+    // none of it is a copy of anything: it is the `finished` beats and the bespoke
+    // per-beat prose that was never a duplicate.
+    //
+    // Two further checks came back empty. The completion-evidence prose, which is the
+    // largest text in the repository, is not in any precached asset — the catalog
+    // build reads it and the browser never does. And no lesson sentence appears in
+    // more than one precached chunk; the strings ship exactly once each.
+    //
+    // The last real saving was the opening beat: 195 modules each carried the same
+    // 96-byte `Preparing the fictional patient…` literal, and hoisting it to
+    // PREPARING_NARRATION in demo/demonstration.ts recovered 429 bytes gz. Small,
+    // because the bundler was already deduping identical literals better than the
+    // 32 KB-window argument above predicts — which is itself worth knowing before
+    // anyone spends a day on a similar hoist.
+    //
+    // So the honest position for whoever reads this next: every mechanical lever we
+    // know of is exhausted, the graph sits within a few kilobytes of the ceiling, and
+    // the next lesson does not fit. The remaining choices are product ones — raise the
+    // ceiling deliberately and say why here, or narrow what the offline claim promises
+    // so that less has to be precached. Neither should happen quietly.
     const files = precache
       .filter((url) => url.startsWith('/assets/') || url.startsWith('/fonts/'))
       .map((url) => readFileSync(join(process.cwd(), 'dist', url)));

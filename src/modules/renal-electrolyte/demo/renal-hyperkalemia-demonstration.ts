@@ -1,4 +1,5 @@
 import type { Scenario } from '@anesthesia/scenarios/types';
+import { PREPARING_NARRATION } from '@anesthesia/demo/demonstration';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import type { RenalHyperkalemiaSnapshot } from '@platform/kernel/protocol';
 import { supportsRenalHyperkalemia, type RenalHyperkalemiaAction } from '../hyperkalemia';
@@ -13,7 +14,7 @@ export interface RenalHyperkalemiaDemonstrationStep {
 }
 
 export function renalHyperkalemiaDemonstrationStep(patient?: RenalHyperkalemiaSnapshot): RenalHyperkalemiaDemonstrationStep {
-  if (!patient) return { id: 'preparing', narration: 'Preparing the fictional patient. This example uses the same controls and clock as your practice.', focus: 'none', progress: 0 };
+  if (!patient) return { id: 'preparing', narration: PREPARING_NARRATION, focus: 'none', progress: 0 };
   if (patient.ended) return { id: 'finished', narration: patient.ended === 'handoff'
     ? 'Treatment and continuing potassium, glucose, and ECG surveillance are handed off. The example ends without claiming durable control or discharge readiness.'
     : 'Instructor takeover ended this branch without predicting a patient outcome. Open the debrief or restart to rehearse another response.', focus: 'actions', progress: 1, finished: true };

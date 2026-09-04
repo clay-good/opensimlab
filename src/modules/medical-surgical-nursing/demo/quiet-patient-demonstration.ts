@@ -1,4 +1,5 @@
 import type { Scenario } from '@anesthesia/scenarios/types';
+import { PREPARING_NARRATION } from '@anesthesia/demo/demonstration';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import type { QuietPatientSnapshot } from '@platform/kernel/protocol';
 import { supportsQuietPatient, type QuietPatientAction } from '../quiet-patient';
@@ -26,7 +27,7 @@ export interface QuietPatientDemonstrationStep {
  */
 export function quietPatientDemonstrationStep(patient?: QuietPatientSnapshot): QuietPatientDemonstrationStep {
   if (!patient) {
-    return { id: 'preparing', narration: 'Preparing the fictional patient. This example uses the same controls and clock as your practice.', focus: 'none', progress: 0 };
+    return { id: 'preparing', narration: PREPARING_NARRATION, focus: 'none', progress: 0 };
   }
   if (patient.ended) {
     return { id: 'finished', focus: 'actions', progress: 1, finished: true,
