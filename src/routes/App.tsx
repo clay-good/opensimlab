@@ -10,7 +10,7 @@ import '@platform/tokens/base.css';
 import { Landing } from '@landing/Landing';
 import { MODULES } from '@platform/modules/registry';
 import {
-  ROOT_ROUTE, SITE_NAME, canonicalUrl, formatTitle, socialImageUrl, type RouteMetadata,
+  ROOT_ROUTE, canonicalUrl, formatTitle, socialImageAlt, socialImageUrl, type RouteMetadata,
 } from './site-metadata';
 import { SiteBar } from '@platform/ui';
 import { UpdateNotice, UpdateProvider } from '@platform/offline/UpdateNotice';
@@ -102,7 +102,7 @@ export function updateDocumentMetadata(metadata: RouteMetadata) {
     // The alt text names the route, so it goes stale on navigation the same way
     // the image does. Type and dimensions are the same for every preview and are
     // left as the prerendered document set them.
-    ['og:image:alt', `${metadata.heading} — ${SITE_NAME}`],
+    ['og:image:alt', socialImageAlt(metadata.heading)],
   ];
   for (const [property, value] of openGraph) {
     setHeadAttribute(`meta[property="${property}"]`, 'meta', 'content', value, { property });
@@ -110,7 +110,7 @@ export function updateDocumentMetadata(metadata: RouteMetadata) {
   const twitter: readonly (readonly [string, string])[] = [
     ['twitter:title', metadata.title], ['twitter:description', metadata.description],
     ['twitter:image', image],
-    ['twitter:image:alt', `${metadata.heading} — ${SITE_NAME}`],
+    ['twitter:image:alt', socialImageAlt(metadata.heading)],
   ];
   for (const [name, value] of twitter) {
     setHeadAttribute(`meta[name="${name}"]`, 'meta', 'content', value, { name });

@@ -28,7 +28,7 @@ import { ROOT_ROUTE, formatTitle } from './site-metadata';
 import type { RouteMetadata } from './site-metadata';
 export {
   SITE_NAME, SITE_ORIGIN, SOCIAL_IMAGE_HEIGHT, SOCIAL_IMAGE_WIDTH,
-  canonicalUrl, formatTitle, socialImageUrl,
+  canonicalUrl, formatTitle, socialImageAlt, socialImageUrl,
 } from './site-metadata';
 export type { RouteMetadata } from './site-metadata';
 

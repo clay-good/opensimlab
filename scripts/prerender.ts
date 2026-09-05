@@ -17,7 +17,7 @@ import { renderToString } from 'react-dom/server';
 import { createElement } from 'react';
 import {
   ROUTES, SITE_ORIGIN, SOCIAL_IMAGE_HEIGHT, SOCIAL_IMAGE_WIDTH,
-  canonicalUrl, formatTitle, indexableRoutes, socialImageUrl,
+  canonicalUrl, formatTitle, indexableRoutes, socialImageAlt, socialImageUrl,
 } from '../src/routes/routes.ts';
 import { structuredDataFor } from '../src/platform/docs/structured-data.ts';
 import { PUBLIC_CATALOG_ARTIFACTS } from '../src/platform/catalog/public-artifacts.ts';
@@ -73,12 +73,12 @@ function head(route: (typeof ROUTES)[number], styles: string): string {
     '<meta property="og:image:type" content="image/png" />',
     `<meta property="og:image:width" content="${SOCIAL_IMAGE_WIDTH}" />`,
     `<meta property="og:image:height" content="${SOCIAL_IMAGE_HEIGHT}" />`,
-    `<meta property="og:image:alt" content="${escape(route.heading)} — Open Sim Lab" />`,
+    `<meta property="og:image:alt" content="${escape(socialImageAlt(route.heading))}" />`,
     '<meta name="twitter:card" content="summary_large_image" />',
     `<meta name="twitter:title" content="${escape(route.title)}" />`,
     `<meta name="twitter:description" content="${escape(route.description)}" />`,
     `<meta name="twitter:image" content="${socialImageUrl(route.path)}" />`,
-    `<meta name="twitter:image:alt" content="${escape(route.heading)} — Open Sim Lab" />`,
+    `<meta name="twitter:image:alt" content="${escape(socialImageAlt(route.heading))}" />`,
     ...jsonLd.map((entry) => `<script type="application/ld+json">${JSON.stringify(entry)}</script>`),
     styles,
     '</head>',

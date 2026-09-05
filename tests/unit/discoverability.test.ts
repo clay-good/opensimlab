@@ -6,7 +6,8 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
-  ROUTES, SITE_NAME, canonicalUrl, formatTitle, indexableRoutes, routeFor, socialImageUrl,
+  ROUTES, SITE_NAME, canonicalUrl, formatTitle, indexableRoutes, routeFor, socialImageAlt,
+  socialImageUrl,
 } from '@routes/routes';
 import {
   breadcrumbJsonLd, learningResourceJsonLd, organizationJsonLd, softwareApplicationJsonLd,
@@ -72,6 +73,8 @@ describe('Requirement: Per-Route Metadata', () => {
     // A trailing slash resolves to the same canonical.
     expect(canonicalUrl('/anesthesia/')).toBe(canonicalUrl('/anesthesia'));
     expect(socialImageUrl('/')).toBe('https://opensimlab.com/og/index.png');
+    expect(socialImageAlt('Open Sim Lab')).toBe('Open Sim Lab');
+    expect(socialImageAlt('Oncology simulator')).toBe('Oncology simulator — Open Sim Lab');
     expect(socialImageUrl('/anesthesia/scenario/dilutional-coagulopathy'))
       .toBe('https://opensimlab.com/og/anesthesia-scenario-dilutional-coagulopathy.png');
   });
@@ -620,6 +623,8 @@ describe('Requirement: Crawlability Basics', () => {
       expect(page).toContain('<meta property="og:image:width" content="1200" />');
       expect(page).toContain('<meta property="og:image:height" content="630" />');
       expect(page).toMatch(/<meta property="og:image:alt" content="[^"]+"/);
+      // The site name is not appended to a heading that is already the site name.
+      expect(page).not.toContain('content="Open Sim Lab — Open Sim Lab"');
       expect(page).not.toContain('/og/index.svg');
       // The file the tag promises has to exist and be a PNG.
       const file = join(process.cwd(), 'dist', new URL(image!).pathname.slice(1));

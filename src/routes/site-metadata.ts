@@ -34,6 +34,16 @@ export function canonicalUrl(path: string): string {
 export const SOCIAL_IMAGE_WIDTH = 1200;
 export const SOCIAL_IMAGE_HEIGHT = 630;
 
+/**
+ * The preview image's alternative text.
+ *
+ * The site name is appended only where the heading is not already the site name,
+ * which on the front door produced `Open Sim Lab — Open Sim Lab`.
+ */
+export function socialImageAlt(heading: string): string {
+  return heading === SITE_NAME ? heading : `${heading} — ${SITE_NAME}`;
+}
+
 export function socialImageUrl(path: string): string {
   const name = path === '/' ? 'index' : path.replace(/^\//, '').replace(/\//g, '-');
   return `${SITE_ORIGIN}/og/${name}.png`;
