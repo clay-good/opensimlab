@@ -22,7 +22,8 @@ function media(dir: string, out: string[] = []): string[] {
 describe('public provenance manifests', () => {
   it('classifies every shipped media asset exactly once', () => {
     const assets = media(publicDir);
-    expect(assets).toHaveLength(275);
+    // 270 routes as both SVG source and rasterised PNG, 3 icons, 2 fonts.
+    expect(assets).toHaveLength(545);
     for (const asset of assets) {
       expect(ASSET_LICENSE_MANIFEST.records.filter((record) => assetMatches(record.match, asset)), asset)
         .toHaveLength(1);

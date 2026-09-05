@@ -23,10 +23,20 @@ export function canonicalUrl(path: string): string {
   return `${SITE_ORIGIN}${path === '/' ? '/' : path.replace(/\/$/, '')}`;
 }
 
-/** Social preview generated for one route, shared by prerender and client navigation. */
+/**
+ * Social preview generated for one route, shared by prerender and client navigation.
+ *
+ * PNG, not the SVG it is drawn from. No major crawler or link preview scraper
+ * renders SVG, so naming the `.svg` here meant every shared link — and the site
+ * has been found almost entirely through shared links — resolved to a card with
+ * no image on it.
+ */
+export const SOCIAL_IMAGE_WIDTH = 1200;
+export const SOCIAL_IMAGE_HEIGHT = 630;
+
 export function socialImageUrl(path: string): string {
   const name = path === '/' ? 'index' : path.replace(/^\//, '').replace(/\//g, '-');
-  return `${SITE_ORIGIN}/og/${name}.svg`;
+  return `${SITE_ORIGIN}/og/${name}.png`;
 }
 
 /**

@@ -33,6 +33,18 @@ export const BUDGETS = {
    * leaving the binding constraint visible only inside a unit test.
    */
   precache: 2 * 1024 * 1024,
+  /**
+   * The social preview images, raw.
+   *
+   * They are budgeted apart from the offline bundle rather than inside it. A
+   * crawler fetches one; the application never fetches any, so they are not part
+   * of what a learner downloads and counting them against the offline ceiling
+   * measured the wrong thing. That went unnoticed while they were SVG and gzipped
+   * to almost nothing. As PNG — which is the only format a link preview actually
+   * renders — they are real bytes, and they get their own ceiling instead of
+   * quietly consuming the one that decides whether another scenario can ship.
+   */
+  previewImages: 20 * 1024 * 1024,
 } as const;
 
 interface Asset { readonly path: string; readonly rawBytes: number; readonly gzipBytes: number }
@@ -165,7 +177,13 @@ function main(): void {
   });
   const interactiveBytes = interactive.reduce((sum, asset) => sum + asset.gzipBytes, 0);
 
-  const fullBytes = assets.reduce((sum, asset) => sum + asset.gzipBytes, 0);
+  // The offline bundle is what a learner downloads. Preview images are fetched
+  // only by crawlers and link previews, so they are measured on their own line.
+  const isPreviewImage = (asset: Asset) => asset.path.startsWith('og/');
+  const offline = assets.filter((asset) => !isPreviewImage(asset));
+  const previews = assets.filter(isPreviewImage);
+  const fullBytes = offline.reduce((sum, asset) => sum + asset.gzipBytes, 0);
+  const previewBytes = previews.reduce((sum, asset) => sum + asset.rawBytes, 0);
 
   const precache = precachedAssetPaths(readFileSync(join(dist, 'sw.js'), 'utf8')).map((path) => {
     const asset = byPath.get(path);
@@ -178,7 +196,8 @@ function main(): void {
     ['landing route', landingBytes, BUDGETS.landing, landing],
     ['interactive cockpit', interactiveBytes, BUDGETS.interactive, interactive],
     ['first-visit precache', precacheBytes, BUDGETS.precache, precache],
-    ['full offline bundle', fullBytes, BUDGETS.fullBundle, assets],
+    ['full offline bundle', fullBytes, BUDGETS.fullBundle, offline],
+    ['social preview images', previewBytes, BUDGETS.previewImages, previews],
   ];
 
   let failed = false;

@@ -442,7 +442,11 @@ function ReviewStatusBody() {
                 <ul>
                   {matching.map((item) => (
                     <li key={itemKey(item)}>
-                      {item.route === null
+                      {/* Only a scenario has a briefing page. An explainer and a
+                          drug card carry a module route so their module is known,
+                          but no `/<module>/scenario/<id>` document exists for them,
+                          and linking one pointed thirteen internal links at a 404. */}
+                      {item.route === null || item.kind !== 'scenario'
                         ? item.title
                         : (
                           <a href={`/${item.route}/scenario/${item.id}`}>{item.title}</a>

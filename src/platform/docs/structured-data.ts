@@ -27,7 +27,7 @@ import { getInfectiousDiseaseScenario } from '../../modules/infectious-disease/s
 import { getMedicalSurgicalNursingScenario } from '../../modules/medical-surgical-nursing/scenarios';
 import { getOncologyScenario } from '../../modules/oncology/scenarios';
 import { ONE_LINE_DESCRIPTION } from '@landing/content';
-import { SITE_NAME, SITE_ORIGIN, canonicalUrl } from '@routes/routes';
+import { ROUTES, SITE_NAME, SITE_ORIGIN, canonicalUrl } from '@routes/routes';
 import { moduleProse } from '@platform/modules/module-prose';
 
 export type JsonLd = Record<string, unknown>;
@@ -139,6 +139,48 @@ export function learningResourceJsonLd(
   };
 }
 
+/**
+ * The trail from the front door to this page.
+ *
+ * A scenario briefing sits three levels deep — `/` → `/oncology` →
+ * `/oncology/scenario/<id>` — and nothing in the markup said so, which left a
+ * search result showing the bare URL instead of the path a reader would walk.
+ * The hierarchy is real: every briefing is reached from its module's index, and
+ * every module from the front door. This only states it.
+ *
+ * It is emitted for module and scenario routes, and for nothing else: a flat
+ * document like `/privacy` has no trail worth describing.
+ */
+export function breadcrumbJsonLd(path: string): JsonLd | undefined {
+  const segments = path.replace(/^\//, '').split('/');
+  const module = MODULES.find((entry) => entry.route === segments[0]);
+  if (!module) return undefined;
+
+  const trail: { name: string; url: string }[] = [
+    { name: SITE_NAME, url: `${SITE_ORIGIN}/` },
+    { name: `${module.displayName} simulator`, url: canonicalUrl(`/${module.route}`) },
+  ];
+  if (segments[1] === 'scenario' && segments[2]) {
+    const briefing = ROUTES.find((route) => route.path === path);
+    if (!briefing) return undefined;
+    trail.push({ name: briefing.heading, url: canonicalUrl(path) });
+  } else if (segments.length > 1) {
+    // A deeper module path that is not a briefing has no described level.
+    return undefined;
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: trail.map((step, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: step.name,
+      item: step.url,
+    })),
+  };
+}
+
 /** The structured data for a route, or an empty list where it declares none. */
 export function structuredDataFor(types: readonly string[], path?: string): JsonLd[] {
   const out: JsonLd[] = [];
@@ -153,5 +195,10 @@ export function structuredDataFor(types: readonly string[], path?: string): Json
     if (type === 'SoftwareApplication') out.push(softwareApplicationJsonLd(path));
     if (type === 'LearningResource') out.push(learningResourceJsonLd(scenarioId, moduleRoute));
   }
+  // Appended, so the page's primary entity stays the first record on the page.
+  // Emitted from the path rather than declared per route, because the trail is a
+  // fact about where a page sits and not an editorial choice a route table makes.
+  const breadcrumb = path === undefined ? undefined : breadcrumbJsonLd(path);
+  if (breadcrumb) out.push(breadcrumb);
   return out;
 }

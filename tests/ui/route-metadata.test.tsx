@@ -10,7 +10,7 @@ describe('Requirement: client navigation keeps route metadata coherent', () => {
     updateDocumentMetadata(route);
 
     const canonical = 'https://opensimlab.com/anesthesia/scenario/dilutional-coagulopathy';
-    const image = 'https://opensimlab.com/og/anesthesia-scenario-dilutional-coagulopathy.svg';
+    const image = 'https://opensimlab.com/og/anesthesia-scenario-dilutional-coagulopathy.png';
     expect(document.title).toBe(route.title);
     expect(document.querySelector('meta[name="description"]')?.getAttribute('content'))
       .toBe(route.description);
@@ -20,5 +20,9 @@ describe('Requirement: client navigation keeps route metadata coherent', () => {
     expect(document.querySelector('meta[property="og:url"]')?.getAttribute('content')).toBe(canonical);
     expect(document.querySelector('meta[property="og:image"]')?.getAttribute('content')).toBe(image);
     expect(document.querySelector('meta[name="twitter:image"]')?.getAttribute('content')).toBe(image);
+    // The alt text names this route, so navigation has to move it too.
+    const alt = `${route.heading} — Open Sim Lab`;
+    expect(document.querySelector('meta[property="og:image:alt"]')?.getAttribute('content')).toBe(alt);
+    expect(document.querySelector('meta[name="twitter:image:alt"]')?.getAttribute('content')).toBe(alt);
   });
 });

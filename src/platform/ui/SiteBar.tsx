@@ -39,6 +39,8 @@ export const SITE_BAR_LINKS: readonly SiteBarLink[] = [
   { href: '/medical-surgical-nursing', label: 'Nursing' },
   { href: '/oncology', label: 'Oncology' },
   { href: '/about', label: 'About' },
+  { href: '/for-educators', label: 'For educators' },
+  { href: '/curriculum', label: 'Curriculum' },
   { href: '/validation', label: 'Validation' },
   { href: '/governance', label: 'Governance' },
   { href: '/limitations', label: 'Limitations' },

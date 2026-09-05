@@ -10,3 +10,7 @@ coverage/
 /report-projection*.json
 /report-query*.json
 .bench/
+
+# Preview images are rasterised from the committed SVGs by `npm run og`.
+# The PNG is a build artifact; the SVG beside it is the source.
+public/og/*.png

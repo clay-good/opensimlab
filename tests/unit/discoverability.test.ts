@@ -2,20 +2,22 @@
  * Acceptance tests for platform/discoverability, platform/landing, and
  * platform/module-contract.
  */
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
   ROUTES, SITE_NAME, canonicalUrl, formatTitle, indexableRoutes, routeFor, socialImageUrl,
 } from '@routes/routes';
 import {
-  learningResourceJsonLd, organizationJsonLd, softwareApplicationJsonLd, structuredDataFor, websiteJsonLd,
+  breadcrumbJsonLd, learningResourceJsonLd, organizationJsonLd, softwareApplicationJsonLd,
+  structuredDataFor, websiteJsonLd,
 } from '@platform/docs/structured-data';
 import {
   CONTENT_SECTIONS, FOOTER_LINKS, FORBIDDEN_MARKETING_WORDS, ONE_LINE_DESCRIPTION, QUESTIONS,
   READY_MODULE_COUNT, READY_SCENARIO_COUNT, REVIEWER_INVITATION, SUGGESTED_CITATION, THREE_FACTS,
 } from '@landing/content';
 import { heroStaticSvg } from '@landing/hero';
+import { robotsTxt } from '../../scripts/prerender';
 import { SCENARIOS } from '@anesthesia/scenarios';
 import { EMERGENCY_MEDICINE_SCENARIOS } from '../../src/modules/emergency-medicine/scenarios';
 import { CRITICAL_CARE_SCENARIOS } from '../../src/modules/critical-care/scenarios';
@@ -69,9 +71,9 @@ describe('Requirement: Per-Route Metadata', () => {
     expect(canonicalUrl('/anesthesia')).toBe('https://opensimlab.com/anesthesia');
     // A trailing slash resolves to the same canonical.
     expect(canonicalUrl('/anesthesia/')).toBe(canonicalUrl('/anesthesia'));
-    expect(socialImageUrl('/')).toBe('https://opensimlab.com/og/index.svg');
+    expect(socialImageUrl('/')).toBe('https://opensimlab.com/og/index.png');
     expect(socialImageUrl('/anesthesia/scenario/dilutional-coagulopathy'))
-      .toBe('https://opensimlab.com/og/anesthesia-scenario-dilutional-coagulopathy.svg');
+      .toBe('https://opensimlab.com/og/anesthesia-scenario-dilutional-coagulopathy.png');
   });
 
   it('Scenario: Scenario briefing pages are indexable, sessions are not', () => {
@@ -523,6 +525,108 @@ describe('Requirement: Crawlability Basics', () => {
       name: 'Auto-PEEP and dynamic hyperinflation',
       url: 'https://opensimlab.com/critical-care/scenario/auto-peep',
     });
+  });
+
+  it('Scenario: a disallow rule blocks only the route it names', () => {
+    // A robots path is a prefix match. `Disallow: /review` also blocked
+    // `/review-status`, which is indexable and listed in this same sitemap.
+    //
+    // Read from the generator rather than `dist`, because a plain `npm run build`
+    // is a preview build whose robots file disallows everything by design.
+    const rules = [...robotsTxt().matchAll(/^Disallow: (\S+)$/gm)].map((match) => match[1]!);
+    expect(rules.length).toBeGreaterThan(0);
+    const paths = indexableRoutes().map((route) => route.path);
+
+    for (const rule of rules) {
+      const anchored = rule.endsWith('$');
+      const prefix = anchored ? rule.slice(0, -1) : rule;
+      for (const path of paths) {
+        const blocked = anchored ? path === prefix : path.startsWith(prefix);
+        expect(blocked, `Disallow: ${rule} blocks the indexable ${path}`).toBe(false);
+      }
+    }
+  });
+
+  it('Scenario: every indexable route is reachable by following links', () => {
+    const dist = join(process.cwd(), 'dist');
+    const documentFor = (path: string) =>
+      join(dist, path === '/' ? 'index.html' : `${path.slice(1)}/index.html`);
+
+    const reached = new Set(['/']);
+    const queue = ['/'];
+    const broken: string[] = [];
+    while (queue.length > 0) {
+      const path = queue.shift()!;
+      const file = documentFor(path);
+      if (!existsSync(file)) { broken.push(path); continue; }
+      for (const match of readFileSync(file, 'utf8').matchAll(/href="(\/[^"#?]*)"/g)) {
+        const href = match[1]!.replace(/\/$/, '') || '/';
+        // Files rather than pages: they are fetched, not crawled onward.
+        if (/^\/(assets|fonts|catalog|og)\//.test(href) || /\.[a-z0-9]+$/i.test(href)) continue;
+        if (reached.has(href)) continue;
+        reached.add(href);
+        queue.push(href);
+      }
+    }
+    // An internal link that resolves to nothing wastes a crawl and dead-ends a reader.
+    expect(broken).toEqual([]);
+
+    const sitemap = readFileSync(join(dist, 'sitemap.xml'), 'utf8');
+    const paths = [...sitemap.matchAll(/<loc>https:\/\/opensimlab\.com([^<]*)<\/loc>/g)]
+      .map((match) => match[1] || '/');
+    // Reachable by following links, not merely listed. `/for-educators` and
+    // `/curriculum` were in the sitemap with nothing on the site linking to them.
+    expect(paths.filter((path) => !reached.has(path))).toEqual([]);
+  });
+
+  it('Scenario: a page states its place in the site', () => {
+    const page = readFileSync(join(
+      process.cwd(), 'dist/critical-care/scenario/auto-peep/index.html',
+    ), 'utf8');
+    const records = [...page.matchAll(/<script type="application\/ld\+json">([^<]+)<\/script>/g)]
+      .map((match) => JSON.parse(match[1]!) as Record<string, unknown>);
+    const trail = records.find((record) => record['@type'] === 'BreadcrumbList');
+    expect(trail).toMatchObject({
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Open Sim Lab', item: 'https://opensimlab.com/' },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: 'Critical care simulator',
+          item: 'https://opensimlab.com/critical-care',
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: 'Auto-PEEP and dynamic hyperinflation',
+          item: 'https://opensimlab.com/critical-care/scenario/auto-peep',
+        },
+      ],
+    });
+    // A flat document has no trail worth describing.
+    expect(breadcrumbJsonLd('/privacy')).toBeUndefined();
+  });
+
+  it('Scenario: the preview image is in a format a scraper renders', () => {
+    // No major crawler or link preview scraper renders SVG. While `og:image`
+    // named the `.svg`, every shared link resolved to a card with no image.
+    for (const path of ['/', '/oncology', '/critical-care/scenario/auto-peep']) {
+      const page = readFileSync(join(
+        process.cwd(), path === '/' ? 'dist/index.html' : `dist${path}/index.html`,
+      ), 'utf8');
+      const image = page.match(/<meta property="og:image" content="([^"]+)"/)?.[1];
+      expect(image, path).toMatch(/^https:\/\/opensimlab\.com\/og\/[a-z0-9-]+\.png$/);
+      expect(page).toContain('<meta property="og:image:type" content="image/png" />');
+      expect(page).toContain('<meta property="og:image:width" content="1200" />');
+      expect(page).toContain('<meta property="og:image:height" content="630" />');
+      expect(page).toMatch(/<meta property="og:image:alt" content="[^"]+"/);
+      expect(page).not.toContain('/og/index.svg');
+      // The file the tag promises has to exist and be a PNG.
+      const file = join(process.cwd(), 'dist', new URL(image!).pathname.slice(1));
+      expect(existsSync(file), image).toBe(true);
+      expect(readFileSync(file).subarray(0, 8))
+        .toEqual(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
+    }
   });
 
   it('Scenario: deploys build and verify an indexable artifact', () => {

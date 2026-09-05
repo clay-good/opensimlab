@@ -96,6 +96,16 @@ Every indexable route SHALL declare Open Graph and Twitter card tags with a prev
 - **WHEN** a link to any indexable route is pasted into a messaging or social application
 - **THEN** it renders with the route's own title, its description, and a preview image drawn in Theater Dark showing the route's subject, at 1200 by 630 pixels
 
+#### Scenario: The preview image is in a format a scraper renders
+
+- **WHEN** `og:image` is read
+- **THEN** it names a PNG, with its type, dimensions and alternative text declared beside it, because no major crawler or link preview scraper renders SVG and naming one produced a card with no image at all
+
+#### Scenario: A preview with no words on it fails the build
+
+- **WHEN** the preview images are rasterised on a machine with no usable sans-serif font
+- **THEN** the build fails, because the renderer drops every glyph silently and 270 wordless cards would otherwise publish unnoticed
+
 #### Scenario: Preview images are generated, not hand-made
 
 - **WHEN** a new scenario is added
@@ -119,6 +129,21 @@ The site SHALL publish a sitemap and a robots file, and SHALL keep them generate
 
 - **WHEN** `robots.txt` is fetched
 - **THEN** it permits crawling of indexable routes, disallows transient session routes, and names the sitemap URL
+
+#### Scenario: A disallow rule blocks only the route it names
+
+- **WHEN** a non-indexable route is disallowed
+- **THEN** the rule is anchored, because a robots path is a prefix match and an unanchored `Disallow: /review` also blocks `/review-status` — an indexable page listed in the same sitemap — and an automated test asserts no disallow rule blocks any route in the sitemap
+
+#### Scenario: Every indexable route is reachable by following links
+
+- **WHEN** the built site is crawled from `/` by following internal links only
+- **THEN** every route in the sitemap is reached without consulting the sitemap, and every internal link resolves to a page that exists, so no indexable page depends on the sitemap alone to be found
+
+#### Scenario: A page's place in the site is stated
+
+- **WHEN** a module route or a scenario briefing is fetched
+- **THEN** it carries a `BreadcrumbList` naming the trail from the front door through its module, so a result shows the path a reader would walk rather than a bare URL
 
 #### Scenario: Links are descriptive
 

@@ -2,11 +2,19 @@
  * Build-time social preview images (platform/discoverability → Social Previews).
  *
  * Generated from the design tokens and the route's own title, with no manual asset
- * step. They are SVG at 1200 by 630, which is a few hundred bytes each rather
- * than a few hundred kilobytes, and the application itself never fetches them, so
- * they cost the download budget nothing.
+ * step. Each is drawn as SVG at 1200 by 630 and then rasterised to PNG.
+ *
+ * The PNG is the one that ships in `og:image`. No major crawler or link preview
+ * scraper renders SVG — Google, Facebook, LinkedIn, X, Slack and iMessage all
+ * accept PNG, JPEG and WebP and nothing else — so every shared link resolved to a
+ * card with no image at all for as long as the tag named the `.svg`. The SVG is
+ * still written beside it as the source the PNG is drawn from.
+ *
+ * The application itself never fetches either, so they cost the download budget
+ * nothing.
  */
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { Resvg } from '@resvg/resvg-js';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { NEUTRAL, TRACE, TYPE } from '../src/platform/tokens/tokens.ts';
@@ -77,6 +85,72 @@ export function iconSvg(size: number, maskable: boolean): string {
   ].join('');
 }
 
+/**
+ * The sans face the previews are lettered in.
+ *
+ * One named file rather than the whole system font stack. `loadSystemFonts`
+ * rescans every font on the machine for each image, which costs 909 ms against
+ * 108 ms for a single file — across 270 images that is four minutes of build
+ * time to arrive at the same picture. The list is tried in order and the first
+ * file present wins; where none is, the scan is the fallback and still correct,
+ * only slow.
+ */
+const SANS_CANDIDATES = [
+  '/System/Library/Fonts/Helvetica.ttc',
+  '/System/Library/Fonts/Supplemental/Arial.ttf',
+  '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+  '/usr/share/fonts/dejavu/DejaVuSans.ttf',
+  '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
+];
+const sansFile = SANS_CANDIDATES.find((path) => existsSync(path));
+const FONT_OPTIONS = sansFile
+  ? { loadSystemFonts: false, fontFiles: [sansFile], defaultFontFamily: 'sans-serif' }
+  : { loadSystemFonts: true, defaultFontFamily: 'sans-serif' };
+
+/**
+ * Rasterise one preview image.
+ *
+ * Text is drawn with the host's own fonts. The vendored interface face is WOFF2,
+ * which the renderer does not decode — handed it, it silently drops every glyph
+ * and returns a picture of the ECG trace with no words on it. So a system face
+ * does the drawing, and `renderedGlyphCount` proves it did: a machine with no
+ * usable sans face fails the build here rather than publishing 270 blank cards,
+ * which is the failure nobody would have noticed.
+ */
+function rasterise(svg: string): Buffer {
+  const image = new Resvg(svg, {
+    fitTo: { mode: 'width', value: WIDTH },
+    font: FONT_OPTIONS,
+  }).render();
+  const png = image.asPng();
+  if (renderedGlyphCount(image.pixels, image.width, image.height) < MINIMUM_GLYPH_PIXELS) {
+    throw new Error(
+      'og: the preview rendered without text. No usable sans-serif font was found on this '
+      + 'machine, and a preview image with no words on it is worse than none. Install a '
+      + 'system font (on a bare Linux image, `fonts-dejavu-core`) and rebuild.',
+    );
+  }
+  return png;
+}
+
+/** How many pixels in the title band are neither background nor the trace green. */
+const MINIMUM_GLYPH_PIXELS = 500;
+function renderedGlyphCount(pixels: Buffer, width: number, height: number): number {
+  // The band holding the title and the body copy, above the trace panel.
+  const top = Math.round(height * 0.15);
+  const bottom = Math.round(height * 0.6);
+  let count = 0;
+  for (let y = top; y < bottom; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const at = (y * width + x) * 4;
+      const [r, g, b] = [pixels[at] ?? 0, pixels[at + 1] ?? 0, pixels[at + 2] ?? 0];
+      // Text is the only light ink in this band; the ground is near-black.
+      if (r > 90 && g > 90 && b > 90) count += 1;
+    }
+  }
+  return count;
+}
+
 function main(): void {
   const root = fileURLToPath(new URL('..', import.meta.url));
   const ogDir = join(root, 'public', 'og');
@@ -84,14 +158,16 @@ function main(): void {
 
   for (const route of ROUTES) {
     const name = route.path === '/' ? 'index' : route.path.replace(/^\//, '').replace(/\//g, '-');
-    writeFileSync(join(ogDir, `${name}.svg`), ogImage(route.heading, route.description), 'utf8');
+    const svg = ogImage(route.heading, route.description);
+    writeFileSync(join(ogDir, `${name}.svg`), svg, 'utf8');
+    writeFileSync(join(ogDir, `${name}.png`), rasterise(svg));
   }
 
   writeFileSync(join(root, 'public', 'icon-192.svg'), iconSvg(192, false), 'utf8');
   writeFileSync(join(root, 'public', 'icon-512.svg'), iconSvg(512, false), 'utf8');
   writeFileSync(join(root, 'public', 'icon-maskable.svg'), iconSvg(512, true), 'utf8');
 
-  process.stdout.write(`og: wrote ${ROUTES.length} preview images and 3 icons\n`);
+  process.stdout.write(`og: wrote ${ROUTES.length} preview images as SVG and PNG, and 3 icons\n`);
 }
 
 const isEntryPoint = process.argv[1] !== undefined

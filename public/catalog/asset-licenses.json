@@ -44,6 +44,16 @@
       "license": "MIT",
       "modification": "Generated deterministically from route metadata, design tokens, and the original hero trace.",
       "redistribution": "Original project output distributed under the repository MIT license."
+    },
+    {
+      "match": "og/*.png",
+      "kind": "generated-image",
+      "origin": "original-generated",
+      "source": "scripts/build-og.ts#rasterise",
+      "author": "Open Sim Lab contributors",
+      "license": "MIT",
+      "modification": "Rasterised from the matching og/*.svg. The artwork is the project's own; the lettering is set in whichever sans-serif face the building machine provides, so the file carries rendered glyph shapes rather than any font file.",
+      "redistribution": "Original project output distributed under the repository MIT license."
     }
   ]
 }

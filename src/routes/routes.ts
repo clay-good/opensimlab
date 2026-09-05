@@ -27,7 +27,8 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import { ROOT_ROUTE, formatTitle } from './site-metadata';
 import type { RouteMetadata } from './site-metadata';
 export {
-  SITE_NAME, SITE_ORIGIN, canonicalUrl, formatTitle, socialImageUrl,
+  SITE_NAME, SITE_ORIGIN, SOCIAL_IMAGE_HEIGHT, SOCIAL_IMAGE_WIDTH,
+  canonicalUrl, formatTitle, socialImageUrl,
 } from './site-metadata';
 export type { RouteMetadata } from './site-metadata';
 
