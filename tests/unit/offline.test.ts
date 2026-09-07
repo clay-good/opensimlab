@@ -3,7 +3,7 @@
  * no-outbound-traffic guarantee.
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { gzipSync } from 'node:zlib';
+import { brotliCompressSync, constants } from 'node:zlib';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
@@ -15,6 +15,14 @@ import { AnesthesiaEngine } from '@anesthesia/engine';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { ROUTES } from '@routes/routes';
 import { PUBLIC_CATALOG_ARTIFACTS } from '@platform/catalog/public-artifacts';
+
+/** The encoding the host serves, at the quality a static host encodes once with. */
+const brotliBytes = (bytes: Buffer): number => brotliCompressSync(bytes, {
+  params: {
+    [constants.BROTLI_PARAM_QUALITY]: 11,
+    [constants.BROTLI_PARAM_SIZE_HINT]: bytes.length,
+  },
+}).length;
 
 const root = fileURLToPath(new URL('../..', import.meta.url));
 const serviceWorker = readFileSync(join(root, 'public/sw.js'), 'utf8');
@@ -147,9 +155,9 @@ describe('Requirement: Full Offline Operation After First Load', () => {
 describe('Requirement: Bounded Download Budget', () => {
   it('includes every specialty when selecting the largest scenario document', () => {
     const assets = [
-      { path: 'anesthesia/scenario/routine-induction/index.html', rawBytes: 1000, gzipBytes: 100 },
-      { path: 'endocrine-metabolic/scenario/dka-resolution-transition/index.html', rawBytes: 2000, gzipBytes: 200 },
-      { path: 'endocrine-metabolic/index.html', rawBytes: 3000, gzipBytes: 300 },
+      { path: 'anesthesia/scenario/routine-induction/index.html', rawBytes: 1000, brotliBytes: 100 },
+      { path: 'endocrine-metabolic/scenario/dka-resolution-transition/index.html', rawBytes: 2000, brotliBytes: 200 },
+      { path: 'endocrine-metabolic/index.html', rawBytes: 3000, brotliBytes: 300 },
     ];
     expect(largestCockpitDocument(assets)).toBe(assets[1]);
     expect(largestCockpitDocument([])).toBeUndefined();
@@ -359,18 +367,41 @@ describe('Requirement: Everything The Offline Claim Names Is Actually Precached'
     // Undifferentiated shock then fit too, at 1,610 bytes gz marginal, leaving 613.
     // Two lessons landed inside a headroom that had been written off as too small for
     // one, which is the whole argument for measuring rather than estimating. 613 bytes
-    // is now genuinely the end of it: the two emergency-medicine labs still without a
-    // lesson (pea-arrest and persistent-vf-arrest) need engine cases first, and engine
-    // code lands in the precached solver worker too. The product decision above is the
-    // only thing left, and it should be taken deliberately rather than discovered by a
-    // failing build.
+    // looked like the end of it, and the paragraph here said the only choice left was
+    // a product one: raise the ceiling, or narrow the offline claim.
+    //
+    // Neither was needed, because the measurement was wrong. Every line above says the
+    // budget exists to count "the number of bytes that cross the wire" and then counted
+    // gzip. The bytes that cross the wire are Brotli. Checked against the deployed site
+    // rather than assumed:
+    //
+    //   curl -sI -H 'Accept-Encoding: br, gzip' https://opensimlab.com/ → content-encoding: br
+    //   the same for /assets/index-*.js
+    //
+    // Cloudflare negotiates `br`, so does every other static host this build is
+    // portable to, and every browser that speaks HTTPS has advertised it since 2016.
+    // Measured over exactly the files below, the same graph is 2.0000 MiB gzip and
+    // 1.5884 MiB Brotli. The ceiling was binding on 421 KB that no learner ever
+    // downloaded.
+    //
+    // So the promise is unchanged — a first visit downloads under 2 MiB and then owns
+    // every scenario offline — and the ceiling now measures it. Headroom is about
+    // 420 KB, which at the 1.6–2.1 KB marginal cost the entries above measured is
+    // room for roughly two hundred more lessons: the whole remaining catalog,
+    // including the two emergency-medicine labs that still need engine cases and the
+    // thirty-nine anesthesia labs that have not started.
+    //
+    // For whoever reads this next: this is not a licence to stop measuring. It moved
+    // the constraint out of the way of the content, it did not remove it. The stored
+    // ceiling below still fires on a data dump, and the marginal cost of a lesson is
+    // still worth checking before assuming the next one is free.
     const files = precache
       .filter((url) => url.startsWith('/assets/') || url.startsWith('/fonts/'))
       .map((url) => readFileSync(join(process.cwd(), 'dist', url)));
-    const transferred = files.reduce((sum, body) => sum + gzipSync(body, { level: 9 }).length, 0);
+    const transferred = files.reduce((sum, body) => sum + brotliBytes(body), 0);
     // The ceiling lives in scripts/check-budgets.ts so `npm run budget` reports
     // it alongside the others; this test is still what enforces it.
-    expect(transferred, `${(transferred / 1024 / 1024).toFixed(2)} MiB compressed`)
+    expect(transferred, `${(transferred / 1024 / 1024).toFixed(2)} MiB transferred (Brotli)`)
       .toBeLessThan(BUDGETS.precache);
     // A second, deliberately loose ceiling on the stored bytes. Compression
     // ratios hide a blob that inflates on disk, and Cache Storage holds the

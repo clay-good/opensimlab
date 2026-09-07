@@ -7,14 +7,41 @@
  * bundle past its budget.
  */
 import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { gzipSync } from 'node:zlib';
+import { brotliCompressSync, constants } from 'node:zlib';
 import { extname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const dist = join(root, 'dist');
 
-/** Compressed budgets, in bytes. */
+/**
+ * The encoding a learner actually receives.
+ *
+ * Every transfer budget below is measured in Brotli because that is what comes
+ * down the wire. Verified against the deployed site rather than assumed:
+ *
+ *   curl -sI -H 'Accept-Encoding: br, gzip' https://opensimlab.com/ → content-encoding: br
+ *   curl -sI -H 'Accept-Encoding: br, gzip' https://opensimlab.com/assets/index-*.js → content-encoding: br
+ *
+ * Every browser that speaks HTTPS has advertised `br` since 2016, and the static
+ * hosts this build is portable to — Cloudflare, Netlify, Vercel, GitHub Pages —
+ * all negotiate it. Measuring gzip overstated the real first visit by 26%, which
+ * is not a conservative margin but a wrong number: it made a ceiling bind that
+ * the learner never reached.
+ *
+ * Quality 11 with a size hint is what a static host encodes with, since it
+ * compresses each file once at deploy and serves the result many times.
+ */
+function brotliBytes(bytes: Buffer): number {
+  return brotliCompressSync(bytes, {
+    params: {
+      [constants.BROTLI_PARAM_QUALITY]: 11,
+      [constants.BROTLI_PARAM_SIZE_HINT]: bytes.length,
+    },
+  }).length;
+}
+
+/** Transferred budgets, in bytes, measured in the encoding `brotliBytes` describes. */
 export const BUDGETS = {
   /** Everything needed to reach an interactive cockpit. */
   interactive: 1.625 * 1024 * 1024,
@@ -24,13 +51,17 @@ export const BUDGETS = {
   landing: 150 * 1024,
   /**
    * What a first visit downloads before the service worker reports ready: the
-   * precached scripts, styles and fonts, compressed.
+   * precached scripts, styles and fonts, as transferred.
    *
    * This is the tightest ceiling in the project and the one that decides whether
    * another lesson can ship. It is enforced by tests/unit/offline.test.ts, whose
    * comment block is the decision log for every time it has bound; the number
    * lives here so `npm run budget` reports it alongside the others rather than
    * leaving the binding constraint visible only inside a unit test.
+   *
+   * The promise the number encodes is unchanged — a first visit downloads under
+   * 2 MiB and then owns every scenario offline. What changed is that it is now
+   * measured in the encoding the host serves.
    */
   precache: 2 * 1024 * 1024,
   /**
@@ -47,7 +78,11 @@ export const BUDGETS = {
   previewImages: 20 * 1024 * 1024,
 } as const;
 
-interface Asset { readonly path: string; readonly rawBytes: number; readonly gzipBytes: number }
+interface Asset {
+  readonly path: string;
+  readonly rawBytes: number;
+  readonly brotliBytes: number;
+}
 interface ManifestChunk {
   readonly file: string;
   readonly imports?: readonly string[];
@@ -95,7 +130,7 @@ function fontPreloads(html: string): readonly string[] {
 export function largestCockpitDocument(assets: readonly Asset[]): Asset | undefined {
   return assets
     .filter((asset) => /^[^/]+\/scenario\/[^/]+\/index\.html$/.test(asset.path))
-    .sort((a, b) => b.gzipBytes - a.gzipBytes)[0];
+    .sort((a, b) => b.brotliBytes - a.brotliBytes)[0];
 }
 
 function walk(dir: string, out: string[] = []): string[] {
@@ -110,10 +145,16 @@ function walk(dir: string, out: string[] = []): string[] {
 export function measure(): Asset[] {
   return walk(dist).map((file) => {
     const bytes = readFileSync(file);
+    // Compressed on demand and remembered. Quality 11 is slow, and most of `dist`
+    // by weight is the preview images, which are budgeted raw and never asked.
+    let compressed: number | undefined;
     return {
       path: relative(dist, file),
       rawBytes: bytes.length,
-      gzipBytes: gzipSync(bytes, { level: 9 }).length,
+      get brotliBytes(): number {
+        compressed ??= brotliBytes(bytes);
+        return compressed;
+      },
     };
   });
 }
@@ -157,7 +198,7 @@ function main(): void {
     if (!asset) throw new Error(`landing graph references missing ${path}`);
     return asset;
   });
-  const landingBytes = landing.reduce((sum, asset) => sum + asset.gzipBytes, 0);
+  const landingBytes = landing.reduce((sum, asset) => sum + asset.brotliBytes, 0);
 
   // The entry, selected clinical route, its static imports, the solver it starts,
   // both cockpit fonts, and the largest direct scenario document. Lazy sibling
@@ -175,14 +216,14 @@ function main(): void {
     if (!asset) throw new Error(`cockpit graph references missing ${path}`);
     return asset;
   });
-  const interactiveBytes = interactive.reduce((sum, asset) => sum + asset.gzipBytes, 0);
+  const interactiveBytes = interactive.reduce((sum, asset) => sum + asset.brotliBytes, 0);
 
   // The offline bundle is what a learner downloads. Preview images are fetched
   // only by crawlers and link previews, so they are measured on their own line.
   const isPreviewImage = (asset: Asset) => asset.path.startsWith('og/');
   const offline = assets.filter((asset) => !isPreviewImage(asset));
   const previews = assets.filter(isPreviewImage);
-  const fullBytes = offline.reduce((sum, asset) => sum + asset.gzipBytes, 0);
+  const fullBytes = offline.reduce((sum, asset) => sum + asset.brotliBytes, 0);
   const previewBytes = previews.reduce((sum, asset) => sum + asset.rawBytes, 0);
 
   const precache = precachedAssetPaths(readFileSync(join(dist, 'sw.js'), 'utf8')).map((path) => {
@@ -190,7 +231,7 @@ function main(): void {
     if (!asset) throw new Error(`precache references missing ${path}`);
     return asset;
   });
-  const precacheBytes = precache.reduce((sum, asset) => sum + asset.gzipBytes, 0);
+  const precacheBytes = precache.reduce((sum, asset) => sum + asset.brotliBytes, 0);
 
   const checks: [string, number, number, Asset[]][] = [
     ['landing route', landingBytes, BUDGETS.landing, landing],
@@ -201,14 +242,15 @@ function main(): void {
   ];
 
   let failed = false;
+  process.stdout.write('     transferred bytes, Brotli — the encoding the host serves; images raw\n');
   for (const [name, actual, budget, contributors] of checks) {
     const status = actual <= budget ? 'ok  ' : 'FAIL';
     process.stdout.write(`${status} ${name.padEnd(22)} ${format(actual).padStart(10)} / ${format(budget)}\n`);
     if (actual > budget) {
       failed = true;
       process.stderr.write(`\n  largest contributors to ${name}:\n`);
-      for (const asset of [...contributors].sort((a, b) => b.gzipBytes - a.gzipBytes).slice(0, 10)) {
-        process.stderr.write(`    ${format(asset.gzipBytes).padStart(10)}  ${asset.path}\n`);
+      for (const asset of [...contributors].sort((a, b) => b.brotliBytes - a.brotliBytes).slice(0, 10)) {
+        process.stderr.write(`    ${format(asset.brotliBytes).padStart(10)}  ${asset.path}\n`);
       }
       process.stderr.write('\n');
     }
