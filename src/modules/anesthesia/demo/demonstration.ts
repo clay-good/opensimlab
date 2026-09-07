@@ -77,60 +77,77 @@ export const INDUCTION_DEMONSTRATION: readonly DemonstrationBeat[] = [
     focus: 'monitor',
     action: { type: 'ventilator', payload: { fio2: 1 } },
   },
+  // Two beats where there was one, and both of them later than before. The old
+  // single beat said "nearly three minutes of that" at second 120, which was two
+  // minutes since the flowmeter moved and about zero since the end-tidal fraction
+  // arrived — and this scenario's own objective counts the end-tidal clock, in the
+  // words "End-tidal, not inspired". The demonstration was making the exact error
+  // it exists to teach against, and securing the airway with 150 seconds of
+  // reserve where the objective asks for 180. See tests/unit/demonstration.test.ts.
   {
     atSecond: 120,
-    narration: 'Nearly three minutes of that. This is the part everyone is tempted to skip, and '
-      + 'it is the difference between eight minutes of apnoea and one.',
+    narration: 'Two minutes since the flowmeter moved, and the end-tidal fraction has only just '
+      + 'reached 0.9. That is the clock that counts: the inspired number says what the machine '
+      + 'delivered, the end-tidal says what her lungs are actually holding.',
     focus: 'monitor',
   },
   {
-    atSecond: 190,
+    atSecond: 220,
+    narration: 'Just over two minutes now with the end-tidal fraction past 0.9. The objective '
+      + 'asks for three, counted from when that number arrived rather than from when the oxygen '
+      + 'went on — and the rest of it accrues during the apnoea that follows, while the reserve '
+      + 'is being spent rather than built. This is the part everyone is tempted to skip, and it '
+      + 'is the difference between eight minutes of apnoea and one.',
+    focus: 'monitor',
+  },
+  {
+    atSecond: 230,
     narration: 'Remifentanil first, then propofol. Now watch the concentration plot.',
     focus: 'analysis',
     action: { type: 'bolus', payload: { drugId: 'remifentanil', amount: 50, unit: 'µg' } },
   },
   {
-    atSecond: 195,
+    atSecond: 235,
     narration: 'Propofol, 2 mg/kg. The solid line is the plasma concentration and it spikes '
       + 'immediately. The dashed line is the effect site — where the drug actually works.',
     focus: 'analysis',
     action: { type: 'bolus', payload: { drugId: 'propofol', amount: 2, unit: 'mg/kg' } },
   },
   {
-    atSecond: 215,
+    atSecond: 255,
     narration: 'The plasma is already falling and the effect site is still climbing. She is '
       + 'getting deeper while the concentration in her blood drops. That gap is why a second '
       + 'dose given now is a dose you will regret.',
     focus: 'analysis',
   },
   {
-    atSecond: 240,
+    atSecond: 280,
     narration: 'The pressure is coming down, following the effect site rather than the plasma. '
       + 'The depth index is heading into the surgical range.',
     focus: 'monitor',
   },
   {
-    atSecond: 265,
+    atSecond: 305,
     narration: 'The capnogram has gone flat. She has stopped breathing — expected, not a '
       + 'complication, and the reason the last three minutes mattered.',
     focus: 'monitor',
   },
   {
-    atSecond: 290,
+    atSecond: 320,
     narration: 'Laryngoscopy. The view and the number of attempts are drawn from a distribution '
       + 'anchored to reported incidence, so this is not scripted to succeed.',
     focus: 'actions',
     action: { type: 'laryngoscopy', payload: { technique: 'video' } },
   },
   {
-    atSecond: 300,
+    atSecond: 330,
     narration: 'Ventilating. The capnogram is back, and that returning trace is how you know the '
       + 'tube is where you think it is.',
     focus: 'monitor',
     action: { type: 'ventilator', payload: { delivering: true, mode: 'volume-control' } },
   },
   {
-    atSecond: 330,
+    atSecond: 350,
     narration: 'That is the whole idea. Every number came from a published model, and the '
       + 'debrief at the end works out what happened by re-running this, not by scoring it. '
       + 'Take the controls and try it yourself.',

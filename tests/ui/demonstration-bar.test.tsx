@@ -90,7 +90,10 @@ describe('the demonstration strip', () => {
   it('moves on to the next beat as the clock advances', () => {
     show(0);
     const opening = text();
-    show(200);
+    // The propofol beat, which moved from 195 s to 235 s when the induction was
+    // pushed back to buy the three minutes of end-tidal reserve the scenario's
+    // objective actually asks for.
+    show(240);
     expect(text()).not.toBe(opening);
     expect(text()).toContain('mg/kg');
   });

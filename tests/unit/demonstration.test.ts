@@ -59,9 +59,9 @@ describe('the guided demonstration', () => {
     }
   });
 
-  it('preoxygenates for at least three minutes before the induction dose', () => {
-    // The script teaches that this is the part not to skip, so the script had
-    // better not skip it.
+  it('still gives the opioid and the hypnotic within a few seconds of each other', () => {
+    // The gap between them is the sequence, not the wait. The wait is asserted
+    // against the engine's own counter below.
     const oxygen = INDUCTION_DEMONSTRATION.find(
       (beat) => beat.action?.type === 'ventilator'
         && (beat.action.payload as { fio2?: number }).fio2 === 1,
@@ -72,7 +72,15 @@ describe('the guided demonstration', () => {
     );
     expect(oxygen).toBeDefined();
     expect(propofol).toBeDefined();
-    expect(propofol!.atSecond - oxygen!.atSecond).toBeGreaterThanOrEqual(180);
+    // This assertion used to be the preoxygenation guard, and it measured the
+    // WRONG CLOCK: propofol minus oxygen is time since the flowmeter moved,
+    // which is precisely what this scenario's objective refuses to accept —
+    // "End-tidal, not inspired: the inspired fraction says what the machine
+    // delivered, not whether the lungs filled." It read 183 seconds and passed
+    // while the engine's end-tidal counter read 150 against a 180-second
+    // objective, so the demonstration was making the error it exists to teach
+    // against. It is kept here only as a sanity bound on the script's shape.
+    expect(propofol!.atSecond - oxygen!.atSecond).toBeGreaterThan(0);
   });
 
   it('gives the opioid before the hypnotic', () => {
@@ -173,16 +181,41 @@ describe.each(SEEDS)('what the narration promises actually happens (seed %i)', (
     expect(field(180, 'endTidalO2Fraction')).toBeGreaterThan(0.85);
   });
 
+  it('secures the airway with the three minutes the objective asks for', () => {
+    // The real guard, and the one the shape check above used to stand in for
+    // badly. This counts what the scenario's `preoxygenate` objective counts:
+    // simulated seconds at an END-TIDAL fraction of 0.9 or more with the airway
+    // still unsecured. The script read 150 seconds against a 180-second
+    // objective until the induction beats moved from 190/195 s to 230/235 s.
+    //
+    // Part of the total accrues after the induction dose, while the patient is
+    // apnoeic and the reserve is being spent rather than built. That is the
+    // engine's definition and the beat at 220 s says so out loud, so a viewer is
+    // not left thinking the whole three minutes was tidal breathing.
+    const laryngoscopy = INDUCTION_DEMONSTRATION
+      .find((beat) => beat.action?.type === 'laryngoscopy')!;
+    let ticks = 0;
+    let previous: number | null = null;
+    for (const sample of history) {
+      if (sample.tick > laryngoscopy.atSecond * TICKS_PER_SECOND) break;
+      if ((sample.state.endTidalO2Fraction ?? 0) >= 0.9 && previous !== null) {
+        ticks += sample.tick - previous;
+      }
+      previous = sample.tick;
+    }
+    expect(ticks / TICKS_PER_SECOND).toBeGreaterThanOrEqual(180);
+  });
+
   it('"the plasma spikes immediately" — it does', () => {
-    expect(propofolAt(194).plasma).toBeLessThan(0.5);
-    expect(propofolAt(200).plasma).toBeGreaterThan(2);
+    expect(propofolAt(234).plasma).toBeLessThan(0.5);
+    expect(propofolAt(240).plasma).toBeGreaterThan(2);
   });
 
   it('"the plasma is falling and the effect site is still climbing" — at the beat that says so', () => {
-    // The beat at 215 s is the entire reason this simulator exists, so it is
+    // The beat at 255 s is the entire reason this simulator exists, so it is
     // asserted at exactly the second the narration claims it.
-    const early = propofolAt(205);
-    const late = propofolAt(215);
+    const early = propofolAt(245);
+    const late = propofolAt(255);
     expect(late.plasma).toBeLessThan(early.plasma);
     expect(late.effectSite).toBeGreaterThan(early.effectSite);
     // And the effect site is still behind the plasma, which is the lag itself.
@@ -191,25 +224,25 @@ describe.each(SEEDS)('what the narration promises actually happens (seed %i)', (
 
   it('"the pressure is coming down" — and it follows the effect site, not the plasma', () => {
     const baseline = field(180, 'meanArterialMmHg');
-    const after = field(240, 'meanArterialMmHg');
+    const after = field(280, 'meanArterialMmHg');
     expect(after).toBeLessThan(baseline);
-    // The plasma peaked around 196 s and the pressure nadir comes later, which
+    // The plasma peaked around 236 s and the pressure nadir comes later, which
     // is the claim: it tracks the second curve.
-    expect(propofolAt(240).plasma).toBeLessThan(propofolAt(200).plasma);
+    expect(propofolAt(280).plasma).toBeLessThan(propofolAt(240).plasma);
   });
 
   it('"the depth index is heading into the surgical range"', () => {
-    expect(field(240, 'depthIndex')).toBeLessThan(60);
-    expect(field(240, 'depthIndex')).toBeLessThan(field(180, 'depthIndex'));
+    expect(field(280, 'depthIndex')).toBeLessThan(60);
+    expect(field(280, 'depthIndex')).toBeLessThan(field(180, 'depthIndex'));
   });
 
   it('"the capnogram has gone flat" — she is apnoeic by the beat that says so', () => {
     expect(field(180, 'respiratoryRateBpm')).toBeGreaterThan(0);
-    expect(field(265, 'respiratoryRateBpm')).toBe(0);
+    expect(field(305, 'respiratoryRateBpm')).toBe(0);
   });
 
   it('"the capnogram is back" — ventilation restores it', () => {
-    expect(field(320, 'etco2MmHg')).toBeGreaterThan(20);
+    expect(field(350, 'etco2MmHg')).toBeGreaterThan(20);
   });
 
   it('she never desaturates, because the preoxygenation was real', () => {
