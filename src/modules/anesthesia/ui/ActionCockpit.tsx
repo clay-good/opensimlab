@@ -241,6 +241,7 @@ import { acuteAorticSyndromeInlinePrompt } from '../../emergency-medicine/tutor/
 import { acuteIschemicStrokeInlinePrompt } from '../../emergency-medicine/tutor/acute-ischemic-stroke-guidance';
 import { hemorrhagicShockInlinePrompt } from '../../emergency-medicine/tutor/hemorrhagic-shock-guidance';
 import { undifferentiatedShockInlinePrompt } from '../../emergency-medicine/tutor/undifferentiated-shock-guidance';
+import { peaArrestInlinePrompt } from '../../emergency-medicine/tutor/pea-arrest-guidance';
 import { acutePulmonaryEdemaInlinePrompt } from '../../emergency-medicine/tutor/acute-pulmonary-edema-guidance';
 import { adultAsthmaInlinePrompt } from '../../emergency-medicine/tutor/adult-asthma-guidance';
 import { emergencyAnaphylaxisInlinePrompt } from '../../emergency-medicine/tutor/emergency-anaphylaxis-guidance';
@@ -3071,6 +3072,7 @@ export interface ActionCockpitProps {
   readonly acuteIschemicStrokeGuidance?: GuidanceLevel;
   readonly hemorrhagicShockGuidance?: GuidanceLevel;
   readonly undifferentiatedShockGuidance?: GuidanceLevel;
+  readonly peaArrestGuidance?: GuidanceLevel;
   readonly acutePulmonaryEdemaGuidance?: GuidanceLevel;
   readonly adultAsthmaGuidance?: GuidanceLevel;
   readonly emergencyAnaphylaxisGuidance?: GuidanceLevel;
@@ -3280,6 +3282,7 @@ export interface ActionCockpitProps {
   readonly acuteIschemicStrokeDemonstrating?: boolean;
   readonly hemorrhagicShockDemonstrating?: boolean;
   readonly undifferentiatedShockDemonstrating?: boolean;
+  readonly peaArrestDemonstrating?: boolean;
   readonly acutePulmonaryEdemaDemonstrating?: boolean;
   readonly adultAsthmaDemonstrating?: boolean;
   readonly emergencyAnaphylaxisDemonstrating?: boolean;
@@ -5474,6 +5477,13 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 lastEnergyJ={props.resuscitation.lastDefibrillationEnergyJ ?? null}
                 roscAtTick={props.resuscitation.roscAtTick ?? null}
                 shockable={!focusedPeaScenario}
+                prompt={focusedPeaScenario && !props.peaArrestDemonstrating
+                  ? peaArrestInlinePrompt(props.peaArrestGuidance ?? 'unassisted', {
+                    scenarioVersion: props.scenario.metadata.version,
+                    patient: props.resuscitation,
+                  })
+                  : null}
+                demonstrating={focusedPeaScenario && props.peaArrestDemonstrating}
                 onCompressions={props.onChestCompressions ?? (() => {})}
                 onEpinephrine={props.onArrestEpinephrine ?? (() => {})}
                 onDefibrillation={props.onDefibrillation ?? (() => {})}
@@ -7322,7 +7332,8 @@ export function NeuromuscularReversalTray({
 
 function CardiacArrestTray({
   active, compressionsActive, compressionSeconds, epinephrineTotalMg, shockCount, lastEnergyJ,
-  roscAtTick, shockable, onCompressions, onEpinephrine, onDefibrillation,
+  roscAtTick, shockable, prompt, demonstrating = false,
+  onCompressions, onEpinephrine, onDefibrillation,
 }: {
   active: boolean;
   compressionsActive: boolean;
@@ -7332,6 +7343,13 @@ function CardiacArrestTray({
   lastEnergyJ: number | null;
   roscAtTick: number | null;
   shockable: boolean;
+  /**
+   * Two lessons share this tray. The tutor prompt and the watching notice are
+   * computed by the caller and passed in, so a second lesson can be given a
+   * tutor without this component learning which lesson it is rendering.
+   */
+  prompt?: { readonly suggestion: string; readonly because: string } | null;
+  demonstrating?: boolean;
   onCompressions: (active: boolean) => void;
   onEpinephrine: () => void;
   onDefibrillation: (energyJ: number) => void;
@@ -7339,7 +7357,10 @@ function CardiacArrestTray({
   const [pending, setPending] = useState<'epinephrine' | number | null>(null);
   const energies = [120, 150, 200];
   return (
-    <div className="tray-grid">
+    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+      <TutorPanel prompt={prompt} />
+      <WatchingNotice demonstrating={demonstrating} />
+      <div className="tray-grid">
       <section className="syringe">
         <div className="syringe__name">Chest compressions</div>
         <div className="syringe__meta">Fixed 110/min teaching action</div>
@@ -7350,7 +7371,8 @@ function CardiacArrestTray({
               : 'No scripted arrest active'}
         </p>
         <Button variant={compressionsActive ? 'ghost' : 'primary'} disabled={!active}
-          onClick={() => onCompressions(!compressionsActive)}>
+          aria-disabled={demonstrating}
+          onClick={demonstrating ? undefined : () => onCompressions(!compressionsActive)}>
           {compressionsActive ? 'Pause compressions' : 'Start compressions'}
         </Button>
         <p className="field__hint">Depth, recoil, interruptions, fatigue, and physical skill are not modeled.</p>
@@ -7360,7 +7382,8 @@ function CardiacArrestTray({
         <div className="syringe__meta">1 mg IV · bounded adult action</div>
         <p className="syringe__remaining" role="status">Accepted total: {epinephrineTotalMg.toFixed(0)} mg</p>
         {pending !== 'epinephrine' ? (
-          <Button disabled={!active || epinephrineTotalMg > 0} onClick={() => setPending('epinephrine')}>Prepare 1 mg IV</Button>
+          <Button disabled={!active || epinephrineTotalMg > 0} aria-disabled={demonstrating}
+            onClick={demonstrating ? undefined : () => setPending('epinephrine')}>Prepare 1 mg IV</Button>
         ) : (
           <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
             <Button variant="primary" onClick={() => { onEpinephrine(); setPending(null); }}>Give 1 mg IV</Button>
@@ -7396,6 +7419,7 @@ function CardiacArrestTray({
         <p className="syringe__remaining" role="status">PEA · continue CPR + treat reversible causes</p>
         <p className="field__hint">Defibrillation is not offered for PEA. Continue the nonshockable-arrest pathway and reassess rhythm and pulse at the modeled cycle boundary.</p>
       </section>}
+      </div>
     </div>
   );
 }

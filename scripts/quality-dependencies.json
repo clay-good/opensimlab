@@ -16,7 +16,7 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "57738480822589d8990a570a539cec774388be49db9fb109610fa09726c7eaf5"
+        "sha256": "d55ec315340a907d032204c8d1ad005215779349397f6588d2a0d2f764281b1a"
       },
       {
         "path": "src/modules/anesthesia/engine.ts",
@@ -28,7 +28,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "41f6a6c4682bf871d8e9d3a8fe56411618b22d1364bef0954a7c336b5e10c435"
+        "sha256": "a9c4191601a9048f8c31d64092d6c85dfe3cab9e913edb8f9b6b00c3a11cb597"
       },
       {
         "path": "src/modules/endocrine-metabolic/HypocalcemiaTray.tsx",
@@ -221,7 +221,7 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "57738480822589d8990a570a539cec774388be49db9fb109610fa09726c7eaf5"
+        "sha256": "d55ec315340a907d032204c8d1ad005215779349397f6588d2a0d2f764281b1a"
       },
       {
         "path": "src/modules/anesthesia/demo/useObservedDemonstration.ts",
@@ -241,15 +241,15 @@
       },
       {
         "path": "src/modules/anesthesia/ui/ActionCockpit.tsx",
-        "sha256": "f4a13856923429c338a76ae1df42a445e5204eba3c7e8968292415f2ba15d293"
+        "sha256": "a4645787e31fa0fd72f038b2d30c9464c026e679456ccec324b7e61a3fcea405"
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "651c9c554a29243ee9cf45ca188906a3c9209f2ab696fa003313f967834f564b"
+        "sha256": "9149076c7608135e512b87d6c51f013b3527466cdbaee9be76c53bf784b603f1"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "41f6a6c4682bf871d8e9d3a8fe56411618b22d1364bef0954a7c336b5e10c435"
+        "sha256": "a9c4191601a9048f8c31d64092d6c85dfe3cab9e913edb8f9b6b00c3a11cb597"
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
@@ -482,7 +482,7 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "57738480822589d8990a570a539cec774388be49db9fb109610fa09726c7eaf5"
+        "sha256": "d55ec315340a907d032204c8d1ad005215779349397f6588d2a0d2f764281b1a"
       },
       {
         "path": "src/modules/anesthesia/demo/useDemonstration.ts",
@@ -502,15 +502,15 @@
       },
       {
         "path": "src/modules/anesthesia/ui/ActionCockpit.tsx",
-        "sha256": "f4a13856923429c338a76ae1df42a445e5204eba3c7e8968292415f2ba15d293"
+        "sha256": "a4645787e31fa0fd72f038b2d30c9464c026e679456ccec324b7e61a3fcea405"
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "651c9c554a29243ee9cf45ca188906a3c9209f2ab696fa003313f967834f564b"
+        "sha256": "9149076c7608135e512b87d6c51f013b3527466cdbaee9be76c53bf784b603f1"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "41f6a6c4682bf871d8e9d3a8fe56411618b22d1364bef0954a7c336b5e10c435"
+        "sha256": "a9c4191601a9048f8c31d64092d6c85dfe3cab9e913edb8f9b6b00c3a11cb597"
       },
       {
         "path": "src/modules/anesthesia/ui/DemonstrationBar.tsx",

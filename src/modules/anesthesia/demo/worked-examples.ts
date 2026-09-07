@@ -179,6 +179,7 @@ import { supportsAcuteAorticSyndromeDemonstration } from '../../emergency-medici
 import { supportsAcuteIschemicStrokeDemonstration } from '../../emergency-medicine/demo/acute-ischemic-stroke-demonstration';
 import { supportsHemorrhagicShockDemonstration } from '../../emergency-medicine/demo/hemorrhagic-shock-demonstration';
 import { supportsUndifferentiatedShockDemonstration } from '../../emergency-medicine/demo/undifferentiated-shock-demonstration';
+import { supportsPeaArrestDemonstration } from '../../emergency-medicine/demo/pea-arrest-demonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
 import { supportsAdultAsthmaDemonstration } from '../../emergency-medicine/demo/adult-asthma-demonstration';
 import { supportsEmergencyAnaphylaxisDemonstration } from '../../emergency-medicine/demo/emergency-anaphylaxis-demonstration';
@@ -420,6 +421,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsAcuteIschemicStrokeDemonstration,
     supportsHemorrhagicShockDemonstration,
     supportsUndifferentiatedShockDemonstration,
+    supportsPeaArrestDemonstration,
     supportsAcutePulmonaryEdemaDemonstration,
     supportsAdultAsthmaDemonstration,
     supportsEmergencyAnaphylaxisDemonstration,

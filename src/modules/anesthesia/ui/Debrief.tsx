@@ -2768,6 +2768,13 @@ export function objectiveFindings(
           finding: 'The session ended before the scripted cardiac arrest.',
         } satisfies ObjectiveFinding;
       }
+      // Four lessons share this branch and two of them are not VF, so the
+      // finding names the rhythm the scenario actually declared. It used to say
+      // "after VF appeared" in a PEA debrief, which is simply not what happened.
+      const onsetRhythm = scenario.timeline.find((event) => event.type === 'rhythm-change'
+        && ['ventricular-fibrillation', 'asystole', 'pea'].includes(event.target ?? ''))?.target;
+      const onsetName = onsetRhythm === 'pea' ? 'pulseless electrical activity'
+        : onsetRhythm === 'asystole' ? 'asystole' : 'VF';
       const compressionStarts = log.filter((entry) => entry.eventId.startsWith('chest-compressions-start-'));
       const compressionStops = log.filter((entry) => entry.eventId.startsWith('chest-compressions-stop-'));
       const epinephrine = log.find((entry) => entry.eventId.startsWith('cardiac-arrest-epinephrine-'));
@@ -2781,8 +2788,8 @@ export function objectiveFindings(
           ...base,
           outcome: delay === null ? 'not-met' : delay <= 20 ? 'met' : delay <= 40 ? 'partly-met' : 'not-met',
           finding: delay === null
-            ? 'No accepted chest-compression start followed the pulseless VF event.'
-            : `Fixed-rate modeled compressions were accepted ${delay.toFixed(0)} seconds after VF appeared. This records screen intent, not physical CPR quality.`,
+            ? `No accepted chest-compression start followed the ${onsetName} event.`
+            : `Fixed-rate modeled compressions were accepted ${delay.toFixed(0)} seconds after ${onsetName} appeared. This records screen intent, not physical CPR quality.`,
           atTick: first?.tick,
         } satisfies ObjectiveFinding;
       }
@@ -2813,7 +2820,7 @@ export function objectiveFindings(
             ? `${Number(converting.data?.energyJ).toFixed(0)} J biphasic defibrillation converted the bounded teaching case to an organized rhythm. This deterministic result is not an individual prediction.`
             : shocks.length > 0
               ? `${shocks.length} accepted shock${shocks.length === 1 ? '' : 's'} did not meet the declared conversion conditions.`
-              : 'No accepted defibrillation was recorded after VF appeared.',
+              : `No accepted defibrillation was recorded after ${onsetName} appeared.`,
           atTick: converting?.tick ?? shocks.at(-1)?.tick,
         } satisfies ObjectiveFinding;
       }

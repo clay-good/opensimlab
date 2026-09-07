@@ -1811,23 +1811,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "pea-arrest-fixtures.ts binds seed 4120 and content 0.1.0 to expert, shock-first error, dose-contract recovery, and no-action paths. The sixty-seven-year-old man of 79 kg, the witnessed collapse, the organized electrical activity without a mechanical pulse, the fixed 110 per minute compression model, and the single bounded 1 mg arrest dose are authored constants. No CPR quality, drug kinetic, reversible-cause, rhythm-evolution or outcome model is claimed, and no ending follows from any choice. tests/integration/emergency-pea-arrest-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
           "status": "satisfied",
           "evidence": [
-            "The timeline contains at least one non-narrative state event."
+            "The shared audit already records this requirement as satisfied from the timeline, which is a briefing and one rhythm event. The progression the lesson actually teaches is not in the timeline and not in an order gate: this lesson has no order gates, and that is deliberate. Every one of the three controls is available from the first tick, including the shock, so what the transcript records is a choice rather than a queue the engine held open. What the engine does enforce is the bounded dose contract — exactly 1 mg, IV or IO, once — and the recovery transcript exercises all three of its refusals."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Three recorded decisions against three declared objectives, driving the generic scripted-arrest mechanics rather than a lesson-specific tray: start modeled compressions at a fixed 110 per minute; record exactly 1 mg of epinephrine by the IV or IO route while those compressions are running; and do not deliver the biphasic shock that the same tray would accept. The third is scored on its absence, so the common-error transcript delivers it and the debrief records that a non-shockable rhythm did not convert. The lesson performs no CPR, secures no access, gives no real drug, manages no airway, works through no reversible cause, runs no second cycle, checks no pulse at a cycle boundary, declares no ending, and predicts no outcome."
           ]
         },
         {
@@ -1839,23 +1839,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends with compressions running and the one accepted arrest dose given. There is no ROSC in this case and no termination: a non-shockable rhythm has no modeled conversion, so the lesson cannot end in an outcome and does not pretend to. Everything past the first cycle — further doses, rhythm and pulse checks, reversible causes, the airway, the team, disposition — is outside the case and the briefing says so before it starts."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Four observed-state prompts at version 0.1.0 read the learner's own recorded steps. The reflex the lesson works against is the defibrillator: every other arrest this learner has practised puts a shock at the front, and here the monitor is showing complexes that look like a rhythm worth shocking. The compressions beat says the monitor is not the patient and names why the objective is written in seconds. The resume beat says a dose given into a chest nobody is compressing goes as far as the vein it was injected into. The epinephrine beat says why non-shockable arrest is the case where the timing of the drug is least argued about, and names the bounded single dose against the algorithm's every three to five minutes. The shock correction says what a shock is for — stopping a heart quivering out of step with itself — and that there is nothing here to stop; it displaces the current beat rather than trailing a finished run, because a tutor advises the next decision and the debrief is what grades. Worked example 0.1.0 drives the ordinary arrest controls through the real engine and asks the tutor for its narration rather than storing a copy; it has no beat for the third objective, because an example cannot demonstrate a shock that was never delivered, so that argument sits in the closing narration which every path reaches. A test asserts that no beat anywhere names a cause, claims a conversion, or reports an outcome. tests/unit/emergency-pea-arrest-worked-example.test.ts verifies every beat and every refusal against the real engine, and tests/ui/emergency-pea-arrest.test.tsx verifies the tray, the absent shock control, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps the declared objectives to accepted engine events, timing the first compression from the rhythm event in seconds and reading the accepted dose, its route and whether compressions were running when it was given. The no-action path meets none and the expert path meets all three. The counterfactual is the shock: the common-error path delivers 200 J to PEA first, the engine accepts and delivers it, records that the non-shockable rhythm did not convert, and the run then completes correctly — which is the point, because doing the rest well does not take the shock back out of the transcript. The recovery path is refused an intramuscular route, refused a 2 mg dose, accepted at 1 mg IV, and refused a second dose."
           ]
         },
         {
@@ -1874,23 +1874,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "pea-arrest-fixtures.ts binds exact-content expert, shock-first error, dose-contract recovery, and no-action pathways to seed 4120 for deterministic replay through the shared engine, including all three dose refusals. Every path starts at tick 1, because the rhythm is a tick-0 timeline event and the arrest is not active until the engine has stepped once. One dispatch table is shared by the transcripts, the worked example and the tests, so a payload cannot drift between what a fixture replays and what the example demonstrates."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

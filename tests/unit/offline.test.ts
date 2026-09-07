@@ -395,6 +395,12 @@ describe('Requirement: Everything The Offline Claim Names Is Actually Precached'
     // the constraint out of the way of the content, it did not remove it. The stored
     // ceiling below still fires on a data dump, and the marginal cost of a lesson is
     // still worth checking before assuming the next one is free.
+    //
+    // The first lesson measured against the corrected ceiling is PEA arrest, at 1,373
+    // bytes Brotli marginal — 1,666,972 total, 430,180 left. Cheaper than the gzip
+    // figures above, and not only because the encoding changed: this lesson adds no
+    // engine code and no lesson-specific tray, because the scripted-arrest mechanics
+    // were already there. It is the floor for what a lesson can cost, not the average.
     const files = precache
       .filter((url) => url.startsWith('/assets/') || url.startsWith('/fonts/'))
       .map((url) => readFileSync(join(process.cwd(), 'dist', url)));
