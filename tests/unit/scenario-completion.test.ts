@@ -25,17 +25,21 @@ describe('machine-readable scenario completion contract', () => {
   });
 
   it('names concrete legacy gaps instead of fabricating fixtures or report coverage', () => {
-    // This used to read routine-induction, which was the obvious example while
-    // no anesthesia scenario had a completion sidecar. It has one now, so the
-    // example moved to a lab that is still legacy — the point being guarded is
-    // that the SHARED audit invents nothing for a scenario with no evidence, and
-    // that point needs a scenario with no evidence to make it.
-    const legacy = catalog.scenarios.find((record) => record.scenarioId === 'rapid-desaturation')!;
-    expect(legacy.requirements.find((entry) => entry.id === 'reference-transcripts')?.status)
-      .toBe('missing');
-    expect(legacy.requirements.find((entry) => entry.id === 'report-control-coverage')?.evidence[0])
+    // The example is DERIVED rather than named. It used to be routine-induction,
+    // then rapid-desaturation, and each time that lab gained a sidecar this test
+    // failed for the wrong reason — the guard is about the shared audit inventing
+    // nothing for a lab with no evidence, not about any particular lab. So it
+    // takes whichever anesthesia scenario is still legacy.
+    const legacy = catalog.scenarios.find((record) => record.requirements
+      .some((entry) => entry.id === 'reference-transcripts' && entry.status === 'missing'));
+    // When this throws, every anesthesia lab has reference transcripts and there
+    // is no legacy scenario left to make the point with. That is a good problem:
+    // delete this test and keep the one below.
+    expect(legacy, 'no legacy anesthesia scenario remains').toBeDefined();
+    expect(legacy!.requirements.find((entry) => entry.id === 'report-control-coverage')?.evidence[0])
       .toContain('not yet implemented');
-    expect(legacy.maturity).toBe('preview');
+    expect(legacy!.maturity).toBe('preview');
+    expect(legacy!.complete).toBe(false);
   });
 
   it('lets a sidecar upgrade a requirement, and only the ones it evidences', () => {

@@ -173,9 +173,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "rapid-desaturation-fixtures.ts binds seed 5310 and content 0.1.0 to expert, no-preoxygenation error, same-haste recovery, and no-action paths over 5,400 ticks. Nothing the objectives are scored on is authored: the fifty-four-year-old man of 138 kg is a set of baseline parameters and an obese respiratory profile, and the saturation, the end-tidal oxygen fraction, the laryngoscopic grade and the number of attempts all come out of the shared engine. The airway is genuinely stochastic — at this seed the first direct attempt returns a Cormack-Lehane grade 3 view and fails, and the second places the tube — which is why the transcripts record what the engine did rather than asserting a result. tests/integration/anesthesia-rapid-desaturation-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -187,9 +187,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "No tray of its own and no lesson-specific action: the flowmeter, two syringes, a laryngoscope with a choice of technique, and the ventilator, all available from the first tick. Two choices carry the lesson. The first is the propofol dose: the formulary offers a 2 mg/kg preset that gives 276 mg on this patient's total body weight, and the transcripts use the fixed 160 mg that is roughly 2 mg/kg of lean body mass instead — the scenario's own formulary comment says a 50 mL syringe was drawn up precisely so that the syringe would not make that decision for the learner. The second is the technique: the airway assessment names a Mallampati III view, 5.5 cm thyromental distance, limited neck extension and a beard before anything is given, and the expert path reaches for video first because of it. The lesson intubates nobody, gives no real drug, and predicts no outcome for any person."
           ]
         },
         {
@@ -201,23 +201,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The transcripts end at 5,400 ticks with the airway secured and the ventilator delivering. There is no maintenance, emergence or end of operation in this scenario and the briefing does not offer one: the slice is induction and the airway, and the run stops because that slice is over rather than because the patient reached a state."
           ]
         },
         {
           "id": "guidance-and-demonstration",
           "status": "missing",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Half of it exists and half does not, so this stays missing. The nine authored tutor rules at version 0.1.0 in tutor/guidance.ts do apply here, and the two that matter most in this patient are the preoxygenation ladder and the apnoea-after-bolus prompt: they read inspired oxygen, the recorded boluses and state the engine produced anyway, so unassisted is silent and coached withholds everything that is not about to hurt him. There is no worked example. The flagship demonstration is authored against routine induction, its seed and its patient — its narration names concentrations and timings belonging to a sixty-eight-kilogram woman with an easy airway — so offering it here would narrate a session that is not happening, and this requirement is not satisfied by pointing at it. The four reference transcripts are bound and replayable, but a transcript is not a demonstration a learner can watch and take the controls back from."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx derives all four objectives from the replayed state trace and the engine event log rather than from a score kept during the run. The counterfactual is the previous lesson. Routine induction teaches that preoxygenation buys time; this patient exists to say what that time is worth, and the error path finds out by treating him like the healthy forty-two-year-old — no oxygen, induce, take the airway. Measured, the saturation reaches 54.5%, and that number is produced by the obese profile's smaller functional residual capacity and higher oxygen consumption rather than authored. The recovery path carries the same impatience, inducing with 94 seconds of end-tidal reserve so the preoxygenation objective is partly met and stays that way, but the oxygen was running and the airway is taken promptly: the saturation never leaves its room-air baseline of 93.8%. Same haste, different margin."
           ]
         },
         {
@@ -236,23 +236,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "rapid-desaturation-fixtures.ts binds exact-content expert, no-preoxygenation error, same-haste recovery, and no-action pathways to seed 5310 for deterministic replay through the shared engine. Scored through the real debrief, the expert path meets all four; the error path is not met, not met, met, met; the recovery path is partly met, met, met, met; and the no-action path is not met, met, not exercised, met. The limit-attempts objective is met on every path that reaches an airway and is not failed by any of them, which is a property of the case rather than of the transcripts: the engine has never needed more than two accepted direct attempts on this patient across the seeds tested, and a transcript that failed it would have to be built to fail. This evidence claims the objective is exercised, not that it is stressed."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
