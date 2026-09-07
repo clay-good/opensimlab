@@ -155,6 +155,16 @@ export const INDUCTION_DEMONSTRATION: readonly DemonstrationBeat[] = [
   },
 ];
 
+/**
+ * The version this script is bound at.
+ *
+ * The completion evidence for routine-induction cites the worked example by
+ * version, so a change to the beats has to be a change to this number and to the
+ * evidence that names it, rather than a silent edit under a claim that no longer
+ * describes what a viewer sees.
+ */
+export const INDUCTION_DEMONSTRATION_VERSION = '0.2.0';
+
 /** The last beat's time, so the interface knows when the demonstration is over. */
 export const DEMONSTRATION_SECONDS =
   INDUCTION_DEMONSTRATION[INDUCTION_DEMONSTRATION.length - 1]!.atSecond;

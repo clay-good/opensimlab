@@ -25,11 +25,32 @@ describe('machine-readable scenario completion contract', () => {
   });
 
   it('names concrete legacy gaps instead of fabricating fixtures or report coverage', () => {
-    const routine = catalog.scenarios.find((record) => record.scenarioId === 'routine-induction')!;
-    expect(routine.requirements.find((entry) => entry.id === 'reference-transcripts')?.status)
+    // This used to read routine-induction, which was the obvious example while
+    // no anesthesia scenario had a completion sidecar. It has one now, so the
+    // example moved to a lab that is still legacy — the point being guarded is
+    // that the SHARED audit invents nothing for a scenario with no evidence, and
+    // that point needs a scenario with no evidence to make it.
+    const legacy = catalog.scenarios.find((record) => record.scenarioId === 'rapid-desaturation')!;
+    expect(legacy.requirements.find((entry) => entry.id === 'reference-transcripts')?.status)
       .toBe('missing');
-    expect(routine.requirements.find((entry) => entry.id === 'report-control-coverage')?.evidence[0])
+    expect(legacy.requirements.find((entry) => entry.id === 'report-control-coverage')?.evidence[0])
       .toContain('not yet implemented');
+    expect(legacy.maturity).toBe('preview');
+  });
+
+  it('lets a sidecar upgrade a requirement, and only the ones it evidences', () => {
+    // The other direction, now that one anesthesia lab has evidence: what the
+    // audit reports for routine-induction has to come from its sidecar rather
+    // than from the shared legacy text, and the two requirements the sidecar
+    // does not claim have to stay missing.
+    const routine = catalog.scenarios.find((record) => record.scenarioId === 'routine-induction')!;
+    expect(routine.requirements.find((entry) => entry.id === 'reference-transcripts'))
+      .toMatchObject({ status: 'satisfied' });
+    expect(routine.requirements.find((entry) => entry.id === 'reference-transcripts')?.evidence[0])
+      .toContain('routine-induction-fixtures.ts');
+    expect(routine.requirements.filter((entry) => entry.status === 'missing').map((entry) => entry.id))
+      .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
+    expect(routine.complete).toBe(false);
     expect(routine.maturity).toBe('preview');
   });
 

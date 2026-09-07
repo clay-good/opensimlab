@@ -29,16 +29,17 @@
  * rewritten twenty-three times before the sentence calling it started could go.
  *
  * Emergency medicine is the eighth and now the largest: twenty-five labs, its
- * number rewritten twenty-four times. With it the front page names fourteen
- * finished modules and one that has not started, and that second claim is derived
- * here too — anesthesia is asserted to be at zero rather than assumed to be, so
- * the sentence breaks the first time it gains a lesson. It is the last module the
- * not-started claim can name: when anesthesia starts, this sentence has to be
- * rewritten rather than relaxed.
+ * number rewritten twenty-four times.
  *
- * The part-finished form itself is not gone. The obstetrics and pediatrics
- * cases below still hold it, so the next module to start inherits a guard that
- * derives its number from the audit rather than trusting the front page.
+ * Anesthesia then started, which is what the not-started claim was written to
+ * break on, and it did. There is no module left to name as unstarted, so that
+ * assertion is gone and anesthesia has inherited the part-finished form instead:
+ * thirty-nine labs, the longest count this file has ever had to carry, derived
+ * from the audit like every one before it.
+ *
+ * The part-finished form is now held by four cases — obstetrics, pediatrics,
+ * cardiology and anesthesia — each deriving its number from the audit rather
+ * than trusting the front page.
  */
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
@@ -61,10 +62,15 @@ import { CRITICAL_CARE_SCENARIOS } from '../../src/modules/critical-care/scenari
 import { SCENARIOS as ANESTHESIA_SCENARIOS } from '@anesthesia/scenarios';
 import { EMERGENCY_MEDICINE_SCENARIOS } from '../../src/modules/emergency-medicine/scenarios';
 
+// Out to thirty-nine, which is the anesthesia module's size and the longest
+// count the front page has ever had to spell.
 const COUNT_WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight',
   'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen',
   'seventeen', 'eighteen', 'nineteen', 'twenty', 'twenty-one', 'twenty-two',
-  'twenty-three', 'twenty-four', 'twenty-five'] as const;
+  'twenty-three', 'twenty-four', 'twenty-five', 'twenty-six', 'twenty-seven',
+  'twenty-eight', 'twenty-nine', 'thirty', 'thirty-one', 'thirty-two',
+  'thirty-three', 'thirty-four', 'thirty-five', 'thirty-six', 'thirty-seven',
+  'thirty-eight', 'thirty-nine'] as const;
 
 function uncovered(scenarios: Parameters<typeof buildModuleCompletionCatalog>[0], moduleId: string) {
   const catalog = buildModuleCompletionCatalog(scenarios, ENGINE_VERSION, moduleId, 'ward');
@@ -222,12 +228,22 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
     expect(readme).not.toContain('of its twenty-five labs done');
   });
 
-  it('names the module that has not started, rather than assuming it', () => {
-    // Anesthesia is asserted to be at zero rather than assumed, so the sentence
-    // breaks the first time it gains a lesson.
-    expect(coveredCount(ANESTHESIA_SCENARIOS, 'anesthesia')).toBe(0);
+  it('counts the finished anesthesia labs rather than trusting the sentence', () => {
+    expect(ANESTHESIA_SCENARIOS).toHaveLength(39);
+    const covered = coveredCount(ANESTHESIA_SCENARIOS, 'anesthesia');
+    expect(covered).toBeGreaterThan(0);
     const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');
-    expect(readme).toContain('Anesthesia has not started.');
+    if (covered === ANESTHESIA_SCENARIOS.length) {
+      // The part-finished sentence is not allowed to linger once it is untrue.
+      expect(uncovered(ANESTHESIA_SCENARIOS, 'anesthesia')).toEqual([]);
+      expect(readme).not.toContain('Anesthesia has\nstarted');
+      return;
+    }
+    // The claim that no module had started is gone, and cannot come back while
+    // this passes: anesthesia was the last one it could have named.
+    expect(readme).not.toContain('has not started');
+    expect(readme).toContain(`with ${COUNT_WORDS[covered]} of its`);
+    expect(readme).toContain(`${COUNT_WORDS[ANESTHESIA_SCENARIOS.length]} labs done.`);
   });
 
   it('claims only what those fourteen modules support', () => {

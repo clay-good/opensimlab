@@ -47,9 +47,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "routine-induction-fixtures.ts binds seed 4207 and content 0.1.0 to expert, wrong-clock error, one-decision recovery, and no-action paths over 5,400 ticks. Unlike the module lessons, nothing here is an authored constant: the forty-two-year-old woman of 68 kg is a set of baseline parameters and everything the transcripts are scored on — seconds at an end-tidal oxygen fraction of 0.9, seconds of mean arterial pressure below 65, the lowest saturation, the percentage the heart rate rose after incision — is computed by the compartment solver and the haemodynamic model from published pharmacology. No outcome is authored and none follows from any choice. tests/integration/anesthesia-routine-induction-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -61,9 +61,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "This lesson has no tray of its own and no lesson-specific action. It drives the ordinary cockpit — the flowmeter, a propofol syringe, a remifentanil syringe, a laryngoscope and the ventilator — and every one of those is available from the first tick in any order. What separates the transcripts is not which controls were reachable but when they were used against a patient who was changing while the learner decided. The expert path is five actions; the error path is the same five with one more, given six seconds after the induction dose against a hundred-second time to peak. The lesson intubates nobody, gives no real drug, and predicts no outcome for any person."
           ]
         },
         {
@@ -75,23 +75,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The transcripts end at 5,400 ticks, which is nine simulated minutes: past incision at tick 3,600 and past port insertion at 4,800, so the two stimulus events the timeline declares have both been answered. There is no emergence, no extubation and no end of operation in this scenario, and the briefing does not offer one. The run stops because the slice it models is over, not because the patient reached a state."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Nine authored tutor rules at version 0.1.0 in tutor/guidance.ts cover four of the five objectives as a ladder rather than a single prompt per state: orient, notice, connect, prioritize, direct and explain for preoxygenation, then one each for ventilation, the effect-site wait, and treating the mechanism of the pressure fall. They carry cooldowns and an urgency flag, so coached withholds everything that is not about to hurt the patient and unassisted says nothing at all while unpromptedOmissions still records what went unsaid for the debrief. No rule covers blunt-incision, and this evidence does not claim one. Worked example 0.2.0 is the flagship demonstration linked from the landing page, driving the ordinary controls through the real engine and the real models. Its induction beats moved from 190/195 s to 230/235 s at this version, because at the earlier timing the example secured the airway with 150 seconds of end-tidal reserve and scored partly met on the preoxygenation objective it exists to teach; it now measures 190.6 seconds and the beat at 220 s names both clocks out loud. tests/unit/demonstration.test.ts asserts every narration promise against the engine, including that wait, and tests/integration/anesthesia-routine-induction-runs.test.ts pins the transcripts and the version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx derives all five objectives from the replayed state trace rather than from a score kept during the run. The counterfactual is the clock. The objective says \"End-tidal, not inspired\", and in this patient the end-tidal fraction does not reach 0.9 until about 97 seconds after the flowmeter moves — so an induction three minutes after turning the oxygen up arrives with roughly 150 seconds of reserve against an objective that asks for 180. The error and recovery paths share that opening exactly and differ in one decision: whether a second propofol dose is given while the first is still climbing. Measured, that single difference moves hysteresis from not met to met and takes the pressure nadir from 56.4 to 62.3 mmHg. Neither path recovers the preoxygenation deficit, because seconds already spent cannot be recovered, and the evidence says so rather than offering a path that pretends otherwise."
           ]
         },
         {
@@ -110,23 +110,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "routine-induction-fixtures.ts binds exact-content expert, wrong-clock error, one-decision recovery, and no-action pathways to seed 4207 for deterministic replay through the shared engine. Scored through the real debrief, the expert path meets all five objectives; the error path is partly met, not met, partly met, met, met; the recovery path is partly met, met, partly met, met, met; and the no-action path is not met, met, met, met, partly met. The expert path carries no vasopressor, because one was measured and changes the pressure nadir by less than a tenth of a millimetre of mercury in this patient — a reference transcript should not contain an action that does nothing."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
