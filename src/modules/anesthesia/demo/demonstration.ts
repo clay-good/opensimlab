@@ -17,6 +17,7 @@
  */
 
 import type { LearnerAction } from '@platform/kernel/protocol';
+import type { Scenario } from '../scenarios/types';
 
 /**
  * The scenario the script was authored against. The beats name concentrations,
@@ -154,6 +155,22 @@ export const INDUCTION_DEMONSTRATION: readonly DemonstrationBeat[] = [
     focus: 'none',
   },
 ];
+
+/**
+ * Whether this scenario is the one the script was authored against.
+ *
+ * The route has always gated the Watch control on the scenario id, and
+ * `offersWorkedExample` knew nothing about it — so the completion audit could
+ * claim a worked example for routine induction while the one list that is
+ * supposed to answer "does the product offer one here" said no. That is the same
+ * split the worked-example offer test was written to catch, and this closes it:
+ * the scripted demonstration is registered like any other, and the two lists
+ * agree again.
+ */
+export function supportsInductionDemonstration(scenario: Scenario): boolean {
+  return scenario.metadata.id === DEMONSTRATION_SCENARIO_ID
+    && scenario.metadata.version === '0.1.0';
+}
 
 /**
  * The version this script is bound at.

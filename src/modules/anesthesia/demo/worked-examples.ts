@@ -181,6 +181,8 @@ import { supportsHemorrhagicShockDemonstration } from '../../emergency-medicine/
 import { supportsUndifferentiatedShockDemonstration } from '../../emergency-medicine/demo/undifferentiated-shock-demonstration';
 import { supportsPeaArrestDemonstration } from '../../emergency-medicine/demo/pea-arrest-demonstration';
 import { supportsPersistentVfArrestDemonstration } from '../../emergency-medicine/demo/persistent-vf-arrest-demonstration';
+import { supportsRapidDesaturationDemonstration } from './rapid-desaturation-demonstration';
+import { supportsInductionDemonstration } from './demonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
 import { supportsAdultAsthmaDemonstration } from '../../emergency-medicine/demo/adult-asthma-demonstration';
 import { supportsEmergencyAnaphylaxisDemonstration } from '../../emergency-medicine/demo/emergency-anaphylaxis-demonstration';
@@ -215,6 +217,13 @@ import { supportsSepticShockDemonstration } from '../../emergency-medicine/demo/
  * and a scenario that appears here must have made that claim.
  */
 const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) => boolean)[]>> = {
+  // Two, and they work differently. The first is observed-state like every
+  // other example in the catalog. The second is the older scripted
+  // demonstration, authored against routine induction alone and driven by the
+  // clock rather than by the patient — the route starts it from a separate
+  // branch, but it is still an example the product offers, so it is listed here
+  // rather than leaving this list disagreeing with the completion audit.
+  anesthesia: [supportsRapidDesaturationDemonstration, supportsInductionDemonstration],
   'endocrine-metabolic': [
         supportsHypoglycemiaDemonstration,
     supportsAdrenalDemonstration,

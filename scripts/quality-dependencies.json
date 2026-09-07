@@ -245,7 +245,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "1813676142782e925d7ea7e0b3a6d51617fb81fac299912d53b9bc2e36c96aec"
+        "sha256": "28ef7a4f2badfd33ad46024599970d1c65689ec2e7e3e0f56be3ad96d1c91bd6"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
@@ -253,7 +253,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
-        "sha256": "52b03614e4980fef3b31134b740790e56ab286e6e410b912d23392a37b115d1f"
+        "sha256": "9c2909b4703132fea1bbc183e101b60d079c8b2ad541f8a796acf27a9f9abd45"
       },
       {
         "path": "src/modules/endocrine-metabolic/HyponatremiaCorrectionTray.tsx",
@@ -506,7 +506,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "1813676142782e925d7ea7e0b3a6d51617fb81fac299912d53b9bc2e36c96aec"
+        "sha256": "28ef7a4f2badfd33ad46024599970d1c65689ec2e7e3e0f56be3ad96d1c91bd6"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
@@ -518,7 +518,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
-        "sha256": "52b03614e4980fef3b31134b740790e56ab286e6e410b912d23392a37b115d1f"
+        "sha256": "9c2909b4703132fea1bbc183e101b60d079c8b2ad541f8a796acf27a9f9abd45"
       },
       {
         "path": "src/modules/anesthesia/ui/accessibility.ts",

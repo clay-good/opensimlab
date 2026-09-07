@@ -359,6 +359,8 @@ import { usePeaArrestDemonstration } from '../../emergency-medicine/demo/usePeaA
 import { supportsPeaArrestDemonstration } from '../../emergency-medicine/demo/pea-arrest-demonstration';
 import { usePersistentVfArrestDemonstration } from '../../emergency-medicine/demo/usePersistentVfArrestDemonstration';
 import { supportsPersistentVfArrestDemonstration } from '../../emergency-medicine/demo/persistent-vf-arrest-demonstration';
+import { useRapidDesaturationDemonstration } from '@anesthesia/demo/useRapidDesaturationDemonstration';
+import { supportsRapidDesaturationDemonstration } from '@anesthesia/demo/rapid-desaturation-demonstration';
 import { useAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/useAcutePulmonaryEdemaDemonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
 import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAdultAsthmaDemonstration';
@@ -729,6 +731,7 @@ export function Cockpit({
   const undifferentiatedShockDemoSupported = supportsUndifferentiatedShockDemonstration(scenario);
   const peaArrestDemoSupported = supportsPeaArrestDemonstration(scenario);
   const persistentVfDemoSupported = supportsPersistentVfArrestDemonstration(scenario);
+  const rapidDesaturationDemoSupported = supportsRapidDesaturationDemonstration(scenario);
   const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
   const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
   const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
@@ -907,6 +910,7 @@ export function Cockpit({
     || undifferentiatedShockDemoSupported
     || peaArrestDemoSupported
     || persistentVfDemoSupported
+    || rapidDesaturationDemoSupported
     || acutePulmonaryEdemaDemoSupported
     || adultAsthmaDemoSupported
     || emergencyAnaphylaxisDemoSupported
@@ -1431,6 +1435,33 @@ export function Cockpit({
     active: demonstrating && peaArrestDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  /**
+   * This lesson has no assessment sidecar, so its worked example reads the
+   * patient: the flowmeter, the end-tidal fraction, the engine's own
+   * preoxygenation counter, whether he is still breathing, what has arrived in
+   * the plasma, and the airway. Assembled here rather than in the hook, because
+   * only the cockpit holds all four of those sources at once.
+   */
+  const rapidDesaturationProgress = session.state && session.equipment ? {
+    inspiredOxygenFraction: session.equipment.ventilator.fio2,
+    endTidalOxygenFraction: session.state.endTidalO2Fraction ?? 0,
+    preoxygenationSeconds: session.equipment.preoxygenationSeconds,
+    respiratoryRateBpm: session.state.respiratoryRateBpm ?? 0,
+    remifentanilPlasma: session.concentrations
+      .find((drug) => drug.drugId === 'remifentanil')?.plasma ?? 0,
+    propofolPlasma: session.concentrations
+      .find((drug) => drug.drugId === 'propofol')?.plasma ?? 0,
+    intubated: session.equipment.airway.intubated,
+    ventilating: session.equipment.ventilator.delivering,
+    airwayAttempts: session.equipment.airway.attempts,
+    airwayAttemptInProgress: session.equipment.airway.attemptInProgress,
+  } : undefined;
+  const rapidDesaturationDemonstration = useRapidDesaturationDemonstration({
+    active: demonstrating && rapidDesaturationDemoSupported,
+    running: session.transport === 'running',
+    patient: rapidDesaturationProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const persistentVfDemonstration = usePersistentVfArrestDemonstration({
@@ -2194,6 +2225,7 @@ export function Cockpit({
     : undifferentiatedShockDemoSupported ? undifferentiatedShockDemonstration
     : peaArrestDemoSupported ? peaArrestDemonstration
     : persistentVfDemoSupported ? persistentVfDemonstration
+    : rapidDesaturationDemoSupported ? rapidDesaturationDemonstration
     : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
     : adultAsthmaDemoSupported ? adultAsthmaDemonstration
     : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration

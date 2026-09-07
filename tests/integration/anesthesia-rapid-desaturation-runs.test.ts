@@ -88,16 +88,18 @@ describe('Rapid desaturation transcripts through the real engine and debrief', (
     expect(rapidDesaturationCompletionEvidence({ ...SCENARIO, patient: { ...SCENARIO.patient, weightKg: 9 } }, ENGINE_VERSION, 'anesthesia')).toEqual([]);
   });
 
-  it('does not claim a worked example it does not have', () => {
-    // The flagship demonstration is authored against routine induction, its seed
-    // and its patient. Pointing at it here would narrate a session that is not
-    // happening, so this requirement stays missing and says why.
+  it('claims its own worked example and not the scripted demonstration', () => {
+    // This requirement was missing until the lesson had an example of its own,
+    // and the reason it could not borrow one is worth keeping: the flagship
+    // demonstration is authored against routine induction, its seed and its
+    // patient, so pointing at it here would narrate a session that is not
+    // happening. The evidence now cites the observed-state example instead.
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'anesthesia', 'operating-room', 'state_transition');
     const guidance = audit.requirements.find(({ id }) => id === 'guidance-and-demonstration')!;
-    expect(guidance.status).toBe('missing');
-    expect(guidance.evidence.join(' ')).toContain('There is no worked example');
+    expect(guidance.status).toBe('satisfied');
+    expect(guidance.evidence.join(' ')).toContain('The flagship scripted demonstration is NOT this');
     expect(audit.requirements.filter(({ status }) => status === 'missing').map(({ id }) => id))
-      .toEqual(['guidance-and-demonstration', 'inclusive-runtime-verification', 'report-control-coverage']);
+      .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
   });
 
   it('guards on the declared objectives', () => {

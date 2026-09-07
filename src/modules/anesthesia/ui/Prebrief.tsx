@@ -23,6 +23,7 @@ import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
 import { supportsSevereHypoglycemia } from '../../endocrine-metabolic/severe-hypoglycemia';
 import { supportsAdrenalCrisis } from '../../endocrine-metabolic/adrenal-crisis';
 import { offersWorkedExample } from '@anesthesia/demo/worked-examples';
+import { supportsInductionDemonstration } from '@anesthesia/demo/demonstration';
 
 export const FICTION_CONTRACT =
   'This is a simulation. The patient is not real, nothing you do here reaches anyone, and an '
@@ -60,10 +61,21 @@ export function Prebrief({
   const patient = scenario.patient;
   const hypoglycemia = supportsSevereHypoglycemia(scenario);
   /**
-   * Whether this lesson has a worked example rather than the scripted 90-second
-   * demonstration. One list, shared with the route that offers the control.
+   * Whether this lesson has an OBSERVED-STATE worked example rather than the
+   * scripted 90-second demonstration. One list for whether an example exists at
+   * all, shared with the route and the completion audit; one predicate for which
+   * kind it is, because the two need different copy.
+   *
+   * They were the same test until the anaesthesia module gained its first real
+   * worked example. Registering the scripted demonstration alongside it — which
+   * the audit cross-check requires, since the route does offer it — silently gave
+   * routine induction the worked-example label and a hint promising it pauses
+   * before each decision and observes at 60× speed. The script does neither: it
+   * runs at five times speed and stops for nothing.
    */
-  const workedExample = offersWorkedExample(scenario, environment);
+  const scriptedDemonstration = environment === 'anesthesia'
+    && supportsInductionDemonstration(scenario);
+  const workedExample = offersWorkedExample(scenario, environment) && !scriptedDemonstration;
 
   return (
     <>

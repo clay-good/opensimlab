@@ -28,6 +28,7 @@ const MODULES = [
   ['infectious-disease', INFECTIOUS_DISEASE_SCENARIOS],
   ['neonatology', NEONATOLOGY_SCENARIOS],
   ['toxicology', TOXICOLOGY_SCENARIOS],
+  ['anesthesia', ANESTHESIA_SCENARIOS],
 ] as const;
 
 const claimed = (scenarios: typeof MODULES[number][1], moduleId: string) =>
@@ -49,18 +50,24 @@ describe('Requirement: Every Audited Example Is Offered', () => {
 
   it('names the modules that ship examples and no others', () => {
     expect(WORKED_EXAMPLE_MODULE_IDS.slice().sort())
-      .toEqual(['cardiology', 'critical-care', 'emergency-medicine', 'endocrine-metabolic',
-        'infectious-disease', 'medical-surgical-nursing', 'neonatology', 'neurology',
-        'obstetrics', 'oncology', 'pediatrics', 'renal-electrolyte', 'respiratory-medicine',
-        'toxicology']);
+      .toEqual(['anesthesia', 'cardiology', 'critical-care', 'emergency-medicine',
+        'endocrine-metabolic', 'infectious-disease', 'medical-surgical-nursing',
+        'neonatology', 'neurology', 'obstetrics', 'oncology', 'pediatrics',
+        'renal-electrolyte', 'respiratory-medicine', 'toxicology']);
   });
 
-  it('offers nothing for a module that has no worked example', () => {
-    // Anesthesia has the older scripted demonstration, which the route offers by
-    // scenario id through a different branch. It is not a worked example.
-    for (const scenario of ANESTHESIA_SCENARIOS) {
-      expect(offersWorkedExample(scenario, 'anesthesia')).toBe(false);
-    }
+  it('offers both anesthesia examples and nothing else in the module', () => {
+    // Anesthesia used to offer nothing here, and this test said so. It now
+    // offers two, and they work differently: rapid-desaturation is observed-state
+    // like every other example in the catalog, and routine-induction is the older
+    // scripted demonstration the route starts from a separate branch. That
+    // separate branch is why this list used to disagree with the completion
+    // audit, which claimed an example for routine-induction that this function
+    // said did not exist. The remaining thirty-seven labs offer nothing.
+    const offered = ANESTHESIA_SCENARIOS
+      .filter((scenario) => offersWorkedExample(scenario, 'anesthesia'))
+      .map((scenario) => scenario.metadata.id);
+    expect(offered.slice().sort()).toEqual(['rapid-desaturation', 'routine-induction']);
   });
 
   it('refuses a look-alike scenario at another content version', () => {
