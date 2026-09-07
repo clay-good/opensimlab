@@ -144,6 +144,7 @@ import { acuteIschemicStrokeCompletionEvidence } from '../../emergency-medicine/
 import { hemorrhagicShockCompletionEvidence } from '../../emergency-medicine/hemorrhagic-shock-completion';
 import { undifferentiatedShockCompletionEvidence } from '../../emergency-medicine/undifferentiated-shock-completion';
 import { peaArrestCompletionEvidence } from '../../emergency-medicine/pea-arrest-completion';
+import { persistentVfArrestCompletionEvidence } from '../../emergency-medicine/persistent-vf-arrest-completion';
 import { acutePulmonaryEdemaCompletionEvidence } from '../../emergency-medicine/acute-pulmonary-edema-completion';
 import { adultAsthmaCompletionEvidence } from '../../emergency-medicine/adult-asthma-completion';
 import { emergencyAnaphylaxisCompletionEvidence } from '../../emergency-medicine/emergency-anaphylaxis-completion';
@@ -446,6 +447,7 @@ export function auditClinicalScenario(
     ...hemorrhagicShockCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...undifferentiatedShockCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...peaArrestCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...persistentVfArrestCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...acutePulmonaryEdemaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...adultAsthmaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...emergencyAnaphylaxisCompletionEvidence(scenario, capabilityVersion, moduleId),

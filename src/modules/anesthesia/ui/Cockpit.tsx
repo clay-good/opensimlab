@@ -357,6 +357,8 @@ import { useUndifferentiatedShockDemonstration } from '../../emergency-medicine/
 import { supportsUndifferentiatedShockDemonstration } from '../../emergency-medicine/demo/undifferentiated-shock-demonstration';
 import { usePeaArrestDemonstration } from '../../emergency-medicine/demo/usePeaArrestDemonstration';
 import { supportsPeaArrestDemonstration } from '../../emergency-medicine/demo/pea-arrest-demonstration';
+import { usePersistentVfArrestDemonstration } from '../../emergency-medicine/demo/usePersistentVfArrestDemonstration';
+import { supportsPersistentVfArrestDemonstration } from '../../emergency-medicine/demo/persistent-vf-arrest-demonstration';
 import { useAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/useAcutePulmonaryEdemaDemonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
 import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAdultAsthmaDemonstration';
@@ -726,6 +728,7 @@ export function Cockpit({
   const hemorrhagicShockDemoSupported = supportsHemorrhagicShockDemonstration(scenario);
   const undifferentiatedShockDemoSupported = supportsUndifferentiatedShockDemonstration(scenario);
   const peaArrestDemoSupported = supportsPeaArrestDemonstration(scenario);
+  const persistentVfDemoSupported = supportsPersistentVfArrestDemonstration(scenario);
   const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
   const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
   const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
@@ -903,6 +906,7 @@ export function Cockpit({
     || hemorrhagicShockDemoSupported
     || undifferentiatedShockDemoSupported
     || peaArrestDemoSupported
+    || persistentVfDemoSupported
     || acutePulmonaryEdemaDemoSupported
     || adultAsthmaDemoSupported
     || emergencyAnaphylaxisDemoSupported
@@ -1425,6 +1429,12 @@ export function Cockpit({
   });
   const peaArrestDemonstration = usePeaArrestDemonstration({
     active: demonstrating && peaArrestDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const persistentVfDemonstration = usePersistentVfArrestDemonstration({
+    active: demonstrating && persistentVfDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
@@ -2183,6 +2193,7 @@ export function Cockpit({
     : hemorrhagicShockDemoSupported ? hemorrhagicShockDemonstration
     : undifferentiatedShockDemoSupported ? undifferentiatedShockDemonstration
     : peaArrestDemoSupported ? peaArrestDemonstration
+    : persistentVfDemoSupported ? persistentVfDemonstration
     : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
     : adultAsthmaDemoSupported ? adultAsthmaDemonstration
     : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration
@@ -3227,6 +3238,8 @@ export function Cockpit({
           undifferentiatedShockDemonstrating={demonstrating && undifferentiatedShockDemoSupported}
           peaArrestGuidance={session.guidance}
           peaArrestDemonstrating={demonstrating && peaArrestDemoSupported}
+          persistentVfGuidance={session.guidance}
+          persistentVfDemonstrating={demonstrating && persistentVfDemoSupported}
           acutePulmonaryEdemaGuidance={session.guidance}
           acutePulmonaryEdemaDemonstrating={demonstrating && acutePulmonaryEdemaDemoSupported}
           adultAsthmaGuidance={session.guidance}

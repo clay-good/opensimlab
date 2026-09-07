@@ -1685,23 +1685,23 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "persistent-vf-arrest-fixtures.ts binds seed 8215 and content 0.1.0 to expert, under-energy error, shock-before-the-dose recovery, and no-action paths. The sixty-four-year-old woman of 74 kg, the two shocks already spent before the handoff, the fixed 110 per minute compression model, the single bounded 1 mg arrest dose, and the declared 200 J device setting are authored constants. The conversion is deterministic under three stated conditions and is a property of the model, not a prediction about a person: no CPR quality, pad or device technique, antiarrhythmic, reversible-cause or post-arrest model is claimed. tests/integration/emergency-persistent-vf-arrest-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
           "status": "satisfied",
           "evidence": [
-            "The timeline contains at least one non-narrative state event."
+            "The shared audit already records this requirement as satisfied from the timeline, which is a briefing, one rhythm event, and a reassessment narrative at three minutes. The progression that decides the lesson is in the conversion rule rather than in an order gate: every control is available from the first tick, and the case converts only when the declared 200 J, an accepted 1 mg arrest dose, and compressions within the last ten seconds are all true together. A shock missing any one of them is delivered and does not convert, so the transcript records a choice rather than a queue the engine held open. Both wrong paths are shocks that were given, not shocks that were withheld."
           ]
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Four recorded decisions against four declared objectives, driving the generic scripted-arrest mechanics rather than a lesson-specific tray: start modeled compressions at a fixed 110 per minute; record exactly 1 mg of epinephrine by the IV or IO route while those compressions are running; deliver the biphasic shock at the setting this device declares; and choose that setting rather than one of the two lower ones the same tray offers. The lesson performs no CPR, applies no pads, secures no access, gives no real drug, manages no airway, gives no antiarrhythmic, works through no reversible cause, delivers no post-arrest care, and predicts no outcome for any person."
           ]
         },
         {
@@ -1713,23 +1713,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The branch ends at the modeled return of an organized rhythm, which the engine states as a bounded teaching result under declared conditions. The lesson says in the briefing, in the tutor, and in the closing narration of the worked example that this is a property of the model rather than an expected outcome, and that what a real arrest reaches at this point is the beginning of post-arrest care, which is entirely outside the case. Later actions cannot restart an ended branch."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "Six observed-state prompts at version 0.1.0 read the learner's own recorded steps. The reflex the lesson works against is the third shock: two have failed, the learner has just taken the arrest over, and the defibrillator is the thing in the room that feels like doing something. The compressions beat says why a third shock alone is unlikely to do better — nothing has changed about the muscle in between — and names the handoff pause as the one interruption the learner personally controls. The energy beat says that the number on a defibrillator comes from its manufacturer's testing rather than from how hard the case is being tried. The resume beat names the ten-second window as a model of something real and describes charging while compressions continue. The epinephrine beat places the drug after failed shocks rather than before them. The correction beat reads which of the three conditions the last shock was missing rather than saying that it did not work, because that is what the monitor already said. Worked example 0.1.0 drives the ordinary arrest controls through the real engine and asks the tutor for its narration rather than storing a copy; it never demonstrates the under-energy shock, so that argument is made in narration rather than by taking the wrong control on purpose. A test asserts that no beat anywhere predicts an outcome for a person or treats the deterministic conversion as one. tests/unit/emergency-persistent-vf-arrest-worked-example.test.ts verifies every beat against the real engine, and tests/ui/emergency-persistent-vf-arrest.test.tsx verifies the tray, the three energy settings, silence when unassisted, stable controls while watching, and version binding."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx maps the declared objectives to accepted engine events, timing the first compression from the rhythm event in seconds, reading the dose with its route and whether compressions were running, and reading the converting shock with its energy. The no-action path meets none of the first three and the expert path meets all four. The counterfactual is the energy: the common-error path does the compressions and the dose correctly and sets the device to 120 J, which is delivered, does not convert, and scores the shock objective partly met — the one wrong choice in an otherwise correct cycle. The recovery path delivers the declared shock before the dose one of its conditions names, watches it fail to convert, and then delivers the identical shock successfully once that condition exists."
           ]
         },
         {
@@ -1748,23 +1748,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "persistent-vf-arrest-fixtures.ts binds exact-content expert, under-energy error, shock-before-the-dose recovery, and no-action pathways to seed 8215 for deterministic replay through the shared engine. Every path starts at tick 1, because the rhythm is a tick-0 timeline event and the arrest is not active until the engine has stepped once. One dispatch table is shared by the transcripts, the worked example and the tests, so a payload cannot drift between what a fixture replays and what the example demonstrates. A separate test holds compressions paused past the ten-second window and pins that an otherwise correct shock does not convert."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated UI, observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

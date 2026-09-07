@@ -401,6 +401,13 @@ describe('Requirement: Everything The Offline Claim Names Is Actually Precached'
     // figures above, and not only because the encoding changed: this lesson adds no
     // engine code and no lesson-specific tray, because the scripted-arrest mechanics
     // were already there. It is the floor for what a lesson can cost, not the average.
+    //
+    // Persistent VF, its sibling on the same tray, then cost 1,316 bytes — 1,668,288
+    // total, 428,864 left — and finished emergency medicine at twenty-five of
+    // twenty-five. Two lessons for 2,689 bytes between them. The thirty-nine anesthesia
+    // labs are what this headroom now exists for; if one of them needs engine code, the
+    // marginal cost will be higher than either of these and worth remeasuring rather
+    // than extrapolating from here.
     const files = precache
       .filter((url) => url.startsWith('/assets/') || url.startsWith('/fonts/'))
       .map((url) => readFileSync(join(process.cwd(), 'dist', url)));

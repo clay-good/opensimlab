@@ -27,10 +27,14 @@
  *
  * Critical care is the seventh and largest: twenty-four labs, its number
  * rewritten twenty-three times before the sentence calling it started could go.
- * With it the front page names thirteen finished modules and two that have not
- * started, and that second claim is derived here too — anesthesia and emergency
- * medicine are asserted to be at zero rather than assumed to be, so the sentence
- * breaks the first time one of them gains a lesson.
+ *
+ * Emergency medicine is the eighth and now the largest: twenty-five labs, its
+ * number rewritten twenty-four times. With it the front page names fourteen
+ * finished modules and one that has not started, and that second claim is derived
+ * here too — anesthesia is asserted to be at zero rather than assumed to be, so
+ * the sentence breaks the first time it gains a lesson. It is the last module the
+ * not-started claim can name: when anesthesia starts, this sentence has to be
+ * rewritten rather than relaxed.
  *
  * The part-finished form itself is not gone. The obstetrics and pediatrics
  * cases below still hold it, so the next module to start inherits a guard that
@@ -206,19 +210,16 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
     expect(readme).not.toContain('of its twenty-four labs done');
   });
 
-  it('counts the finished emergency-medicine labs rather than trusting the sentence', () => {
+  it('covers every emergency-medicine lab', () => {
     expect(EMERGENCY_MEDICINE_SCENARIOS).toHaveLength(25);
-    const covered = coveredCount(EMERGENCY_MEDICINE_SCENARIOS, 'emergency-medicine');
-    expect(covered).toBeGreaterThan(0);
+    expect(uncovered(EMERGENCY_MEDICINE_SCENARIOS, 'emergency-medicine')).toEqual([]);
+    // Emergency medicine counted upward through twenty-four lessons and is the
+    // eighth module to make the transition, so the front page says it as a list
+    // entry and the part-finished sentence must be gone rather than stale.
+    expect(coveredCount(EMERGENCY_MEDICINE_SCENARIOS, 'emergency-medicine')).toBe(EMERGENCY_MEDICINE_SCENARIOS.length);
     const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');
-    if (covered === EMERGENCY_MEDICINE_SCENARIOS.length) {
-      // The part-finished sentence is not allowed to linger once it is untrue.
-      expect(uncovered(EMERGENCY_MEDICINE_SCENARIOS, 'emergency-medicine')).toEqual([]);
-      expect(readme).not.toContain('Emergency medicine has started');
-      return;
-    }
-    expect(readme).toContain(`with ${COUNT_WORDS[covered]} of its`);
-    expect(readme).toContain(`${COUNT_WORDS[EMERGENCY_MEDICINE_SCENARIOS.length]} labs done.`);
+    expect(readme).not.toContain('Emergency medicine has started');
+    expect(readme).not.toContain('of its twenty-five labs done');
   });
 
   it('names the module that has not started, rather than assuming it', () => {
@@ -229,11 +230,11 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
     expect(readme).toContain('Anesthesia has not started.');
   });
 
-  it('claims only what those thirteen modules support', () => {
+  it('claims only what those fourteen modules support', () => {
     const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');
     expect(readme).toContain('Every renal, oncology, endocrine, nursing,');
     expect(readme).toContain('infectious-disease, neonatology, toxicology, neurology, obstetrics, respiratory-medicine,');
-    expect(readme).toContain('pediatrics, cardiology, and critical-care lab has both.');
+    expect(readme).toContain('pediatrics, cardiology, critical-care, and emergency-medicine lab has both.');
     // The hedge this sentence used to carry belongs to a state the audit has
     // left behind. If it comes back, one of the three tests above is failing too.
     expect(readme).not.toContain('and most\nendocrine ones');

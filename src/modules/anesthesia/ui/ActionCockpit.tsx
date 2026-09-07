@@ -242,6 +242,7 @@ import { acuteIschemicStrokeInlinePrompt } from '../../emergency-medicine/tutor/
 import { hemorrhagicShockInlinePrompt } from '../../emergency-medicine/tutor/hemorrhagic-shock-guidance';
 import { undifferentiatedShockInlinePrompt } from '../../emergency-medicine/tutor/undifferentiated-shock-guidance';
 import { peaArrestInlinePrompt } from '../../emergency-medicine/tutor/pea-arrest-guidance';
+import { persistentVfInlinePrompt } from '../../emergency-medicine/tutor/persistent-vf-arrest-guidance';
 import { acutePulmonaryEdemaInlinePrompt } from '../../emergency-medicine/tutor/acute-pulmonary-edema-guidance';
 import { adultAsthmaInlinePrompt } from '../../emergency-medicine/tutor/adult-asthma-guidance';
 import { emergencyAnaphylaxisInlinePrompt } from '../../emergency-medicine/tutor/emergency-anaphylaxis-guidance';
@@ -3073,6 +3074,7 @@ export interface ActionCockpitProps {
   readonly hemorrhagicShockGuidance?: GuidanceLevel;
   readonly undifferentiatedShockGuidance?: GuidanceLevel;
   readonly peaArrestGuidance?: GuidanceLevel;
+  readonly persistentVfGuidance?: GuidanceLevel;
   readonly acutePulmonaryEdemaGuidance?: GuidanceLevel;
   readonly adultAsthmaGuidance?: GuidanceLevel;
   readonly emergencyAnaphylaxisGuidance?: GuidanceLevel;
@@ -3283,6 +3285,7 @@ export interface ActionCockpitProps {
   readonly hemorrhagicShockDemonstrating?: boolean;
   readonly undifferentiatedShockDemonstrating?: boolean;
   readonly peaArrestDemonstrating?: boolean;
+  readonly persistentVfDemonstrating?: boolean;
   readonly acutePulmonaryEdemaDemonstrating?: boolean;
   readonly adultAsthmaDemonstrating?: boolean;
   readonly emergencyAnaphylaxisDemonstrating?: boolean;
@@ -4573,6 +4576,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
   const focusedPeaScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && event.target === 'pea');
+  const focusedVfScenario = props.scenario.formulary.length === 0
+    && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
+      && event.target === 'ventricular-fibrillation');
   const hasCrisisResponse = hasNonMaternalCrisisResponse || hasPreeclampsiaResponse
     || hasAspirationRiskResponse || hasEmergenceResidualBlockResponse
     || hasDelayedEmergenceResponse || hasExtubationReadinessResponse || hasCiedPlanningResponse
@@ -5482,8 +5488,14 @@ export function ActionCockpit(props: ActionCockpitProps) {
                     scenarioVersion: props.scenario.metadata.version,
                     patient: props.resuscitation,
                   })
+                  : focusedVfScenario && !props.persistentVfDemonstrating
+                  ? persistentVfInlinePrompt(props.persistentVfGuidance ?? 'unassisted', {
+                    scenarioVersion: props.scenario.metadata.version,
+                    patient: props.resuscitation,
+                  })
                   : null}
-                demonstrating={focusedPeaScenario && props.peaArrestDemonstrating}
+                demonstrating={(focusedPeaScenario && props.peaArrestDemonstrating)
+                  || (focusedVfScenario && props.persistentVfDemonstrating)}
                 onCompressions={props.onChestCompressions ?? (() => {})}
                 onEpinephrine={props.onArrestEpinephrine ?? (() => {})}
                 onDefibrillation={props.onDefibrillation ?? (() => {})}
@@ -7401,7 +7413,8 @@ function CardiacArrestTray({
         {typeof pending !== 'number' ? (
           <div className="syringe__presets">
             {energies.map((energy) => <Button key={energy} disabled={!active}
-              onClick={() => setPending(energy)}>{energy} J</Button>)}
+              aria-disabled={demonstrating}
+              onClick={demonstrating ? undefined : () => setPending(energy)}>{energy} J</Button>)}
           </div>
         ) : (
           <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
