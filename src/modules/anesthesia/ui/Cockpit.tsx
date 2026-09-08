@@ -387,6 +387,8 @@ import { useAnaphylaxisDemonstration } from '@anesthesia/demo/useAnaphylaxisDemo
 import { supportsAnaphylaxisDemonstration } from '@anesthesia/demo/anaphylaxis-demonstration';
 import { useQuantitativeReversalDemonstration } from '@anesthesia/demo/useQuantitativeReversalDemonstration';
 import { supportsQuantitativeReversalDemonstration } from '@anesthesia/demo/quantitative-reversal-demonstration';
+import { useEmergenceResidualBlockadeDemonstration } from '@anesthesia/demo/useEmergenceResidualBlockadeDemonstration';
+import { supportsEmergenceResidualBlockadeDemonstration } from '@anesthesia/demo/emergence-residual-blockade-demonstration';
 import { useAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/useAcutePulmonaryEdemaDemonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
 import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAdultAsthmaDemonstration';
@@ -771,6 +773,7 @@ export function Cockpit({
   const malignantHyperthermiaDemoSupported = supportsMalignantHyperthermiaDemonstration(scenario);
   const anaphylaxisDemoSupported = supportsAnaphylaxisDemonstration(scenario);
   const quantitativeReversalDemoSupported = supportsQuantitativeReversalDemonstration(scenario);
+  const emergenceResidualBlockadeDemoSupported = supportsEmergenceResidualBlockadeDemonstration(scenario);
   const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
   const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
   const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
@@ -963,6 +966,7 @@ export function Cockpit({
     || malignantHyperthermiaDemoSupported
     || anaphylaxisDemoSupported
     || quantitativeReversalDemoSupported
+    || emergenceResidualBlockadeDemoSupported
     || acutePulmonaryEdemaDemoSupported
     || adultAsthmaDemoSupported
     || emergencyAnaphylaxisDemoSupported
@@ -1843,6 +1847,27 @@ export function Cockpit({
     patient: quantitativeReversalProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  /**
+   * The first anaesthesia lesson with an assessment sidecar to read: its
+   * recorded steps are ticks that are either null or not, so this example needs
+   * no physiological gate at all. The sidecar lives under `resuscitation`
+   * alongside the crisis totals rather than at the top of the snapshot.
+   */
+  const emergenceResidualBlockadeProgress = session.state && session.equipment ? {
+    monitorReviewedAtTick: session.equipment.resuscitation
+      .emergenceResidualBlockAssessment?.monitorReviewedAtTick ?? null,
+    classification: session.equipment.resuscitation
+      .emergenceResidualBlockAssessment?.classification ?? null,
+    plan: session.equipment.resuscitation.emergenceResidualBlockAssessment?.plan ?? null,
+    trainOfFourCount: session.state.trainOfFourCount ?? 4,
+    trainOfFourRatio: session.state.trainOfFourRatio ?? 1,
+  } : undefined;
+  const emergenceResidualBlockadeDemonstration = useEmergenceResidualBlockadeDemonstration({
+    active: demonstrating && emergenceResidualBlockadeDemoSupported,
+    running: session.transport === 'running',
+    patient: emergenceResidualBlockadeProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const persistentVfDemonstration = usePersistentVfArrestDemonstration({
     active: demonstrating && persistentVfDemoSupported,
     running: session.transport === 'running',
@@ -2618,6 +2643,7 @@ export function Cockpit({
     : malignantHyperthermiaDemoSupported ? malignantHyperthermiaDemonstration
     : anaphylaxisDemoSupported ? anaphylaxisDemonstration
     : quantitativeReversalDemoSupported ? quantitativeReversalDemonstration
+    : emergenceResidualBlockadeDemoSupported ? emergenceResidualBlockadeDemonstration
     : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
     : adultAsthmaDemoSupported ? adultAsthmaDemonstration
     : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration

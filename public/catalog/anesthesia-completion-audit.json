@@ -3827,9 +3827,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "emergence-with-residual-blockade-fixtures.ts binds seed 2277 and content 0.1.0 to expert, misread-ratio error, same-misreading recovery, and no-action paths over 3,000 ticks. This lesson has no drugs and no dials, so what determinism means here is narrower and worth stating exactly: the fifty-eight-year-old man of 82 kg arrives with a train-of-four count of 4 and a quantitative ratio of 0.72, and the engine reports that ratio and the qualitative assessment that accompanies it — four twitches, no detectable fade — rather than the transcripts asserting either. tests/integration/anesthesia-emergence-residual-blockade-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -3841,9 +3841,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five bounded choices and nothing else: review the quantitative monitor, classify residual or recovered, and defer extubation or proceed to it. There is no syringe, no ventilator dial and no airway manoeuvre in this lesson, and that is the design rather than a limitation — the whole difficulty is believing an instrument over an examination. The engine enforces the order: nothing can be classified before the monitor is reviewed and no plan can be chosen before a classification is recorded, and a test drives a path that skips the review and shows both later actions refused. The lesson extubates nobody, gives no drug, and predicts no outcome for any person."
           ]
         },
         {
@@ -3855,23 +3855,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The transcripts end at 3,000 ticks, past the point where every path has recorded a plan or established that it will not. This is a decision vignette rather than a course of treatment: there is no reversal agent, no reassessment interval, no extubation and no recovery-room handover in it, and the briefing does not offer one. The run stops because the decision has been made rather than because the patient reached a state."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "The nine authored tutor rules at version 0.1.0 in tutor/guidance.ts are the module's shared induction ladder, and none of them fires here: this lesson is an emergence decision with no induction, no bolus sequence and no apnoea for them to speak about. The guidance it relies on is the engine's order enforcement, which refuses a classification before a review and names why. Worked example 0.1.0 is the module's fifteenth observed-state one and the FIRST with an assessment sidecar to read. Every earlier anaesthesia example had to gate on physiology because these lessons carry no recorded steps; this one does, so its beats read ticks that are either null or not — the shape every other module in the catalog uses, arriving in anaesthesia for the first time. That makes the ordering trivial and the lesson hard, which is the right way round. Its classification beat says out loud that everything except the number looks fine, and that calling this residual means believing an instrument over an examination. Its closing beat declines the obvious inference: a ratio at or above 0.9 would have been necessary for extubation and would not have been sufficient, because strength is one of several things that must be true and a monitor measuring one of them cannot clear the others. tests/unit/anesthesia-emergence-residual-blockade-worked-example.test.ts drives every beat through the real engine from both a fresh start and a handover, and tests/unit/worked-example-offer.test.ts pins that what this audit claims is what the product actually offers."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx derives all four objectives from the recorded assessment steps rather than from a running tally. The counterfactual isolates the classification. The error and the recovery are identical for their first two actions — review the monitor, then call a ratio of 0.72 recovered — and differ only in the third: proceed to extubation, or defer it. Deferring after the wrong classification moves the airway objective from not met to partly met and moves nothing else, which is the honest result: the plan is supposed to follow from the reading, and arriving at the safe plan while having misread the number is not the same as having read it."
           ]
         },
         {
@@ -3890,23 +3890,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "emergence-with-residual-blockade-fixtures.ts binds exact-content expert, misread-ratio error, same-misreading recovery, and no-action pathways to seed 2277 for deterministic replay through the shared engine. Scored through the real debrief, the expert path meets all four; the error path is met, not met, not met, not met; the recovery path is met, not met, partly met, not met; and the no-action path fails all four. Two readings need stating. separate-recovery-from-extubation-readiness fails on the recovery path even though that path defers extubation, because the objective asks whether the completed path preserved the distinction between neuromuscular recovery and extubation readiness — and a path that classified 0.72 as recovered did not preserve it, whatever it then chose to do. And the no-action path leaves the patient intubated and ventilated with every objective failed, which is worth naming: the tube stays in by default rather than by plan, and this rubric does not credit an outcome that nobody decided."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

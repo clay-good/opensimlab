@@ -159,6 +159,7 @@ import { lastCompletionEvidence } from '../local-anesthetic-systemic-toxicity-co
 import { earlyMalignantHyperthermiaCompletionEvidence } from '../early-malignant-hyperthermia-completion';
 import { perioperativeAnaphylaxisCompletionEvidence } from '../perioperative-anaphylaxis-completion';
 import { quantitativeReversalCompletionEvidence } from '../quantitative-neuromuscular-reversal-completion';
+import { emergenceResidualBlockadeCompletionEvidence } from '../emergence-with-residual-blockade-completion';
 import { persistentVfArrestCompletionEvidence } from '../../emergency-medicine/persistent-vf-arrest-completion';
 import { acutePulmonaryEdemaCompletionEvidence } from '../../emergency-medicine/acute-pulmonary-edema-completion';
 import { adultAsthmaCompletionEvidence } from '../../emergency-medicine/adult-asthma-completion';
@@ -477,6 +478,7 @@ export function auditClinicalScenario(
     ...earlyMalignantHyperthermiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...perioperativeAnaphylaxisCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...quantitativeReversalCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...emergenceResidualBlockadeCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...persistentVfArrestCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...acutePulmonaryEdemaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...adultAsthmaCompletionEvidence(scenario, capabilityVersion, moduleId),
