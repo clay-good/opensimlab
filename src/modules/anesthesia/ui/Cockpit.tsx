@@ -375,6 +375,8 @@ import { useUnexpectedHemorrhageDemonstration } from '@anesthesia/demo/useUnexpe
 import { supportsUnexpectedHemorrhageDemonstration } from '@anesthesia/demo/unexpected-hemorrhage-demonstration';
 import { useDilutionalCoagulopathyDemonstration } from '@anesthesia/demo/useDilutionalCoagulopathyDemonstration';
 import { supportsDilutionalCoagulopathyDemonstration } from '@anesthesia/demo/dilutional-coagulopathy-demonstration';
+import { useObstetricGeneralAnesthesiaDemonstration } from '@anesthesia/demo/useObstetricGeneralAnesthesiaDemonstration';
+import { supportsObstetricGeneralAnesthesiaDemonstration } from '@anesthesia/demo/obstetric-general-anesthesia-demonstration';
 import { useAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/useAcutePulmonaryEdemaDemonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
 import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAdultAsthmaDemonstration';
@@ -753,6 +755,7 @@ export function Cockpit({
   const bronchospasmDemoSupported = supportsBronchospasmDemonstration(scenario);
   const unexpectedHemorrhageDemoSupported = supportsUnexpectedHemorrhageDemonstration(scenario);
   const dilutionalCoagulopathyDemoSupported = supportsDilutionalCoagulopathyDemonstration(scenario);
+  const obstetricGeneralAnesthesiaDemoSupported = supportsObstetricGeneralAnesthesiaDemonstration(scenario);
   const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
   const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
   const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
@@ -939,6 +942,7 @@ export function Cockpit({
     || bronchospasmDemoSupported
     || unexpectedHemorrhageDemoSupported
     || dilutionalCoagulopathyDemoSupported
+    || obstetricGeneralAnesthesiaDemoSupported
     || acutePulmonaryEdemaDemoSupported
     || adultAsthmaDemoSupported
     || emergencyAnaphylaxisDemoSupported
@@ -1678,6 +1682,32 @@ export function Cockpit({
     active: demonstrating && dilutionalCoagulopathyDemoSupported,
     running: session.transport === 'running',
     patient: dilutionalCoagulopathyProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  /**
+   * The obstetric lesson is the only one that needs the fresh-gas flow, because
+   * its preparation objective asks for both halves of the wash-in: a circle
+   * system left at 2 L/min rebreathes nitrogen however high the dial reads.
+   */
+  const obstetricGeneralAnesthesiaProgress = session.state && session.equipment ? {
+    inspiredOxygenFraction: session.equipment.ventilator.fio2,
+    freshGasFlowLPerMin: session.equipment.ventilator.freshGasFlowLPerMin ?? 0,
+    endTidalOxygenFraction: session.state.endTidalO2Fraction ?? 0,
+    trainOfFourCount: session.state.trainOfFourCount ?? 4,
+    propofolPlasma: session.concentrations
+      .find((drug) => drug.drugId === 'propofol')?.plasma ?? 0,
+    rocuroniumPlasma: session.concentrations
+      .find((drug) => drug.drugId === 'rocuronium')?.plasma ?? 0,
+    intubated: session.equipment.airway.intubated,
+    ventilating: session.equipment.ventilator.delivering,
+    spo2Percent: session.state.spo2Percent ?? 100,
+    airwayAttempts: session.equipment.airway.attempts,
+    airwayAttemptInProgress: session.equipment.airway.attemptInProgress,
+  } : undefined;
+  const obstetricGeneralAnesthesiaDemonstration = useObstetricGeneralAnesthesiaDemonstration({
+    active: demonstrating && obstetricGeneralAnesthesiaDemoSupported,
+    running: session.transport === 'running',
+    patient: obstetricGeneralAnesthesiaProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const persistentVfDemonstration = usePersistentVfArrestDemonstration({
@@ -2449,6 +2479,7 @@ export function Cockpit({
     : bronchospasmDemoSupported ? bronchospasmDemonstration
     : unexpectedHemorrhageDemoSupported ? unexpectedHemorrhageDemonstration
     : dilutionalCoagulopathyDemoSupported ? dilutionalCoagulopathyDemonstration
+    : obstetricGeneralAnesthesiaDemoSupported ? obstetricGeneralAnesthesiaDemonstration
     : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
     : adultAsthmaDemoSupported ? adultAsthmaDemonstration
     : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration

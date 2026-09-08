@@ -3323,9 +3323,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "obstetric-general-anesthesia-fixtures.ts binds seed 7203 and content 0.1.0 to expert, no-reserve error, same-reserve recovery, and no-action paths over 3,600 ticks. Nothing the objectives are scored on is authored. The thirty-year-old woman of 78 kg at term is a set of baseline parameters, and the end-tidal oxygen fraction, the maternal saturation, the train-of-four count and the laryngoscopic view all come out of the shared engine. The saturation figures the counterfactual turns on — 50.2% on the error path against 81.5% on the recovery — fall out of a smaller functional residual capacity and a higher oxygen consumption rather than being written down. tests/integration/anesthesia-obstetric-general-anesthesia-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -3337,9 +3337,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "No tray of its own: the flowmeter and fresh-gas flow, two syringes, a laryngoscope and the ventilator. Two choices carry the lesson and neither is a drug identity. The first is that the preparation has two halves — the objective asks for at least 95% inspired oxygen AND 10 L/min of fresh gas, because a circle system left at 2 L/min rebreathes nitrogen back at the patient however high the dial reads, and a learner who sets only the dial scores partly met. The second is the order, which the cockpit does not enforce: rocuronium before propofol is accepted exactly as readily as the other way round, and only the debrief reports it. The formulary offers rocuronium at 1.0 and 1.2 mg/kg with no lower option and no reversal, so the trade being made is a faster onset against a block that outlasts the case. The lesson intubates nobody, paralyses nobody, gives no real drug, and predicts no outcome for any person or pregnancy."
           ]
         },
         {
@@ -3351,23 +3351,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The transcripts end at 3,600 ticks, past the scenario's reassessment prompt at 2,400 and past the point where every path that secures an airway has sustained capnography. There is no delivery, no emergence and no neonatal handover in this scenario, and the briefing does not offer one: the slice is the preparation, the induction and the airway, and the run stops because that slice is over rather than because the patient reached a state."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "The nine authored tutor rules at version 0.1.0 in tutor/guidance.ts apply here, and the preoxygenation ladder is the one that matters, because in this patient the preparation is the whole margin. It reads the inspired fraction and the recorded boluses, so it speaks before the first drug rather than after, and it is silent on the unassisted setting and suppressed while any alarm is active. No rule names the fresh-gas flow and none names the drug order, which is deliberate on both counts: those are the two decisions the debrief exists to report on, and a prompt that supplied either would remove it. Worked example 0.1.0 is the module's ninth observed-state one, and its preparation beat sets both halves in a single accepted action and says which half gets forgotten. It has no beat that starts the ventilator: measured, the engine begins delivering the moment the tube is placed, so such a beat is unreachable and its narration would promise an action no viewer ever sees. One was written and cut, and what it had to say — that placement is a claim and the sustained capnogram is the evidence for it — is in the closing narration instead. Its airway beats are gated on attempts made rather than on the train-of-four count, because the count returns to four later in the run and a count-based gate walks the example backwards. tests/unit/anesthesia-obstetric-general-anesthesia-worked-example.test.ts drives every beat through the real engine from both a fresh start and a handover, and tests/unit/worked-example-offer.test.ts pins that what this audit claims is what the product actually offers."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx derives all four objectives from the replayed state trace and the recorded actions rather than from a score kept during the run. The counterfactual holds the missing reserve constant. The error path gives no oxygen at all, gives the relaxant before the hypnotic, and does not resume ventilation until tick 2,600: measured, the maternal saturation reaches 50.2%. The recovery path keeps the identical missing reserve, gives the hypnotic first and takes the airway at tick 900 rather than 1,500, and reaches 81.5% — recovering exactly one objective. The margin objective fails on both, because its floor is 95% and 81.5% is nowhere near it. That floor is the point of the lesson rather than a harsh setting: it is 95% here against the 92% the module's earlier inductions use, because a patient at term has a smaller functional residual capacity and a higher oxygen consumption at the same time."
           ]
         },
         {
@@ -3386,23 +3386,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "obstetric-general-anesthesia-fixtures.ts binds exact-content expert, no-reserve error, same-reserve recovery, and no-action pathways to seed 7203 for deterministic replay through the shared engine. Scored through the real debrief, the expert path meets all four; the error path is not met, not met, not met, met; the recovery path is not met, met, not met, met; and the no-action path reports not exercised on all four. Two readings worth stating. Nothing in this lesson passes by idleness, which is unusual in this module and is a property of the objectives rather than of the transcripts: every one of them is written from the first induction drug or the first airway attempt, so a session in which neither happens exercises none of them. And a third variant is measured in the tests rather than shipped as a fixture, because of what it shows: the error path with ONLY the airway timing corrected — the relaxant still given before the hypnotic — reaches 78.7% instead of 50.2% and moves no objective at all. Twenty-eight points of saturation, and the rubric records nothing, because this objective is a floor rather than a scale. The evidence claims the objective is exercised; it does not claim it grades the response."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
