@@ -155,6 +155,7 @@ import { unexpectedHemorrhageCompletionEvidence } from '../unexpected-intraopera
 import { dilutionalCoagulopathyCompletionEvidence } from '../dilutional-coagulopathy-completion';
 import { obstetricGeneralAnesthesiaCompletionEvidence } from '../obstetric-general-anesthesia-completion';
 import { routineGeriatricInductionCompletionEvidence } from '../routine-geriatric-induction-completion';
+import { postoperativeHandoffCompletionEvidence } from '../postoperative-handoff-completion';
 import { lastCompletionEvidence } from '../local-anesthetic-systemic-toxicity-completion';
 import { earlyMalignantHyperthermiaCompletionEvidence } from '../early-malignant-hyperthermia-completion';
 import { perioperativeAnaphylaxisCompletionEvidence } from '../perioperative-anaphylaxis-completion';
@@ -477,6 +478,7 @@ export function auditClinicalScenario(
     ...dilutionalCoagulopathyCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...obstetricGeneralAnesthesiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...routineGeriatricInductionCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...postoperativeHandoffCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...lastCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...earlyMalignantHyperthermiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...perioperativeAnaphylaxisCompletionEvidence(scenario, capabilityVersion, moduleId),

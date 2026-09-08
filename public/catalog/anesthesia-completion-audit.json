@@ -4835,9 +4835,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "postoperative-handoff-fixtures.ts binds seed 6633 and content 0.1.0 to expert, no-read-back error, refusal-taken-seriously recovery, and no-action paths over 3,000 ticks. The sixty-four-year-old woman arriving in recovery after an open hemicolectomy is a set of baseline parameters; what the objectives read is not her physiology at all but the ordered tick stamps the engine records as each of six bounded steps is accepted or refused. That makes this the module's most nearly deterministic lesson and the honest description of it: there is no solver output in the counterfactual, only which steps were taken and in what order. tests/integration/anesthesia-postoperative-handoff-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -4849,9 +4849,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "One assessment tray of six bounded steps — confirm the receiver is ready, share the patient and course, share the current state, name risks and ownership, take the read-back, accept the transfer — and an empty formulary, because this lesson gives no drug and touches no airway. The choice is the order, and the engine makes the order real rather than advisory: a step taken out of turn is refused and logged, so the tray is not a checklist that accepts clicks in any sequence. The content of each block is fixed, which is the design and also the limit the scenario states in its own metadata: this records that a block was shared, never how well it was said."
           ]
         },
         {
@@ -4863,23 +4863,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The transcripts end at 3,000 ticks, past the last accepted step on every path — the expert accepts the transfer at 1,800 and the recovery at 2,100, after two extra steps forced by a refusal. There is no deterioration to wait for and none is simulated: the patient is stable throughout and the run stops because the conversation is over, not because anyone reached a state. The no-action path runs the same 3,000 ticks and ends with the transfer never accepted, which is the correct depiction of what happens when nothing is said."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "The nine authored tutor rules at version 0.1.0 in tutor/guidance.ts apply here, and all nine are silent on the unassisted setting and suppressed while any alarm is active. None of them names a handoff step, which is deliberate and worth stating: the rules in this module speak to airway, depth and haemodynamics, and there is no rule that would tell a learner to ask for a read-back. The guidance a learner gets in this lesson is the worked example, not the tutor. Worked example 0.1.0 is the module's nineteenth observed-state one, the fifth to read an assessment sidecar, the longest at six beats, and the only one whose subject is a conversation. Each beat is gated on the recorded tick of the step before it, so the example is resumable from any point a learner reached alone, and no gate can reverse because a recorded step never becomes unrecorded. Its closing beat declines two credits: it names the read-back as the step that feels redundant and is the one the engine refuses to proceed without, and it says plainly that this model cannot record that anyone understood anything. tests/unit/anesthesia-postoperative-handoff-worked-example.test.ts drives every beat through the real engine from both a fresh start and a handover, and tests/unit/worked-example-offer.test.ts pins that what this audit claims is what the product actually offers."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx derives all four objectives from the recorded actions and the replayed state trace rather than from a score kept during the run. The counterfactual is a single omitted step and the engine escalates it past a mark-down: the error path confirms readiness, shares the course, shares the current state, and names the risks and their owners — everything except the read-back — and then reaches for the acceptance. The acceptance is REFUSED, logged as handoff-acceptance-order-refused-1500, and responsibility does not move. Measured: the error path meets three of four objectives and fails close-loop-and-accept-transfer, so the debrief reports a handoff in which every piece of information was shared and nothing was handed over. The recovery path is that identical array plus the read-back and a second acceptance, and it meets all four; the earlier refusal stays in its log, which is the intended reading rather than a blemish."
           ]
         },
         {
@@ -4898,23 +4898,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "postoperative-handoff-fixtures.ts binds exact-content expert, no-read-back error, refusal-taken-seriously recovery, and no-action pathways to seed 6633 for deterministic replay through the shared engine. Scored through the real debrief: the expert path meets all four, the error path is met, met, met, not met, the recovery path meets all four, and the no-action path fails all four. Two behaviours are pinned by tests because neither is obvious from the rubric. The first is that the read-back is load-bearing on the acceptance rather than on itself: skipping it does not cost a fourth objective for being skipped, it costs the fourth objective because the acceptance that follows is refused, and a learner who reads only the objective text would expect a deduction where the engine delivers a block. The second is what the error path does NOT lose. Three objectives are met by a handoff nobody accepted, because those three ask whether content was shared and it genuinely was. The evidence states the limit rather than papering over it: this model can record that a synthesis was requested and given, and it cannot record that anyone understood it, so a run that satisfies every step here can still be a bad handoff and the debrief has no way to say so."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

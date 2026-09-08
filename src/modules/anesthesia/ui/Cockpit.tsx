@@ -379,6 +379,8 @@ import { useObstetricGeneralAnesthesiaDemonstration } from '@anesthesia/demo/use
 import { supportsObstetricGeneralAnesthesiaDemonstration } from '@anesthesia/demo/obstetric-general-anesthesia-demonstration';
 import { useGeriatricInductionDemonstration } from '@anesthesia/demo/useGeriatricInductionDemonstration';
 import { supportsGeriatricInductionDemonstration } from '@anesthesia/demo/geriatric-induction-demonstration';
+import { usePostoperativeHandoffDemonstration } from '@anesthesia/demo/usePostoperativeHandoffDemonstration';
+import { supportsPostoperativeHandoffDemonstration } from '@anesthesia/demo/postoperative-handoff-demonstration';
 import { useLastDemonstration } from '@anesthesia/demo/useLastDemonstration';
 import { supportsLastDemonstration } from '@anesthesia/demo/last-demonstration';
 import { useMalignantHyperthermiaDemonstration } from '@anesthesia/demo/useMalignantHyperthermiaDemonstration';
@@ -775,6 +777,7 @@ export function Cockpit({
   const dilutionalCoagulopathyDemoSupported = supportsDilutionalCoagulopathyDemonstration(scenario);
   const obstetricGeneralAnesthesiaDemoSupported = supportsObstetricGeneralAnesthesiaDemonstration(scenario);
   const geriatricInductionDemoSupported = supportsGeriatricInductionDemonstration(scenario);
+  const postoperativeHandoffDemoSupported = supportsPostoperativeHandoffDemonstration(scenario);
   const lastDemoSupported = supportsLastDemonstration(scenario);
   const malignantHyperthermiaDemoSupported = supportsMalignantHyperthermiaDemonstration(scenario);
   const anaphylaxisDemoSupported = supportsAnaphylaxisDemonstration(scenario);
@@ -971,6 +974,7 @@ export function Cockpit({
     || dilutionalCoagulopathyDemoSupported
     || obstetricGeneralAnesthesiaDemoSupported
     || geriatricInductionDemoSupported
+    || postoperativeHandoffDemoSupported
     || lastDemoSupported
     || malignantHyperthermiaDemoSupported
     || anaphylaxisDemoSupported
@@ -1931,6 +1935,12 @@ export function Cockpit({
     patient: extubationReadinessProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  const postoperativeHandoffDemonstration = usePostoperativeHandoffDemonstration({
+    active: demonstrating && postoperativeHandoffDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.postoperativeHandoffAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const persistentVfDemonstration = usePersistentVfArrestDemonstration({
     active: demonstrating && persistentVfDemoSupported,
     running: session.transport === 'running',
@@ -2702,6 +2712,7 @@ export function Cockpit({
     : dilutionalCoagulopathyDemoSupported ? dilutionalCoagulopathyDemonstration
     : obstetricGeneralAnesthesiaDemoSupported ? obstetricGeneralAnesthesiaDemonstration
     : geriatricInductionDemoSupported ? geriatricInductionDemonstration
+    : postoperativeHandoffDemoSupported ? postoperativeHandoffDemonstration
     : lastDemoSupported ? lastDemonstration
     : malignantHyperthermiaDemoSupported ? malignantHyperthermiaDemonstration
     : anaphylaxisDemoSupported ? anaphylaxisDemonstration

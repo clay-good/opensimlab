@@ -8,6 +8,7 @@ import { supportsUnexpectedHemorrhageDemonstration } from './unexpected-hemorrha
 import { supportsDilutionalCoagulopathyDemonstration } from './dilutional-coagulopathy-demonstration';
 import { supportsObstetricGeneralAnesthesiaDemonstration } from './obstetric-general-anesthesia-demonstration';
 import { supportsGeriatricInductionDemonstration } from './geriatric-induction-demonstration';
+import { supportsPostoperativeHandoffDemonstration } from './postoperative-handoff-demonstration';
 import { supportsLastDemonstration } from './last-demonstration';
 import { supportsMalignantHyperthermiaDemonstration } from './malignant-hyperthermia-demonstration';
 import { supportsAnaphylaxisDemonstration } from './anaphylaxis-demonstration';
@@ -251,6 +252,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsDilutionalCoagulopathyDemonstration,
     supportsObstetricGeneralAnesthesiaDemonstration,
     supportsGeriatricInductionDemonstration,
+    supportsPostoperativeHandoffDemonstration,
     supportsLastDemonstration,
     supportsMalignantHyperthermiaDemonstration,
     supportsAnaphylaxisDemonstration,
