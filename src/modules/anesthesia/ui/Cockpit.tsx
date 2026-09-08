@@ -383,6 +383,8 @@ import { useLastDemonstration } from '@anesthesia/demo/useLastDemonstration';
 import { supportsLastDemonstration } from '@anesthesia/demo/last-demonstration';
 import { useMalignantHyperthermiaDemonstration } from '@anesthesia/demo/useMalignantHyperthermiaDemonstration';
 import { supportsMalignantHyperthermiaDemonstration } from '@anesthesia/demo/malignant-hyperthermia-demonstration';
+import { useAnaphylaxisDemonstration } from '@anesthesia/demo/useAnaphylaxisDemonstration';
+import { supportsAnaphylaxisDemonstration } from '@anesthesia/demo/anaphylaxis-demonstration';
 import { useAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/useAcutePulmonaryEdemaDemonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
 import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAdultAsthmaDemonstration';
@@ -765,6 +767,7 @@ export function Cockpit({
   const geriatricInductionDemoSupported = supportsGeriatricInductionDemonstration(scenario);
   const lastDemoSupported = supportsLastDemonstration(scenario);
   const malignantHyperthermiaDemoSupported = supportsMalignantHyperthermiaDemonstration(scenario);
+  const anaphylaxisDemoSupported = supportsAnaphylaxisDemonstration(scenario);
   const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
   const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
   const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
@@ -955,6 +958,7 @@ export function Cockpit({
     || geriatricInductionDemoSupported
     || lastDemoSupported
     || malignantHyperthermiaDemoSupported
+    || anaphylaxisDemoSupported
     || acutePulmonaryEdemaDemoSupported
     || adultAsthmaDemoSupported
     || emergencyAnaphylaxisDemoSupported
@@ -1793,6 +1797,25 @@ export function Cockpit({
     patient: malignantHyperthermiaProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  /**
+   * The anaphylaxis lesson has no severity field on the snapshot, so its example
+   * triggers on the collapse itself — the same observation the learner has. Its
+   * treatment branch latches on epinephrine given, because the drug lifts the
+   * pressure back over the trigger threshold for a while.
+   */
+  const anaphylaxisProgress = session.state && session.equipment ? {
+    inspiredOxygenFraction: session.equipment.ventilator.fio2,
+    ventilatorDelivering: session.equipment.ventilator.delivering,
+    epinephrineTotalMicrograms: session.equipment.resuscitation.epinephrineTotalMicrograms,
+    crystalloidTotalMl: session.equipment.resuscitation.crystalloidTotalMl,
+    meanArterialMmHg: session.state.meanArterialMmHg ?? 0,
+  } : undefined;
+  const anaphylaxisDemonstration = useAnaphylaxisDemonstration({
+    active: demonstrating && anaphylaxisDemoSupported,
+    running: session.transport === 'running',
+    patient: anaphylaxisProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const persistentVfDemonstration = usePersistentVfArrestDemonstration({
     active: demonstrating && persistentVfDemoSupported,
     running: session.transport === 'running',
@@ -2566,6 +2589,7 @@ export function Cockpit({
     : geriatricInductionDemoSupported ? geriatricInductionDemonstration
     : lastDemoSupported ? lastDemonstration
     : malignantHyperthermiaDemoSupported ? malignantHyperthermiaDemonstration
+    : anaphylaxisDemoSupported ? anaphylaxisDemonstration
     : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
     : adultAsthmaDemoSupported ? adultAsthmaDemonstration
     : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration
