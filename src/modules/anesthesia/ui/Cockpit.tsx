@@ -367,6 +367,8 @@ import { useRapidSequenceInductionDemonstration } from '@anesthesia/demo/useRapi
 import { supportsRapidSequenceInductionDemonstration } from '@anesthesia/demo/rapid-sequence-induction-demonstration';
 import { useAwarenessUnderParalysisDemonstration } from '@anesthesia/demo/useAwarenessUnderParalysisDemonstration';
 import { supportsAwarenessUnderParalysisDemonstration } from '@anesthesia/demo/awareness-under-paralysis-demonstration';
+import { useLaryngospasmDemonstration } from '@anesthesia/demo/useLaryngospasmDemonstration';
+import { supportsLaryngospasmDemonstration } from '@anesthesia/demo/laryngospasm-demonstration';
 import { useAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/useAcutePulmonaryEdemaDemonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
 import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAdultAsthmaDemonstration';
@@ -741,6 +743,7 @@ export function Cockpit({
   const hypotensionAfterInductionDemoSupported = supportsHypotensionAfterInductionDemonstration(scenario);
   const rapidSequenceInductionDemoSupported = supportsRapidSequenceInductionDemonstration(scenario);
   const awarenessUnderParalysisDemoSupported = supportsAwarenessUnderParalysisDemonstration(scenario);
+  const laryngospasmDemoSupported = supportsLaryngospasmDemonstration(scenario);
   const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
   const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
   const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
@@ -923,6 +926,7 @@ export function Cockpit({
     || hypotensionAfterInductionDemoSupported
     || rapidSequenceInductionDemoSupported
     || awarenessUnderParalysisDemoSupported
+    || laryngospasmDemoSupported
     || acutePulmonaryEdemaDemoSupported
     || adultAsthmaDemoSupported
     || emergencyAnaphylaxisDemoSupported
@@ -1563,6 +1567,27 @@ export function Cockpit({
     active: demonstrating && awarenessUnderParalysisDemoSupported,
     running: session.transport === 'running',
     patient: awarenessUnderParalysisProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  /**
+   * The closure lesson reads the airway's own patency fraction alongside the
+   * depth index, because the engine relieves the spasm only while the held
+   * maneuver, positive pressure, oxygen and a depth at or below 60 are all true
+   * at once — so neither number alone can order the example's beats.
+   */
+  const laryngospasmProgress = session.state && session.equipment ? {
+    inspiredOxygenFraction: session.equipment.ventilator.fio2,
+    ventilatorDelivering: session.equipment.ventilator.delivering,
+    endTidalOxygenFraction: session.state.endTidalO2Fraction ?? 0,
+    patencyFraction: session.equipment.airway.patencyFraction,
+    jawThrustSecondsRemaining: session.equipment.airway.jawThrustCpapSecondsRemaining,
+    depthIndex: session.state.depthIndex ?? 100,
+    spo2Percent: session.state.spo2Percent ?? 100,
+  } : undefined;
+  const laryngospasmDemonstration = useLaryngospasmDemonstration({
+    active: demonstrating && laryngospasmDemoSupported,
+    running: session.transport === 'running',
+    patient: laryngospasmProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const persistentVfDemonstration = usePersistentVfArrestDemonstration({
@@ -2330,6 +2355,7 @@ export function Cockpit({
     : hypotensionAfterInductionDemoSupported ? hypotensionAfterInductionDemonstration
     : rapidSequenceInductionDemoSupported ? rapidSequenceInductionDemonstration
     : awarenessUnderParalysisDemoSupported ? awarenessUnderParalysisDemonstration
+    : laryngospasmDemoSupported ? laryngospasmDemonstration
     : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
     : adultAsthmaDemoSupported ? adultAsthmaDemonstration
     : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration

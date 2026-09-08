@@ -149,6 +149,7 @@ import { rapidDesaturationCompletionEvidence } from '../rapid-desaturation-compl
 import { hypotensionAfterInductionCompletionEvidence } from '../hypotension-after-induction-completion';
 import { rapidSequenceInductionCompletionEvidence } from '../rapid-sequence-induction-completion';
 import { awarenessUnderParalysisCompletionEvidence } from '../awareness-under-paralysis-completion';
+import { laryngospasmCompletionEvidence } from '../laryngospasm-after-airway-stimulation-completion';
 import { persistentVfArrestCompletionEvidence } from '../../emergency-medicine/persistent-vf-arrest-completion';
 import { acutePulmonaryEdemaCompletionEvidence } from '../../emergency-medicine/acute-pulmonary-edema-completion';
 import { adultAsthmaCompletionEvidence } from '../../emergency-medicine/adult-asthma-completion';
@@ -457,6 +458,7 @@ export function auditClinicalScenario(
     ...hypotensionAfterInductionCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...rapidSequenceInductionCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...awarenessUnderParalysisCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...laryngospasmCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...persistentVfArrestCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...acutePulmonaryEdemaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...adultAsthmaCompletionEvidence(scenario, capabilityVersion, moduleId),

@@ -929,9 +929,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "laryngospasm-after-airway-stimulation-fixtures.ts binds seed 6412 and content 0.1.0 to expert, late-response error, same-reserve recovery, and no-action paths over 4,200 ticks. Nothing the objectives are scored on is authored. The twenty-two-year-old man of 74 kg is a set of baseline parameters, and the end-tidal oxygen fraction at closure, the airway patency fraction, the depth index and the saturation all come out of the shared engine. The closure is declared once in the scenario timeline as a laryngospasm event at tick 2,400 with a severity of 0.95, and the relief is computed rather than scripted: severity falls at 0.2 per second only while a held maneuver, positive pressure, at least 95% oxygen and a depth index at or below 60 are true together. tests/integration/anesthesia-laryngospasm-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -943,9 +943,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "No tray of its own: the flowmeter, the ventilator, two syringes, and the held jaw-thrust/CPAP maneuver. The scenario is explicit about what it does NOT stock — no suction, no airway adjunct, no succinylcholine, no call for help and no refractory pathway — and the briefing says so before anything starts, so the bound is a declared teaching decision rather than a missing feature. The choice that carries the lesson is the dose, and it is a real one: the maneuver and the propofol are not two parallel measures, because the model relieves the closure only at a depth of 60 or below. A learner who holds the maneuver correctly and gives a token 0.5 mg/kg has done the algorithm in the right order at the right moment and opened nothing. The lesson intubates nobody, gives no real drug, and predicts no outcome for any person."
           ]
         },
         {
@@ -957,23 +957,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The transcripts end at 4,200 ticks, which is the scenario's own reassessment prompt and the end of the slice it models. That bound is load-bearing rather than tidy. Past roughly 4,600 ticks the unreserved paths reach a modelled hypoxic arrest, and the engine states plainly at that point that it models no resuscitation and that nothing after it is simulated physiology. A reference transcript that ran past it would be citing frames the engine itself disclaims, so none of these does."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "The nine authored tutor rules at version 0.1.0 in tutor/guidance.ts apply here, and the one that matters is the preoxygenation ladder, because in this lesson the preparation is the treatment. It reads the inspired fraction and the recorded boluses, is silent on the unassisted setting, and is suppressed while any alarm is active — which means it says nothing once the closure alarms, and that is right: the lesson is about what was done before. Worked example 0.1.0 is the module's fifth observed-state one, and what is new in it is that the response is a conjunction rather than a list. Its deepening beat exists to satisfy a precondition, and its narration says so — a token dose given at exactly the right moment scores the same on the timing and leaves the airway exactly as closed. The example reads the airway's patency fraction and the depth index together, and it is ordered by the held maneuver rather than by the patency, because patency falls and rises again while the maneuver's countdown only runs down. Its closing beat declines the obvious credit: the saturation it ends on is mostly the three minutes of oxygen rather than the last minute of treatment, and it says which of the two earned what. Two beats dispatch nothing, and one of them is the beat where the preparation is already finished and there is nothing left to do at the moment it matters. tests/unit/anesthesia-laryngospasm-worked-example.test.ts drives every beat through the real engine from both a fresh start and a handover, and tests/unit/worked-example-offer.test.ts pins that what this audit claims is what the product actually offers."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx derives all four objectives from the replayed state trace and the recorded actions rather than from a score kept during the run. The counterfactual is the reserve, and the measurement is blunt. With the flowmeter at 100% and the ventilator delivering from tick 120, the saturation does not fall below 99.97% across the whole modelled window even when nothing whatever is done about the closure — a test drives that path and pins it. Without the reserve, the immediate and complete response bottoms at 86.3% and the ninety-seconds-late one at 64.0%. So the error path is the same measures applied late with nothing behind them, and the recovery path is the identical missing reserve met immediately and completely: it gains twenty-two points of saturation and still fails the oxygenation objective, because the margin it is working inside was spent before the spasm began."
           ]
         },
         {
@@ -992,23 +992,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "laryngospasm-after-airway-stimulation-fixtures.ts binds exact-content expert, late-response error, same-reserve recovery, and no-action pathways to seed 6412 for deterministic replay through the shared engine. Scored through the real debrief, the expert path meets all four; the error path is not met, partly met, partly met, not met; the recovery path is not met, met, met, not met; and the no-action path fails all four. Two readings need stating plainly, and both are about what the rubric cannot see. The two response objectives are timing proxies, which the scenario's own measures say in words and the transcripts say in numbers: a test drives the recovery path with 0.5 mg/kg instead of 2 mg/kg, scores identically on both of them, and reaches 51.8% — the no-action nadir to the last decimal place — because the depth never crosses 60 while it would have mattered. Measured that way the dose is worth more than the timing the rubric reads: 34.5 points against 22.4. And protect-oxygenation-during-laryngospasm is met by preoxygenation rather than by the response: on the preoxygenated-but-untreated path it is met with a nadir of 99.97% while the two response objectives fail outright. The evidence claims these objectives are exercised; it does not claim they measure the quality of the response."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
