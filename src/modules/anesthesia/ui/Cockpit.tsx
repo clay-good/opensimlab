@@ -363,6 +363,8 @@ import { useRapidDesaturationDemonstration } from '@anesthesia/demo/useRapidDesa
 import { supportsRapidDesaturationDemonstration } from '@anesthesia/demo/rapid-desaturation-demonstration';
 import { useHypotensionAfterInductionDemonstration } from '@anesthesia/demo/useHypotensionAfterInductionDemonstration';
 import { supportsHypotensionAfterInductionDemonstration } from '@anesthesia/demo/hypotension-after-induction-demonstration';
+import { useRapidSequenceInductionDemonstration } from '@anesthesia/demo/useRapidSequenceInductionDemonstration';
+import { supportsRapidSequenceInductionDemonstration } from '@anesthesia/demo/rapid-sequence-induction-demonstration';
 import { useAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/useAcutePulmonaryEdemaDemonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
 import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAdultAsthmaDemonstration';
@@ -735,6 +737,7 @@ export function Cockpit({
   const persistentVfDemoSupported = supportsPersistentVfArrestDemonstration(scenario);
   const rapidDesaturationDemoSupported = supportsRapidDesaturationDemonstration(scenario);
   const hypotensionAfterInductionDemoSupported = supportsHypotensionAfterInductionDemonstration(scenario);
+  const rapidSequenceInductionDemoSupported = supportsRapidSequenceInductionDemonstration(scenario);
   const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
   const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
   const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
@@ -915,6 +918,7 @@ export function Cockpit({
     || persistentVfDemoSupported
     || rapidDesaturationDemoSupported
     || hypotensionAfterInductionDemoSupported
+    || rapidSequenceInductionDemoSupported
     || acutePulmonaryEdemaDemoSupported
     || adultAsthmaDemoSupported
     || emergencyAnaphylaxisDemoSupported
@@ -1492,6 +1496,39 @@ export function Cockpit({
     active: demonstrating && hypotensionAfterInductionDemoSupported,
     running: session.transport === 'running',
     patient: hypotensionAfterInductionProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  /**
+   * The block lesson needs two sources the others do not: the post-tetanic count,
+   * and both rocuronium curves. The pair is what tells onset from offset — during
+   * onset the plasma leads, during offset the effect site does — and the reversal
+   * control is refused on the wrong limb, so the example cannot be written
+   * without them.
+   */
+  const rapidSequenceInductionProgress = session.state && session.equipment ? {
+    inspiredOxygenFraction: session.equipment.ventilator.fio2,
+    endTidalOxygenFraction: session.state.endTidalO2Fraction ?? 0,
+    depthIndex: session.state.depthIndex ?? 100,
+    trainOfFourCount: session.state.trainOfFourCount ?? 4,
+    trainOfFourRatio: session.state.trainOfFourRatio ?? 1,
+    postTetanicCount: session.equipment.resuscitation.postTetanicCount ?? 0,
+    remifentanilPlasma: session.concentrations
+      .find((drug) => drug.drugId === 'remifentanil')?.plasma ?? 0,
+    propofolPlasma: session.concentrations
+      .find((drug) => drug.drugId === 'propofol')?.plasma ?? 0,
+    rocuroniumPlasma: session.concentrations
+      .find((drug) => drug.drugId === 'rocuronium')?.plasma ?? 0,
+    rocuroniumEffectSite: session.concentrations
+      .find((drug) => drug.drugId === 'rocuronium')?.effectSite ?? 0,
+    intubated: session.equipment.airway.intubated,
+    reversed: session.equipment.resuscitation.lastNeuromuscularReversal != null,
+    airwayAttempts: session.equipment.airway.attempts,
+    airwayAttemptInProgress: session.equipment.airway.attemptInProgress,
+  } : undefined;
+  const rapidSequenceInductionDemonstration = useRapidSequenceInductionDemonstration({
+    active: demonstrating && rapidSequenceInductionDemoSupported,
+    running: session.transport === 'running',
+    patient: rapidSequenceInductionProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const persistentVfDemonstration = usePersistentVfArrestDemonstration({
@@ -2257,6 +2294,7 @@ export function Cockpit({
     : persistentVfDemoSupported ? persistentVfDemonstration
     : rapidDesaturationDemoSupported ? rapidDesaturationDemonstration
     : hypotensionAfterInductionDemoSupported ? hypotensionAfterInductionDemonstration
+    : rapidSequenceInductionDemoSupported ? rapidSequenceInductionDemonstration
     : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
     : adultAsthmaDemoSupported ? adultAsthmaDemonstration
     : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration
