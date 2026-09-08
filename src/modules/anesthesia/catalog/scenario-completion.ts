@@ -162,6 +162,7 @@ import { quantitativeReversalCompletionEvidence } from '../quantitative-neuromus
 import { emergenceResidualBlockadeCompletionEvidence } from '../emergence-with-residual-blockade-completion';
 import { aspirationRiskCompletionEvidence } from '../aspiration-risk-recognition-completion';
 import { delayedEmergenceCompletionEvidence } from '../delayed-emergence-differential-completion';
+import { extubationReadinessCompletionEvidence } from '../extubation-readiness-completion';
 import { persistentVfArrestCompletionEvidence } from '../../emergency-medicine/persistent-vf-arrest-completion';
 import { acutePulmonaryEdemaCompletionEvidence } from '../../emergency-medicine/acute-pulmonary-edema-completion';
 import { adultAsthmaCompletionEvidence } from '../../emergency-medicine/adult-asthma-completion';
@@ -483,6 +484,7 @@ export function auditClinicalScenario(
     ...emergenceResidualBlockadeCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...aspirationRiskCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...delayedEmergenceCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...extubationReadinessCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...persistentVfArrestCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...acutePulmonaryEdemaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...adultAsthmaCompletionEvidence(scenario, capabilityVersion, moduleId),

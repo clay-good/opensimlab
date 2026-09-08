@@ -393,6 +393,8 @@ import { useAspirationRiskDemonstration } from '@anesthesia/demo/useAspirationRi
 import { supportsAspirationRiskDemonstration } from '@anesthesia/demo/aspiration-risk-demonstration';
 import { useDelayedEmergenceDemonstration } from '@anesthesia/demo/useDelayedEmergenceDemonstration';
 import { supportsDelayedEmergenceDemonstration } from '@anesthesia/demo/delayed-emergence-demonstration';
+import { useExtubationReadinessDemonstration } from '@anesthesia/demo/useExtubationReadinessDemonstration';
+import { supportsExtubationReadinessDemonstration } from '@anesthesia/demo/extubation-readiness-demonstration';
 import { useAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/useAcutePulmonaryEdemaDemonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
 import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAdultAsthmaDemonstration';
@@ -780,6 +782,7 @@ export function Cockpit({
   const emergenceResidualBlockadeDemoSupported = supportsEmergenceResidualBlockadeDemonstration(scenario);
   const aspirationRiskDemoSupported = supportsAspirationRiskDemonstration(scenario);
   const delayedEmergenceDemoSupported = supportsDelayedEmergenceDemonstration(scenario);
+  const extubationReadinessDemoSupported = supportsExtubationReadinessDemonstration(scenario);
   const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
   const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
   const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
@@ -975,6 +978,7 @@ export function Cockpit({
     || emergenceResidualBlockadeDemoSupported
     || aspirationRiskDemoSupported
     || delayedEmergenceDemoSupported
+    || extubationReadinessDemoSupported
     || acutePulmonaryEdemaDemoSupported
     || adultAsthmaDemoSupported
     || emergencyAnaphylaxisDemoSupported
@@ -1908,6 +1912,25 @@ export function Cockpit({
     patient: delayedEmergenceProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  /** The fourth sidecar lesson: four ordered reviews, then a decision. */
+  const extubationReadinessProgress = session.state && session.equipment ? {
+    quantitativeRecoveryReviewedAtTick: session.equipment.resuscitation
+      .extubationReadinessAssessment?.quantitativeRecoveryReviewedAtTick ?? null,
+    awakeAirwayReviewedAtTick: session.equipment.resuscitation
+      .extubationReadinessAssessment?.awakeAirwayReviewedAtTick ?? null,
+    gasExchangeReviewedAtTick: session.equipment.resuscitation
+      .extubationReadinessAssessment?.gasExchangeReviewedAtTick ?? null,
+    airwayPlanReviewedAtTick: session.equipment.resuscitation
+      .extubationReadinessAssessment?.airwayPlanReviewedAtTick ?? null,
+    decision: session.equipment.resuscitation.extubationReadinessAssessment?.decision ?? null,
+    trainOfFourRatio: session.state.trainOfFourRatio ?? 1,
+  } : undefined;
+  const extubationReadinessDemonstration = useExtubationReadinessDemonstration({
+    active: demonstrating && extubationReadinessDemoSupported,
+    running: session.transport === 'running',
+    patient: extubationReadinessProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const persistentVfDemonstration = usePersistentVfArrestDemonstration({
     active: demonstrating && persistentVfDemoSupported,
     running: session.transport === 'running',
@@ -2686,6 +2709,7 @@ export function Cockpit({
     : emergenceResidualBlockadeDemoSupported ? emergenceResidualBlockadeDemonstration
     : aspirationRiskDemoSupported ? aspirationRiskDemonstration
     : delayedEmergenceDemoSupported ? delayedEmergenceDemonstration
+    : extubationReadinessDemoSupported ? extubationReadinessDemonstration
     : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
     : adultAsthmaDemoSupported ? adultAsthmaDemonstration
     : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration
