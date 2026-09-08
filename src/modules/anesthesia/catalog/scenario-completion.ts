@@ -160,6 +160,7 @@ import { earlyMalignantHyperthermiaCompletionEvidence } from '../early-malignant
 import { perioperativeAnaphylaxisCompletionEvidence } from '../perioperative-anaphylaxis-completion';
 import { quantitativeReversalCompletionEvidence } from '../quantitative-neuromuscular-reversal-completion';
 import { emergenceResidualBlockadeCompletionEvidence } from '../emergence-with-residual-blockade-completion';
+import { aspirationRiskCompletionEvidence } from '../aspiration-risk-recognition-completion';
 import { persistentVfArrestCompletionEvidence } from '../../emergency-medicine/persistent-vf-arrest-completion';
 import { acutePulmonaryEdemaCompletionEvidence } from '../../emergency-medicine/acute-pulmonary-edema-completion';
 import { adultAsthmaCompletionEvidence } from '../../emergency-medicine/adult-asthma-completion';
@@ -479,6 +480,7 @@ export function auditClinicalScenario(
     ...perioperativeAnaphylaxisCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...quantitativeReversalCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...emergenceResidualBlockadeCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...aspirationRiskCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...persistentVfArrestCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...acutePulmonaryEdemaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...adultAsthmaCompletionEvidence(scenario, capabilityVersion, moduleId),

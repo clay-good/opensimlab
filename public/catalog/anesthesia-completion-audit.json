@@ -3701,9 +3701,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "aspiration-risk-recognition-fixtures.ts binds seed 7180 and content 0.1.0 to expert, called-it-routine error, same-misreading recovery, and no-action paths over 3,600 ticks. This is a decision vignette with no drugs and no dials, so determinism here means something narrower than in the physiological lessons and the evidence says so: what is replayed is the ordered assessment sidecar, and what the engine supplies is the refusal of any step taken out of order. The fifty-two-year-old woman of 92 kg carries a declared escalating GLP-1 dose, active gastrointestinal symptoms and an entirely ordinary fasting interval, and those are scenario content rather than solver output. tests/integration/anesthesia-aspiration-risk-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -3715,9 +3715,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Five bounded choices: review the cues, classify elevated or routine, and defer-and-replan or proceed-routine. The engine enforces the order — nothing can be classified before the cues are reviewed and no disposition chosen before a classification — and a test drives a path that skips the review to show both later actions refused outright. What makes the classification a real decision is that three of the four cues look reassuring in isolation: the fasting interval is normal, and it is not the question. The lesson cancels nobody's operation, gives no drug, and predicts no outcome for any person."
           ]
         },
         {
@@ -3729,23 +3729,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The transcripts end at 3,600 ticks, past the point where every path has recorded a disposition or established that it will not. This is an elective preoperative decision rather than a course of treatment: there is no induction, no airway, no gastric ultrasound and no rescheduled operation in it, and the briefing does not offer one. The run stops because the decision has been made rather than because the patient reached a state."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "The nine authored tutor rules at version 0.1.0 in tutor/guidance.ts are the module's shared induction ladder, and none of them fires here: this lesson is a preoperative decision with no induction, no bolus sequence and no apnoea for them to speak about. The guidance it relies on is the engine's order enforcement, which refuses a classification before a cue review and names why. Worked example 0.1.0 is the module's sixteenth observed-state one and the second to read an assessment sidecar rather than physiology, so its beats read ticks that are either null or not and none of its gates can reverse. Its classification beat says which two cues carry the argument and which two do not, rather than reciting all four. Its closing beat states the case the fourth objective is really about, and states it in both directions: a blanket rule would reach the right disposition here for the wrong reason, and would delay the operations of stable, asymptomatic patients for nothing. tests/unit/anesthesia-aspiration-risk-worked-example.test.ts drives every beat through the real engine from both a fresh start and a handover, and tests/unit/worked-example-offer.test.ts pins that what this audit claims is what the product actually offers."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx derives all four objectives from the recorded assessment steps rather than from a running tally. The counterfactual isolates the disposition. The error and the recovery are identical for their first two actions — review the cues, then call an escalating dose with active symptoms a routine fasting risk — and differ only in the third: proceed on the day, or defer and replan. Deferring after the wrong classification moves the disposition objective from not met to partly met and moves nothing else, because the finding text records that the accepted classification did not identify the pattern the deferral was supposed to follow from."
           ]
         },
         {
@@ -3764,23 +3764,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "aspiration-risk-recognition-fixtures.ts binds exact-content expert, called-it-routine error, same-misreading recovery, and no-action pathways to seed 7180 for deterministic replay through the shared engine. Scored through the real debrief, the expert path meets all four; the error path is met, not met, not met, not met; the recovery path is met, not met, partly met, not met; and the no-action path fails all four. The reading that needs stating is the fourth objective. avoid-blanket-glp1-rule is not earned by any action a learner can take: there is no click for it, and it is derived from whether the completed path tied its deferral to this patient's escalation phase and active symptoms. That makes it the only objective in this lesson that a learner cannot pursue directly, and it is met on the expert path alone. A learner who deferred every GLP-1 user on principle would reach the same disposition and fail it, which is precisely what the objective exists to catch."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

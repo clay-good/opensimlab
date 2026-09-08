@@ -389,6 +389,8 @@ import { useQuantitativeReversalDemonstration } from '@anesthesia/demo/useQuanti
 import { supportsQuantitativeReversalDemonstration } from '@anesthesia/demo/quantitative-reversal-demonstration';
 import { useEmergenceResidualBlockadeDemonstration } from '@anesthesia/demo/useEmergenceResidualBlockadeDemonstration';
 import { supportsEmergenceResidualBlockadeDemonstration } from '@anesthesia/demo/emergence-residual-blockade-demonstration';
+import { useAspirationRiskDemonstration } from '@anesthesia/demo/useAspirationRiskDemonstration';
+import { supportsAspirationRiskDemonstration } from '@anesthesia/demo/aspiration-risk-demonstration';
 import { useAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/useAcutePulmonaryEdemaDemonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
 import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAdultAsthmaDemonstration';
@@ -774,6 +776,7 @@ export function Cockpit({
   const anaphylaxisDemoSupported = supportsAnaphylaxisDemonstration(scenario);
   const quantitativeReversalDemoSupported = supportsQuantitativeReversalDemonstration(scenario);
   const emergenceResidualBlockadeDemoSupported = supportsEmergenceResidualBlockadeDemonstration(scenario);
+  const aspirationRiskDemoSupported = supportsAspirationRiskDemonstration(scenario);
   const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
   const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
   const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
@@ -967,6 +970,7 @@ export function Cockpit({
     || anaphylaxisDemoSupported
     || quantitativeReversalDemoSupported
     || emergenceResidualBlockadeDemoSupported
+    || aspirationRiskDemoSupported
     || acutePulmonaryEdemaDemoSupported
     || adultAsthmaDemoSupported
     || emergencyAnaphylaxisDemoSupported
@@ -1868,6 +1872,20 @@ export function Cockpit({
     patient: emergenceResidualBlockadeProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  /** The second sidecar lesson: recorded steps under `resuscitation`, no physiology. */
+  const aspirationRiskProgress = session.equipment ? {
+    cuesReviewedAtTick: session.equipment.resuscitation
+      .aspirationRiskAssessment?.cuesReviewedAtTick ?? null,
+    classification: session.equipment.resuscitation
+      .aspirationRiskAssessment?.classification ?? null,
+    plan: session.equipment.resuscitation.aspirationRiskAssessment?.plan ?? null,
+  } : undefined;
+  const aspirationRiskDemonstration = useAspirationRiskDemonstration({
+    active: demonstrating && aspirationRiskDemoSupported,
+    running: session.transport === 'running',
+    patient: aspirationRiskProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const persistentVfDemonstration = usePersistentVfArrestDemonstration({
     active: demonstrating && persistentVfDemoSupported,
     running: session.transport === 'running',
@@ -2644,6 +2662,7 @@ export function Cockpit({
     : anaphylaxisDemoSupported ? anaphylaxisDemonstration
     : quantitativeReversalDemoSupported ? quantitativeReversalDemonstration
     : emergenceResidualBlockadeDemoSupported ? emergenceResidualBlockadeDemonstration
+    : aspirationRiskDemoSupported ? aspirationRiskDemonstration
     : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
     : adultAsthmaDemoSupported ? adultAsthmaDemonstration
     : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration
