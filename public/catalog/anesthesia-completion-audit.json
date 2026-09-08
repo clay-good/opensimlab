@@ -3071,9 +3071,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "quantitative-neuromuscular-reversal-fixtures.ts binds seed 4930 and content 0.1.0 to expert, wrong-limb error, refusal-heeded recovery, and no-action paths over 7,200 ticks. Nothing the objectives are scored on is authored. The forty-five-year-old woman of 70 kg is a set of baseline parameters and the block is a Wierda-anchored teaching model, so the timings the counterfactual turns on are solver output: after 0.6 mg/kg the post-tetanic count reads 1 from about tick 900 to 1,400 while the block is still deepening, falls to 0 through the middle of the case, and reads 1 again from tick 3,600 onward while it wears off. tests/integration/anesthesia-quantitative-reversal-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -3085,9 +3085,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "The narrowest tray in the module, and deliberately so: one syringe with one preset. Rocuronium is stocked at 0.6 mg/kg and nothing else, the patient arrives already anaesthetised on a running volatile, and the ventilator is already delivering — so every decision this lesson assesses is about reading a monitor rather than choosing a drug or a dose. The choice that carries it is when to reverse, and the engine enforces the answer: sugammadex is refused at 2 mg/kg with no twitches, at 4 mg/kg without a post-tetanic count, and at any dose while the block is still deepening. The lesson paralyses nobody, gives no real drug, and predicts no outcome for any person."
           ]
         },
         {
@@ -3099,23 +3099,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The transcripts end at 7,200 ticks, past the scenario's own case-end prompt at 6,000 and past the point where the quantitative ratio has recovered on every path that reverses. There is no emergence, no extubation and no handover in this lesson and the briefing does not offer one: the slice is one block and its reversal, and the run stops because that slice is over rather than because the patient reached a state."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "The nine authored tutor rules at version 0.1.0 in tutor/guidance.ts are the module's shared induction ladder, and none of them fires here: this lesson takes over mid-case with the anaesthetic already running, so there is no preoxygenation, no induction bolus and no apnoea for them to speak about. The guidance it relies on is the engine's refusal message, which arrives at the moment a learner acts on the count alone. Worked example 0.1.0 is the module's fourteenth observed-state one and the second to gate a reversal on the crossover of the two rocuronium curves rather than on the post-tetanic count. It carries a beat that fires on the ascending limb and dispatches nothing — it names the reading as the one that will be right in a few minutes and is wrong now — so a viewer sees the trap rather than only the correct answer. Nothing in it is sequenced on the count or the ratio, because both return to their starting values; the ordering facts are the rocuronium in the plasma and the accepted reversal, both of which latch. There is no separate confirmation beat: measured, the quantitative ratio reaches 0.9 on the tick after an accepted reversal, so one is unreachable, and the same beat was cut from the rapid-sequence example for the same reason. tests/unit/anesthesia-quantitative-reversal-worked-example.test.ts drives every beat through the real engine from both a fresh start and a handover of the refused attempt, and tests/unit/worked-example-offer.test.ts pins that what this audit claims is what the product actually offers."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx derives all four objectives from the replayed state trace and the recorded actions rather than from a running tally. The counterfactual is the limb, and the trap is that the number does not say which one you are on. The error path reverses at tick 1,000 on a post-tetanic count of 1 — the exact count the objective asks for, read while the block is still deepening — and the engine refuses it. The recovery path is that array plus exactly one more action: the same dose at tick 3,700, when the same count means the opposite thing. It then scores identically to the expert path. What actually distinguishes the limbs is not on the screen: it is that the rocuronium effect site has come back down past the plasma, which is the same crossover the rapid-sequence lesson's worked example gates on."
           ]
         },
         {
@@ -3134,23 +3134,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "quantitative-neuromuscular-reversal-fixtures.ts binds exact-content expert, wrong-limb error, refusal-heeded recovery, and no-action pathways to seed 4930 for deterministic replay through the shared engine. Scored through the real debrief, the expert path meets all four; the error path is met, not met, not met, met; the recovery path meets all four; and the no-action path fails all four because none of them is exercised without an accepted rocuronium dose. Two readings need stating. The recovery scoring identically to the expert is the finding rather than a redundancy: a refused reversal is not held against the learner, and this is the second lesson in the module where that is true. And the debrief cannot distinguish WHY a reversal was refused — a test drives both failure modes, reversing on the ascending limb and selecting 2 mg/kg with no twitches, and both produce the same finding text and the same engine message, which enumerates all the rules rather than naming the one that was broken. That is a real limit of the feedback and the evidence names it rather than implying the rubric diagnoses the mistake."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

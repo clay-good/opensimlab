@@ -11,6 +11,7 @@ import { supportsGeriatricInductionDemonstration } from './geriatric-induction-d
 import { supportsLastDemonstration } from './last-demonstration';
 import { supportsMalignantHyperthermiaDemonstration } from './malignant-hyperthermia-demonstration';
 import { supportsAnaphylaxisDemonstration } from './anaphylaxis-demonstration';
+import { supportsQuantitativeReversalDemonstration } from './quantitative-reversal-demonstration';
 import { supportsHypoglycemiaDemonstration } from '../../endocrine-metabolic/demo/hypoglycemia-demonstration';
 import { supportsAdrenalDemonstration } from '../../endocrine-metabolic/demo/adrenal-demonstration';
 import { supportsThyroidDemonstration } from '../../endocrine-metabolic/demo/thyroid-demonstration';
@@ -249,6 +250,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsLastDemonstration,
     supportsMalignantHyperthermiaDemonstration,
     supportsAnaphylaxisDemonstration,
+    supportsQuantitativeReversalDemonstration,
     supportsInductionDemonstration,
   ],
   'endocrine-metabolic': [

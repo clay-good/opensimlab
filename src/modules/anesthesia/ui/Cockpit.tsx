@@ -385,6 +385,8 @@ import { useMalignantHyperthermiaDemonstration } from '@anesthesia/demo/useMalig
 import { supportsMalignantHyperthermiaDemonstration } from '@anesthesia/demo/malignant-hyperthermia-demonstration';
 import { useAnaphylaxisDemonstration } from '@anesthesia/demo/useAnaphylaxisDemonstration';
 import { supportsAnaphylaxisDemonstration } from '@anesthesia/demo/anaphylaxis-demonstration';
+import { useQuantitativeReversalDemonstration } from '@anesthesia/demo/useQuantitativeReversalDemonstration';
+import { supportsQuantitativeReversalDemonstration } from '@anesthesia/demo/quantitative-reversal-demonstration';
 import { useAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/useAcutePulmonaryEdemaDemonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
 import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAdultAsthmaDemonstration';
@@ -768,6 +770,7 @@ export function Cockpit({
   const lastDemoSupported = supportsLastDemonstration(scenario);
   const malignantHyperthermiaDemoSupported = supportsMalignantHyperthermiaDemonstration(scenario);
   const anaphylaxisDemoSupported = supportsAnaphylaxisDemonstration(scenario);
+  const quantitativeReversalDemoSupported = supportsQuantitativeReversalDemonstration(scenario);
   const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
   const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
   const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
@@ -959,6 +962,7 @@ export function Cockpit({
     || lastDemoSupported
     || malignantHyperthermiaDemoSupported
     || anaphylaxisDemoSupported
+    || quantitativeReversalDemoSupported
     || acutePulmonaryEdemaDemoSupported
     || adultAsthmaDemoSupported
     || emergencyAnaphylaxisDemoSupported
@@ -1816,6 +1820,29 @@ export function Cockpit({
     patient: anaphylaxisProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  /**
+   * The reversal lesson is sequenced on the rocuronium in the plasma and on the
+   * accepted reversal, both of which latch. Neither the train-of-four count nor
+   * the ratio can order anything: both return to their starting values, and the
+   * post-tetanic count reads the same on each limb of the block.
+   */
+  const quantitativeReversalProgress = session.state && session.equipment ? {
+    trainOfFourCount: session.state.trainOfFourCount ?? 4,
+    trainOfFourRatio: session.state.trainOfFourRatio ?? 1,
+    postTetanicCount: session.equipment.resuscitation.postTetanicCount ?? 0,
+    rocuroniumPlasma: session.concentrations
+      .find((drug) => drug.drugId === 'rocuronium')?.plasma ?? 0,
+    rocuroniumEffectSite: session.concentrations
+      .find((drug) => drug.drugId === 'rocuronium')?.effectSite ?? 0,
+    reversed: session.equipment.resuscitation.lastNeuromuscularReversal != null,
+    depthIndex: session.state.depthIndex ?? 100,
+  } : undefined;
+  const quantitativeReversalDemonstration = useQuantitativeReversalDemonstration({
+    active: demonstrating && quantitativeReversalDemoSupported,
+    running: session.transport === 'running',
+    patient: quantitativeReversalProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const persistentVfDemonstration = usePersistentVfArrestDemonstration({
     active: demonstrating && persistentVfDemoSupported,
     running: session.transport === 'running',
@@ -2590,6 +2617,7 @@ export function Cockpit({
     : lastDemoSupported ? lastDemonstration
     : malignantHyperthermiaDemoSupported ? malignantHyperthermiaDemonstration
     : anaphylaxisDemoSupported ? anaphylaxisDemonstration
+    : quantitativeReversalDemoSupported ? quantitativeReversalDemonstration
     : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
     : adultAsthmaDemoSupported ? adultAsthmaDemonstration
     : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration
