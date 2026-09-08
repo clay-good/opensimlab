@@ -361,6 +361,8 @@ import { usePersistentVfArrestDemonstration } from '../../emergency-medicine/dem
 import { supportsPersistentVfArrestDemonstration } from '../../emergency-medicine/demo/persistent-vf-arrest-demonstration';
 import { useRapidDesaturationDemonstration } from '@anesthesia/demo/useRapidDesaturationDemonstration';
 import { supportsRapidDesaturationDemonstration } from '@anesthesia/demo/rapid-desaturation-demonstration';
+import { useHypotensionAfterInductionDemonstration } from '@anesthesia/demo/useHypotensionAfterInductionDemonstration';
+import { supportsHypotensionAfterInductionDemonstration } from '@anesthesia/demo/hypotension-after-induction-demonstration';
 import { useAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/useAcutePulmonaryEdemaDemonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
 import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAdultAsthmaDemonstration';
@@ -732,6 +734,7 @@ export function Cockpit({
   const peaArrestDemoSupported = supportsPeaArrestDemonstration(scenario);
   const persistentVfDemoSupported = supportsPersistentVfArrestDemonstration(scenario);
   const rapidDesaturationDemoSupported = supportsRapidDesaturationDemonstration(scenario);
+  const hypotensionAfterInductionDemoSupported = supportsHypotensionAfterInductionDemonstration(scenario);
   const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
   const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
   const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
@@ -911,6 +914,7 @@ export function Cockpit({
     || peaArrestDemoSupported
     || persistentVfDemoSupported
     || rapidDesaturationDemoSupported
+    || hypotensionAfterInductionDemoSupported
     || acutePulmonaryEdemaDemoSupported
     || adultAsthmaDemoSupported
     || emergencyAnaphylaxisDemoSupported
@@ -1462,6 +1466,32 @@ export function Cockpit({
     active: demonstrating && rapidDesaturationDemoSupported,
     running: session.transport === 'running',
     patient: rapidDesaturationProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  /**
+   * The same four sources as the lesson before it, plus two the pressure lesson
+   * needs: the engine's own accepted crystalloid total, and whether the modelled
+   * losses are still running. Reading the total rather than counting dispatches
+   * is what makes the example resumable after a learner hangs a bag themselves.
+   */
+  const hypotensionAfterInductionProgress = session.state && session.equipment ? {
+    inspiredOxygenFraction: session.equipment.ventilator.fio2,
+    endTidalOxygenFraction: session.state.endTidalO2Fraction ?? 0,
+    meanArterialMmHg: session.state.meanArterialMmHg ?? 0,
+    crystalloidTotalMl: session.equipment.resuscitation.crystalloidTotalMl,
+    lossesRunning: session.equipment.resuscitation.hemorrhageActive === true,
+    remifentanilPlasma: session.concentrations
+      .find((drug) => drug.drugId === 'remifentanil')?.plasma ?? 0,
+    propofolPlasma: session.concentrations
+      .find((drug) => drug.drugId === 'propofol')?.plasma ?? 0,
+    intubated: session.equipment.airway.intubated,
+    airwayAttempts: session.equipment.airway.attempts,
+    airwayAttemptInProgress: session.equipment.airway.attemptInProgress,
+  } : undefined;
+  const hypotensionAfterInductionDemonstration = useHypotensionAfterInductionDemonstration({
+    active: demonstrating && hypotensionAfterInductionDemoSupported,
+    running: session.transport === 'running',
+    patient: hypotensionAfterInductionProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const persistentVfDemonstration = usePersistentVfArrestDemonstration({
@@ -2226,6 +2256,7 @@ export function Cockpit({
     : peaArrestDemoSupported ? peaArrestDemonstration
     : persistentVfDemoSupported ? persistentVfDemonstration
     : rapidDesaturationDemoSupported ? rapidDesaturationDemonstration
+    : hypotensionAfterInductionDemoSupported ? hypotensionAfterInductionDemonstration
     : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
     : adultAsthmaDemoSupported ? adultAsthmaDemonstration
     : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration

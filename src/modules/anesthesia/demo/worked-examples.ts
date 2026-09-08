@@ -1,4 +1,5 @@
 import type { Scenario } from '@anesthesia/scenarios/types';
+import { supportsHypotensionAfterInductionDemonstration } from './hypotension-after-induction-demonstration';
 import { supportsHypoglycemiaDemonstration } from '../../endocrine-metabolic/demo/hypoglycemia-demonstration';
 import { supportsAdrenalDemonstration } from '../../endocrine-metabolic/demo/adrenal-demonstration';
 import { supportsThyroidDemonstration } from '../../endocrine-metabolic/demo/thyroid-demonstration';
@@ -223,7 +224,11 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
   // clock rather than by the patient — the route starts it from a separate
   // branch, but it is still an example the product offers, so it is listed here
   // rather than leaving this list disagreeing with the completion audit.
-  anesthesia: [supportsRapidDesaturationDemonstration, supportsInductionDemonstration],
+  anesthesia: [
+    supportsRapidDesaturationDemonstration,
+    supportsHypotensionAfterInductionDemonstration,
+    supportsInductionDemonstration,
+  ],
   'endocrine-metabolic': [
         supportsHypoglycemiaDemonstration,
     supportsAdrenalDemonstration,
