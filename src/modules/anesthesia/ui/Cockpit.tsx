@@ -371,6 +371,8 @@ import { useLaryngospasmDemonstration } from '@anesthesia/demo/useLaryngospasmDe
 import { supportsLaryngospasmDemonstration } from '@anesthesia/demo/laryngospasm-demonstration';
 import { useBronchospasmDemonstration } from '@anesthesia/demo/useBronchospasmDemonstration';
 import { supportsBronchospasmDemonstration } from '@anesthesia/demo/bronchospasm-demonstration';
+import { useUnexpectedHemorrhageDemonstration } from '@anesthesia/demo/useUnexpectedHemorrhageDemonstration';
+import { supportsUnexpectedHemorrhageDemonstration } from '@anesthesia/demo/unexpected-hemorrhage-demonstration';
 import { useAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/useAcutePulmonaryEdemaDemonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
 import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAdultAsthmaDemonstration';
@@ -747,6 +749,7 @@ export function Cockpit({
   const awarenessUnderParalysisDemoSupported = supportsAwarenessUnderParalysisDemonstration(scenario);
   const laryngospasmDemoSupported = supportsLaryngospasmDemonstration(scenario);
   const bronchospasmDemoSupported = supportsBronchospasmDemonstration(scenario);
+  const unexpectedHemorrhageDemoSupported = supportsUnexpectedHemorrhageDemonstration(scenario);
   const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
   const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
   const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
@@ -931,6 +934,7 @@ export function Cockpit({
     || awarenessUnderParalysisDemoSupported
     || laryngospasmDemoSupported
     || bronchospasmDemoSupported
+    || unexpectedHemorrhageDemoSupported
     || acutePulmonaryEdemaDemoSupported
     || adultAsthmaDemoSupported
     || emergencyAnaphylaxisDemoSupported
@@ -1621,6 +1625,34 @@ export function Cockpit({
     active: demonstrating && bronchospasmDemoSupported,
     running: session.transport === 'running',
     patient: bronchospasmProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  /**
+   * The haemorrhage lesson reads the accepted crystalloid total and the released
+   * products rather than the engine's hemorrhage flag alone: that flag is true
+   * from tick 300 because of the slow loss as well as the tamponade release, so
+   * it can start the sequence and cannot order it.
+   */
+  const unexpectedHemorrhageProgress = session.state && session.equipment ? {
+    inspiredOxygenFraction: session.equipment.ventilator.fio2,
+    endTidalOxygenFraction: session.state.endTidalO2Fraction ?? 0,
+    hemorrhageActive: session.equipment.resuscitation.hemorrhageActive === true,
+    crystalloidTotalMl: session.equipment.resuscitation.crystalloidTotalMl,
+    bloodProductsReleased: session.equipment.resuscitation.bloodProductsReleased === true,
+    packedRedBloodCellUnits: session.equipment.resuscitation.packedRedBloodCellUnits ?? 0,
+    meanArterialMmHg: session.state.meanArterialMmHg ?? 0,
+    remifentanilPlasma: session.concentrations
+      .find((drug) => drug.drugId === 'remifentanil')?.plasma ?? 0,
+    propofolPlasma: session.concentrations
+      .find((drug) => drug.drugId === 'propofol')?.plasma ?? 0,
+    intubated: session.equipment.airway.intubated,
+    airwayAttempts: session.equipment.airway.attempts,
+    airwayAttemptInProgress: session.equipment.airway.attemptInProgress,
+  } : undefined;
+  const unexpectedHemorrhageDemonstration = useUnexpectedHemorrhageDemonstration({
+    active: demonstrating && unexpectedHemorrhageDemoSupported,
+    running: session.transport === 'running',
+    patient: unexpectedHemorrhageProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const persistentVfDemonstration = usePersistentVfArrestDemonstration({
@@ -2390,6 +2422,7 @@ export function Cockpit({
     : awarenessUnderParalysisDemoSupported ? awarenessUnderParalysisDemonstration
     : laryngospasmDemoSupported ? laryngospasmDemonstration
     : bronchospasmDemoSupported ? bronchospasmDemonstration
+    : unexpectedHemorrhageDemoSupported ? unexpectedHemorrhageDemonstration
     : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
     : adultAsthmaDemoSupported ? adultAsthmaDemonstration
     : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration

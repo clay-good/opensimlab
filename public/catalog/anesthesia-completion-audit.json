@@ -551,9 +551,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "unexpected-intraoperative-hemorrhage-fixtures.ts binds seed 9314 and content 0.1.0 to expert, vasopressor-only error, same-resuscitation recovery, and no-action paths over 5,400 ticks. Nothing the objectives are scored on is authored. The thirty-four-year-old woman of 63 kg is a set of baseline parameters, and the pressure, the pulse pressure and the response to every bag come out of the shared engine. The bleeding is declared in two timeline events — a slow 180 mL per minute from tick 300, and 500 mL per minute for two minutes from tick 2,400 when the tamponade releases — and the solver does the arithmetic on a circulation this patient has already been losing into before the case starts. tests/integration/anesthesia-unexpected-hemorrhage-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -565,9 +565,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "No tray of its own: the flowmeter, two syringes, a fluid bag, a vasopressor, a laryngoscope, the ventilator, and a bounded blood-bank request and product release. The choice that carries the lesson is the induction dose, and the formulary is built around it — the presets run 20 mg, 0.5 mg/kg, 0.75 mg/kg and 2 mg/kg, so the textbook dose and the shocked-patient dose are adjacent buttons and nothing labels either correct. The second choice is what a falling pressure means: a vasopressor and a bag both raise it, they are both on the tray, and the objective that separates them is written on millilitres of crystalloid rather than on millimetres of mercury. The lesson transfuses nobody, gives no real drug, and predicts no outcome for any person."
           ]
         },
         {
@@ -579,23 +579,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The transcripts end at 5,400 ticks, past the surgeon controlling the bleeding at 3,900 and past the point where every path's pressure has settled or has not. There is no emergence and no end of operation in this scenario and the briefing does not offer one: the slice is the induction and the first minutes of an unexpected haemorrhage, and the run stops because that slice is over rather than because the patient reached a state."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "The nine authored tutor rules at version 0.1.0 in tutor/guidance.ts apply here, and the map-below-60 rule is the one this patient triggers. It names the reading rather than the treatment — ask what is holding the pressure down before treating the number — and points at the Why panel rather than at a bag, so it cannot hand over the answer the lesson exists to leave open. Worked example 0.1.0 is the module's seventh observed-state one. Two things about it were found by driving it rather than by design. The engine's hemorrhage flag is true from tick 300 because of the slow loss, not only from the tamponade release, so reading it as \"the abdomen is open\" sent the example straight past the induction; the airway now always comes first and the volume beat responds to the pressure instead. And it carries no vasopressor beat at all: the engine's vasopressor effect decays below any sane threshold within about ten seconds while the pressure is still down, so a beat gated on it re-fires forever, and every reordering that closes that loop makes the beat unreachable instead. The reference transcripts carry the bridging dose; the closing beat explains why the example does not. It finishes on the released red cells rather than on the pressure, because a pressure held up by five litres of crystalloid is exactly the thing this lesson is careful not to call a result. tests/unit/anesthesia-unexpected-hemorrhage-worked-example.test.ts drives every beat through the real engine from both a fresh start and a handover, and tests/unit/worked-example-offer.test.ts pins that what this audit claims is what the product actually offers."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx derives all four objectives from the replayed state trace and the engine event log rather than from a score kept during the run. The counterfactual here isolates one variable, which none of the earlier anaesthesia labs managed. The expert and recovery transcripts share a single `resuscitation` array: the same litre before induction, the same two litres one second after the tamponade releases, the same blood-bank request, the same two units of red cells, the same vasopressor at the same tick, the same airway at the same tick. They differ in exactly one action, the induction dose, 0.5 mg/kg against 2 mg/kg. Measured, that difference is worth 14.5 mmHg of pressure nadir — 72.6 against 58.1 — and the whole of the manage-hypotension objective: zero seconds below 65 mmHg against 235. Because everything else is identical, nothing else can be credited with it."
           ]
         },
         {
@@ -614,23 +614,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "unexpected-intraoperative-hemorrhage-fixtures.ts binds exact-content expert, vasopressor-only error, same-resuscitation recovery, and no-action pathways to seed 9314 for deterministic replay through the shared engine. Scored through the real debrief, the expert path meets all four; the error path fails all four; the recovery path is met, met, not met, not met; and the no-action path is not met, not met, not exercised, not met. Two readings need stating. manage-hypotension is failed by the no-action path as well, because the patient bleeds whether or not anyone induces her — the objective is not a test of the induction alone and the evidence does not claim it is. And the error path is not merely passive: it gives two vasopressor doses and no fluid at all, reaching 33.5 mmHg and spending 236 seconds below 55 mmHg, which is the argument the temporizing objective exists to make rather than an absence of effort."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
