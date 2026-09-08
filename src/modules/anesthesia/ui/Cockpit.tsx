@@ -365,6 +365,8 @@ import { useHypotensionAfterInductionDemonstration } from '@anesthesia/demo/useH
 import { supportsHypotensionAfterInductionDemonstration } from '@anesthesia/demo/hypotension-after-induction-demonstration';
 import { useRapidSequenceInductionDemonstration } from '@anesthesia/demo/useRapidSequenceInductionDemonstration';
 import { supportsRapidSequenceInductionDemonstration } from '@anesthesia/demo/rapid-sequence-induction-demonstration';
+import { useAwarenessUnderParalysisDemonstration } from '@anesthesia/demo/useAwarenessUnderParalysisDemonstration';
+import { supportsAwarenessUnderParalysisDemonstration } from '@anesthesia/demo/awareness-under-paralysis-demonstration';
 import { useAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/useAcutePulmonaryEdemaDemonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
 import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAdultAsthmaDemonstration';
@@ -738,6 +740,7 @@ export function Cockpit({
   const rapidDesaturationDemoSupported = supportsRapidDesaturationDemonstration(scenario);
   const hypotensionAfterInductionDemoSupported = supportsHypotensionAfterInductionDemonstration(scenario);
   const rapidSequenceInductionDemoSupported = supportsRapidSequenceInductionDemonstration(scenario);
+  const awarenessUnderParalysisDemoSupported = supportsAwarenessUnderParalysisDemonstration(scenario);
   const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
   const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
   const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
@@ -919,6 +922,7 @@ export function Cockpit({
     || rapidDesaturationDemoSupported
     || hypotensionAfterInductionDemoSupported
     || rapidSequenceInductionDemoSupported
+    || awarenessUnderParalysisDemoSupported
     || acutePulmonaryEdemaDemoSupported
     || adultAsthmaDemoSupported
     || emergencyAnaphylaxisDemoSupported
@@ -1529,6 +1533,36 @@ export function Cockpit({
     active: demonstrating && rapidSequenceInductionDemoSupported,
     running: session.transport === 'running',
     patient: rapidSequenceInductionProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  /**
+   * The silent-failure lesson reads the delivery path itself rather than any
+   * action list, because that is the only place the failure is visible: the pump
+   * keeps reporting its commanded rate, and the infusion rate below is the
+   * commanded one rather than the delivered one.
+   */
+  const awarenessUnderParalysisProgress = session.state && session.equipment ? {
+    inspiredOxygenFraction: session.equipment.ventilator.fio2,
+    depthIndex: session.state.depthIndex ?? 100,
+    trainOfFourRatio: session.state.trainOfFourRatio ?? 1,
+    hypnoticLineConnected: session.equipment.hypnoticLine.connected,
+    hypnoticLineInspected: session.equipment.hypnoticLine.inspected,
+    propofolInfusionRate: session.equipment.drugs
+      .find((drug) => drug.drugId === 'propofol')?.infusionRate ?? 0,
+    remifentanilPlasma: session.concentrations
+      .find((drug) => drug.drugId === 'remifentanil')?.plasma ?? 0,
+    propofolPlasma: session.concentrations
+      .find((drug) => drug.drugId === 'propofol')?.plasma ?? 0,
+    rocuroniumPlasma: session.concentrations
+      .find((drug) => drug.drugId === 'rocuronium')?.plasma ?? 0,
+    intubated: session.equipment.airway.intubated,
+    airwayAttempts: session.equipment.airway.attempts,
+    airwayAttemptInProgress: session.equipment.airway.attemptInProgress,
+  } : undefined;
+  const awarenessUnderParalysisDemonstration = useAwarenessUnderParalysisDemonstration({
+    active: demonstrating && awarenessUnderParalysisDemoSupported,
+    running: session.transport === 'running',
+    patient: awarenessUnderParalysisProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const persistentVfDemonstration = usePersistentVfArrestDemonstration({
@@ -2295,6 +2329,7 @@ export function Cockpit({
     : rapidDesaturationDemoSupported ? rapidDesaturationDemonstration
     : hypotensionAfterInductionDemoSupported ? hypotensionAfterInductionDemonstration
     : rapidSequenceInductionDemoSupported ? rapidSequenceInductionDemonstration
+    : awarenessUnderParalysisDemoSupported ? awarenessUnderParalysisDemonstration
     : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
     : adultAsthmaDemoSupported ? adultAsthmaDemonstration
     : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration

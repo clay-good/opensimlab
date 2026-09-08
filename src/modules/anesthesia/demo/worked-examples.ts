@@ -1,6 +1,7 @@
 import type { Scenario } from '@anesthesia/scenarios/types';
 import { supportsHypotensionAfterInductionDemonstration } from './hypotension-after-induction-demonstration';
 import { supportsRapidSequenceInductionDemonstration } from './rapid-sequence-induction-demonstration';
+import { supportsAwarenessUnderParalysisDemonstration } from './awareness-under-paralysis-demonstration';
 import { supportsHypoglycemiaDemonstration } from '../../endocrine-metabolic/demo/hypoglycemia-demonstration';
 import { supportsAdrenalDemonstration } from '../../endocrine-metabolic/demo/adrenal-demonstration';
 import { supportsThyroidDemonstration } from '../../endocrine-metabolic/demo/thyroid-demonstration';
@@ -229,6 +230,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsRapidDesaturationDemonstration,
     supportsHypotensionAfterInductionDemonstration,
     supportsRapidSequenceInductionDemonstration,
+    supportsAwarenessUnderParalysisDemonstration,
     supportsInductionDemonstration,
   ],
   'endocrine-metabolic': [

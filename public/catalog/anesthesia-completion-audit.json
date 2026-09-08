@@ -803,9 +803,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "awareness-under-paralysis-fixtures.ts binds seed 8801 and content 0.1.0 to expert, wrong-order error, same-order recovery, and no-action paths over 7,200 ticks. Nothing the objectives are scored on is authored. The thirty-four-year-old woman of 68 kg is a set of baseline parameters and a healthy respiratory profile, and the predicted depth, the train-of-four ratio and the propofol plasma all come out of the shared engine. The line failure is declared once in the scenario timeline as an equipment-failure event at tick 1,800 and the solver does the rest: from that tick the pump keeps its commanded rate and the delivered rate is zero, which is the entire mechanism. tests/integration/anesthesia-awareness-under-paralysis-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -817,9 +817,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "No tray of its own: the flowmeter, three syringes, an infusion, a laryngoscope, the ventilator, and a control that inspects or reconnects the propofol line. Two choices carry the lesson. The first is the order, which the cockpit does not enforce — rocuronium before propofol is accepted exactly as readily as the other way round, and only the debrief reports it. The second is where to look when the predicted depth rises. Nothing labels the line as the cause; a learner can give another bolus instead, and the pump will go on reporting the rate it was told to give, because from where the pump sits nothing is wrong. The lesson paralyses nobody, gives no real drug, models neither consciousness nor recall, and predicts no outcome for any person."
           ]
         },
         {
@@ -831,23 +831,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The transcripts end at 7,200 ticks, past the last declared timeline event at 5,400 and past the point where every path's predicted depth has settled. The case stops at early maintenance by design: there is no emergence and no end of operation, and the briefing does not offer one. The run stops because that slice is over rather than because the patient reached a state."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "The nine authored tutor rules at version 0.1.0 in tutor/guidance.ts apply here, and none of them names the line. That is deliberate rather than a gap: the whole lesson is which of several explanations a rising predicted depth has, and a prompt that pointed at the giving set would answer it. What the rules do supply is the preoxygenation ladder and the apnoea prompt around the induction, both silent on the unassisted setting and suppressed while any alarm is active. Worked example 0.1.0 is the module's fourth observed-state one, and its central beat is a beat that does nothing: between securing the airway and the line failing, the correct action is to keep reading two numbers that are not moving, and an example that fast-forwarded through it would skip the only thing this lesson teaches. Two ordering bugs were found by driving it and are worth recording. The line beats originally outranked the induction beats, so a run that reached tick 1,800 mid-induction abandoned an unsecured airway to go and look at a giving set; the line is now handled only once the airway is secured. And a handover that reconnects a line which was never feeding an infusion could never settle, because restoring the path restores nothing on its own — the example now says exactly that and starts one. It reads the delivery path itself rather than an action list, which is what makes it resumable: driven from the error path's opening it picks the case up mid-maintenance and reaches the same place. tests/unit/anesthesia-awareness-under-paralysis-worked-example.test.ts drives every beat through the real engine from both a fresh start and that handover, and tests/unit/worked-example-offer.test.ts pins that what this audit claims is what the product actually offers."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx derives all four objectives from the replayed state trace and the recorded actions rather than from a score kept during the run. The counterfactual is the order, and it is the order the previous lesson leaves unscored. The error path gives the relaxant before the hypnotic, runs no maintenance infusion at all, and never looks at the line: it peaks at a predicted depth of 78 and spends 403.7 seconds above 60. The recovery path makes the identical opening error and then does the whole correct thing eighty seconds late — looks, reconnects, and starts the infusion that was never running. It takes ten points off the peak, and it shortens the interval above 60 by barely six seconds, because the time was already spent and an emptied effect site refills slowly. hypnosis-before-paralysis fails on both, because an order cannot be un-given. A separate variant is measured alongside it and is the sharpest thing this lesson has to say about a rubric: inspecting and reconnecting WITHOUT restarting the infusion moves two objectives from not met to partly met and leaves the trace identical to the path that never looked — same peak, same seconds above 60 — because restoring a delivery path restores nothing when there is nothing going down it."
           ]
         },
         {
@@ -866,23 +866,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "awareness-under-paralysis-fixtures.ts binds exact-content expert, wrong-order error, same-order recovery, and no-action pathways to seed 8801 for deterministic replay through the shared engine. Scored through the real debrief, the expert path meets all four; the error path is not met, not met, not met, met; the recovery path is not met, partly met, partly met, met; and the no-action path is not exercised, not met, not met, not met. Three readings need stating plainly. recognize-paralysis-risk is a hazard marker rather than a performance measure: it is met when the trace shows a predicted depth above 60 under a suppressed block, so the error path meets it by letting the harm happen and the no-action path fails it because nobody ever gave a relaxant. The evidence claims the pattern was exercised, not that the error path did well. And the expert path meets it only because it runs a deliberately light maintenance rate. At 0.06 mg/kg/min the depth crosses 60 about thirty seconds after the disconnection; at the 0.15 mg/kg/min a generous anaesthetist would choose it never crosses 60 at all, not even a hundred and ninety seconds later. A test measures both. The infusion that keeps her safest minute to minute is the one that hides the failure longest, and that is a property of the lesson worth naming rather than a transcript tuned to pass."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
