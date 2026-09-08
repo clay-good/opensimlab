@@ -1559,9 +1559,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "local-anesthetic-systemic-toxicity-fixtures.ts binds seed 6015 and content 0.1.0 to expert, full-dose-reflex error, same-reflex recovery, and no-action paths over 3,600 ticks. Nothing the objectives are scored on is authored. The sixty-kilogram patient is a set of baseline parameters, and the toxicity fraction, the seizure fraction, the lipid bolus and infusion rates and the epinephrine ceiling are all computed: the engine derives the 90 mL initial bolus and the 15.0 mL/min infusion from the ASRA weight band rather than reading them from the transcript, and it derives the 60 microgram epinephrine ceiling as 1 microgram per kilogram. The exposure is declared once as a local-anesthetic-toxicity event at tick 600. tests/integration/anesthesia-last-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -1573,9 +1573,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "No tray of its own: the ventilator, a bounded IV benzodiazepine for the modelled seizure, the weight-banded 20% lipid protocol, and an epinephrine bolus. Three of those four are refused by the engine outside their bounds, which is what makes the choices real rather than labelled. Lipid must be 20%, intravenous, the initial protocol, with no infusion already running. The benzodiazepine requires active modelled seizure activity. And epinephrine above 1 microgram per kilogram is refused outright while the toxicity is running — the ordinary 500 microgram arrest dose is eight times this patient's ceiling and simply does not happen. The lesson resuscitates nobody, gives no real drug, and predicts no outcome for any person."
           ]
         },
         {
@@ -1587,23 +1587,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The transcripts end at 3,600 ticks, past the scenario's own reassessment prompt at 2,400 and past the point where the lipid bolus has run and the infusion is established on every path that starts one. This is an initial-response case by design: there is no cardiopulmonary bypass, no prolonged resuscitation and no disposition, and the briefing does not offer one. The run stops because that slice is over rather than because the patient reached a state."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "The nine authored tutor rules at version 0.1.0 in tutor/guidance.ts are the module's shared induction ladder, and none of them fires here: this lesson begins after a block rather than at an induction, so there is no preoxygenation, no bolus sequence and no apnoea for them to speak about. That is stated rather than papered over. The guidance this lesson actually relies on is the engine's refusal message, which names the ceiling at the moment a learner reaches past it — and the transcripts are built so that a learner does exactly that. Worked example 0.1.0 is the module's eleventh observed-state one. Its ordering problem is that the toxicity fraction and the seizure fraction both fall as the treatment works, so neither can sequence the beats; what orders it instead are three quantities that only rise or latch — the running lipid infusion, the accepted epinephrine micrograms, and the ventilator's own delivering flag. The example never reaches for a full-dose pressor, and its closing beat says what would happen if it did rather than leaving the ceiling to be discovered. It also sets all four ventilator fields in a single action and says why: that the oxygen being on and the patient being ventilated are different claims, and only the second treats the acidosis driving the toxicity. tests/unit/anesthesia-last-worked-example.test.ts drives every beat through the real engine from both a fresh start and a handover of the refused reflex, and tests/unit/worked-example-offer.test.ts pins that what this audit claims is what the product actually offers."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx derives all four objectives from the replayed state trace and the engine event log rather than from a score kept during the run. The counterfactual has a shape none of the earlier anaesthesia labs produced: the recovery path scores IDENTICALLY to the expert path, and that is the finding rather than an accident. Both the error and the recovery reach for a 500 microgram epinephrine bolus at tick 700 — the reflex every other emergency trains, and the most dangerous single action available here — and the engine refuses it in both. What separates them is the next ten seconds. The recovery reads the refusal and runs the checklist, meeting all four objectives exactly as the expert does; the error treats the refusal as a pause and starts eighty seconds after exposure, scoring partly met, not met, partly met, not exercised. The refused action is not held against anyone. The time it costs is."
           ]
         },
         {
@@ -1622,23 +1622,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "local-anesthetic-systemic-toxicity-fixtures.ts binds exact-content expert, full-dose-reflex error, same-reflex recovery, and no-action pathways to seed 6015 for deterministic replay through the shared engine. Scored through the real debrief, the expert path meets all four; the error path is partly met, not met, partly met, not exercised; the recovery path meets all four; and the no-action path is not met, not met, not met, not exercised. Two readings need stating. use-reduced-last-epinephrine reads \"not exercised\" rather than \"not met\" when a full-dose bolus is refused, and its own finding text explains why: the ASRA checklist does not require epinephrine at all when circulation is maintained, so an absent accepted dose is not a failure. That is the opposite of the convention in the dilutional-coagulopathy lesson, where a refused plasma attempt scores not met, and the difference is deliberate on the rubric's part rather than an inconsistency this evidence is smoothing over. And support-last-airway-and-seizure reads four ventilator fields — inspired fraction, delivering, tidal volume and rate — so setting the dial without a rate leaves it partly met; the transcripts set all four in one action."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

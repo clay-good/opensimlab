@@ -8,6 +8,7 @@ import { supportsUnexpectedHemorrhageDemonstration } from './unexpected-hemorrha
 import { supportsDilutionalCoagulopathyDemonstration } from './dilutional-coagulopathy-demonstration';
 import { supportsObstetricGeneralAnesthesiaDemonstration } from './obstetric-general-anesthesia-demonstration';
 import { supportsGeriatricInductionDemonstration } from './geriatric-induction-demonstration';
+import { supportsLastDemonstration } from './last-demonstration';
 import { supportsHypoglycemiaDemonstration } from '../../endocrine-metabolic/demo/hypoglycemia-demonstration';
 import { supportsAdrenalDemonstration } from '../../endocrine-metabolic/demo/adrenal-demonstration';
 import { supportsThyroidDemonstration } from '../../endocrine-metabolic/demo/thyroid-demonstration';
@@ -243,6 +244,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsDilutionalCoagulopathyDemonstration,
     supportsObstetricGeneralAnesthesiaDemonstration,
     supportsGeriatricInductionDemonstration,
+    supportsLastDemonstration,
     supportsInductionDemonstration,
   ],
   'endocrine-metabolic': [
