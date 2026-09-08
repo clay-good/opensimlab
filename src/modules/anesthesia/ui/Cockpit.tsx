@@ -373,6 +373,8 @@ import { useBronchospasmDemonstration } from '@anesthesia/demo/useBronchospasmDe
 import { supportsBronchospasmDemonstration } from '@anesthesia/demo/bronchospasm-demonstration';
 import { useUnexpectedHemorrhageDemonstration } from '@anesthesia/demo/useUnexpectedHemorrhageDemonstration';
 import { supportsUnexpectedHemorrhageDemonstration } from '@anesthesia/demo/unexpected-hemorrhage-demonstration';
+import { useDilutionalCoagulopathyDemonstration } from '@anesthesia/demo/useDilutionalCoagulopathyDemonstration';
+import { supportsDilutionalCoagulopathyDemonstration } from '@anesthesia/demo/dilutional-coagulopathy-demonstration';
 import { useAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/useAcutePulmonaryEdemaDemonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
 import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAdultAsthmaDemonstration';
@@ -750,6 +752,7 @@ export function Cockpit({
   const laryngospasmDemoSupported = supportsLaryngospasmDemonstration(scenario);
   const bronchospasmDemoSupported = supportsBronchospasmDemonstration(scenario);
   const unexpectedHemorrhageDemoSupported = supportsUnexpectedHemorrhageDemonstration(scenario);
+  const dilutionalCoagulopathyDemoSupported = supportsDilutionalCoagulopathyDemonstration(scenario);
   const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
   const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
   const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
@@ -935,6 +938,7 @@ export function Cockpit({
     || laryngospasmDemoSupported
     || bronchospasmDemoSupported
     || unexpectedHemorrhageDemoSupported
+    || dilutionalCoagulopathyDemoSupported
     || acutePulmonaryEdemaDemoSupported
     || adultAsthmaDemoSupported
     || emergencyAnaphylaxisDemoSupported
@@ -1653,6 +1657,27 @@ export function Cockpit({
     active: demonstrating && unexpectedHemorrhageDemoSupported,
     running: session.transport === 'running',
     patient: unexpectedHemorrhageProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  /**
+   * The only demonstration in this module that reads the session's event log.
+   * Ordering a coagulation panel changes no modelled state — it reports numbers
+   * the solver was already computing — so a second panel is invisible to the
+   * equipment snapshot, and counting the accepted events is the only honest way
+   * to observe an action whose whole effect is on the observer.
+   */
+  const dilutionalCoagulopathyProgress = session.state && session.equipment ? {
+    coagulationPanelCount: session.log
+      .filter((entry) => entry.eventId.startsWith('coagulation-labs-')).length,
+    bloodProductsReleased: session.equipment.resuscitation.bloodProductsReleased === true,
+    freshFrozenPlasmaUnits: session.equipment.resuscitation.freshFrozenPlasmaUnits ?? 0,
+    prothrombinTimeRatio: session.state.prothrombinTimeRatio ?? 1,
+    fibrinogenGPerL: session.state.fibrinogenGPerL ?? 3,
+  } : undefined;
+  const dilutionalCoagulopathyDemonstration = useDilutionalCoagulopathyDemonstration({
+    active: demonstrating && dilutionalCoagulopathyDemoSupported,
+    running: session.transport === 'running',
+    patient: dilutionalCoagulopathyProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const persistentVfDemonstration = usePersistentVfArrestDemonstration({
@@ -2423,6 +2448,7 @@ export function Cockpit({
     : laryngospasmDemoSupported ? laryngospasmDemonstration
     : bronchospasmDemoSupported ? bronchospasmDemonstration
     : unexpectedHemorrhageDemoSupported ? unexpectedHemorrhageDemonstration
+    : dilutionalCoagulopathyDemoSupported ? dilutionalCoagulopathyDemonstration
     : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
     : adultAsthmaDemoSupported ? adultAsthmaDemonstration
     : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration

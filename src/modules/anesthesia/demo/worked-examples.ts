@@ -5,6 +5,7 @@ import { supportsAwarenessUnderParalysisDemonstration } from './awareness-under-
 import { supportsLaryngospasmDemonstration } from './laryngospasm-demonstration';
 import { supportsBronchospasmDemonstration } from './bronchospasm-demonstration';
 import { supportsUnexpectedHemorrhageDemonstration } from './unexpected-hemorrhage-demonstration';
+import { supportsDilutionalCoagulopathyDemonstration } from './dilutional-coagulopathy-demonstration';
 import { supportsHypoglycemiaDemonstration } from '../../endocrine-metabolic/demo/hypoglycemia-demonstration';
 import { supportsAdrenalDemonstration } from '../../endocrine-metabolic/demo/adrenal-demonstration';
 import { supportsThyroidDemonstration } from '../../endocrine-metabolic/demo/thyroid-demonstration';
@@ -237,6 +238,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsLaryngospasmDemonstration,
     supportsBronchospasmDemonstration,
     supportsUnexpectedHemorrhageDemonstration,
+    supportsDilutionalCoagulopathyDemonstration,
     supportsInductionDemonstration,
   ],
   'endocrine-metabolic': [
