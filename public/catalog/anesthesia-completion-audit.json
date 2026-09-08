@@ -2945,9 +2945,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "routine-geriatric-induction-fixtures.ts binds seed 5860 and content 0.1.0 to expert, textbook-dose error, right-total-wrong-technique recovery, and no-action paths over 5,400 ticks. Nothing the objectives are scored on is authored. The seventy-six-year-old man of 72 kg is a set of baseline parameters, and the end-tidal oxygen fraction, the depth index, the pressure nadir and the saturation all come out of the shared engine on an Eleveld-anchored propofol model. The three pressure nadirs the counterfactual turns on — 69.2, 69.1 and 61.9 mmHg — are solver output rather than authored figures, which is what makes the comparison below worth making. tests/integration/anesthesia-routine-geriatric-induction-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -2959,9 +2959,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "No tray of its own: the flowmeter, one syringe, and the ventilator. The choice is the dose and how it is given, and the formulary is built so that both halves are real — the presets run 20 mg, 40 mg and upwards, so five clicks of the smallest and one click of a larger one are equally easy. The ventilator adds a second: it starts at a 450 mL tidal volume set before anyone met this patient, and the objective asks for 6 to 8 mL/kg, so 500 mL is a decision rather than a default. The lesson intubates nobody, gives no real drug, and predicts no outcome for any person."
           ]
         },
         {
@@ -2973,23 +2973,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The transcripts end at 5,400 ticks, past the scenario's own case-end prompt at 4,800 and past the point where the pressure has reached its nadir and recovered on every path. There is no maintenance, emergence or airway in this lesson and the briefing does not offer one: the slice is the preoxygenation, the induction and the first ventilation, and the run stops because that slice is over rather than because the patient reached a state."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "The nine authored tutor rules at version 0.1.0 in tutor/guidance.ts apply here, and two are load-bearing: the preoxygenation ladder before the first bolus, and the recent-bolus prompt, which is the one written for exactly this technique — it reads the recorded boluses and the interval between them, so it speaks to a learner about to give a second increment before the first has arrived. Both are silent on the unassisted setting and suppressed while any alarm is active. No rule names the older-adult range, because the range is the thing the lesson exists to teach rather than to supply. Worked example 0.1.0 is the module's tenth observed-state one, and the first whose central beat repeats a known number of times: five increments are five separate decisions and each needs its own beat. They are keyed on the accepted milligrams — derived from the engine's own syringe volume rather than from a count of clicks, so the example stays resumable after a learner gives one themselves — because the plasma concentration rises with each increment and falls between them, and a beat gated on it walks backwards. Its closing beat declines the credit the demonstration would otherwise take: it says in plain terms that the same hundred milligrams as a single push reaches a nadir within a tenth of a millimetre of mercury, and that what five increments bought here was the objective rather than the patient. tests/unit/anesthesia-geriatric-induction-worked-example.test.ts drives every beat through the real engine from both a fresh start and a handover, and tests/unit/worked-example-offer.test.ts pins that what this audit claims is what the product actually offers."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx derives all four objectives from the replayed state trace and the recorded actions rather than from a score kept during the run. The three paths form a gradient with one variable changing at each step. The expert gives 100 mg as five 20 mg increments. The recovery gives the SAME 100 mg as a single push — the dose learned and the technique not. The error gives 144 mg, which is 2 mg/kg, the number for someone thirty years younger, also as one push. Measured: 69.2 mmHg, 69.1 mmHg, and 61.9 mmHg. The total is what moves the pressure; the increments are worth a tenth of a millimetre of mercury."
           ]
         },
         {
@@ -3008,23 +3008,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "routine-geriatric-induction-fixtures.ts binds exact-content expert, textbook-dose error, right-total-wrong-technique recovery, and no-action pathways to seed 5860 for deterministic replay through the shared engine. Scored through the real debrief, the expert path meets all four; the error path is met, not met, not met, met; the recovery path is met, partly met, met, met; and the no-action path fails all four because none of them is exercised without a first accepted dose. The reading that needs stating is the one the recovery path exposes, and a test measures it directly: the incremental technique moves the titration objective and does not move the patient. Same total, one push against five, and the pressure nadirs differ by 0.1 mmHg. The evidence does not claim the rubric and the physiology agree here. The clinical argument for titrating is about the doses a learner then does not give — stopping when the patient is asleep rather than when the syringe is empty — and that is a decision this bounded model has no way to reward, so the objective scores the technique and the transcripts report what it bought. A second rubric behaviour is pinned by a test because it is not obvious: ventilate-geriatric-induction reads the tidal volume the learner ENTERED rather than the one already on the machine. This ventilator starts at 450 mL, which is 6.25 mL/kg and inside the range the objective asks for, and starting ventilation without stating a volume is nevertheless scored at 0.0 mL/kg — the objective reduces over accepted settings, and an unstated field is not one."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

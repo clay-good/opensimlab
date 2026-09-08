@@ -154,6 +154,7 @@ import { bronchospasmCompletionEvidence } from '../bronchospasm-completion';
 import { unexpectedHemorrhageCompletionEvidence } from '../unexpected-intraoperative-hemorrhage-completion';
 import { dilutionalCoagulopathyCompletionEvidence } from '../dilutional-coagulopathy-completion';
 import { obstetricGeneralAnesthesiaCompletionEvidence } from '../obstetric-general-anesthesia-completion';
+import { routineGeriatricInductionCompletionEvidence } from '../routine-geriatric-induction-completion';
 import { persistentVfArrestCompletionEvidence } from '../../emergency-medicine/persistent-vf-arrest-completion';
 import { acutePulmonaryEdemaCompletionEvidence } from '../../emergency-medicine/acute-pulmonary-edema-completion';
 import { adultAsthmaCompletionEvidence } from '../../emergency-medicine/adult-asthma-completion';
@@ -467,6 +468,7 @@ export function auditClinicalScenario(
     ...unexpectedHemorrhageCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...dilutionalCoagulopathyCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...obstetricGeneralAnesthesiaCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...routineGeriatricInductionCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...persistentVfArrestCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...acutePulmonaryEdemaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...adultAsthmaCompletionEvidence(scenario, capabilityVersion, moduleId),

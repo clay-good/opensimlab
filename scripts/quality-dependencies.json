@@ -16,7 +16,7 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "3f9df20c1060b8e242410d66da9a010c9bacecd8bc6ef6d63e2a20a31e56fbfd"
+        "sha256": "1b344910da49ced415ca68b0725b4eb3f531b8f05aca136a38eef047a7a78842"
       },
       {
         "path": "src/modules/anesthesia/engine.ts",
@@ -221,7 +221,7 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "3f9df20c1060b8e242410d66da9a010c9bacecd8bc6ef6d63e2a20a31e56fbfd"
+        "sha256": "1b344910da49ced415ca68b0725b4eb3f531b8f05aca136a38eef047a7a78842"
       },
       {
         "path": "src/modules/anesthesia/demo/useObservedDemonstration.ts",
@@ -245,7 +245,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "9917afb706c26e4ef88936b4aaa4592915cad7406f543cd47b2220383b0cf34a"
+        "sha256": "f8cf75244ddf09145442895ac8f38d55c40439dc59f7583f37a2a91e62d43b1a"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
@@ -482,7 +482,7 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "3f9df20c1060b8e242410d66da9a010c9bacecd8bc6ef6d63e2a20a31e56fbfd"
+        "sha256": "1b344910da49ced415ca68b0725b4eb3f531b8f05aca136a38eef047a7a78842"
       },
       {
         "path": "src/modules/anesthesia/demo/useDemonstration.ts",
@@ -506,7 +506,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "9917afb706c26e4ef88936b4aaa4592915cad7406f543cd47b2220383b0cf34a"
+        "sha256": "f8cf75244ddf09145442895ac8f38d55c40439dc59f7583f37a2a91e62d43b1a"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",

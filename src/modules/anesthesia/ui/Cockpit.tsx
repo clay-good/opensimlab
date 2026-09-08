@@ -377,6 +377,8 @@ import { useDilutionalCoagulopathyDemonstration } from '@anesthesia/demo/useDilu
 import { supportsDilutionalCoagulopathyDemonstration } from '@anesthesia/demo/dilutional-coagulopathy-demonstration';
 import { useObstetricGeneralAnesthesiaDemonstration } from '@anesthesia/demo/useObstetricGeneralAnesthesiaDemonstration';
 import { supportsObstetricGeneralAnesthesiaDemonstration } from '@anesthesia/demo/obstetric-general-anesthesia-demonstration';
+import { useGeriatricInductionDemonstration } from '@anesthesia/demo/useGeriatricInductionDemonstration';
+import { supportsGeriatricInductionDemonstration } from '@anesthesia/demo/geriatric-induction-demonstration';
 import { useAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/useAcutePulmonaryEdemaDemonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
 import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAdultAsthmaDemonstration';
@@ -756,6 +758,7 @@ export function Cockpit({
   const unexpectedHemorrhageDemoSupported = supportsUnexpectedHemorrhageDemonstration(scenario);
   const dilutionalCoagulopathyDemoSupported = supportsDilutionalCoagulopathyDemonstration(scenario);
   const obstetricGeneralAnesthesiaDemoSupported = supportsObstetricGeneralAnesthesiaDemonstration(scenario);
+  const geriatricInductionDemoSupported = supportsGeriatricInductionDemonstration(scenario);
   const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
   const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
   const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
@@ -943,6 +946,7 @@ export function Cockpit({
     || unexpectedHemorrhageDemoSupported
     || dilutionalCoagulopathyDemoSupported
     || obstetricGeneralAnesthesiaDemoSupported
+    || geriatricInductionDemoSupported
     || acutePulmonaryEdemaDemoSupported
     || adultAsthmaDemoSupported
     || emergencyAnaphylaxisDemoSupported
@@ -1708,6 +1712,32 @@ export function Cockpit({
     active: demonstrating && obstetricGeneralAnesthesiaDemoSupported,
     running: session.transport === 'running',
     patient: obstetricGeneralAnesthesiaProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  /**
+   * The geriatric lesson counts accepted milligrams rather than clicks, and
+   * derives them from the engine's own syringe volume so the example stays
+   * resumable after a learner gives an increment themselves. The plasma
+   * concentration cannot do the job: it falls between increments.
+   */
+  const geriatricPropofol = scenario.formulary.find((entry) => entry.drugId === 'propofol');
+  const geriatricInductionProgress = session.state && session.equipment && geriatricPropofol ? {
+    inspiredOxygenFraction: session.equipment.ventilator.fio2,
+    endTidalOxygenFraction: session.state.endTidalO2Fraction ?? 0,
+    propofolTotalMg: (geriatricPropofol.syringeVolumeMl - (session.equipment.drugs
+      .find((drug) => drug.drugId === 'propofol')?.syringeRemainingMl
+      ?? geriatricPropofol.syringeVolumeMl)) * geriatricPropofol.concentration,
+    propofolPlasma: session.concentrations
+      .find((drug) => drug.drugId === 'propofol')?.plasma ?? 0,
+    depthIndex: session.state.depthIndex ?? 100,
+    meanArterialMmHg: session.state.meanArterialMmHg ?? 0,
+    ventilating: session.equipment.ventilator.delivering,
+    spo2Percent: session.state.spo2Percent ?? 100,
+  } : undefined;
+  const geriatricInductionDemonstration = useGeriatricInductionDemonstration({
+    active: demonstrating && geriatricInductionDemoSupported,
+    running: session.transport === 'running',
+    patient: geriatricInductionProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const persistentVfDemonstration = usePersistentVfArrestDemonstration({
@@ -2480,6 +2510,7 @@ export function Cockpit({
     : unexpectedHemorrhageDemoSupported ? unexpectedHemorrhageDemonstration
     : dilutionalCoagulopathyDemoSupported ? dilutionalCoagulopathyDemonstration
     : obstetricGeneralAnesthesiaDemoSupported ? obstetricGeneralAnesthesiaDemonstration
+    : geriatricInductionDemoSupported ? geriatricInductionDemonstration
     : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
     : adultAsthmaDemoSupported ? adultAsthmaDemonstration
     : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration
