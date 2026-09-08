@@ -3953,9 +3953,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "delayed-emergence-differential-fixtures.ts binds seed 5544 and content 0.1.0 to expert, reached-for-the-end error, refusal-heeded recovery, and no-action paths over 3,600 ticks. This is a decision vignette with no drugs and no dials, so determinism here means the ordered assessment sidecar replays identically and the engine refuses every step taken out of turn. The sixty-nine-year-old woman of 74 kg carries fixed bedside findings — glucose, carbon dioxide, sodium and temperature, all unremarkable — and a new asymmetric arm response with a leftward gaze preference, and those are scenario content rather than solver output. tests/integration/anesthesia-delayed-emergence-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -3967,9 +3967,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "Six bounded choices and the longest enforced order in the module: support, reconcile exposures, check metabolic causes, examine, and then either escalate urgently or continue routine observation. The engine refuses any step taken out of turn, and a test drives a path that opens with the examination to show it. The choice that carries the lesson is the last one, and it is a real choice: continuing to observe is on the tray, it sounds defensible, and nothing in the cockpit labels it wrong. The lesson diagnoses nobody, orders no imaging, gives no drug, and predicts no outcome for any person."
           ]
         },
         {
@@ -3981,23 +3981,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The transcripts end at 3,600 ticks, past the point where every path has recorded an escalation decision or established that it will not. This is a differential vignette rather than a course of treatment: there is no imaging, no thrombolysis, no neurology review and no disposition in it, and the briefing does not offer one. The run stops because the decision has been made rather than because the patient reached a state."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "The nine authored tutor rules at version 0.1.0 in tutor/guidance.ts are the module's shared induction ladder, and none of them fires here: this lesson is a recovery-room differential with no induction, no bolus sequence and no apnoea for them to speak about. The guidance it relies on is the engine's order enforcement, which names the missing step at the moment a learner reaches past it. Worked example 0.1.0 is the module's seventeenth observed-state one and its longest at five beats, each gated on the previous step's tick being recorded. Its narration argues for the order rather than reciting it: three of the four investigative steps find nothing wrong, and the example says that is the point — it is the sequence of negatives that turns an asymmetric arm and a gaze preference from an oddity into a finding, and a learner who examined first would have found the same signs with nothing to weigh them against. Its escalation beat names the alternative honestly, as comfortable, defensible-sounding and wrong. It does not name a diagnosis, and says the cockpit has no imaging to offer. tests/unit/anesthesia-delayed-emergence-worked-example.test.ts drives every beat through the real engine from both a fresh start and a handover of the refused opening, and tests/unit/worked-example-offer.test.ts pins that what this audit claims is what the product actually offers."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx derives all five objectives from the recorded assessment steps rather than from a running tally. The counterfactual is the refusal being heeded. The error path reaches straight for the examination and the escalation, is refused twice, and stops with nothing recorded. The recovery path makes the identical opening, is refused identically, and then works through the sequence properly to meet all five — the third lesson in this module where a refused action costs nothing once it is heeded."
           ]
         },
         {
@@ -4016,23 +4016,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "delayed-emergence-differential-fixtures.ts binds exact-content expert, reached-for-the-end error, refusal-heeded recovery, and no-action pathways to seed 5544 for deterministic replay through the shared engine. Scored through the real debrief, the expert path meets all five; the error path fails all five with two refusals recorded; the recovery path meets all five; and the no-action path fails all five. The reading that needs stating is measured in the tests rather than shipped as a fixture, because it is the sharpest thing here: a path that completes the ENTIRE workup — all four investigative steps, including finding the new asymmetric arm response and the gaze preference — and then continues routine recovery observation meets FOUR of the five objectives. The workup is not the decision. A learner can find the sign and still not act on it, and this rubric records that as four-fifths of a correct performance, which is what the shape of the mistake actually looks like."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

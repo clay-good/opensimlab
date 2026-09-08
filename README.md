@@ -49,7 +49,7 @@ unless you ask for it, says nothing at all on the unassisted setting, and never 
 diagnosis a lesson exists to leave open. Every renal, oncology, endocrine, nursing,
 infectious-disease, neonatology, toxicology, neurology, obstetrics, respiratory-medicine,
 pediatrics, cardiology, critical-care, and emergency-medicine lab has both. Anesthesia has
-started, with seventeen of its thirty-nine labs done.
+started, with eighteen of its thirty-nine labs done.
 
 ## How it works
 

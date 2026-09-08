@@ -391,6 +391,8 @@ import { useEmergenceResidualBlockadeDemonstration } from '@anesthesia/demo/useE
 import { supportsEmergenceResidualBlockadeDemonstration } from '@anesthesia/demo/emergence-residual-blockade-demonstration';
 import { useAspirationRiskDemonstration } from '@anesthesia/demo/useAspirationRiskDemonstration';
 import { supportsAspirationRiskDemonstration } from '@anesthesia/demo/aspiration-risk-demonstration';
+import { useDelayedEmergenceDemonstration } from '@anesthesia/demo/useDelayedEmergenceDemonstration';
+import { supportsDelayedEmergenceDemonstration } from '@anesthesia/demo/delayed-emergence-demonstration';
 import { useAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/useAcutePulmonaryEdemaDemonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
 import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAdultAsthmaDemonstration';
@@ -777,6 +779,7 @@ export function Cockpit({
   const quantitativeReversalDemoSupported = supportsQuantitativeReversalDemonstration(scenario);
   const emergenceResidualBlockadeDemoSupported = supportsEmergenceResidualBlockadeDemonstration(scenario);
   const aspirationRiskDemoSupported = supportsAspirationRiskDemonstration(scenario);
+  const delayedEmergenceDemoSupported = supportsDelayedEmergenceDemonstration(scenario);
   const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
   const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
   const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
@@ -971,6 +974,7 @@ export function Cockpit({
     || quantitativeReversalDemoSupported
     || emergenceResidualBlockadeDemoSupported
     || aspirationRiskDemoSupported
+    || delayedEmergenceDemoSupported
     || acutePulmonaryEdemaDemoSupported
     || adultAsthmaDemoSupported
     || emergencyAnaphylaxisDemoSupported
@@ -1886,6 +1890,24 @@ export function Cockpit({
     patient: aspirationRiskProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  /** The third sidecar lesson, and the longest: five recorded steps in order. */
+  const delayedEmergenceProgress = session.equipment ? {
+    supportReviewedAtTick: session.equipment.resuscitation
+      .delayedEmergenceAssessment?.supportReviewedAtTick ?? null,
+    exposureReviewedAtTick: session.equipment.resuscitation
+      .delayedEmergenceAssessment?.exposureReviewedAtTick ?? null,
+    metabolicReviewedAtTick: session.equipment.resuscitation
+      .delayedEmergenceAssessment?.metabolicReviewedAtTick ?? null,
+    neurologicExamAtTick: session.equipment.resuscitation
+      .delayedEmergenceAssessment?.neurologicExamAtTick ?? null,
+    escalation: session.equipment.resuscitation.delayedEmergenceAssessment?.escalation ?? null,
+  } : undefined;
+  const delayedEmergenceDemonstration = useDelayedEmergenceDemonstration({
+    active: demonstrating && delayedEmergenceDemoSupported,
+    running: session.transport === 'running',
+    patient: delayedEmergenceProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const persistentVfDemonstration = usePersistentVfArrestDemonstration({
     active: demonstrating && persistentVfDemoSupported,
     running: session.transport === 'running',
@@ -2663,6 +2685,7 @@ export function Cockpit({
     : quantitativeReversalDemoSupported ? quantitativeReversalDemonstration
     : emergenceResidualBlockadeDemoSupported ? emergenceResidualBlockadeDemonstration
     : aspirationRiskDemoSupported ? aspirationRiskDemonstration
+    : delayedEmergenceDemoSupported ? delayedEmergenceDemonstration
     : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
     : adultAsthmaDemoSupported ? adultAsthmaDemonstration
     : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration

@@ -14,6 +14,7 @@ import { supportsAnaphylaxisDemonstration } from './anaphylaxis-demonstration';
 import { supportsQuantitativeReversalDemonstration } from './quantitative-reversal-demonstration';
 import { supportsEmergenceResidualBlockadeDemonstration } from './emergence-residual-blockade-demonstration';
 import { supportsAspirationRiskDemonstration } from './aspiration-risk-demonstration';
+import { supportsDelayedEmergenceDemonstration } from './delayed-emergence-demonstration';
 import { supportsHypoglycemiaDemonstration } from '../../endocrine-metabolic/demo/hypoglycemia-demonstration';
 import { supportsAdrenalDemonstration } from '../../endocrine-metabolic/demo/adrenal-demonstration';
 import { supportsThyroidDemonstration } from '../../endocrine-metabolic/demo/thyroid-demonstration';
@@ -255,6 +256,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsQuantitativeReversalDemonstration,
     supportsEmergenceResidualBlockadeDemonstration,
     supportsAspirationRiskDemonstration,
+    supportsDelayedEmergenceDemonstration,
     supportsInductionDemonstration,
   ],
   'endocrine-metabolic': [
