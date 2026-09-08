@@ -369,6 +369,8 @@ import { useAwarenessUnderParalysisDemonstration } from '@anesthesia/demo/useAwa
 import { supportsAwarenessUnderParalysisDemonstration } from '@anesthesia/demo/awareness-under-paralysis-demonstration';
 import { useLaryngospasmDemonstration } from '@anesthesia/demo/useLaryngospasmDemonstration';
 import { supportsLaryngospasmDemonstration } from '@anesthesia/demo/laryngospasm-demonstration';
+import { useBronchospasmDemonstration } from '@anesthesia/demo/useBronchospasmDemonstration';
+import { supportsBronchospasmDemonstration } from '@anesthesia/demo/bronchospasm-demonstration';
 import { useAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/useAcutePulmonaryEdemaDemonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
 import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAdultAsthmaDemonstration';
@@ -744,6 +746,7 @@ export function Cockpit({
   const rapidSequenceInductionDemoSupported = supportsRapidSequenceInductionDemonstration(scenario);
   const awarenessUnderParalysisDemoSupported = supportsAwarenessUnderParalysisDemonstration(scenario);
   const laryngospasmDemoSupported = supportsLaryngospasmDemonstration(scenario);
+  const bronchospasmDemoSupported = supportsBronchospasmDemonstration(scenario);
   const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
   const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
   const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
@@ -927,6 +930,7 @@ export function Cockpit({
     || rapidSequenceInductionDemoSupported
     || awarenessUnderParalysisDemoSupported
     || laryngospasmDemoSupported
+    || bronchospasmDemoSupported
     || acutePulmonaryEdemaDemoSupported
     || adultAsthmaDemoSupported
     || emergencyAnaphylaxisDemoSupported
@@ -1588,6 +1592,35 @@ export function Cockpit({
     active: demonstrating && laryngospasmDemoSupported,
     running: session.transport === 'running',
     patient: laryngospasmProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  /**
+   * The obstruction lesson reads the engine's own bronchospasm severity rather
+   * than the end-tidal figure, because the severity moves while the number is
+   * still inside its alarm limits — which is the delay the lesson argues
+   * against, and would be reproduced by an example that waited for the number.
+   */
+  const bronchospasmProgress = session.state && session.equipment ? {
+    inspiredOxygenFraction: session.equipment.ventilator.fio2,
+    endTidalOxygenFraction: session.state.endTidalO2Fraction ?? 0,
+    ventilatorDelivering: session.equipment.ventilator.delivering,
+    bronchospasmSeverity: session.equipment.airway.bronchospasmSeverity,
+    etco2MmHg: session.state.etco2MmHg ?? 0,
+    depthIndex: session.state.depthIndex ?? 100,
+    helpRequested: session.equipment.airway.helpRequestedAtTick !== null,
+    salbutamolTotalMg: session.equipment.resuscitation.salbutamolTotalMg ?? 0,
+    remifentanilPlasma: session.concentrations
+      .find((drug) => drug.drugId === 'remifentanil')?.plasma ?? 0,
+    propofolPlasma: session.concentrations
+      .find((drug) => drug.drugId === 'propofol')?.plasma ?? 0,
+    intubated: session.equipment.airway.intubated,
+    airwayAttempts: session.equipment.airway.attempts,
+    airwayAttemptInProgress: session.equipment.airway.attemptInProgress,
+  } : undefined;
+  const bronchospasmDemonstration = useBronchospasmDemonstration({
+    active: demonstrating && bronchospasmDemoSupported,
+    running: session.transport === 'running',
+    patient: bronchospasmProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const persistentVfDemonstration = usePersistentVfArrestDemonstration({
@@ -2356,6 +2389,7 @@ export function Cockpit({
     : rapidSequenceInductionDemoSupported ? rapidSequenceInductionDemonstration
     : awarenessUnderParalysisDemoSupported ? awarenessUnderParalysisDemonstration
     : laryngospasmDemoSupported ? laryngospasmDemonstration
+    : bronchospasmDemoSupported ? bronchospasmDemonstration
     : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
     : adultAsthmaDemoSupported ? adultAsthmaDemonstration
     : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration

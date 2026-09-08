@@ -425,9 +425,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "bronchospasm-fixtures.ts binds seed 5127 and content 0.1.0 to expert, late-recognition error, same-dose recovery, and no-action paths over 7,200 ticks. Nothing the objectives are scored on is authored. The twenty-nine-year-old woman of 71 kg is a set of baseline parameters, and the capnogram shape, the end-tidal figure, the depth index, the saturation and the pressure all come out of the shared engine. The obstruction is declared in two timeline events — 0.35 at tick 2,400 and 0.75 at tick 3,300 — and it is deliberately gentle first: measured, the modelled severity is 0.35 while end-tidal carbon dioxide is still 38 mmHg and inside its alarm limits, which is the entire premise of the lesson. tests/integration/anesthesia-bronchospasm-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -439,9 +439,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "No tray of its own: the flowmeter, two syringes, a laryngoscope, the ventilator, a bounded call for help and a bounded nebulized bronchodilator. Two choices carry the lesson, and neither is the drug. The first is the induction dose, made four minutes before anything goes wrong: 1.5 mg/kg against the 2 mg/kg the syringe also offers, and it is what the hypotension objective ends up measuring. The second is the order — deepen before treating the wheeze as a separate problem — and the cockpit does not enforce it. The bronchodilator itself is bounded to 5 mg nebulized salbutamol and a 10 mg cumulative ceiling, and the engine refuses anything else rather than modelling it; the scenario says so. The lesson intubates nobody, gives no real drug, and predicts no outcome for any person."
           ]
         },
         {
@@ -453,23 +453,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The transcripts end at 7,200 ticks, past the end of the second obstruction event at 5,700 and past the point where the modelled severity has returned to zero on every path. There is no emergence and no end of operation in this scenario and the briefing does not offer one: the slice is the induction and the first ten minutes of an obstruction, and the run stops because that slice is over rather than because the patient reached a state."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "The nine authored tutor rules at version 0.1.0 in tutor/guidance.ts apply here, and the map-below-60 rule is the one that fires in this patient after a 2 mg/kg induction. None of them names the capnogram, which is deliberate: reading the shape is the thing the lesson exists to leave to the learner, and a prompt that named it would answer the only question being asked. Worked example 0.1.0 is the module's sixth observed-state one, and it is the first gated on a shape rather than a threshold. It triggers on the engine's modelled obstruction severity rather than on end-tidal carbon dioxide, because gating on the number would reproduce the delay the lesson argues against — and its closing beat reports what the figure actually was when the response began, which is inside its alarm limits. Three of its beats are conditional on the state it is handed rather than on its own script, and a test proves each of them reachable by driving the example from a room-air, light-plane handover: the flowmeter beat, and a deepening beat that titrates. That deepening beat is keyed on the depth decade rather than carrying one fixed id, because a single dose is not always enough to bring a light plane back into range and a fixed id stalls the example on exactly the patient who needs it most. Where the plane is already surgical the example does not dose at all and says the cheapest explanation is excluded rather than assumed. tests/unit/anesthesia-bronchospasm-worked-example.test.ts drives every beat through the real engine from a fresh start and two handovers, and tests/unit/worked-example-offer.test.ts pins that what this audit claims is what the product actually offers."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx derives all six objectives from the replayed state trace and the engine event log rather than from a score kept during the run. The counterfactual is the induction dose, and it is the one thing neither the error path nor the recovery path can take back. Both induce with 2 mg/kg; the pressure that follows is what fails manage-hypotension, and no amount of answering the wheeze well afterwards recovers it. What the recovery path does recover is everything else: on an identical opening it answers the shape inside the two-minute window, escalates inside the sixty-second one, and gets the nebulizer in — four objectives back. The error path waits for the end-tidal number instead, and every action it takes lands after tick 3,700, which is what waiting for a figure that is still inside its alarm limits costs on this clock."
           ]
         },
         {
@@ -488,23 +488,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "bronchospasm-fixtures.ts binds exact-content expert, late-recognition error, same-dose recovery, and no-action pathways to seed 5127 for deterministic replay through the shared engine. Scored through the real debrief, the expert path meets all six; the error path is not met, met, not met, not met, met, not met; the recovery path is met, met, met, met, met, not met; and the no-action path is not met, not met, not met, not met, partly met, met. Three readings need stating plainly. deepen-before-reaching-for-anything-else is met on the error path WITHOUT a deepening bolus, because the objective is written to accept a plane that was already at or below 60 and this induction leaves it there — the finding text says which of the two it credited, and the evidence does not claim the error path deepened anything. ventilate-before-desaturation is met on every path that induces at all: this is a healthy twenty-nine-year-old with a full flowmeter and the saturation does not leave 100% after onset, so the objective is exercised rather than stressed. And manage-hypotension is met on the no-action path, because nobody induced her. The expert path carries no vasopressor: measured, one changes the pressure nadir here by nothing at all, and a reference transcript should not contain an action that does nothing."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
