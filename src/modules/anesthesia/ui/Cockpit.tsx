@@ -381,6 +381,8 @@ import { useGeriatricInductionDemonstration } from '@anesthesia/demo/useGeriatri
 import { supportsGeriatricInductionDemonstration } from '@anesthesia/demo/geriatric-induction-demonstration';
 import { useLastDemonstration } from '@anesthesia/demo/useLastDemonstration';
 import { supportsLastDemonstration } from '@anesthesia/demo/last-demonstration';
+import { useMalignantHyperthermiaDemonstration } from '@anesthesia/demo/useMalignantHyperthermiaDemonstration';
+import { supportsMalignantHyperthermiaDemonstration } from '@anesthesia/demo/malignant-hyperthermia-demonstration';
 import { useAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/useAcutePulmonaryEdemaDemonstration';
 import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
 import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAdultAsthmaDemonstration';
@@ -762,6 +764,7 @@ export function Cockpit({
   const obstetricGeneralAnesthesiaDemoSupported = supportsObstetricGeneralAnesthesiaDemonstration(scenario);
   const geriatricInductionDemoSupported = supportsGeriatricInductionDemonstration(scenario);
   const lastDemoSupported = supportsLastDemonstration(scenario);
+  const malignantHyperthermiaDemoSupported = supportsMalignantHyperthermiaDemonstration(scenario);
   const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
   const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
   const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
@@ -951,6 +954,7 @@ export function Cockpit({
     || obstetricGeneralAnesthesiaDemoSupported
     || geriatricInductionDemoSupported
     || lastDemoSupported
+    || malignantHyperthermiaDemoSupported
     || acutePulmonaryEdemaDemoSupported
     || adultAsthmaDemoSupported
     || emergencyAnaphylaxisDemoSupported
@@ -1766,6 +1770,29 @@ export function Cockpit({
     patient: lastProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  /**
+   * The MH lesson is sequenced on the dantrolene total, the only quantity here
+   * that cannot go back down: the rigidity fraction climbs before treatment and
+   * falls after it, so a beat gated on it fires again on the way down.
+   */
+  const malignantHyperthermiaProgress = session.state && session.equipment ? {
+    sevofluranePercent: session.equipment.ventilator.sevofluranePercent ?? 0,
+    inspiredOxygenFraction: session.equipment.ventilator.fio2,
+    freshGasFlowLPerMin: session.equipment.ventilator.freshGasFlowLPerMin ?? 0,
+    tidalVolumeMl: session.equipment.ventilator.tidalVolumeMl,
+    respiratoryRateBpm: session.equipment.ventilator.respiratoryRateBpm,
+    ventilatorDelivering: session.equipment.ventilator.delivering,
+    muscleRigidityFraction: session.state.muscleRigidityFraction ?? 0,
+    etco2MmHg: session.state.etco2MmHg ?? 0,
+    coreTemperatureC: session.state.coreTemperatureC ?? 0,
+    dantroleneTotalMg: session.equipment.resuscitation.dantroleneTotalMg,
+  } : undefined;
+  const malignantHyperthermiaDemonstration = useMalignantHyperthermiaDemonstration({
+    active: demonstrating && malignantHyperthermiaDemoSupported,
+    running: session.transport === 'running',
+    patient: malignantHyperthermiaProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const persistentVfDemonstration = usePersistentVfArrestDemonstration({
     active: demonstrating && persistentVfDemoSupported,
     running: session.transport === 'running',
@@ -2538,6 +2565,7 @@ export function Cockpit({
     : obstetricGeneralAnesthesiaDemoSupported ? obstetricGeneralAnesthesiaDemonstration
     : geriatricInductionDemoSupported ? geriatricInductionDemonstration
     : lastDemoSupported ? lastDemonstration
+    : malignantHyperthermiaDemoSupported ? malignantHyperthermiaDemonstration
     : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
     : adultAsthmaDemoSupported ? adultAsthmaDemonstration
     : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration

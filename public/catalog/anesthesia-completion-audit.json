@@ -1181,9 +1181,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "early-malignant-hyperthermia-fixtures.ts binds seed 3308 and content 0.1.0 to expert, unrecognised-pattern error, late-recognition recovery, and no-action paths over 7,200 ticks. Nothing the objectives are scored on is authored, and the trigger least of all: this crisis is LATENT rather than scheduled, firing on genuine end-tidal volatile exposure, so the tick at which rigidity appears is produced by the learner turning a vaporizer on rather than by the timeline. The carbon dioxide, the rigidity fraction and the temperature trajectory all come out of the shared engine — peak end-tidal carbon dioxide is 39 mmHg on the expert path, 53 on the recovery path and 109 on the error path, and peak rigidity 0.37, 0.42 and 0.91. tests/integration/anesthesia-malignant-hyperthermia-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -1195,9 +1195,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "No tray of its own: the anaesthetic machine — vaporizer, inspired fraction, fresh-gas flow, tidal volume and rate — and a bounded 2.5 mg/kg intravenous dantrolene the engine accepts at that dose and no other. What makes the choices real here is that the first one is invisible as a choice. Starting 2% sevoflurane on a 2 L/min circle is competent volatile maintenance and is also the trigger, and nothing in the cockpit marks it. The rescue objective then reads four machine settings together rather than one, because turning the vaporizer off does not empty a circle that is full of agent — the flow is what washes it out. The lesson gives no real drug, triggers nothing in anyone, and predicts no outcome for any person."
           ]
         },
         {
@@ -1209,23 +1209,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The transcripts end at 7,200 ticks, past the scenario's own reassessment prompt at 5,400 and past the 120-second reassessment window on every path that gives dantrolene. This is an initial-response case: there is no cooling protocol, no repeat dosing schedule, no laboratory workup and no disposition, and the briefing does not offer one. The run stops because that slice is over rather than because the patient reached a state."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "The nine authored tutor rules at version 0.1.0 in tutor/guidance.ts are the module's shared induction ladder, and none of them fires here: this lesson is a volatile maintenance rather than an induction, so there is no preoxygenation, no bolus sequence and no apnoea for them to speak about. That is stated rather than papered over, and it matters more in this lesson than in the others — there is no prompt anywhere that names the rising carbon dioxide, because reading that divergence is the entire thing being assessed. Worked example 0.1.0 is the module's twelfth observed-state one and the only one that has to CAUSE the crisis it then treats: the trigger is latent, so an example that skipped the maintenance beat would sit in an uneventful anaesthetic forever with nothing to demonstrate. Its first beat therefore starts the sevoflurane and says plainly that this is the beat that causes what follows. It is sequenced on the dantrolene total, which is the only quantity here that cannot go back down — the rigidity fraction climbs before treatment and falls after it, so a beat gated on it fires again on the way down. Its closing beat argues with its own temperature reading, pointing out that the number is barely above baseline and that a clinician waiting for a fever would still be waiting, and it also declines the credit its own reassessment would take. tests/unit/anesthesia-malignant-hyperthermia-worked-example.test.ts drives every beat through the real engine from both a fresh start and a handover, and tests/unit/worked-example-offer.test.ts pins that what this audit claims is what the product actually offers."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx derives all four objectives from the replayed state trace and the recorded actions rather than from a score kept during the run. The counterfactual is how early the pattern is read, on an identical opening: every path except the idle one starts the same 2% sevoflurane maintenance, and the error path simply never reads the pattern. Measured, it reaches an end-tidal carbon dioxide of 109 mmHg and a rigidity fraction of 0.91 while its core temperature is still 38.95°C — which is the argument the lesson exists to make, since a clinician waiting for a fever would still be waiting. The recovery path makes the identical opening, recognises it seventy-two seconds in rather than two, and treats completely: partly met, not met, partly met, met."
           ]
         },
         {
@@ -1244,23 +1244,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "early-malignant-hyperthermia-fixtures.ts binds exact-content expert, unrecognised-pattern error, late-recognition recovery, and no-action pathways to seed 3308 for deterministic replay through the shared engine. Scored through the real debrief, the expert path meets all four; the error path fails all four; the recovery path is partly met, not met, partly met, met; and the no-action path reports not exercised on all four. Two readings need stating. The no-action result is correct rather than a gap: the trigger is latent, so a session in which nobody delivers volatile never develops rigidity and there is no malignant hyperthermia to respond to — the finding text says exactly that. And the expert path meets reassess-mh-response on a trace where end-tidal carbon dioxide goes from 39 to 39. Treating within two seconds means there was never anything to reverse, so it is the RECOVERY path that actually demonstrates the physiology, falling from 53 to 49 across its window. Fast enough to prevent and fast enough to show are not the same thing, and a test pins both numbers rather than letting the expert transcript imply a response it did not need."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
