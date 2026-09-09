@@ -1937,9 +1937,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "venous-air-embolism-fixtures.ts binds seed 7158 and content 0.1.0 to expert, oxygen-without-source-control error, late-source-control recovery, and no-action paths over 4,000 ticks. Every number the counterfactual turns on is solver output on the bounded embolism trajectory the scenario declares: an end-tidal carbon dioxide falling from 37 to 17 mmHg, a mean arterial pressure from 92 to 53, and their recovery to 37 and 88 once air entry is stopped. tests/integration/anesthesia-venous-air-embolism-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -1951,9 +1951,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "A single-drug formulary carrying propofol alone -- nothing in this lesson is answered pharmacologically -- and three controls: the help request in its venous-air context, the bounded source-control intent, and the ventilator. The source-control action records intent rather than technique -- occluding the site, lowering it, flooding the field are all one accepted action, and the metadata says finding or physically controlling a source is not simulated. What the lesson leaves open is whether the learner reaches for it at all, and the transcripts measure exactly that."
           ]
         },
         {
@@ -1965,23 +1965,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The scripted embolism begins at tick 600 and the transcripts end at 4,000, past the scenario's own reassessment prompt at 2,400 and past the point where every path has settled -- the source-controlled paths hold an end-tidal carbon dioxide near 36 mmHg and a pressure near 88 from roughly tick 2,000 onward, and the uncontrolled paths hold 17 and 53 for the remainder of the run. The fourth objective reads the capnogram back after source control, so the run must continue long enough for that recovery to be observable or absent."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "The nine authored tutor rules at version 0.1.0 in tutor/guidance.ts apply here and are silent on the unassisted setting and suppressed while any alarm is active. None names the capnogram pattern, which is correct: recognising an abrupt end-tidal fall with a barely-moved saturation is the judgement this lesson exists to build. Worked example 0.1.0 is the module's twenty-seventh observed-state one and the fourth to open with a beat that deliberately does nothing, because the bounded source-control action is refused before the scripted event. Its oxygen beat is unusually careful: it tells the learner to give the oxygen because the physiology is right rather than because the monitor will respond, which is the honest instruction given what the model then shows. Its closing beat declines three credits -- the error path's earned objective beside its unchanged numbers, the near-complete recovery from source control alone, and the fact that the saturation carries almost no signal in this lesson. tests/unit/anesthesia-venous-air-embolism-worked-example.test.ts drives every beat through the real engine from both a fresh start and a handover, and tests/unit/worked-example-offer.test.ts pins that what this audit claims is what the product actually offers."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx derives all four objectives from the replayed state trace and the recorded actions rather than from a score kept during the run. The counterfactual is an earned objective that buys nothing. The error path recognises the change, calls for help at 10 seconds, and establishes 100% oxygen with active delivery at 20 -- everything except stopping the air. Measured, it is met, not met, MET, not met, and it ends with an end-tidal carbon dioxide of 17 mmHg and a mean arterial pressure of 53. A path that does nothing at all ends at 16 and 55. The mirror measurement is in a test: source control ALONE, a single action scoring only two of the four objectives, ends at 35 mmHg and 92 -- very nearly this patient's pre-event numbers. The expert path meets all four; the recovery path stops the entry at tick 1,400, keeps its missed objective missed, and recovers the patient to 36 and 88."
           ]
         },
         {
@@ -2000,23 +2000,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "venous-air-embolism-fixtures.ts binds exact-content expert, oxygen-without-source-control error, late-source-control recovery, and no-action pathways to seed 7158 for deterministic replay through the shared engine. Three readings are pinned by tests. The first is the one above, and it is worth stating in the form the transcripts prove: in this bounded model 100% oxygen with active breath delivery is indistinguishable from no treatment at all, and one source-control action is worth nearly the whole recovery. The evidence does not conclude the oxygen objective is wrong to exist -- washing nitrogen out is sound practice whose benefit this model does not represent -- but a learner comparing the two paths would otherwise be entitled to infer that the oxygen helped, and it did not. The second is that the saturation is the wrong instrument here: it stays between 91% and 100% on every path including the no-action one, moving barely nine points while the capnogram falls twenty, so a learner watching the oximeter sees almost nothing. The third is that late source control still works: the recovery path closes the source at 80 seconds, permanently loses that objective, and returns the patient to within a few millimetres of the expert path. The missed window costs the score and not the patient, which is the opposite arrangement from the high-spinal lesson bound alongside it."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

@@ -395,6 +395,8 @@ import { useSupraglotticRescueDemonstration } from '@anesthesia/demo/useSupraglo
 import { supportsSupraglotticRescueDemonstration } from '@anesthesia/demo/supraglottic-rescue-demonstration';
 import { useHighSpinalDemonstration } from '@anesthesia/demo/useHighSpinalDemonstration';
 import { supportsHighSpinalDemonstration } from '@anesthesia/demo/high-spinal-demonstration';
+import { useVenousAirEmbolismDemonstration } from '@anesthesia/demo/useVenousAirEmbolismDemonstration';
+import { supportsVenousAirEmbolismDemonstration } from '@anesthesia/demo/venous-air-embolism-demonstration';
 import { useLastDemonstration } from '@anesthesia/demo/useLastDemonstration';
 import { supportsLastDemonstration } from '@anesthesia/demo/last-demonstration';
 import { useMalignantHyperthermiaDemonstration } from '@anesthesia/demo/useMalignantHyperthermiaDemonstration';
@@ -799,6 +801,7 @@ export function Cockpit({
   const repeatedLaryngoscopyDemoSupported = supportsRepeatedLaryngoscopyDemonstration(scenario);
   const supraglotticRescueDemoSupported = supportsSupraglotticRescueDemonstration(scenario);
   const highSpinalDemoSupported = supportsHighSpinalDemonstration(scenario);
+  const venousAirDemoSupported = supportsVenousAirEmbolismDemonstration(scenario);
   const lastDemoSupported = supportsLastDemonstration(scenario);
   const malignantHyperthermiaDemoSupported = supportsMalignantHyperthermiaDemonstration(scenario);
   const anaphylaxisDemoSupported = supportsAnaphylaxisDemonstration(scenario);
@@ -1003,6 +1006,7 @@ export function Cockpit({
     || repeatedLaryngoscopyDemoSupported
     || supraglotticRescueDemoSupported
     || highSpinalDemoSupported
+    || venousAirDemoSupported
     || lastDemoSupported
     || malignantHyperthermiaDemoSupported
     || anaphylaxisDemoSupported
@@ -1991,6 +1995,19 @@ export function Cockpit({
     patient: repeatedLaryngoscopyProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  const venousAirProgress = session.state && session.equipment ? {
+    severity: session.equipment.resuscitation.venousAirEmbolismFraction ?? 0,
+    helpRequestedAtTick: session.equipment.airway.helpRequestedAtTick ?? null,
+    entryControlled: session.equipment.resuscitation.venousAirEntryControlled ?? false,
+    ventilatorDelivering: session.equipment.ventilator.delivering,
+    inspiredOxygenFraction: session.equipment.ventilator.fio2,
+  } : undefined;
+  const venousAirDemonstration = useVenousAirEmbolismDemonstration({
+    active: demonstrating && venousAirDemoSupported,
+    running: session.transport === 'running',
+    patient: venousAirProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const highSpinalProgress = session.state && session.equipment ? {
     severity: session.equipment.resuscitation.highSpinalFraction ?? 0,
     helpRequestedAtTick: session.equipment.airway.helpRequestedAtTick ?? null,
@@ -2849,6 +2866,7 @@ export function Cockpit({
     : repeatedLaryngoscopyDemoSupported ? repeatedLaryngoscopyDemonstration
     : supraglotticRescueDemoSupported ? supraglotticRescueDemonstration
     : highSpinalDemoSupported ? highSpinalDemonstration
+    : venousAirDemoSupported ? venousAirDemonstration
     : lastDemoSupported ? lastDemonstration
     : malignantHyperthermiaDemoSupported ? malignantHyperthermiaDemonstration
     : anaphylaxisDemoSupported ? anaphylaxisDemonstration
