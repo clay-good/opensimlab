@@ -82,4 +82,28 @@ export const SURGERY_TRAUMA_LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'These are observational cohorts from single centres across more than twenty years, with different populations, different definitions of missed injury, and different follow-up; the review that pooled them says none was randomized, none reported long-term health outcomes, and risk of bias varied considerably. Together they establish that examinations of patients who cannot take part miss things and that formalising a checklist did not by itself fix that. They give no probability for this patient, and the reason to complete the survey here is that his assessment is demonstrably unfinished, not that a percentage says so.',
     briefIn: ['unfinished-survey-a-patient-who-cannot-be-asked'],
   },
+  {
+    id: 'transient-response-presentation-and-team-response-are-authored',
+    headline: 'One resuscitation room, one telephone call, and two authored blood pressures.',
+    simplification: 'The case supplies two fixed observation sets and moves between them once, five minutes in, when the pressure falls a third time; and an operating team that answers eight minutes after it is called with a fixed reply. No perfusion, haemorrhage, coagulation, or fluid-response model runs underneath, no bolus can be given, and no injury is ever confirmed or excluded.',
+    whereItMisleads: 'A learner concludes that a transient responder always deteriorates on this schedule, that the fall always waits five minutes, that the theatre team always answers in eight, or that calling is what kept him talking.',
+    correctUnderstanding: 'Nothing the learner does changes his course, because nothing was going to. The two states exist so that the falling pattern is legible; a real patient may crash in the first minute, may hold for an hour, or may not be bleeding at all. The reply is authored: in practice the call may not be answered, the theatre may not be free, and the plan has to survive both.',
+    briefIn: ['transient-response-a-patient-who-will-not-stay-up'],
+  },
+  {
+    id: 'transient-response-controls-are-recording-and-escalation-only',
+    headline: 'No fluid is given, no blood is ordered, no scan is requested, and no operation is chosen.',
+    simplification: 'The learner records the mechanism and its clock, records the response to volume as a shape, records what a picture can and cannot do here, calls the operating team, records bounded qualified-team intent, and reviews the boundaries.',
+    whereItMisleads: 'The bounded operative-intent control is read as booking an operation, the refusal of another bolus is read as withholding resuscitation, or the refusal to scan first is read as an argument against imaging trauma patients.',
+    correctUnderstanding: 'The transfer, any imaging on the way or not at all, transfusion, and every operative decision belong to the qualified team, and this lesson exposes no drug, dose, route, fluid, blood product, incision, or threshold. The bolus refusal objects to spending a third interval watching the same answer shrink, not to the two boluses already given; the scan refusal objects to the interval and the room for this patient, and says so in the refusal itself.',
+    briefIn: ['transient-response-a-patient-who-will-not-stay-up'],
+  },
+  {
+    id: 'transient-response-retrospective-figures-are-not-a-stopwatch',
+    headline: 'Three retrospective studies, two of them about somebody else, pointing in opposite directions.',
+    simplification: 'The lesson quotes a probability of death rising by as much as 0.35 percent a minute among 165 of 243 registry patients, a hazard ratio of 1.89 (1.10 to 3.26) beyond ten minutes and 2.67 (0.97 to 7.34) below a systolic of 70 in 309 hypotensive torso gunshot wounds, and standardised mortality ratios of 0.745 against 1.023 favouring early whole-body imaging in 4,621 blunt trauma patients.',
+    whereItMisleads: 'A learner carries these to the bedside as a clock — ten minutes, ninety minutes, a percentage per minute — or reads the imaging result as licence to scan this patient, or reads the delay results as an argument against scanning anyone.',
+    correctUnderstanding: 'None of the three is randomised. Two are about penetrating injury or injury isolated to the abdomen, and the registry series reverses direction beyond ninety minutes because the patients who lasted that long were a different group. The gunshot-wound paper\u2019s own conclusion describes its 1.89 hazard ratio as almost threefold, which the ratio does not say, and the lesson keeps the ratio. Together they establish only the shape: that intervals cost something here, and that imaging is generally good for injured patients and still cannot stop bleeding. They give no threshold and no probability for this patient.',
+    briefIn: ['transient-response-a-patient-who-will-not-stay-up'],
+  },
 ];

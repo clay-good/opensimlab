@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "moduleId": "surgery-trauma",
   "capabilityVersion": "0.1.0-alpha.48",
-  "scenarioCount": 3,
+  "scenarioCount": 4,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -365,6 +365,132 @@
           "status": "satisfied",
           "evidence": [
             "unfinished-survey-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "transient-response-a-patient-who-will-not-stay-up",
+      "title": "A transient response: a patient who will not stay up",
+      "moduleId": "surgery-trauma",
+      "environment": "ward",
+      "estimatedMinutes": 9,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario transient-response-a-patient-who-will-not-stay-up carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "missing",
+          "evidence": [
+            "This scenario declares 8 objectives; the contract allows at most 5."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "transient-response-fixtures.ts binds seed 6241 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No perfusion, haemorrhage, coagulation, or fluid-response model is claimed; the two states are authored."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "transient-response.ts runs two authored transitions. At 5 minutes the pressure falls a third time, to 84/50 with a rate of 124, five minutes after a second answer that held for nine and with nothing taken away — the only lesson in this module whose monitored numbers move at all, and they move in the reassuring direction first. The operating team answers 8 minutes after it is called, the fastest reply in the module because what is handed over is a decision that already exists, repeats the response pattern back, and takes ownership of the transfer, of any imaging on the way or not at all, and of the operation and its timing. Nothing arrives uncalled."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "The learner records the mechanism with its clock, records the response to volume as a shape rather than a reading, records what a picture can and cannot do here in both directions, calls the team that can stop the bleeding, records bounded qualified-team intent, and reviews the boundaries. Reading the return of the pressure as stability, sending him for a picture before telling anybody, giving another bolus and watching, and waiting for cross-matched blood before calling are each refused, and every refusal objects to the interval rather than to the step: the scan refusal says the imaging is worth having and is the receiving team’s to arrange or skip, and the blood refusal says the cross-match proceeds alongside the call rather than in front of it."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "The recorded mechanism and clock, the recorded response pattern, the recorded limits of imaging, the call to the operating team, bounded operative intent, the boundary review, and a current full assessment permit handoff with the injury, the imaging question and the operation all open. Instructor takeover bounds a run with no escalation at 45 minutes — the shortest interval in this module by half, because here the harm is measured in single minutes — or an unfinished session at four hours."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "satisfied",
+          "evidence": [
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary recorded actions. Unassisted mode is silent and coached withholds the two non-urgent beats. The prompts read only the learner’s own recorded steps, never name an injury, and never say what an operation would find, because nothing in the lesson can establish either. The example is driven through the real engine in tests rather than asserted as a script, and it calls the team before the third fall, because an example that called only once the pressure had dropped again would teach that the next fall is what licenses the call."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "Eight event-bound objectives distinguish recording a mechanism with its clock, recording a response as a shape rather than a reading, refusing a returning pressure as stability, recording what imaging can and cannot do in both directions, calling the team that can stop the bleeding without clearing a gate first, bounded qualified-team intent, retrospective evidence that argues with itself, and accountable handoff of a decision that already exists. Refused shortcuts remain visible, and no injury, effect, disposition, or outcome is certified."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "3 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "transient-response-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
           ]
         },
         {

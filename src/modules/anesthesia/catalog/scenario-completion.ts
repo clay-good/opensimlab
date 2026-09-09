@@ -234,6 +234,7 @@ import { easyLabelCompletionEvidence } from '../../oncology/easy-label-completio
 import { negativeScanCompletionEvidence } from '../../surgery-trauma/negative-scan-completion';
 import { risingRequirementCompletionEvidence } from '../../surgery-trauma/rising-requirement-completion';
 import { unfinishedSurveyCompletionEvidence } from '../../surgery-trauma/unfinished-survey-completion';
+import { transientResponseCompletionEvidence } from '../../surgery-trauma/transient-response-completion';
 import { countedRateCompletionEvidence } from '../../medical-surgical-nursing/counted-rate-completion';
 import { pairedReadingCompletionEvidence } from '../../medical-surgical-nursing/paired-reading-completion';
 import { afferentLimbCompletionEvidence } from '../../medical-surgical-nursing/afferent-limb-completion';
@@ -579,6 +580,7 @@ export function auditClinicalScenario(
     ...negativeScanCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...risingRequirementCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...unfinishedSurveyCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...transientResponseCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...countedRateCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...pairedReadingCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...afferentLimbCompletionEvidence(scenario, capabilityVersion, moduleId),

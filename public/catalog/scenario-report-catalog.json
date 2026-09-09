@@ -4100,6 +4100,23 @@
       "limitationManifestHash": "sha256:7460105ec939d333da8172e60795e32bbfd9cdf2006e219f9594c65d7e3e62a2"
     },
     {
+      "scenarioId": "transient-response-a-patient-who-will-not-stay-up",
+      "contentVersion": "0.1.0",
+      "moduleId": "surgery-trauma",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:cd87f8ed4f6cfe8842745f3a1bc63c65514d5cce4a5cb7b9d93ade2465bfe8b2",
+      "defaultsHash": "sha256:976a739d45a2ed5b99a63959afec72396c9371daa78d94a33affad89786eeeb7",
+      "maturityHash": "sha256:06d9f5ffa0a2850944527f8fbf76414ae7cdf8f9a323f931c392277d84beab5a",
+      "sourceManifestHash": "sha256:c137e2d024a5c5aa4775cb0f2003ffdad5024c98e5ec680bf84a3279d5e5ec02",
+      "limitationManifestHash": "sha256:7e4b626a33fa607c61f6fa4ef8ba50e138186cda7dba5e82ab767d810ae755ba"
+    },
+    {
       "scenarioId": "unfinished-survey-a-patient-who-cannot-be-asked",
       "contentVersion": "0.1.0",
       "moduleId": "surgery-trauma",

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "surgery-trauma",
-  "recordCount": 3,
+  "recordCount": 4,
   "records": [
     {
       "recordId": "scenario:negative-scan-a-scan-that-cannot-say-no@0.1.0",
@@ -34,6 +34,17 @@
       "evidence": [
         "/catalog/surgery-trauma-completion-audit.json#unfinished-survey-a-patient-who-cannot-be-asked@0.1.0",
         "/catalog/surgery-trauma-quality-audit.json#unfinished-survey-a-patient-who-cannot-be-asked@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:transient-response-a-patient-who-will-not-stay-up@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "transient-response-a-patient-who-will-not-stay-up",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/surgery-trauma-completion-audit.json#transient-response-a-patient-who-will-not-stay-up@0.1.0",
+        "/catalog/surgery-trauma-quality-audit.json#transient-response-a-patient-who-will-not-stay-up@0.1.0"
       ]
     }
   ]

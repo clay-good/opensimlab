@@ -63,6 +63,7 @@ import { supportsDelayedImmuneEvent } from '../../oncology/delayed-immune-event'
 import { supportsNegativeScan } from '../../surgery-trauma/negative-scan';
 import { supportsRisingRequirement } from '../../surgery-trauma/rising-requirement';
 import { supportsUnfinishedSurvey } from '../../surgery-trauma/unfinished-survey';
+import { supportsTransientResponse } from '../../surgery-trauma/transient-response';
 import { supportsIncidentalClot } from '../../oncology/incidental-clot';
 import { supportsNormalTestToxicity } from '../../oncology/normal-test-toxicity';
 import { supportsPrognosisQuestion } from '../../oncology/prognosis-question';
@@ -1084,6 +1085,51 @@ export function objectiveFindings(
         'handoff-oncology-incidental-clot-an-unresolved-decision': { met: !!handoff, tick: handoff?.tick,
           finding: (handoff ? 'The finding, its route, the conditional strength and very low certainty, the figures in both directions, and his bleeding history all travelled. ' : 'Current full findings, the recorded certainty, or continuing-care ownership remains incomplete. ')
             + 'The decision was handed over open, which is what an unresolved decision looks like when it is handed over honestly rather than closed to make the handoff tidy.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id.includes('-surgery-trauma-transient-response-')) {
+      if (!supportsTransientResponse(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The surgery and trauma transient-response lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^transient-response-${id}-\\d+$`).test(entry.eventId));
+      const mechanism = event('mechanism-recorded'); const shape = event('response-recorded');
+      const picture = event('imaging-limits-recorded'); const escalation = event('escalation-requested');
+      const intent = event('operative-intent-recorded'); const boundaries = event('boundary-review');
+      const handoff = event('handoff'); const fell = event('pressure-fallen-again');
+      const answered = log.find((entry) => /^transient-response-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedStability = event('stability-claim-refused'); const refusedScan = event('scan-first-refused');
+      const refusedLitre = event('another-litre-refused'); const refusedBlood = event('wait-for-blood-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'record-surgery-trauma-transient-response-the-mechanism-and-the-clock': { met: !!mechanism, tick: mechanism?.tick,
+          finding: (mechanism ? 'The mechanism was recorded with the elapsed minutes kept as a live number rather than a detail. ' : 'The mechanism and the time running on it were never recorded, so every later decision was made without the one quantity that only moves one way. ')
+            + 'Minutes are the only thing spent in this room that nobody can put back.' },
+        'record-surgery-trauma-transient-response-the-shape-of-the-response': { met: !!shape, tick: shape?.tick,
+          finding: (shape ? 'The response to volume was recorded as a pattern: two boluses, each answer smaller and sooner than the last. ' : 'The response was never recorded as a pattern, so a pressure taken from the middle of a falling sequence was left to stand on its own. ')
+            + 'A single reading out of that sequence reads as a patient who is fine.' },
+        'recognize-surgery-trauma-transient-response-a-pressure-that-returns-is-not-a-pressure-that-holds': { met: !!shape && !refusedStability, tick: shape?.tick,
+          finding: (refusedStability ? 'Reading the returning pressure as stability was attempted and refused. ' : shape ? 'The return of the pressure was read as a statement about the volume added rather than about the bleeding. ' : 'The returning pressure was never read against what produced it. ')
+            + (refusedLitre ? 'Another bolus and a wait was attempted and refused: it spends a third interval to watch the same answer get smaller. ' : '')
+            + 'Stability is a pressure that holds without being propped up.' },
+        'record-surgery-trauma-transient-response-what-a-picture-cannot-do': { met: !!picture, tick: picture?.tick,
+          finding: (picture ? 'What imaging can and cannot do here was recorded in both directions. ' : 'What a picture can and cannot do for this patient was never recorded, in either direction. ')
+            + 'Early whole-body imaging was associated with better survival across 4,621 registry patients, and it still cannot stop bleeding or be done to a patient who will not stay up in it. The objection is to the interval and the room, not to imaging.' },
+        'activate-surgery-trauma-transient-response-call-the-team-that-can-stop-it': { met: !!escalation && !refusedScan && !refusedBlood, tick: escalation?.tick,
+          finding: (escalation ? 'The team that can stop the bleeding was called, with the response pattern and the clock stated together. ' : 'The operating team was never called. ')
+            + (refusedScan ? 'Sending him for a picture before telling anybody was attempted and refused. ' : '')
+            + (refusedBlood ? 'Waiting for cross-matched blood before calling was attempted and refused; the cross-match runs alongside the call, not in front of it. ' : '')
+            + 'Every gate cleared before the call is an interval, and the interval is the harm.' },
+        'record-surgery-trauma-transient-response-bounded-operative-intent': { met: !!intent, tick: intent?.tick,
+          finding: (intent ? 'The transfer, whether any imaging happens on the way or not at all, and the operation with its timing and content were recorded as the qualified team\u2019s. ' : 'Bounded qualified-team intent was never recorded. ')
+            + 'Nothing was ordered and no drug, dose, route, fluid, blood product, incision, or threshold was chosen or displayed here.' },
+        'review-surgery-trauma-transient-response-minutes-measured-in-retrospect': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'All three retrospective studies were reviewed, including the two that point in opposite directions. ' : 'The boundary and certainty review is missing. ')
+            + 'Up to 0.35 percent a minute in 243 registry patients; a hazard ratio of 1.89 (1.10 to 3.26) past ten minutes in 309 hypotensive torso gunshot wounds, which that paper\u2019s own conclusion calls almost threefold; and better survival with early whole-body imaging in 4,621 blunt trauma patients. None is randomised, and none is a stopwatch or a permission slip.' },
+        'handoff-surgery-trauma-transient-response-a-decision-that-travels-with-its-clock': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The mechanism and its minutes, the response as a shrinking pattern, what a picture can and cannot do, the call made without waiting, and the bounded intent all travelled. ' : 'Current full findings, the recorded pattern, or continuing-care ownership remains incomplete. ')
+            + (fell ? 'The pressure fell a third time during this run, five minutes after an answer that held for nine, with nothing taken away. ' : '')
+            + (answered ? 'The team repeated the pattern back and has taken it on. ' : 'The team had not answered by the end of this run, and the handoff had to survive that. ')
+            + 'No injury, effect, disposition, or outcome is certified.' },
       };
       const result = results[objective.id]!;
       return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;

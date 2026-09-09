@@ -35,7 +35,7 @@ describe('Surgery and trauma module foundation', () => {
     expect(moduleProse('surgery-trauma').plannedScope).toContain('Ten bounded');
     // The prose must no longer read as an unbuilt module, because the route now runs one.
     expect(moduleProse('surgery-trauma').description).not.toBe('Planned.');
-    expect(SURGERY_TRAUMA_SCENARIOS).toHaveLength(3);
+    expect(SURGERY_TRAUMA_SCENARIOS).toHaveLength(4);
     expect(DEFAULT_SURGERY_TRAUMA_SCENARIO_ID).toBe(id);
     expect(getSurgeryTraumaScenario(id)).toBe(scenario);
     expect(getSurgeryTraumaScenario('not-a-scenario')).toBeUndefined();
@@ -61,7 +61,7 @@ describe('Surgery and trauma module foundation', () => {
     expect(route.indexable).toBe(true);
     expect(route.description.length).toBeGreaterThanOrEqual(110);
     expect(route.description.length).toBeLessThanOrEqual(160);
-    expect(ROUTES.filter((entry) => entry.path.startsWith('/surgery-trauma'))).toHaveLength(4);
+    expect(ROUTES.filter((entry) => entry.path.startsWith('/surgery-trauma'))).toHaveLength(5);
     const markup = renderToStaticMarkup(createElement(PrerenderedBody, { path }));
     expect(markup).toContain('a scan that cannot say no');
     const moduleMarkup = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/surgery-trauma' }));
@@ -75,7 +75,7 @@ describe('Surgery and trauma module foundation', () => {
       expect(PUBLIC_CATALOG_ARTIFACTS).toContain(`/catalog/surgery-trauma-${artifact}.json`);
     }
     const completion = json('public/catalog/surgery-trauma-completion-audit.json');
-    expect(completion.scenarioCount).toBe(3);
+    expect(completion.scenarioCount).toBe(4);
     expect(completion.scenarios[0].scenarioId).toBe(id);
     expect(completion.scenarios[0].environment).toBe('ward');
     // The two report catalogs must stay byte-identical, or a report can resolve in one and not the other.
@@ -114,18 +114,19 @@ describe('Surgery and trauma module foundation', () => {
     expect(WORKED_EXAMPLE_MODULE_IDS).toContain('surgery-trauma');
   });
 
-  // The two lessons are a deliberate pair. The first teaches holding a position while nothing
-  // changes; the second teaches that a requirement climbing over hours is itself the finding
-  // and that here the delay is the harm. A module that only ever taught one of those would be
-  // teaching a reflex, so this asserts the pair rather than either half.
+  // The lessons are a deliberate alternation. Two of them teach holding a position while
+  // nothing declares itself; two teach that the delay is the harm. A module that only ever
+  // taught one of those would be teaching a reflex, so this asserts the sequence rather than
+  // any single lesson.
   it('alternates a lesson about holding with a lesson about not waiting', () => {
     // A module that only ever taught "keep looking" would teach a learner to sit on a limb
     // that needed decompressing an hour ago, and a module that only ever taught "escalate now"
     // would teach the reverse reflex. The order is the teaching, so it is asserted.
-    const [first, second, third] = SURGERY_TRAUMA_SCENARIOS;
+    const [first, second, third, fourth] = SURGERY_TRAUMA_SCENARIOS;
     expect(first!.metadata.id).toBe('negative-scan-a-scan-that-cannot-say-no');
     expect(second!.metadata.id).toBe('rising-requirement-a-number-that-under-calls');
     expect(third!.metadata.id).toBe('unfinished-survey-a-patient-who-cannot-be-asked');
+    expect(fourth!.metadata.id).toBe('transient-response-a-patient-who-will-not-stay-up');
     const ids = SURGERY_TRAUMA_SCENARIOS.flatMap((entry) => entry.metadata.objectives.map((o) => o.id));
     expect(new Set(ids).size).toBe(ids.length);
   });

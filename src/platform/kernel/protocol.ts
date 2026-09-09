@@ -1193,6 +1193,52 @@ export interface UnfinishedSurveySnapshot {
   readonly durableRecoveryProven: boolean;
 }
 
+export interface TransientResponseSnapshot {
+  readonly mechanismRecordedAtTick: number | null;
+  readonly responseRecordedAtTick: number | null;
+  readonly imagingLimitsRecordedAtTick: number | null;
+  readonly escalationAtTick: number | null;
+  readonly operativeIntentAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly minutesSinceInjury: number;
+  readonly bolusCount: number;
+  readonly firstResponseHeldMinutes: number;
+  readonly secondResponseHeldMinutes: number;
+  readonly freeFluidReported: boolean;
+  readonly fallen: boolean;
+  readonly teamResponded: boolean;
+  readonly teamObserved: boolean;
+  readonly stabilityClaimAttempted: boolean;
+  readonly scanFirstAttempted: boolean;
+  readonly anotherLitreAttempted: boolean;
+  readonly waitForBloodAttempted: boolean;
+  readonly observationRecord: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+  } | null;
+  readonly responseRecord: {
+    readonly atTick: number; readonly mechanism: string; readonly minutesSinceInjury: number;
+    readonly bolusCount: number; readonly firstResponseHeldMinutes: number;
+    readonly secondResponseHeldMinutes: number; readonly freeFluidReported: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+    readonly mechanism: string; readonly minutesSinceInjury: number;
+    readonly bolusCount: number; readonly firstResponseHeldMinutes: number;
+    readonly secondResponseHeldMinutes: number; readonly freeFluidReported: boolean;
+    readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
+}
+
 export interface NegativeScanSnapshot {
   readonly operativeCourseRecordedAtTick: number | null;
   readonly progressRecordedAtTick: number | null;
@@ -4957,6 +5003,7 @@ export interface EquipmentSnapshot {
     readonly negativeScan?: NegativeScanSnapshot;
     readonly risingRequirement?: RisingRequirementSnapshot;
     readonly unfinishedSurvey?: UnfinishedSurveySnapshot;
+    readonly transientResponse?: TransientResponseSnapshot;
     readonly incidentalClot?: IncidentalClotSnapshot;
     readonly normalTestToxicity?: NormalTestToxicitySnapshot;
     readonly prognosisQuestion?: PrognosisQuestionSnapshot;
