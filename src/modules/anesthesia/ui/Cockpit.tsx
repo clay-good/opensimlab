@@ -62,6 +62,7 @@ import { useInheritedUrgencyDemonstration } from '../../oncology/demo/useInherit
 import { useTrialRuleDemonstration } from '../../oncology/demo/useTrialRuleDemonstration';
 import { useSilentInteractionDemonstration } from '../../oncology/demo/useSilentInteractionDemonstration';
 import { useEasyLabelDemonstration } from '../../oncology/demo/useEasyLabelDemonstration';
+import { useNegativeScanDemonstration } from '../../surgery-trauma/demo/useNegativeScanDemonstration';
 import { useLowScoreDemonstration } from '../../medical-surgical-nursing/demo/useLowScoreDemonstration';
 import { useCountedRateDemonstration } from '../../medical-surgical-nursing/demo/useCountedRateDemonstration';
 import { usePairedReadingDemonstration } from '../../medical-surgical-nursing/demo/usePairedReadingDemonstration';
@@ -488,6 +489,7 @@ import { supportsDkaResolutionDemonstration } from '../../endocrine-metabolic/de
 import { useHhsOsmolalityDemonstration } from '../../endocrine-metabolic/demo/useHhsOsmolalityDemonstration';
 import { supportsHhsOsmolalityDemonstration } from '../../endocrine-metabolic/demo/hhs-osmolality-demonstration';
 import { supportsEasyLabelDemonstration } from '../../oncology/demo/easy-label-demonstration';
+import { supportsNegativeScanDemonstration } from '../../surgery-trauma/demo/negative-scan-demonstration';
 import { supportsSilentInteractionDemonstration } from '../../oncology/demo/silent-interaction-demonstration';
 import { supportsTrialRuleDemonstration } from '../../oncology/demo/trial-rule-demonstration';
 import { supportsInheritedUrgencyDemonstration } from '../../oncology/demo/inherited-urgency-demonstration';
@@ -652,6 +654,7 @@ export function Cockpit({
   const trialRuleDemoSupported = supportsTrialRuleDemonstration(scenario);
   const silentInteractionDemoSupported = supportsSilentInteractionDemonstration(scenario);
   const easyLabelDemoSupported = supportsEasyLabelDemonstration(scenario);
+  const negativeScanDemoSupported = supportsNegativeScanDemonstration(scenario);
   const lowScoreDemoSupported = supportsLowScoreDemonstration(scenario);
   const countedRateDemoSupported = supportsCountedRateDemonstration(scenario);
   const pairedReadingDemoSupported = supportsPairedReadingDemonstration(scenario);
@@ -887,6 +890,7 @@ export function Cockpit({
     || laboratoryTlsDemoSupported || rareEarlyMyocarditisDemoSupported
     || loweringTheCountDemoSupported || inheritedUrgencyDemoSupported
     || trialRuleDemoSupported || silentInteractionDemoSupported || easyLabelDemoSupported
+    || negativeScanDemoSupported
     || dkaResolutionDemoSupported || hhsOsmolalityDemoSupported || lowScoreDemoSupported || countedRateDemoSupported || pairedReadingDemoSupported || afferentLimbDemoSupported || quietPatientDemoSupported || proxyScaleDemoSupported || lastKnownWellDemoSupported || oxygenTargetScaleDemoSupported || lostContingencyDemoSupported
     || meningococcalSepsisDemoSupported || obstructedKidneyDemoSupported
     || febrileNeutropeniaDemoSupported
@@ -2887,6 +2891,11 @@ export function Cockpit({
     patient: session.equipment?.resuscitation.endocrineDkaResolutionAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  const negativeScanDemonstration = useNegativeScanDemonstration({
+    active: demonstrating && negativeScanDemoSupported,
+    running: session.transport === 'running', patient: session.equipment?.resuscitation.negativeScan,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const easyLabelDemonstration = useEasyLabelDemonstration({
     active: demonstrating && easyLabelDemoSupported,
     running: session.transport === 'running', patient: session.equipment?.resuscitation.easyLabel,
@@ -3169,6 +3178,7 @@ export function Cockpit({
     : lowScoreDemoSupported ? lowScoreDemonstration
     : hhsOsmolalityDemoSupported ? hhsOsmolalityDemonstration
     : dkaResolutionDemoSupported ? dkaResolutionDemonstration
+    : negativeScanDemoSupported ? negativeScanDemonstration
     : easyLabelDemoSupported ? easyLabelDemonstration
     : silentInteractionDemoSupported ? silentInteractionDemonstration
     : trialRuleDemoSupported ? trialRuleDemonstration
@@ -4189,6 +4199,8 @@ export function Cockpit({
           silentInteraction={equipment?.resuscitation.silentInteraction}
           easyLabel={equipment?.resuscitation.easyLabel}
           negativeScan={equipment?.resuscitation.negativeScan}
+          negativeScanGuidance={session.guidance}
+          negativeScanDemonstrating={demonstrating && negativeScanDemoSupported}
           renalHyponatremiaGuidance={session.guidance}
           delayedImmuneEventGuidance={session.guidance}
           incidentalClotGuidance={session.guidance}

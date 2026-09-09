@@ -28,9 +28,10 @@ describe('Surgery and trauma negative-scan contract', () => {
     const audit = auditClinicalScenario(SCENARIO, '0.1.0-alpha.48', 'surgery-trauma', 'ward', 'state_transition');
     expect(audit.requirements.filter((entry) => entry.status === 'missing').map((entry) => entry.id))
       .toContain('inclusive-runtime-verification');
-    // The module opens without a worked example, and the audit says so rather than claiming one.
+    // The lesson now carries observed-state guidance and a learner-paused example, and the
+    // audit claims it only because the product actually offers one.
     expect(audit.requirements.find((entry) => entry.id === 'guidance-and-demonstration')?.status)
-      .toBe('missing');
+      .toBe('satisfied');
   });
 
   // The lesson only works while the operation stays the reference and the scan stays reported as

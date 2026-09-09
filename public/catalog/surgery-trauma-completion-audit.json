@@ -82,9 +82,9 @@
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This lesson opens the module and does not yet carry observed-state guidance or a learner-paused worked example. Nothing in the product offers one for it, so the audit and the offer agree."
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary recorded actions. Unassisted mode is silent and coached withholds the two non-urgent beats. The prompts read only the learner’s own recorded steps and never say whether this is a leak, because that is what the lesson deliberately leaves open and what neither the observation nor the scan can settle. The example is driven through the real engine in tests rather than asserted as a script, and it ends with the leak neither confirmed nor excluded: an example that arrived at a diagnosis would teach the reflex this lesson exists to refuse. Both authored waits are narrated as contrasts rather than as clinical waiting, since the escalation has already been made by then."
           ]
         },
         {

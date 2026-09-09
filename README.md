@@ -45,15 +45,13 @@ carries a planned line.
 Each lab is a closed-loop scenario: the physiology keeps running while you decide, and
 what you do changes where the patient goes next.
 
-Almost every lab also carries a **worked example** you can watch and take the controls back from
-at any point, and a private tutor that reads only what you have actually done. The tutor is silent
+Every lab also carries a **worked example** you can watch and take the controls back from at
+any point, and a private tutor that reads only what you have actually done. The tutor is silent
 unless you ask for it, says nothing at all on the unassisted setting, and never supplies the
-diagnosis a lesson exists to leave open. Fifteen of the sixteen specialties are complete on both
-counts -- renal, oncology, endocrine, nursing, infectious-disease, neonatology, toxicology,
-neurology, obstetrics, respiratory-medicine, pediatrics, cardiology, critical-care,
-emergency-medicine, and anesthesia, whose thirty-nine labs were the last to be finished. The
-exception is the one lab that opened surgery and trauma: it has neither yet, its completion audit
-says so, and the product offers no example for it.
+diagnosis a lesson exists to leave open. All sixteen specialties are complete on both counts --
+renal, oncology, endocrine, nursing, infectious-disease, neonatology, toxicology, neurology,
+obstetrics, respiratory-medicine, pediatrics, cardiology, critical-care, emergency-medicine,
+anesthesia, and surgery and trauma, whose single lab is the newest.
 
 ## How it works
 

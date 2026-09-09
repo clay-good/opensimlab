@@ -15,6 +15,7 @@ import { ROUTES, routeFor } from '@routes/routes';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { validateScenario } from '@anesthesia/scenarios/schema';
 import { moduleProse } from '@platform/modules/module-prose';
+import { offersWorkedExample, WORKED_EXAMPLE_MODULE_IDS } from '@anesthesia/demo/worked-examples';
 import {
   DEFAULT_SURGERY_TRAUMA_SCENARIO_ID, SURGERY_TRAUMA_SCENARIOS, getSurgeryTraumaScenario,
 } from '../../src/modules/surgery-trauma/scenarios';
@@ -100,11 +101,13 @@ describe('Surgery and trauma module foundation', () => {
     }
   });
 
-  it('does not yet claim a worked example it has not built', () => {
+  it('claims a worked example only because the product actually offers one', () => {
     const completion = json('public/catalog/surgery-trauma-completion-audit.json');
     const requirement = completion.scenarios[0].requirements
       .find((entry: { id: string }) => entry.id === 'guidance-and-demonstration');
-    expect(requirement.status).toBe('missing');
+    expect(requirement.status).toBe('satisfied');
+    expect(offersWorkedExample(scenario, 'surgery-trauma')).toBe(true);
+    expect(WORKED_EXAMPLE_MODULE_IDS).toContain('surgery-trauma');
   });
 
   it('makes every scenario in the module reportable, not just the first', () => {

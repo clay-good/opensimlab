@@ -2932,6 +2932,7 @@ export interface ActionCockpitProps {
   readonly onSilentInteractionResponse?: (action: SilentInteractionAction) => void;
   readonly onEasyLabelResponse?: (action: EasyLabelAction) => void;
   readonly onNegativeScanResponse?: (action: NegativeScanAction) => void;
+  readonly negativeScanGuidance?: GuidanceLevel;
   readonly renalHyponatremiaGuidance?: GuidanceLevel;
   readonly delayedImmuneEventGuidance?: GuidanceLevel;
   readonly incidentalClotGuidance?: GuidanceLevel;
@@ -6830,6 +6831,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             )}
             {hasNegativeScanResponse && (
               <NegativeScanTray assessment={props.negativeScan}
+                guidance={props.negativeScanGuidance}
+                scenarioVersion={props.scenario.metadata.version}
                 demonstrating={props.negativeScanDemonstrating}
                 onAction={props.onNegativeScanResponse ?? (() => {})} />
             )}

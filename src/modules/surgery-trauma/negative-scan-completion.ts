@@ -2,11 +2,13 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { CompletionRequirementAudit } from '@platform/catalog/scenario-completion';
 import { NEGATIVE_SCAN_A_SCAN_THAT_CANNOT_SAY_NO } from './scenarios/negative-scan-a-scan-that-cannot-say-no';
 import { NEGATIVE_SCAN_FIXTURES } from './negative-scan-fixtures';
+import { NEGATIVE_SCAN_DEMONSTRATION_VERSION } from './demo/negative-scan-demonstration';
 
 export function negativeScanCompletionEvidence(scenario: Scenario, capabilityVersion: string, moduleId: string): readonly CompletionRequirementAudit[] {
   if (moduleId !== 'surgery-trauma' || capabilityVersion !== '0.1.0-alpha.48'
     || scenario.metadata.id !== NEGATIVE_SCAN_FIXTURES.scenarioId || scenario.metadata.version !== '0.1.0'
     || NEGATIVE_SCAN_FIXTURES.contentVersion !== '0.1.0' || NEGATIVE_SCAN_FIXTURES.seed !== 6841
+    || NEGATIVE_SCAN_DEMONSTRATION_VERSION !== '0.1.0'
     || JSON.stringify(scenario) !== JSON.stringify(NEGATIVE_SCAN_A_SCAN_THAT_CANNOT_SAY_NO)) return [];
   return [
     { id: 'deterministic-seed-policy', status: 'satisfied', evidence: ['negative-scan-fixtures.ts binds seed 6841 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No leak, perfusion, or healing model is claimed.'] },
@@ -15,7 +17,7 @@ export function negativeScanCompletionEvidence(scenario: Scenario, capabilityVer
     { id: 'bounded-stop-condition', status: 'satisfied', evidence: ['The recorded operative course, the recorded failure to progress, the recorded limits of the scan, contact with the operating team, bounded surgical intent, the boundary review, and a current full assessment permit handoff with the diagnosis and the operative decision open. Instructor takeover bounds a run with no escalation at 180 minutes, or an unfinished session at eight hours.'] },
     { id: 'debrief-and-counterfactual', status: 'satisfied', evidence: ['Seven event-bound objectives distinguish reading a patient against the course his own operation predicts, a trajectory from a single reading, a report of no evidence from an exclusion, returning the patient to the team that made the anastomosis, bounded qualified-team intent, what two small single-centre literatures pointing opposite ways each license, and accountable handoff. Refused shortcuts remain visible, and no leak, operative decision, or outcome is certified.'] },
     { id: 'reference-transcripts', status: 'satisfied', evidence: ['negative-scan-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine.'] },
-    { id: 'guidance-and-demonstration', status: 'missing', evidence: ['This lesson opens the module and does not yet carry observed-state guidance or a learner-paused worked example. Nothing in the product offers one for it, so the audit and the offer agree.'] },
+    { id: 'guidance-and-demonstration', status: 'satisfied', evidence: [`Observed-state guidance and learner-paused example ${NEGATIVE_SCAN_DEMONSTRATION_VERSION} use ordinary recorded actions. Unassisted mode is silent and coached withholds the two non-urgent beats. The prompts read only the learner\u2019s own recorded steps and never say whether this is a leak, because that is what the lesson deliberately leaves open and what neither the observation nor the scan can settle. The example is driven through the real engine in tests rather than asserted as a script, and it ends with the leak neither confirmed nor excluded: an example that arrived at a diagnosis would teach the reflex this lesson exists to refuse. Both authored waits are narrated as contrasts rather than as clinical waiting, since the escalation has already been made by then.`] },
     { id: 'inclusive-runtime-verification', status: 'missing', evidence: ['Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation.'] },
     { id: 'report-control-coverage', status: 'missing', evidence: ['Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version.'] },
   ];

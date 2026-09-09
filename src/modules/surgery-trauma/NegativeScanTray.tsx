@@ -1,14 +1,18 @@
 import { Button } from '@platform/ui';
 import { formatElapsed } from '@platform/clock/simulation-clock';
+import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { NegativeScanSnapshot } from '@platform/kernel/protocol';
 import type { NegativeScanAction } from './negative-scan';
+import { negativeScanInlinePrompt } from './negative-scan-tutor';
 
-export function NegativeScanTray({ assessment, onAction, demonstrating = false }: {
-  readonly assessment?: NegativeScanSnapshot;
+export function NegativeScanTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
+  readonly assessment?: NegativeScanSnapshot; readonly scenarioVersion: string;
   readonly onAction: (action: NegativeScanAction) => void;
+  readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
   if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  const prompt = negativeScanInlinePrompt(guidance, { scenarioVersion, negativeScan: assessment });
   const observations = assessment.observationRecord; const operative = assessment.operativeRecord;
   const observation = assessment.observation;
   const decision = (action: NegativeScanAction, label: string, accepted = false) => {
@@ -17,8 +21,10 @@ export function NegativeScanTray({ assessment, onAction, demonstrating = false }
   };
   return <>
     {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    {/* This lesson does not yet carry a private tutor. The audit says so, and nothing here
-        pretends otherwise. */}
+    {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
+      <div className="syringe__name">A moment to think</div>
+      <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
+    </aside>}
     <p className="syringe__remaining" role="status">Day {assessment.postoperativeDay} after a sigmoid resection with a primary colorectal anastomosis and no diverting stoma. Heart rate above 100 for {assessment.tachycardiaHours} hours. No flatus passed.</p>
     <p className="syringe__remaining">Selected sources: a 452-patient cohort of vital signs after bowel resection, and two single-centre series of computed tomography for anastomotic leakage. Open the source view for exact wording and confidence intervals.</p>
     <section className="syringe negative-scan__section" aria-labelledby="negative-scan-course-title">

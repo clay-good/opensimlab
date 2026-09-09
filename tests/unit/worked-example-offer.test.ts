@@ -14,6 +14,7 @@ import { offersWorkedExample, WORKED_EXAMPLE_MODULE_IDS } from '@anesthesia/demo
 import { ENDOCRINE_METABOLIC_SCENARIOS } from '../../src/modules/endocrine-metabolic/scenarios';
 import { RENAL_ELECTROLYTE_SCENARIOS } from '../../src/modules/renal-electrolyte/scenarios';
 import { ONCOLOGY_SCENARIOS } from '../../src/modules/oncology/scenarios';
+import { SURGERY_TRAUMA_SCENARIOS } from '../../src/modules/surgery-trauma/scenarios';
 import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../../src/modules/medical-surgical-nursing/scenarios';
 import { INFECTIOUS_DISEASE_SCENARIOS } from '../../src/modules/infectious-disease/scenarios';
 import { NEONATOLOGY_SCENARIOS } from '../../src/modules/neonatology/scenarios';
@@ -24,6 +25,7 @@ const MODULES = [
   ['endocrine-metabolic', ENDOCRINE_METABOLIC_SCENARIOS],
   ['renal-electrolyte', RENAL_ELECTROLYTE_SCENARIOS],
   ['oncology', ONCOLOGY_SCENARIOS],
+  ['surgery-trauma', SURGERY_TRAUMA_SCENARIOS],
   ['medical-surgical-nursing', MEDICAL_SURGICAL_NURSING_SCENARIOS],
   ['infectious-disease', INFECTIOUS_DISEASE_SCENARIOS],
   ['neonatology', NEONATOLOGY_SCENARIOS],
@@ -53,7 +55,7 @@ describe('Requirement: Every Audited Example Is Offered', () => {
       .toEqual(['anesthesia', 'cardiology', 'critical-care', 'emergency-medicine',
         'endocrine-metabolic', 'infectious-disease', 'medical-surgical-nursing',
         'neonatology', 'neurology', 'obstetrics', 'oncology', 'pediatrics',
-        'renal-electrolyte', 'respiratory-medicine', 'toxicology']);
+        'renal-electrolyte', 'respiratory-medicine', 'surgery-trauma', 'toxicology']);
   });
 
   it('offers every anesthesia example and nothing else in the module', () => {

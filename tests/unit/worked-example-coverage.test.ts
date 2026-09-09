@@ -281,8 +281,8 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
     for (const [scenarios, moduleId] of modules) {
       expect(uncovered(scenarios, moduleId), moduleId).toEqual([]);
     }
-    expect(readme).toContain('Fifteen of the sixteen specialties are complete on both');
-    expect(readme).toContain('emergency-medicine, and anesthesia, whose thirty-nine labs were the last to be finished.');
+    expect(readme).toContain('All sixteen specialties are complete on both counts');
+    expect(readme).toContain('anesthesia, and surgery and trauma, whose single lab is the newest.');
     // The hedge this sentence used to carry belongs to a state the audit has
     // left behind. If it comes back, one of the tests above is failing too.
     expect(readme).not.toContain('and most\nendocrine ones');
@@ -293,17 +293,16 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
     expect(readme).not.toContain('All fifteen specialties are now complete on both');
   });
 
-  // The sixteenth module opened with neither a tutor nor a worked example. That is allowed, and
-  // it is the first lesson in the catalog to say so — but the README's exception sentence has to
-  // disappear the moment the audit stops agreeing with it.
-  it('says the surgery and trauma lab has neither, for exactly as long as that is true', () => {
+  // The sixteenth module opened with neither a tutor nor a worked example, and the README
+  // carried an exception sentence saying so. Both are now bound, so that sentence has to be
+  // gone — and the hedge in front of it with it.
+  it('covers the surgery and trauma lab, and drops the exception that described it', () => {
+    expect(SURGERY_TRAUMA_SCENARIOS).toHaveLength(1);
+    expect(uncovered(SURGERY_TRAUMA_SCENARIOS, 'surgery-trauma')).toEqual([]);
+    expect(coveredCount(SURGERY_TRAUMA_SCENARIOS, 'surgery-trauma')).toBe(SURGERY_TRAUMA_SCENARIOS.length);
     const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');
-    const covered = coveredCount(SURGERY_TRAUMA_SCENARIOS, 'surgery-trauma');
-    if (covered === 0) {
-      expect(readme).toContain('The\nexception is the one lab that opened surgery and trauma');
-      expect(readme).toContain('Almost every lab also carries');
-      return;
-    }
     expect(readme).not.toContain('exception is the one lab that opened surgery and trauma');
+    expect(readme).not.toContain('Almost every lab also carries');
+    expect(readme).toContain('Every lab also carries');
   });
 });
