@@ -391,6 +391,8 @@ import { usePneumothoraxDemonstration } from '@anesthesia/demo/usePneumothoraxDe
 import { supportsPneumothoraxUnderPositivePressureDemonstration } from '@anesthesia/demo/pneumothorax-under-positive-pressure-demonstration';
 import { useRepeatedLaryngoscopyDemonstration } from '@anesthesia/demo/useRepeatedLaryngoscopyDemonstration';
 import { supportsRepeatedLaryngoscopyDemonstration } from '@anesthesia/demo/repeated-laryngoscopy-demonstration';
+import { useSupraglotticRescueDemonstration } from '@anesthesia/demo/useSupraglotticRescueDemonstration';
+import { supportsSupraglotticRescueDemonstration } from '@anesthesia/demo/supraglottic-rescue-demonstration';
 import { useLastDemonstration } from '@anesthesia/demo/useLastDemonstration';
 import { supportsLastDemonstration } from '@anesthesia/demo/last-demonstration';
 import { useMalignantHyperthermiaDemonstration } from '@anesthesia/demo/useMalignantHyperthermiaDemonstration';
@@ -793,6 +795,7 @@ export function Cockpit({
   const opioidVentilatoryDemoSupported = supportsOpioidVentilatoryImpairmentDemonstration(scenario);
   const pneumothoraxDemoSupported = supportsPneumothoraxUnderPositivePressureDemonstration(scenario);
   const repeatedLaryngoscopyDemoSupported = supportsRepeatedLaryngoscopyDemonstration(scenario);
+  const supraglotticRescueDemoSupported = supportsSupraglotticRescueDemonstration(scenario);
   const lastDemoSupported = supportsLastDemonstration(scenario);
   const malignantHyperthermiaDemoSupported = supportsMalignantHyperthermiaDemonstration(scenario);
   const anaphylaxisDemoSupported = supportsAnaphylaxisDemonstration(scenario);
@@ -995,6 +998,7 @@ export function Cockpit({
     || opioidVentilatoryDemoSupported
     || pneumothoraxDemoSupported
     || repeatedLaryngoscopyDemoSupported
+    || supraglotticRescueDemoSupported
     || lastDemoSupported
     || malignantHyperthermiaDemoSupported
     || anaphylaxisDemoSupported
@@ -1977,6 +1981,12 @@ export function Cockpit({
     patient: repeatedLaryngoscopyProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  const supraglotticRescueDemonstration = useSupraglotticRescueDemonstration({
+    active: demonstrating && supraglotticRescueDemoSupported,
+    running: session.transport === 'running',
+    patient: repeatedLaryngoscopyProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const pneumothoraxProgress = session.state && session.equipment ? {
     severity: session.equipment.resuscitation.tensionPneumothoraxFraction ?? 0,
     assessedAtTick: session.equipment.resuscitation.pneumothoraxAssessedAtTick ?? null,
@@ -2819,6 +2829,7 @@ export function Cockpit({
     : opioidVentilatoryDemoSupported ? opioidVentilatoryDemonstration
     : pneumothoraxDemoSupported ? pneumothoraxDemonstration
     : repeatedLaryngoscopyDemoSupported ? repeatedLaryngoscopyDemonstration
+    : supraglotticRescueDemoSupported ? supraglotticRescueDemonstration
     : lastDemoSupported ? lastDemonstration
     : malignantHyperthermiaDemoSupported ? malignantHyperthermiaDemonstration
     : anaphylaxisDemoSupported ? anaphylaxisDemonstration
