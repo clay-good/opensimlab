@@ -18,6 +18,7 @@ import { supportsSupraglotticRescueDemonstration } from './supraglottic-rescue-d
 import { supportsHighSpinalDemonstration } from './high-spinal-demonstration';
 import { supportsVenousAirEmbolismDemonstration } from './venous-air-embolism-demonstration';
 import { supportsPostExtubationObstructionDemonstration } from './post-extubation-obstruction-demonstration';
+import { supportsCircleSystemRebreathingDemonstration } from './circle-system-rebreathing-demonstration';
 import { supportsLastDemonstration } from './last-demonstration';
 import { supportsMalignantHyperthermiaDemonstration } from './malignant-hyperthermia-demonstration';
 import { supportsAnaphylaxisDemonstration } from './anaphylaxis-demonstration';
@@ -271,6 +272,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsHighSpinalDemonstration,
     supportsVenousAirEmbolismDemonstration,
     supportsPostExtubationObstructionDemonstration,
+    supportsCircleSystemRebreathingDemonstration,
     supportsLastDemonstration,
     supportsMalignantHyperthermiaDemonstration,
     supportsAnaphylaxisDemonstration,

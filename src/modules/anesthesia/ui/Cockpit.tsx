@@ -399,6 +399,8 @@ import { useVenousAirEmbolismDemonstration } from '@anesthesia/demo/useVenousAir
 import { supportsVenousAirEmbolismDemonstration } from '@anesthesia/demo/venous-air-embolism-demonstration';
 import { usePostExtubationObstructionDemonstration } from '@anesthesia/demo/usePostExtubationObstructionDemonstration';
 import { supportsPostExtubationObstructionDemonstration } from '@anesthesia/demo/post-extubation-obstruction-demonstration';
+import { useCircleSystemRebreathingDemonstration } from '@anesthesia/demo/useCircleSystemRebreathingDemonstration';
+import { supportsCircleSystemRebreathingDemonstration } from '@anesthesia/demo/circle-system-rebreathing-demonstration';
 import { useLastDemonstration } from '@anesthesia/demo/useLastDemonstration';
 import { supportsLastDemonstration } from '@anesthesia/demo/last-demonstration';
 import { useMalignantHyperthermiaDemonstration } from '@anesthesia/demo/useMalignantHyperthermiaDemonstration';
@@ -805,6 +807,7 @@ export function Cockpit({
   const highSpinalDemoSupported = supportsHighSpinalDemonstration(scenario);
   const venousAirDemoSupported = supportsVenousAirEmbolismDemonstration(scenario);
   const postExtubationDemoSupported = supportsPostExtubationObstructionDemonstration(scenario);
+  const circleRebreathingDemoSupported = supportsCircleSystemRebreathingDemonstration(scenario);
   const lastDemoSupported = supportsLastDemonstration(scenario);
   const malignantHyperthermiaDemoSupported = supportsMalignantHyperthermiaDemonstration(scenario);
   const anaphylaxisDemoSupported = supportsAnaphylaxisDemonstration(scenario);
@@ -1011,6 +1014,7 @@ export function Cockpit({
     || highSpinalDemoSupported
     || venousAirDemoSupported
     || postExtubationDemoSupported
+    || circleRebreathingDemoSupported
     || lastDemoSupported
     || malignantHyperthermiaDemoSupported
     || anaphylaxisDemoSupported
@@ -1999,6 +2003,19 @@ export function Cockpit({
     patient: repeatedLaryngoscopyProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  const circleRebreathingProgress = session.state && session.equipment ? {
+    absorbentExhausted: session.equipment.breathingCircuit?.co2Absorbent === 'exhausted',
+    inspiredCo2MmHg: session.equipment.breathingCircuit?.inspiredCo2MmHg ?? 0,
+    capnogramAssessed: session.equipment.breathingCircuit?.capnogramAssessed ?? false,
+    absorbentReplaced: session.equipment.breathingCircuit?.absorbentReplaced ?? false,
+    freshGasFlowLPerMin: session.equipment.ventilator.freshGasFlowLPerMin ?? 0,
+  } : undefined;
+  const circleRebreathingDemonstration = useCircleSystemRebreathingDemonstration({
+    active: demonstrating && circleRebreathingDemoSupported,
+    running: session.transport === 'running',
+    patient: circleRebreathingProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const postExtubationProgress = session.state && session.equipment ? {
     obstructionSeverity: session.equipment.airway.postExtubationObstructionSeverity ?? 0,
     helpRequestedAtTick: session.equipment.airway.helpRequestedAtTick ?? null,
@@ -2886,6 +2903,7 @@ export function Cockpit({
     : highSpinalDemoSupported ? highSpinalDemonstration
     : venousAirDemoSupported ? venousAirDemonstration
     : postExtubationDemoSupported ? postExtubationDemonstration
+    : circleRebreathingDemoSupported ? circleRebreathingDemonstration
     : lastDemoSupported ? lastDemonstration
     : malignantHyperthermiaDemoSupported ? malignantHyperthermiaDemonstration
     : anaphylaxisDemoSupported ? anaphylaxisDemonstration

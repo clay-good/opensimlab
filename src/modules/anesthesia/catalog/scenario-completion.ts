@@ -165,6 +165,7 @@ import { difficultAirwaySupraglotticRescueCompletionEvidence } from '../difficul
 import { highSpinalAfterEpiduralTopUpCompletionEvidence } from '../high-spinal-after-epidural-top-up-completion';
 import { venousAirEmbolismCompletionEvidence } from '../venous-air-embolism-completion';
 import { postExtubationObstructionCompletionEvidence } from '../post-extubation-obstruction-completion';
+import { circleSystemRebreathingCompletionEvidence } from '../circle-system-rebreathing-completion';
 import { lastCompletionEvidence } from '../local-anesthetic-systemic-toxicity-completion';
 import { earlyMalignantHyperthermiaCompletionEvidence } from '../early-malignant-hyperthermia-completion';
 import { perioperativeAnaphylaxisCompletionEvidence } from '../perioperative-anaphylaxis-completion';
@@ -497,6 +498,7 @@ export function auditClinicalScenario(
     ...highSpinalAfterEpiduralTopUpCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...venousAirEmbolismCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...postExtubationObstructionCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...circleSystemRebreathingCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...lastCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...earlyMalignantHyperthermiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...perioperativeAnaphylaxisCompletionEvidence(scenario, capabilityVersion, moduleId),
