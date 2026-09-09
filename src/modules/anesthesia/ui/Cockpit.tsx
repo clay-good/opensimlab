@@ -405,6 +405,8 @@ import { useCapnographyLineDemonstration } from '@anesthesia/demo/useCapnography
 import { supportsCapnographyLineDemonstration } from '@anesthesia/demo/capnography-line-demonstration';
 import { useBloodBankHandoffDemonstration } from '@anesthesia/demo/useBloodBankHandoffDemonstration';
 import { supportsBloodBankHandoffDemonstration } from '@anesthesia/demo/blood-bank-handoff-demonstration';
+import { useArterialTransducerDemonstration } from '@anesthesia/demo/useArterialTransducerDemonstration';
+import { supportsArterialTransducerDemonstration } from '@anesthesia/demo/arterial-transducer-demonstration';
 import { useLastDemonstration } from '@anesthesia/demo/useLastDemonstration';
 import { supportsLastDemonstration } from '@anesthesia/demo/last-demonstration';
 import { useMalignantHyperthermiaDemonstration } from '@anesthesia/demo/useMalignantHyperthermiaDemonstration';
@@ -814,6 +816,7 @@ export function Cockpit({
   const circleRebreathingDemoSupported = supportsCircleSystemRebreathingDemonstration(scenario);
   const capnographyLineDemoSupported = supportsCapnographyLineDemonstration(scenario);
   const bloodBankDemoSupported = supportsBloodBankHandoffDemonstration(scenario);
+  const arterialTransducerDemoSupported = supportsArterialTransducerDemonstration(scenario);
   const lastDemoSupported = supportsLastDemonstration(scenario);
   const malignantHyperthermiaDemoSupported = supportsMalignantHyperthermiaDemonstration(scenario);
   const anaphylaxisDemoSupported = supportsAnaphylaxisDemonstration(scenario);
@@ -1023,6 +1026,7 @@ export function Cockpit({
     || circleRebreathingDemoSupported
     || capnographyLineDemoSupported
     || bloodBankDemoSupported
+    || arterialTransducerDemoSupported
     || lastDemoSupported
     || malignantHyperthermiaDemoSupported
     || anaphylaxisDemoSupported
@@ -2011,6 +2015,20 @@ export function Cockpit({
     patient: repeatedLaryngoscopyProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  const arterialTransducerProgress = session.state && session.equipment ? {
+    mislevelingCm: session.equipment.arterialLine?.mislevelingCm ?? 0,
+    dynamicResponse: session.equipment.arterialLine?.dynamicResponse ?? 'normal',
+    waveformAssessed: session.equipment.arterialLine?.waveformAssessed ?? false,
+    leveledAndZeroed: session.equipment.arterialLine?.leveledAndZeroed ?? false,
+    cuffStatus: session.equipment.arterialLine?.cuff?.status ?? 'idle',
+    cuffMeanArterialMmHg: session.equipment.arterialLine?.cuff?.meanArterialMmHg ?? null,
+  } : undefined;
+  const arterialTransducerDemonstration = useArterialTransducerDemonstration({
+    active: demonstrating && arterialTransducerDemoSupported,
+    running: session.transport === 'running',
+    patient: arterialTransducerProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const bloodBankProgress = session.state && session.equipment ? {
     hemorrhageActive: session.equipment.resuscitation.hemorrhageActive ?? false,
     bloodProductsReleased: session.equipment.resuscitation.bloodProductsReleased ?? false,
@@ -2939,6 +2957,7 @@ export function Cockpit({
     : circleRebreathingDemoSupported ? circleRebreathingDemonstration
     : capnographyLineDemoSupported ? capnographyLineDemonstration
     : bloodBankDemoSupported ? bloodBankDemonstration
+    : arterialTransducerDemoSupported ? arterialTransducerDemonstration
     : lastDemoSupported ? lastDemonstration
     : malignantHyperthermiaDemoSupported ? malignantHyperthermiaDemonstration
     : anaphylaxisDemoSupported ? anaphylaxisDemonstration

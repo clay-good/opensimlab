@@ -168,6 +168,7 @@ import { postExtubationObstructionCompletionEvidence } from '../post-extubation-
 import { circleSystemRebreathingCompletionEvidence } from '../circle-system-rebreathing-completion';
 import { capnographySamplingLineObstructionCompletionEvidence } from '../capnography-sampling-line-obstruction-completion';
 import { bloodBankHandoffCompletionEvidence } from '../blood-bank-handoff-completion';
+import { arterialPressureTransducerArtifactCompletionEvidence } from '../arterial-pressure-transducer-artifact-completion';
 import { lastCompletionEvidence } from '../local-anesthetic-systemic-toxicity-completion';
 import { earlyMalignantHyperthermiaCompletionEvidence } from '../early-malignant-hyperthermia-completion';
 import { perioperativeAnaphylaxisCompletionEvidence } from '../perioperative-anaphylaxis-completion';
@@ -503,6 +504,7 @@ export function auditClinicalScenario(
     ...circleSystemRebreathingCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...capnographySamplingLineObstructionCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...bloodBankHandoffCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...arterialPressureTransducerArtifactCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...lastCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...earlyMalignantHyperthermiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...perioperativeAnaphylaxisCompletionEvidence(scenario, capabilityVersion, moduleId),

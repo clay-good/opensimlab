@@ -21,6 +21,7 @@ import { supportsPostExtubationObstructionDemonstration } from './post-extubatio
 import { supportsCircleSystemRebreathingDemonstration } from './circle-system-rebreathing-demonstration';
 import { supportsCapnographyLineDemonstration } from './capnography-line-demonstration';
 import { supportsBloodBankHandoffDemonstration } from './blood-bank-handoff-demonstration';
+import { supportsArterialTransducerDemonstration } from './arterial-transducer-demonstration';
 import { supportsLastDemonstration } from './last-demonstration';
 import { supportsMalignantHyperthermiaDemonstration } from './malignant-hyperthermia-demonstration';
 import { supportsAnaphylaxisDemonstration } from './anaphylaxis-demonstration';
@@ -277,6 +278,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsCircleSystemRebreathingDemonstration,
     supportsCapnographyLineDemonstration,
     supportsBloodBankHandoffDemonstration,
+    supportsArterialTransducerDemonstration,
     supportsLastDemonstration,
     supportsMalignantHyperthermiaDemonstration,
     supportsAnaphylaxisDemonstration,
