@@ -100,6 +100,8 @@ import { NegativeScan } from '../surgery-trauma/negative-scan';
 import { supportsNegativeScan } from '../surgery-trauma/negative-scan';
 import { RisingRequirement } from '../surgery-trauma/rising-requirement';
 import { supportsRisingRequirement } from '../surgery-trauma/rising-requirement';
+import { UnfinishedSurvey } from '../surgery-trauma/unfinished-survey';
+import { supportsUnfinishedSurvey } from '../surgery-trauma/unfinished-survey';
 
 /** The engine's own version, recorded in every transcript. */
 export const ENGINE_VERSION = '0.1.0-alpha.48';
@@ -1813,6 +1815,7 @@ export class AnesthesiaEngine {
   private readonly easyLabel: EasyLabel | null;
   private readonly negativeScan: NegativeScan | null;
   private readonly risingRequirement: RisingRequirement | null;
+  private readonly unfinishedSurvey: UnfinishedSurvey | null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2003,7 +2006,9 @@ export class AnesthesiaEngine {
     this.negativeScan = supportsNegativeScan(options.scenario) ? new NegativeScan() : null;
     if (this.negativeScan) this.rhythm = 'sinus';
     this.risingRequirement = supportsRisingRequirement(options.scenario) ? new RisingRequirement() : null;
+    this.unfinishedSurvey = supportsUnfinishedSurvey(options.scenario) ? new UnfinishedSurvey() : null;
     if (this.risingRequirement) this.rhythm = 'sinus';
+    if (this.unfinishedSurvey) this.rhythm = 'sinus';
     this.practiceRegion = options.practiceRegion;
     this.seed = options.seed;
     if (options.scenario.timeline.some((event) => event.type === 'narrative'
@@ -2147,6 +2152,11 @@ export class AnesthesiaEngine {
     if (this.risingRequirement && action.type !== 'rising-requirement-response' && action.type !== 'silence-alarm') {
       this.log('warning', 'assessment', `rising-requirement-generic-action-refused-${this.currentTick}`,
         'Only this lesson\u2019s injury-recording, requirement-recording, reading-limit, escalation, bounded-intent, boundary-review, observation, and handoff choices are available.');
+      return;
+    }
+    if (this.unfinishedSurvey && action.type !== 'unfinished-survey-response' && action.type !== 'silence-alarm') {
+      this.log('warning', 'assessment', `unfinished-survey-generic-action-refused-${this.currentTick}`,
+        'Only this lesson\u2019s examination-limit, injury-list, unfinished-survey, escalation, bounded-intent, boundary-review, observation, and handoff choices are available.');
       return;
     }
     if (this.negativeScan && action.type !== 'negative-scan-response' && action.type !== 'silence-alarm') {
@@ -3279,6 +3289,19 @@ export class AnesthesiaEngine {
         }
         for (const event of this.risingRequirement.apply(action.payload.action, this.currentTick)) {
           this.log('warning', 'assessment', `rising-requirement-${event.id}-${this.currentTick}`, event.message);
+        }
+        break;
+      }
+      case 'unfinished-survey-response': {
+        if (!this.unfinishedSurvey || Reflect.ownKeys(action.payload).length !== 1
+          || !Object.hasOwn(action.payload, 'action')
+          || !Object.getOwnPropertyDescriptor(action.payload, 'action')!.enumerable
+          || !Object.hasOwn(Object.getOwnPropertyDescriptor(action.payload, 'action')!, 'value')) {
+          this.log('warning', 'assessment', `unfinished-survey-action-refused-${this.currentTick}`, 'Only the declared dose-free reassessment choices are available in this lesson.');
+          break;
+        }
+        for (const event of this.unfinishedSurvey.apply(action.payload.action, this.currentTick)) {
+          this.log('warning', 'assessment', `unfinished-survey-${event.id}-${this.currentTick}`, event.message);
         }
         break;
       }
@@ -15286,6 +15309,9 @@ export class AnesthesiaEngine {
     for (const event of this.risingRequirement?.advance(this.currentTick) ?? []) {
       this.log('warning', 'assessment', `rising-requirement-${event.id}-${this.currentTick}`, event.message);
     }
+    for (const event of this.unfinishedSurvey?.advance(this.currentTick) ?? []) {
+      this.log('warning', 'assessment', `unfinished-survey-${event.id}-${this.currentTick}`, event.message);
+    }
     for (const event of this.negativeScan?.advance(this.currentTick) ?? []) {
       this.log('warning', 'assessment', `negative-scan-${event.id}-${this.currentTick}`, event.message);
     }
@@ -16226,6 +16252,13 @@ export class AnesthesiaEngine {
     }
     if (this.risingRequirement) {
       const patient = this.risingRequirement.vitals();
+      crisisState = { ...crisisState, heartRateBpm: patient.heartRateBpm,
+        respiratoryRateBpm: patient.respiratoryRateBpm, spo2Percent: patient.spo2Percent,
+        systolicMmHg: patient.systolicMmHg, diastolicMmHg: patient.diastolicMmHg,
+        meanArterialMmHg: patient.meanArterialMmHg, coreTemperatureC: patient.coreTemperatureC };
+    }
+    if (this.unfinishedSurvey) {
+      const patient = this.unfinishedSurvey.vitals();
       crisisState = { ...crisisState, heartRateBpm: patient.heartRateBpm,
         respiratoryRateBpm: patient.respiratoryRateBpm, spo2Percent: patient.spo2Percent,
         systolicMmHg: patient.systolicMmHg, diastolicMmHg: patient.diastolicMmHg,
@@ -21292,6 +21325,7 @@ export class AnesthesiaEngine {
         ...(this.easyLabel ? { easyLabel: this.easyLabel.snapshot(this.currentTick) } : {}),
         ...(this.negativeScan ? { negativeScan: this.negativeScan.snapshot(this.currentTick) } : {}),
         ...(this.risingRequirement ? { risingRequirement: this.risingRequirement.snapshot(this.currentTick) } : {}),
+        ...(this.unfinishedSurvey ? { unfinishedSurvey: this.unfinishedSurvey.snapshot(this.currentTick) } : {}),
         ...(this.avpDeficiency ? { avpDeficiency: this.avpDeficiency.snapshot(this.currentTick) } : {}),
         ...(this.hyponatremiaCorrection ? { hyponatremiaCorrection: this.hyponatremiaCorrection.snapshot(this.currentTick) } : {}),
         aspirationRiskAssessment: {

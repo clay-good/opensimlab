@@ -164,7 +164,7 @@ export const MODULES: readonly ModuleDeclaration[] = [
     route: 'surgery-trauma',
     displayName: 'Surgery and trauma',
     status: 'available',
-    scenarioCount: 2,
+    scenarioCount: 3,
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {

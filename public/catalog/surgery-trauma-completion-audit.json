@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "moduleId": "surgery-trauma",
   "capabilityVersion": "0.1.0-alpha.48",
-  "scenarioCount": 2,
+  "scenarioCount": 3,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -239,6 +239,132 @@
           "status": "satisfied",
           "evidence": [
             "rising-requirement-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "unfinished-survey-a-patient-who-cannot-be-asked",
+      "title": "An unfinished survey: a patient who cannot be asked",
+      "moduleId": "surgery-trauma",
+      "environment": "ward",
+      "estimatedMinutes": 9,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario unfinished-survey-a-patient-who-cannot-be-asked carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "missing",
+          "evidence": [
+            "This scenario declares 8 objectives; the contract allows at most 5."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "unfinished-survey-fixtures.ts binds seed 5137 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No injury, healing, sedation, or neurological model is claimed."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "unfinished-survey.ts runs two authored transitions. At 10 minutes sedation is lightened for the routine neurological assessment and he localises to the right, does not move the left arm, and grimaces when the left forearm is handled, while the ventilator, drain, pressures and every monitored number stay exactly as they were and the ward asks a second time about the bed — so the only thing that changes is how much of him can be examined. The trauma team answers 25 minutes after it is asked — longer than this module’s second lesson, because what is requested is a deliberate reassessment rather than a time-critical decision — confirms from its own record that no tertiary survey has been documented, states that the secondary survey entry records an examination rather than an absence of injury, and takes ownership of completing the survey, re-reviewing the imaging against it, and anything that follows. Nothing arrives uncalled."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "The learner records why the examination behind the record was limited, records what the injury list rests on, records that no tertiary survey has been performed or documented, asks the team that owns the survey to complete it, records bounded qualified-team intent, and reviews the boundaries. Treating the documented secondary survey as the assessment, leaning on the whole-body imaging to exclude the rest, reading his silence as reassurance, and clearing him now to review if something appears are each refused, and the clearing refusal objects to recording him as fully assessed rather than to the step-down itself."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "The recorded examination limits, the recorded basis of the injury list, the recorded absence of a tertiary survey, the request to the trauma team, bounded survey intent, the boundary review, and a current full assessment permit handoff with the survey and any missed injury open. Instructor takeover bounds a run with no escalation at 180 minutes — this module’s first lesson’s interval rather than its second’s, because here the harm is not measured minute to minute — or an unfinished session at twelve hours."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "satisfied",
+          "evidence": [
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary recorded actions. Unassisted mode is silent and coached withholds the two non-urgent beats. The prompts read only the learner’s own recorded steps and never assert that a missed injury exists, because nothing available in the lesson can establish that and asserting it would remove the difficulty the lesson is about. The example is driven through the real engine in tests rather than asserted as a script, and it asks for the survey while the patient is still sedated and there is nothing to show, because an example that waited for the sedation window would teach that the finding is what justifies the position."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "Eight event-bound objectives distinguish recording what a patient could contribute to his own examination, reading an injury list as a record of findings rather than an exclusion, refusing a complete record of a limited examination as an assessment, recording an unfinished survey as a live finding, asking the team that owns the step to take it, bounded qualified-team intent, a step worth taking whose evidence does not show it works, and accountable handoff of an assessment recorded as unfinished. Refused shortcuts remain visible, and no missed injury, disposition, or outcome is certified."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "3 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "unfinished-survey-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
           ]
         },
         {

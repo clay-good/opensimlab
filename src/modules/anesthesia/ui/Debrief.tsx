@@ -62,6 +62,7 @@ import { supportsLostContingency } from '../../medical-surgical-nursing/lost-con
 import { supportsDelayedImmuneEvent } from '../../oncology/delayed-immune-event';
 import { supportsNegativeScan } from '../../surgery-trauma/negative-scan';
 import { supportsRisingRequirement } from '../../surgery-trauma/rising-requirement';
+import { supportsUnfinishedSurvey } from '../../surgery-trauma/unfinished-survey';
 import { supportsIncidentalClot } from '../../oncology/incidental-clot';
 import { supportsNormalTestToxicity } from '../../oncology/normal-test-toxicity';
 import { supportsPrognosisQuestion } from '../../oncology/prognosis-question';
@@ -1083,6 +1084,51 @@ export function objectiveFindings(
         'handoff-oncology-incidental-clot-an-unresolved-decision': { met: !!handoff, tick: handoff?.tick,
           finding: (handoff ? 'The finding, its route, the conditional strength and very low certainty, the figures in both directions, and his bleeding history all travelled. ' : 'Current full findings, the recorded certainty, or continuing-care ownership remains incomplete. ')
             + 'The decision was handed over open, which is what an unresolved decision looks like when it is handed over honestly rather than closed to make the handoff tidy.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id.includes('-surgery-trauma-unfinished-survey-')) {
+      if (!supportsUnfinishedSurvey(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The surgery and trauma unfinished-survey lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^unfinished-survey-${id}-\\d+$`).test(entry.eventId));
+      const limits = event('examination-limits-recorded'); const list = event('injury-list-recorded');
+      const third = event('survey-incomplete-recorded'); const escalation = event('escalation-requested');
+      const intent = event('survey-intent-recorded'); const boundaries = event('boundary-review');
+      const handoff = event('handoff'); const window = event('sedation-lightened');
+      const answered = log.find((entry) => /^unfinished-survey-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedDocumentation = event('documentation-claim-refused'); const refusedImaging = event('imaging-claim-refused');
+      const refusedSilence = event('no-complaint-refused'); const refusedClear = event('clear-now-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'record-surgery-trauma-unfinished-survey-what-he-could-not-contribute': { met: !!limits, tick: limits?.tick,
+          finding: (limits ? 'What he was able to contribute to that examination was recorded beside it: sedated, intubated, a Glasgow Coma Scale of 6 at the scene, unable to report pain or move to command. ' : 'The reasons the examination was limited were never recorded, so the entry reading "secondary survey complete" travels on alone. ')
+            + 'Without that sentence the record reads as a statement about the patient rather than about the examination.' },
+        'record-surgery-trauma-unfinished-survey-what-the-list-rests-on': { met: !!list && !refusedImaging, tick: list?.tick,
+          finding: (list ? 'The listed injuries were recorded as the product of reported imaging and an examination he could not take part in. ' : 'What the injury list rests on was never recorded, so a list of findings was left to stand as an exclusion. ')
+            + (refusedImaging ? 'Leaning on the whole-body scan to exclude the rest was attempted and refused. ' : '')
+            + 'Twenty-one of the 41 injuries found late in the published series were extremity fractures, and the limbs are largely outside what an admission trauma scan covers.' },
+        'recognize-surgery-trauma-unfinished-survey-a-complete-record-is-not-a-complete-examination': { met: !!limits && !refusedDocumentation && !refusedSilence, tick: limits?.tick,
+          finding: (refusedDocumentation ? 'Treating the documented secondary survey as the assessment was attempted and refused. ' : limits ? 'The documented survey was read as a record of an examination rather than as an absence of injury. ' : 'The record was never read against what produced it. ')
+            + (refusedSilence ? 'Reading his silence as reassurance was attempted and refused; he has not complained because he cannot. ' : '')
+            + 'An accurate record of a limited examination is still a limited examination.' },
+        'record-surgery-trauma-unfinished-survey-the-third-survey-is-not-done': { met: !!third, tick: third?.tick,
+          finding: (third ? 'The absent tertiary survey was recorded as a live finding rather than left as an omission. ' : 'That no tertiary survey had been done or documented was never recorded, so nothing stopped him being treated as fully assessed. ')
+            + 'In 399 patients surveyed prospectively the recorded rate was 2 percent until somebody went back and looked; then it was 9.' },
+        'activate-surgery-trauma-unfinished-survey-ask-the-team-that-owns-it': { met: !!escalation && !refusedClear, tick: escalation?.tick,
+          finding: (escalation ? 'The team that owns the survey was asked to complete it, with the reasons he could not be examined stated alongside the injuries already listed. ' : 'The trauma team was never asked. ')
+            + (refusedClear ? 'Clearing him now and reviewing if something appeared was attempted and refused: it waits for the exact event the step exists to pre-empt. ' : '')
+            + 'The request is not permission to keep him and not an argument about the bed.' },
+        'record-surgery-trauma-unfinished-survey-bounded-survey-intent': { met: !!intent, tick: intent?.tick,
+          finding: (intent ? 'Reexamination, re-review of the admission imaging, and any further imaging, referral or operation were recorded as the qualified team’s. ' : 'Bounded qualified-team intent was never recorded. ')
+            + 'Nothing was ordered and no investigation, drug, dose, route, or procedure was chosen or displayed here.' },
+        'review-surgery-trauma-unfinished-survey-a-step-worth-doing-and-weak-evidence': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'Both halves of the evidence were reviewed and both were kept. ' : 'The boundary and certainty review is missing. ')
+            + 'Prospective survey turned 2 percent into 9 in 399 patients; a systematic review of ten observational studies put injuries it finds at 4.3 percent and those it still misses at 1.5, with none randomised and moderate risk of bias; and formalising it in 487 patients raised performance from 27 to 42 percent while missed injury did not fall. The step is worth taking and the evidence that taking it fixes this is weak.' },
+        'handoff-surgery-trauma-unfinished-survey-an-assessment-that-travels-unfinished': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'Why he could not be examined, what the list rests on, the unfinished assessment, the request made and the bounded intent all travelled. ' : 'Current full findings, the recorded reasons, or continuing-care ownership remains incomplete. ')
+            + (window ? 'Sedation was lightened during this run and he localised on the right, did not move the left arm, and pulled away when the forearm was handled, with every monitored number unchanged. ' : '')
+            + (answered ? 'The team confirmed from its own record that no tertiary survey had been documented and has taken it on. ' : 'The team had not answered by the end of this run, and the handoff had to survive that. ')
+            + 'No missed injury, disposition, or outcome is certified.' },
       };
       const result = results[objective.id]!;
       return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;

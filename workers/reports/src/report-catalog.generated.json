@@ -4100,6 +4100,23 @@
       "limitationManifestHash": "sha256:7460105ec939d333da8172e60795e32bbfd9cdf2006e219f9594c65d7e3e62a2"
     },
     {
+      "scenarioId": "unfinished-survey-a-patient-who-cannot-be-asked",
+      "contentVersion": "0.1.0",
+      "moduleId": "surgery-trauma",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:917ffac39f1f6eee6c307ff0828d1421fc2d0715e0b086d14c6cdf45f69c2114",
+      "defaultsHash": "sha256:1aeef24623fddf6183e5b4886c30a756ec8e8c2c58c1b5f013096f532038829f",
+      "maturityHash": "sha256:848cd82bf8df7a7fa33cb3a60349c59104f445467f93db579b5d13796c75fc71",
+      "sourceManifestHash": "sha256:0a22744c7f37a6a7f66e5730a71a5beab4e524f629f03db97f8b2b9075d3bca0",
+      "limitationManifestHash": "sha256:a70cd273cab4eaeee8f6e1c0db362ca95e17f022ef5b98c51d5c4668caf31dd3"
+    },
+    {
       "scenarioId": "acetaminophen-clock-and-nomogram",
       "contentVersion": "0.1.0",
       "moduleId": "toxicology",

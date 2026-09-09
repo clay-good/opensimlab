@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot, DelayedImmuneEventSnapshot, IncidentalClotSnapshot, NormalTestToxicitySnapshot, PrognosisQuestionSnapshot, LaboratoryTlsSnapshot, RareEarlyMyocarditisSnapshot, LoweringTheCountSnapshot, InheritedUrgencySnapshot, TrialRuleSnapshot, SilentInteractionSnapshot, EasyLabelSnapshot, NegativeScanSnapshot, RisingRequirementSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot, DelayedImmuneEventSnapshot, IncidentalClotSnapshot, NormalTestToxicitySnapshot, PrognosisQuestionSnapshot, LaboratoryTlsSnapshot, RareEarlyMyocarditisSnapshot, LoweringTheCountSnapshot, InheritedUrgencySnapshot, TrialRuleSnapshot, SilentInteractionSnapshot, EasyLabelSnapshot, NegativeScanSnapshot, RisingRequirementSnapshot, UnfinishedSurveySnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -142,6 +142,7 @@ export function stateSummary(
     readonly easyLabel?: EasyLabelSnapshot;
     readonly negativeScan?: NegativeScanSnapshot;
     readonly risingRequirement?: RisingRequirementSnapshot;
+    readonly unfinishedSurvey?: UnfinishedSurveySnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -195,7 +196,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale || options.lostContingency || options.delayedImmuneEvent || options.incidentalClot || options.normalTestToxicity || options.prognosisQuestion || options.laboratoryTls || options.rareEarlyMyocarditis || options.loweringTheCount || options.inheritedUrgency || options.trialRule || options.silentInteraction || options.easyLabel || options.negativeScan || options.risingRequirement) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale || options.lostContingency || options.delayedImmuneEvent || options.incidentalClot || options.normalTestToxicity || options.prognosisQuestion || options.laboratoryTls || options.rareEarlyMyocarditis || options.loweringTheCount || options.inheritedUrgency || options.trialRule || options.silentInteraction || options.easyLabel || options.negativeScan || options.risingRequirement || options.unfinishedSurvey) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -218,6 +219,25 @@ export function stateSummary(
           + (reversal.doseMgPerKg === null ? '' : ` ${reversal.doseMgPerKg} milligrams per kilogram`)
           + ' intravenous.');
       }
+    }
+  }
+  if (options.unfinishedSurvey) {
+    const patient = options.unfinishedSurvey;
+    // What the record says and what it rests on, in every state, because nothing else here moves.
+    lines.push(`Motorcycle collision ${patient.hoursSinceInjury} hours ago, sedated and ventilated in intensive care. ${patient.listedInjuries} injuries listed from reported whole-body imaging. Secondary survey ${patient.secondarySurveyDocumented ? 'documented as complete' : 'not documented'}. Tertiary survey ${patient.tertiarySurveyDocumented ? 'documented' : 'not documented'}.`);
+    lines.push('Supplied starting observations were pulse 88 per minute, blood pressure 118 over 68, ventilated at a set rate of 14 per minute, temperature 36.8 degrees Celsius, and oxygen saturation 98 percent. These remain historical starting observations, and none of them is abnormal.');
+    lines.push('He was a Glasgow Coma Scale of 6 at the scene and could not report pain, move to command, or be asked where it hurt when the secondary survey was performed. The ward has asked whether he can be stepped down tonight.');
+    lines.push(`Current state: ${patient.alertness}.`);
+    lines.push(`Reasons the examination was limited recorded: ${patient.examinationLimitsRecordedAtTick === null ? 'no' : 'yes'}. What the injury list rests on recorded: ${patient.injuryListRecordedAtTick === null ? 'no' : 'yes'}. Absent tertiary survey recorded: ${patient.surveyIncompleteRecordedAtTick === null ? 'no' : 'yes'}. Trauma team: ${patient.escalationAtTick === null ? 'not asked' : 'asked'}. Bounded intent: ${patient.surveyIntentAtTick === null ? 'not recorded' : 'recorded as the qualified team\u2019s decision'}. Boundaries: ${patient.boundariesReviewedAtTick === null ? 'not reviewed' : 'reviewed'}.`);
+    if (patient.sedationLightened) {
+      lines.push('Sedation has been lightened for the routine neurological assessment. He opens his eyes, localises to the right, does not move the left arm, and grimaces when the left forearm is handled. The ventilator, the drain, the pressures and every monitored number are exactly as they were, and the ward has asked a second time.');
+    }
+    lines.push('Surveying 399 injured patients prospectively turned a registry rate of 2 percent into 41 missed injuries in 36 patients, 9 percent, of which 21 were extremity fractures, and the commonest reason for missing them was an altered level of consciousness. Formalising the survey in 487 patients raised how often it was performed from 27 to 42 percent without reducing missed injury. Reexamination, re-review of the imaging, and any further imaging, referral, or operation belong to the qualified trauma team; no investigation, drug, dose, route, or procedure is selected here, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: pulse ${patient.observation.heartRateBpm} per minute; ${patient.observation.hoursSinceInjury} hours since injury; ${patient.observation.listedInjuries} injuries listed; tertiary survey ${patient.observation.tertiarySurveyDocumented ? 'documented' : 'still not documented'}.`
+      : 'No new full assessment has been requested.');
+    if (patient.teamObserved) {
+      lines.push('The trauma team has answered, confirmed from its own record that no tertiary survey has been documented, and owns completing the survey, re-reviewing the imaging against it, and anything that follows.');
     }
   }
   if (options.risingRequirement) {

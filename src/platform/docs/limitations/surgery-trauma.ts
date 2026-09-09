@@ -58,4 +58,28 @@ export const SURGERY_TRAUMA_LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'All of it is tibial-fracture data from single centres with small numerators, and the syndrome occurs at other sites and after other causes where none of it has been measured. The figures are quoted to show which direction each measure fails in — one misses most cases, the other over-calls — and not to supply a probability or a threshold for any individual patient.',
     briefIn: ['rising-requirement-a-number-that-under-calls'],
   },
+  {
+    id: 'unfinished-survey-presentation-and-team-response-are-authored',
+    headline: 'One intensive care bed, one telephone call, and a patient who never deteriorates.',
+    simplification: 'The case supplies a fixed set of stable observations that do not move, one authored sedation window at which he localises on the right, does not move the left arm and grimaces when the left forearm is handled, and a trauma team that answers twenty-five minutes after it is asked with a fixed reply. No injury, healing, sedation, or neurological model runs underneath, and no missed injury is ever confirmed or excluded.',
+    whereItMisleads: 'A learner concludes that the sedation window always produces a finding, that keeping the question open is what caused the left arm to declare itself, or that a trauma team always answers.',
+    correctUnderstanding: 'Nothing the learner does changes his course, because nothing was going to. The window is authored and arrives whether or not anybody was waiting for it; in practice sedation may not be lightened that night, the examination may show nothing at all, and the call may not be answered. The lesson is that the assessment was incomplete before any of that was known, which is the only state the learner is ever actually in.',
+    briefIn: ['unfinished-survey-a-patient-who-cannot-be-asked'],
+  },
+  {
+    id: 'unfinished-survey-controls-are-recording-and-escalation-only',
+    headline: 'No examination is performed, no imaging is ordered, and no disposition is decided.',
+    simplification: 'The learner records why the examination behind the record was limited, records what the injury list rests on, records that no tertiary survey has been done, asks the trauma team to complete it, records bounded qualified-team intent, and reviews the boundaries.',
+    whereItMisleads: 'The bounded survey-intent control is read as booking imaging or a referral, or the escalation control is read as the learner refusing the step-down.',
+    correctUnderstanding: 'Reexamination, re-review of the admission imaging, further films, specialty referral, and any operation belong to the qualified trauma team, and this lesson exposes no investigation, drug, dose, route, or procedure. The learner never decides where he sleeps tonight; the objection recorded is to calling him fully assessed, not to moving him.',
+    briefIn: ['unfinished-survey-a-patient-who-cannot-be-asked'],
+  },
+  {
+    id: 'unfinished-survey-observational-figures-are-not-a-decision-rule',
+    headline: 'Observational studies that disagree about whether the step they measure works.',
+    simplification: 'The lesson quotes 41 missed injuries in 36 of 399 patients (9 percent against a registry 2), a systematic review putting injuries found by the survey at 4.3 percent and those still missed at 1.5, and a before-and-after cohort of 487 patients in which formalising the survey raised performance from 27 to 42 percent without changing missed injury rates.',
+    whereItMisleads: 'A learner treats 9 percent as this patient\u2019s probability of a missed injury, or reads the negative before-and-after result as evidence that the tertiary survey is not worth performing.',
+    correctUnderstanding: 'These are observational cohorts from single centres across more than twenty years, with different populations, different definitions of missed injury, and different follow-up; the review that pooled them says none was randomized, none reported long-term health outcomes, and risk of bias varied considerably. Together they establish that examinations of patients who cannot take part miss things and that formalising a checklist did not by itself fix that. They give no probability for this patient, and the reason to complete the survey here is that his assessment is demonstrably unfinished, not that a percentage says so.',
+    briefIn: ['unfinished-survey-a-patient-who-cannot-be-asked'],
+  },
 ];

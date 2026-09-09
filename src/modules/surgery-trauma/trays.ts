@@ -10,8 +10,11 @@ import { NegativeScanTray } from './NegativeScanTray';
 import { RisingRequirementTray } from './RisingRequirementTray';
 import { supportsNegativeScan } from './negative-scan';
 import { supportsRisingRequirement } from './rising-requirement';
+import { UnfinishedSurveyTray } from './UnfinishedSurveyTray';
+import { supportsUnfinishedSurvey } from './unfinished-survey';
 
 export const SURGERY_TRAUMA_TRAYS: readonly LessonTray[] = [
   { id: 'NegativeScan', actionType: 'negative-scan-response', supports: supportsNegativeScan, assessment: (r) => r?.negativeScan, Component: NegativeScanTray as LessonTray['Component'] },
   { id: 'RisingRequirement', actionType: 'rising-requirement-response', supports: supportsRisingRequirement, assessment: (r) => r?.risingRequirement, Component: RisingRequirementTray as LessonTray['Component'] },
+  { id: 'UnfinishedSurvey', actionType: 'unfinished-survey-response', supports: supportsUnfinishedSurvey, assessment: (r) => r?.unfinishedSurvey, Component: UnfinishedSurveyTray as LessonTray['Component'] },
 ];

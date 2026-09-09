@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "surgery-trauma",
-  "recordCount": 2,
+  "recordCount": 3,
   "records": [
     {
       "recordId": "scenario:negative-scan-a-scan-that-cannot-say-no@0.1.0",
@@ -23,6 +23,17 @@
       "evidence": [
         "/catalog/surgery-trauma-completion-audit.json#rising-requirement-a-number-that-under-calls@0.1.0",
         "/catalog/surgery-trauma-quality-audit.json#rising-requirement-a-number-that-under-calls@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:unfinished-survey-a-patient-who-cannot-be-asked@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "unfinished-survey-a-patient-who-cannot-be-asked",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/surgery-trauma-completion-audit.json#unfinished-survey-a-patient-who-cannot-be-asked@0.1.0",
+        "/catalog/surgery-trauma-quality-audit.json#unfinished-survey-a-patient-who-cannot-be-asked@0.1.0"
       ]
     }
   ]
