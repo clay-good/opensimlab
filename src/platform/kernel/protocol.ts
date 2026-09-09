@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 210 adds the authored negative-scan postoperative recognition snapshot. */
-export const WORKER_PROTOCOL_VERSION = 210;
+/** Version 211 adds the authored rising-requirement limb-assessment snapshot. */
+export const WORKER_PROTOCOL_VERSION = 211;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1091,6 +1091,53 @@ export interface DelayedImmuneEventSnapshot {
     readonly spo2Percent: number; readonly coreTemperatureC: number; readonly stoolsToday: number;
     readonly checkpointInhibitorCycles: number; readonly weeksSinceLastDose: number;
     readonly onCurrentMedicationList: boolean; readonly referralAttribution: string;
+    readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
+}
+
+export interface RisingRequirementSnapshot {
+  readonly injuryRecordedAtTick: number | null;
+  readonly requirementRecordedAtTick: number | null;
+  readonly pressureLimitsRecordedAtTick: number | null;
+  readonly escalationAtTick: number | null;
+  readonly decompressionIntentAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly hoursSinceInjury: number;
+  readonly analgesiaRequests: number;
+  readonly singlePressureMmHg: number;
+  readonly pulsePresent: boolean;
+  readonly painOnPassiveStretch: boolean;
+  readonly worsened: boolean;
+  readonly teamResponded: boolean;
+  readonly teamObserved: boolean;
+  readonly perfusionClaimAttempted: boolean;
+  readonly thresholdClaimAttempted: boolean;
+  readonly analgesiaAttempted: boolean;
+  readonly repeatPressureAttempted: boolean;
+  readonly observationRecord: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+  } | null;
+  readonly limbRecord: {
+    readonly atTick: number; readonly injury: string; readonly hoursSinceInjury: number;
+    readonly immobilised: boolean; readonly analgesiaRequests: number;
+    readonly painOnPassiveStretch: boolean; readonly pulsePresent: boolean;
+    readonly singlePressureMmHg: number;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+    readonly injury: string; readonly hoursSinceInjury: number; readonly immobilised: boolean;
+    readonly analgesiaRequests: number; readonly painOnPassiveStretch: boolean;
+    readonly pulsePresent: boolean; readonly singlePressureMmHg: number;
     readonly alertness: string;
   } | null;
   readonly alertness: string;
@@ -4863,6 +4910,7 @@ export interface EquipmentSnapshot {
     readonly lowScore?: LowScoreSnapshot;
     readonly delayedImmuneEvent?: DelayedImmuneEventSnapshot;
     readonly negativeScan?: NegativeScanSnapshot;
+    readonly risingRequirement?: RisingRequirementSnapshot;
     readonly incidentalClot?: IncidentalClotSnapshot;
     readonly normalTestToxicity?: NormalTestToxicitySnapshot;
     readonly prognosisQuestion?: PrognosisQuestionSnapshot;

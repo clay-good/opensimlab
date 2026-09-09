@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "moduleId": "surgery-trauma",
   "capabilityVersion": "0.1.0-alpha.48",
-  "scenarioCount": 1,
+  "scenarioCount": 2,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -113,6 +113,132 @@
           "status": "satisfied",
           "evidence": [
             "negative-scan-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "rising-requirement-a-number-that-under-calls",
+      "title": "A rising requirement: a number that under-calls",
+      "moduleId": "surgery-trauma",
+      "environment": "ward",
+      "estimatedMinutes": 8,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario rising-requirement-a-number-that-under-calls carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "missing",
+          "evidence": [
+            "This scenario declares 8 objectives; the contract allows at most 5."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "rising-requirement-fixtures.ts binds seed 4219 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No perfusion, compartment, or ischaemia model is claimed."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "rising-requirement.ts runs two authored transitions. At 10 minutes, while the learner is still waiting for the team, he asks a fourth time and passive extension stops him mid-sentence, while the pulse, capillary refill, sensation and every monitored observation stay exactly as they were, so the only thing that moves is the requirement and the clock. The surgical team answers 20 minutes after it is called — sooner than this module’s first lesson, because what is escalated is time-critical rather than uncertain — confirms the fracture and its timing from its own record, states that a single reading neither establishes nor excludes this, and takes ownership of repeat assessment, further measurement, and the decision to decompress. Nothing arrives uncalled."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "The learner records the injury with its elapsed hours, records the rising requirement as a trajectory, records what one pressure reading cannot decide, calls the team that owns the decision, records bounded qualified-team intent, and reviews the boundaries. Reasoning from a present pulse to an intact compartment, excluding on a remembered cut-off, increasing the analgesia and reviewing in the morning, and waiting for a repeat pressure before calling are each refused, and the analgesia refusal objects to the deferral rather than to comfort."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "The recorded injury and clock, the recorded requirement, the recorded limits of the reading, the call to the surgical team, bounded decompression intent, the boundary review, and a current full assessment permit handoff with the diagnosis and the operative decision open. Instructor takeover bounds a run with no escalation at 90 minutes — half this module’s first lesson, because here the harm is the delay — or an unfinished session at eight hours."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "satisfied",
+          "evidence": [
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary recorded actions. Unassisted mode is silent and coached withholds the two non-urgent beats. The prompts read only the learner’s own recorded steps and never say whether this is compartment syndrome, because no measure available in the lesson can settle that. The example is driven through the real engine in tests rather than asserted as a script, and it calls the team before any further number is sought, because the interval spent obtaining one is the harm being taught."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "Eight event-bound objectives distinguish carrying the clock on a limb, reading a requirement as a finding, refusing an artery as evidence about a compartment, refusing one reading as the discriminating quantity, calling before the number, bounded qualified-team intent, two measures that fail in opposite directions, and accountable handoff. Refused shortcuts remain visible, and no diagnosis, operative decision, or outcome is certified."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "3 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "rising-requirement-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
           ]
         },
         {

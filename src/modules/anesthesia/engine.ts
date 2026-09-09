@@ -98,6 +98,8 @@ import { EasyLabel } from '../oncology/easy-label';
 import { supportsEasyLabel } from '../oncology/easy-label';
 import { NegativeScan } from '../surgery-trauma/negative-scan';
 import { supportsNegativeScan } from '../surgery-trauma/negative-scan';
+import { RisingRequirement } from '../surgery-trauma/rising-requirement';
+import { supportsRisingRequirement } from '../surgery-trauma/rising-requirement';
 
 /** The engine's own version, recorded in every transcript. */
 export const ENGINE_VERSION = '0.1.0-alpha.48';
@@ -1810,6 +1812,7 @@ export class AnesthesiaEngine {
   private readonly silentInteraction: SilentInteraction | null;
   private readonly easyLabel: EasyLabel | null;
   private readonly negativeScan: NegativeScan | null;
+  private readonly risingRequirement: RisingRequirement | null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1999,6 +2002,8 @@ export class AnesthesiaEngine {
     if (this.easyLabel) this.rhythm = 'sinus';
     this.negativeScan = supportsNegativeScan(options.scenario) ? new NegativeScan() : null;
     if (this.negativeScan) this.rhythm = 'sinus';
+    this.risingRequirement = supportsRisingRequirement(options.scenario) ? new RisingRequirement() : null;
+    if (this.risingRequirement) this.rhythm = 'sinus';
     this.practiceRegion = options.practiceRegion;
     this.seed = options.seed;
     if (options.scenario.timeline.some((event) => event.type === 'narrative'
@@ -2137,6 +2142,11 @@ export class AnesthesiaEngine {
     if (this.lastKnownWell && action.type !== 'last-known-well-response' && action.type !== 'silence-alarm') {
       this.log('warning', 'assessment', `last-known-well-generic-action-refused-${this.currentTick}`,
         'Only this lesson\u2019s bound-recording, recollection-recording, activation, consequence-recording, boundary-review, observation, and handoff choices are available.');
+      return;
+    }
+    if (this.risingRequirement && action.type !== 'rising-requirement-response' && action.type !== 'silence-alarm') {
+      this.log('warning', 'assessment', `rising-requirement-generic-action-refused-${this.currentTick}`,
+        'Only this lesson\u2019s injury-recording, requirement-recording, reading-limit, escalation, bounded-intent, boundary-review, observation, and handoff choices are available.');
       return;
     }
     if (this.negativeScan && action.type !== 'negative-scan-response' && action.type !== 'silence-alarm') {
@@ -3256,6 +3266,19 @@ export class AnesthesiaEngine {
         }
         for (const event of this.possibleSepsis.apply(action.payload.action, this.currentTick)) {
           this.log('warning', 'assessment', `possible-sepsis-${event.id}-${this.currentTick}`, event.message);
+        }
+        break;
+      }
+      case 'rising-requirement-response': {
+        if (!this.risingRequirement || Reflect.ownKeys(action.payload).length !== 1
+          || !Object.hasOwn(action.payload, 'action')
+          || !Object.getOwnPropertyDescriptor(action.payload, 'action')!.enumerable
+          || !Object.hasOwn(Object.getOwnPropertyDescriptor(action.payload, 'action')!, 'value')) {
+          this.log('warning', 'assessment', `rising-requirement-action-refused-${this.currentTick}`, 'Only the declared dose-free limb-assessment choices are available in this lesson.');
+          break;
+        }
+        for (const event of this.risingRequirement.apply(action.payload.action, this.currentTick)) {
+          this.log('warning', 'assessment', `rising-requirement-${event.id}-${this.currentTick}`, event.message);
         }
         break;
       }
@@ -15260,6 +15283,9 @@ export class AnesthesiaEngine {
     for (const event of this.silentInteraction?.advance(this.currentTick) ?? []) {
       this.log('warning', 'assessment', `silent-interaction-${event.id}-${this.currentTick}`, event.message);
     }
+    for (const event of this.risingRequirement?.advance(this.currentTick) ?? []) {
+      this.log('warning', 'assessment', `rising-requirement-${event.id}-${this.currentTick}`, event.message);
+    }
     for (const event of this.negativeScan?.advance(this.currentTick) ?? []) {
       this.log('warning', 'assessment', `negative-scan-${event.id}-${this.currentTick}`, event.message);
     }
@@ -16197,6 +16223,13 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: this.endocrineDkaResolutionReassessmentAtTick !== null ? 16 : 18,
         spo2Percent: 98, systolicMmHg: 118, diastolicMmHg: 70, meanArterialMmHg: 86,
         coreTemperatureC: 36.9 };
+    }
+    if (this.risingRequirement) {
+      const patient = this.risingRequirement.vitals();
+      crisisState = { ...crisisState, heartRateBpm: patient.heartRateBpm,
+        respiratoryRateBpm: patient.respiratoryRateBpm, spo2Percent: patient.spo2Percent,
+        systolicMmHg: patient.systolicMmHg, diastolicMmHg: patient.diastolicMmHg,
+        meanArterialMmHg: patient.meanArterialMmHg, coreTemperatureC: patient.coreTemperatureC };
     }
     if (this.negativeScan) {
       const patient = this.negativeScan.vitals();
@@ -21258,6 +21291,7 @@ export class AnesthesiaEngine {
         ...(this.silentInteraction ? { silentInteraction: this.silentInteraction.snapshot(this.currentTick) } : {}),
         ...(this.easyLabel ? { easyLabel: this.easyLabel.snapshot(this.currentTick) } : {}),
         ...(this.negativeScan ? { negativeScan: this.negativeScan.snapshot(this.currentTick) } : {}),
+        ...(this.risingRequirement ? { risingRequirement: this.risingRequirement.snapshot(this.currentTick) } : {}),
         ...(this.avpDeficiency ? { avpDeficiency: this.avpDeficiency.snapshot(this.currentTick) } : {}),
         ...(this.hyponatremiaCorrection ? { hyponatremiaCorrection: this.hyponatremiaCorrection.snapshot(this.currentTick) } : {}),
         aspirationRiskAssessment: {

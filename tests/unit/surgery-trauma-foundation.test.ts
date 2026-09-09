@@ -35,7 +35,7 @@ describe('Surgery and trauma module foundation', () => {
     expect(moduleProse('surgery-trauma').plannedScope).toContain('Ten bounded');
     // The prose must no longer read as an unbuilt module, because the route now runs one.
     expect(moduleProse('surgery-trauma').description).not.toBe('Planned.');
-    expect(SURGERY_TRAUMA_SCENARIOS).toHaveLength(1);
+    expect(SURGERY_TRAUMA_SCENARIOS).toHaveLength(2);
     expect(DEFAULT_SURGERY_TRAUMA_SCENARIO_ID).toBe(id);
     expect(getSurgeryTraumaScenario(id)).toBe(scenario);
     expect(getSurgeryTraumaScenario('not-a-scenario')).toBeUndefined();
@@ -61,7 +61,7 @@ describe('Surgery and trauma module foundation', () => {
     expect(route.indexable).toBe(true);
     expect(route.description.length).toBeGreaterThanOrEqual(110);
     expect(route.description.length).toBeLessThanOrEqual(160);
-    expect(ROUTES.filter((entry) => entry.path.startsWith('/surgery-trauma'))).toHaveLength(2);
+    expect(ROUTES.filter((entry) => entry.path.startsWith('/surgery-trauma'))).toHaveLength(3);
     const markup = renderToStaticMarkup(createElement(PrerenderedBody, { path }));
     expect(markup).toContain('a scan that cannot say no');
     const moduleMarkup = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/surgery-trauma' }));
@@ -75,7 +75,7 @@ describe('Surgery and trauma module foundation', () => {
       expect(PUBLIC_CATALOG_ARTIFACTS).toContain(`/catalog/surgery-trauma-${artifact}.json`);
     }
     const completion = json('public/catalog/surgery-trauma-completion-audit.json');
-    expect(completion.scenarioCount).toBe(1);
+    expect(completion.scenarioCount).toBe(2);
     expect(completion.scenarios[0].scenarioId).toBe(id);
     expect(completion.scenarios[0].environment).toBe('ward');
     // The two report catalogs must stay byte-identical, or a report can resolve in one and not the other.
@@ -101,13 +101,29 @@ describe('Surgery and trauma module foundation', () => {
     }
   });
 
-  it('claims a worked example only because the product actually offers one', () => {
+  it('claims a worked example for every lesson only because the product offers one', () => {
     const completion = json('public/catalog/surgery-trauma-completion-audit.json');
-    const requirement = completion.scenarios[0].requirements
-      .find((entry: { id: string }) => entry.id === 'guidance-and-demonstration');
-    expect(requirement.status).toBe('satisfied');
-    expect(offersWorkedExample(scenario, 'surgery-trauma')).toBe(true);
+    for (const audited of completion.scenarios) {
+      const requirement = audited.requirements
+        .find((entry: { id: string }) => entry.id === 'guidance-and-demonstration');
+      expect(requirement.status, `${audited.scenarioId} claims no example`).toBe('satisfied');
+    }
+    for (const entry of SURGERY_TRAUMA_SCENARIOS) {
+      expect(offersWorkedExample(entry, 'surgery-trauma'), entry.metadata.id).toBe(true);
+    }
     expect(WORKED_EXAMPLE_MODULE_IDS).toContain('surgery-trauma');
+  });
+
+  // The two lessons are a deliberate pair. The first teaches holding a position while nothing
+  // changes; the second teaches that a requirement climbing over hours is itself the finding
+  // and that here the delay is the harm. A module that only ever taught one of those would be
+  // teaching a reflex, so this asserts the pair rather than either half.
+  it('pairs a lesson about holding with a lesson about not waiting', () => {
+    const [first, second] = SURGERY_TRAUMA_SCENARIOS;
+    expect(first!.metadata.id).toBe('negative-scan-a-scan-that-cannot-say-no');
+    expect(second!.metadata.id).toBe('rising-requirement-a-number-that-under-calls');
+    const ids = SURGERY_TRAUMA_SCENARIOS.flatMap((entry) => entry.metadata.objectives.map((o) => o.id));
+    expect(new Set(ids).size).toBe(ids.length);
   });
 
   it('makes every scenario in the module reportable, not just the first', () => {

@@ -34,4 +34,28 @@ export const SURGERY_TRAUMA_LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'These are single-centre cohorts with different populations, different imaging protocols, different leak rates, and small numerators; the two imaging series disagree with each other on sensitivity by fourteen points. They establish only the shape of the problem: that one observation cannot establish a leak and this scan cannot exclude one. They do not give a probability for this patient, and no figure here should be carried to the bedside as one.',
     briefIn: ['negative-scan-a-scan-that-cannot-say-no'],
   },
+  {
+    id: 'rising-requirement-presentation-and-team-response-are-authored',
+    headline: 'One ward, one telephone call, and observations that never move.',
+    simplification: 'The case supplies a fixed set of entirely normal observations, one authored worsening at which he asks a fourth time and passive extension stops him mid-sentence, and an on-call team that answers twenty minutes after it is called with a fixed reply. No perfusion, compartment, muscle or ischaemia model runs underneath, and no diagnosis is ever confirmed or excluded.',
+    whereItMisleads: 'A learner concludes that this always progresses this slowly, that the pulse and the observations always stay normal for this long, that the team always answers within twenty minutes, or that calling is what preserved the limb.',
+    correctUnderstanding: 'Nothing the learner does changes his course, because nothing was going to. The observations are held normal so that reading a trajectory is the only thing being tested; a real limb may declare itself faster, may lose its pulse, or may have nothing wrong with it. The reply is authored: in practice the call may not be answered, and the plan has to survive that.',
+    briefIn: ['rising-requirement-a-number-that-under-calls'],
+  },
+  {
+    id: 'rising-requirement-controls-are-recording-and-escalation-only',
+    headline: 'No measurement is taken, no drug is selected, and no limb is decompressed.',
+    simplification: 'The learner records the injury and its clock, records the rising requirement, records what one pressure reading cannot decide, calls the team, records bounded qualified-team intent, and reviews the boundaries.',
+    whereItMisleads: 'The bounded intent control is read as booking a fasciotomy, the pressure control is read as the learner taking or interpreting a measurement, or the refusal of extra analgesia is read as withholding pain relief.',
+    correctUnderstanding: 'Repeat assessment, any further measurement, and any decision to decompress belong to the qualified surgical team, and this lesson exposes no drug, dose, route, threshold, incision, or dressing. The analgesia refusal objects to deferring the decision until morning, not to treating his pain, and the lesson says so in the refusal itself.',
+    briefIn: ['rising-requirement-a-number-that-under-calls'],
+  },
+  {
+    id: 'rising-requirement-tibial-fracture-figures-are-not-a-threshold',
+    headline: 'Tibial-fracture data from single centres, quoted for its direction rather than its number.',
+    simplification: 'The lesson quotes clinical findings at 13 to 19 percent sensitivity with 97 to 98 percent specificity and negative predictive value, a probability near 25 percent with one finding and 93 with three, 53 of 116 monitored patients above an absolute 30 mmHg against three cases, and continuous differential monitoring at 94 percent sensitivity and 98 percent specificity in 850 fractures.',
+    whereItMisleads: 'A learner carries these to the bedside as a rule: a percentage for this patient, a pressure at which to act, or a count of findings that settles it.',
+    correctUnderstanding: 'All of it is tibial-fracture data from single centres with small numerators, and the syndrome occurs at other sites and after other causes where none of it has been measured. The figures are quoted to show which direction each measure fails in — one misses most cases, the other over-calls — and not to supply a probability or a threshold for any individual patient.',
+    briefIn: ['rising-requirement-a-number-that-under-calls'],
+  },
 ];

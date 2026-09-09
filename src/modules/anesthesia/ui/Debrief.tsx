@@ -61,6 +61,7 @@ import { supportsOxygenTargetScale } from '../../medical-surgical-nursing/oxygen
 import { supportsLostContingency } from '../../medical-surgical-nursing/lost-contingency';
 import { supportsDelayedImmuneEvent } from '../../oncology/delayed-immune-event';
 import { supportsNegativeScan } from '../../surgery-trauma/negative-scan';
+import { supportsRisingRequirement } from '../../surgery-trauma/rising-requirement';
 import { supportsIncidentalClot } from '../../oncology/incidental-clot';
 import { supportsNormalTestToxicity } from '../../oncology/normal-test-toxicity';
 import { supportsPrognosisQuestion } from '../../oncology/prognosis-question';
@@ -1082,6 +1083,51 @@ export function objectiveFindings(
         'handoff-oncology-incidental-clot-an-unresolved-decision': { met: !!handoff, tick: handoff?.tick,
           finding: (handoff ? 'The finding, its route, the conditional strength and very low certainty, the figures in both directions, and his bleeding history all travelled. ' : 'Current full findings, the recorded certainty, or continuing-care ownership remains incomplete. ')
             + 'The decision was handed over open, which is what an unresolved decision looks like when it is handed over honestly rather than closed to make the handoff tidy.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id.includes('-surgery-trauma-rising-requirement-')) {
+      if (!supportsRisingRequirement(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The surgery and trauma rising-requirement lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^rising-requirement-${id}-\\d+$`).test(entry.eventId));
+      const injury = event('injury-recorded'); const requirement = event('requirement-recorded');
+      const limits = event('pressure-limits-recorded'); const escalation = event('escalation-requested');
+      const intent = event('decompression-intent-recorded'); const boundaries = event('boundary-review');
+      const handoff = event('handoff'); const worsened = event('requirement-risen-again');
+      const answered = log.find((entry) => /^rising-requirement-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedPerfusion = event('perfusion-claim-refused'); const refusedThreshold = event('threshold-claim-refused');
+      const refusedAnalgesia = event('analgesia-refused'); const refusedRepeat = event('repeat-pressure-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'record-surgery-trauma-rising-requirement-the-clock-on-the-limb': { met: !!injury, tick: injury?.tick,
+          finding: (injury ? 'The fracture and the hours already elapsed were recorded together, with the clock as a live quantity. ' : 'The injury was never recorded with its elapsed time, so the one number every later judgement depends on was not written down. ')
+            + 'Every decision after this is about how long a compartment may already have been under pressure.' },
+        'record-surgery-trauma-rising-requirement-a-requirement-is-a-finding': { met: !!requirement && !refusedAnalgesia, tick: requirement?.tick,
+          finding: (requirement ? 'The escalating requests were recorded as a direction with an interval rather than as a complaint. ' : 'The rising requirement was never recorded, so nothing in the notes says the only moving finding was moving. ')
+            + (refusedAnalgesia ? 'Increasing the analgesia and reviewing in the morning was attempted and refused: it removes the signal being followed while the clock keeps running. ' : '')
+            + 'A patient in pain after a fracture is unremarkable. A patient needing more every hour is the finding.' },
+        'recognize-surgery-trauma-rising-requirement-an-artery-is-not-a-compartment': { met: !!requirement && !refusedPerfusion, tick: requirement?.tick,
+          finding: (refusedPerfusion ? 'Reasoning from the present pulse to an intact compartment was attempted and refused. ' : requirement ? 'The limb was read with the present pulse recorded but not treated as evidence against the diagnosis. ' : 'The limb was never read, so nothing here shows the pulse was weighed at all. ')
+            + 'The pressure that closes a compartment is far below the pressure that closes the dorsalis pedis, so a warm foot with a good pulse is compatible with this rather than reassuring about it.' },
+        'record-surgery-trauma-rising-requirement-one-reading-is-not-the-quantity': { met: !!limits && !refusedThreshold, tick: limits?.tick,
+          finding: (limits ? 'What the single reading could and could not settle was recorded explicitly. ' : 'The limits of the single reading were never recorded, so a number taken once was allowed to stand as a verdict. ')
+            + (refusedThreshold ? 'Excluding the diagnosis on a remembered cut-off was attempted and refused. ' : '')
+            + 'In the monitored series 53 of 116 patients exceeded an absolute 30 mmHg while three had the syndrome; the differential against diastolic, followed over time, is what discriminated.' },
+        'activate-surgery-trauma-rising-requirement-call-before-the-number': { met: !!escalation, tick: escalation?.tick,
+          finding: (escalation ? 'The team that owns the decision was called with the limb, the requirement and the clock stated together. ' : 'The surgical team was never called. ')
+            + (refusedRepeat ? 'Waiting for a repeat pressure before calling was attempted and refused; the measurement is theirs to arrange, not a gate to clear first. ' : '')
+            + 'The interval spent obtaining a better number is where this diagnosis is missed.' },
+        'record-surgery-trauma-rising-requirement-bounded-decompression-intent': { met: !!intent, tick: intent?.tick,
+          finding: (intent ? 'Repeat assessment, continuous measurement, and any decision to decompress were recorded as the qualified team’s. ' : 'Bounded qualified-team intent was never recorded. ')
+            + 'Nothing was given and no drug, dose, route, threshold, incision, or dressing was chosen or displayed here.' },
+        'review-surgery-trauma-rising-requirement-two-numbers-that-fail-differently': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'Both measures were reviewed with the direction of their failure attached. ' : 'The boundary and certainty review is missing. ')
+            + 'Clinical findings miss most cases at 13 to 19 percent sensitivity but are worth a great deal absent, at 97 to 98 percent specificity and negative predictive value; one finding put the probability near 25 percent and three at 93. Continuous differential monitoring in 850 tibial fractures reached 94 percent sensitivity and 98 percent specificity, with five cases still missed. It is tibial-fracture data from single centres and it does not license waiting.' },
+        'handoff-surgery-trauma-rising-requirement-a-course-that-travels': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The hours on the limb, the climbing requirement, the limits of the reading, the call made and the bounded intent all travelled. ' : 'Current full findings, the recorded clock, or continuing-care ownership remains incomplete. ')
+            + (worsened ? 'A fourth request arrived during this run with the pulse, the refill and every monitored observation unchanged, which is what this diagnosis looks like while it is happening. ' : '')
+            + (answered ? 'The team confirmed the fracture and its timing from its own record and acts on the trend rather than one measurement. ' : 'The team had not answered by the end of this run, and the handoff had to survive that. ')
+            + 'No diagnosis, operative decision, or outcome is certified.' },
       };
       const result = results[objective.id]!;
       return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;

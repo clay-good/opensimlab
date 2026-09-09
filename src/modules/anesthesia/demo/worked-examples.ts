@@ -66,6 +66,7 @@ import { supportsTrialRuleDemonstration } from '../../oncology/demo/trial-rule-d
 import { supportsSilentInteractionDemonstration } from '../../oncology/demo/silent-interaction-demonstration';
 import { supportsEasyLabelDemonstration } from '../../oncology/demo/easy-label-demonstration';
 import { supportsNegativeScanDemonstration } from '../../surgery-trauma/demo/negative-scan-demonstration';
+import { supportsRisingRequirementDemonstration } from '../../surgery-trauma/demo/rising-requirement-demonstration';
 import { supportsLowScoreDemonstration } from '../../medical-surgical-nursing/demo/low-score-demonstration';
 import { supportsCountedRateDemonstration } from '../../medical-surgical-nursing/demo/counted-rate-demonstration';
 import { supportsPairedReadingDemonstration } from '../../medical-surgical-nursing/demo/paired-reading-demonstration';
@@ -339,6 +340,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
   ],
   'surgery-trauma': [
     supportsNegativeScanDemonstration,
+    supportsRisingRequirementDemonstration,
   ],
   'medical-surgical-nursing': [
     supportsLowScoreDemonstration,

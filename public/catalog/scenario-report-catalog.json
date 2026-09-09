@@ -4083,6 +4083,23 @@
       "limitationManifestHash": "sha256:ed5376a44d639ef97231fff102db316b52462baab8cfc2edeac48f08d241095f"
     },
     {
+      "scenarioId": "rising-requirement-a-number-that-under-calls",
+      "contentVersion": "0.1.0",
+      "moduleId": "surgery-trauma",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:2776180bce7d122277ed4174fd5f7e77ffcfe085e7dbee43dc240baf4df3d41d",
+      "defaultsHash": "sha256:81f4f5540aeb7246c2a8d43d884eddc5fc53168371f0fe9f989fa3515f91b3ea",
+      "maturityHash": "sha256:d401fc6d7b79e3ec048ea84fc8503e31fe4f7947aa9b268b333799edf6aa2bd1",
+      "sourceManifestHash": "sha256:db6943489313289f908db3f0f302595be3598e03e2a5aff4d54d8d482877df58",
+      "limitationManifestHash": "sha256:7460105ec939d333da8172e60795e32bbfd9cdf2006e219f9594c65d7e3e62a2"
+    },
+    {
       "scenarioId": "acetaminophen-clock-and-nomogram",
       "contentVersion": "0.1.0",
       "moduleId": "toxicology",

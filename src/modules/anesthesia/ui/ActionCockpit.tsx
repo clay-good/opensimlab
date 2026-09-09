@@ -88,6 +88,7 @@ import { TrialRuleTray } from '../../oncology/TrialRuleTray';
 import { SilentInteractionTray } from '../../oncology/SilentInteractionTray';
 import { EasyLabelTray } from '../../oncology/EasyLabelTray';
 import { NegativeScanTray } from '../../surgery-trauma/NegativeScanTray';
+import { RisingRequirementTray } from '../../surgery-trauma/RisingRequirementTray';
 import { supportsLastKnownWell, type LastKnownWellAction, type LastKnownWellSnapshot } from '../../medical-surgical-nursing/last-known-well';
 import { supportsOxygenTargetScale, type OxygenTargetScaleAction, type OxygenTargetScaleSnapshot } from '../../medical-surgical-nursing/oxygen-target-scale';
 import { supportsLostContingency, type LostContingencyAction, type LostContingencySnapshot } from '../../medical-surgical-nursing/lost-contingency';
@@ -109,6 +110,7 @@ import { supportsTrialRule, type TrialRuleAction } from '../../oncology/trial-ru
 import { supportsSilentInteraction, type SilentInteractionAction } from '../../oncology/silent-interaction';
 import { supportsEasyLabel, type EasyLabelAction } from '../../oncology/easy-label';
 import { supportsNegativeScan, type NegativeScanAction } from '../../surgery-trauma/negative-scan';
+import { supportsRisingRequirement, type RisingRequirementAction } from '../../surgery-trauma/rising-requirement';
 import { dkaResolutionInlinePrompt } from '../../endocrine-metabolic/tutor/dka-resolution-guidance';
 import { hhsOsmolalityInlinePrompt } from '../../endocrine-metabolic/tutor/hhs-osmolality-guidance';
 import { nicuHandoffInlinePrompt } from '../../neonatology/tutor/delivery-room-to-nicu-handoff-guidance';
@@ -271,6 +273,7 @@ import type { TrialRuleSnapshot } from '@platform/kernel/protocol';
 import type { SilentInteractionSnapshot } from '@platform/kernel/protocol';
 import type { EasyLabelSnapshot } from '@platform/kernel/protocol';
 import type { NegativeScanSnapshot } from '@platform/kernel/protocol';
+import type { RisingRequirementSnapshot } from '@platform/kernel/protocol';
 import { supportsProxyScale, type ProxyScaleAction, type ProxyScaleSnapshot } from '../../medical-surgical-nursing/proxy-scale';
 import { supportsQuietPatient, type QuietPatientAction, type QuietPatientSnapshot } from '../../medical-surgical-nursing/quiet-patient';
 import { supportsAfferentLimb, type AfferentLimbAction, type AfferentLimbSnapshot } from '../../medical-surgical-nursing/afferent-limb';
@@ -361,6 +364,7 @@ export interface ActionCockpitProps {
   readonly silentInteraction?: SilentInteractionSnapshot;
   readonly easyLabel?: EasyLabelSnapshot;
   readonly negativeScan?: NegativeScanSnapshot;
+  readonly risingRequirement?: RisingRequirementSnapshot;
   readonly hypoglycemiaDemonstrating?: boolean;
   readonly scenario: Scenario;
   readonly region: RegionProfile;
@@ -2933,6 +2937,8 @@ export interface ActionCockpitProps {
   readonly onEasyLabelResponse?: (action: EasyLabelAction) => void;
   readonly onNegativeScanResponse?: (action: NegativeScanAction) => void;
   readonly negativeScanGuidance?: GuidanceLevel;
+  readonly onRisingRequirementResponse?: (action: RisingRequirementAction) => void;
+  readonly risingRequirementGuidance?: GuidanceLevel;
   readonly renalHyponatremiaGuidance?: GuidanceLevel;
   readonly delayedImmuneEventGuidance?: GuidanceLevel;
   readonly incidentalClotGuidance?: GuidanceLevel;
@@ -3157,6 +3163,7 @@ export interface ActionCockpitProps {
   readonly silentInteractionDemonstrating?: boolean;
   readonly easyLabelDemonstrating?: boolean;
   readonly negativeScanDemonstrating?: boolean;
+  readonly risingRequirementDemonstrating?: boolean;
   readonly endocrineDkaResolutionDemonstrating?: boolean;
   readonly endocrineHhsDemonstrating?: boolean;
   readonly neonatologyNicuHandoffDemonstrating?: boolean;
@@ -3529,6 +3536,7 @@ export function crisisResponseAvailability(
   const hasSilentInteractionResponse = supportsSilentInteraction(scenario);
   const hasEasyLabelResponse = supportsEasyLabel(scenario);
   const hasNegativeScanResponse = supportsNegativeScan(scenario);
+  const hasRisingRequirementResponse = supportsRisingRequirement(scenario);
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -4101,7 +4109,7 @@ export function crisisResponseAvailability(
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
-    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse, hasToxicShockResponse, hasPossibleSepsisResponse, hasSepticShockLabelResponse, hasMeningitisImagingResponse, hasLowScoreResponse, hasCountedRateResponse, hasPairedReadingResponse, hasAfferentLimbResponse, hasQuietPatientResponse, hasProxyScaleResponse, hasLastKnownWellResponse, hasOxygenTargetScaleResponse, hasLostContingencyResponse, hasDelayedImmuneEventResponse, hasIncidentalClotResponse, hasNormalTestToxicityResponse, hasPrognosisQuestionResponse, hasLaboratoryTlsResponse, hasRareEarlyMyocarditisResponse, hasLoweringTheCountResponse, hasInheritedUrgencyResponse, hasTrialRuleResponse, hasSilentInteractionResponse, hasEasyLabelResponse, hasNegativeScanResponse,
+    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse, hasToxicShockResponse, hasPossibleSepsisResponse, hasSepticShockLabelResponse, hasMeningitisImagingResponse, hasLowScoreResponse, hasCountedRateResponse, hasPairedReadingResponse, hasAfferentLimbResponse, hasQuietPatientResponse, hasProxyScaleResponse, hasLastKnownWellResponse, hasOxygenTargetScaleResponse, hasLostContingencyResponse, hasDelayedImmuneEventResponse, hasIncidentalClotResponse, hasNormalTestToxicityResponse, hasPrognosisQuestionResponse, hasLaboratoryTlsResponse, hasRareEarlyMyocarditisResponse, hasLoweringTheCountResponse, hasInheritedUrgencyResponse, hasTrialRuleResponse, hasSilentInteractionResponse, hasEasyLabelResponse, hasNegativeScanResponse, hasRisingRequirementResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -4492,7 +4500,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasEndocrineHhsResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
-    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse, hasToxicShockResponse, hasPossibleSepsisResponse, hasSepticShockLabelResponse, hasMeningitisImagingResponse, hasLowScoreResponse, hasCountedRateResponse, hasPairedReadingResponse, hasAfferentLimbResponse, hasQuietPatientResponse, hasProxyScaleResponse, hasLastKnownWellResponse, hasOxygenTargetScaleResponse, hasLostContingencyResponse, hasDelayedImmuneEventResponse, hasIncidentalClotResponse, hasNormalTestToxicityResponse, hasPrognosisQuestionResponse, hasLaboratoryTlsResponse, hasRareEarlyMyocarditisResponse, hasLoweringTheCountResponse, hasInheritedUrgencyResponse, hasTrialRuleResponse, hasSilentInteractionResponse, hasEasyLabelResponse, hasNegativeScanResponse,
+    hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse, hasToxicShockResponse, hasPossibleSepsisResponse, hasSepticShockLabelResponse, hasMeningitisImagingResponse, hasLowScoreResponse, hasCountedRateResponse, hasPairedReadingResponse, hasAfferentLimbResponse, hasQuietPatientResponse, hasProxyScaleResponse, hasLastKnownWellResponse, hasOxygenTargetScaleResponse, hasLostContingencyResponse, hasDelayedImmuneEventResponse, hasIncidentalClotResponse, hasNormalTestToxicityResponse, hasPrognosisQuestionResponse, hasLaboratoryTlsResponse, hasRareEarlyMyocarditisResponse, hasLoweringTheCountResponse, hasInheritedUrgencyResponse, hasTrialRuleResponse, hasSilentInteractionResponse, hasEasyLabelResponse, hasNegativeScanResponse, hasRisingRequirementResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -4700,8 +4708,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasSilentInteractionResponse
     || hasEasyLabelResponse
     || hasNegativeScanResponse
+    || hasRisingRequirementResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasNegativeScanResponse
+  const responseTray = hasRisingRequirementResponse
+    || hasNegativeScanResponse
     || hasEasyLabelResponse
     || hasSilentInteractionResponse
     || hasTrialRuleResponse
@@ -6828,6 +6838,13 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 guidance={props.proxyScaleGuidance}
                 demonstrating={props.proxyScaleDemonstrating}
                 onAction={props.onProxyScaleResponse ?? (() => {})} />
+            )}
+            {hasRisingRequirementResponse && (
+              <RisingRequirementTray assessment={props.risingRequirement}
+                guidance={props.risingRequirementGuidance}
+                scenarioVersion={props.scenario.metadata.version}
+                demonstrating={props.risingRequirementDemonstrating}
+                onAction={props.onRisingRequirementResponse ?? (() => {})} />
             )}
             {hasNegativeScanResponse && (
               <NegativeScanTray assessment={props.negativeScan}

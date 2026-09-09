@@ -12,7 +12,7 @@ const SURGERY_TRAUMA_CONFIG: ClinicalModuleConfig = {
   id: 'surgery-trauma', basePath: '/surgery-trauma',
   heading: 'Surgery and trauma simulator',
   limitations: SURGERY_TRAUMA_LIMITATIONS,
-  catalogIntroduction: 'Rehearsals for the surgical patient who never declares himself: a recovery that has quietly stopped following the operation that predicted it, an investigation that cannot say no, and a decision that belongs to the team that operated.',
+  catalogIntroduction: 'Rehearsals for the surgical patient who never declares himself: a recovery that has quietly stopped following the operation that predicted it, a limb whose only moving finding is how often he asks, and investigations that cannot say no in either direction.',
   // "1 ... are available" reads as a typo on a module that has just opened with one lab.
   catalogStatus: `${SURGERY_TRAUMA_SCENARIOS.length} of 10 planned Surgery and trauma labs ${SURGERY_TRAUMA_SCENARIOS.length === 1 ? 'is' : 'are'} available as previews. Registration does not establish completed review.`,
   scenarios: SURGERY_TRAUMA_SCENARIOS,

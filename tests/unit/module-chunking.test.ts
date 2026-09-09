@@ -90,10 +90,22 @@ describe('Requirement: One Module Downloads One Catalogue', () => {
     // prose is in EVERY module's cockpit graph, and a lesson added to surgery and trauma grows
     // anesthesia. The seam the three tests above prove covers scenario catalogues, not this.
     //
+    // Measured at 986.5 KB gz over 19 files when this was raised, of which the shared cockpit
+    // chunk was 647.7 and nothing else exceeded 137.1. Its raw inputs are the demonstrations,
+    // the two cockpit files, the trays, the demo hooks and the tutors. Lesson engine prose is
+    // NOT in it: strings unique to a lesson's engine class appear only in solver.worker, so
+    // the `supports<Lesson>` imports tree-shake as intended.
+    //
+    // The marginal cost was then measured rather than guessed. Adding the module's second
+    // lesson — scenario, tray, tutor and worked example — took the graph to 992.3 and the
+    // cockpit chunk to 652.2, so a lesson costs about 5.8 KB gz and this guard holds exactly
+    // ONE more. An earlier version of this comment estimated three; that was wrong, and the
+    // number above is what a build actually reports.
+    //
     // The durable fix is to load a lesson's tray, tutor and demonstration on the route that
-    // runs it, the way the module catalogues already are. Until that lands, this guard buys
-    // roughly one more lesson, and raising it a third time is not an option — measure the
-    // graph instead.
+    // runs it, the way the module catalogues already are. It is not a small change: 294 test
+    // files render ActionCockpit and depend on trays being synchronous. Raising this a third
+    // time is not an option — measure the graph and move the boundary instead.
     expect(gzipBytes(anesthesia) / 1024).toBeLessThan(1000);
   });
 });

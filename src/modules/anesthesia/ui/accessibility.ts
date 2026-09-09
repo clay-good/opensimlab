@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot, DelayedImmuneEventSnapshot, IncidentalClotSnapshot, NormalTestToxicitySnapshot, PrognosisQuestionSnapshot, LaboratoryTlsSnapshot, RareEarlyMyocarditisSnapshot, LoweringTheCountSnapshot, InheritedUrgencySnapshot, TrialRuleSnapshot, SilentInteractionSnapshot, EasyLabelSnapshot, NegativeScanSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot, DelayedImmuneEventSnapshot, IncidentalClotSnapshot, NormalTestToxicitySnapshot, PrognosisQuestionSnapshot, LaboratoryTlsSnapshot, RareEarlyMyocarditisSnapshot, LoweringTheCountSnapshot, InheritedUrgencySnapshot, TrialRuleSnapshot, SilentInteractionSnapshot, EasyLabelSnapshot, NegativeScanSnapshot, RisingRequirementSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -141,6 +141,7 @@ export function stateSummary(
     readonly silentInteraction?: SilentInteractionSnapshot;
     readonly easyLabel?: EasyLabelSnapshot;
     readonly negativeScan?: NegativeScanSnapshot;
+    readonly risingRequirement?: RisingRequirementSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -194,7 +195,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale || options.lostContingency || options.delayedImmuneEvent || options.incidentalClot || options.normalTestToxicity || options.prognosisQuestion || options.laboratoryTls || options.rareEarlyMyocarditis || options.loweringTheCount || options.inheritedUrgency || options.trialRule || options.silentInteraction || options.easyLabel || options.negativeScan) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale || options.lostContingency || options.delayedImmuneEvent || options.incidentalClot || options.normalTestToxicity || options.prognosisQuestion || options.laboratoryTls || options.rareEarlyMyocarditis || options.loweringTheCount || options.inheritedUrgency || options.trialRule || options.silentInteraction || options.easyLabel || options.negativeScan || options.risingRequirement) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -219,6 +220,28 @@ export function stateSummary(
       }
     }
   }
+  if (options.risingRequirement) {
+    const patient = options.risingRequirement;
+    // The clock and the direction, in every state, because nothing else here moves.
+    lines.push(`Closed tibial diaphyseal fracture ${patient.hoursSinceInjury} hours ago, in a below-knee cast. ${patient.analgesiaRequests} escalating requests for analgesia. Pain on passive extension ${patient.painOnPassiveStretch ? 'present' : 'absent'}.`);
+    lines.push('Supplied starting observations were pulse 96 per minute, blood pressure 128 over 74, respiratory rate 18 per minute, temperature 36.9 degrees Celsius, and oxygen saturation 99 percent in air. These remain historical starting observations, and none of them is abnormal.');
+    lines.push(`The foot is warm, the dorsalis pedis is ${patient.pulsePresent ? 'easily felt' : 'not felt'}, capillary refill is under two seconds, and sensation in the first web space is intact. One compartment pressure of ${patient.singlePressureMmHg} millimetres of mercury was measured once, and the note beside it says the pressure was not diagnostic.`);
+    lines.push(`Current state: ${patient.alertness}.`);
+    lines.push(`Injury and clock recorded: ${patient.injuryRecordedAtTick === null ? 'no' : 'yes'}. Rising requirement recorded: ${patient.requirementRecordedAtTick === null ? 'no' : 'yes'}. Limits of the reading recorded: ${patient.pressureLimitsRecordedAtTick === null ? 'no' : 'yes'}. Surgical team: ${patient.escalationAtTick === null ? 'not called' : 'called'}. Bounded intent: ${patient.decompressionIntentAtTick === null ? 'not recorded' : 'recorded as the qualified team\u2019s decision'}. Boundaries: ${patient.boundariesReviewedAtTick === null ? 'not reviewed' : 'reviewed'}.`);
+    if (patient.worsened) {
+      lines.push('He has asked a fourth time and passive extension of the toes now stops him mid-sentence. The pulse, the capillary refill, the sensation and every monitored observation are exactly as they were.');
+    }
+    lines.push('Clinical findings in this diagnosis carry a sensitivity of 13 to 19 percent, so they miss most cases, and a specificity and negative predictive value of 97 to 98 percent, so they are worth more absent than present. A single absolute compartment pressure over-calls: 53 of 116 monitored patients exceeded 30 millimetres of mercury and three had the syndrome. Repeat assessment, further measurement, and any decision to decompress belong to the qualified surgical team; no drug, dose, route, incision, or dressing is selected here, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: pulse ${patient.observation.heartRateBpm} per minute; ${patient.observation.hoursSinceInjury} hours since injury; ${patient.observation.analgesiaRequests} escalating requests; ${patient.observation.pulsePresent ? 'pulse present' : 'no pulse'}.`
+      : 'No new full assessment has been requested.');
+    if (patient.teamObserved) {
+      lines.push('The surgical team has answered, confirmed the fracture and its timing from its own record, and owns repeat assessment, further measurement, and the decision to decompress.');
+    }
+    if (patient.choiceFeedback) lines.push(patient.choiceFeedback);
+    if (patient.ended) lines.push(patient.ended === 'handoff' ? 'Practice complete. No diagnosis, operative decision, or outcome is certified.' : 'Instructor takeover ended this branch. The teaching stop predicts no patient outcome.');
+  }
+
   if (options.negativeScan) {
     const patient = options.negativeScan;
     // The operation, the day, and how long this has been true — in every state.

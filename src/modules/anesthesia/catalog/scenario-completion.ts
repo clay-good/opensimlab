@@ -232,6 +232,7 @@ import { trialRuleCompletionEvidence } from '../../oncology/trial-rule-completio
 import { silentInteractionCompletionEvidence } from '../../oncology/silent-interaction-completion';
 import { easyLabelCompletionEvidence } from '../../oncology/easy-label-completion';
 import { negativeScanCompletionEvidence } from '../../surgery-trauma/negative-scan-completion';
+import { risingRequirementCompletionEvidence } from '../../surgery-trauma/rising-requirement-completion';
 import { countedRateCompletionEvidence } from '../../medical-surgical-nursing/counted-rate-completion';
 import { pairedReadingCompletionEvidence } from '../../medical-surgical-nursing/paired-reading-completion';
 import { afferentLimbCompletionEvidence } from '../../medical-surgical-nursing/afferent-limb-completion';
@@ -575,6 +576,7 @@ export function auditClinicalScenario(
     ...silentInteractionCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...easyLabelCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...negativeScanCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...risingRequirementCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...countedRateCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...pairedReadingCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...afferentLimbCompletionEvidence(scenario, capabilityVersion, moduleId),

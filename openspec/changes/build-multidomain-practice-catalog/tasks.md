@@ -1954,7 +1954,14 @@ credited toward the catalog until every item in the completion contract passes.
   the product offers no example for it — the first lesson in the catalog to say so rather than
   claim one. Opening it also emptied the planned list: every declared module is now built, so
   the front door's planned sentence is gone rather than being kept alive by inventing a
-  seventeenth module. Every
+  seventeenth module. A second surgery and trauma lesson follows it as a deliberate counterweight:
+  the first teaches a learner to hold a position while a patient refuses to declare himself, and a
+  module that only ever taught that would be teaching a reflex. The second is a limb eight hours
+  after a tibial fracture whose only moving finding is how often he asks for more analgesia, where
+  both slogans fail in opposite directions — clinical findings carry a sensitivity of 13 to 19
+  percent and miss most cases, while 53 of 116 monitored patients passed an absolute compartment
+  pressure of 30 mmHg and three had the syndrome — so the correct action is urgent rather than
+  patient, and the harm is the interval spent obtaining a better number. Every
   scenario in this wave remains preview: none carries clinical review, a state-space matrix, or
   inclusive-runtime evidence, so the wave's completion count is still zero.
   Two budgets were the binding constraint on the remaining oncology lessons, and both have been
