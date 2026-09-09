@@ -37,9 +37,17 @@
  * thirty-nine labs, the longest count this file has ever had to carry, derived
  * from the audit like every one before it.
  *
- * The part-finished form is now held by four cases — obstetrics, pediatrics,
- * cardiology and anesthesia — each deriving its number from the audit rather
- * than trusting the front page.
+ * Anesthesia has now finished too: thirty-nine of thirty-nine, its number
+ * rewritten thirty-eight times before the sentence calling it started could go.
+ * It was the last module the front page described as part-finished, so that
+ * form now has no holder at all — the branches keeping it are left in place
+ * against the next module rather than deleted, but every one of them currently
+ * takes its completed path.
+ *
+ * The sentence itself has changed shape as a result. It used to name fourteen
+ * complete modules and leave anesthesia to a count; it now claims all fifteen,
+ * which is a stronger claim than this file has ever allowed, and it stays
+ * allowed only while every test above agrees.
  */
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
@@ -246,13 +254,38 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
     expect(readme).toContain(`${COUNT_WORDS[ANESTHESIA_SCENARIOS.length]} labs done.`);
   });
 
-  it('claims only what those fourteen modules support', () => {
+  it('claims only what all fifteen modules support', () => {
     const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');
-    expect(readme).toContain('Every renal, oncology, endocrine, nursing,');
-    expect(readme).toContain('infectious-disease, neonatology, toxicology, neurology, obstetrics, respiratory-medicine,');
-    expect(readme).toContain('pediatrics, cardiology, critical-care, and emergency-medicine lab has both.');
+    // Every module named in the sentence, checked against the audit rather than
+    // against the sentence. The claim is now that all fifteen are complete, so
+    // each of these has to be fully covered for the front page to be honest.
+    const modules: readonly [Parameters<typeof uncovered>[0], string][] = [
+      [ONCOLOGY_SCENARIOS, 'oncology'],
+      [RENAL_ELECTROLYTE_SCENARIOS, 'renal-electrolyte'],
+      [ENDOCRINE_METABOLIC_SCENARIOS, 'endocrine-metabolic'],
+      [MEDICAL_SURGICAL_NURSING_SCENARIOS, 'medical-surgical-nursing'],
+      [INFECTIOUS_DISEASE_SCENARIOS, 'infectious-disease'],
+      [NEONATOLOGY_SCENARIOS, 'neonatology'],
+      [TOXICOLOGY_SCENARIOS, 'toxicology'],
+      [NEUROLOGY_SCENARIOS, 'neurology'],
+      [OBSTETRICS_SCENARIOS, 'obstetrics'],
+      [RESPIRATORY_MEDICINE_SCENARIOS, 'respiratory-medicine'],
+      [PEDIATRICS_SCENARIOS, 'pediatrics'],
+      [CARDIOLOGY_SCENARIOS, 'cardiology'],
+      [CRITICAL_CARE_SCENARIOS, 'critical-care'],
+      [EMERGENCY_MEDICINE_SCENARIOS, 'emergency-medicine'],
+      [ANESTHESIA_SCENARIOS, 'anesthesia'],
+    ];
+    expect(modules).toHaveLength(15);
+    for (const [scenarios, moduleId] of modules) {
+      expect(uncovered(scenarios, moduleId), moduleId).toEqual([]);
+    }
+    expect(readme).toContain('All fifteen specialties are now complete on both');
+    expect(readme).toContain('emergency-medicine, and anesthesia, whose thirty-nine labs were the last to be finished.');
     // The hedge this sentence used to carry belongs to a state the audit has
-    // left behind. If it comes back, one of the three tests above is failing too.
+    // left behind. If it comes back, one of the tests above is failing too.
     expect(readme).not.toContain('and most\nendocrine ones');
+    // And the older fourteen-module form must not survive alongside the new one.
+    expect(readme).not.toContain('and emergency-medicine lab has both.');
   });
 });

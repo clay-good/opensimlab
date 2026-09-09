@@ -417,6 +417,8 @@ import { usePersistentVfCardiacArrestDemonstration } from '@anesthesia/demo/useP
 import { supportsPersistentVfCardiacArrestDemonstration } from '@anesthesia/demo/persistent-vf-cardiac-arrest-demonstration';
 import { usePediatricIvInductionDemonstration } from '@anesthesia/demo/usePediatricIvInductionDemonstration';
 import { supportsPediatricIvInductionDemonstration } from '@anesthesia/demo/pediatric-iv-induction-demonstration';
+import { usePediatricInhalationalInductionDemonstration } from '@anesthesia/demo/usePediatricInhalationalInductionDemonstration';
+import { supportsPediatricInhalationalInductionDemonstration } from '@anesthesia/demo/pediatric-inhalational-induction-demonstration';
 import { useLastDemonstration } from '@anesthesia/demo/useLastDemonstration';
 import { supportsLastDemonstration } from '@anesthesia/demo/last-demonstration';
 import { useMalignantHyperthermiaDemonstration } from '@anesthesia/demo/useMalignantHyperthermiaDemonstration';
@@ -832,6 +834,7 @@ export function Cockpit({
   const inhalationalMaintenanceDemoSupported = supportsInhalationalMaintenanceDemonstration(scenario);
   const vfCardiacArrestDemoSupported = supportsPersistentVfCardiacArrestDemonstration(scenario);
   const pediatricIvDemoSupported = supportsPediatricIvInductionDemonstration(scenario);
+  const pediatricGasDemoSupported = supportsPediatricInhalationalInductionDemonstration(scenario);
   const lastDemoSupported = supportsLastDemonstration(scenario);
   const malignantHyperthermiaDemoSupported = supportsMalignantHyperthermiaDemonstration(scenario);
   const anaphylaxisDemoSupported = supportsAnaphylaxisDemonstration(scenario);
@@ -1047,6 +1050,7 @@ export function Cockpit({
     || inhalationalMaintenanceDemoSupported
     || vfCardiacArrestDemoSupported
     || pediatricIvDemoSupported
+    || pediatricGasDemoSupported
     || lastDemoSupported
     || malignantHyperthermiaDemoSupported
     || anaphylaxisDemoSupported
@@ -2033,6 +2037,19 @@ export function Cockpit({
     active: demonstrating && supraglotticRescueDemoSupported,
     running: session.transport === 'running',
     patient: repeatedLaryngoscopyProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  const pediatricGasProgress = session.state && session.equipment ? {
+    inspiredOxygenFraction: session.equipment.ventilator.fio2,
+    freshGasFlowLPerMin: session.equipment.ventilator.freshGasFlowLPerMin ?? 0,
+    sevofluranePercent: session.equipment.ventilator.sevofluranePercent ?? 0,
+    endTidalSevofluranePercent: session.state.endTidalSevofluranePercent ?? 0,
+    ventilatorDelivering: session.equipment.ventilator.delivering,
+  } : undefined;
+  const pediatricGasDemonstration = usePediatricInhalationalInductionDemonstration({
+    active: demonstrating && pediatricGasDemoSupported,
+    running: session.transport === 'running',
+    patient: pediatricGasProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const pediatricIvPropofol = scenario.formulary.find((entry) => entry.drugId === 'propofol');
@@ -3049,6 +3066,7 @@ export function Cockpit({
     : inhalationalMaintenanceDemoSupported ? inhalationalMaintenanceDemonstration
     : vfCardiacArrestDemoSupported ? vfCardiacArrestDemonstration
     : pediatricIvDemoSupported ? pediatricIvDemonstration
+    : pediatricGasDemoSupported ? pediatricGasDemonstration
     : lastDemoSupported ? lastDemonstration
     : malignantHyperthermiaDemoSupported ? malignantHyperthermiaDemonstration
     : anaphylaxisDemoSupported ? anaphylaxisDemonstration

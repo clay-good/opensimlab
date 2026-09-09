@@ -24,23 +24,13 @@ describe('machine-readable scenario completion contract', () => {
     }
   });
 
-  it('names concrete legacy gaps instead of fabricating fixtures or report coverage', () => {
-    // The example is DERIVED rather than named. It used to be routine-induction,
-    // then rapid-desaturation, and each time that lab gained a sidecar this test
-    // failed for the wrong reason — the guard is about the shared audit inventing
-    // nothing for a lab with no evidence, not about any particular lab. So it
-    // takes whichever anesthesia scenario is still legacy.
-    const legacy = catalog.scenarios.find((record) => record.requirements
-      .some((entry) => entry.id === 'reference-transcripts' && entry.status === 'missing'));
-    // When this throws, every anesthesia lab has reference transcripts and there
-    // is no legacy scenario left to make the point with. That is a good problem:
-    // delete this test and keep the one below.
-    expect(legacy, 'no legacy anesthesia scenario remains').toBeDefined();
-    expect(legacy!.requirements.find((entry) => entry.id === 'report-control-coverage')?.evidence[0])
-      .toContain('not yet implemented');
-    expect(legacy!.maturity).toBe('preview');
-    expect(legacy!.complete).toBe(false);
-  });
+  // A test stood here that took whichever anesthesia scenario was still legacy
+  // and checked the shared audit invented nothing for it. Its own comment said
+  // to delete it once every anesthesia lab had reference transcripts, because
+  // there would be no legacy scenario left to make the point with. That is now
+  // the case -- all thirty-nine are bound -- so it is gone rather than left
+  // asserting against an empty find. The test below makes the other half of the
+  // point and still has a lab to make it with.
 
   it('lets a sidecar upgrade a requirement, and only the ones it evidences', () => {
     // The other direction, now that one anesthesia lab has evidence: what the

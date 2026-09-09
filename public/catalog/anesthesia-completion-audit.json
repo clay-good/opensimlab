@@ -3197,9 +3197,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "routine-pediatric-inhalational-induction-fixtures.ts binds seed 4126 and content 0.1.0 to expert, never-reduced error, late-reduction recovery, and no-action paths over 4,200 ticks. Every number is solver output on the bounded paediatric profile the scenario declares: a wash-in target reached at 48.7 seconds, a settled depth of 49 with a pressure of 60 mmHg where the vaporizer comes down promptly, and a depth of 16 with a pressure of 34 where it does not. tests/integration/anesthesia-routine-pediatric-inhalational-induction-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -3211,9 +3211,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "An empty formulary: the whole lesson is the vaporizer and the fresh gas, which makes it the module's second continuous titration problem after routine-inhalational-maintenance. The engine accepts any sevoflurane percentage from 0 to 8, so the induction concentration and the moment of reduction are both free choices rather than presets. The first objective also carries a restraint clause that is easy to breach in a single movement -- the oxygen and flow must be raised WITH the vaporizer still off -- and the transcripts measure what turning it on in the same setting costs."
           ]
         },
         {
@@ -3225,23 +3225,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The transcripts end at 4,200 ticks, at the scenario's own case-end prompt. The third objective reads a sustained sixty seconds, so the run must be long enough to contain that window wherever the reduction falls -- and long enough afterwards for the late-reduction path to reach its settled depth of 49 and pressure of 60, which is what makes the comparison in the evidence below possible at all."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "The nine authored tutor rules at version 0.1.0 in tutor/guidance.ts apply here and are silent on the unassisted setting and suppressed while any alarm is active. None names a paediatric volatile concentration or a reduction moment, which is correct: when to come down is the judgement this lesson exists to build. Worked example 0.1.0 is the module's thirty-eighth and last observed-state one. Its reduce beat fires on the recorded END-TIDAL concentration rather than on a tick, because the objective is measured from the moment of reduction and a reduction made before the wash-in target would not count at all -- the gate has to read the same quantity the rubric does. Its prepare beat states the vaporizer-off clause as part of the objective rather than as an omission, before a learner could breach it in one movement. Its closing beat declines the credit the demonstration would take by reporting that the late-reduction run ends at the very numbers just achieved and is still scored lower. tests/unit/anesthesia-pediatric-inhalational-induction-worked-example.test.ts drives every beat through the real engine from both a fresh start and a handover, and tests/unit/worked-example-offer.test.ts pins that what this audit claims is what the product actually offers."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx derives all three objectives from the replayed state trace and the recorded actions rather than from a score kept during the run. The error path prepares the circuit correctly and washes in correctly, and then never turns the vaporizer down: measured, it is met, met, NOT MET, and the child sits at a predicted depth of 16 with a mean arterial pressure of 34 for the rest of the case. The recovery path reduces at tick 1,800 instead of never, and improves to met, met, PARTLY MET. The expert path reduces at tick 500, shortly after the wash-in target, and meets all three with a depth of 49 and a pressure of 60 mmHg through the scored window."
           ]
         },
         {
@@ -3260,23 +3260,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "routine-pediatric-inhalational-induction-fixtures.ts binds exact-content expert, never-reduced error, late-reduction recovery, and no-action pathways to seed 4126 for deterministic replay through the shared engine. Three readings are pinned by tests. The first is the one worth the lesson, and it is about WHEN rather than WHETHER: THE SCORED SIXTY SECONDS ARE THE SIXTY IMMEDIATELY AFTER THE REDUCTION, not the best sixty of the case. The recovery path ends at a depth of 49 and a pressure of 60 mmHg -- the expert path's settled numbers to the digit -- and still scores partly met, because at the moment it reduced the child was still far too deep. A test asserts both paths' final samples are equal and their third outcomes are not. Finishing in the right place is not the same as having got there safely, and this rubric distinguishes them. The second is the restraint clause in the first objective: raising the oxygen and flow WITH the vaporizer already on loses it outright, and the preparation is then recorded as the machine defaults of 21% oxygen at 2.0 L/min, because there was no moment before volatile delivery at which the machine was ready. The third is that a coherent all-met path exists and its window is narrow: a sweep of induction concentrations, reduction ticks and maintenance settings found thirty-three combinations meeting all three, all of them reducing within roughly a minute of the wash-in target being reached."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]
