@@ -171,6 +171,7 @@ import { bloodBankHandoffCompletionEvidence } from '../blood-bank-handoff-comple
 import { arterialPressureTransducerArtifactCompletionEvidence } from '../arterial-pressure-transducer-artifact-completion';
 import { hypothermiaAndRewarmingCompletionEvidence } from '../hypothermia-and-rewarming-completion';
 import { perioperativeHyperglycemiaCompletionEvidence } from '../perioperative-hyperglycemia-completion';
+import { routineInhalationalMaintenanceCompletionEvidence } from '../routine-inhalational-maintenance-completion';
 import { lastCompletionEvidence } from '../local-anesthetic-systemic-toxicity-completion';
 import { earlyMalignantHyperthermiaCompletionEvidence } from '../early-malignant-hyperthermia-completion';
 import { perioperativeAnaphylaxisCompletionEvidence } from '../perioperative-anaphylaxis-completion';
@@ -509,6 +510,7 @@ export function auditClinicalScenario(
     ...arterialPressureTransducerArtifactCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...hypothermiaAndRewarmingCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...perioperativeHyperglycemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...routineInhalationalMaintenanceCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...lastCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...earlyMalignantHyperthermiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...perioperativeAnaphylaxisCompletionEvidence(scenario, capabilityVersion, moduleId),

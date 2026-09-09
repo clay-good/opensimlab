@@ -24,6 +24,7 @@ import { supportsBloodBankHandoffDemonstration } from './blood-bank-handoff-demo
 import { supportsArterialTransducerDemonstration } from './arterial-transducer-demonstration';
 import { supportsHypothermiaRewarmingDemonstration } from './hypothermia-rewarming-demonstration';
 import { supportsPerioperativeHyperglycemiaDemonstration } from './perioperative-hyperglycemia-demonstration';
+import { supportsInhalationalMaintenanceDemonstration } from './inhalational-maintenance-demonstration';
 import { supportsLastDemonstration } from './last-demonstration';
 import { supportsMalignantHyperthermiaDemonstration } from './malignant-hyperthermia-demonstration';
 import { supportsAnaphylaxisDemonstration } from './anaphylaxis-demonstration';
@@ -283,6 +284,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsArterialTransducerDemonstration,
     supportsHypothermiaRewarmingDemonstration,
     supportsPerioperativeHyperglycemiaDemonstration,
+    supportsInhalationalMaintenanceDemonstration,
     supportsLastDemonstration,
     supportsMalignantHyperthermiaDemonstration,
     supportsAnaphylaxisDemonstration,
