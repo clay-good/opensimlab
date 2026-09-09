@@ -154,4 +154,28 @@ export const SURGERY_TRAUMA_LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'The observational studies cannot separate delay from the reasons patients are delayed, and the randomised trial tested something narrower than the lesson: it accelerated an already prompt pathway from a median of 24 hours to 6, in patients who were being operated on. Neither design speaks to a patient in her third day for whom no clinical question is documented. The lesson draws no threshold from any of them; what it asserts is only that a wait with no author is not a plan, which is a statement about accountability rather than about hours.',
     briefIn: ['unowned-delay-a-wait-that-nobody-decided'],
   },
+  {
+    id: 'third-attendance-presentation-and-team-response-are-authored',
+    headline: 'One department, one colleague passing the door, and observations that never move.',
+    simplification: 'The case supplies a fixed set of very nearly normal observations that do not change, one authored interruption at 12 minutes in which the clinician who saw her on Tuesday says she was fine then and asks kindly whether anything is different, and a surgical team that answers forty minutes after it is asked with a fixed reply. No inflammatory, pain, or disease model runs underneath, and no diagnosis is ever confirmed or excluded.',
+    whereItMisleads: 'A learner concludes that a challenging colleague always appears, that colleagues who challenge are the obstacle, that a surgical team always answers, or that asking is what changed the outcome.',
+    correctUnderstanding: 'The interruption is authored, arrives whether or not anybody was expecting it, and is written as a decent colleague behaving reasonably, because that is the version worth rehearsing. Nothing the learner does changes her course, because nothing was going to; a real patient may deteriorate quickly, may have another cause entirely, or may have nothing wrong at all. The reply is authored and deliberately slow: in practice the call may not be answered, and the plan has to survive that.',
+    briefIn: ['third-attendance-a-question-two-people-have-already-answered'],
+  },
+  {
+    id: 'third-attendance-controls-are-recording-and-escalation-only',
+    headline: 'No examination is performed, no investigation is ordered, and no diagnosis is named.',
+    simplification: 'The learner records the three attendances with what each found, records what a previous assessment can and cannot say, records the change between the examinations, asks the surgical team to see her, records bounded qualified-team intent, and reviews the boundaries.',
+    whereItMisleads: 'The escalation control is read as a complaint about two colleagues, the discharge refusal is read as refusing to let her go home, or the lesson as a whole is read as teaching that previous clinicians should be distrusted.',
+    correctUnderstanding: 'The examination, any investigation or imaging, any operation and the disposition belong to the qualified team, and this lesson exposes no investigation, score, drug, dose, route, or operation. Both previous entries are accurate and both clinicians behaved reasonably; the lesson is about how a record is read on a third occasion, not about how it was written on the first two, and the escalation text says so explicitly. The discharge refusal objects to reissuing an instruction she has already followed, not to her going home.',
+    briefIn: ['third-attendance-a-question-two-people-have-already-answered'],
+  },
+  {
+    id: 'third-attendance-a-return-visit-is-not-evidence-of-error',
+    headline: 'One of the three sources argues directly against the instinct this case produces.',
+    simplification: 'The lesson quotes a potentially missed diagnosis in 6.0 percent of 101,375 adults later diagnosed with appendicitis with an adjusted odds ratio of 1.68 for women with abdominal pain, a paediatric series in which a nonspecific triage complaint carried 8.8 percent missed against 3.8, and an analysis of more than nine million attendances in which patients admitted on a return visit had lower in-hospital mortality than those admitted at their first visit, 1.85 against 2.48 percent.',
+    whereItMisleads: 'A learner treats a return visit as evidence that something was missed, carries the 6 percent to the bedside as this patient\u2019s probability, or applies the paediatric anchoring figures to an adult as a rate.',
+    correctUnderstanding: 'The paediatric series is a single-centre study of children and is quoted for its mechanism rather than its rate; the adult cohort is administrative claims data, which identifies patterns rather than errors, and its 6 percent is conditioned on eventually having the diagnosis. The return-visit analysis says plainly that admissions after a return visit do not adequately capture deficits in care, and those patients did better, not worse. Returning is common and is not a verdict on anybody. Nothing here gives a probability for this patient, and the reason to look again is that a third examination has not been done.',
+    briefIn: ['third-attendance-a-question-two-people-have-already-answered'],
+  },
 ];

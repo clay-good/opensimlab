@@ -237,6 +237,7 @@ import { unfinishedSurveyCompletionEvidence } from '../../surgery-trauma/unfinis
 import { transientResponseCompletionEvidence } from '../../surgery-trauma/transient-response-completion';
 import { quietChestCompletionEvidence } from '../../surgery-trauma/quiet-chest-completion';
 import { unownedDelayCompletionEvidence } from '../../surgery-trauma/unowned-delay-completion';
+import { thirdAttendanceCompletionEvidence } from '../../surgery-trauma/third-attendance-completion';
 import { countedRateCompletionEvidence } from '../../medical-surgical-nursing/counted-rate-completion';
 import { pairedReadingCompletionEvidence } from '../../medical-surgical-nursing/paired-reading-completion';
 import { afferentLimbCompletionEvidence } from '../../medical-surgical-nursing/afferent-limb-completion';
@@ -585,6 +586,7 @@ export function auditClinicalScenario(
     ...transientResponseCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...quietChestCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...unownedDelayCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...thirdAttendanceCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...countedRateCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...pairedReadingCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...afferentLimbCompletionEvidence(scenario, capabilityVersion, moduleId),

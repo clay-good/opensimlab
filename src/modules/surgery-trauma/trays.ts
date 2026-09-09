@@ -18,6 +18,8 @@ import { QuietChestTray } from './QuietChestTray';
 import { supportsQuietChest } from './quiet-chest';
 import { UnownedDelayTray } from './UnownedDelayTray';
 import { supportsUnownedDelay } from './unowned-delay';
+import { ThirdAttendanceTray } from './ThirdAttendanceTray';
+import { supportsThirdAttendance } from './third-attendance';
 
 export const SURGERY_TRAUMA_TRAYS: readonly LessonTray[] = [
   { id: 'NegativeScan', actionType: 'negative-scan-response', supports: supportsNegativeScan, assessment: (r) => r?.negativeScan, Component: NegativeScanTray as LessonTray['Component'] },
@@ -26,4 +28,5 @@ export const SURGERY_TRAUMA_TRAYS: readonly LessonTray[] = [
   { id: 'TransientResponse', actionType: 'transient-response-response', supports: supportsTransientResponse, assessment: (r) => r?.transientResponse, Component: TransientResponseTray as LessonTray['Component'] },
   { id: 'QuietChest', actionType: 'quiet-chest-response', supports: supportsQuietChest, assessment: (r) => r?.quietChest, Component: QuietChestTray as LessonTray['Component'] },
   { id: 'UnownedDelay', actionType: 'unowned-delay-response', supports: supportsUnownedDelay, assessment: (r) => r?.unownedDelay, Component: UnownedDelayTray as LessonTray['Component'] },
+  { id: 'ThirdAttendance', actionType: 'third-attendance-response', supports: supportsThirdAttendance, assessment: (r) => r?.thirdAttendance, Component: ThirdAttendanceTray as LessonTray['Component'] },
 ];

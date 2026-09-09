@@ -66,6 +66,7 @@ import { supportsUnfinishedSurvey } from '../../surgery-trauma/unfinished-survey
 import { supportsTransientResponse } from '../../surgery-trauma/transient-response';
 import { supportsQuietChest } from '../../surgery-trauma/quiet-chest';
 import { supportsUnownedDelay } from '../../surgery-trauma/unowned-delay';
+import { supportsThirdAttendance } from '../../surgery-trauma/third-attendance';
 import { supportsIncidentalClot } from '../../oncology/incidental-clot';
 import { supportsNormalTestToxicity } from '../../oncology/normal-test-toxicity';
 import { supportsPrognosisQuestion } from '../../oncology/prognosis-question';
@@ -1087,6 +1088,51 @@ export function objectiveFindings(
         'handoff-oncology-incidental-clot-an-unresolved-decision': { met: !!handoff, tick: handoff?.tick,
           finding: (handoff ? 'The finding, its route, the conditional strength and very low certainty, the figures in both directions, and his bleeding history all travelled. ' : 'Current full findings, the recorded certainty, or continuing-care ownership remains incomplete. ')
             + 'The decision was handed over open, which is what an unresolved decision looks like when it is handed over honestly rather than closed to make the handoff tidy.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id.includes('-surgery-trauma-third-attendance-')) {
+      if (!supportsThirdAttendance(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The surgery and trauma third-attendance lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^third-attendance-${id}-\\d+$`).test(entry.eventId));
+      const visits = event('attendances-recorded'); const prior = event('prior-limits-recorded');
+      const change = event('change-recorded'); const escalation = event('escalation-requested');
+      const intent = event('assessment-intent-recorded'); const boundaries = event('boundary-review');
+      const handoff = event('handoff'); const colleague = event('colleague-spoke');
+      const answered = log.find((entry) => /^third-attendance-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedSeen = event('seen-twice-refused'); const refusedSettling = event('settling-claim-refused');
+      const refusedAnxious = event('anxious-claim-refused'); const refusedAdvice = event('same-advice-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'record-surgery-trauma-third-attendance-what-each-visit-found': { met: !!visits, tick: visits?.tick,
+          finding: (visits ? 'The three attendances were recorded as three assessments, each with what it found. ' : 'The attendances were never separated into what each one found. ')
+            + '"Seen twice and sent home" is a record of the department; three examinations are a record of the patient.' },
+        'record-surgery-trauma-third-attendance-what-a-previous-assessment-can-say': { met: !!prior, tick: prior?.tick,
+          finding: (prior ? 'What the previous entries can and cannot say was recorded: accurate, and written by people who did not have today. ' : 'What the previous assessments can say was never recorded, so two entries were left to stand as an answer. ')
+            + 'They establish that somebody looked twice, which is not the same as establishing that nothing is there now.' },
+        'recognize-surgery-trauma-third-attendance-two-answers-are-not-an-answer': { met: !!prior && !refusedSeen && !refusedSettling, tick: prior?.tick,
+          finding: (refusedSeen ? 'Treating two previous assessments as an answer was attempted and refused. ' : prior ? 'Two previous conclusions were treated as a pressure rather than as evidence. ' : 'The previous conclusions were never examined as a pressure. ')
+            + (refusedSettling ? 'Reading a documented "settling" as a trajectory was attempted and refused; it described Tuesday, by somebody comparing Tuesday with Sunday. ' : '')
+            + 'A label carried forward without its date is the mechanism by which anchoring works.' },
+        'record-surgery-trauma-third-attendance-what-has-changed': { met: !!change, tick: change?.tick,
+          finding: (change ? 'The change between the three examinations was recorded as a comparison. ' : 'The comparison across visits was never recorded, so the case stayed a snapshot. ')
+            + 'Generalised pain that has localised and become worse on movement, a day without eating, and a third return by somebody told to come back only if it worsened: no single examination contains that.' },
+        'activate-surgery-trauma-third-attendance-ask-for-the-third-examination': { met: !!escalation && !refusedAnxious && !refusedAdvice, tick: escalation?.tick,
+          finding: (escalation ? 'The surgical team was asked to see her, with the attendances and the change stated together and no criticism of either previous clinician recorded. ' : 'The surgical team was never asked. ')
+            + (refusedAnxious ? 'Explaining the attendances by the patient\u2019s anxiety was attempted and refused; the phrase travels, and it is the sentence that makes a fourth attendance harder for her. ' : '')
+            + (refusedAdvice ? 'Reissuing the advice she had already followed was attempted and refused: it turns a safety net into a loop with nobody in it. ' : '')
+            + 'The request is for an examination, not for a review of two colleagues\u2019 notes.' },
+        'record-surgery-trauma-third-attendance-bounded-assessment-intent': { met: !!intent, tick: intent?.tick,
+          finding: (intent ? 'The examination, any investigation, any operation and the disposition were recorded as the qualified team\u2019s. ' : 'Bounded qualified-team intent was never recorded. ')
+            + 'Nothing was ordered and no investigation, score, drug, dose, route, or operation was chosen or displayed here.' },
+        'review-surgery-trauma-third-attendance-a-return-visit-is-not-a-verdict': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The evidence was reviewed including the half that argues against the instinct this case produces. ' : 'The boundary and certainty review is missing. ')
+            + 'Six percent of 101,375 adults later diagnosed had a potentially missed diagnosis at an earlier attendance, with an adjusted odds ratio of 1.68 for women with abdominal pain, and a paediatric series put missed appendicitis at 8.8 against 3.8 percent by triage complaint. Against both, across more than nine million attendances those admitted on a return visit had lower in-hospital mortality than those admitted first time, 1.85 against 2.48 percent. The reason to look again is the unexamined third presentation, not the return.' },
+        'handoff-surgery-trauma-third-attendance-a-third-examination-that-is-owed': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The three attendances with what each found, the earlier entries as earlier examinations, the change between them and the bounded intent all travelled. ' : 'Current full findings, the recorded comparison, or continuing-care ownership remains incomplete. ')
+            + (colleague ? 'The Tuesday clinician raised the question during this run, and no fact changed when she did. ' : '')
+            + (answered ? 'The team read the previous entries the same way and is coming to examine her. ' : 'The team had not answered by the end of this run, and the handoff had to survive that. ')
+            + 'No diagnosis, disposition, or outcome is certified, and no criticism of either previous clinician is recorded.' },
       };
       const result = results[objective.id]!;
       return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "surgery-trauma",
-  "recordCount": 6,
+  "recordCount": 7,
   "records": [
     {
       "recordId": "scenario:negative-scan-a-scan-that-cannot-say-no@0.1.0",
@@ -67,6 +67,17 @@
       "evidence": [
         "/catalog/surgery-trauma-completion-audit.json#unowned-delay-a-wait-that-nobody-decided@0.1.0",
         "/catalog/surgery-trauma-quality-audit.json#unowned-delay-a-wait-that-nobody-decided@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:third-attendance-a-question-two-people-have-already-answered@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "third-attendance-a-question-two-people-have-already-answered",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/surgery-trauma-completion-audit.json#third-attendance-a-question-two-people-have-already-answered@0.1.0",
+        "/catalog/surgery-trauma-quality-audit.json#third-attendance-a-question-two-people-have-already-answered@0.1.0"
       ]
     }
   ]

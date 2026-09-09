@@ -4117,6 +4117,23 @@
       "limitationManifestHash": "sha256:7460105ec939d333da8172e60795e32bbfd9cdf2006e219f9594c65d7e3e62a2"
     },
     {
+      "scenarioId": "third-attendance-a-question-two-people-have-already-answered",
+      "contentVersion": "0.1.0",
+      "moduleId": "surgery-trauma",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:987bfe62eaa6a4ca294cc598d61ba0b07ce39794f3a2da40787860d1eb96771e",
+      "defaultsHash": "sha256:b376cffa80182ee252940bcb4597d207a45b91d7ee96a17d098ba728ff2e25f6",
+      "maturityHash": "sha256:ddf02582a29f310d48dea0ccb66b74dc4569b4623fd51f8eab33c669eb81bb6e",
+      "sourceManifestHash": "sha256:af77b5c71c04bea31368756014cafdb2ad66d7f1698fbb9235a110889e586036",
+      "limitationManifestHash": "sha256:e77e52ddc75eaf78863d44bdabc64c36423525393ca432e4495bb476a7d64e60"
+    },
+    {
       "scenarioId": "transient-response-a-patient-who-will-not-stay-up",
       "contentVersion": "0.1.0",
       "moduleId": "surgery-trauma",

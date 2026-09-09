@@ -244,6 +244,7 @@ export const WORKED_EXAMPLE_KEYS: readonly string[] = [
   'surgery-trauma:negative-scan-a-scan-that-cannot-say-no@0.1.0',
   'surgery-trauma:quiet-chest-an-injury-whose-severity-is-not-yet-visible@0.1.0',
   'surgery-trauma:rising-requirement-a-number-that-under-calls@0.1.0',
+  'surgery-trauma:third-attendance-a-question-two-people-have-already-answered@0.1.0',
   'surgery-trauma:transient-response-a-patient-who-will-not-stay-up@0.1.0',
   'surgery-trauma:unfinished-survey-a-patient-who-cannot-be-asked@0.1.0',
   'surgery-trauma:unowned-delay-a-wait-that-nobody-decided@0.1.0',

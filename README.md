@@ -16,7 +16,7 @@ any device, with or without a network.
 
 ## What it covers
 
-246 bounded labs across 16 specialties:
+247 bounded labs across 16 specialties:
 
 | Module | Labs | Where |
 | --- | --- | --- |
@@ -35,10 +35,10 @@ any device, with or without a network.
 | Nursing | 9 | `/medical-surgical-nursing` |
 | Renal & electrolyte | 6 | `/renal-electrolyte` |
 | Oncology | 11 | `/oncology` |
-| Surgery and trauma | 6 | `/surgery-trauma` |
+| Surgery and trauma | 7 | `/surgery-trauma` |
 
 Counts are the registered scenarios the build audits, not a roadmap. Every module above is at its
-full planned count except surgery and trauma, which has six labs of a planned ten. Nothing is
+full planned count except surgery and trauma, which has seven labs of a planned ten. Nothing is
 declared and unbuilt any more, so the front door no longer carries a planned line.
 
 Each lab is a closed-loop scenario: the physiology keeps running while you decide, and
@@ -50,7 +50,7 @@ unless you ask for it, says nothing at all on the unassisted setting, and never 
 diagnosis a lesson exists to leave open. All sixteen specialties are complete on both counts --
 renal, oncology, endocrine, nursing, infectious-disease, neonatology, toxicology, neurology,
 obstetrics, respiratory-medicine, pediatrics, cardiology, critical-care, emergency-medicine,
-anesthesia, and surgery and trauma, whose six labs are the newest.
+anesthesia, and surgery and trauma, whose seven labs are the newest.
 
 ## How it works
 

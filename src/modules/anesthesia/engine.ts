@@ -108,6 +108,8 @@ import { QuietChest } from '../surgery-trauma/quiet-chest';
 import { supportsQuietChest } from '../surgery-trauma/quiet-chest';
 import { UnownedDelay } from '../surgery-trauma/unowned-delay';
 import { supportsUnownedDelay } from '../surgery-trauma/unowned-delay';
+import { ThirdAttendance } from '../surgery-trauma/third-attendance';
+import { supportsThirdAttendance } from '../surgery-trauma/third-attendance';
 
 /** The engine's own version, recorded in every transcript. */
 export const ENGINE_VERSION = '0.1.0-alpha.48';
@@ -1825,6 +1827,7 @@ export class AnesthesiaEngine {
   private readonly transientResponse: TransientResponse | null;
   private readonly quietChest: QuietChest | null;
   private readonly unownedDelay: UnownedDelay | null;
+  private readonly thirdAttendance: ThirdAttendance | null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2019,11 +2022,13 @@ export class AnesthesiaEngine {
     this.transientResponse = supportsTransientResponse(options.scenario) ? new TransientResponse() : null;
     this.quietChest = supportsQuietChest(options.scenario) ? new QuietChest() : null;
     this.unownedDelay = supportsUnownedDelay(options.scenario) ? new UnownedDelay() : null;
+    this.thirdAttendance = supportsThirdAttendance(options.scenario) ? new ThirdAttendance() : null;
     if (this.risingRequirement) this.rhythm = 'sinus';
     if (this.unfinishedSurvey) this.rhythm = 'sinus';
     if (this.transientResponse) this.rhythm = 'sinus';
     if (this.quietChest) this.rhythm = 'sinus';
     if (this.unownedDelay) this.rhythm = 'sinus';
+    if (this.thirdAttendance) this.rhythm = 'sinus';
     this.practiceRegion = options.practiceRegion;
     this.seed = options.seed;
     if (options.scenario.timeline.some((event) => event.type === 'narrative'
@@ -2167,6 +2172,11 @@ export class AnesthesiaEngine {
     if (this.risingRequirement && action.type !== 'rising-requirement-response' && action.type !== 'silence-alarm') {
       this.log('warning', 'assessment', `rising-requirement-generic-action-refused-${this.currentTick}`,
         'Only this lesson\u2019s injury-recording, requirement-recording, reading-limit, escalation, bounded-intent, boundary-review, observation, and handoff choices are available.');
+      return;
+    }
+    if (this.thirdAttendance && action.type !== 'third-attendance-response' && action.type !== 'silence-alarm') {
+      this.log('warning', 'assessment', `third-attendance-generic-action-refused-${this.currentTick}`,
+        'Only this lesson\u2019s attendance-recording, prior-assessment-limit, change, escalation, bounded-intent, boundary-review, observation, and handoff choices are available.');
       return;
     }
     if (this.unownedDelay && action.type !== 'unowned-delay-response' && action.type !== 'silence-alarm') {
@@ -3319,6 +3329,19 @@ export class AnesthesiaEngine {
         }
         for (const event of this.risingRequirement.apply(action.payload.action, this.currentTick)) {
           this.log('warning', 'assessment', `rising-requirement-${event.id}-${this.currentTick}`, event.message);
+        }
+        break;
+      }
+      case 'third-attendance-response': {
+        if (!this.thirdAttendance || Reflect.ownKeys(action.payload).length !== 1
+          || !Object.hasOwn(action.payload, 'action')
+          || !Object.getOwnPropertyDescriptor(action.payload, 'action')!.enumerable
+          || !Object.hasOwn(Object.getOwnPropertyDescriptor(action.payload, 'action')!, 'value')) {
+          this.log('warning', 'assessment', `third-attendance-action-refused-${this.currentTick}`, 'Only the declared dose-free reassessment choices are available in this lesson.');
+          break;
+        }
+        for (const event of this.thirdAttendance.apply(action.payload.action, this.currentTick)) {
+          this.log('warning', 'assessment', `third-attendance-${event.id}-${this.currentTick}`, event.message);
         }
         break;
       }
@@ -15390,6 +15413,9 @@ export class AnesthesiaEngine {
     for (const event of this.unownedDelay?.advance(this.currentTick) ?? []) {
       this.log('warning', 'assessment', `unowned-delay-${event.id}-${this.currentTick}`, event.message);
     }
+    for (const event of this.thirdAttendance?.advance(this.currentTick) ?? []) {
+      this.log('warning', 'assessment', `third-attendance-${event.id}-${this.currentTick}`, event.message);
+    }
     for (const event of this.negativeScan?.advance(this.currentTick) ?? []) {
       this.log('warning', 'assessment', `negative-scan-${event.id}-${this.currentTick}`, event.message);
     }
@@ -16330,6 +16356,13 @@ export class AnesthesiaEngine {
     }
     if (this.risingRequirement) {
       const patient = this.risingRequirement.vitals();
+      crisisState = { ...crisisState, heartRateBpm: patient.heartRateBpm,
+        respiratoryRateBpm: patient.respiratoryRateBpm, spo2Percent: patient.spo2Percent,
+        systolicMmHg: patient.systolicMmHg, diastolicMmHg: patient.diastolicMmHg,
+        meanArterialMmHg: patient.meanArterialMmHg, coreTemperatureC: patient.coreTemperatureC };
+    }
+    if (this.thirdAttendance) {
+      const patient = this.thirdAttendance.vitals();
       crisisState = { ...crisisState, heartRateBpm: patient.heartRateBpm,
         respiratoryRateBpm: patient.respiratoryRateBpm, spo2Percent: patient.spo2Percent,
         systolicMmHg: patient.systolicMmHg, diastolicMmHg: patient.diastolicMmHg,
@@ -21428,6 +21461,7 @@ export class AnesthesiaEngine {
         ...(this.transientResponse ? { transientResponse: this.transientResponse.snapshot(this.currentTick) } : {}),
         ...(this.quietChest ? { quietChest: this.quietChest.snapshot(this.currentTick) } : {}),
         ...(this.unownedDelay ? { unownedDelay: this.unownedDelay.snapshot(this.currentTick) } : {}),
+        ...(this.thirdAttendance ? { thirdAttendance: this.thirdAttendance.snapshot(this.currentTick) } : {}),
         ...(this.avpDeficiency ? { avpDeficiency: this.avpDeficiency.snapshot(this.currentTick) } : {}),
         ...(this.hyponatremiaCorrection ? { hyponatremiaCorrection: this.hyponatremiaCorrection.snapshot(this.currentTick) } : {}),
         aspirationRiskAssessment: {

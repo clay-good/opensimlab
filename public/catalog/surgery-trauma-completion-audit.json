@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "moduleId": "surgery-trauma",
   "capabilityVersion": "0.1.0-alpha.48",
-  "scenarioCount": 6,
+  "scenarioCount": 7,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -743,6 +743,132 @@
           "status": "satisfied",
           "evidence": [
             "unowned-delay-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "third-attendance-a-question-two-people-have-already-answered",
+      "title": "A third attendance: a question two people have already answered",
+      "moduleId": "surgery-trauma",
+      "environment": "ward",
+      "estimatedMinutes": 9,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario third-attendance-a-question-two-people-have-already-answered carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "missing",
+          "evidence": [
+            "This scenario declares 8 objectives; the contract allows at most 5."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "third-attendance-fixtures.ts binds seed 9152 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No inflammatory, pain, or disease model is claimed; both transitions are authored and neither is a patient event."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "third-attendance.ts runs two authored transitions and neither changes the patient. At 12 minutes the clinician who saw her on Tuesday passes the door, says she was fine then, and asks kindly whether anything is different — the only authored beat in this module that makes the learner’s position harder rather than easier, and it arrives with no new fact attached. The surgical team answers 40 minutes after it is asked, the slowest reply in the module after the first lesson, so that waiting for it is never the winning move; it reads the previous entries as records of earlier examinations rather than as conclusions and takes ownership of the examination, any investigation, any operation, and the disposition. Nothing arrives uncalled."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "The learner records the three attendances with what each found, records what a previous assessment can and cannot say, records the change between the three examinations, asks the surgical team for the examination nobody has done, records bounded qualified-team intent, and reviews the boundaries. Treating two previous assessments as an answer, reading a documented \"settling\" as a trajectory, explaining the attendances by the patient’s anxiety, and reissuing the advice she has already followed are each refused. The anxiety refusal notes that the phrase travels and makes a fourth attendance harder for her; the discharge refusal objects to repeating an instruction she has already obeyed rather than to her going home."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "The recorded attendances, the recorded limits of a previous assessment, the recorded change, the request to the surgical team, bounded assessment intent, the boundary review, and a current full assessment permit handoff with the diagnosis, the investigation and the disposition all open. Instructor takeover bounds a run with no escalation at 150 minutes, or an unfinished session at eight hours."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "satisfied",
+          "evidence": [
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary recorded actions. Unassisted mode is silent and coached withholds the two non-urgent beats. The prompts read only the learner’s own recorded steps, never assert that a diagnosis was missed, and never criticise either previous clinician, because a learner who leaves believing the answer is to distrust colleagues has learned the wrong thing. The example is driven through the real engine in tests rather than asserted as a script, and it asks for the assessment before the Tuesday clinician speaks, because one that acted only after being challenged would teach that the position needed defending before it was worth taking."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "Eight event-bound objectives distinguish recording three visits as three assessments, recording what a previous assessment can say, refusing two conclusions as an answer, recording change across examinations rather than state at one, asking for an examination without making it a complaint, bounded qualified-team intent, evidence in which the return visit carries less than it appears to, and accountable handoff of a third examination that is owed. Refused shortcuts remain visible, and no diagnosis, disposition, or outcome is certified."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "3 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "third-attendance-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
           ]
         },
         {
