@@ -20,6 +20,7 @@ import { supportsVenousAirEmbolismDemonstration } from './venous-air-embolism-de
 import { supportsPostExtubationObstructionDemonstration } from './post-extubation-obstruction-demonstration';
 import { supportsCircleSystemRebreathingDemonstration } from './circle-system-rebreathing-demonstration';
 import { supportsCapnographyLineDemonstration } from './capnography-line-demonstration';
+import { supportsBloodBankHandoffDemonstration } from './blood-bank-handoff-demonstration';
 import { supportsLastDemonstration } from './last-demonstration';
 import { supportsMalignantHyperthermiaDemonstration } from './malignant-hyperthermia-demonstration';
 import { supportsAnaphylaxisDemonstration } from './anaphylaxis-demonstration';
@@ -275,6 +276,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsPostExtubationObstructionDemonstration,
     supportsCircleSystemRebreathingDemonstration,
     supportsCapnographyLineDemonstration,
+    supportsBloodBankHandoffDemonstration,
     supportsLastDemonstration,
     supportsMalignantHyperthermiaDemonstration,
     supportsAnaphylaxisDemonstration,
