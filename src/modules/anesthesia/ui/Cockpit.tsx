@@ -397,6 +397,8 @@ import { useHighSpinalDemonstration } from '@anesthesia/demo/useHighSpinalDemons
 import { supportsHighSpinalDemonstration } from '@anesthesia/demo/high-spinal-demonstration';
 import { useVenousAirEmbolismDemonstration } from '@anesthesia/demo/useVenousAirEmbolismDemonstration';
 import { supportsVenousAirEmbolismDemonstration } from '@anesthesia/demo/venous-air-embolism-demonstration';
+import { usePostExtubationObstructionDemonstration } from '@anesthesia/demo/usePostExtubationObstructionDemonstration';
+import { supportsPostExtubationObstructionDemonstration } from '@anesthesia/demo/post-extubation-obstruction-demonstration';
 import { useLastDemonstration } from '@anesthesia/demo/useLastDemonstration';
 import { supportsLastDemonstration } from '@anesthesia/demo/last-demonstration';
 import { useMalignantHyperthermiaDemonstration } from '@anesthesia/demo/useMalignantHyperthermiaDemonstration';
@@ -802,6 +804,7 @@ export function Cockpit({
   const supraglotticRescueDemoSupported = supportsSupraglotticRescueDemonstration(scenario);
   const highSpinalDemoSupported = supportsHighSpinalDemonstration(scenario);
   const venousAirDemoSupported = supportsVenousAirEmbolismDemonstration(scenario);
+  const postExtubationDemoSupported = supportsPostExtubationObstructionDemonstration(scenario);
   const lastDemoSupported = supportsLastDemonstration(scenario);
   const malignantHyperthermiaDemoSupported = supportsMalignantHyperthermiaDemonstration(scenario);
   const anaphylaxisDemoSupported = supportsAnaphylaxisDemonstration(scenario);
@@ -1007,6 +1010,7 @@ export function Cockpit({
     || supraglotticRescueDemoSupported
     || highSpinalDemoSupported
     || venousAirDemoSupported
+    || postExtubationDemoSupported
     || lastDemoSupported
     || malignantHyperthermiaDemoSupported
     || anaphylaxisDemoSupported
@@ -1995,6 +1999,20 @@ export function Cockpit({
     patient: repeatedLaryngoscopyProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  const postExtubationProgress = session.state && session.equipment ? {
+    obstructionSeverity: session.equipment.airway.postExtubationObstructionSeverity ?? 0,
+    helpRequestedAtTick: session.equipment.airway.helpRequestedAtTick ?? null,
+    ventilatorDelivering: session.equipment.ventilator.delivering,
+    inspiredOxygenFraction: session.equipment.ventilator.fio2,
+    jawThrustCpapSecondsRemaining: session.equipment.airway.jawThrustCpapSecondsRemaining ?? 0,
+    patencyFraction: session.equipment.airway.patencyFraction ?? 0,
+  } : undefined;
+  const postExtubationDemonstration = usePostExtubationObstructionDemonstration({
+    active: demonstrating && postExtubationDemoSupported,
+    running: session.transport === 'running',
+    patient: postExtubationProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const venousAirProgress = session.state && session.equipment ? {
     severity: session.equipment.resuscitation.venousAirEmbolismFraction ?? 0,
     helpRequestedAtTick: session.equipment.airway.helpRequestedAtTick ?? null,
@@ -2867,6 +2885,7 @@ export function Cockpit({
     : supraglotticRescueDemoSupported ? supraglotticRescueDemonstration
     : highSpinalDemoSupported ? highSpinalDemonstration
     : venousAirDemoSupported ? venousAirDemonstration
+    : postExtubationDemoSupported ? postExtubationDemonstration
     : lastDemoSupported ? lastDemonstration
     : malignantHyperthermiaDemoSupported ? malignantHyperthermiaDemonstration
     : anaphylaxisDemoSupported ? anaphylaxisDemonstration
