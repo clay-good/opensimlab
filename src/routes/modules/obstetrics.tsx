@@ -7,6 +7,7 @@
 import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRoute';
 import { DEFAULT_OBSTETRICS_SCENARIO_ID, OBSTETRICS_SCENARIOS, getObstetricsScenario } from '../../modules/obstetrics/scenarios';
 import { OBSTETRICS_LIMITATIONS } from '@platform/docs/limitations/obstetrics';
+import { OBSTETRICS_DEMONSTRATIONS } from '../../modules/obstetrics/demo/demonstrations';
 
 const OBSTETRICS_CONFIG: ClinicalModuleConfig = {
   id: 'obstetrics', basePath: '/obstetrics', heading: 'Obstetrics simulator',
@@ -15,6 +16,7 @@ const OBSTETRICS_CONFIG: ClinicalModuleConfig = {
   catalogStatus: `${OBSTETRICS_SCENARIOS.length} of 15 bounded Obstetrics labs is playable.`,
   scenarios: OBSTETRICS_SCENARIOS, defaultScenarioId: DEFAULT_OBSTETRICS_SCENARIO_ID,
   getScenario: getObstetricsScenario,
+  demonstrations: OBSTETRICS_DEMONSTRATIONS,
 };
 
 export function ObstetricsRoute({ path }: { path: string }) {

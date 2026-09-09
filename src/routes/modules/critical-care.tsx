@@ -7,6 +7,7 @@
 import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRoute';
 import { CRITICAL_CARE_SCENARIOS, DEFAULT_CRITICAL_CARE_SCENARIO_ID, getCriticalCareScenario } from '../../modules/critical-care/scenarios';
 import { CRITICAL_CARE_LIMITATIONS } from '@platform/docs/limitations/critical-care';
+import { CRITICAL_CARE_DEMONSTRATIONS } from '../../modules/critical-care/demo/demonstrations';
 
 const CRITICAL_CARE_CONFIG: ClinicalModuleConfig = {
   id: 'critical-care', basePath: '/critical-care', heading: 'Critical care simulator',
@@ -15,6 +16,7 @@ const CRITICAL_CARE_CONFIG: ClinicalModuleConfig = {
   catalogStatus: 'Twenty-four bounded critical care labs are playable.',
   scenarios: CRITICAL_CARE_SCENARIOS, defaultScenarioId: DEFAULT_CRITICAL_CARE_SCENARIO_ID,
   getScenario: getCriticalCareScenario,
+  demonstrations: CRITICAL_CARE_DEMONSTRATIONS,
 };
 
 export function CriticalCareRoute({ path }: { path: string }) {

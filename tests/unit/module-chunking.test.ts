@@ -83,29 +83,25 @@ describe('Requirement: One Module Downloads One Catalogue', () => {
     // evidence manifest for the sake of three strings. The graph was 941.0 KB gz there.
     //
     // Raised from 985 to 1000 when binding the tutor and worked example to the surgery and
-    // trauma lesson took it to 986.5, and the note above is right that this is the wrong
-    // instinct — so here is the cause, named rather than absorbed. `ActionCockpit.tsx`
-    // statically imports all 47 lesson trays, and `Cockpit.tsx` all 241 demonstration modules.
-    // A tray pulls its lesson's tutor and a demo hook pulls its narration, so EVERY lesson's
-    // prose is in EVERY module's cockpit graph, and a lesson added to surgery and trauma grows
-    // anesthesia. The seam the three tests above prove covers scenario catalogues, not this.
+    // trauma lesson took it to 986.5, with a note naming the cause rather than absorbing it:
+    // `Cockpit.tsx` statically imported all 241 demonstration modules and a demonstration
+    // carries its narration, so EVERY lesson's script was in EVERY module's cockpit graph and
+    // a lesson added to surgery and trauma grew anesthesia. The marginal cost was measured at
+    // about 5.8 KB gz per lesson, which left room for exactly one more.
     //
-    // Measured at 986.5 KB gz over 19 files when this was raised, of which the shared cockpit
-    // chunk was 647.7 and nothing else exceeded 137.1. Its raw inputs are the demonstrations,
-    // the two cockpit files, the trays, the demo hooks and the tutors. Lesson engine prose is
-    // NOT in it: strings unique to a lesson's engine class appear only in solver.worker, so
-    // the `supports<Lesson>` imports tree-shake as intended.
+    // That is now fixed for the demonstrations. A module hands its own worked examples to the
+    // cockpit as data through `ClinicalModuleConfig.demonstrations` (see
+    // `src/modules/*/demo/demonstrations.ts`), and one `useObservedDemonstration` call runs
+    // whichever the module supplied. 198 of the 241 moved; the rest read more than the
+    // resuscitation snapshot and still have their own hooks here. The graph fell from 992.4 to
+    // 878.5 KB gz and the shared cockpit chunk from 652.2 to 538.3, so the guard comes down to
+    // 900 rather than staying loose at 1000.
     //
-    // The marginal cost was then measured rather than guessed. Adding the module's second
-    // lesson — scenario, tray, tutor and worked example — took the graph to 992.3 and the
-    // cockpit chunk to 652.2, so a lesson costs about 5.8 KB gz and this guard holds exactly
-    // ONE more. An earlier version of this comment estimated three; that was wrong, and the
-    // number above is what a build actually reports.
-    //
-    // The durable fix is to load a lesson's tray, tutor and demonstration on the route that
-    // runs it, the way the module catalogues already are. It is not a small change: 294 test
-    // files render ActionCockpit and depend on trays being synchronous. Raising this a third
-    // time is not an option — measure the graph and move the boundary instead.
-    expect(gzipBytes(anesthesia) / 1024).toBeLessThan(1000);
+    // Two things are still shared and are the next lever, in this order: `ActionCockpit.tsx`
+    // statically imports all 48 lesson trays, and a tray pulls its lesson's tutor. Moving those
+    // is harder than this was — 294 test files render `ActionCockpit` through
+    // `renderToStaticMarkup`, which will not serve Suspense, so `React.lazy` is not available.
+    // Raising this number is not the answer to either; measure the graph and move the boundary.
+    expect(gzipBytes(anesthesia) / 1024).toBeLessThan(900);
   });
 });

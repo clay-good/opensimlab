@@ -7,6 +7,7 @@
 import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRoute';
 import { DEFAULT_ENDOCRINE_METABOLIC_SCENARIO_ID, ENDOCRINE_METABOLIC_SCENARIOS, getEndocrineMetabolicScenario } from '../../modules/endocrine-metabolic/scenarios';
 import { ENDOCRINE_METABOLIC_LIMITATIONS } from '@platform/docs/limitations/endocrine-metabolic';
+import { ENDOCRINE_METABOLIC_DEMONSTRATIONS } from '../../modules/endocrine-metabolic/demo/demonstrations';
 
 const ENDOCRINE_METABOLIC_CONFIG: ClinicalModuleConfig = {
   id: 'endocrine-metabolic', basePath: '/endocrine-metabolic',
@@ -17,6 +18,7 @@ const ENDOCRINE_METABOLIC_CONFIG: ClinicalModuleConfig = {
   scenarios: ENDOCRINE_METABOLIC_SCENARIOS,
   defaultScenarioId: DEFAULT_ENDOCRINE_METABOLIC_SCENARIO_ID,
   getScenario: getEndocrineMetabolicScenario,
+  demonstrations: ENDOCRINE_METABOLIC_DEMONSTRATIONS,
 };
 
 export function EndocrineMetabolicRoute({ path }: { path: string }) {

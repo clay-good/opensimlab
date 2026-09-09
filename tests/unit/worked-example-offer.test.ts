@@ -6,11 +6,26 @@
  * them: built, tested, audited as satisfying `guidance-and-demonstration`, and
  * unreachable from the product. Only a test that compares the two lists can
  * catch that, because each half is individually correct.
+ *
+ * The offer is now answered from an inert list of keys rather than by running
+ * the demonstration predicates, so that the shared cockpit chunk stops carrying
+ * every lesson's narration. That makes a second drift possible — the list and
+ * the predicates disagreeing — so the last test here regenerates the list from
+ * the predicates and the real catalogues and compares them exactly.
  */
 import { describe, expect, it } from 'vitest';
 import { ENGINE_VERSION } from '@anesthesia/engine';
 import { buildModuleCompletionCatalog } from '@anesthesia/catalog/scenario-completion';
 import { offersWorkedExample, WORKED_EXAMPLE_MODULE_IDS } from '@anesthesia/demo/worked-examples';
+import { WORKED_EXAMPLE_KEYS } from '@anesthesia/demo/worked-example-keys';
+import { workedExampleKeys } from '@anesthesia/demo/worked-example-predicates';
+import { EMERGENCY_MEDICINE_SCENARIOS } from '../../src/modules/emergency-medicine/scenarios';
+import { CRITICAL_CARE_SCENARIOS } from '../../src/modules/critical-care/scenarios';
+import { CARDIOLOGY_SCENARIOS } from '../../src/modules/cardiology/scenarios';
+import { RESPIRATORY_MEDICINE_SCENARIOS } from '../../src/modules/respiratory-medicine/scenarios';
+import { PEDIATRICS_SCENARIOS } from '../../src/modules/pediatrics/scenarios';
+import { NEUROLOGY_SCENARIOS } from '../../src/modules/neurology/scenarios';
+import { OBSTETRICS_SCENARIOS } from '../../src/modules/obstetrics/scenarios';
 import { ENDOCRINE_METABOLIC_SCENARIOS } from '../../src/modules/endocrine-metabolic/scenarios';
 import { RENAL_ELECTROLYTE_SCENARIOS } from '../../src/modules/renal-electrolyte/scenarios';
 import { ONCOLOGY_SCENARIOS } from '../../src/modules/oncology/scenarios';
@@ -106,5 +121,30 @@ describe('Requirement: Every Audited Example Is Offered', () => {
     expect(offersWorkedExample(scenario!, 'oncology')).toBe(true);
     expect(offersWorkedExample({ ...scenario!, metadata: { ...scenario!.metadata, version: '9.9.9' } }, 'oncology')).toBe(false);
     expect(offersWorkedExample(scenario!, 'endocrine-metabolic')).toBe(false);
+  });
+
+  it('offers exactly what the demonstration predicates support', () => {
+    // The list `offersWorkedExample` reads imports nothing, so nothing but this
+    // test stops it drifting from the demonstrations it claims to describe. A
+    // lesson whose demonstration is written but not listed here is unreachable;
+    // a lesson listed but not written offers a button that does nothing.
+    expect(WORKED_EXAMPLE_KEYS.slice()).toEqual(workedExampleKeys({
+      anesthesia: ANESTHESIA_SCENARIOS,
+      'emergency-medicine': EMERGENCY_MEDICINE_SCENARIOS,
+      'critical-care': CRITICAL_CARE_SCENARIOS,
+      cardiology: CARDIOLOGY_SCENARIOS,
+      'respiratory-medicine': RESPIRATORY_MEDICINE_SCENARIOS,
+      pediatrics: PEDIATRICS_SCENARIOS,
+      neurology: NEUROLOGY_SCENARIOS,
+      toxicology: TOXICOLOGY_SCENARIOS,
+      obstetrics: OBSTETRICS_SCENARIOS,
+      neonatology: NEONATOLOGY_SCENARIOS,
+      'endocrine-metabolic': ENDOCRINE_METABOLIC_SCENARIOS,
+      'renal-electrolyte': RENAL_ELECTROLYTE_SCENARIOS,
+      'infectious-disease': INFECTIOUS_DISEASE_SCENARIOS,
+      'medical-surgical-nursing': MEDICAL_SURGICAL_NURSING_SCENARIOS,
+      oncology: ONCOLOGY_SCENARIOS,
+      'surgery-trauma': SURGERY_TRAUMA_SCENARIOS,
+    }));
   });
 });

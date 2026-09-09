@@ -7,6 +7,7 @@
 import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRoute';
 import { DEFAULT_PEDIATRICS_SCENARIO_ID, PEDIATRICS_SCENARIOS, getPediatricsScenario } from '../../modules/pediatrics/scenarios';
 import { PEDIATRICS_LIMITATIONS } from '@platform/docs/limitations/pediatrics';
+import { PEDIATRICS_DEMONSTRATIONS } from '../../modules/pediatrics/demo/demonstrations';
 
 const PEDIATRICS_CONFIG: ClinicalModuleConfig = {
   id: 'pediatrics', basePath: '/pediatrics', heading: 'Pediatrics simulator',
@@ -15,6 +16,7 @@ const PEDIATRICS_CONFIG: ClinicalModuleConfig = {
   catalogStatus: `${PEDIATRICS_SCENARIOS.length} of 16 bounded Pediatrics labs is playable.`,
   scenarios: PEDIATRICS_SCENARIOS, defaultScenarioId: DEFAULT_PEDIATRICS_SCENARIO_ID,
   getScenario: getPediatricsScenario,
+  demonstrations: PEDIATRICS_DEMONSTRATIONS,
 };
 
 export function PediatricsRoute({ path }: { path: string }) {

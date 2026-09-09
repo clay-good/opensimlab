@@ -7,6 +7,7 @@
 import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRoute';
 import { DEFAULT_NEONATOLOGY_SCENARIO_ID, NEONATOLOGY_SCENARIOS, getNeonatologyScenario } from '../../modules/neonatology/scenarios';
 import { NEONATOLOGY_LIMITATIONS } from '@platform/docs/limitations/neonatology';
+import { NEONATOLOGY_DEMONSTRATIONS } from '../../modules/neonatology/demo/demonstrations';
 
 const NEONATOLOGY_CONFIG: ClinicalModuleConfig = {
   id: 'neonatology', basePath: '/neonatology', heading: 'Neonatology simulator',
@@ -15,6 +16,7 @@ const NEONATOLOGY_CONFIG: ClinicalModuleConfig = {
   catalogStatus: `${NEONATOLOGY_SCENARIOS.length} of 11 bounded Neonatology labs is playable.`,
   scenarios: NEONATOLOGY_SCENARIOS, defaultScenarioId: DEFAULT_NEONATOLOGY_SCENARIO_ID,
   getScenario: getNeonatologyScenario,
+  demonstrations: NEONATOLOGY_DEMONSTRATIONS,
 };
 
 export function NeonatologyRoute({ path }: { path: string }) {

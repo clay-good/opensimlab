@@ -7,6 +7,7 @@
 import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRoute';
 import { DEFAULT_SURGERY_TRAUMA_SCENARIO_ID, SURGERY_TRAUMA_SCENARIOS, getSurgeryTraumaScenario } from '../../modules/surgery-trauma/scenarios';
 import { SURGERY_TRAUMA_LIMITATIONS } from '@platform/docs/limitations/surgery-trauma';
+import { SURGERY_TRAUMA_DEMONSTRATIONS } from '../../modules/surgery-trauma/demo/demonstrations';
 
 const SURGERY_TRAUMA_CONFIG: ClinicalModuleConfig = {
   id: 'surgery-trauma', basePath: '/surgery-trauma',
@@ -18,6 +19,7 @@ const SURGERY_TRAUMA_CONFIG: ClinicalModuleConfig = {
   scenarios: SURGERY_TRAUMA_SCENARIOS,
   defaultScenarioId: DEFAULT_SURGERY_TRAUMA_SCENARIO_ID,
   getScenario: getSurgeryTraumaScenario,
+  demonstrations: SURGERY_TRAUMA_DEMONSTRATIONS,
 };
 
 export function SurgeryTraumaRoute({ path }: { path: string }) {

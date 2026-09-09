@@ -7,6 +7,7 @@
 import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRoute';
 import { DEFAULT_TOXICOLOGY_SCENARIO_ID, TOXICOLOGY_SCENARIOS, getToxicologyScenario } from '../../modules/toxicology/scenarios';
 import { TOXICOLOGY_LIMITATIONS } from '@platform/docs/limitations/toxicology';
+import { TOXICOLOGY_DEMONSTRATIONS } from '../../modules/toxicology/demo/demonstrations';
 
 const TOXICOLOGY_CONFIG: ClinicalModuleConfig = {
   id: 'toxicology', basePath: '/toxicology', heading: 'Toxicology simulator',
@@ -15,6 +16,7 @@ const TOXICOLOGY_CONFIG: ClinicalModuleConfig = {
   catalogStatus: `${TOXICOLOGY_SCENARIOS.length} of 15 bounded Toxicology labs is playable.`,
   scenarios: TOXICOLOGY_SCENARIOS, defaultScenarioId: DEFAULT_TOXICOLOGY_SCENARIO_ID,
   getScenario: getToxicologyScenario,
+  demonstrations: TOXICOLOGY_DEMONSTRATIONS,
 };
 
 export function ToxicologyRoute({ path }: { path: string }) {

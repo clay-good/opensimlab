@@ -3,7 +3,7 @@ import type { LearnerAction } from '@platform/kernel/protocol';
 import type { DemonstrationBeat } from './demonstration';
 import type { DemonstrationController } from './useDemonstration';
 
-interface ObservedStep {
+export interface ObservedStep {
   readonly id: string;
   readonly narration: string;
   readonly focus: DemonstrationBeat['focus'];

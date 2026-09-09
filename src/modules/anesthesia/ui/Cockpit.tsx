@@ -27,336 +27,10 @@ import { AnalysisRegion } from './AnalysisRegion';
 import { ActionCockpit, crisisResponseAvailability } from './ActionCockpit';
 import { DemonstrationBar } from './DemonstrationBar';
 import { useDemonstration } from '@anesthesia/demo/useDemonstration';
-import { useHypoglycemiaDemonstration } from '../../endocrine-metabolic/demo/useHypoglycemiaDemonstration';
-import { supportsHypoglycemiaDemonstration } from '../../endocrine-metabolic/demo/hypoglycemia-demonstration';
-import { useAdrenalDemonstration } from '../../endocrine-metabolic/demo/useAdrenalDemonstration';
-import { supportsAdrenalDemonstration } from '../../endocrine-metabolic/demo/adrenal-demonstration';
-import { useThyroidDemonstration } from '../../endocrine-metabolic/demo/useThyroidDemonstration';
-import { supportsThyroidDemonstration } from '../../endocrine-metabolic/demo/thyroid-demonstration';
-import { useMyxedemaDemonstration } from '../../endocrine-metabolic/demo/useMyxedemaDemonstration';
-import { supportsMyxedemaDemonstration } from '../../endocrine-metabolic/demo/myxedema-demonstration';
-import { useHypercalcemiaDemonstration } from '../../endocrine-metabolic/demo/useHypercalcemiaDemonstration';
-import { useHypocalcemiaDemonstration } from '../../endocrine-metabolic/demo/useHypocalcemiaDemonstration';
-import { supportsHypocalcemiaDemonstration } from '../../endocrine-metabolic/demo/hypocalcemia-demonstration';
-import { useHyponatremiaCorrectionDemonstration } from '../../endocrine-metabolic/demo/useHyponatremiaCorrectionDemonstration';
-import { supportsHyponatremiaCorrectionDemonstration } from '../../endocrine-metabolic/demo/hyponatremia-correction-demonstration';
-import { usePerioperativeDiabetesDemonstration } from '../../endocrine-metabolic/demo/usePerioperativeDiabetesDemonstration';
-import { supportsPerioperativeDiabetesDemonstration } from '../../endocrine-metabolic/demo/perioperative-diabetes-demonstration';
-import { supportsRenalHyperkalemiaDemonstration } from '../../renal-electrolyte/demo/renal-hyperkalemia-demonstration';
-import { useRenalHyperkalemiaDemonstration } from '../../renal-electrolyte/demo/useRenalHyperkalemiaDemonstration';
-import { supportsRenalHypokalemiaDemonstration } from '../../renal-electrolyte/demo/renal-hypokalemia-demonstration';
-import { useRenalHypokalemiaDemonstration } from '../../renal-electrolyte/demo/useRenalHypokalemiaDemonstration';
-import { supportsRenalHyponatremiaDemonstration } from '../../renal-electrolyte/demo/renal-hyponatremia-demonstration';
-import { supportsRenalHypernatremiaDemonstration } from '../../renal-electrolyte/demo/renal-hypernatremia-demonstration';
-import { supportsRenalHypocalcemiaDemonstration } from '../../renal-electrolyte/demo/renal-hypocalcemia-demonstration';
-import { supportsRenalHypermagnesemiaDemonstration } from '../../renal-electrolyte/demo/renal-hypermagnesemia-demonstration';
-import { useRenalHyponatremiaDemonstration } from '../../renal-electrolyte/demo/useRenalHyponatremiaDemonstration';
-import { useDelayedImmuneEventDemonstration } from '../../oncology/demo/useDelayedImmuneEventDemonstration';
-import { useIncidentalClotDemonstration } from '../../oncology/demo/useIncidentalClotDemonstration';
-import { useNormalTestToxicityDemonstration } from '../../oncology/demo/useNormalTestToxicityDemonstration';
-import { usePrognosisQuestionDemonstration } from '../../oncology/demo/usePrognosisQuestionDemonstration';
-import { useLaboratoryTlsDemonstration } from '../../oncology/demo/useLaboratoryTlsDemonstration';
-import { useRareEarlyMyocarditisDemonstration } from '../../oncology/demo/useRareEarlyMyocarditisDemonstration';
-import { useLoweringTheCountDemonstration } from '../../oncology/demo/useLoweringTheCountDemonstration';
-import { useInheritedUrgencyDemonstration } from '../../oncology/demo/useInheritedUrgencyDemonstration';
-import { useTrialRuleDemonstration } from '../../oncology/demo/useTrialRuleDemonstration';
-import { useSilentInteractionDemonstration } from '../../oncology/demo/useSilentInteractionDemonstration';
-import { useEasyLabelDemonstration } from '../../oncology/demo/useEasyLabelDemonstration';
-import { useNegativeScanDemonstration } from '../../surgery-trauma/demo/useNegativeScanDemonstration';
-import { useRisingRequirementDemonstration } from '../../surgery-trauma/demo/useRisingRequirementDemonstration';
-import { useLowScoreDemonstration } from '../../medical-surgical-nursing/demo/useLowScoreDemonstration';
-import { useCountedRateDemonstration } from '../../medical-surgical-nursing/demo/useCountedRateDemonstration';
-import { usePairedReadingDemonstration } from '../../medical-surgical-nursing/demo/usePairedReadingDemonstration';
-import { useAfferentLimbDemonstration } from '../../medical-surgical-nursing/demo/useAfferentLimbDemonstration';
-import { useQuietPatientDemonstration } from '../../medical-surgical-nursing/demo/useQuietPatientDemonstration';
-import { useProxyScaleDemonstration } from '../../medical-surgical-nursing/demo/useProxyScaleDemonstration';
-import { useLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/useLastKnownWellDemonstration';
-import { useOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/useOxygenTargetScaleDemonstration';
-import { useLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/useLostContingencyDemonstration';
-import { useMeningococcalSepsisDemonstration } from '../../infectious-disease/demo/useMeningococcalSepsisDemonstration';
-import { supportsMeningococcalSepsisDemonstration } from '../../infectious-disease/demo/meningococcal-sepsis-demonstration';
-import { useObstructedKidneyDemonstration } from '../../infectious-disease/demo/useObstructedKidneyDemonstration';
-import { supportsObstructedKidneyDemonstration } from '../../infectious-disease/demo/obstructed-kidney-demonstration';
-import { useFebrileNeutropeniaDemonstration } from '../../infectious-disease/demo/useFebrileNeutropeniaDemonstration';
-import { supportsFebrileNeutropeniaDemonstration } from '../../infectious-disease/demo/febrile-neutropenia-demonstration';
-import { useNecrotizingInfectionDemonstration } from '../../infectious-disease/demo/useNecrotizingInfectionDemonstration';
-import { supportsNecrotizingInfectionDemonstration } from '../../infectious-disease/demo/necrotizing-infection-demonstration';
-import { useEndocarditisHeartFailureDemonstration } from '../../infectious-disease/demo/useEndocarditisHeartFailureDemonstration';
-import { supportsEndocarditisHeartFailureDemonstration } from '../../infectious-disease/demo/endocarditis-heart-failure-demonstration';
-import { useSeverePneumoniaDemonstration } from '../../infectious-disease/demo/useSeverePneumoniaDemonstration';
-import { supportsSeverePneumoniaDemonstration } from '../../infectious-disease/demo/severe-pneumonia-demonstration';
-import { useToxicShockDemonstration } from '../../infectious-disease/demo/useToxicShockDemonstration';
-import { supportsToxicShockDemonstration } from '../../infectious-disease/demo/toxic-shock-demonstration';
-import { usePossibleSepsisDemonstration } from '../../infectious-disease/demo/usePossibleSepsisDemonstration';
-import { supportsPossibleSepsisDemonstration } from '../../infectious-disease/demo/possible-sepsis-demonstration';
-import { useSepticShockLabelDemonstration } from '../../infectious-disease/demo/useSepticShockLabelDemonstration';
-import { supportsSepticShockLabelDemonstration } from '../../infectious-disease/demo/septic-shock-label-demonstration';
-import { useMeningitisImagingDemonstration } from '../../infectious-disease/demo/useMeningitisImagingDemonstration';
-import { supportsMeningitisImagingDemonstration } from '../../infectious-disease/demo/meningitis-imaging-demonstration';
-import { useNicuHandoffDemonstration } from '../../neonatology/demo/useNicuHandoffDemonstration';
-import { supportsNicuHandoffDemonstration } from '../../neonatology/demo/delivery-room-to-nicu-handoff-demonstration';
-import { useThermoregulationDemonstration } from '../../neonatology/demo/useThermoregulationDemonstration';
-import { supportsThermoregulationDemonstration } from '../../neonatology/demo/thermoregulation-failure-demonstration';
-import { useNeonatalSepsisDemonstration } from '../../neonatology/demo/useNeonatalSepsisDemonstration';
-import { supportsNeonatalSepsisDemonstration } from '../../neonatology/demo/neonatal-sepsis-demonstration';
-import { useNeonatalHypoglycemiaDemonstration } from '../../neonatology/demo/useNeonatalHypoglycemiaDemonstration';
-import { supportsNeonatalHypoglycemiaDemonstration } from '../../neonatology/demo/neonatal-hypoglycemia-demonstration';
-import { usePretermRespiratoryDistressDemonstration } from '../../neonatology/demo/usePretermRespiratoryDistressDemonstration';
-import { supportsPretermRespiratoryDistressDemonstration } from '../../neonatology/demo/preterm-respiratory-distress-demonstration';
-import { useMeconiumTransitionDemonstration } from '../../neonatology/demo/useMeconiumTransitionDemonstration';
-import { supportsMeconiumTransitionDemonstration } from '../../neonatology/demo/meconium-stained-transition-demonstration';
-import { useNeonatalBradycardiaDemonstration } from '../../neonatology/demo/useNeonatalBradycardiaDemonstration';
-import { supportsNeonatalBradycardiaDemonstration } from '../../neonatology/demo/neonatal-bradycardia-demonstration';
-import { useIneffectiveVentilationDemonstration } from '../../neonatology/demo/useIneffectiveVentilationDemonstration';
-import { supportsIneffectiveVentilationDemonstration } from '../../neonatology/demo/ineffective-ventilation-correction-demonstration';
-import { useNeonatalApneaDemonstration } from '../../neonatology/demo/useNeonatalApneaDemonstration';
-import { supportsNeonatalApneaDemonstration } from '../../neonatology/demo/neonatal-apnea-demonstration';
-import { useTermTransitionDemonstration } from '../../neonatology/demo/useTermTransitionDemonstration';
-import { supportsTermTransitionDemonstration } from '../../neonatology/demo/term-newborn-transition-demonstration';
-import { useTensionPneumothoraxDemonstration } from '../../neonatology/demo/useTensionPneumothoraxDemonstration';
-import { supportsTensionPneumothoraxDemonstration } from '../../neonatology/demo/neonatal-tension-pneumothorax-demonstration';
-import { useMethemoglobinemiaDemonstration } from '../../toxicology/demo/useMethemoglobinemiaDemonstration';
-import { supportsMethemoglobinemiaDemonstration } from '../../toxicology/demo/methemoglobinemia-saturation-gap-demonstration';
-import { useCarbonMonoxideDemonstration } from '../../toxicology/demo/useCarbonMonoxideDemonstration';
-import { supportsCarbonMonoxideDemonstration } from '../../toxicology/demo/carbon-monoxide-reassuring-monitor-demonstration';
-import { useAcetaminophenDemonstration } from '../../toxicology/demo/useAcetaminophenDemonstration';
-import { supportsAcetaminophenDemonstration } from '../../toxicology/demo/acetaminophen-clock-and-nomogram-demonstration';
-import { useSalicylateDemonstration } from '../../toxicology/demo/useSalicylateDemonstration';
-import { supportsSalicylateDemonstration } from '../../toxicology/demo/salicylate-falling-number-demonstration';
-import { useTricyclicDemonstration } from '../../toxicology/demo/useTricyclicDemonstration';
-import { supportsTricyclicDemonstration } from '../../toxicology/demo/tricyclic-sodium-channel-cardiotoxicity-demonstration';
-import { useBetaBlockerDemonstration } from '../../toxicology/demo/useBetaBlockerDemonstration';
-import { supportsBetaBlockerDemonstration } from '../../toxicology/demo/beta-blocker-cardiogenic-shock-demonstration';
-import { useCalciumChannelBlockerDemonstration } from '../../toxicology/demo/useCalciumChannelBlockerDemonstration';
-import { supportsCalciumChannelBlockerDemonstration } from '../../toxicology/demo/calcium-channel-blocker-shock-demonstration';
-import { useDigoxinDemonstration } from '../../toxicology/demo/useDigoxinDemonstration';
-import { supportsDigoxinDemonstration } from '../../toxicology/demo/digoxin-rhythm-potassium-demonstration';
-import { useCholinergicDemonstration } from '../../toxicology/demo/useCholinergicDemonstration';
-import { supportsCholinergicDemonstration } from '../../toxicology/demo/cholinergic-pesticide-respiratory-failure-demonstration';
-import { useAnticholinergicDemonstration } from '../../toxicology/demo/useAnticholinergicDemonstration';
-import { supportsAnticholinergicDemonstration } from '../../toxicology/demo/anticholinergic-hyperthermia-delirium-demonstration';
-import { useSerotoninDemonstration } from '../../toxicology/demo/useSerotoninDemonstration';
-import { supportsSerotoninDemonstration } from '../../toxicology/demo/serotonin-toxicity-hyperthermia-clonus-demonstration';
-import { useSympathomimeticDemonstration } from '../../toxicology/demo/useSympathomimeticDemonstration';
-import { supportsSympathomimeticDemonstration } from '../../toxicology/demo/sympathomimetic-hyperadrenergic-hyperthermia-demonstration';
-import { useMethanolDemonstration } from '../../toxicology/demo/useMethanolDemonstration';
-import { supportsMethanolDemonstration } from '../../toxicology/demo/methanol-visual-acidosis-gaps-demonstration';
-import { useDelayedLastDemonstration } from '../../toxicology/demo/useDelayedLastDemonstration';
-import { supportsDelayedLastDemonstration } from '../../toxicology/demo/delayed-local-anesthetic-cns-cardiac-toxicity-demonstration';
-import { useOpioidXylazineDemonstration } from '../../toxicology/demo/useOpioidXylazineDemonstration';
-import { supportsOpioidXylazineDemonstration } from '../../toxicology/demo/opioid-xylazine-persistent-sedation-demonstration';
-import { useMinorStrokeDemonstration } from '../../neurology/demo/useMinorStrokeDemonstration';
-import { supportsMinorStrokeDemonstration } from '../../neurology/demo/minor-nondisabling-acute-ischemic-stroke-demonstration';
-import { useBasilarLvoDemonstration } from '../../neurology/demo/useBasilarLvoDemonstration';
-import { supportsBasilarLvoDemonstration } from '../../neurology/demo/basilar-artery-occlusion-escalation-demonstration';
-import { useCerebellarIchDemonstration } from '../../neurology/demo/useCerebellarIchDemonstration';
-import { supportsCerebellarIchDemonstration } from '../../neurology/demo/spontaneous-cerebellar-intracerebral-hemorrhage-demonstration';
-import { useAsahDemonstration } from '../../neurology/demo/useAsahDemonstration';
-import { supportsAsahDemonstration } from '../../neurology/demo/aneurysmal-subarachnoid-hemorrhage-deterioration-demonstration';
-import { useFocalMotorStatusDemonstration } from '../../neurology/demo/useFocalMotorStatusDemonstration';
-import { supportsFocalMotorStatusDemonstration } from '../../neurology/demo/focal-motor-status-epilepticus-escalation-demonstration';
-import { useNcseDemonstration } from '../../neurology/demo/useNcseDemonstration';
-import { supportsNcseDemonstration } from '../../neurology/demo/nonconvulsive-status-epilepticus-recognition-demonstration';
-import { useMyastheniaDemonstration } from '../../neurology/demo/useMyastheniaDemonstration';
-import { supportsMyastheniaDemonstration } from '../../neurology/demo/myasthenic-crisis-escalation-demonstration';
-import { useGbsDemonstration } from '../../neurology/demo/useGbsDemonstration';
-import { supportsGbsDemonstration } from '../../neurology/demo/guillain-barre-respiratory-decline-demonstration';
-import { useMeningitisDemonstration } from '../../neurology/demo/useMeningitisDemonstration';
-import { supportsMeningitisDemonstration } from '../../neurology/demo/acute-bacterial-meningitis-first-hour-demonstration';
-import { useEncephalitisDemonstration } from '../../neurology/demo/useEncephalitisDemonstration';
-import { supportsEncephalitisDemonstration } from '../../neurology/demo/suspected-herpes-simplex-encephalitis-demonstration';
-import { useRaisedIcpDemonstration } from '../../neurology/demo/useRaisedIcpDemonstration';
-import { supportsRaisedIcpDemonstration } from '../../neurology/demo/raised-intracranial-pressure-visual-threat-demonstration';
-import { useHerniationDemonstration } from '../../neurology/demo/useHerniationDemonstration';
-import { supportsHerniationDemonstration } from '../../neurology/demo/acute-transtentorial-herniation-pattern-demonstration';
-import { useMsccDemonstration } from '../../neurology/demo/useMsccDemonstration';
-import { supportsMsccDemonstration } from '../../neurology/demo/metastatic-spinal-cord-compression-demonstration';
-import { useDeliriumDemonstration } from '../../neurology/demo/useDeliriumDemonstration';
-import { supportsDeliriumDemonstration } from '../../neurology/demo/acute-delirium-reversible-causes-demonstration';
-import { useDysreflexiaDemonstration } from '../../neurology/demo/useDysreflexiaDemonstration';
-import { supportsDysreflexiaDemonstration } from '../../neurology/demo/autonomic-dysreflexia-authored-trigger-demonstration';
-import { useAtonyDemonstration } from '../../obstetrics/demo/useAtonyDemonstration';
-import { supportsAtonyDemonstration } from '../../obstetrics/demo/postpartum-hemorrhage-uterine-atony-demonstration';
-import { useMaternalSepsisDemonstration } from '../../obstetrics/demo/useMaternalSepsisDemonstration';
-import { supportsMaternalSepsisDemonstration } from '../../obstetrics/demo/maternal-sepsis-postpartum-deterioration-demonstration';
-import { useConcealedAbruptionDemonstration } from '../../obstetrics/demo/useConcealedAbruptionDemonstration';
-import { supportsConcealedAbruptionDemonstration } from '../../obstetrics/demo/concealed-placental-abruption-hemorrhage-demonstration';
-import { usePostpartumPreeclampsiaDemonstration } from '../../obstetrics/demo/usePostpartumPreeclampsiaDemonstration';
-import { supportsPostpartumPreeclampsiaDemonstration } from '../../obstetrics/demo/postpartum-severe-preeclampsia-warning-signs-demonstration';
-import { useEclampsiaDemonstration } from '../../obstetrics/demo/useEclampsiaDemonstration';
-import { supportsEclampsiaDemonstration } from '../../obstetrics/demo/eclampsia-first-seizure-response-demonstration';
-import { useAfeDemonstration } from '../../obstetrics/demo/useAfeDemonstration';
-import { supportsAfeDemonstration } from '../../obstetrics/demo/suspected-amniotic-fluid-embolism-pattern-demonstration';
-import { useMaternalArrestDemonstration } from '../../obstetrics/demo/useMaternalArrestDemonstration';
-import { supportsMaternalArrestDemonstration } from '../../obstetrics/demo/maternal-cardiac-arrest-coordinated-response-demonstration';
-import { useShoulderDystociaDemonstration } from '../../obstetrics/demo/useShoulderDystociaDemonstration';
-import { supportsShoulderDystociaDemonstration } from '../../obstetrics/demo/shoulder-dystocia-cognitive-sequence-demonstration';
-import { useCordProlapseDemonstration } from '../../obstetrics/demo/useCordProlapseDemonstration';
-import { supportsCordProlapseDemonstration } from '../../obstetrics/demo/umbilical-cord-prolapse-urgent-birth-coordination-demonstration';
-import { useUterineRuptureDemonstration } from '../../obstetrics/demo/useUterineRuptureDemonstration';
-import { supportsUterineRuptureDemonstration } from '../../obstetrics/demo/suspected-uterine-rupture-recognition-demonstration';
-import { useMagnesiumToxicityDemonstration } from '../../obstetrics/demo/useMagnesiumToxicityDemonstration';
-import { supportsMagnesiumToxicityDemonstration } from '../../obstetrics/demo/magnesium-sulfate-toxicity-recognition-demonstration';
-import { useHighNeuraxialDemonstration } from '../../obstetrics/demo/useHighNeuraxialDemonstration';
-import { supportsHighNeuraxialDemonstration } from '../../obstetrics/demo/high-neuraxial-block-obstetric-coordination-demonstration';
-import { useFailedIntubationDemonstration } from '../../obstetrics/demo/useFailedIntubationDemonstration';
-import { supportsFailedIntubationDemonstration } from '../../obstetrics/demo/failed-obstetric-intubation-oxygenation-first-demonstration';
-import { useMaternalNeonatalHandoffDemonstration } from '../../obstetrics/demo/useMaternalNeonatalHandoffDemonstration';
-import { supportsMaternalNeonatalHandoffDemonstration } from '../../obstetrics/demo/maternal-to-neonatal-resuscitation-handoff-demonstration';
-import { useOxytocinTachysystoleDemonstration } from '../../obstetrics/demo/useOxytocinTachysystoleDemonstration';
-import { supportsOxytocinTachysystoleDemonstration } from '../../obstetrics/demo/oxytocin-associated-uterine-tachysystole-demonstration';
-import { useAcuteSevereAsthmaDemonstration } from '../../respiratory-medicine/demo/useAcuteSevereAsthmaDemonstration';
-import { supportsAcuteSevereAsthmaDemonstration } from '../../respiratory-medicine/demo/acute-severe-asthma-demonstration';
-import { useCopdTransitionDemonstration } from '../../respiratory-medicine/demo/useCopdTransitionDemonstration';
-import { supportsCopdTransitionDemonstration } from '../../respiratory-medicine/demo/copd-exacerbation-transition-reassessment-demonstration';
-import { useCapHypoxemiaDemonstration } from '../../respiratory-medicine/demo/useCapHypoxemiaDemonstration';
-import { supportsCapHypoxemiaDemonstration } from '../../respiratory-medicine/demo/community-acquired-pneumonia-hypoxemia-reassessment-demonstration';
-import { usePostPeDyspneaDemonstration } from '../../respiratory-medicine/demo/usePostPeDyspneaDemonstration';
-import { supportsPostPeDyspneaDemonstration } from '../../respiratory-medicine/demo/post-pulmonary-embolism-persistent-dyspnea-demonstration';
-import { useApeSupportDemonstration } from '../../respiratory-medicine/demo/useApeSupportDemonstration';
-import { supportsApeSupportDemonstration } from '../../respiratory-medicine/demo/acute-pulmonary-edema-respiratory-support-reassessment-demonstration';
-import { usePostTensionPneumothoraxDemonstration } from '../../respiratory-medicine/demo/usePostTensionPneumothoraxDemonstration';
-import { supportsPostTensionPneumothoraxDemonstration } from '../../respiratory-medicine/demo/spontaneous-tension-pneumothorax-post-drainage-reassessment-demonstration';
-import { useLargePleuralEffusionDemonstration } from '../../respiratory-medicine/demo/useLargePleuralEffusionDemonstration';
-import { supportsLargePleuralEffusionDemonstration } from '../../respiratory-medicine/demo/large-unilateral-pleural-effusion-reassessment-demonstration';
-import { useBronchiectasisMucusPluggingDemonstration } from '../../respiratory-medicine/demo/useBronchiectasisMucusPluggingDemonstration';
-import { supportsBronchiectasisMucusPluggingDemonstration } from '../../respiratory-medicine/demo/bronchiectasis-mucus-plugging-reassessment-demonstration';
-import { useChronicOpioidHypoventilationDemonstration } from '../../respiratory-medicine/demo/useChronicOpioidHypoventilationDemonstration';
-import { supportsChronicOpioidHypoventilationDemonstration } from '../../respiratory-medicine/demo/chronic-opioid-related-hypoventilation-reassessment-demonstration';
-import { useNeuromuscularRespiratoryFailureDemonstration } from '../../respiratory-medicine/demo/useNeuromuscularRespiratoryFailureDemonstration';
-import { supportsNeuromuscularRespiratoryFailureDemonstration } from '../../respiratory-medicine/demo/neuromuscular-respiratory-failure-reassessment-demonstration';
-import { useObesityHypoventilationDemonstration } from '../../respiratory-medicine/demo/useObesityHypoventilationDemonstration';
-import { supportsObesityHypoventilationDemonstration } from '../../respiratory-medicine/demo/obesity-hypoventilation-reassessment-demonstration';
-import { useNoninvasiveVentilationSelectionDemonstration } from '../../respiratory-medicine/demo/useNoninvasiveVentilationSelectionDemonstration';
-import { supportsNoninvasiveVentilationSelectionDemonstration } from '../../respiratory-medicine/demo/noninvasive-ventilation-selection-demonstration';
-import { useHighFlowOxygenEscalationDemonstration } from '../../respiratory-medicine/demo/useHighFlowOxygenEscalationDemonstration';
-import { supportsHighFlowOxygenEscalationDemonstration } from '../../respiratory-medicine/demo/high-flow-nasal-oxygen-escalation-demonstration';
-import { useOxygenDeviceFailureDemonstration } from '../../respiratory-medicine/demo/useOxygenDeviceFailureDemonstration';
-import { supportsOxygenDeviceFailureDemonstration } from '../../respiratory-medicine/demo/oxygen-device-failure-demonstration';
-import { useAcuteTracheostomyObstructionDemonstration } from '../../respiratory-medicine/demo/useAcuteTracheostomyObstructionDemonstration';
-import { supportsAcuteTracheostomyObstructionDemonstration } from '../../respiratory-medicine/demo/acute-tracheostomy-obstruction-demonstration';
-import { usePediatricRespiratoryDistressDemonstration } from '../../pediatrics/demo/usePediatricRespiratoryDistressDemonstration';
-import { supportsPediatricRespiratoryDistressDemonstration } from '../../pediatrics/demo/pediatric-respiratory-distress-demonstration';
-import { useBronchiolitisDemonstration } from '../../pediatrics/demo/useBronchiolitisDemonstration';
-import { supportsBronchiolitisDemonstration } from '../../pediatrics/demo/bronchiolitis-demonstration';
-import { useCroupDemonstration } from '../../pediatrics/demo/useCroupDemonstration';
-import { supportsCroupDemonstration } from '../../pediatrics/demo/croup-demonstration';
-import { usePediatricStatusAsthmaticusDemonstration } from '../../pediatrics/demo/usePediatricStatusAsthmaticusDemonstration';
-import { supportsPediatricStatusAsthmaticusDemonstration } from '../../pediatrics/demo/pediatric-status-asthmaticus-demonstration';
-import { usePediatricSepsisDemonstration } from '../../pediatrics/demo/usePediatricSepsisDemonstration';
-import { supportsPediatricSepsisDemonstration } from '../../pediatrics/demo/pediatric-sepsis-demonstration';
-import { usePediatricSepticShockDemonstration } from '../../pediatrics/demo/usePediatricSepticShockDemonstration';
-import { supportsPediatricSepticShockDemonstration } from '../../pediatrics/demo/pediatric-septic-shock-demonstration';
-import { usePediatricDehydrationDemonstration } from '../../pediatrics/demo/usePediatricDehydrationDemonstration';
-import { supportsPediatricDehydrationDemonstration } from '../../pediatrics/demo/pediatric-dehydration-demonstration';
-import { usePediatricDkaDemonstration } from '../../pediatrics/demo/usePediatricDkaDemonstration';
-import { supportsPediatricDkaDemonstration } from '../../pediatrics/demo/pediatric-dka-demonstration';
-import { usePediatricHypoglycemicSeizureDemonstration } from '../../pediatrics/demo/usePediatricHypoglycemicSeizureDemonstration';
-import { supportsPediatricHypoglycemicSeizureDemonstration } from '../../pediatrics/demo/pediatric-hypoglycemic-seizure-demonstration';
-import { usePediatricFebrileSeizureDemonstration } from '../../pediatrics/demo/usePediatricFebrileSeizureDemonstration';
-import { supportsPediatricFebrileSeizureDemonstration } from '../../pediatrics/demo/pediatric-febrile-seizure-demonstration';
-import { usePediatricStatusEpilepticusDemonstration } from '../../pediatrics/demo/usePediatricStatusEpilepticusDemonstration';
-import { supportsPediatricStatusEpilepticusDemonstration } from '../../pediatrics/demo/pediatric-status-epilepticus-demonstration';
-import { usePediatricAnaphylaxisDemonstration } from '../../pediatrics/demo/usePediatricAnaphylaxisDemonstration';
-import { supportsPediatricAnaphylaxisDemonstration } from '../../pediatrics/demo/pediatric-anaphylaxis-demonstration';
-import { usePediatricSvtDemonstration } from '../../pediatrics/demo/usePediatricSvtDemonstration';
-import { supportsPediatricSvtDemonstration } from '../../pediatrics/demo/pediatric-svt-demonstration';
-import { usePediatricBradycardicArrestDemonstration } from '../../pediatrics/demo/usePediatricBradycardicArrestDemonstration';
-import { supportsPediatricBradycardicArrestDemonstration } from '../../pediatrics/demo/pediatric-bradycardic-arrest-demonstration';
-import { usePediatricFbaoDemonstration } from '../../pediatrics/demo/usePediatricFbaoDemonstration';
-import { supportsPediatricFbaoDemonstration } from '../../pediatrics/demo/pediatric-fbao-demonstration';
-import { usePediatricInjurySafeguardingDemonstration } from '../../pediatrics/demo/usePediatricInjurySafeguardingDemonstration';
-import { supportsPediatricInjurySafeguardingDemonstration } from '../../pediatrics/demo/pediatric-injury-safeguarding-demonstration';
-import { useStableChestPainDemonstration } from '../../cardiology/demo/useStableChestPainDemonstration';
-import { supportsStableChestPainDemonstration } from '../../cardiology/demo/stable-chest-pain-demonstration';
-import { useClinicStemiDemonstration } from '../../cardiology/demo/useClinicStemiDemonstration';
-import { supportsClinicStemiDemonstration } from '../../cardiology/demo/clinic-stemi-demonstration';
-import { useNstemiRiskDemonstration } from '../../cardiology/demo/useNstemiRiskDemonstration';
-import { supportsNstemiRiskDemonstration } from '../../cardiology/demo/nstemi-risk-demonstration';
-import { useHeartFailureDemonstration } from '../../cardiology/demo/useHeartFailureDemonstration';
-import { supportsHeartFailureDemonstration } from '../../cardiology/demo/heart-failure-demonstration';
-import { useAfRvrDemonstration } from '../../cardiology/demo/useAfRvrDemonstration';
-import { supportsAfRvrDemonstration } from '../../cardiology/demo/af-rvr-demonstration';
-import { usePostInfarctionShockDemonstration } from '../../cardiology/demo/usePostInfarctionShockDemonstration';
-import { supportsPostInfarctionShockDemonstration } from '../../cardiology/demo/post-infarction-shock-demonstration';
-import { useStableNarrowTachycardiaDemonstration } from '../../cardiology/demo/useStableNarrowTachycardiaDemonstration';
-import { supportsStableNarrowTachycardiaDemonstration } from '../../cardiology/demo/stable-narrow-tachycardia-demonstration';
-import { useStableWideTachycardiaDemonstration } from '../../cardiology/demo/useStableWideTachycardiaDemonstration';
-import { supportsStableWideTachycardiaDemonstration } from '../../cardiology/demo/stable-wide-tachycardia-demonstration';
-import { useSymptomaticBradycardiaDemonstration } from '../../cardiology/demo/useSymptomaticBradycardiaDemonstration';
-import { supportsSymptomaticBradycardiaDemonstration } from '../../cardiology/demo/symptomatic-bradycardia-demonstration';
-import { useCompleteHeartBlockDemonstration } from '../../cardiology/demo/useCompleteHeartBlockDemonstration';
-import { supportsCompleteHeartBlockDemonstration } from '../../cardiology/demo/complete-heart-block-demonstration';
-import { useTorsadesDemonstration } from '../../cardiology/demo/useTorsadesDemonstration';
-import { supportsTorsadesDemonstration } from '../../cardiology/demo/torsades-demonstration';
-import { useHyperkalemicConductionDemonstration } from '../../cardiology/demo/useHyperkalemicConductionDemonstration';
-import { supportsHyperkalemicConductionDemonstration } from '../../cardiology/demo/hyperkalemic-conduction-demonstration';
-import { usePericardialTamponadeDemonstration } from '../../cardiology/demo/usePericardialTamponadeDemonstration';
-import { supportsPericardialTamponadeDemonstration } from '../../cardiology/demo/pericardial-tamponade-demonstration';
-import { useRightVentricularInfarctionDemonstration } from '../../cardiology/demo/useRightVentricularInfarctionDemonstration';
-import { supportsRightVentricularInfarctionDemonstration } from '../../cardiology/demo/right-ventricular-infarction-demonstration';
-import { useHypertensiveEmergencyDemonstration } from '../../cardiology/demo/useHypertensiveEmergencyDemonstration';
-import { supportsHypertensiveEmergencyDemonstration } from '../../cardiology/demo/hypertensive-emergency-demonstration';
-import { usePacemakerCaptureFailureDemonstration } from '../../cardiology/demo/usePacemakerCaptureFailureDemonstration';
-import { supportsPacemakerCaptureFailureDemonstration } from '../../cardiology/demo/pacemaker-capture-failure-demonstration';
-import { useTranscutaneousPacingCaptureDemonstration } from '../../cardiology/demo/useTranscutaneousPacingCaptureDemonstration';
-import { supportsTranscutaneousPacingCaptureDemonstration } from '../../cardiology/demo/transcutaneous-pacing-capture-demonstration';
-import { useSepticShockResuscitationDemonstration } from '../../critical-care/demo/useSepticShockResuscitationDemonstration';
-import { supportsSepticShockResuscitationDemonstration } from '../../critical-care/demo/septic-shock-resuscitation-demonstration';
-import { useCardiogenicShockDemonstration } from '../../critical-care/demo/useCardiogenicShockDemonstration';
-import { supportsCardiogenicShockDemonstration } from '../../critical-care/demo/cardiogenic-shock-demonstration';
-import { useMixedShockDemonstration } from '../../critical-care/demo/useMixedShockDemonstration';
-import { supportsMixedShockDemonstration } from '../../critical-care/demo/mixed-shock-demonstration';
-import { useRvFailureDemonstration } from '../../critical-care/demo/useRvFailureDemonstration';
-import { supportsRvFailureDemonstration } from '../../critical-care/demo/rv-failure-demonstration';
-import { useMassivePeDemonstration } from '../../critical-care/demo/useMassivePeDemonstration';
-import { supportsMassivePeDemonstration } from '../../critical-care/demo/massive-pe-demonstration';
-import { useAutoPeepDemonstration } from '../../critical-care/demo/useAutoPeepDemonstration';
-import { supportsAutoPeepDemonstration } from '../../critical-care/demo/auto-peep-demonstration';
-import { useDyssynchronyDemonstration } from '../../critical-care/demo/useDyssynchronyDemonstration';
-import { supportsDyssynchronyDemonstration } from '../../critical-care/demo/dyssynchrony-demonstration';
-import { useMucusPluggingDemonstration } from '../../critical-care/demo/useMucusPluggingDemonstration';
-import { supportsMucusPluggingDemonstration } from '../../critical-care/demo/mucus-plugging-demonstration';
-import { useEscalatingHypoxemiaDemonstration } from '../../critical-care/demo/useEscalatingHypoxemiaDemonstration';
-import { supportsEscalatingHypoxemiaDemonstration } from '../../critical-care/demo/escalating-hypoxemia-demonstration';
-import { useUnplannedExtubationDemonstration } from '../../critical-care/demo/useUnplannedExtubationDemonstration';
-import { supportsUnplannedExtubationDemonstration } from '../../critical-care/demo/unplanned-extubation-demonstration';
-import { useCircuitDisconnectionDemonstration } from '../../critical-care/demo/useCircuitDisconnectionDemonstration';
-import { supportsCircuitDisconnectionDemonstration } from '../../critical-care/demo/circuit-disconnection-demonstration';
-import { usePostIntubationHypotensionDemonstration } from '../../critical-care/demo/usePostIntubationHypotensionDemonstration';
-import { supportsPostIntubationHypotensionDemonstration } from '../../critical-care/demo/post-intubation-hypotension-demonstration';
-import { useSevereAcidemiaDemonstration } from '../../critical-care/demo/useSevereAcidemiaDemonstration';
-import { supportsSevereAcidemiaDemonstration } from '../../critical-care/demo/severe-acidemia-demonstration';
-import { useDelayedVasopressorDeliveryDemonstration } from '../../critical-care/demo/useDelayedVasopressorDeliveryDemonstration';
-import { supportsDelayedVasopressorDeliveryDemonstration } from '../../critical-care/demo/delayed-vasopressor-delivery-demonstration';
-import { useIntracranialHypertensionDemonstration } from '../../critical-care/demo/useIntracranialHypertensionDemonstration';
-import { supportsIntracranialHypertensionDemonstration } from '../../critical-care/demo/intracranial-hypertension-demonstration';
-import { useSpontaneousBreathingTrialDemonstration } from '../../critical-care/demo/useSpontaneousBreathingTrialDemonstration';
-import { supportsSpontaneousBreathingTrialDemonstration } from '../../critical-care/demo/spontaneous-breathing-trial-demonstration';
+import { useObservedDemonstration, type ObservedStep } from '@anesthesia/demo/useObservedDemonstration';
+import type { LessonDemonstration } from '@anesthesia/demo/lesson-demonstration';
 import { useStatusEpilepticusDemonstration as useCriticalCareStatusEpilepticusDemonstration } from '../../critical-care/demo/useStatusEpilepticusDemonstration';
 import { supportsStatusEpilepticusDemonstration as supportsCriticalCareStatusEpilepticusDemonstration } from '../../critical-care/demo/status-epilepticus-demonstration';
-import { useTargetedTemperatureManagementDemonstration } from '../../critical-care/demo/useTargetedTemperatureManagementDemonstration';
-import { supportsTargetedTemperatureManagementDemonstration } from '../../critical-care/demo/targeted-temperature-management-demonstration';
-import { useUpperGiHemorrhageDemonstration } from '../../critical-care/demo/useUpperGiHemorrhageDemonstration';
-import { supportsUpperGiHemorrhageDemonstration } from '../../critical-care/demo/upper-gi-hemorrhage-demonstration';
-import { useAkiFluidOverloadDemonstration } from '../../critical-care/demo/useAkiFluidOverloadDemonstration';
-import { supportsAkiFluidOverloadDemonstration } from '../../critical-care/demo/aki-fluid-overload-demonstration';
-import { useTubeMigrationDemonstration } from '../../critical-care/demo/useTubeMigrationDemonstration';
-import { supportsTubeMigrationDemonstration } from '../../critical-care/demo/tube-migration-demonstration';
-import { useIcuHandoffDemonstration } from '../../critical-care/demo/useIcuHandoffDemonstration';
-import { supportsIcuHandoffDemonstration } from '../../critical-care/demo/icu-handoff-demonstration';
-import { usePulseOximeterArtifactDemonstration } from '../../critical-care/demo/usePulseOximeterArtifactDemonstration';
-import { supportsPulseOximeterArtifactDemonstration } from '../../critical-care/demo/pulse-oximeter-artifact-demonstration';
-import { useArdsLungProtectiveDemonstration } from '../../critical-care/demo/useArdsLungProtectiveDemonstration';
-import { supportsArdsLungProtectiveDemonstration } from '../../critical-care/demo/ards-lung-protective-demonstration';
-import { useAcuteAorticSyndromeDemonstration } from '../../emergency-medicine/demo/useAcuteAorticSyndromeDemonstration';
-import { supportsAcuteAorticSyndromeDemonstration } from '../../emergency-medicine/demo/acute-aortic-syndrome-demonstration';
-import { useAcuteIschemicStrokeDemonstration } from '../../emergency-medicine/demo/useAcuteIschemicStrokeDemonstration';
-import { supportsAcuteIschemicStrokeDemonstration } from '../../emergency-medicine/demo/acute-ischemic-stroke-demonstration';
-import { useHemorrhagicShockDemonstration } from '../../emergency-medicine/demo/useHemorrhagicShockDemonstration';
-import { supportsHemorrhagicShockDemonstration } from '../../emergency-medicine/demo/hemorrhagic-shock-demonstration';
-import { useUndifferentiatedShockDemonstration } from '../../emergency-medicine/demo/useUndifferentiatedShockDemonstration';
-import { supportsUndifferentiatedShockDemonstration } from '../../emergency-medicine/demo/undifferentiated-shock-demonstration';
 import { usePeaArrestDemonstration } from '../../emergency-medicine/demo/usePeaArrestDemonstration';
 import { supportsPeaArrestDemonstration } from '../../emergency-medicine/demo/pea-arrest-demonstration';
 import { usePersistentVfArrestDemonstration } from '../../emergency-medicine/demo/usePersistentVfArrestDemonstration';
@@ -437,79 +111,11 @@ import { useDelayedEmergenceDemonstration } from '@anesthesia/demo/useDelayedEme
 import { supportsDelayedEmergenceDemonstration } from '@anesthesia/demo/delayed-emergence-demonstration';
 import { useExtubationReadinessDemonstration } from '@anesthesia/demo/useExtubationReadinessDemonstration';
 import { supportsExtubationReadinessDemonstration } from '@anesthesia/demo/extubation-readiness-demonstration';
-import { useAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/useAcutePulmonaryEdemaDemonstration';
-import { supportsAcutePulmonaryEdemaDemonstration } from '../../emergency-medicine/demo/acute-pulmonary-edema-demonstration';
-import { useAdultAsthmaDemonstration } from '../../emergency-medicine/demo/useAdultAsthmaDemonstration';
-import { supportsAdultAsthmaDemonstration } from '../../emergency-medicine/demo/adult-asthma-demonstration';
-import { useEmergencyAnaphylaxisDemonstration } from '../../emergency-medicine/demo/useEmergencyAnaphylaxisDemonstration';
-import { supportsEmergencyAnaphylaxisDemonstration } from '../../emergency-medicine/demo/emergency-anaphylaxis-demonstration';
-import { useCardiacTamponadeDemonstration } from '../../emergency-medicine/demo/useCardiacTamponadeDemonstration';
-import { supportsCardiacTamponadeDemonstration } from '../../emergency-medicine/demo/cardiac-tamponade-demonstration';
-import { useCopdExacerbationDemonstration } from '../../emergency-medicine/demo/useCopdExacerbationDemonstration';
-import { supportsCopdExacerbationDemonstration } from '../../emergency-medicine/demo/copd-exacerbation-demonstration';
-import { useDiabeticKetoacidosisDemonstration } from '../../emergency-medicine/demo/useDiabeticKetoacidosisDemonstration';
-import { supportsDiabeticKetoacidosisDemonstration } from '../../emergency-medicine/demo/diabetic-ketoacidosis-demonstration';
-import { useExertionalHeatStrokeDemonstration } from '../../emergency-medicine/demo/useExertionalHeatStrokeDemonstration';
-import { supportsExertionalHeatStrokeDemonstration } from '../../emergency-medicine/demo/exertional-heat-stroke-demonstration';
-import { useHyperkalemiaWithEcgChangeDemonstration } from '../../emergency-medicine/demo/useHyperkalemiaWithEcgChangeDemonstration';
-import { supportsHyperkalemiaWithEcgChangeDemonstration } from '../../emergency-medicine/demo/hyperkalemia-with-ecg-change-demonstration';
-import { useIntracranialHemorrhageDemonstration } from '../../emergency-medicine/demo/useIntracranialHemorrhageDemonstration';
-import { supportsIntracranialHemorrhageDemonstration } from '../../emergency-medicine/demo/intracranial-hemorrhage-deterioration-demonstration';
-import { useOpioidToxicityDemonstration } from '../../emergency-medicine/demo/useOpioidToxicityDemonstration';
-import { supportsOpioidToxicityDemonstration } from '../../emergency-medicine/demo/opioid-toxicity-demonstration';
-import { usePulmonaryEmbolismDemonstration } from '../../emergency-medicine/demo/usePulmonaryEmbolismDemonstration';
-import { supportsPulmonaryEmbolismDemonstration } from '../../emergency-medicine/demo/pulmonary-embolism-deterioration-demonstration';
-import { useSevereHyponatremiaDemonstration } from '../../emergency-medicine/demo/useSevereHyponatremiaDemonstration';
-import { supportsSevereHyponatremiaDemonstration } from '../../emergency-medicine/demo/severe-hyponatremia-with-seizure-demonstration';
-import { useStemiDemonstration } from '../../emergency-medicine/demo/useStemiDemonstration';
-import { supportsStemiDemonstration } from '../../emergency-medicine/demo/stemi-demonstration';
-import { useTraumaPrimarySurveyDemonstration } from '../../emergency-medicine/demo/useTraumaPrimarySurveyDemonstration';
-import { supportsTraumaPrimarySurveyDemonstration } from '../../emergency-medicine/demo/trauma-primary-survey-demonstration';
-import { useUnstableBradycardiaDemonstration } from '../../emergency-medicine/demo/useUnstableBradycardiaDemonstration';
-import { supportsUnstableBradycardiaDemonstration } from '../../emergency-medicine/demo/unstable-bradycardia-demonstration';
 import { useUnstableNarrowTachycardiaDemonstration as useEmergencyUnstableNarrowTachycardiaDemonstration } from '../../emergency-medicine/demo/useUnstableNarrowTachycardiaDemonstration';
 import { supportsUnstableNarrowTachycardiaDemonstration } from '../../emergency-medicine/demo/unstable-narrow-complex-tachycardia-demonstration';
 import { useObstructivePleuralShockDemonstration } from '../../emergency-medicine/demo/useObstructivePleuralShockDemonstration';
 import { supportsObstructivePleuralShockDemonstration } from '../../emergency-medicine/demo/obstructive-shock-tension-pneumothorax-demonstration';
-import { useStatusEpilepticusDemonstration } from '../../emergency-medicine/demo/useStatusEpilepticusDemonstration';
-import { supportsStatusEpilepticusDemonstration } from '../../emergency-medicine/demo/status-epilepticus-demonstration';
-import { useSepticShockDemonstration } from '../../emergency-medicine/demo/useSepticShockDemonstration';
-import { supportsSepticShockDemonstration } from '../../emergency-medicine/demo/septic-shock-demonstration';
 import { obstructivePleuralShockProgress } from '../../emergency-medicine/obstructive-shock-tension-pneumothorax';
-import { supportsLostContingencyDemonstration } from '../../medical-surgical-nursing/demo/lost-contingency-demonstration';
-import { supportsOxygenTargetScaleDemonstration } from '../../medical-surgical-nursing/demo/oxygen-target-scale-demonstration';
-import { supportsLastKnownWellDemonstration } from '../../medical-surgical-nursing/demo/last-known-well-demonstration';
-import { supportsProxyScaleDemonstration } from '../../medical-surgical-nursing/demo/proxy-scale-demonstration';
-import { supportsQuietPatientDemonstration } from '../../medical-surgical-nursing/demo/quiet-patient-demonstration';
-import { supportsAfferentLimbDemonstration } from '../../medical-surgical-nursing/demo/afferent-limb-demonstration';
-import { supportsPairedReadingDemonstration } from '../../medical-surgical-nursing/demo/paired-reading-demonstration';
-import { supportsCountedRateDemonstration } from '../../medical-surgical-nursing/demo/counted-rate-demonstration';
-import { supportsLowScoreDemonstration } from '../../medical-surgical-nursing/demo/low-score-demonstration';
-import { useDkaResolutionDemonstration } from '../../endocrine-metabolic/demo/useDkaResolutionDemonstration';
-import { supportsDkaResolutionDemonstration } from '../../endocrine-metabolic/demo/dka-resolution-demonstration';
-import { useHhsOsmolalityDemonstration } from '../../endocrine-metabolic/demo/useHhsOsmolalityDemonstration';
-import { supportsHhsOsmolalityDemonstration } from '../../endocrine-metabolic/demo/hhs-osmolality-demonstration';
-import { supportsEasyLabelDemonstration } from '../../oncology/demo/easy-label-demonstration';
-import { supportsNegativeScanDemonstration } from '../../surgery-trauma/demo/negative-scan-demonstration';
-import { supportsRisingRequirementDemonstration } from '../../surgery-trauma/demo/rising-requirement-demonstration';
-import { supportsSilentInteractionDemonstration } from '../../oncology/demo/silent-interaction-demonstration';
-import { supportsTrialRuleDemonstration } from '../../oncology/demo/trial-rule-demonstration';
-import { supportsInheritedUrgencyDemonstration } from '../../oncology/demo/inherited-urgency-demonstration';
-import { supportsLoweringTheCountDemonstration } from '../../oncology/demo/lowering-the-count-demonstration';
-import { supportsRareEarlyMyocarditisDemonstration } from '../../oncology/demo/rare-early-myocarditis-demonstration';
-import { supportsLaboratoryTlsDemonstration } from '../../oncology/demo/laboratory-tls-demonstration';
-import { supportsPrognosisQuestionDemonstration } from '../../oncology/demo/prognosis-question-demonstration';
-import { supportsNormalTestToxicityDemonstration } from '../../oncology/demo/normal-test-toxicity-demonstration';
-import { supportsIncidentalClotDemonstration } from '../../oncology/demo/incidental-clot-demonstration';
-import { supportsDelayedImmuneEventDemonstration } from '../../oncology/demo/delayed-immune-event-demonstration';
-import { useRenalHypernatremiaDemonstration } from '../../renal-electrolyte/demo/useRenalHypernatremiaDemonstration';
-import { useRenalHypocalcemiaDemonstration } from '../../renal-electrolyte/demo/useRenalHypocalcemiaDemonstration';
-import { useRenalHypermagnesemiaDemonstration } from '../../renal-electrolyte/demo/useRenalHypermagnesemiaDemonstration';
-import { useRefeedingDemonstration } from '../../endocrine-metabolic/demo/useRefeedingDemonstration';
-import { supportsRefeedingDemonstration } from '../../endocrine-metabolic/demo/refeeding-demonstration';
-import { useAvpDeficiencyDemonstration } from '../../endocrine-metabolic/demo/useAvpDeficiencyDemonstration';
-import { supportsAvpDeficiencyDemonstration } from '../../endocrine-metabolic/demo/avp-deficiency-demonstration';
-import { supportsHypercalcemiaDemonstration } from '../../endocrine-metabolic/demo/hypercalcemia-demonstration';
 import { WhyPanel } from './WhyPanel';
 import {
   announcementsFor, arterialLineSummary, breathingCircuitSummary, mechanicalPulseFromState, stateSummary,
@@ -530,6 +136,9 @@ import {
   TUTOR_INTRODUCTION_PREFERENCE, TutorIntroduction, TutorPromptCard,
 } from './TutorRegion';
 
+/** What the one registry hook reads when this module supplied no example for the lesson. */
+const IDLE_STEP: ObservedStep = { id: 'idle', narration: '', focus: 'none', progress: 0 };
+
 export interface CockpitProps {
   readonly scenario: Scenario;
   readonly region: RegionProfile;
@@ -541,6 +150,17 @@ export interface CockpitProps {
   readonly onEnd: () => void;
   readonly onReportSource?: () => void;
   readonly onSourceVisibilityChange?: (open: boolean) => void;
+  /**
+   * This module's worked examples, supplied by its route.
+   *
+   * The cockpit used to call one `use<Lesson>Demonstration` hook per lesson, and
+   * a demonstration module carries its narration, so all 242 lessons' scripts
+   * sat in the shared cockpit chunk and a lesson added to one module grew the
+   * download for all sixteen. A module that supplies this keeps its scripts in
+   * its own chunk. The hooks still written out below are the lessons that read
+   * more than the resuscitation snapshot and have not moved yet.
+   */
+  readonly demonstrations?: readonly LessonDemonstration[];
   readonly moduleId?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics' | 'neonatology' | 'endocrine-metabolic' | 'renal-electrolyte' | 'infectious-disease' | 'medical-surgical-nursing' | 'oncology' | 'surgery-trauma';
 }
 
@@ -626,189 +246,16 @@ const DEFAULT_RESUSCITATION = {
 export function Cockpit({
   scenario, region, audio, demonstrating = false, onTakeControls, onEnd, onReportSource,
   onSourceVisibilityChange,
+  demonstrations,
   moduleId = 'anesthesia',
 }: CockpitProps) {
   const session = useSession();
   const reducedMotion = usePrefersReducedMotion();
   // The demonstration performs the same actions through the same path a learner
   // does, so what it shows is the engine and not a recording of it.
-  const hypoglycemiaDemoSupported = supportsHypoglycemiaDemonstration(scenario);
-  const adrenalDemoSupported = supportsAdrenalDemonstration(scenario);
-  const thyroidDemoSupported = supportsThyroidDemonstration(scenario);
-  const myxedemaDemoSupported = supportsMyxedemaDemonstration(scenario);
-  const hypercalcemiaDemoSupported = supportsHypercalcemiaDemonstration(scenario);
-  const hypocalcemiaDemoSupported = supportsHypocalcemiaDemonstration(scenario);
-  const hyponatremiaCorrectionDemoSupported = supportsHyponatremiaCorrectionDemonstration(scenario);
-  const avpDeficiencyDemoSupported = supportsAvpDeficiencyDemonstration(scenario);
-  const refeedingDemoSupported = supportsRefeedingDemonstration(scenario);
-  const perioperativeDiabetesDemoSupported = supportsPerioperativeDiabetesDemonstration(scenario);
-  const renalHyperkalemiaDemoSupported = supportsRenalHyperkalemiaDemonstration(scenario);
-  const renalHypokalemiaDemoSupported = supportsRenalHypokalemiaDemonstration(scenario);
-  const renalHyponatremiaDemoSupported = supportsRenalHyponatremiaDemonstration(scenario);
-  const delayedImmuneEventDemoSupported = supportsDelayedImmuneEventDemonstration(scenario);
-  const incidentalClotDemoSupported = supportsIncidentalClotDemonstration(scenario);
-  const normalTestToxicityDemoSupported = supportsNormalTestToxicityDemonstration(scenario);
-  const prognosisQuestionDemoSupported = supportsPrognosisQuestionDemonstration(scenario);
-  const laboratoryTlsDemoSupported = supportsLaboratoryTlsDemonstration(scenario);
-  const rareEarlyMyocarditisDemoSupported = supportsRareEarlyMyocarditisDemonstration(scenario);
-  const loweringTheCountDemoSupported = supportsLoweringTheCountDemonstration(scenario);
-  const inheritedUrgencyDemoSupported = supportsInheritedUrgencyDemonstration(scenario);
-  const trialRuleDemoSupported = supportsTrialRuleDemonstration(scenario);
-  const silentInteractionDemoSupported = supportsSilentInteractionDemonstration(scenario);
-  const easyLabelDemoSupported = supportsEasyLabelDemonstration(scenario);
-  const negativeScanDemoSupported = supportsNegativeScanDemonstration(scenario);
-  const risingRequirementDemoSupported = supportsRisingRequirementDemonstration(scenario);
-  const lowScoreDemoSupported = supportsLowScoreDemonstration(scenario);
-  const countedRateDemoSupported = supportsCountedRateDemonstration(scenario);
-  const pairedReadingDemoSupported = supportsPairedReadingDemonstration(scenario);
-  const afferentLimbDemoSupported = supportsAfferentLimbDemonstration(scenario);
-  const quietPatientDemoSupported = supportsQuietPatientDemonstration(scenario);
-  const proxyScaleDemoSupported = supportsProxyScaleDemonstration(scenario);
-  const lastKnownWellDemoSupported = supportsLastKnownWellDemonstration(scenario);
-  const oxygenTargetScaleDemoSupported = supportsOxygenTargetScaleDemonstration(scenario);
-  const lostContingencyDemoSupported = supportsLostContingencyDemonstration(scenario);
-  const meningococcalSepsisDemoSupported = supportsMeningococcalSepsisDemonstration(scenario);
-  const obstructedKidneyDemoSupported = supportsObstructedKidneyDemonstration(scenario);
-  const febrileNeutropeniaDemoSupported = supportsFebrileNeutropeniaDemonstration(scenario);
-  const necrotizingInfectionDemoSupported = supportsNecrotizingInfectionDemonstration(scenario);
-  const endocarditisHeartFailureDemoSupported = supportsEndocarditisHeartFailureDemonstration(scenario);
-  const severePneumoniaDemoSupported = supportsSeverePneumoniaDemonstration(scenario);
-  const toxicShockDemoSupported = supportsToxicShockDemonstration(scenario);
-  const possibleSepsisDemoSupported = supportsPossibleSepsisDemonstration(scenario);
-  const septicShockLabelDemoSupported = supportsSepticShockLabelDemonstration(scenario);
-  const meningitisImagingDemoSupported = supportsMeningitisImagingDemonstration(scenario);
-  const nicuHandoffDemoSupported = supportsNicuHandoffDemonstration(scenario);
-  const thermoregulationDemoSupported = supportsThermoregulationDemonstration(scenario);
-  const neonatalSepsisDemoSupported = supportsNeonatalSepsisDemonstration(scenario);
-  const neonatalHypoglycemiaDemoSupported = supportsNeonatalHypoglycemiaDemonstration(scenario);
-  const pretermRespiratoryDemoSupported = supportsPretermRespiratoryDistressDemonstration(scenario);
-  const meconiumTransitionDemoSupported = supportsMeconiumTransitionDemonstration(scenario);
-  const neonatalBradycardiaDemoSupported = supportsNeonatalBradycardiaDemonstration(scenario);
-  const ineffectiveVentilationDemoSupported = supportsIneffectiveVentilationDemonstration(scenario);
-  const neonatalApneaDemoSupported = supportsNeonatalApneaDemonstration(scenario);
-  const termTransitionDemoSupported = supportsTermTransitionDemonstration(scenario);
-  const tensionPneumothoraxDemoSupported = supportsTensionPneumothoraxDemonstration(scenario);
-  const methemoglobinemiaDemoSupported = supportsMethemoglobinemiaDemonstration(scenario);
-  const carbonMonoxideDemoSupported = supportsCarbonMonoxideDemonstration(scenario);
-  const acetaminophenDemoSupported = supportsAcetaminophenDemonstration(scenario);
-  const salicylateDemoSupported = supportsSalicylateDemonstration(scenario);
-  const tricyclicDemoSupported = supportsTricyclicDemonstration(scenario);
-  const betaBlockerDemoSupported = supportsBetaBlockerDemonstration(scenario);
-  const calciumChannelBlockerDemoSupported = supportsCalciumChannelBlockerDemonstration(scenario);
-  const digoxinDemoSupported = supportsDigoxinDemonstration(scenario);
-  const cholinergicDemoSupported = supportsCholinergicDemonstration(scenario);
-  const anticholinergicDemoSupported = supportsAnticholinergicDemonstration(scenario);
-  const serotoninDemoSupported = supportsSerotoninDemonstration(scenario);
-  const sympathomimeticDemoSupported = supportsSympathomimeticDemonstration(scenario);
-  const methanolDemoSupported = supportsMethanolDemonstration(scenario);
-  const delayedLastDemoSupported = supportsDelayedLastDemonstration(scenario);
-  const opioidXylazineDemoSupported = supportsOpioidXylazineDemonstration(scenario);
-  const minorStrokeDemoSupported = supportsMinorStrokeDemonstration(scenario);
-  const basilarLvoDemoSupported = supportsBasilarLvoDemonstration(scenario);
-  const cerebellarIchDemoSupported = supportsCerebellarIchDemonstration(scenario);
-  const asahDemoSupported = supportsAsahDemonstration(scenario);
-  const focalMotorStatusDemoSupported = supportsFocalMotorStatusDemonstration(scenario);
-  const ncseDemoSupported = supportsNcseDemonstration(scenario);
-  const myastheniaDemoSupported = supportsMyastheniaDemonstration(scenario);
-  const gbsDemoSupported = supportsGbsDemonstration(scenario);
-  const meningitisDemoSupported = supportsMeningitisDemonstration(scenario);
-  const encephalitisDemoSupported = supportsEncephalitisDemonstration(scenario);
-  const raisedIcpDemoSupported = supportsRaisedIcpDemonstration(scenario);
-  const herniationDemoSupported = supportsHerniationDemonstration(scenario);
-  const msccDemoSupported = supportsMsccDemonstration(scenario);
-  const deliriumDemoSupported = supportsDeliriumDemonstration(scenario);
-  const dysreflexiaDemoSupported = supportsDysreflexiaDemonstration(scenario);
-  const atonyDemoSupported = supportsAtonyDemonstration(scenario);
-  const maternalSepsisDemoSupported = supportsMaternalSepsisDemonstration(scenario);
-  const concealedAbruptionDemoSupported = supportsConcealedAbruptionDemonstration(scenario);
-  const postpartumPreeclampsiaDemoSupported = supportsPostpartumPreeclampsiaDemonstration(scenario);
-  const eclampsiaDemoSupported = supportsEclampsiaDemonstration(scenario);
-  const afeDemoSupported = supportsAfeDemonstration(scenario);
-  const maternalArrestDemoSupported = supportsMaternalArrestDemonstration(scenario);
-  const shoulderDystociaDemoSupported = supportsShoulderDystociaDemonstration(scenario);
-  const cordProlapseDemoSupported = supportsCordProlapseDemonstration(scenario);
-  const uterineRuptureDemoSupported = supportsUterineRuptureDemonstration(scenario);
-  const magnesiumToxicityDemoSupported = supportsMagnesiumToxicityDemonstration(scenario);
-  const highNeuraxialDemoSupported = supportsHighNeuraxialDemonstration(scenario);
-  const failedIntubationDemoSupported = supportsFailedIntubationDemonstration(scenario);
-  const maternalNeonatalHandoffDemoSupported = supportsMaternalNeonatalHandoffDemonstration(scenario);
-  const oxytocinTachysystoleDemoSupported = supportsOxytocinTachysystoleDemonstration(scenario);
-  const acuteSevereAsthmaDemoSupported = supportsAcuteSevereAsthmaDemonstration(scenario);
-  const copdTransitionDemoSupported = supportsCopdTransitionDemonstration(scenario);
-  const capHypoxemiaDemoSupported = supportsCapHypoxemiaDemonstration(scenario);
-  const postPeDyspneaDemoSupported = supportsPostPeDyspneaDemonstration(scenario);
-  const apeSupportDemoSupported = supportsApeSupportDemonstration(scenario);
-  const postTensionPneumothoraxDemoSupported = supportsPostTensionPneumothoraxDemonstration(scenario);
-  const largePleuralEffusionDemoSupported = supportsLargePleuralEffusionDemonstration(scenario);
-  const bronchiectasisMucusPluggingDemoSupported = supportsBronchiectasisMucusPluggingDemonstration(scenario);
-  const chronicOpioidHypoventilationDemoSupported = supportsChronicOpioidHypoventilationDemonstration(scenario);
-  const neuromuscularRespiratoryFailureDemoSupported = supportsNeuromuscularRespiratoryFailureDemonstration(scenario);
-  const obesityHypoventilationDemoSupported = supportsObesityHypoventilationDemonstration(scenario);
-  const nivSelectionDemoSupported = supportsNoninvasiveVentilationSelectionDemonstration(scenario);
-  const highFlowOxygenDemoSupported = supportsHighFlowOxygenEscalationDemonstration(scenario);
-  const oxygenDeviceFailureDemoSupported = supportsOxygenDeviceFailureDemonstration(scenario);
-  const acuteTracheostomyObstructionDemoSupported = supportsAcuteTracheostomyObstructionDemonstration(scenario);
-  const pediatricRespiratoryDistressDemoSupported = supportsPediatricRespiratoryDistressDemonstration(scenario);
-  const bronchiolitisDemoSupported = supportsBronchiolitisDemonstration(scenario);
-  const croupDemoSupported = supportsCroupDemonstration(scenario);
-  const pediatricStatusAsthmaticusDemoSupported = supportsPediatricStatusAsthmaticusDemonstration(scenario);
-  const pediatricSepsisDemoSupported = supportsPediatricSepsisDemonstration(scenario);
-  const pediatricSepticShockDemoSupported = supportsPediatricSepticShockDemonstration(scenario);
-  const pediatricDehydrationDemoSupported = supportsPediatricDehydrationDemonstration(scenario);
-  const pediatricDkaDemoSupported = supportsPediatricDkaDemonstration(scenario);
-  const pediatricHypoglycemicSeizureDemoSupported = supportsPediatricHypoglycemicSeizureDemonstration(scenario);
-  const pediatricFebrileSeizureDemoSupported = supportsPediatricFebrileSeizureDemonstration(scenario);
-  const pediatricStatusEpilepticusDemoSupported = supportsPediatricStatusEpilepticusDemonstration(scenario);
-  const pediatricAnaphylaxisDemoSupported = supportsPediatricAnaphylaxisDemonstration(scenario);
-  const pediatricSvtDemoSupported = supportsPediatricSvtDemonstration(scenario);
-  const pediatricBradycardicArrestDemoSupported = supportsPediatricBradycardicArrestDemonstration(scenario);
-  const pediatricFbaoDemoSupported = supportsPediatricFbaoDemonstration(scenario);
-  const pediatricInjurySafeguardingDemoSupported = supportsPediatricInjurySafeguardingDemonstration(scenario);
-  const stableChestPainDemoSupported = supportsStableChestPainDemonstration(scenario);
-  const clinicStemiDemoSupported = supportsClinicStemiDemonstration(scenario);
-  const nstemiRiskDemoSupported = supportsNstemiRiskDemonstration(scenario);
-  const heartFailureDemoSupported = supportsHeartFailureDemonstration(scenario);
-  const afRvrDemoSupported = supportsAfRvrDemonstration(scenario);
-  const postInfarctionShockDemoSupported = supportsPostInfarctionShockDemonstration(scenario);
-  const stableNarrowTachycardiaDemoSupported = supportsStableNarrowTachycardiaDemonstration(scenario);
-  const stableWideTachycardiaDemoSupported = supportsStableWideTachycardiaDemonstration(scenario);
-  const symptomaticBradycardiaDemoSupported = supportsSymptomaticBradycardiaDemonstration(scenario);
-  const completeHeartBlockDemoSupported = supportsCompleteHeartBlockDemonstration(scenario);
-  const torsadesDemoSupported = supportsTorsadesDemonstration(scenario);
-  const hyperkalemicConductionDemoSupported = supportsHyperkalemicConductionDemonstration(scenario);
-  const pericardialTamponadeDemoSupported = supportsPericardialTamponadeDemonstration(scenario);
-  const rightVentricularInfarctionDemoSupported = supportsRightVentricularInfarctionDemonstration(scenario);
-  const hypertensiveEmergencyDemoSupported = supportsHypertensiveEmergencyDemonstration(scenario);
-  const pacemakerCaptureFailureDemoSupported = supportsPacemakerCaptureFailureDemonstration(scenario);
-  const transcutaneousPacingCaptureDemoSupported = supportsTranscutaneousPacingCaptureDemonstration(scenario);
-  const septicShockResuscitationDemoSupported = supportsSepticShockResuscitationDemonstration(scenario);
-  const cardiogenicShockDemoSupported = supportsCardiogenicShockDemonstration(scenario);
-  const mixedShockDemoSupported = supportsMixedShockDemonstration(scenario);
-  const rvFailureDemoSupported = supportsRvFailureDemonstration(scenario);
-  const massivePeDemoSupported = supportsMassivePeDemonstration(scenario);
-  const autoPeepDemoSupported = supportsAutoPeepDemonstration(scenario);
-  const dyssynchronyDemoSupported = supportsDyssynchronyDemonstration(scenario);
-  const mucusPluggingDemoSupported = supportsMucusPluggingDemonstration(scenario);
-  const escalatingHypoxemiaDemoSupported = supportsEscalatingHypoxemiaDemonstration(scenario);
-  const unplannedExtubationDemoSupported = supportsUnplannedExtubationDemonstration(scenario);
-  const circuitDisconnectionDemoSupported = supportsCircuitDisconnectionDemonstration(scenario);
-  const postIntubationHypotensionDemoSupported = supportsPostIntubationHypotensionDemonstration(scenario);
-  const severeAcidemiaDemoSupported = supportsSevereAcidemiaDemonstration(scenario);
-  const delayedVasopressorDeliveryDemoSupported = supportsDelayedVasopressorDeliveryDemonstration(scenario);
-  const intracranialHypertensionDemoSupported = supportsIntracranialHypertensionDemonstration(scenario);
-  const spontaneousBreathingTrialDemoSupported = supportsSpontaneousBreathingTrialDemonstration(scenario);
+  // The lesson this module's registry recognises, if it supplied one.
+  const registryDemo = demonstrations?.find((entry) => entry.supports(scenario));
   const criticalCareStatusEpilepticusDemoSupported = supportsCriticalCareStatusEpilepticusDemonstration(scenario);
-  const postArrestTemperatureDemoSupported = supportsTargetedTemperatureManagementDemonstration(scenario);
-  const upperGiHemorrhageDemoSupported = supportsUpperGiHemorrhageDemonstration(scenario);
-  const akiFluidOverloadDemoSupported = supportsAkiFluidOverloadDemonstration(scenario);
-  const tubeMigrationDemoSupported = supportsTubeMigrationDemonstration(scenario);
-  const icuHandoffDemoSupported = supportsIcuHandoffDemonstration(scenario);
-  const pulseOximeterArtifactDemoSupported = supportsPulseOximeterArtifactDemonstration(scenario);
-  const ardsLungProtectiveDemoSupported = supportsArdsLungProtectiveDemonstration(scenario);
-  const acuteAorticSyndromeDemoSupported = supportsAcuteAorticSyndromeDemonstration(scenario);
-  const acuteIschemicStrokeDemoSupported = supportsAcuteIschemicStrokeDemonstration(scenario);
-  const hemorrhagicShockDemoSupported = supportsHemorrhagicShockDemonstration(scenario);
-  const undifferentiatedShockDemoSupported = supportsUndifferentiatedShockDemonstration(scenario);
   const peaArrestDemoSupported = supportsPeaArrestDemonstration(scenario);
   const persistentVfDemoSupported = supportsPersistentVfArrestDemonstration(scenario);
   const rapidDesaturationDemoSupported = supportsRapidDesaturationDemonstration(scenario);
@@ -849,30 +296,8 @@ export function Cockpit({
   const aspirationRiskDemoSupported = supportsAspirationRiskDemonstration(scenario);
   const delayedEmergenceDemoSupported = supportsDelayedEmergenceDemonstration(scenario);
   const extubationReadinessDemoSupported = supportsExtubationReadinessDemonstration(scenario);
-  const acutePulmonaryEdemaDemoSupported = supportsAcutePulmonaryEdemaDemonstration(scenario);
-  const adultAsthmaDemoSupported = supportsAdultAsthmaDemonstration(scenario);
-  const emergencyAnaphylaxisDemoSupported = supportsEmergencyAnaphylaxisDemonstration(scenario);
-  const cardiacTamponadeDemoSupported = supportsCardiacTamponadeDemonstration(scenario);
-  const copdExacerbationDemoSupported = supportsCopdExacerbationDemonstration(scenario);
-  const diabeticKetoacidosisDemoSupported = supportsDiabeticKetoacidosisDemonstration(scenario);
-  const exertionalHeatStrokeDemoSupported = supportsExertionalHeatStrokeDemonstration(scenario);
-  const hyperkalemiaEcgDemoSupported = supportsHyperkalemiaWithEcgChangeDemonstration(scenario);
-  const intracranialHemorrhageDemoSupported = supportsIntracranialHemorrhageDemonstration(scenario);
-  const opioidToxicityDemoSupported = supportsOpioidToxicityDemonstration(scenario);
-  const pulmonaryEmbolismDemoSupported = supportsPulmonaryEmbolismDemonstration(scenario);
-  const severeHyponatremiaDemoSupported = supportsSevereHyponatremiaDemonstration(scenario);
-  const emergencyStemiDemoSupported = supportsStemiDemonstration(scenario);
-  const traumaPrimarySurveyDemoSupported = supportsTraumaPrimarySurveyDemonstration(scenario);
-  const unstableBradycardiaDemoSupported = supportsUnstableBradycardiaDemonstration(scenario);
   const emergencySvtDemoSupported = supportsUnstableNarrowTachycardiaDemonstration(scenario);
   const obstructivePleuralShockDemoSupported = supportsObstructivePleuralShockDemonstration(scenario);
-  const statusEpilepticusDemoSupported = supportsStatusEpilepticusDemonstration(scenario);
-  const emergencySepticShockDemoSupported = supportsSepticShockDemonstration(scenario);
-  const dkaResolutionDemoSupported = supportsDkaResolutionDemonstration(scenario);
-  const hhsOsmolalityDemoSupported = supportsHhsOsmolalityDemonstration(scenario);
-  const renalHypernatremiaDemoSupported = supportsRenalHypernatremiaDemonstration(scenario);
-  const renalHypocalcemiaDemoSupported = supportsRenalHypocalcemiaDemonstration(scenario);
-  const renalHypermagnesemiaDemoSupported = supportsRenalHypermagnesemiaDemonstration(scenario);
 
   /**
    * The two facts the rest of this component keeps asking about, named once.
@@ -888,144 +313,8 @@ export function Cockpit({
    * that four of the sites already shared, and `scenarioDemoSupported` adds the
    * four older lessons that only the induction-demonstration guard excluded.
    */
-  const observedStateDemoSupported = hypercalcemiaDemoSupported || hypocalcemiaDemoSupported || hyponatremiaCorrectionDemoSupported || avpDeficiencyDemoSupported || refeedingDemoSupported || perioperativeDiabetesDemoSupported || renalHyperkalemiaDemoSupported || renalHypokalemiaDemoSupported || renalHyponatremiaDemoSupported || renalHypernatremiaDemoSupported || renalHypocalcemiaDemoSupported || renalHypermagnesemiaDemoSupported || delayedImmuneEventDemoSupported || incidentalClotDemoSupported
-    || normalTestToxicityDemoSupported || prognosisQuestionDemoSupported
-    || laboratoryTlsDemoSupported || rareEarlyMyocarditisDemoSupported
-    || loweringTheCountDemoSupported || inheritedUrgencyDemoSupported
-    || trialRuleDemoSupported || silentInteractionDemoSupported || easyLabelDemoSupported
-    || negativeScanDemoSupported || risingRequirementDemoSupported
-    || dkaResolutionDemoSupported || hhsOsmolalityDemoSupported || lowScoreDemoSupported || countedRateDemoSupported || pairedReadingDemoSupported || afferentLimbDemoSupported || quietPatientDemoSupported || proxyScaleDemoSupported || lastKnownWellDemoSupported || oxygenTargetScaleDemoSupported || lostContingencyDemoSupported
-    || meningococcalSepsisDemoSupported || obstructedKidneyDemoSupported
-    || febrileNeutropeniaDemoSupported
-    || necrotizingInfectionDemoSupported
-    || endocarditisHeartFailureDemoSupported
-    || severePneumoniaDemoSupported
-    || toxicShockDemoSupported
-    || possibleSepsisDemoSupported
-    || septicShockLabelDemoSupported
-    || meningitisImagingDemoSupported
-    || tensionPneumothoraxDemoSupported
-    || methemoglobinemiaDemoSupported
-    || carbonMonoxideDemoSupported
-    || acetaminophenDemoSupported
-    || salicylateDemoSupported
-    || tricyclicDemoSupported
-    || betaBlockerDemoSupported
-    || calciumChannelBlockerDemoSupported
-    || digoxinDemoSupported
-    || cholinergicDemoSupported
-    || anticholinergicDemoSupported
-    || serotoninDemoSupported
-    || sympathomimeticDemoSupported
-    || methanolDemoSupported
-    || delayedLastDemoSupported
-    || opioidXylazineDemoSupported
-    || minorStrokeDemoSupported
-    || basilarLvoDemoSupported
-    || cerebellarIchDemoSupported
-    || asahDemoSupported
-    || focalMotorStatusDemoSupported
-    || ncseDemoSupported
-    || myastheniaDemoSupported
-    || gbsDemoSupported
-    || meningitisDemoSupported
-    || encephalitisDemoSupported
-    || raisedIcpDemoSupported
-    || herniationDemoSupported
-    || msccDemoSupported
-    || deliriumDemoSupported
-    || dysreflexiaDemoSupported
-    || atonyDemoSupported
-    || maternalSepsisDemoSupported
-    || concealedAbruptionDemoSupported
-    || postpartumPreeclampsiaDemoSupported
-    || eclampsiaDemoSupported
-    || afeDemoSupported
-    || maternalArrestDemoSupported
-    || shoulderDystociaDemoSupported
-    || cordProlapseDemoSupported
-    || uterineRuptureDemoSupported
-    || magnesiumToxicityDemoSupported
-    || highNeuraxialDemoSupported
-    || failedIntubationDemoSupported
-    || maternalNeonatalHandoffDemoSupported
-    || oxytocinTachysystoleDemoSupported
-    || acuteSevereAsthmaDemoSupported
-    || copdTransitionDemoSupported
-    || capHypoxemiaDemoSupported
-    || postPeDyspneaDemoSupported
-    || apeSupportDemoSupported
-    || postTensionPneumothoraxDemoSupported
-    || largePleuralEffusionDemoSupported
-    || bronchiectasisMucusPluggingDemoSupported
-    || chronicOpioidHypoventilationDemoSupported
-    || neuromuscularRespiratoryFailureDemoSupported
-    || obesityHypoventilationDemoSupported
-    || nivSelectionDemoSupported
-    || highFlowOxygenDemoSupported
-    || oxygenDeviceFailureDemoSupported
-    || acuteTracheostomyObstructionDemoSupported
-    || pediatricRespiratoryDistressDemoSupported
-    || bronchiolitisDemoSupported
-    || croupDemoSupported
-    || pediatricStatusAsthmaticusDemoSupported
-    || pediatricSepsisDemoSupported
-    || pediatricSepticShockDemoSupported
-    || pediatricDehydrationDemoSupported
-    || pediatricDkaDemoSupported
-    || pediatricHypoglycemicSeizureDemoSupported
-    || pediatricFebrileSeizureDemoSupported
-    || pediatricStatusEpilepticusDemoSupported
-    || pediatricAnaphylaxisDemoSupported
-    || pediatricSvtDemoSupported
-    || pediatricBradycardicArrestDemoSupported
-    || pediatricFbaoDemoSupported
-    || pediatricInjurySafeguardingDemoSupported
-    || stableChestPainDemoSupported
-    || clinicStemiDemoSupported
-    || nstemiRiskDemoSupported
-    || heartFailureDemoSupported
-    || afRvrDemoSupported
-    || postInfarctionShockDemoSupported
-    || stableNarrowTachycardiaDemoSupported
-    || stableWideTachycardiaDemoSupported
-    || symptomaticBradycardiaDemoSupported
-    || completeHeartBlockDemoSupported
-    || torsadesDemoSupported
-    || hyperkalemicConductionDemoSupported
-    || pericardialTamponadeDemoSupported
-    || rightVentricularInfarctionDemoSupported
-    || hypertensiveEmergencyDemoSupported
-    || pacemakerCaptureFailureDemoSupported
-    || transcutaneousPacingCaptureDemoSupported
-    || septicShockResuscitationDemoSupported
-    || cardiogenicShockDemoSupported
-    || mixedShockDemoSupported
-    || rvFailureDemoSupported
-    || massivePeDemoSupported
-    || autoPeepDemoSupported
-    || dyssynchronyDemoSupported
-    || mucusPluggingDemoSupported
-    || escalatingHypoxemiaDemoSupported
-    || unplannedExtubationDemoSupported
-    || circuitDisconnectionDemoSupported
-    || postIntubationHypotensionDemoSupported
-    || severeAcidemiaDemoSupported
-    || delayedVasopressorDeliveryDemoSupported
-    || intracranialHypertensionDemoSupported
-    || spontaneousBreathingTrialDemoSupported
+  const observedStateDemoSupported = !!registryDemo
     || criticalCareStatusEpilepticusDemoSupported
-    || postArrestTemperatureDemoSupported
-    || upperGiHemorrhageDemoSupported
-    || akiFluidOverloadDemoSupported
-    || tubeMigrationDemoSupported
-    || icuHandoffDemoSupported
-    || pulseOximeterArtifactDemoSupported
-    || ardsLungProtectiveDemoSupported
-    || acuteAorticSyndromeDemoSupported
-    || acuteIschemicStrokeDemoSupported
-    || hemorrhagicShockDemoSupported
-    || undifferentiatedShockDemoSupported
     || peaArrestDemoSupported
     || persistentVfDemoSupported
     || rapidDesaturationDemoSupported
@@ -1066,422 +355,19 @@ export function Cockpit({
     || aspirationRiskDemoSupported
     || delayedEmergenceDemoSupported
     || extubationReadinessDemoSupported
-    || acutePulmonaryEdemaDemoSupported
-    || adultAsthmaDemoSupported
-    || emergencyAnaphylaxisDemoSupported
-    || cardiacTamponadeDemoSupported
-    || copdExacerbationDemoSupported
-    || diabeticKetoacidosisDemoSupported
-    || exertionalHeatStrokeDemoSupported
-    || hyperkalemiaEcgDemoSupported
-    || intracranialHemorrhageDemoSupported
-    || opioidToxicityDemoSupported
-    || pulmonaryEmbolismDemoSupported
-    || severeHyponatremiaDemoSupported
-    || emergencyStemiDemoSupported
-    || traumaPrimarySurveyDemoSupported
-    || unstableBradycardiaDemoSupported
     || emergencySvtDemoSupported
-    || obstructivePleuralShockDemoSupported
-    || statusEpilepticusDemoSupported
-    || emergencySepticShockDemoSupported
-    || termTransitionDemoSupported
-    || neonatalApneaDemoSupported
-    || ineffectiveVentilationDemoSupported
-    || neonatalBradycardiaDemoSupported
-    || meconiumTransitionDemoSupported
-    || pretermRespiratoryDemoSupported
-    || neonatalHypoglycemiaDemoSupported
-    || neonatalSepsisDemoSupported
-    || thermoregulationDemoSupported
-    || nicuHandoffDemoSupported;
-  const scenarioDemoSupported = hypoglycemiaDemoSupported || adrenalDemoSupported
-    || thyroidDemoSupported || myxedemaDemoSupported || observedStateDemoSupported;
+    || obstructivePleuralShockDemoSupported;
+  const scenarioDemoSupported = observedStateDemoSupported;
   const inductionDemonstration = useDemonstration({
     active: demonstrating && !scenarioDemoSupported,
     tick: session.tick,
     act: session.act,
     onFinished: () => onTakeControls?.(),
   });
-  const hypoglycemiaDemonstration = useHypoglycemiaDemonstration({
-    active: demonstrating && hypoglycemiaDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.severeHypoglycemia,
-    pause: session.pause, play: session.play,
-    act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const adrenalDemonstration = useAdrenalDemonstration({
-    active: demonstrating && adrenalDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.adrenalCrisis,
-    pause: session.pause, play: session.play,
-    act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const thyroidDemonstration = useThyroidDemonstration({
-    active: demonstrating && thyroidDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.thyroidStorm,
-    pause: session.pause, play: session.play,
-    act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const myxedemaDemonstration = useMyxedemaDemonstration({
-    active: demonstrating && myxedemaDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.myxedema,
-    pause: session.pause, play: session.play,
-    act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const hypercalcemiaDemonstration = useHypercalcemiaDemonstration({
-    active: demonstrating && hypercalcemiaDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.hypercalcemia,
-    pause: session.pause, play: session.play,
-    act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const hypocalcemiaDemonstration = useHypocalcemiaDemonstration({
-    active: demonstrating && hypocalcemiaDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.hypocalcemia,
-    pause: session.pause, play: session.play,
-    act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const hyponatremiaCorrectionDemonstration = useHyponatremiaCorrectionDemonstration({
-    active: demonstrating && hyponatremiaCorrectionDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.hyponatremiaCorrection,
-    pause: session.pause, play: session.play,
-    act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const avpDeficiencyDemonstration = useAvpDeficiencyDemonstration({
-    active: demonstrating && avpDeficiencyDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.avpDeficiency,
-    pause: session.pause, play: session.play,
-    act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const refeedingDemonstration = useRefeedingDemonstration({
-    active: demonstrating && refeedingDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.refeeding,
-    pause: session.pause, play: session.play,
-    act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const perioperativeDiabetesDemonstration = usePerioperativeDiabetesDemonstration({
-    active: demonstrating && perioperativeDiabetesDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.perioperativeDiabetes,
-    pause: session.pause, play: session.play,
-    act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const renalHyperkalemiaDemonstration = useRenalHyperkalemiaDemonstration({
-    active: demonstrating && renalHyperkalemiaDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyperkalemia,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const renalHypokalemiaDemonstration = useRenalHypokalemiaDemonstration({
-    active: demonstrating && renalHypokalemiaDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypokalemia,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const renalHyponatremiaDemonstration = useRenalHyponatremiaDemonstration({
-    active: demonstrating && renalHyponatremiaDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHyponatremia,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const nicuHandoffDemonstration = useNicuHandoffDemonstration({
-    active: demonstrating && nicuHandoffDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neonatologyNicuHandoffAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const thermoregulationDemonstration = useThermoregulationDemonstration({
-    active: demonstrating && thermoregulationDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neonatologyThermoregulationAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const neonatalSepsisDemonstration = useNeonatalSepsisDemonstration({
-    active: demonstrating && neonatalSepsisDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neonatologySepsisAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const neonatalHypoglycemiaDemonstration = useNeonatalHypoglycemiaDemonstration({
-    active: demonstrating && neonatalHypoglycemiaDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neonatologyHypoglycemiaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const pretermRespiratoryDemonstration = usePretermRespiratoryDistressDemonstration({
-    active: demonstrating && pretermRespiratoryDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neonatologyPretermRespiratoryDistressAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const meconiumTransitionDemonstration = useMeconiumTransitionDemonstration({
-    active: demonstrating && meconiumTransitionDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neonatologyMeconiumTransitionAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const neonatalBradycardiaDemonstration = useNeonatalBradycardiaDemonstration({
-    active: demonstrating && neonatalBradycardiaDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neonatologyBradycardiaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const ineffectiveVentilationDemonstration = useIneffectiveVentilationDemonstration({
-    active: demonstrating && ineffectiveVentilationDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neonatologyIneffectiveVentilationAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const neonatalApneaDemonstration = useNeonatalApneaDemonstration({
-    active: demonstrating && neonatalApneaDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neonatologyApneaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const termTransitionDemonstration = useTermTransitionDemonstration({
-    active: demonstrating && termTransitionDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neonatologyTermTransitionAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const chronicOpioidHypoventilationDemonstration = useChronicOpioidHypoventilationDemonstration({
-    active: demonstrating && chronicOpioidHypoventilationDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.chronicOpioidHypoventilationAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const pediatricStatusAsthmaticusDemonstration = usePediatricStatusAsthmaticusDemonstration({
-    active: demonstrating && pediatricStatusAsthmaticusDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.pediatricStatusAsthmaticusAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const stableWideTachycardiaDemonstration = useStableWideTachycardiaDemonstration({
-    active: demonstrating && stableWideTachycardiaDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.stableWideTachycardiaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const symptomaticBradycardiaDemonstration = useSymptomaticBradycardiaDemonstration({
-    active: demonstrating && symptomaticBradycardiaDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.symptomaticBradycardiaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const completeHeartBlockDemonstration = useCompleteHeartBlockDemonstration({
-    active: demonstrating && completeHeartBlockDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.completeHeartBlockAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const torsadesDemonstration = useTorsadesDemonstration({
-    active: demonstrating && torsadesDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.torsadesAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const hyperkalemicConductionDemonstration = useHyperkalemicConductionDemonstration({
-    active: demonstrating && hyperkalemicConductionDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.hyperkalemicConductionAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const pericardialTamponadeDemonstration = usePericardialTamponadeDemonstration({
-    active: demonstrating && pericardialTamponadeDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.pericardialTamponadeAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const rightVentricularInfarctionDemonstration = useRightVentricularInfarctionDemonstration({
-    active: demonstrating && rightVentricularInfarctionDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.rightVentricularInfarctionAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const hypertensiveEmergencyDemonstration = useHypertensiveEmergencyDemonstration({
-    active: demonstrating && hypertensiveEmergencyDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.hypertensiveEmergencyAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const pacemakerCaptureFailureDemonstration = usePacemakerCaptureFailureDemonstration({
-    active: demonstrating && pacemakerCaptureFailureDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.pacemakerCaptureFailureAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const transcutaneousPacingCaptureDemonstration = useTranscutaneousPacingCaptureDemonstration({
-    active: demonstrating && transcutaneousPacingCaptureDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.transcutaneousPacingCaptureAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const septicShockResuscitationDemonstration = useSepticShockResuscitationDemonstration({
-    active: demonstrating && septicShockResuscitationDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.septicShockResuscitationAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const cardiogenicShockDemonstration = useCardiogenicShockDemonstration({
-    active: demonstrating && cardiogenicShockDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.cardiogenicShockAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const mixedShockDemonstration = useMixedShockDemonstration({
-    active: demonstrating && mixedShockDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.mixedShockAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const rvFailureDemonstration = useRvFailureDemonstration({
-    active: demonstrating && rvFailureDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.rightVentricularFailureAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const massivePeDemonstration = useMassivePeDemonstration({
-    active: demonstrating && massivePeDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.massivePulmonaryEmbolismAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const autoPeepDemonstration = useAutoPeepDemonstration({
-    active: demonstrating && autoPeepDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.autoPeepAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const dyssynchronyDemonstration = useDyssynchronyDemonstration({
-    active: demonstrating && dyssynchronyDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.ventilatorDyssynchronyAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const mucusPluggingDemonstration = useMucusPluggingDemonstration({
-    active: demonstrating && mucusPluggingDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.mucusPluggingAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const escalatingHypoxemiaDemonstration = useEscalatingHypoxemiaDemonstration({
-    active: demonstrating && escalatingHypoxemiaDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.escalatingHypoxemiaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const unplannedExtubationDemonstration = useUnplannedExtubationDemonstration({
-    active: demonstrating && unplannedExtubationDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.unplannedExtubationAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const circuitDisconnectionDemonstration = useCircuitDisconnectionDemonstration({
-    active: demonstrating && circuitDisconnectionDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.ventilatorCircuitDisconnectionAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const postIntubationHypotensionDemonstration = usePostIntubationHypotensionDemonstration({
-    active: demonstrating && postIntubationHypotensionDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.postIntubationHypotensionAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const severeAcidemiaDemonstration = useSevereAcidemiaDemonstration({
-    active: demonstrating && severeAcidemiaDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.severeAcidemiaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const delayedVasopressorDeliveryDemonstration = useDelayedVasopressorDeliveryDemonstration({
-    active: demonstrating && delayedVasopressorDeliveryDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.delayedVasopressorDeliveryAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const intracranialHypertensionDemonstration = useIntracranialHypertensionDemonstration({
-    active: demonstrating && intracranialHypertensionDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.intracranialHypertensionAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const spontaneousBreathingTrialDemonstration = useSpontaneousBreathingTrialDemonstration({
-    active: demonstrating && spontaneousBreathingTrialDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.spontaneousBreathingTrialAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
   const criticalCareStatusEpilepticusDemonstration = useCriticalCareStatusEpilepticusDemonstration({
     active: demonstrating && criticalCareStatusEpilepticusDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.criticalCareStatusEpilepticusAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const postArrestTemperatureDemonstration = useTargetedTemperatureManagementDemonstration({
-    active: demonstrating && postArrestTemperatureDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.postArrestTemperatureAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const upperGiHemorrhageDemonstration = useUpperGiHemorrhageDemonstration({
-    active: demonstrating && upperGiHemorrhageDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.upperGiHemorrhageAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const akiFluidOverloadDemonstration = useAkiFluidOverloadDemonstration({
-    active: demonstrating && akiFluidOverloadDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.akiFluidOverloadAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const tubeMigrationDemonstration = useTubeMigrationDemonstration({
-    active: demonstrating && tubeMigrationDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.endotrachealTubeMigrationAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const icuHandoffDemonstration = useIcuHandoffDemonstration({
-    active: demonstrating && icuHandoffDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.icuHiddenDeteriorationHandoffAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const pulseOximeterArtifactDemonstration = usePulseOximeterArtifactDemonstration({
-    active: demonstrating && pulseOximeterArtifactDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.pulseOximeterArtifactAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const ardsLungProtectiveDemonstration = useArdsLungProtectiveDemonstration({
-    active: demonstrating && ardsLungProtectiveDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.ardsLungProtectiveAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const acuteAorticSyndromeDemonstration = useAcuteAorticSyndromeDemonstration({
-    active: demonstrating && acuteAorticSyndromeDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.acuteAorticSyndromeAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const acuteIschemicStrokeDemonstration = useAcuteIschemicStrokeDemonstration({
-    active: demonstrating && acuteIschemicStrokeDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.acuteIschemicStrokeAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const acutePulmonaryEdemaDemonstration = useAcutePulmonaryEdemaDemonstration({
-    active: demonstrating && acutePulmonaryEdemaDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.acutePulmonaryEdemaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const emergencySepticShockDemonstration = useSepticShockDemonstration({
-    active: demonstrating && emergencySepticShockDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.septicShockAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const statusEpilepticusDemonstration = useStatusEpilepticusDemonstration({
-    active: demonstrating && statusEpilepticusDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.statusEpilepticusAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const obstructivePleuralShockDemonstration = useObstructivePleuralShockDemonstration({
@@ -1494,96 +380,6 @@ export function Cockpit({
     active: demonstrating && emergencySvtDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.unstableNarrowTachycardiaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const unstableBradycardiaDemonstration = useUnstableBradycardiaDemonstration({
-    active: demonstrating && unstableBradycardiaDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.unstableBradycardiaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const traumaPrimarySurveyDemonstration = useTraumaPrimarySurveyDemonstration({
-    active: demonstrating && traumaPrimarySurveyDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.traumaPrimarySurveyAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const emergencyStemiDemonstration = useStemiDemonstration({
-    active: demonstrating && emergencyStemiDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.stemiAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const severeHyponatremiaDemonstration = useSevereHyponatremiaDemonstration({
-    active: demonstrating && severeHyponatremiaDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.hyponatremiaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const pulmonaryEmbolismDemonstration = usePulmonaryEmbolismDemonstration({
-    active: demonstrating && pulmonaryEmbolismDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.pulmonaryEmbolismAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const opioidToxicityDemonstration = useOpioidToxicityDemonstration({
-    active: demonstrating && opioidToxicityDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.opioidToxicityAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const intracranialHemorrhageDemonstration = useIntracranialHemorrhageDemonstration({
-    active: demonstrating && intracranialHemorrhageDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.intracranialHemorrhageAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const hyperkalemiaEcgDemonstration = useHyperkalemiaWithEcgChangeDemonstration({
-    active: demonstrating && hyperkalemiaEcgDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.hyperkalemiaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const exertionalHeatStrokeDemonstration = useExertionalHeatStrokeDemonstration({
-    active: demonstrating && exertionalHeatStrokeDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.heatStrokeAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const diabeticKetoacidosisDemonstration = useDiabeticKetoacidosisDemonstration({
-    active: demonstrating && diabeticKetoacidosisDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.diabeticKetoacidosisAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const copdExacerbationDemonstration = useCopdExacerbationDemonstration({
-    active: demonstrating && copdExacerbationDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.copdExacerbationAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const cardiacTamponadeDemonstration = useCardiacTamponadeDemonstration({
-    active: demonstrating && cardiacTamponadeDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.cardiacTamponadeAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const emergencyAnaphylaxisDemonstration = useEmergencyAnaphylaxisDemonstration({
-    active: demonstrating && emergencyAnaphylaxisDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.emergencyAnaphylaxisAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const adultAsthmaDemonstration = useAdultAsthmaDemonstration({
-    active: demonstrating && adultAsthmaDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.adultAsthmaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const undifferentiatedShockDemonstration = useUndifferentiatedShockDemonstration({
-    active: demonstrating && undifferentiatedShockDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.undifferentiatedShockAssessment,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   const peaArrestDemonstration = usePeaArrestDemonstration({
@@ -2289,769 +1085,16 @@ export function Cockpit({
     patient: session.equipment?.resuscitation,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
-  const hemorrhagicShockDemonstration = useHemorrhagicShockDemonstration({
-    active: demonstrating && hemorrhagicShockDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.hemorrhagicShockAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const stableNarrowTachycardiaDemonstration = useStableNarrowTachycardiaDemonstration({
-    active: demonstrating && stableNarrowTachycardiaDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.stableNarrowTachycardiaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const postInfarctionShockDemonstration = usePostInfarctionShockDemonstration({
-    active: demonstrating && postInfarctionShockDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.postInfarctionShockAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const afRvrDemonstration = useAfRvrDemonstration({
-    active: demonstrating && afRvrDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.afRvrAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const heartFailureDemonstration = useHeartFailureDemonstration({
-    active: demonstrating && heartFailureDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.heartFailureAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const nstemiRiskDemonstration = useNstemiRiskDemonstration({
-    active: demonstrating && nstemiRiskDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.nstemiRiskAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const clinicStemiDemonstration = useClinicStemiDemonstration({
-    active: demonstrating && clinicStemiDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.clinicStemiAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const stableChestPainDemonstration = useStableChestPainDemonstration({
-    active: demonstrating && stableChestPainDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.stableChestPainAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const pediatricInjurySafeguardingDemonstration = usePediatricInjurySafeguardingDemonstration({
-    active: demonstrating && pediatricInjurySafeguardingDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.pediatricInjurySafeguardingAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const pediatricFbaoDemonstration = usePediatricFbaoDemonstration({
-    active: demonstrating && pediatricFbaoDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.pediatricForeignBodyAirwayObstructionAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const pediatricBradycardicArrestDemonstration = usePediatricBradycardicArrestDemonstration({
-    active: demonstrating && pediatricBradycardicArrestDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.pediatricBradycardicArrestAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const pediatricSvtDemonstration = usePediatricSvtDemonstration({
-    active: demonstrating && pediatricSvtDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.pediatricSupraventricularTachycardiaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const pediatricAnaphylaxisDemonstration = usePediatricAnaphylaxisDemonstration({
-    active: demonstrating && pediatricAnaphylaxisDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.pediatricAnaphylaxisAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const pediatricStatusEpilepticusDemonstration = usePediatricStatusEpilepticusDemonstration({
-    active: demonstrating && pediatricStatusEpilepticusDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.pediatricStatusEpilepticusAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const pediatricFebrileSeizureDemonstration = usePediatricFebrileSeizureDemonstration({
-    active: demonstrating && pediatricFebrileSeizureDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.pediatricFebrileSeizureAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const pediatricHypoglycemicSeizureDemonstration = usePediatricHypoglycemicSeizureDemonstration({
-    active: demonstrating && pediatricHypoglycemicSeizureDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.pediatricHypoglycemicSeizureAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const pediatricDkaDemonstration = usePediatricDkaDemonstration({
-    active: demonstrating && pediatricDkaDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.pediatricDiabeticKetoacidosisAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const pediatricDehydrationDemonstration = usePediatricDehydrationDemonstration({
-    active: demonstrating && pediatricDehydrationDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.pediatricDehydrationAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const pediatricSepticShockDemonstration = usePediatricSepticShockDemonstration({
-    active: demonstrating && pediatricSepticShockDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.pediatricSepticShockAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const pediatricSepsisDemonstration = usePediatricSepsisDemonstration({
-    active: demonstrating && pediatricSepsisDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.pediatricSepsisAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const croupDemonstration = useCroupDemonstration({
-    active: demonstrating && croupDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.croupAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const bronchiolitisDemonstration = useBronchiolitisDemonstration({
-    active: demonstrating && bronchiolitisDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.bronchiolitisAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const pediatricRespiratoryDistressDemonstration = usePediatricRespiratoryDistressDemonstration({
-    active: demonstrating && pediatricRespiratoryDistressDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.pediatricRespiratoryDistressAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const acuteTracheostomyObstructionDemonstration = useAcuteTracheostomyObstructionDemonstration({
-    active: demonstrating && acuteTracheostomyObstructionDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.acuteTracheostomyObstructionAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const oxygenDeviceFailureDemonstration = useOxygenDeviceFailureDemonstration({
-    active: demonstrating && oxygenDeviceFailureDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.oxygenDeviceFailureAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const highFlowOxygenDemonstration = useHighFlowOxygenEscalationDemonstration({
-    active: demonstrating && highFlowOxygenDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.highFlowOxygenEscalationAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const nivSelectionDemonstration = useNoninvasiveVentilationSelectionDemonstration({
-    active: demonstrating && nivSelectionDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.noninvasiveVentilationSelectionAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const obesityHypoventilationDemonstration = useObesityHypoventilationDemonstration({
-    active: demonstrating && obesityHypoventilationDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.obesityHypoventilationAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const neuromuscularRespiratoryFailureDemonstration = useNeuromuscularRespiratoryFailureDemonstration({
-    active: demonstrating && neuromuscularRespiratoryFailureDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neuromuscularRespiratoryFailureAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const bronchiectasisMucusPluggingDemonstration = useBronchiectasisMucusPluggingDemonstration({
-    active: demonstrating && bronchiectasisMucusPluggingDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.bronchiectasisMucusPluggingAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const largePleuralEffusionDemonstration = useLargePleuralEffusionDemonstration({
-    active: demonstrating && largePleuralEffusionDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.largePleuralEffusionAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const postTensionPneumothoraxDemonstration = usePostTensionPneumothoraxDemonstration({
-    active: demonstrating && postTensionPneumothoraxDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.postTensionPneumothoraxAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const apeSupportDemonstration = useApeSupportDemonstration({
-    active: demonstrating && apeSupportDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.apeSupportAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const postPeDyspneaDemonstration = usePostPeDyspneaDemonstration({
-    active: demonstrating && postPeDyspneaDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.postPeDyspneaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const capHypoxemiaDemonstration = useCapHypoxemiaDemonstration({
-    active: demonstrating && capHypoxemiaDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.capHypoxemiaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const copdTransitionDemonstration = useCopdTransitionDemonstration({
-    active: demonstrating && copdTransitionDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.copdTransitionAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const acuteSevereAsthmaDemonstration = useAcuteSevereAsthmaDemonstration({
-    active: demonstrating && acuteSevereAsthmaDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.acuteSevereAsthmaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const oxytocinTachysystoleDemonstration = useOxytocinTachysystoleDemonstration({
-    active: demonstrating && oxytocinTachysystoleDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.obstetricsOxytocinTachysystoleAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const maternalNeonatalHandoffDemonstration = useMaternalNeonatalHandoffDemonstration({
-    active: demonstrating && maternalNeonatalHandoffDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.obstetricsMaternalNeonatalHandoffAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const failedIntubationDemonstration = useFailedIntubationDemonstration({
-    active: demonstrating && failedIntubationDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.obstetricsFailedIntubationAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const highNeuraxialDemonstration = useHighNeuraxialDemonstration({
-    active: demonstrating && highNeuraxialDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.obstetricsHighNeuraxialAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const magnesiumToxicityDemonstration = useMagnesiumToxicityDemonstration({
-    active: demonstrating && magnesiumToxicityDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.obstetricsMagnesiumToxicityAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const uterineRuptureDemonstration = useUterineRuptureDemonstration({
-    active: demonstrating && uterineRuptureDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.obstetricsUterineRuptureAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const cordProlapseDemonstration = useCordProlapseDemonstration({
-    active: demonstrating && cordProlapseDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.obstetricsCordProlapseAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const shoulderDystociaDemonstration = useShoulderDystociaDemonstration({
-    active: demonstrating && shoulderDystociaDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.obstetricsShoulderDystociaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const maternalArrestDemonstration = useMaternalArrestDemonstration({
-    active: demonstrating && maternalArrestDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.obstetricsMaternalArrestAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const afeDemonstration = useAfeDemonstration({
-    active: demonstrating && afeDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.obstetricsAfeAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const eclampsiaDemonstration = useEclampsiaDemonstration({
-    active: demonstrating && eclampsiaDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.obstetricsEclampsiaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const postpartumPreeclampsiaDemonstration = usePostpartumPreeclampsiaDemonstration({
-    active: demonstrating && postpartumPreeclampsiaDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.obstetricsPostpartumPreeclampsiaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const concealedAbruptionDemonstration = useConcealedAbruptionDemonstration({
-    active: demonstrating && concealedAbruptionDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.obstetricsConcealedAbruptionAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const maternalSepsisDemonstration = useMaternalSepsisDemonstration({
-    active: demonstrating && maternalSepsisDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.obstetricsMaternalSepsisAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const atonyDemonstration = useAtonyDemonstration({
-    active: demonstrating && atonyDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.obstetricsAtonyAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const dysreflexiaDemonstration = useDysreflexiaDemonstration({
-    active: demonstrating && dysreflexiaDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neurologyAutonomicDysreflexiaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const deliriumDemonstration = useDeliriumDemonstration({
-    active: demonstrating && deliriumDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neurologyDeliriumAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const msccDemonstration = useMsccDemonstration({
-    active: demonstrating && msccDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neurologyMsccAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const herniationDemonstration = useHerniationDemonstration({
-    active: demonstrating && herniationDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neurologyHerniationAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const raisedIcpDemonstration = useRaisedIcpDemonstration({
-    active: demonstrating && raisedIcpDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neurologyRaisedIcpAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const encephalitisDemonstration = useEncephalitisDemonstration({
-    active: demonstrating && encephalitisDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neurologyEncephalitisAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const meningitisDemonstration = useMeningitisDemonstration({
-    active: demonstrating && meningitisDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neurologyMeningitisAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const gbsDemonstration = useGbsDemonstration({
-    active: demonstrating && gbsDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neurologyGbsAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const myastheniaDemonstration = useMyastheniaDemonstration({
-    active: demonstrating && myastheniaDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neurologyMyasthenicCrisisAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const ncseDemonstration = useNcseDemonstration({
-    active: demonstrating && ncseDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neurologyNcseAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const focalMotorStatusDemonstration = useFocalMotorStatusDemonstration({
-    active: demonstrating && focalMotorStatusDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neurologyFocalMotorStatusAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const asahDemonstration = useAsahDemonstration({
-    active: demonstrating && asahDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neurologyAsahAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const cerebellarIchDemonstration = useCerebellarIchDemonstration({
-    active: demonstrating && cerebellarIchDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neurologyCerebellarIchAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const basilarLvoDemonstration = useBasilarLvoDemonstration({
-    active: demonstrating && basilarLvoDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neurologyBasilarLvoAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const minorStrokeDemonstration = useMinorStrokeDemonstration({
-    active: demonstrating && minorStrokeDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neurologyMinorStrokeAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const opioidXylazineDemonstration = useOpioidXylazineDemonstration({
-    active: demonstrating && opioidXylazineDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.toxicologyOpioidXylazineAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const delayedLastDemonstration = useDelayedLastDemonstration({
-    active: demonstrating && delayedLastDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.toxicologyDelayedLastAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const methanolDemonstration = useMethanolDemonstration({
-    active: demonstrating && methanolDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.toxicologyMethanolAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const sympathomimeticDemonstration = useSympathomimeticDemonstration({
-    active: demonstrating && sympathomimeticDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.toxicologySympathomimeticAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const serotoninDemonstration = useSerotoninDemonstration({
-    active: demonstrating && serotoninDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.toxicologySerotoninAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const anticholinergicDemonstration = useAnticholinergicDemonstration({
-    active: demonstrating && anticholinergicDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.toxicologyAnticholinergicAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const cholinergicDemonstration = useCholinergicDemonstration({
-    active: demonstrating && cholinergicDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.toxicologyCholinergicAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const digoxinDemonstration = useDigoxinDemonstration({
-    active: demonstrating && digoxinDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.toxicologyDigoxinAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const calciumChannelBlockerDemonstration = useCalciumChannelBlockerDemonstration({
-    active: demonstrating && calciumChannelBlockerDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.toxicologyCalciumChannelBlockerAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const betaBlockerDemonstration = useBetaBlockerDemonstration({
-    active: demonstrating && betaBlockerDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.toxicologyBetaBlockerAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const tricyclicDemonstration = useTricyclicDemonstration({
-    active: demonstrating && tricyclicDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.toxicologyTricyclicAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const salicylateDemonstration = useSalicylateDemonstration({
-    active: demonstrating && salicylateDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.toxicologySalicylateAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const acetaminophenDemonstration = useAcetaminophenDemonstration({
-    active: demonstrating && acetaminophenDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.toxicologyAcetaminophenAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const carbonMonoxideDemonstration = useCarbonMonoxideDemonstration({
-    active: demonstrating && carbonMonoxideDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.toxicologyCarbonMonoxideAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const methemoglobinemiaDemonstration = useMethemoglobinemiaDemonstration({
-    active: demonstrating && methemoglobinemiaDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.toxicologyMethemoglobinemiaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const tensionPneumothoraxDemonstration = useTensionPneumothoraxDemonstration({
-    active: demonstrating && tensionPneumothoraxDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.neonatologyTensionPneumothoraxAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const meningitisImagingDemonstration = useMeningitisImagingDemonstration({
-    active: demonstrating && meningitisImagingDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.meningitisImaging,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const septicShockLabelDemonstration = useSepticShockLabelDemonstration({
-    active: demonstrating && septicShockLabelDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.septicShockLabel,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const possibleSepsisDemonstration = usePossibleSepsisDemonstration({
-    active: demonstrating && possibleSepsisDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.possibleSepsis,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const toxicShockDemonstration = useToxicShockDemonstration({
-    active: demonstrating && toxicShockDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.toxicShock,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const severePneumoniaDemonstration = useSeverePneumoniaDemonstration({
-    active: demonstrating && severePneumoniaDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.severePneumonia,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const endocarditisHeartFailureDemonstration = useEndocarditisHeartFailureDemonstration({
-    active: demonstrating && endocarditisHeartFailureDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.endocarditisHeartFailure,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const necrotizingInfectionDemonstration = useNecrotizingInfectionDemonstration({
-    active: demonstrating && necrotizingInfectionDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.necrotizingInfection,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const febrileNeutropeniaDemonstration = useFebrileNeutropeniaDemonstration({
-    active: demonstrating && febrileNeutropeniaDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.febrileNeutropenia,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const obstructedKidneyDemonstration = useObstructedKidneyDemonstration({
-    active: demonstrating && obstructedKidneyDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.obstructedKidney,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const meningococcalSepsisDemonstration = useMeningococcalSepsisDemonstration({
-    active: demonstrating && meningococcalSepsisDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.meningococcalSepsis,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const lostContingencyDemonstration = useLostContingencyDemonstration({
-    active: demonstrating && lostContingencyDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.lostContingency,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const oxygenTargetScaleDemonstration = useOxygenTargetScaleDemonstration({
-    active: demonstrating && oxygenTargetScaleDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.oxygenTargetScale,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const lastKnownWellDemonstration = useLastKnownWellDemonstration({
-    active: demonstrating && lastKnownWellDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.lastKnownWell,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const proxyScaleDemonstration = useProxyScaleDemonstration({
-    active: demonstrating && proxyScaleDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.proxyScale,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const quietPatientDemonstration = useQuietPatientDemonstration({
-    active: demonstrating && quietPatientDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.quietPatient,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const afferentLimbDemonstration = useAfferentLimbDemonstration({
-    active: demonstrating && afferentLimbDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.afferentLimb,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const pairedReadingDemonstration = usePairedReadingDemonstration({
-    active: demonstrating && pairedReadingDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.pairedReading,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const countedRateDemonstration = useCountedRateDemonstration({
-    active: demonstrating && countedRateDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.countedRate,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const lowScoreDemonstration = useLowScoreDemonstration({
-    active: demonstrating && lowScoreDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.lowScore,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const hhsOsmolalityDemonstration = useHhsOsmolalityDemonstration({
-    active: demonstrating && hhsOsmolalityDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.endocrineHhsAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const dkaResolutionDemonstration = useDkaResolutionDemonstration({
-    active: demonstrating && dkaResolutionDemoSupported,
-    running: session.transport === 'running',
-    patient: session.equipment?.resuscitation.endocrineDkaResolutionAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const risingRequirementDemonstration = useRisingRequirementDemonstration({
-    active: demonstrating && risingRequirementDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.risingRequirement,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const negativeScanDemonstration = useNegativeScanDemonstration({
-    active: demonstrating && negativeScanDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.negativeScan,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const easyLabelDemonstration = useEasyLabelDemonstration({
-    active: demonstrating && easyLabelDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.easyLabel,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const silentInteractionDemonstration = useSilentInteractionDemonstration({
-    active: demonstrating && silentInteractionDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.silentInteraction,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const trialRuleDemonstration = useTrialRuleDemonstration({
-    active: demonstrating && trialRuleDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.trialRule,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const inheritedUrgencyDemonstration = useInheritedUrgencyDemonstration({
-    active: demonstrating && inheritedUrgencyDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.inheritedUrgency,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const loweringTheCountDemonstration = useLoweringTheCountDemonstration({
-    active: demonstrating && loweringTheCountDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.loweringTheCount,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const rareEarlyMyocarditisDemonstration = useRareEarlyMyocarditisDemonstration({
-    active: demonstrating && rareEarlyMyocarditisDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.rareEarlyMyocarditis,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const laboratoryTlsDemonstration = useLaboratoryTlsDemonstration({
-    active: demonstrating && laboratoryTlsDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.laboratoryTls,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const prognosisQuestionDemonstration = usePrognosisQuestionDemonstration({
-    active: demonstrating && prognosisQuestionDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.prognosisQuestion,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const normalTestToxicityDemonstration = useNormalTestToxicityDemonstration({
-    active: demonstrating && normalTestToxicityDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.normalTestToxicity,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const incidentalClotDemonstration = useIncidentalClotDemonstration({
-    active: demonstrating && incidentalClotDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.incidentalClot,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const delayedImmuneEventDemonstration = useDelayedImmuneEventDemonstration({
-    active: demonstrating && delayedImmuneEventDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.delayedImmuneEvent,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const renalHypernatremiaDemonstration = useRenalHypernatremiaDemonstration({
-    active: demonstrating && renalHypernatremiaDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypernatremia,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const renalHypocalcemiaDemonstration = useRenalHypocalcemiaDemonstration({
-    active: demonstrating && renalHypocalcemiaDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypocalcemia,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const renalHypermagnesemiaDemonstration = useRenalHypermagnesemiaDemonstration({
-    active: demonstrating && renalHypermagnesemiaDemoSupported,
-    running: session.transport === 'running', patient: session.equipment?.resuscitation.renalHypermagnesemia,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
-  });
-  const demonstration = nicuHandoffDemoSupported ? nicuHandoffDemonstration
-    : thermoregulationDemoSupported ? thermoregulationDemonstration
-    : neonatalSepsisDemoSupported ? neonatalSepsisDemonstration
-    : neonatalHypoglycemiaDemoSupported ? neonatalHypoglycemiaDemonstration
-    : pretermRespiratoryDemoSupported ? pretermRespiratoryDemonstration
-    : meconiumTransitionDemoSupported ? meconiumTransitionDemonstration
-    : neonatalBradycardiaDemoSupported ? neonatalBradycardiaDemonstration
-    : ineffectiveVentilationDemoSupported ? ineffectiveVentilationDemonstration
-    : neonatalApneaDemoSupported ? neonatalApneaDemonstration
-    : termTransitionDemoSupported ? termTransitionDemonstration
-    : chronicOpioidHypoventilationDemoSupported ? chronicOpioidHypoventilationDemonstration
-    : neuromuscularRespiratoryFailureDemoSupported ? neuromuscularRespiratoryFailureDemonstration
-    : obesityHypoventilationDemoSupported ? obesityHypoventilationDemonstration
-    : nivSelectionDemoSupported ? nivSelectionDemonstration
-    : highFlowOxygenDemoSupported ? highFlowOxygenDemonstration
-    : oxygenDeviceFailureDemoSupported ? oxygenDeviceFailureDemonstration
-    : acuteTracheostomyObstructionDemoSupported ? acuteTracheostomyObstructionDemonstration
-    : pediatricRespiratoryDistressDemoSupported ? pediatricRespiratoryDistressDemonstration
-    : bronchiolitisDemoSupported ? bronchiolitisDemonstration
-    : croupDemoSupported ? croupDemonstration
-    : pediatricStatusAsthmaticusDemoSupported ? pediatricStatusAsthmaticusDemonstration
-    : pediatricSepsisDemoSupported ? pediatricSepsisDemonstration
-    : pediatricSepticShockDemoSupported ? pediatricSepticShockDemonstration
-    : pediatricDehydrationDemoSupported ? pediatricDehydrationDemonstration
-    : pediatricDkaDemoSupported ? pediatricDkaDemonstration
-    : pediatricHypoglycemicSeizureDemoSupported ? pediatricHypoglycemicSeizureDemonstration
-    : pediatricFebrileSeizureDemoSupported ? pediatricFebrileSeizureDemonstration
-    : pediatricStatusEpilepticusDemoSupported ? pediatricStatusEpilepticusDemonstration
-    : pediatricAnaphylaxisDemoSupported ? pediatricAnaphylaxisDemonstration
-    : pediatricSvtDemoSupported ? pediatricSvtDemonstration
-    : pediatricBradycardicArrestDemoSupported ? pediatricBradycardicArrestDemonstration
-    : pediatricFbaoDemoSupported ? pediatricFbaoDemonstration
-    : pediatricInjurySafeguardingDemoSupported ? pediatricInjurySafeguardingDemonstration
-    : stableChestPainDemoSupported ? stableChestPainDemonstration
-    : clinicStemiDemoSupported ? clinicStemiDemonstration
-    : nstemiRiskDemoSupported ? nstemiRiskDemonstration
-    : heartFailureDemoSupported ? heartFailureDemonstration
-    : afRvrDemoSupported ? afRvrDemonstration
-    : postInfarctionShockDemoSupported ? postInfarctionShockDemonstration
-    : stableNarrowTachycardiaDemoSupported ? stableNarrowTachycardiaDemonstration
-    : stableWideTachycardiaDemoSupported ? stableWideTachycardiaDemonstration
-    : symptomaticBradycardiaDemoSupported ? symptomaticBradycardiaDemonstration
-    : completeHeartBlockDemoSupported ? completeHeartBlockDemonstration
-    : torsadesDemoSupported ? torsadesDemonstration
-    : hyperkalemicConductionDemoSupported ? hyperkalemicConductionDemonstration
-    : pericardialTamponadeDemoSupported ? pericardialTamponadeDemonstration
-    : rightVentricularInfarctionDemoSupported ? rightVentricularInfarctionDemonstration
-    : hypertensiveEmergencyDemoSupported ? hypertensiveEmergencyDemonstration
-    : pacemakerCaptureFailureDemoSupported ? pacemakerCaptureFailureDemonstration
-    : transcutaneousPacingCaptureDemoSupported ? transcutaneousPacingCaptureDemonstration
-    : septicShockResuscitationDemoSupported ? septicShockResuscitationDemonstration
-    : cardiogenicShockDemoSupported ? cardiogenicShockDemonstration
-    : mixedShockDemoSupported ? mixedShockDemonstration
-    : rvFailureDemoSupported ? rvFailureDemonstration
-    : massivePeDemoSupported ? massivePeDemonstration
-    : autoPeepDemoSupported ? autoPeepDemonstration
-    : dyssynchronyDemoSupported ? dyssynchronyDemonstration
-    : mucusPluggingDemoSupported ? mucusPluggingDemonstration
-    : escalatingHypoxemiaDemoSupported ? escalatingHypoxemiaDemonstration
-    : unplannedExtubationDemoSupported ? unplannedExtubationDemonstration
-    : circuitDisconnectionDemoSupported ? circuitDisconnectionDemonstration
-    : postIntubationHypotensionDemoSupported ? postIntubationHypotensionDemonstration
-    : severeAcidemiaDemoSupported ? severeAcidemiaDemonstration
-    : delayedVasopressorDeliveryDemoSupported ? delayedVasopressorDeliveryDemonstration
-    : intracranialHypertensionDemoSupported ? intracranialHypertensionDemonstration
-    : spontaneousBreathingTrialDemoSupported ? spontaneousBreathingTrialDemonstration
+  const registryDemonstration = useObservedDemonstration({
+    active: demonstrating && !!registryDemo,
+    running: session.transport === 'running',
+    step: registryDemo?.step(session.equipment?.resuscitation) ?? IDLE_STEP,
+    actionType: registryDemo?.actionType ?? '',
+    pause: session.pause, play: session.play, act: session.act,
+    onFinished: () => onTakeControls?.(),
+  });
+  const demonstration = registryDemo ? registryDemonstration
     : criticalCareStatusEpilepticusDemoSupported ? criticalCareStatusEpilepticusDemonstration
-    : postArrestTemperatureDemoSupported ? postArrestTemperatureDemonstration
-    : upperGiHemorrhageDemoSupported ? upperGiHemorrhageDemonstration
-    : akiFluidOverloadDemoSupported ? akiFluidOverloadDemonstration
-    : tubeMigrationDemoSupported ? tubeMigrationDemonstration
-    : icuHandoffDemoSupported ? icuHandoffDemonstration
-    : pulseOximeterArtifactDemoSupported ? pulseOximeterArtifactDemonstration
-    : ardsLungProtectiveDemoSupported ? ardsLungProtectiveDemonstration
-    : acuteAorticSyndromeDemoSupported ? acuteAorticSyndromeDemonstration
-    : acuteIschemicStrokeDemoSupported ? acuteIschemicStrokeDemonstration
-    : hemorrhagicShockDemoSupported ? hemorrhagicShockDemonstration
-    : undifferentiatedShockDemoSupported ? undifferentiatedShockDemonstration
     : peaArrestDemoSupported ? peaArrestDemonstration
     : persistentVfDemoSupported ? persistentVfDemonstration
     : rapidDesaturationDemoSupported ? rapidDesaturationDemonstration
@@ -3092,128 +1135,8 @@ export function Cockpit({
     : aspirationRiskDemoSupported ? aspirationRiskDemonstration
     : delayedEmergenceDemoSupported ? delayedEmergenceDemonstration
     : extubationReadinessDemoSupported ? extubationReadinessDemonstration
-    : acutePulmonaryEdemaDemoSupported ? acutePulmonaryEdemaDemonstration
-    : adultAsthmaDemoSupported ? adultAsthmaDemonstration
-    : emergencyAnaphylaxisDemoSupported ? emergencyAnaphylaxisDemonstration
-    : cardiacTamponadeDemoSupported ? cardiacTamponadeDemonstration
-    : copdExacerbationDemoSupported ? copdExacerbationDemonstration
-    : diabeticKetoacidosisDemoSupported ? diabeticKetoacidosisDemonstration
-    : exertionalHeatStrokeDemoSupported ? exertionalHeatStrokeDemonstration
-    : hyperkalemiaEcgDemoSupported ? hyperkalemiaEcgDemonstration
-    : intracranialHemorrhageDemoSupported ? intracranialHemorrhageDemonstration
-    : opioidToxicityDemoSupported ? opioidToxicityDemonstration
-    : pulmonaryEmbolismDemoSupported ? pulmonaryEmbolismDemonstration
-    : severeHyponatremiaDemoSupported ? severeHyponatremiaDemonstration
-    : emergencyStemiDemoSupported ? emergencyStemiDemonstration
-    : traumaPrimarySurveyDemoSupported ? traumaPrimarySurveyDemonstration
-    : unstableBradycardiaDemoSupported ? unstableBradycardiaDemonstration
     : emergencySvtDemoSupported ? emergencySvtDemonstration
-    : obstructivePleuralShockDemoSupported ? obstructivePleuralShockDemonstration
-    : statusEpilepticusDemoSupported ? statusEpilepticusDemonstration
-    : emergencySepticShockDemoSupported ? emergencySepticShockDemonstration
-    : bronchiectasisMucusPluggingDemoSupported ? bronchiectasisMucusPluggingDemonstration
-    : largePleuralEffusionDemoSupported ? largePleuralEffusionDemonstration
-    : postTensionPneumothoraxDemoSupported ? postTensionPneumothoraxDemonstration
-    : apeSupportDemoSupported ? apeSupportDemonstration
-    : postPeDyspneaDemoSupported ? postPeDyspneaDemonstration
-    : capHypoxemiaDemoSupported ? capHypoxemiaDemonstration
-    : copdTransitionDemoSupported ? copdTransitionDemonstration
-    : acuteSevereAsthmaDemoSupported ? acuteSevereAsthmaDemonstration
-    : oxytocinTachysystoleDemoSupported ? oxytocinTachysystoleDemonstration
-    : maternalNeonatalHandoffDemoSupported ? maternalNeonatalHandoffDemonstration
-    : failedIntubationDemoSupported ? failedIntubationDemonstration
-    : highNeuraxialDemoSupported ? highNeuraxialDemonstration
-    : magnesiumToxicityDemoSupported ? magnesiumToxicityDemonstration
-    : uterineRuptureDemoSupported ? uterineRuptureDemonstration
-    : cordProlapseDemoSupported ? cordProlapseDemonstration
-    : shoulderDystociaDemoSupported ? shoulderDystociaDemonstration
-    : maternalArrestDemoSupported ? maternalArrestDemonstration
-    : afeDemoSupported ? afeDemonstration
-    : eclampsiaDemoSupported ? eclampsiaDemonstration
-    : postpartumPreeclampsiaDemoSupported ? postpartumPreeclampsiaDemonstration
-    : concealedAbruptionDemoSupported ? concealedAbruptionDemonstration
-    : maternalSepsisDemoSupported ? maternalSepsisDemonstration
-    : atonyDemoSupported ? atonyDemonstration
-    : dysreflexiaDemoSupported ? dysreflexiaDemonstration
-    : deliriumDemoSupported ? deliriumDemonstration
-    : msccDemoSupported ? msccDemonstration
-    : herniationDemoSupported ? herniationDemonstration
-    : raisedIcpDemoSupported ? raisedIcpDemonstration
-    : encephalitisDemoSupported ? encephalitisDemonstration
-    : meningitisDemoSupported ? meningitisDemonstration
-    : gbsDemoSupported ? gbsDemonstration
-    : myastheniaDemoSupported ? myastheniaDemonstration
-    : ncseDemoSupported ? ncseDemonstration
-    : focalMotorStatusDemoSupported ? focalMotorStatusDemonstration
-    : asahDemoSupported ? asahDemonstration
-    : cerebellarIchDemoSupported ? cerebellarIchDemonstration
-    : basilarLvoDemoSupported ? basilarLvoDemonstration
-    : minorStrokeDemoSupported ? minorStrokeDemonstration
-    : opioidXylazineDemoSupported ? opioidXylazineDemonstration
-    : delayedLastDemoSupported ? delayedLastDemonstration
-    : methanolDemoSupported ? methanolDemonstration
-    : sympathomimeticDemoSupported ? sympathomimeticDemonstration
-    : serotoninDemoSupported ? serotoninDemonstration
-    : anticholinergicDemoSupported ? anticholinergicDemonstration
-    : cholinergicDemoSupported ? cholinergicDemonstration
-    : digoxinDemoSupported ? digoxinDemonstration
-    : calciumChannelBlockerDemoSupported ? calciumChannelBlockerDemonstration
-    : betaBlockerDemoSupported ? betaBlockerDemonstration
-    : tricyclicDemoSupported ? tricyclicDemonstration
-    : salicylateDemoSupported ? salicylateDemonstration
-    : acetaminophenDemoSupported ? acetaminophenDemonstration
-    : carbonMonoxideDemoSupported ? carbonMonoxideDemonstration
-    : methemoglobinemiaDemoSupported ? methemoglobinemiaDemonstration
-    : tensionPneumothoraxDemoSupported ? tensionPneumothoraxDemonstration
-    : meningitisImagingDemoSupported ? meningitisImagingDemonstration
-    : septicShockLabelDemoSupported ? septicShockLabelDemonstration
-    : possibleSepsisDemoSupported ? possibleSepsisDemonstration
-    : toxicShockDemoSupported ? toxicShockDemonstration
-    : severePneumoniaDemoSupported ? severePneumoniaDemonstration
-    : endocarditisHeartFailureDemoSupported ? endocarditisHeartFailureDemonstration
-    : necrotizingInfectionDemoSupported ? necrotizingInfectionDemonstration
-    : febrileNeutropeniaDemoSupported ? febrileNeutropeniaDemonstration
-    : obstructedKidneyDemoSupported ? obstructedKidneyDemonstration
-    : meningococcalSepsisDemoSupported ? meningococcalSepsisDemonstration
-    : lostContingencyDemoSupported ? lostContingencyDemonstration
-    : oxygenTargetScaleDemoSupported ? oxygenTargetScaleDemonstration
-    : lastKnownWellDemoSupported ? lastKnownWellDemonstration
-    : proxyScaleDemoSupported ? proxyScaleDemonstration
-    : quietPatientDemoSupported ? quietPatientDemonstration
-    : afferentLimbDemoSupported ? afferentLimbDemonstration
-    : pairedReadingDemoSupported ? pairedReadingDemonstration
-    : countedRateDemoSupported ? countedRateDemonstration
-    : lowScoreDemoSupported ? lowScoreDemonstration
-    : hhsOsmolalityDemoSupported ? hhsOsmolalityDemonstration
-    : dkaResolutionDemoSupported ? dkaResolutionDemonstration
-    : risingRequirementDemoSupported ? risingRequirementDemonstration
-    : negativeScanDemoSupported ? negativeScanDemonstration
-    : easyLabelDemoSupported ? easyLabelDemonstration
-    : silentInteractionDemoSupported ? silentInteractionDemonstration
-    : trialRuleDemoSupported ? trialRuleDemonstration
-    : inheritedUrgencyDemoSupported ? inheritedUrgencyDemonstration
-    : loweringTheCountDemoSupported ? loweringTheCountDemonstration
-    : rareEarlyMyocarditisDemoSupported ? rareEarlyMyocarditisDemonstration
-    : laboratoryTlsDemoSupported ? laboratoryTlsDemonstration
-    : prognosisQuestionDemoSupported ? prognosisQuestionDemonstration
-    : normalTestToxicityDemoSupported ? normalTestToxicityDemonstration
-    : incidentalClotDemoSupported ? incidentalClotDemonstration
-    : delayedImmuneEventDemoSupported ? delayedImmuneEventDemonstration
-    : renalHypermagnesemiaDemoSupported ? renalHypermagnesemiaDemonstration
-    : renalHypocalcemiaDemoSupported ? renalHypocalcemiaDemonstration
-    : renalHypernatremiaDemoSupported ? renalHypernatremiaDemonstration
-    : renalHyponatremiaDemoSupported ? renalHyponatremiaDemonstration
-    : renalHypokalemiaDemoSupported ? renalHypokalemiaDemonstration
-    : renalHyperkalemiaDemoSupported ? renalHyperkalemiaDemonstration
-    : perioperativeDiabetesDemoSupported ? perioperativeDiabetesDemonstration
-    : refeedingDemoSupported ? refeedingDemonstration
-    : avpDeficiencyDemoSupported ? avpDeficiencyDemonstration
-    : hyponatremiaCorrectionDemoSupported ? hyponatremiaCorrectionDemonstration
-    : hypocalcemiaDemoSupported ? hypocalcemiaDemonstration
-    : hypercalcemiaDemoSupported ? hypercalcemiaDemonstration
-    : myxedemaDemoSupported ? myxedemaDemonstration
-    : thyroidDemoSupported ? thyroidDemonstration : adrenalDemoSupported ? adrenalDemonstration
-    : hypoglycemiaDemoSupported ? hypoglycemiaDemonstration : inductionDemonstration;
+    : obstructivePleuralShockDemoSupported ? obstructivePleuralShockDemonstration : inductionDemonstration;
   const [colorblindSafe] = useLocalPreference('colorblind-safe', false);
   const [whyField, setWhyField] = useState<StateField | null>(null);
   const [explainerId, setExplainerId] = useState<string | null>(null);
@@ -3749,11 +1672,15 @@ export function Cockpit({
                 spo2Percent: 'Pulse-derived saturation unavailable',
                 etco2MmHg: 'Exhaled carbon dioxide not supplied',
               }
+            // Myxedema is checked first because it is now inside the registry, and
+            // the registry is the first term of `observedStateDemoSupported`. It
+            // used to sit after that guard and be reached because the guard did
+            // not name it; keeping its own message needs the order swapped.
+            : registryDemo?.id === 'Myxedema'
+              ? { etco2MmHg: 'Exhaled carbon dioxide not supplied; request a bedside PaCO₂ assessment',
+                  fio2: 'Oxygen setting is not modeled' }
             : observedStateDemoSupported
               ? { etco2MmHg: 'Exhaled carbon dioxide is not supplied in this lesson',
-                  fio2: 'Oxygen setting is not modeled' }
-            : myxedemaDemoSupported
-              ? { etco2MmHg: 'Exhaled carbon dioxide not supplied; request a bedside PaCO₂ assessment',
                   fio2: 'Oxygen setting is not modeled' }
             : scenario.metadata.id === 'pediatric-foreign-body-airway-obstruction'
               ? { meanArterialMmHg: 'Pressure not supplied' } : undefined}
@@ -3855,340 +1782,340 @@ export function Cockpit({
           oxygenTargetScaleGuidance={session.guidance}
           lostContingencyGuidance={session.guidance}
           meningococcalSepsisGuidance={session.guidance}
-          meningococcalSepsisDemonstrating={demonstrating && meningococcalSepsisDemoSupported}
+          meningococcalSepsisDemonstrating={demonstrating && registryDemo?.id === 'MeningococcalSepsis'}
           obstructedKidneyGuidance={session.guidance}
-          obstructedKidneyDemonstrating={demonstrating && obstructedKidneyDemoSupported}
+          obstructedKidneyDemonstrating={demonstrating && registryDemo?.id === 'ObstructedKidney'}
           febrileNeutropeniaGuidance={session.guidance}
-          febrileNeutropeniaDemonstrating={demonstrating && febrileNeutropeniaDemoSupported}
+          febrileNeutropeniaDemonstrating={demonstrating && registryDemo?.id === 'FebrileNeutropenia'}
           necrotizingInfectionGuidance={session.guidance}
-          necrotizingInfectionDemonstrating={demonstrating && necrotizingInfectionDemoSupported}
+          necrotizingInfectionDemonstrating={demonstrating && registryDemo?.id === 'NecrotizingInfection'}
           endocarditisHeartFailureGuidance={session.guidance}
-          endocarditisHeartFailureDemonstrating={demonstrating && endocarditisHeartFailureDemoSupported}
+          endocarditisHeartFailureDemonstrating={demonstrating && registryDemo?.id === 'EndocarditisHeartFailure'}
           severePneumoniaGuidance={session.guidance}
-          severePneumoniaDemonstrating={demonstrating && severePneumoniaDemoSupported}
+          severePneumoniaDemonstrating={demonstrating && registryDemo?.id === 'SeverePneumonia'}
           toxicShockGuidance={session.guidance}
-          toxicShockDemonstrating={demonstrating && toxicShockDemoSupported}
+          toxicShockDemonstrating={demonstrating && registryDemo?.id === 'ToxicShock'}
           possibleSepsisGuidance={session.guidance}
-          possibleSepsisDemonstrating={demonstrating && possibleSepsisDemoSupported}
+          possibleSepsisDemonstrating={demonstrating && registryDemo?.id === 'PossibleSepsis'}
           septicShockLabelGuidance={session.guidance}
-          septicShockLabelDemonstrating={demonstrating && septicShockLabelDemoSupported}
+          septicShockLabelDemonstrating={demonstrating && registryDemo?.id === 'SepticShockLabel'}
           meningitisImagingGuidance={session.guidance}
-          meningitisImagingDemonstrating={demonstrating && meningitisImagingDemoSupported}
+          meningitisImagingDemonstrating={demonstrating && registryDemo?.id === 'MeningitisImaging'}
           neonatologyNicuHandoffGuidance={session.guidance}
-          neonatologyNicuHandoffDemonstrating={demonstrating && nicuHandoffDemoSupported}
+          neonatologyNicuHandoffDemonstrating={demonstrating && registryDemo?.id === 'NicuHandoff'}
           neonatologyThermoregulationGuidance={session.guidance}
-          neonatologyThermoregulationDemonstrating={demonstrating && thermoregulationDemoSupported}
+          neonatologyThermoregulationDemonstrating={demonstrating && registryDemo?.id === 'Thermoregulation'}
           neonatologySepsisGuidance={session.guidance}
-          neonatologySepsisDemonstrating={demonstrating && neonatalSepsisDemoSupported}
+          neonatologySepsisDemonstrating={demonstrating && registryDemo?.id === 'NeonatalSepsis'}
           neonatologyHypoglycemiaGuidance={session.guidance}
-          neonatologyHypoglycemiaDemonstrating={demonstrating && neonatalHypoglycemiaDemoSupported}
+          neonatologyHypoglycemiaDemonstrating={demonstrating && registryDemo?.id === 'NeonatalHypoglycemia'}
           neonatologyPretermRespiratoryGuidance={session.guidance}
-          neonatologyPretermRespiratoryDemonstrating={demonstrating && pretermRespiratoryDemoSupported}
+          neonatologyPretermRespiratoryDemonstrating={demonstrating && registryDemo?.id === 'PretermRespiratoryDistress'}
           neonatologyMeconiumGuidance={session.guidance}
-          neonatologyMeconiumDemonstrating={demonstrating && meconiumTransitionDemoSupported}
+          neonatologyMeconiumDemonstrating={demonstrating && registryDemo?.id === 'MeconiumTransition'}
           neonatologyBradycardiaGuidance={session.guidance}
-          neonatologyBradycardiaDemonstrating={demonstrating && neonatalBradycardiaDemoSupported}
+          neonatologyBradycardiaDemonstrating={demonstrating && registryDemo?.id === 'NeonatalBradycardia'}
           neonatologyIneffectiveVentilationGuidance={session.guidance}
-          neonatologyIneffectiveVentilationDemonstrating={demonstrating && ineffectiveVentilationDemoSupported}
+          neonatologyIneffectiveVentilationDemonstrating={demonstrating && registryDemo?.id === 'IneffectiveVentilation'}
           neonatologyApneaGuidance={session.guidance}
-          neonatologyApneaDemonstrating={demonstrating && neonatalApneaDemoSupported}
+          neonatologyApneaDemonstrating={demonstrating && registryDemo?.id === 'NeonatalApnea'}
           neonatologyTermTransitionGuidance={session.guidance}
-          neonatologyTermTransitionDemonstrating={demonstrating && termTransitionDemoSupported}
+          neonatologyTermTransitionDemonstrating={demonstrating && registryDemo?.id === 'TermTransition'}
           neonatologyTensionPneumothoraxGuidance={session.guidance}
-          neonatologyTensionPneumothoraxDemonstrating={demonstrating && tensionPneumothoraxDemoSupported}
+          neonatologyTensionPneumothoraxDemonstrating={demonstrating && registryDemo?.id === 'TensionPneumothorax'}
           toxicologyMethemoglobinemiaGuidance={session.guidance}
-          toxicologyMethemoglobinemiaDemonstrating={demonstrating && methemoglobinemiaDemoSupported}
+          toxicologyMethemoglobinemiaDemonstrating={demonstrating && registryDemo?.id === 'Methemoglobinemia'}
           toxicologyCarbonMonoxideGuidance={session.guidance}
-          toxicologyCarbonMonoxideDemonstrating={demonstrating && carbonMonoxideDemoSupported}
+          toxicologyCarbonMonoxideDemonstrating={demonstrating && registryDemo?.id === 'CarbonMonoxide'}
           toxicologyAcetaminophenGuidance={session.guidance}
-          toxicologyAcetaminophenDemonstrating={demonstrating && acetaminophenDemoSupported}
+          toxicologyAcetaminophenDemonstrating={demonstrating && registryDemo?.id === 'Acetaminophen'}
           toxicologySalicylateGuidance={session.guidance}
-          toxicologySalicylateDemonstrating={demonstrating && salicylateDemoSupported}
+          toxicologySalicylateDemonstrating={demonstrating && registryDemo?.id === 'Salicylate'}
           toxicologyTricyclicGuidance={session.guidance}
-          toxicologyTricyclicDemonstrating={demonstrating && tricyclicDemoSupported}
+          toxicologyTricyclicDemonstrating={demonstrating && registryDemo?.id === 'Tricyclic'}
           toxicologyBetaBlockerGuidance={session.guidance}
-          toxicologyBetaBlockerDemonstrating={demonstrating && betaBlockerDemoSupported}
+          toxicologyBetaBlockerDemonstrating={demonstrating && registryDemo?.id === 'BetaBlocker'}
           toxicologyCalciumChannelBlockerGuidance={session.guidance}
-          toxicologyCalciumChannelBlockerDemonstrating={demonstrating && calciumChannelBlockerDemoSupported}
+          toxicologyCalciumChannelBlockerDemonstrating={demonstrating && registryDemo?.id === 'CalciumChannelBlocker'}
           toxicologyDigoxinGuidance={session.guidance}
-          toxicologyDigoxinDemonstrating={demonstrating && digoxinDemoSupported}
+          toxicologyDigoxinDemonstrating={demonstrating && registryDemo?.id === 'Digoxin'}
           toxicologyCholinergicGuidance={session.guidance}
-          toxicologyCholinergicDemonstrating={demonstrating && cholinergicDemoSupported}
+          toxicologyCholinergicDemonstrating={demonstrating && registryDemo?.id === 'Cholinergic'}
           toxicologyAnticholinergicGuidance={session.guidance}
-          toxicologyAnticholinergicDemonstrating={demonstrating && anticholinergicDemoSupported}
+          toxicologyAnticholinergicDemonstrating={demonstrating && registryDemo?.id === 'Anticholinergic'}
           toxicologySerotoninGuidance={session.guidance}
-          toxicologySerotoninDemonstrating={demonstrating && serotoninDemoSupported}
+          toxicologySerotoninDemonstrating={demonstrating && registryDemo?.id === 'Serotonin'}
           toxicologySympathomimeticGuidance={session.guidance}
-          toxicologySympathomimeticDemonstrating={demonstrating && sympathomimeticDemoSupported}
+          toxicologySympathomimeticDemonstrating={demonstrating && registryDemo?.id === 'Sympathomimetic'}
           toxicologyMethanolGuidance={session.guidance}
-          toxicologyMethanolDemonstrating={demonstrating && methanolDemoSupported}
+          toxicologyMethanolDemonstrating={demonstrating && registryDemo?.id === 'Methanol'}
           toxicologyDelayedLastGuidance={session.guidance}
-          toxicologyDelayedLastDemonstrating={demonstrating && delayedLastDemoSupported}
+          toxicologyDelayedLastDemonstrating={demonstrating && registryDemo?.id === 'DelayedLast'}
           toxicologyOpioidXylazineGuidance={session.guidance}
-          toxicologyOpioidXylazineDemonstrating={demonstrating && opioidXylazineDemoSupported}
+          toxicologyOpioidXylazineDemonstrating={demonstrating && registryDemo?.id === 'OpioidXylazine'}
           neurologyMinorStrokeGuidance={session.guidance}
-          neurologyMinorStrokeDemonstrating={demonstrating && minorStrokeDemoSupported}
+          neurologyMinorStrokeDemonstrating={demonstrating && registryDemo?.id === 'MinorStroke'}
           neurologyBasilarLvoGuidance={session.guidance}
-          neurologyBasilarLvoDemonstrating={demonstrating && basilarLvoDemoSupported}
+          neurologyBasilarLvoDemonstrating={demonstrating && registryDemo?.id === 'BasilarLvo'}
           neurologyCerebellarIchGuidance={session.guidance}
-          neurologyCerebellarIchDemonstrating={demonstrating && cerebellarIchDemoSupported}
+          neurologyCerebellarIchDemonstrating={demonstrating && registryDemo?.id === 'CerebellarIch'}
           neurologyAsahGuidance={session.guidance}
-          neurologyAsahDemonstrating={demonstrating && asahDemoSupported}
+          neurologyAsahDemonstrating={demonstrating && registryDemo?.id === 'Asah'}
           neurologyFocalMotorStatusGuidance={session.guidance}
-          neurologyFocalMotorStatusDemonstrating={demonstrating && focalMotorStatusDemoSupported}
+          neurologyFocalMotorStatusDemonstrating={demonstrating && registryDemo?.id === 'FocalMotorStatus'}
           neurologyNcseGuidance={session.guidance}
-          neurologyNcseDemonstrating={demonstrating && ncseDemoSupported}
+          neurologyNcseDemonstrating={demonstrating && registryDemo?.id === 'Ncse'}
           neurologyMyastheniaGuidance={session.guidance}
-          neurologyMyastheniaDemonstrating={demonstrating && myastheniaDemoSupported}
+          neurologyMyastheniaDemonstrating={demonstrating && registryDemo?.id === 'Myasthenia'}
           neurologyGbsGuidance={session.guidance}
-          neurologyGbsDemonstrating={demonstrating && gbsDemoSupported}
+          neurologyGbsDemonstrating={demonstrating && registryDemo?.id === 'Gbs'}
           neurologyMeningitisGuidance={session.guidance}
-          neurologyMeningitisDemonstrating={demonstrating && meningitisDemoSupported}
+          neurologyMeningitisDemonstrating={demonstrating && registryDemo?.id === 'Meningitis'}
           neurologyEncephalitisGuidance={session.guidance}
-          neurologyEncephalitisDemonstrating={demonstrating && encephalitisDemoSupported}
+          neurologyEncephalitisDemonstrating={demonstrating && registryDemo?.id === 'Encephalitis'}
           neurologyRaisedIcpGuidance={session.guidance}
-          neurologyRaisedIcpDemonstrating={demonstrating && raisedIcpDemoSupported}
+          neurologyRaisedIcpDemonstrating={demonstrating && registryDemo?.id === 'RaisedIcp'}
           neurologyHerniationGuidance={session.guidance}
-          neurologyHerniationDemonstrating={demonstrating && herniationDemoSupported}
+          neurologyHerniationDemonstrating={demonstrating && registryDemo?.id === 'Herniation'}
           neurologyMsccGuidance={session.guidance}
-          neurologyMsccDemonstrating={demonstrating && msccDemoSupported}
+          neurologyMsccDemonstrating={demonstrating && registryDemo?.id === 'Mscc'}
           neurologyDeliriumGuidance={session.guidance}
-          neurologyDeliriumDemonstrating={demonstrating && deliriumDemoSupported}
+          neurologyDeliriumDemonstrating={demonstrating && registryDemo?.id === 'Delirium'}
           neurologyDysreflexiaGuidance={session.guidance}
-          neurologyDysreflexiaDemonstrating={demonstrating && dysreflexiaDemoSupported}
+          neurologyDysreflexiaDemonstrating={demonstrating && registryDemo?.id === 'Dysreflexia'}
           obstetricsAtonyGuidance={session.guidance}
-          obstetricsAtonyDemonstrating={demonstrating && atonyDemoSupported}
+          obstetricsAtonyDemonstrating={demonstrating && registryDemo?.id === 'Atony'}
           obstetricsMaternalSepsisGuidance={session.guidance}
-          obstetricsMaternalSepsisDemonstrating={demonstrating && maternalSepsisDemoSupported}
+          obstetricsMaternalSepsisDemonstrating={demonstrating && registryDemo?.id === 'MaternalSepsis'}
           obstetricsConcealedAbruptionGuidance={session.guidance}
-          obstetricsConcealedAbruptionDemonstrating={demonstrating && concealedAbruptionDemoSupported}
+          obstetricsConcealedAbruptionDemonstrating={demonstrating && registryDemo?.id === 'ConcealedAbruption'}
           obstetricsPostpartumPreeclampsiaGuidance={session.guidance}
-          obstetricsPostpartumPreeclampsiaDemonstrating={demonstrating && postpartumPreeclampsiaDemoSupported}
+          obstetricsPostpartumPreeclampsiaDemonstrating={demonstrating && registryDemo?.id === 'PostpartumPreeclampsia'}
           obstetricsEclampsiaGuidance={session.guidance}
-          obstetricsEclampsiaDemonstrating={demonstrating && eclampsiaDemoSupported}
+          obstetricsEclampsiaDemonstrating={demonstrating && registryDemo?.id === 'Eclampsia'}
           obstetricsAfeGuidance={session.guidance}
-          obstetricsAfeDemonstrating={demonstrating && afeDemoSupported}
+          obstetricsAfeDemonstrating={demonstrating && registryDemo?.id === 'Afe'}
           obstetricsMaternalArrestGuidance={session.guidance}
-          obstetricsMaternalArrestDemonstrating={demonstrating && maternalArrestDemoSupported}
+          obstetricsMaternalArrestDemonstrating={demonstrating && registryDemo?.id === 'MaternalArrest'}
           obstetricsShoulderDystociaGuidance={session.guidance}
-          obstetricsShoulderDystociaDemonstrating={demonstrating && shoulderDystociaDemoSupported}
+          obstetricsShoulderDystociaDemonstrating={demonstrating && registryDemo?.id === 'ShoulderDystocia'}
           obstetricsCordProlapseGuidance={session.guidance}
-          obstetricsCordProlapseDemonstrating={demonstrating && cordProlapseDemoSupported}
+          obstetricsCordProlapseDemonstrating={demonstrating && registryDemo?.id === 'CordProlapse'}
           obstetricsUterineRuptureGuidance={session.guidance}
-          obstetricsUterineRuptureDemonstrating={demonstrating && uterineRuptureDemoSupported}
+          obstetricsUterineRuptureDemonstrating={demonstrating && registryDemo?.id === 'UterineRupture'}
           obstetricsMagnesiumToxicityGuidance={session.guidance}
-          obstetricsMagnesiumToxicityDemonstrating={demonstrating && magnesiumToxicityDemoSupported}
+          obstetricsMagnesiumToxicityDemonstrating={demonstrating && registryDemo?.id === 'MagnesiumToxicity'}
           obstetricsHighNeuraxialGuidance={session.guidance}
-          obstetricsHighNeuraxialDemonstrating={demonstrating && highNeuraxialDemoSupported}
+          obstetricsHighNeuraxialDemonstrating={demonstrating && registryDemo?.id === 'HighNeuraxial'}
           obstetricsFailedIntubationGuidance={session.guidance}
-          obstetricsFailedIntubationDemonstrating={demonstrating && failedIntubationDemoSupported}
+          obstetricsFailedIntubationDemonstrating={demonstrating && registryDemo?.id === 'FailedIntubation'}
           obstetricsMaternalNeonatalHandoffGuidance={session.guidance}
-          obstetricsMaternalNeonatalHandoffDemonstrating={demonstrating && maternalNeonatalHandoffDemoSupported}
+          obstetricsMaternalNeonatalHandoffDemonstrating={demonstrating && registryDemo?.id === 'MaternalNeonatalHandoff'}
           obstetricsOxytocinTachysystoleGuidance={session.guidance}
-          obstetricsOxytocinTachysystoleDemonstrating={demonstrating && oxytocinTachysystoleDemoSupported}
+          obstetricsOxytocinTachysystoleDemonstrating={demonstrating && registryDemo?.id === 'OxytocinTachysystole'}
           acuteSevereAsthmaGuidance={session.guidance}
-          acuteSevereAsthmaDemonstrating={demonstrating && acuteSevereAsthmaDemoSupported}
+          acuteSevereAsthmaDemonstrating={demonstrating && registryDemo?.id === 'AcuteSevereAsthma'}
           copdTransitionGuidance={session.guidance}
-          copdTransitionDemonstrating={demonstrating && copdTransitionDemoSupported}
+          copdTransitionDemonstrating={demonstrating && registryDemo?.id === 'CopdTransition'}
           capHypoxemiaGuidance={session.guidance}
-          capHypoxemiaDemonstrating={demonstrating && capHypoxemiaDemoSupported}
+          capHypoxemiaDemonstrating={demonstrating && registryDemo?.id === 'CapHypoxemia'}
           postPeDyspneaGuidance={session.guidance}
-          postPeDyspneaDemonstrating={demonstrating && postPeDyspneaDemoSupported}
+          postPeDyspneaDemonstrating={demonstrating && registryDemo?.id === 'PostPeDyspnea'}
           apeSupportGuidance={session.guidance}
-          apeSupportDemonstrating={demonstrating && apeSupportDemoSupported}
+          apeSupportDemonstrating={demonstrating && registryDemo?.id === 'ApeSupport'}
           postTensionPneumothoraxGuidance={session.guidance}
-          postTensionPneumothoraxDemonstrating={demonstrating && postTensionPneumothoraxDemoSupported}
+          postTensionPneumothoraxDemonstrating={demonstrating && registryDemo?.id === 'PostTensionPneumothorax'}
           largePleuralEffusionGuidance={session.guidance}
-          largePleuralEffusionDemonstrating={demonstrating && largePleuralEffusionDemoSupported}
+          largePleuralEffusionDemonstrating={demonstrating && registryDemo?.id === 'LargePleuralEffusion'}
           bronchiectasisMucusPluggingGuidance={session.guidance}
-          bronchiectasisMucusPluggingDemonstrating={demonstrating && bronchiectasisMucusPluggingDemoSupported}
+          bronchiectasisMucusPluggingDemonstrating={demonstrating && registryDemo?.id === 'BronchiectasisMucusPlugging'}
           chronicOpioidHypoventilationGuidance={session.guidance}
-          chronicOpioidHypoventilationDemonstrating={demonstrating && chronicOpioidHypoventilationDemoSupported}
+          chronicOpioidHypoventilationDemonstrating={demonstrating && registryDemo?.id === 'ChronicOpioidHypoventilation'}
           neuromuscularRespiratoryFailureGuidance={session.guidance}
-          neuromuscularRespiratoryFailureDemonstrating={demonstrating && neuromuscularRespiratoryFailureDemoSupported}
+          neuromuscularRespiratoryFailureDemonstrating={demonstrating && registryDemo?.id === 'NeuromuscularRespiratoryFailure'}
           obesityHypoventilationGuidance={session.guidance}
-          obesityHypoventilationDemonstrating={demonstrating && obesityHypoventilationDemoSupported}
+          obesityHypoventilationDemonstrating={demonstrating && registryDemo?.id === 'ObesityHypoventilation'}
           noninvasiveVentilationSelectionGuidance={session.guidance}
-          noninvasiveVentilationSelectionDemonstrating={demonstrating && nivSelectionDemoSupported}
+          noninvasiveVentilationSelectionDemonstrating={demonstrating && registryDemo?.id === 'NoninvasiveVentilationSelection'}
           highFlowOxygenEscalationGuidance={session.guidance}
-          highFlowOxygenEscalationDemonstrating={demonstrating && highFlowOxygenDemoSupported}
+          highFlowOxygenEscalationDemonstrating={demonstrating && registryDemo?.id === 'HighFlowOxygenEscalation'}
           oxygenDeviceFailureGuidance={session.guidance}
-          oxygenDeviceFailureDemonstrating={demonstrating && oxygenDeviceFailureDemoSupported}
+          oxygenDeviceFailureDemonstrating={demonstrating && registryDemo?.id === 'OxygenDeviceFailure'}
           acuteTracheostomyObstructionGuidance={session.guidance}
-          acuteTracheostomyObstructionDemonstrating={demonstrating && acuteTracheostomyObstructionDemoSupported}
+          acuteTracheostomyObstructionDemonstrating={demonstrating && registryDemo?.id === 'AcuteTracheostomyObstruction'}
           pediatricRespiratoryDistressGuidance={session.guidance}
-          pediatricRespiratoryDistressDemonstrating={demonstrating && pediatricRespiratoryDistressDemoSupported}
+          pediatricRespiratoryDistressDemonstrating={demonstrating && registryDemo?.id === 'PediatricRespiratoryDistress'}
           bronchiolitisGuidance={session.guidance}
-          bronchiolitisDemonstrating={demonstrating && bronchiolitisDemoSupported}
+          bronchiolitisDemonstrating={demonstrating && registryDemo?.id === 'Bronchiolitis'}
           croupGuidance={session.guidance}
-          croupDemonstrating={demonstrating && croupDemoSupported}
+          croupDemonstrating={demonstrating && registryDemo?.id === 'Croup'}
           pediatricStatusAsthmaticusGuidance={session.guidance}
-          pediatricStatusAsthmaticusDemonstrating={demonstrating && pediatricStatusAsthmaticusDemoSupported}
+          pediatricStatusAsthmaticusDemonstrating={demonstrating && registryDemo?.id === 'PediatricStatusAsthmaticus'}
           pediatricSepsisGuidance={session.guidance}
-          pediatricSepsisDemonstrating={demonstrating && pediatricSepsisDemoSupported}
+          pediatricSepsisDemonstrating={demonstrating && registryDemo?.id === 'PediatricSepsis'}
           pediatricSepticShockGuidance={session.guidance}
-          pediatricSepticShockDemonstrating={demonstrating && pediatricSepticShockDemoSupported}
+          pediatricSepticShockDemonstrating={demonstrating && registryDemo?.id === 'PediatricSepticShock'}
           pediatricDehydrationGuidance={session.guidance}
-          pediatricDehydrationDemonstrating={demonstrating && pediatricDehydrationDemoSupported}
+          pediatricDehydrationDemonstrating={demonstrating && registryDemo?.id === 'PediatricDehydration'}
           pediatricDkaGuidance={session.guidance}
-          pediatricDkaDemonstrating={demonstrating && pediatricDkaDemoSupported}
+          pediatricDkaDemonstrating={demonstrating && registryDemo?.id === 'PediatricDka'}
           pediatricHypoglycemicSeizureGuidance={session.guidance}
-          pediatricHypoglycemicSeizureDemonstrating={demonstrating && pediatricHypoglycemicSeizureDemoSupported}
+          pediatricHypoglycemicSeizureDemonstrating={demonstrating && registryDemo?.id === 'PediatricHypoglycemicSeizure'}
           pediatricFebrileSeizureGuidance={session.guidance}
-          pediatricFebrileSeizureDemonstrating={demonstrating && pediatricFebrileSeizureDemoSupported}
+          pediatricFebrileSeizureDemonstrating={demonstrating && registryDemo?.id === 'PediatricFebrileSeizure'}
           pediatricStatusEpilepticusGuidance={session.guidance}
-          pediatricStatusEpilepticusDemonstrating={demonstrating && pediatricStatusEpilepticusDemoSupported}
+          pediatricStatusEpilepticusDemonstrating={demonstrating && registryDemo?.id === 'PediatricStatusEpilepticus'}
           pediatricAnaphylaxisGuidance={session.guidance}
-          pediatricAnaphylaxisDemonstrating={demonstrating && pediatricAnaphylaxisDemoSupported}
+          pediatricAnaphylaxisDemonstrating={demonstrating && registryDemo?.id === 'PediatricAnaphylaxis'}
           pediatricSvtGuidance={session.guidance}
-          pediatricSvtDemonstrating={demonstrating && pediatricSvtDemoSupported}
+          pediatricSvtDemonstrating={demonstrating && registryDemo?.id === 'PediatricSvt'}
           pediatricBradycardicArrestGuidance={session.guidance}
-          pediatricBradycardicArrestDemonstrating={demonstrating && pediatricBradycardicArrestDemoSupported}
+          pediatricBradycardicArrestDemonstrating={demonstrating && registryDemo?.id === 'PediatricBradycardicArrest'}
           pediatricFbaoGuidance={session.guidance}
-          pediatricFbaoDemonstrating={demonstrating && pediatricFbaoDemoSupported}
+          pediatricFbaoDemonstrating={demonstrating && registryDemo?.id === 'PediatricFbao'}
           pediatricInjurySafeguardingGuidance={session.guidance}
-          pediatricInjurySafeguardingDemonstrating={demonstrating && pediatricInjurySafeguardingDemoSupported}
+          pediatricInjurySafeguardingDemonstrating={demonstrating && registryDemo?.id === 'PediatricInjurySafeguarding'}
           stableChestPainGuidance={session.guidance}
-          stableChestPainDemonstrating={demonstrating && stableChestPainDemoSupported}
+          stableChestPainDemonstrating={demonstrating && registryDemo?.id === 'StableChestPain'}
           clinicStemiGuidance={session.guidance}
-          clinicStemiDemonstrating={demonstrating && clinicStemiDemoSupported}
+          clinicStemiDemonstrating={demonstrating && registryDemo?.id === 'ClinicStemi'}
           nstemiRiskGuidance={session.guidance}
-          nstemiRiskDemonstrating={demonstrating && nstemiRiskDemoSupported}
+          nstemiRiskDemonstrating={demonstrating && registryDemo?.id === 'NstemiRisk'}
           heartFailureGuidance={session.guidance}
-          heartFailureDemonstrating={demonstrating && heartFailureDemoSupported}
+          heartFailureDemonstrating={demonstrating && registryDemo?.id === 'HeartFailure'}
           afRvrGuidance={session.guidance}
-          afRvrDemonstrating={demonstrating && afRvrDemoSupported}
+          afRvrDemonstrating={demonstrating && registryDemo?.id === 'AfRvr'}
           postInfarctionShockGuidance={session.guidance}
-          postInfarctionShockDemonstrating={demonstrating && postInfarctionShockDemoSupported}
+          postInfarctionShockDemonstrating={demonstrating && registryDemo?.id === 'PostInfarctionShock'}
           stableNarrowTachycardiaGuidance={session.guidance}
-          stableNarrowTachycardiaDemonstrating={demonstrating && stableNarrowTachycardiaDemoSupported}
+          stableNarrowTachycardiaDemonstrating={demonstrating && registryDemo?.id === 'StableNarrowTachycardia'}
           stableWideTachycardiaGuidance={session.guidance}
-          stableWideTachycardiaDemonstrating={demonstrating && stableWideTachycardiaDemoSupported}
+          stableWideTachycardiaDemonstrating={demonstrating && registryDemo?.id === 'StableWideTachycardia'}
           symptomaticBradycardiaGuidance={session.guidance}
-          symptomaticBradycardiaDemonstrating={demonstrating && symptomaticBradycardiaDemoSupported}
+          symptomaticBradycardiaDemonstrating={demonstrating && registryDemo?.id === 'SymptomaticBradycardia'}
           completeHeartBlockGuidance={session.guidance}
-          completeHeartBlockDemonstrating={demonstrating && completeHeartBlockDemoSupported}
+          completeHeartBlockDemonstrating={demonstrating && registryDemo?.id === 'CompleteHeartBlock'}
           torsadesGuidance={session.guidance}
-          torsadesDemonstrating={demonstrating && torsadesDemoSupported}
+          torsadesDemonstrating={demonstrating && registryDemo?.id === 'Torsades'}
           hyperkalemicConductionGuidance={session.guidance}
-          hyperkalemicConductionDemonstrating={demonstrating && hyperkalemicConductionDemoSupported}
+          hyperkalemicConductionDemonstrating={demonstrating && registryDemo?.id === 'HyperkalemicConduction'}
           pericardialTamponadeGuidance={session.guidance}
-          pericardialTamponadeDemonstrating={demonstrating && pericardialTamponadeDemoSupported}
+          pericardialTamponadeDemonstrating={demonstrating && registryDemo?.id === 'PericardialTamponade'}
           rightVentricularInfarctionGuidance={session.guidance}
-          rightVentricularInfarctionDemonstrating={demonstrating && rightVentricularInfarctionDemoSupported}
+          rightVentricularInfarctionDemonstrating={demonstrating && registryDemo?.id === 'RightVentricularInfarction'}
           hypertensiveEmergencyGuidance={session.guidance}
-          hypertensiveEmergencyDemonstrating={demonstrating && hypertensiveEmergencyDemoSupported}
+          hypertensiveEmergencyDemonstrating={demonstrating && registryDemo?.id === 'HypertensiveEmergency'}
           pacemakerCaptureFailureGuidance={session.guidance}
-          pacemakerCaptureFailureDemonstrating={demonstrating && pacemakerCaptureFailureDemoSupported}
+          pacemakerCaptureFailureDemonstrating={demonstrating && registryDemo?.id === 'PacemakerCaptureFailure'}
           transcutaneousPacingCaptureGuidance={session.guidance}
-          transcutaneousPacingCaptureDemonstrating={demonstrating && transcutaneousPacingCaptureDemoSupported}
+          transcutaneousPacingCaptureDemonstrating={demonstrating && registryDemo?.id === 'TranscutaneousPacingCapture'}
           septicShockResuscitationGuidance={session.guidance}
-          septicShockResuscitationDemonstrating={demonstrating && septicShockResuscitationDemoSupported}
+          septicShockResuscitationDemonstrating={demonstrating && registryDemo?.id === 'SepticShockResuscitation'}
           cardiogenicShockGuidance={session.guidance}
-          cardiogenicShockDemonstrating={demonstrating && cardiogenicShockDemoSupported}
+          cardiogenicShockDemonstrating={demonstrating && registryDemo?.id === 'CardiogenicShock'}
           mixedShockGuidance={session.guidance}
-          mixedShockDemonstrating={demonstrating && mixedShockDemoSupported}
+          mixedShockDemonstrating={demonstrating && registryDemo?.id === 'MixedShock'}
           rightVentricularFailureGuidance={session.guidance}
-          rightVentricularFailureDemonstrating={demonstrating && rvFailureDemoSupported}
+          rightVentricularFailureDemonstrating={demonstrating && registryDemo?.id === 'RvFailure'}
           massivePulmonaryEmbolismGuidance={session.guidance}
-          massivePulmonaryEmbolismDemonstrating={demonstrating && massivePeDemoSupported}
+          massivePulmonaryEmbolismDemonstrating={demonstrating && registryDemo?.id === 'MassivePe'}
           autoPeepGuidance={session.guidance}
-          autoPeepDemonstrating={demonstrating && autoPeepDemoSupported}
+          autoPeepDemonstrating={demonstrating && registryDemo?.id === 'AutoPeep'}
           ventilatorDyssynchronyGuidance={session.guidance}
-          ventilatorDyssynchronyDemonstrating={demonstrating && dyssynchronyDemoSupported}
+          ventilatorDyssynchronyDemonstrating={demonstrating && registryDemo?.id === 'Dyssynchrony'}
           mucusPluggingGuidance={session.guidance}
-          mucusPluggingDemonstrating={demonstrating && mucusPluggingDemoSupported}
+          mucusPluggingDemonstrating={demonstrating && registryDemo?.id === 'MucusPlugging'}
           escalatingHypoxemiaGuidance={session.guidance}
-          escalatingHypoxemiaDemonstrating={demonstrating && escalatingHypoxemiaDemoSupported}
+          escalatingHypoxemiaDemonstrating={demonstrating && registryDemo?.id === 'EscalatingHypoxemia'}
           unplannedExtubationGuidance={session.guidance}
-          unplannedExtubationDemonstrating={demonstrating && unplannedExtubationDemoSupported}
+          unplannedExtubationDemonstrating={demonstrating && registryDemo?.id === 'UnplannedExtubation'}
           ventilatorCircuitDisconnectionGuidance={session.guidance}
-          ventilatorCircuitDisconnectionDemonstrating={demonstrating && circuitDisconnectionDemoSupported}
+          ventilatorCircuitDisconnectionDemonstrating={demonstrating && registryDemo?.id === 'CircuitDisconnection'}
           postIntubationHypotensionGuidance={session.guidance}
-          postIntubationHypotensionDemonstrating={demonstrating && postIntubationHypotensionDemoSupported}
+          postIntubationHypotensionDemonstrating={demonstrating && registryDemo?.id === 'PostIntubationHypotension'}
           severeAcidemiaGuidance={session.guidance}
-          severeAcidemiaDemonstrating={demonstrating && severeAcidemiaDemoSupported}
+          severeAcidemiaDemonstrating={demonstrating && registryDemo?.id === 'SevereAcidemia'}
           delayedVasopressorDeliveryGuidance={session.guidance}
-          delayedVasopressorDeliveryDemonstrating={demonstrating && delayedVasopressorDeliveryDemoSupported}
+          delayedVasopressorDeliveryDemonstrating={demonstrating && registryDemo?.id === 'DelayedVasopressorDelivery'}
           intracranialHypertensionGuidance={session.guidance}
-          intracranialHypertensionDemonstrating={demonstrating && intracranialHypertensionDemoSupported}
+          intracranialHypertensionDemonstrating={demonstrating && registryDemo?.id === 'IntracranialHypertension'}
           spontaneousBreathingTrialGuidance={session.guidance}
-          spontaneousBreathingTrialDemonstrating={demonstrating && spontaneousBreathingTrialDemoSupported}
+          spontaneousBreathingTrialDemonstrating={demonstrating && registryDemo?.id === 'SpontaneousBreathingTrial'}
           criticalCareStatusEpilepticusGuidance={session.guidance}
           criticalCareStatusEpilepticusDemonstrating={demonstrating && criticalCareStatusEpilepticusDemoSupported}
           postArrestTemperatureGuidance={session.guidance}
-          postArrestTemperatureDemonstrating={demonstrating && postArrestTemperatureDemoSupported}
+          postArrestTemperatureDemonstrating={demonstrating && registryDemo?.id === 'TargetedTemperatureManagement'}
           upperGiHemorrhageGuidance={session.guidance}
-          upperGiHemorrhageDemonstrating={demonstrating && upperGiHemorrhageDemoSupported}
+          upperGiHemorrhageDemonstrating={demonstrating && registryDemo?.id === 'UpperGiHemorrhage'}
           akiFluidOverloadGuidance={session.guidance}
-          akiFluidOverloadDemonstrating={demonstrating && akiFluidOverloadDemoSupported}
+          akiFluidOverloadDemonstrating={demonstrating && registryDemo?.id === 'AkiFluidOverload'}
           endotrachealTubeMigrationGuidance={session.guidance}
-          endotrachealTubeMigrationDemonstrating={demonstrating && tubeMigrationDemoSupported}
+          endotrachealTubeMigrationDemonstrating={demonstrating && registryDemo?.id === 'TubeMigration'}
           icuHiddenDeteriorationHandoffGuidance={session.guidance}
-          icuHiddenDeteriorationHandoffDemonstrating={demonstrating && icuHandoffDemoSupported}
+          icuHiddenDeteriorationHandoffDemonstrating={demonstrating && registryDemo?.id === 'IcuHandoff'}
           pulseOximeterArtifactGuidance={session.guidance}
-          pulseOximeterArtifactDemonstrating={demonstrating && pulseOximeterArtifactDemoSupported}
+          pulseOximeterArtifactDemonstrating={demonstrating && registryDemo?.id === 'PulseOximeterArtifact'}
           ardsLungProtectiveGuidance={session.guidance}
-          ardsLungProtectiveDemonstrating={demonstrating && ardsLungProtectiveDemoSupported}
+          ardsLungProtectiveDemonstrating={demonstrating && registryDemo?.id === 'ArdsLungProtective'}
           acuteAorticSyndromeGuidance={session.guidance}
-          acuteAorticSyndromeDemonstrating={demonstrating && acuteAorticSyndromeDemoSupported}
+          acuteAorticSyndromeDemonstrating={demonstrating && registryDemo?.id === 'AcuteAorticSyndrome'}
           acuteIschemicStrokeGuidance={session.guidance}
-          acuteIschemicStrokeDemonstrating={demonstrating && acuteIschemicStrokeDemoSupported}
+          acuteIschemicStrokeDemonstrating={demonstrating && registryDemo?.id === 'AcuteIschemicStroke'}
           hemorrhagicShockGuidance={session.guidance}
-          hemorrhagicShockDemonstrating={demonstrating && hemorrhagicShockDemoSupported}
+          hemorrhagicShockDemonstrating={demonstrating && registryDemo?.id === 'HemorrhagicShock'}
           undifferentiatedShockGuidance={session.guidance}
-          undifferentiatedShockDemonstrating={demonstrating && undifferentiatedShockDemoSupported}
+          undifferentiatedShockDemonstrating={demonstrating && registryDemo?.id === 'UndifferentiatedShock'}
           peaArrestGuidance={session.guidance}
           peaArrestDemonstrating={demonstrating && peaArrestDemoSupported}
           persistentVfGuidance={session.guidance}
           persistentVfDemonstrating={demonstrating && persistentVfDemoSupported}
           acutePulmonaryEdemaGuidance={session.guidance}
-          acutePulmonaryEdemaDemonstrating={demonstrating && acutePulmonaryEdemaDemoSupported}
+          acutePulmonaryEdemaDemonstrating={demonstrating && registryDemo?.id === 'AcutePulmonaryEdema'}
           adultAsthmaGuidance={session.guidance}
-          adultAsthmaDemonstrating={demonstrating && adultAsthmaDemoSupported}
+          adultAsthmaDemonstrating={demonstrating && registryDemo?.id === 'AdultAsthma'}
           emergencyAnaphylaxisGuidance={session.guidance}
-          emergencyAnaphylaxisDemonstrating={demonstrating && emergencyAnaphylaxisDemoSupported}
+          emergencyAnaphylaxisDemonstrating={demonstrating && registryDemo?.id === 'EmergencyAnaphylaxis'}
           cardiacTamponadeGuidance={session.guidance}
-          cardiacTamponadeDemonstrating={demonstrating && cardiacTamponadeDemoSupported}
+          cardiacTamponadeDemonstrating={demonstrating && registryDemo?.id === 'CardiacTamponade'}
           copdExacerbationGuidance={session.guidance}
-          copdExacerbationDemonstrating={demonstrating && copdExacerbationDemoSupported}
+          copdExacerbationDemonstrating={demonstrating && registryDemo?.id === 'CopdExacerbation'}
           diabeticKetoacidosisGuidance={session.guidance}
-          diabeticKetoacidosisDemonstrating={demonstrating && diabeticKetoacidosisDemoSupported}
+          diabeticKetoacidosisDemonstrating={demonstrating && registryDemo?.id === 'DiabeticKetoacidosis'}
           exertionalHeatStrokeGuidance={session.guidance}
-          exertionalHeatStrokeDemonstrating={demonstrating && exertionalHeatStrokeDemoSupported}
+          exertionalHeatStrokeDemonstrating={demonstrating && registryDemo?.id === 'ExertionalHeatStroke'}
           hyperkalemiaEcgGuidance={session.guidance}
-          hyperkalemiaEcgDemonstrating={demonstrating && hyperkalemiaEcgDemoSupported}
+          hyperkalemiaEcgDemonstrating={demonstrating && registryDemo?.id === 'HyperkalemiaWithEcgChange'}
           intracranialHemorrhageGuidance={session.guidance}
-          intracranialHemorrhageDemonstrating={demonstrating && intracranialHemorrhageDemoSupported}
+          intracranialHemorrhageDemonstrating={demonstrating && registryDemo?.id === 'IntracranialHemorrhage'}
           opioidToxicityGuidance={session.guidance}
-          opioidToxicityDemonstrating={demonstrating && opioidToxicityDemoSupported}
+          opioidToxicityDemonstrating={demonstrating && registryDemo?.id === 'OpioidToxicity'}
           pulmonaryEmbolismGuidance={session.guidance}
-          pulmonaryEmbolismDemonstrating={demonstrating && pulmonaryEmbolismDemoSupported}
+          pulmonaryEmbolismDemonstrating={demonstrating && registryDemo?.id === 'PulmonaryEmbolism'}
           severeHyponatremiaGuidance={session.guidance}
-          severeHyponatremiaDemonstrating={demonstrating && severeHyponatremiaDemoSupported}
+          severeHyponatremiaDemonstrating={demonstrating && registryDemo?.id === 'SevereHyponatremia'}
           emergencyStemiGuidance={session.guidance}
-          emergencyStemiDemonstrating={demonstrating && emergencyStemiDemoSupported}
+          emergencyStemiDemonstrating={demonstrating && registryDemo?.id === 'Stemi'}
           traumaPrimarySurveyGuidance={session.guidance}
-          traumaPrimarySurveyDemonstrating={demonstrating && traumaPrimarySurveyDemoSupported}
+          traumaPrimarySurveyDemonstrating={demonstrating && registryDemo?.id === 'TraumaPrimarySurvey'}
           unstableBradycardiaGuidance={session.guidance}
-          unstableBradycardiaDemonstrating={demonstrating && unstableBradycardiaDemoSupported}
+          unstableBradycardiaDemonstrating={demonstrating && registryDemo?.id === 'UnstableBradycardia'}
           emergencySvtGuidance={session.guidance}
           emergencySvtDemonstrating={demonstrating && emergencySvtDemoSupported}
           obstructivePleuralShockGuidance={session.guidance}
           obstructivePleuralShockDemonstrating={demonstrating && obstructivePleuralShockDemoSupported}
           statusEpilepticusGuidance={session.guidance}
-          statusEpilepticusDemonstrating={demonstrating && statusEpilepticusDemoSupported}
+          statusEpilepticusDemonstrating={demonstrating && registryDemo?.id === 'StatusEpilepticus'}
           emergencySepticShockGuidance={session.guidance}
-          emergencySepticShockDemonstrating={demonstrating && emergencySepticShockDemoSupported}
-          lostContingencyDemonstrating={demonstrating && lostContingencyDemoSupported}
-          oxygenTargetScaleDemonstrating={demonstrating && oxygenTargetScaleDemoSupported}
-          lastKnownWellDemonstrating={demonstrating && lastKnownWellDemoSupported}
-          proxyScaleDemonstrating={demonstrating && proxyScaleDemoSupported}
-          quietPatientDemonstrating={demonstrating && quietPatientDemoSupported}
-          afferentLimbDemonstrating={demonstrating && afferentLimbDemoSupported}
-          pairedReadingDemonstrating={demonstrating && pairedReadingDemoSupported}
-          countedRateDemonstrating={demonstrating && countedRateDemoSupported}
-          lowScoreDemonstrating={demonstrating && lowScoreDemoSupported}
+          emergencySepticShockDemonstrating={demonstrating && registryDemo?.id === 'SepticShock'}
+          lostContingencyDemonstrating={demonstrating && registryDemo?.id === 'LostContingency'}
+          oxygenTargetScaleDemonstrating={demonstrating && registryDemo?.id === 'OxygenTargetScale'}
+          lastKnownWellDemonstrating={demonstrating && registryDemo?.id === 'LastKnownWell'}
+          proxyScaleDemonstrating={demonstrating && registryDemo?.id === 'ProxyScale'}
+          quietPatientDemonstrating={demonstrating && registryDemo?.id === 'QuietPatient'}
+          afferentLimbDemonstrating={demonstrating && registryDemo?.id === 'AfferentLimb'}
+          pairedReadingDemonstrating={demonstrating && registryDemo?.id === 'PairedReading'}
+          countedRateDemonstrating={demonstrating && registryDemo?.id === 'CountedRate'}
+          lowScoreDemonstrating={demonstrating && registryDemo?.id === 'LowScore'}
           countedRate={equipment?.resuscitation.countedRate}
           pairedReading={equipment?.resuscitation.pairedReading}
           afferentLimb={equipment?.resuscitation.afferentLimb}
@@ -4210,10 +2137,10 @@ export function Cockpit({
           easyLabel={equipment?.resuscitation.easyLabel}
           negativeScan={equipment?.resuscitation.negativeScan}
           negativeScanGuidance={session.guidance}
-          negativeScanDemonstrating={demonstrating && negativeScanDemoSupported}
+          negativeScanDemonstrating={demonstrating && registryDemo?.id === 'NegativeScan'}
           risingRequirement={equipment?.resuscitation.risingRequirement}
           risingRequirementGuidance={session.guidance}
-          risingRequirementDemonstrating={demonstrating && risingRequirementDemoSupported}
+          risingRequirementDemonstrating={demonstrating && registryDemo?.id === 'RisingRequirement'}
           renalHyponatremiaGuidance={session.guidance}
           delayedImmuneEventGuidance={session.guidance}
           incidentalClotGuidance={session.guidance}
@@ -4227,44 +2154,44 @@ export function Cockpit({
           silentInteractionGuidance={session.guidance}
           easyLabelGuidance={session.guidance}
           endocrineDkaResolutionGuidance={session.guidance}
-          endocrineDkaResolutionDemonstrating={demonstrating && dkaResolutionDemoSupported}
+          endocrineDkaResolutionDemonstrating={demonstrating && registryDemo?.id === 'DkaResolution'}
           endocrineHhsGuidance={session.guidance}
-          endocrineHhsDemonstrating={demonstrating && hhsOsmolalityDemoSupported}
+          endocrineHhsDemonstrating={demonstrating && registryDemo?.id === 'HhsOsmolality'}
           renalHypernatremiaGuidance={session.guidance}
           renalHypocalcemiaGuidance={session.guidance}
           renalHypermagnesemiaGuidance={session.guidance}
-          renalHyponatremiaDemonstrating={demonstrating && renalHyponatremiaDemoSupported}
-          renalHypernatremiaDemonstrating={demonstrating && renalHypernatremiaDemoSupported}
-          renalHypocalcemiaDemonstrating={demonstrating && renalHypocalcemiaDemoSupported}
-          renalHypermagnesemiaDemonstrating={demonstrating && renalHypermagnesemiaDemoSupported}
+          renalHyponatremiaDemonstrating={demonstrating && registryDemo?.id === 'RenalHyponatremia'}
+          renalHypernatremiaDemonstrating={demonstrating && registryDemo?.id === 'RenalHypernatremia'}
+          renalHypocalcemiaDemonstrating={demonstrating && registryDemo?.id === 'RenalHypocalcemia'}
+          renalHypermagnesemiaDemonstrating={demonstrating && registryDemo?.id === 'RenalHypermagnesemia'}
           onRenalHyponatremiaTutorSource={session.pause}
           onRenalHypernatremiaTutorSource={session.pause}
           onRenalHypocalcemiaTutorSource={session.pause}
           onRenalHypermagnesemiaTutorSource={session.pause}
-          renalHypokalemiaDemonstrating={demonstrating && renalHypokalemiaDemoSupported}
+          renalHypokalemiaDemonstrating={demonstrating && registryDemo?.id === 'RenalHypokalemia'}
           onRenalHypokalemiaTutorSource={session.pause}
-          renalHyperkalemiaDemonstrating={demonstrating && renalHyperkalemiaDemoSupported}
+          renalHyperkalemiaDemonstrating={demonstrating && registryDemo?.id === 'RenalHyperkalemia'}
           onRenalHyperkalemiaTutorSource={session.pause}
-          perioperativeDiabetesDemonstrating={demonstrating && perioperativeDiabetesDemoSupported}
+          perioperativeDiabetesDemonstrating={demonstrating && registryDemo?.id === 'PerioperativeDiabetes'}
           onPerioperativeDiabetesTutorSource={session.pause}
-          refeedingDemonstrating={demonstrating && refeedingDemoSupported}
+          refeedingDemonstrating={demonstrating && registryDemo?.id === 'Refeeding'}
           onRefeedingTutorSource={session.pause}
-          avpDeficiencyDemonstrating={demonstrating && avpDeficiencyDemoSupported}
+          avpDeficiencyDemonstrating={demonstrating && registryDemo?.id === 'AvpDeficiency'}
           onAvpDeficiencyTutorSource={session.pause}
-          hyponatremiaCorrectionDemonstrating={demonstrating && hyponatremiaCorrectionDemoSupported}
+          hyponatremiaCorrectionDemonstrating={demonstrating && registryDemo?.id === 'HyponatremiaCorrection'}
           onHyponatremiaCorrectionTutorSource={session.pause}
-          hypocalcemiaDemonstrating={demonstrating && hypocalcemiaDemoSupported}
+          hypocalcemiaDemonstrating={demonstrating && registryDemo?.id === 'Hypocalcemia'}
           onHypocalcemiaTutorSource={session.pause}
-          hypercalcemiaDemonstrating={demonstrating && hypercalcemiaDemoSupported}
+          hypercalcemiaDemonstrating={demonstrating && registryDemo?.id === 'Hypercalcemia'}
           onHypercalcemiaTutorSource={session.pause}
-          myxedemaDemonstrating={demonstrating && myxedemaDemoSupported}
+          myxedemaDemonstrating={demonstrating && registryDemo?.id === 'Myxedema'}
           onMyxedemaTutorSource={session.pause}
-          thyroidDemonstrating={demonstrating && thyroidDemoSupported}
+          thyroidDemonstrating={demonstrating && registryDemo?.id === 'Thyroid'}
           onThyroidTutorSource={session.pause}
           adrenalGuidance={session.guidance}
-          adrenalDemonstrating={demonstrating && adrenalDemoSupported}
+          adrenalDemonstrating={demonstrating && registryDemo?.id === 'Adrenal'}
           onAdrenalTutorSource={session.pause}
-          hypoglycemiaDemonstrating={demonstrating && hypoglycemiaDemoSupported}
+          hypoglycemiaDemonstrating={demonstrating && registryDemo?.id === 'Hypoglycemia'}
           scenario={scenario}
           region={region}
           infusions={infusions}

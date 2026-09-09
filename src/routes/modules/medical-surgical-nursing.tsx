@@ -7,6 +7,7 @@
 import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRoute';
 import { DEFAULT_MEDICAL_SURGICAL_NURSING_SCENARIO_ID, MEDICAL_SURGICAL_NURSING_SCENARIOS, getMedicalSurgicalNursingScenario } from '../../modules/medical-surgical-nursing/scenarios';
 import { MEDICAL_SURGICAL_NURSING_LIMITATIONS } from '@platform/docs/limitations/medical-surgical-nursing';
+import { MEDICAL_SURGICAL_NURSING_DEMONSTRATIONS } from '../../modules/medical-surgical-nursing/demo/demonstrations';
 
 const MEDICAL_SURGICAL_NURSING_CONFIG: ClinicalModuleConfig = {
   id: 'medical-surgical-nursing', basePath: '/medical-surgical-nursing',
@@ -17,6 +18,7 @@ const MEDICAL_SURGICAL_NURSING_CONFIG: ClinicalModuleConfig = {
   scenarios: MEDICAL_SURGICAL_NURSING_SCENARIOS,
   defaultScenarioId: DEFAULT_MEDICAL_SURGICAL_NURSING_SCENARIO_ID,
   getScenario: getMedicalSurgicalNursingScenario,
+  demonstrations: MEDICAL_SURGICAL_NURSING_DEMONSTRATIONS,
 };
 
 export function MedicalSurgicalNursingRoute({ path }: { path: string }) {

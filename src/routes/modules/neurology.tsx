@@ -7,6 +7,7 @@
 import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRoute';
 import { DEFAULT_NEUROLOGY_SCENARIO_ID, NEUROLOGY_SCENARIOS, getNeurologyScenario } from '../../modules/neurology/scenarios';
 import { NEUROLOGY_LIMITATIONS } from '@platform/docs/limitations/neurology';
+import { NEUROLOGY_DEMONSTRATIONS } from '../../modules/neurology/demo/demonstrations';
 
 const NEUROLOGY_CONFIG: ClinicalModuleConfig = {
   id: 'neurology', basePath: '/neurology', heading: 'Neurology simulator',
@@ -15,6 +16,7 @@ const NEUROLOGY_CONFIG: ClinicalModuleConfig = {
   catalogStatus: `${NEUROLOGY_SCENARIOS.length} of 15 bounded Neurology labs is playable.`,
   scenarios: NEUROLOGY_SCENARIOS, defaultScenarioId: DEFAULT_NEUROLOGY_SCENARIO_ID,
   getScenario: getNeurologyScenario,
+  demonstrations: NEUROLOGY_DEMONSTRATIONS,
 };
 
 export function NeurologyRoute({ path }: { path: string }) {

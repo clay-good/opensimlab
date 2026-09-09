@@ -7,6 +7,7 @@
 import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRoute';
 import { DEFAULT_RESPIRATORY_MEDICINE_SCENARIO_ID, RESPIRATORY_MEDICINE_SCENARIOS, getRespiratoryMedicineScenario } from '../../modules/respiratory-medicine/scenarios';
 import { RESPIRATORY_MEDICINE_LIMITATIONS } from '@platform/docs/limitations/respiratory-medicine';
+import { RESPIRATORY_MEDICINE_DEMONSTRATIONS } from '../../modules/respiratory-medicine/demo/demonstrations';
 
 const RESPIRATORY_MEDICINE_CONFIG: ClinicalModuleConfig = {
   id: 'respiratory-medicine', basePath: '/respiratory-medicine',
@@ -17,6 +18,7 @@ const RESPIRATORY_MEDICINE_CONFIG: ClinicalModuleConfig = {
   scenarios: RESPIRATORY_MEDICINE_SCENARIOS,
   defaultScenarioId: DEFAULT_RESPIRATORY_MEDICINE_SCENARIO_ID,
   getScenario: getRespiratoryMedicineScenario,
+  demonstrations: RESPIRATORY_MEDICINE_DEMONSTRATIONS,
 };
 
 export function RespiratoryMedicineRoute({ path }: { path: string }) {

@@ -23,6 +23,26 @@ Do not reveal a diagnosis when recognition is an objective. Do not invent precis
 browser defaults, or copy another product's behavior. Use shared capabilities and preserve honest
 fidelity. A planned title remains distinct from a playable scenario until every public audit passes.
 
+## Register the worked example
+
+A lesson's worked example is data, not a hook in the shared cockpit. Add the entry to
+`src/modules/<module>/demo/demonstrations.ts`:
+
+```ts
+{ id: 'YourLesson', supports: supportsYourLessonDemonstration,
+  actionType: 'your-lesson-response', step: (r) => yourLessonDemonstrationStep(r?.yourLesson) },
+```
+
+The module's route (`src/routes/modules/<module>.tsx`) already passes that array to the cockpit
+through `ClinicalModuleConfig.demonstrations`, so nothing else needs wiring, and add the lesson's
+`moduleId:scenarioId@version` key to `src/modules/anesthesia/demo/worked-example-keys.ts` so the
+prebrief offers it.
+
+Do not add a `use<Lesson>Demonstration` call to `Cockpit.tsx`. Every lesson that has one puts its
+narration in the chunk all sixteen modules download, which is what
+`tests/unit/module-chunking.test.ts` guards. A handful of older lessons still read more than the
+resuscitation snapshot and keep their hooks there; a new lesson should not join them.
+
 ## Publish quality evidence
 
 Keep records beside the scenario and register them in

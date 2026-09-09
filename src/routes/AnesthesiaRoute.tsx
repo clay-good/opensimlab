@@ -106,6 +106,7 @@ import { possibleSepsisReportActions } from '../modules/infectious-disease/possi
 import { renalHyponatremiaReportActions } from '../modules/renal-electrolyte/hyponatremia-reporting';
 import { renalHypokalemiaReportActions } from '../modules/renal-electrolyte/hypokalemia-reporting';
 import { offersWorkedExample } from '@anesthesia/demo/worked-examples';
+import type { LessonDemonstration } from '@anesthesia/demo/lesson-demonstration';
 import { Cockpit } from '@anesthesia/ui/Cockpit';
 import { Debrief } from '@anesthesia/ui/Debrief';
 import { assertTranscriptIsAnonymous, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
@@ -144,6 +145,13 @@ export interface ClinicalModuleConfig {
   readonly scenarios: readonly Scenario[];
   readonly defaultScenarioId: string;
   readonly getScenario: (id: string) => Scenario | undefined;
+  /**
+   * This module's worked examples, carried here for the same reason the
+   * limitations are: so the shared cockpit can run one without importing every
+   * module's demonstration narration. A module that has not been migrated off
+   * the cockpit's own hooks yet supplies nothing.
+   */
+  readonly demonstrations?: readonly LessonDemonstration[];
 }
 
 /**
@@ -1049,6 +1057,7 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
       onTakeControls={() => { setDemonstrating(false); session.setSpeed(1); }}
       onEnd={session.end}
       moduleId={config.id}
+      demonstrations={config.demonstrations}
       onReportSource={() => requestReport('source')}
       onSourceVisibilityChange={setSourceOpen}
     />

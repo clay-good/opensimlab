@@ -7,6 +7,7 @@
 import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRoute';
 import { CARDIOLOGY_SCENARIOS, DEFAULT_CARDIOLOGY_SCENARIO_ID, getCardiologyScenario } from '../../modules/cardiology/scenarios';
 import { CARDIOLOGY_LIMITATIONS } from '@platform/docs/limitations/cardiology';
+import { CARDIOLOGY_DEMONSTRATIONS } from '../../modules/cardiology/demo/demonstrations';
 
 const CARDIOLOGY_CONFIG: ClinicalModuleConfig = {
   id: 'cardiology', basePath: '/cardiology', heading: 'Cardiology simulator',
@@ -15,6 +16,7 @@ const CARDIOLOGY_CONFIG: ClinicalModuleConfig = {
   catalogStatus: 'All seventeen bounded cardiology labs are playable.',
   scenarios: CARDIOLOGY_SCENARIOS, defaultScenarioId: DEFAULT_CARDIOLOGY_SCENARIO_ID,
   getScenario: getCardiologyScenario,
+  demonstrations: CARDIOLOGY_DEMONSTRATIONS,
 };
 
 export function CardiologyRoute({ path }: { path: string }) {
