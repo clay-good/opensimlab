@@ -158,6 +158,7 @@ import { routineGeriatricInductionCompletionEvidence } from '../routine-geriatri
 import { postoperativeHandoffCompletionEvidence } from '../postoperative-handoff-completion';
 import { pacemakerAndCauteryPlanningCompletionEvidence } from '../pacemaker-and-cautery-planning-completion';
 import { preeclampsiaUrgentDeliveryCompletionEvidence } from '../preeclampsia-urgent-delivery-completion';
+import { opioidInducedVentilatoryImpairmentCompletionEvidence } from '../opioid-induced-ventilatory-impairment-completion';
 import { lastCompletionEvidence } from '../local-anesthetic-systemic-toxicity-completion';
 import { earlyMalignantHyperthermiaCompletionEvidence } from '../early-malignant-hyperthermia-completion';
 import { perioperativeAnaphylaxisCompletionEvidence } from '../perioperative-anaphylaxis-completion';
@@ -483,6 +484,7 @@ export function auditClinicalScenario(
     ...postoperativeHandoffCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...pacemakerAndCauteryPlanningCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...preeclampsiaUrgentDeliveryCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...opioidInducedVentilatoryImpairmentCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...lastCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...earlyMalignantHyperthermiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...perioperativeAnaphylaxisCompletionEvidence(scenario, capabilityVersion, moduleId),

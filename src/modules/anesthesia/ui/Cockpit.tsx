@@ -385,6 +385,8 @@ import { usePacemakerAndCauteryPlanningDemonstration } from '@anesthesia/demo/us
 import { supportsPacemakerAndCauteryPlanningDemonstration } from '@anesthesia/demo/pacemaker-and-cautery-planning-demonstration';
 import { usePreeclampsiaUrgentDeliveryDemonstration } from '@anesthesia/demo/usePreeclampsiaUrgentDeliveryDemonstration';
 import { supportsPreeclampsiaUrgentDeliveryDemonstration } from '@anesthesia/demo/preeclampsia-urgent-delivery-demonstration';
+import { useOpioidVentilatoryImpairmentDemonstration } from '@anesthesia/demo/useOpioidVentilatoryImpairmentDemonstration';
+import { supportsOpioidVentilatoryImpairmentDemonstration } from '@anesthesia/demo/opioid-ventilatory-impairment-demonstration';
 import { useLastDemonstration } from '@anesthesia/demo/useLastDemonstration';
 import { supportsLastDemonstration } from '@anesthesia/demo/last-demonstration';
 import { useMalignantHyperthermiaDemonstration } from '@anesthesia/demo/useMalignantHyperthermiaDemonstration';
@@ -784,6 +786,7 @@ export function Cockpit({
   const postoperativeHandoffDemoSupported = supportsPostoperativeHandoffDemonstration(scenario);
   const ciedPlanningDemoSupported = supportsPacemakerAndCauteryPlanningDemonstration(scenario);
   const preeclampsiaDemoSupported = supportsPreeclampsiaUrgentDeliveryDemonstration(scenario);
+  const opioidVentilatoryDemoSupported = supportsOpioidVentilatoryImpairmentDemonstration(scenario);
   const lastDemoSupported = supportsLastDemonstration(scenario);
   const malignantHyperthermiaDemoSupported = supportsMalignantHyperthermiaDemonstration(scenario);
   const anaphylaxisDemoSupported = supportsAnaphylaxisDemonstration(scenario);
@@ -983,6 +986,7 @@ export function Cockpit({
     || postoperativeHandoffDemoSupported
     || ciedPlanningDemoSupported
     || preeclampsiaDemoSupported
+    || opioidVentilatoryDemoSupported
     || lastDemoSupported
     || malignantHyperthermiaDemoSupported
     || anaphylaxisDemoSupported
@@ -1944,6 +1948,28 @@ export function Cockpit({
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
   /**
+   * The opioid lesson never keys on the saturation, which reads 100% both when
+   * the patient is supported and when they are only receiving oxygen while
+   * breathing four times a minute. Latched ticks and the machine state instead.
+   */
+  const opioidVentilatoryProgress = session.state && session.equipment ? {
+    severity: session.equipment.resuscitation.opioidVentilatoryResponse?.severity ?? 0,
+    helpRequestedAtTick: session.equipment.airway.helpRequestedAtTick ?? null,
+    ventilatorDelivering: session.equipment.ventilator.delivering,
+    inspiredOxygenFraction: session.equipment.ventilator.fio2,
+    furtherOpioidHeldAtTick:
+      session.equipment.resuscitation.opioidVentilatoryResponse?.furtherOpioidHeldAtTick ?? null,
+    naloxoneIntentAtTick:
+      session.equipment.resuscitation.opioidVentilatoryResponse?.naloxoneIntentAtTick ?? null,
+    respiratoryRateBpm: session.state.respiratoryRateBpm ?? 0,
+  } : undefined;
+  const opioidVentilatoryDemonstration = useOpioidVentilatoryImpairmentDemonstration({
+    active: demonstrating && opioidVentilatoryDemoSupported,
+    running: session.transport === 'running',
+    patient: opioidVentilatoryProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
+  /**
    * The preeclampsia lesson keys on a check count and two cumulative doses,
    * all of which only rise. The pressure itself falls after labetalol, so a
    * beat gated on it would walk backwards once the drug worked.
@@ -2746,6 +2772,7 @@ export function Cockpit({
     : postoperativeHandoffDemoSupported ? postoperativeHandoffDemonstration
     : ciedPlanningDemoSupported ? ciedPlanningDemonstration
     : preeclampsiaDemoSupported ? preeclampsiaDemonstration
+    : opioidVentilatoryDemoSupported ? opioidVentilatoryDemonstration
     : lastDemoSupported ? lastDemonstration
     : malignantHyperthermiaDemoSupported ? malignantHyperthermiaDemonstration
     : anaphylaxisDemoSupported ? anaphylaxisDemonstration

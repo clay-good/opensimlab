@@ -11,6 +11,7 @@ import { supportsGeriatricInductionDemonstration } from './geriatric-induction-d
 import { supportsPostoperativeHandoffDemonstration } from './postoperative-handoff-demonstration';
 import { supportsPacemakerAndCauteryPlanningDemonstration } from './pacemaker-and-cautery-planning-demonstration';
 import { supportsPreeclampsiaUrgentDeliveryDemonstration } from './preeclampsia-urgent-delivery-demonstration';
+import { supportsOpioidVentilatoryImpairmentDemonstration } from './opioid-ventilatory-impairment-demonstration';
 import { supportsLastDemonstration } from './last-demonstration';
 import { supportsMalignantHyperthermiaDemonstration } from './malignant-hyperthermia-demonstration';
 import { supportsAnaphylaxisDemonstration } from './anaphylaxis-demonstration';
@@ -257,6 +258,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsPostoperativeHandoffDemonstration,
     supportsPacemakerAndCauteryPlanningDemonstration,
     supportsPreeclampsiaUrgentDeliveryDemonstration,
+    supportsOpioidVentilatoryImpairmentDemonstration,
     supportsLastDemonstration,
     supportsMalignantHyperthermiaDemonstration,
     supportsAnaphylaxisDemonstration,
