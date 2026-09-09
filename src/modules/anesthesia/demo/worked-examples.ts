@@ -10,6 +10,7 @@ import { supportsObstetricGeneralAnesthesiaDemonstration } from './obstetric-gen
 import { supportsGeriatricInductionDemonstration } from './geriatric-induction-demonstration';
 import { supportsPostoperativeHandoffDemonstration } from './postoperative-handoff-demonstration';
 import { supportsPacemakerAndCauteryPlanningDemonstration } from './pacemaker-and-cautery-planning-demonstration';
+import { supportsPreeclampsiaUrgentDeliveryDemonstration } from './preeclampsia-urgent-delivery-demonstration';
 import { supportsLastDemonstration } from './last-demonstration';
 import { supportsMalignantHyperthermiaDemonstration } from './malignant-hyperthermia-demonstration';
 import { supportsAnaphylaxisDemonstration } from './anaphylaxis-demonstration';
@@ -255,6 +256,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsGeriatricInductionDemonstration,
     supportsPostoperativeHandoffDemonstration,
     supportsPacemakerAndCauteryPlanningDemonstration,
+    supportsPreeclampsiaUrgentDeliveryDemonstration,
     supportsLastDemonstration,
     supportsMalignantHyperthermiaDemonstration,
     supportsAnaphylaxisDemonstration,

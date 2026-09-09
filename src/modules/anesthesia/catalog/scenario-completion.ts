@@ -157,6 +157,7 @@ import { obstetricGeneralAnesthesiaCompletionEvidence } from '../obstetric-gener
 import { routineGeriatricInductionCompletionEvidence } from '../routine-geriatric-induction-completion';
 import { postoperativeHandoffCompletionEvidence } from '../postoperative-handoff-completion';
 import { pacemakerAndCauteryPlanningCompletionEvidence } from '../pacemaker-and-cautery-planning-completion';
+import { preeclampsiaUrgentDeliveryCompletionEvidence } from '../preeclampsia-urgent-delivery-completion';
 import { lastCompletionEvidence } from '../local-anesthetic-systemic-toxicity-completion';
 import { earlyMalignantHyperthermiaCompletionEvidence } from '../early-malignant-hyperthermia-completion';
 import { perioperativeAnaphylaxisCompletionEvidence } from '../perioperative-anaphylaxis-completion';
@@ -481,6 +482,7 @@ export function auditClinicalScenario(
     ...routineGeriatricInductionCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...postoperativeHandoffCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...pacemakerAndCauteryPlanningCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...preeclampsiaUrgentDeliveryCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...lastCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...earlyMalignantHyperthermiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...perioperativeAnaphylaxisCompletionEvidence(scenario, capabilityVersion, moduleId),

@@ -383,6 +383,8 @@ import { usePostoperativeHandoffDemonstration } from '@anesthesia/demo/usePostop
 import { supportsPostoperativeHandoffDemonstration } from '@anesthesia/demo/postoperative-handoff-demonstration';
 import { usePacemakerAndCauteryPlanningDemonstration } from '@anesthesia/demo/usePacemakerAndCauteryPlanningDemonstration';
 import { supportsPacemakerAndCauteryPlanningDemonstration } from '@anesthesia/demo/pacemaker-and-cautery-planning-demonstration';
+import { usePreeclampsiaUrgentDeliveryDemonstration } from '@anesthesia/demo/usePreeclampsiaUrgentDeliveryDemonstration';
+import { supportsPreeclampsiaUrgentDeliveryDemonstration } from '@anesthesia/demo/preeclampsia-urgent-delivery-demonstration';
 import { useLastDemonstration } from '@anesthesia/demo/useLastDemonstration';
 import { supportsLastDemonstration } from '@anesthesia/demo/last-demonstration';
 import { useMalignantHyperthermiaDemonstration } from '@anesthesia/demo/useMalignantHyperthermiaDemonstration';
@@ -781,6 +783,7 @@ export function Cockpit({
   const geriatricInductionDemoSupported = supportsGeriatricInductionDemonstration(scenario);
   const postoperativeHandoffDemoSupported = supportsPostoperativeHandoffDemonstration(scenario);
   const ciedPlanningDemoSupported = supportsPacemakerAndCauteryPlanningDemonstration(scenario);
+  const preeclampsiaDemoSupported = supportsPreeclampsiaUrgentDeliveryDemonstration(scenario);
   const lastDemoSupported = supportsLastDemonstration(scenario);
   const malignantHyperthermiaDemoSupported = supportsMalignantHyperthermiaDemonstration(scenario);
   const anaphylaxisDemoSupported = supportsAnaphylaxisDemonstration(scenario);
@@ -979,6 +982,7 @@ export function Cockpit({
     || geriatricInductionDemoSupported
     || postoperativeHandoffDemoSupported
     || ciedPlanningDemoSupported
+    || preeclampsiaDemoSupported
     || lastDemoSupported
     || malignantHyperthermiaDemoSupported
     || anaphylaxisDemoSupported
@@ -1939,6 +1943,23 @@ export function Cockpit({
     patient: extubationReadinessProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  /**
+   * The preeclampsia lesson keys on a check count and two cumulative doses,
+   * all of which only rise. The pressure itself falls after labetalol, so a
+   * beat gated on it would walk backwards once the drug worked.
+   */
+  const preeclampsiaProgress = session.state && session.equipment ? {
+    bloodPressureChecks: session.equipment.resuscitation.preeclampsiaBloodPressureChecks ?? 0,
+    labetalolTotalMg: session.equipment.resuscitation.labetalolTotalMg ?? 0,
+    magnesiumSulfateTotalG: session.equipment.resuscitation.magnesiumSulfateTotalG ?? 0,
+    systolicMmHg: session.state.systolicMmHg ?? 0,
+  } : undefined;
+  const preeclampsiaDemonstration = usePreeclampsiaUrgentDeliveryDemonstration({
+    active: demonstrating && preeclampsiaDemoSupported,
+    running: session.transport === 'running',
+    patient: preeclampsiaProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const ciedPlanningDemonstration = usePacemakerAndCauteryPlanningDemonstration({
     active: demonstrating && ciedPlanningDemoSupported,
     running: session.transport === 'running',
@@ -2724,6 +2745,7 @@ export function Cockpit({
     : geriatricInductionDemoSupported ? geriatricInductionDemonstration
     : postoperativeHandoffDemoSupported ? postoperativeHandoffDemonstration
     : ciedPlanningDemoSupported ? ciedPlanningDemonstration
+    : preeclampsiaDemoSupported ? preeclampsiaDemonstration
     : lastDemoSupported ? lastDemonstration
     : malignantHyperthermiaDemoSupported ? malignantHyperthermiaDemonstration
     : anaphylaxisDemoSupported ? anaphylaxisDemonstration
