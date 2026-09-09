@@ -26,6 +26,7 @@ import { supportsHypothermiaRewarmingDemonstration } from './hypothermia-rewarmi
 import { supportsPerioperativeHyperglycemiaDemonstration } from './perioperative-hyperglycemia-demonstration';
 import { supportsInhalationalMaintenanceDemonstration } from './inhalational-maintenance-demonstration';
 import { supportsPersistentVfCardiacArrestDemonstration } from './persistent-vf-cardiac-arrest-demonstration';
+import { supportsPediatricIvInductionDemonstration } from './pediatric-iv-induction-demonstration';
 import { supportsLastDemonstration } from './last-demonstration';
 import { supportsMalignantHyperthermiaDemonstration } from './malignant-hyperthermia-demonstration';
 import { supportsAnaphylaxisDemonstration } from './anaphylaxis-demonstration';
@@ -287,6 +288,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsPerioperativeHyperglycemiaDemonstration,
     supportsInhalationalMaintenanceDemonstration,
     supportsPersistentVfCardiacArrestDemonstration,
+    supportsPediatricIvInductionDemonstration,
     supportsLastDemonstration,
     supportsMalignantHyperthermiaDemonstration,
     supportsAnaphylaxisDemonstration,

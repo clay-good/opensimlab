@@ -1307,9 +1307,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "routine-pediatric-iv-induction-fixtures.ts binds seed 6390 and content 0.1.0 to expert, adult-tidal-volume error, resized-breath recovery, and no-action paths over 5,400 ticks. Nothing the objectives read is authored: the end-tidal oxygen fraction of 0.93 at induction, the saturations that hold at 100% on every path but one, and the 36% reached by a run that stops ventilating are all solver output on the Paedfusor-anchored paediatric profile the scenario declares. tests/integration/anesthesia-routine-pediatric-iv-induction-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -1321,9 +1321,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "A one-drug formulary and the ventilator, for a healthy six-year-old of 20 kg. The labelled propofol range of 2.5-3.5 mg/kg is 50-70 mg here and the 6-8 mL/kg tidal-volume range is 120-160 mL, so both objectives are arithmetic a learner has to do rather than presets to pick. The engine also refuses a bolus above its bound entirely -- 8 mg/kg is not accepted at all, and the run then reports every objective as not-exercised rather than as a bad dose."
           ]
         },
         {
@@ -1335,23 +1335,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The transcripts end at 5,400 ticks, past the scenario's own imaging-team prompt at 4,200. The third objective reads a sustained overlap -- child-sized delivered breaths together with an end-tidal carbon dioxide between 30 and 50 mmHg for a final 30 seconds -- so the run has to continue long enough after any correction for that window to close, which is what separates the recovery path's resizing at tick 2,400 from a later one that would not have settled."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "The nine authored tutor rules at version 0.1.0 in tutor/guidance.ts apply here, and the preoxygenation ladder is the load-bearing one; all are silent on the unassisted setting and suppressed while any alarm is active. None names a paediatric weight band, which is correct -- the mg/kg habit is the thing being taught rather than supplied. Worked example 0.1.0 is the module's thirty-seventh observed-state one. Its induce beat says BY WEIGHT in as many words and explains that the equivalent absolute dose gives identical drug and scores lower, before the learner could discover it by losing the mark. Its ventilate beat names the adult number to resist and converts it: 450 mL is 22.5 mL/kg here. Its closing gate reads a tidal volume at or above 130 mL rather than merely in band, because the scenario's own 120 mL default is already in band and a gate on that would have ended the example the moment the propofol landed -- found by failing, and now pinned by a test that every beat id appears exactly once. Its closing beat declines the credit the demonstration would take, reporting that the overdose and the missing preoxygenation cost objectives and not this child, and that the one action which does harm is stopping the breaths. tests/unit/anesthesia-pediatric-iv-induction-worked-example.test.ts drives every beat through the real engine from both a fresh start and a handover, and tests/unit/worked-example-offer.test.ts pins that what this audit claims is what the product actually offers."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx derives all four objectives from the replayed state trace and the recorded actions rather than from a score kept during the run. The bound counterfactual is an adult reflex applied to a child: everything correct except a 450 mL tidal volume, which the debrief reports as 22.5 mL/kg. Measured, it is met, met, NOT MET, met, and the saturation holds at 100% throughout -- the objective is lost and this child is not harmed. The recovery path resizes the breath at tick 2,400 and meets all four. The no-action path reports not-exercised four times, because every objective in this lesson is downstream of an accepted induction dose."
           ]
         },
         {
@@ -1370,23 +1370,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "routine-pediatric-iv-induction-fixtures.ts binds exact-content expert, adult-tidal-volume error, resized-breath recovery, and no-action pathways to seed 6390 for deterministic replay through the shared engine. Four readings are pinned by tests. The first is the one worth the lesson: THE SECOND OBJECTIVE SCORES THE UNIT, NOT THE DOSE. Entering 60 mg as an absolute dose gives this 20 kg child exactly 3.00 mg/kg -- the debrief computes it back and reports that figure -- and scores partly met rather than met, purely because it was entered as an absolute dose rather than by weight. A test replays both entries and asserts that the drug totals, the saturations and the other three outcomes are identical, so the difference is isolated to the unit. That is a defensible thing for a rubric to teach, and the evidence says plainly that it is a habit being scored rather than a safer dose being measured. The second is that 5 mg/kg -- two thirds above the labelled maximum -- costs that objective and nothing else: the lowest saturation is still 100%. The third is that skipping preoxygenation entirely costs the first objective while the lowest saturation is 98%. The fourth is the counterweight to those two: the desaturation objective is NOT decorative, and a run that stops delivering breaths after induction reaches 36%. Three of this lesson's four objectives can be lost without the modelled child changing at all, and the evidence would rather name that than let a reader read four met outcomes as four measured benefits. A fifth reading is pinned as a cross-lesson contrast rather than a property of this lab alone: this ventilator starts at 120 mL, which is 6.0 mL/kg and already inside the band, so a learner who turns delivery on WITHOUT stating a volume meets the ventilation objective here -- while the same omission in routine-geriatric-induction is scored at 0.0 mL/kg and fails. Two lessons in one module read an unstated field in opposite directions, and a learner moving between them would have no way to know."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

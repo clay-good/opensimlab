@@ -173,6 +173,7 @@ import { hypothermiaAndRewarmingCompletionEvidence } from '../hypothermia-and-re
 import { perioperativeHyperglycemiaCompletionEvidence } from '../perioperative-hyperglycemia-completion';
 import { routineInhalationalMaintenanceCompletionEvidence } from '../routine-inhalational-maintenance-completion';
 import { persistentVfCardiacArrestCompletionEvidence } from '../persistent-vf-cardiac-arrest-completion';
+import { routinePediatricIvInductionCompletionEvidence } from '../routine-pediatric-iv-induction-completion';
 import { lastCompletionEvidence } from '../local-anesthetic-systemic-toxicity-completion';
 import { earlyMalignantHyperthermiaCompletionEvidence } from '../early-malignant-hyperthermia-completion';
 import { perioperativeAnaphylaxisCompletionEvidence } from '../perioperative-anaphylaxis-completion';
@@ -513,6 +514,7 @@ export function auditClinicalScenario(
     ...perioperativeHyperglycemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...routineInhalationalMaintenanceCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...persistentVfCardiacArrestCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...routinePediatricIvInductionCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...lastCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...earlyMalignantHyperthermiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...perioperativeAnaphylaxisCompletionEvidence(scenario, capabilityVersion, moduleId),
