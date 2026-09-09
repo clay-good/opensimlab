@@ -381,6 +381,8 @@ import { useGeriatricInductionDemonstration } from '@anesthesia/demo/useGeriatri
 import { supportsGeriatricInductionDemonstration } from '@anesthesia/demo/geriatric-induction-demonstration';
 import { usePostoperativeHandoffDemonstration } from '@anesthesia/demo/usePostoperativeHandoffDemonstration';
 import { supportsPostoperativeHandoffDemonstration } from '@anesthesia/demo/postoperative-handoff-demonstration';
+import { usePacemakerAndCauteryPlanningDemonstration } from '@anesthesia/demo/usePacemakerAndCauteryPlanningDemonstration';
+import { supportsPacemakerAndCauteryPlanningDemonstration } from '@anesthesia/demo/pacemaker-and-cautery-planning-demonstration';
 import { useLastDemonstration } from '@anesthesia/demo/useLastDemonstration';
 import { supportsLastDemonstration } from '@anesthesia/demo/last-demonstration';
 import { useMalignantHyperthermiaDemonstration } from '@anesthesia/demo/useMalignantHyperthermiaDemonstration';
@@ -778,6 +780,7 @@ export function Cockpit({
   const obstetricGeneralAnesthesiaDemoSupported = supportsObstetricGeneralAnesthesiaDemonstration(scenario);
   const geriatricInductionDemoSupported = supportsGeriatricInductionDemonstration(scenario);
   const postoperativeHandoffDemoSupported = supportsPostoperativeHandoffDemonstration(scenario);
+  const ciedPlanningDemoSupported = supportsPacemakerAndCauteryPlanningDemonstration(scenario);
   const lastDemoSupported = supportsLastDemonstration(scenario);
   const malignantHyperthermiaDemoSupported = supportsMalignantHyperthermiaDemonstration(scenario);
   const anaphylaxisDemoSupported = supportsAnaphylaxisDemonstration(scenario);
@@ -975,6 +978,7 @@ export function Cockpit({
     || obstetricGeneralAnesthesiaDemoSupported
     || geriatricInductionDemoSupported
     || postoperativeHandoffDemoSupported
+    || ciedPlanningDemoSupported
     || lastDemoSupported
     || malignantHyperthermiaDemoSupported
     || anaphylaxisDemoSupported
@@ -1935,6 +1939,12 @@ export function Cockpit({
     patient: extubationReadinessProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  const ciedPlanningDemonstration = usePacemakerAndCauteryPlanningDemonstration({
+    active: demonstrating && ciedPlanningDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.ciedPlanningAssessment,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const postoperativeHandoffDemonstration = usePostoperativeHandoffDemonstration({
     active: demonstrating && postoperativeHandoffDemoSupported,
     running: session.transport === 'running',
@@ -2713,6 +2723,7 @@ export function Cockpit({
     : obstetricGeneralAnesthesiaDemoSupported ? obstetricGeneralAnesthesiaDemonstration
     : geriatricInductionDemoSupported ? geriatricInductionDemonstration
     : postoperativeHandoffDemoSupported ? postoperativeHandoffDemonstration
+    : ciedPlanningDemoSupported ? ciedPlanningDemonstration
     : lastDemoSupported ? lastDemonstration
     : malignantHyperthermiaDemoSupported ? malignantHyperthermiaDemonstration
     : anaphylaxisDemoSupported ? anaphylaxisDemonstration
