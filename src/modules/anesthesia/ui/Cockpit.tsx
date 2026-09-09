@@ -389,6 +389,8 @@ import { useOpioidVentilatoryImpairmentDemonstration } from '@anesthesia/demo/us
 import { supportsOpioidVentilatoryImpairmentDemonstration } from '@anesthesia/demo/opioid-ventilatory-impairment-demonstration';
 import { usePneumothoraxDemonstration } from '@anesthesia/demo/usePneumothoraxDemonstration';
 import { supportsPneumothoraxUnderPositivePressureDemonstration } from '@anesthesia/demo/pneumothorax-under-positive-pressure-demonstration';
+import { useRepeatedLaryngoscopyDemonstration } from '@anesthesia/demo/useRepeatedLaryngoscopyDemonstration';
+import { supportsRepeatedLaryngoscopyDemonstration } from '@anesthesia/demo/repeated-laryngoscopy-demonstration';
 import { useLastDemonstration } from '@anesthesia/demo/useLastDemonstration';
 import { supportsLastDemonstration } from '@anesthesia/demo/last-demonstration';
 import { useMalignantHyperthermiaDemonstration } from '@anesthesia/demo/useMalignantHyperthermiaDemonstration';
@@ -790,6 +792,7 @@ export function Cockpit({
   const preeclampsiaDemoSupported = supportsPreeclampsiaUrgentDeliveryDemonstration(scenario);
   const opioidVentilatoryDemoSupported = supportsOpioidVentilatoryImpairmentDemonstration(scenario);
   const pneumothoraxDemoSupported = supportsPneumothoraxUnderPositivePressureDemonstration(scenario);
+  const repeatedLaryngoscopyDemoSupported = supportsRepeatedLaryngoscopyDemonstration(scenario);
   const lastDemoSupported = supportsLastDemonstration(scenario);
   const malignantHyperthermiaDemoSupported = supportsMalignantHyperthermiaDemonstration(scenario);
   const anaphylaxisDemoSupported = supportsAnaphylaxisDemonstration(scenario);
@@ -991,6 +994,7 @@ export function Cockpit({
     || preeclampsiaDemoSupported
     || opioidVentilatoryDemoSupported
     || pneumothoraxDemoSupported
+    || repeatedLaryngoscopyDemoSupported
     || lastDemoSupported
     || malignantHyperthermiaDemoSupported
     || anaphylaxisDemoSupported
@@ -1951,6 +1955,28 @@ export function Cockpit({
     patient: extubationReadinessProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  /**
+   * The laryngoscopy lesson keys on quantities that only rise, and holds a beat
+   * while an attempt is in progress: the count is still zero until it completes.
+   */
+  const repeatedLaryngoscopyPropofol = scenario.formulary.find((entry) => entry.drugId === 'propofol');
+  const repeatedLaryngoscopyProgress = session.state && session.equipment && repeatedLaryngoscopyPropofol ? {
+    endTidalOxygenFraction: session.state.endTidalO2Fraction ?? 0,
+    helpRequestedAtTick: session.equipment.airway.helpRequestedAtTick ?? null,
+    propofolTotalMg: (repeatedLaryngoscopyPropofol.syringeVolumeMl - (session.equipment.drugs
+      .find((drug) => drug.drugId === 'propofol')?.syringeRemainingMl
+      ?? repeatedLaryngoscopyPropofol.syringeVolumeMl)) * repeatedLaryngoscopyPropofol.concentration,
+    attempts: session.equipment.airway.attempts,
+    attemptInProgress: session.equipment.airway.attemptInProgress,
+    airwayDevice: session.equipment.airway.device,
+    ventilatorDelivering: session.equipment.ventilator.delivering,
+  } : undefined;
+  const repeatedLaryngoscopyDemonstration = useRepeatedLaryngoscopyDemonstration({
+    active: demonstrating && repeatedLaryngoscopyDemoSupported,
+    running: session.transport === 'running',
+    patient: repeatedLaryngoscopyProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const pneumothoraxProgress = session.state && session.equipment ? {
     severity: session.equipment.resuscitation.tensionPneumothoraxFraction ?? 0,
     assessedAtTick: session.equipment.resuscitation.pneumothoraxAssessedAtTick ?? null,
@@ -2792,6 +2818,7 @@ export function Cockpit({
     : preeclampsiaDemoSupported ? preeclampsiaDemonstration
     : opioidVentilatoryDemoSupported ? opioidVentilatoryDemonstration
     : pneumothoraxDemoSupported ? pneumothoraxDemonstration
+    : repeatedLaryngoscopyDemoSupported ? repeatedLaryngoscopyDemonstration
     : lastDemoSupported ? lastDemonstration
     : malignantHyperthermiaDemoSupported ? malignantHyperthermiaDemonstration
     : anaphylaxisDemoSupported ? anaphylaxisDemonstration

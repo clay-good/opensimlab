@@ -160,6 +160,7 @@ import { pacemakerAndCauteryPlanningCompletionEvidence } from '../pacemaker-and-
 import { preeclampsiaUrgentDeliveryCompletionEvidence } from '../preeclampsia-urgent-delivery-completion';
 import { opioidInducedVentilatoryImpairmentCompletionEvidence } from '../opioid-induced-ventilatory-impairment-completion';
 import { pneumothoraxUnderPositivePressureCompletionEvidence } from '../pneumothorax-under-positive-pressure-completion';
+import { repeatedLaryngoscopyHarmCompletionEvidence } from '../repeated-laryngoscopy-harm-completion';
 import { lastCompletionEvidence } from '../local-anesthetic-systemic-toxicity-completion';
 import { earlyMalignantHyperthermiaCompletionEvidence } from '../early-malignant-hyperthermia-completion';
 import { perioperativeAnaphylaxisCompletionEvidence } from '../perioperative-anaphylaxis-completion';
@@ -487,6 +488,7 @@ export function auditClinicalScenario(
     ...preeclampsiaUrgentDeliveryCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...opioidInducedVentilatoryImpairmentCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...pneumothoraxUnderPositivePressureCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...repeatedLaryngoscopyHarmCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...lastCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...earlyMalignantHyperthermiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...perioperativeAnaphylaxisCompletionEvidence(scenario, capabilityVersion, moduleId),

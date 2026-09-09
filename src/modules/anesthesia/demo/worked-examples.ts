@@ -13,6 +13,7 @@ import { supportsPacemakerAndCauteryPlanningDemonstration } from './pacemaker-an
 import { supportsPreeclampsiaUrgentDeliveryDemonstration } from './preeclampsia-urgent-delivery-demonstration';
 import { supportsOpioidVentilatoryImpairmentDemonstration } from './opioid-ventilatory-impairment-demonstration';
 import { supportsPneumothoraxUnderPositivePressureDemonstration } from './pneumothorax-under-positive-pressure-demonstration';
+import { supportsRepeatedLaryngoscopyDemonstration } from './repeated-laryngoscopy-demonstration';
 import { supportsLastDemonstration } from './last-demonstration';
 import { supportsMalignantHyperthermiaDemonstration } from './malignant-hyperthermia-demonstration';
 import { supportsAnaphylaxisDemonstration } from './anaphylaxis-demonstration';
@@ -261,6 +262,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsPreeclampsiaUrgentDeliveryDemonstration,
     supportsOpioidVentilatoryImpairmentDemonstration,
     supportsPneumothoraxUnderPositivePressureDemonstration,
+    supportsRepeatedLaryngoscopyDemonstration,
     supportsLastDemonstration,
     supportsMalignantHyperthermiaDemonstration,
     supportsAnaphylaxisDemonstration,
