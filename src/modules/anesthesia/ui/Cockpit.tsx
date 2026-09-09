@@ -387,6 +387,8 @@ import { usePreeclampsiaUrgentDeliveryDemonstration } from '@anesthesia/demo/use
 import { supportsPreeclampsiaUrgentDeliveryDemonstration } from '@anesthesia/demo/preeclampsia-urgent-delivery-demonstration';
 import { useOpioidVentilatoryImpairmentDemonstration } from '@anesthesia/demo/useOpioidVentilatoryImpairmentDemonstration';
 import { supportsOpioidVentilatoryImpairmentDemonstration } from '@anesthesia/demo/opioid-ventilatory-impairment-demonstration';
+import { usePneumothoraxDemonstration } from '@anesthesia/demo/usePneumothoraxDemonstration';
+import { supportsPneumothoraxUnderPositivePressureDemonstration } from '@anesthesia/demo/pneumothorax-under-positive-pressure-demonstration';
 import { useLastDemonstration } from '@anesthesia/demo/useLastDemonstration';
 import { supportsLastDemonstration } from '@anesthesia/demo/last-demonstration';
 import { useMalignantHyperthermiaDemonstration } from '@anesthesia/demo/useMalignantHyperthermiaDemonstration';
@@ -787,6 +789,7 @@ export function Cockpit({
   const ciedPlanningDemoSupported = supportsPacemakerAndCauteryPlanningDemonstration(scenario);
   const preeclampsiaDemoSupported = supportsPreeclampsiaUrgentDeliveryDemonstration(scenario);
   const opioidVentilatoryDemoSupported = supportsOpioidVentilatoryImpairmentDemonstration(scenario);
+  const pneumothoraxDemoSupported = supportsPneumothoraxUnderPositivePressureDemonstration(scenario);
   const lastDemoSupported = supportsLastDemonstration(scenario);
   const malignantHyperthermiaDemoSupported = supportsMalignantHyperthermiaDemonstration(scenario);
   const anaphylaxisDemoSupported = supportsAnaphylaxisDemonstration(scenario);
@@ -987,6 +990,7 @@ export function Cockpit({
     || ciedPlanningDemoSupported
     || preeclampsiaDemoSupported
     || opioidVentilatoryDemoSupported
+    || pneumothoraxDemoSupported
     || lastDemoSupported
     || malignantHyperthermiaDemoSupported
     || anaphylaxisDemoSupported
@@ -1947,6 +1951,20 @@ export function Cockpit({
     patient: extubationReadinessProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  const pneumothoraxProgress = session.state && session.equipment ? {
+    severity: session.equipment.resuscitation.tensionPneumothoraxFraction ?? 0,
+    assessedAtTick: session.equipment.resuscitation.pneumothoraxAssessedAtTick ?? null,
+    helpRequestedAtTick: session.equipment.airway.helpRequestedAtTick ?? null,
+    inspiredOxygenFraction: session.equipment.ventilator.fio2,
+    ventilatorDelivering: session.equipment.ventilator.delivering,
+    decompressedAtTick: session.equipment.resuscitation.pneumothoraxDecompressedAtTick ?? null,
+  } : undefined;
+  const pneumothoraxDemonstration = usePneumothoraxDemonstration({
+    active: demonstrating && pneumothoraxDemoSupported,
+    running: session.transport === 'running',
+    patient: pneumothoraxProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   /**
    * The opioid lesson never keys on the saturation, which reads 100% both when
    * the patient is supported and when they are only receiving oxygen while
@@ -2773,6 +2791,7 @@ export function Cockpit({
     : ciedPlanningDemoSupported ? ciedPlanningDemonstration
     : preeclampsiaDemoSupported ? preeclampsiaDemonstration
     : opioidVentilatoryDemoSupported ? opioidVentilatoryDemonstration
+    : pneumothoraxDemoSupported ? pneumothoraxDemonstration
     : lastDemoSupported ? lastDemonstration
     : malignantHyperthermiaDemoSupported ? malignantHyperthermiaDemonstration
     : anaphylaxisDemoSupported ? anaphylaxisDemonstration

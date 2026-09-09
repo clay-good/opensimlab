@@ -58,13 +58,13 @@ describe('Requirement: Every Audited Example Is Offered', () => {
 
   it('offers every anesthesia example and nothing else in the module', () => {
     // Anesthesia used to offer nothing here, and this test said so. It now
-    // offers twenty-three, and they do not all work the same way: all but one are
+    // offers twenty-four, and they do not all work the same way: all but one are
     // observed-state like every other example in the catalog, and
     // routine-induction is the older scripted
     // demonstration the route starts from a separate branch. That separate
     // branch is why this list used to disagree with the completion audit, which
     // claimed an example for routine-induction that this function said did not
-    // exist. The remaining sixteen labs offer nothing.
+    // exist. The remaining fifteen labs offer nothing.
     const offered = ANESTHESIA_SCENARIOS
       .filter((scenario) => offersWorkedExample(scenario, 'anesthesia'))
       .map((scenario) => scenario.metadata.id);
@@ -77,7 +77,8 @@ describe('Requirement: Every Audited Example Is Offered', () => {
       'local-anesthetic-systemic-toxicity',
       'obstetric-general-anesthesia', 'opioid-induced-ventilatory-impairment',
       'pacemaker-and-cautery-planning',
-      'perioperative-anaphylaxis-after-antibiotic', 'postoperative-handoff',
+      'perioperative-anaphylaxis-after-antibiotic',
+      'pneumothorax-under-positive-pressure', 'postoperative-handoff',
       'preeclampsia-urgent-delivery',
       'quantitative-neuromuscular-reversal', 'rapid-desaturation',
       'rapid-sequence-induction', 'routine-geriatric-induction', 'routine-induction',
