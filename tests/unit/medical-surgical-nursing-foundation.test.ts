@@ -38,7 +38,7 @@ describe('Nursing module foundation', () => {
     expect(getMedicalSurgicalNursingScenario(id)).toBe(scenario);
     expect(getMedicalSurgicalNursingScenario('not-a-scenario')).toBeUndefined();
     expect(availableModules().map((entry) => entry.id)).toContain('medical-surgical-nursing');
-    expect(READY_MODULE_COUNT).toBe(15);
+    expect(READY_MODULE_COUNT).toBe(16);
   });
 
   it('validates against the shared scenario schema', () => {

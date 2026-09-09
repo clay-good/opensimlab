@@ -37,6 +37,7 @@ import { RENAL_ELECTROLYTE_SCENARIOS } from '../../modules/renal-electrolyte/sce
 import { INFECTIOUS_DISEASE_SCENARIOS } from '../../modules/infectious-disease/scenarios';
 import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../../modules/medical-surgical-nursing/scenarios';
 import { ONCOLOGY_SCENARIOS } from '../../modules/oncology/scenarios';
+import { SURGERY_TRAUMA_SCENARIOS } from '../../modules/surgery-trauma/scenarios';
 
 export interface ReviewStatusItem {
   readonly kind: 'scenario' | 'explainer' | 'drug-card' | 'region-profile';
@@ -88,6 +89,7 @@ const MODULE_SCENARIOS: readonly (readonly [string, readonly {
   ['infectious-disease', INFECTIOUS_DISEASE_SCENARIOS],
   ['medical-surgical-nursing', MEDICAL_SURGICAL_NURSING_SCENARIOS],
   ['oncology', ONCOLOGY_SCENARIOS],
+  ['surgery-trauma', SURGERY_TRAUMA_SCENARIOS],
 ];
 
 /** The identity of one item across modules, since ids alone are not unique. */

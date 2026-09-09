@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot, DelayedImmuneEventSnapshot, IncidentalClotSnapshot, NormalTestToxicitySnapshot, PrognosisQuestionSnapshot, LaboratoryTlsSnapshot, RareEarlyMyocarditisSnapshot, LoweringTheCountSnapshot, InheritedUrgencySnapshot, TrialRuleSnapshot, SilentInteractionSnapshot, EasyLabelSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot, DelayedImmuneEventSnapshot, IncidentalClotSnapshot, NormalTestToxicitySnapshot, PrognosisQuestionSnapshot, LaboratoryTlsSnapshot, RareEarlyMyocarditisSnapshot, LoweringTheCountSnapshot, InheritedUrgencySnapshot, TrialRuleSnapshot, SilentInteractionSnapshot, EasyLabelSnapshot, NegativeScanSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -140,6 +140,7 @@ export function stateSummary(
     readonly trialRule?: TrialRuleSnapshot;
     readonly silentInteraction?: SilentInteractionSnapshot;
     readonly easyLabel?: EasyLabelSnapshot;
+    readonly negativeScan?: NegativeScanSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -193,7 +194,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale || options.lostContingency || options.delayedImmuneEvent || options.incidentalClot || options.normalTestToxicity || options.prognosisQuestion || options.laboratoryTls || options.rareEarlyMyocarditis || options.loweringTheCount || options.inheritedUrgency || options.trialRule || options.silentInteraction || options.easyLabel) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale || options.lostContingency || options.delayedImmuneEvent || options.incidentalClot || options.normalTestToxicity || options.prognosisQuestion || options.laboratoryTls || options.rareEarlyMyocarditis || options.loweringTheCount || options.inheritedUrgency || options.trialRule || options.silentInteraction || options.easyLabel || options.negativeScan) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -218,6 +219,28 @@ export function stateSummary(
       }
     }
   }
+  if (options.negativeScan) {
+    const patient = options.negativeScan;
+    // The operation, the day, and how long this has been true — in every state.
+    lines.push(`Day ${patient.postoperativeDay} after a sigmoid resection with a primary colorectal anastomosis and no diverting stoma. Heart rate above 100 for ${patient.tachycardiaHours} hours. ${patient.flatusPassed ? 'Flatus passed' : 'No flatus passed'}.`);
+    lines.push('Supplied starting observations were pulse 110 per minute, blood pressure 110 over 68, respiratory rate 22 per minute, temperature 37.4 degrees Celsius, and oxygen saturation 95 percent in air. These remain historical starting observations.');
+    lines.push('The abdominal computed tomography reported eighteen hours ago says no evidence of an anastomotic leak, with a small volume of free fluid and free gas within expected postoperative appearances.');
+    lines.push(`Current state: ${patient.alertness}.`);
+    lines.push(`Operative course recorded: ${patient.operativeCourseRecordedAtTick === null ? 'no' : 'yes'}. Failure to progress recorded: ${patient.progressRecordedAtTick === null ? 'no' : 'yes'}. Limits of the scan recorded: ${patient.scanLimitsRecordedAtTick === null ? 'no' : 'yes'}. Operating team: ${patient.escalationAtTick === null ? 'not called' : 'called'}. Bounded intent: ${patient.surgicalIntentAtTick === null ? 'not recorded' : 'recorded as the qualified surgical team\u2019s decision'}. Boundaries: ${patient.boundariesReviewedAtTick === null ? 'not reviewed' : 'reviewed'}.`);
+    if (patient.roundCompleted) {
+      lines.push('The observations have been repeated and are unchanged. He has vomited once since the last round and has still passed no flatus.');
+    }
+    lines.push('Abnormal vital signs after bowel resection are common and poorly predictive taken one at a time, with a positive predictive value between 4 and 11 percent, so a single reading establishes nothing. The reported scan cannot exclude a leak either: published negative predictive values were 0.70 and 88 percent. Re-imaging, direct assessment of the anastomosis, and any return to theatre belong to the qualified surgical team; no investigation, drug, dose, route, or operation is selected here, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: pulse ${patient.observation.heartRateBpm} per minute; temperature ${patient.observation.coreTemperatureC.toFixed(1)} degrees Celsius; above 100 for ${patient.observation.tachycardiaHours} hours; ${patient.observation.flatusPassed ? 'flatus passed' : 'no flatus'}.`
+      : 'No new full assessment has been requested.');
+    if (patient.teamObserved) {
+      lines.push('The operating team has answered, confirmed the procedure and the anastomosis from its own record, and owns re-imaging, direct assessment, and any return to theatre.');
+    }
+    if (patient.choiceFeedback) lines.push(patient.choiceFeedback);
+    if (patient.ended) lines.push(patient.ended === 'handoff' ? 'Practice complete. No leak, operative decision, or outcome is certified.' : 'Instructor takeover ended this branch. The teaching stop predicts no patient outcome.');
+  }
+
   if (options.easyLabel) {
     const patient = options.easyLabel;
     // The label and what it still requires, in the same breath, in every state.

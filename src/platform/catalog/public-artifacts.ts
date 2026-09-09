@@ -19,6 +19,7 @@ export const PUBLIC_CATALOG_ARTIFACTS = [
   '/catalog/infectious-disease-completion-audit.json',
   '/catalog/medical-surgical-nursing-completion-audit.json',
   '/catalog/oncology-completion-audit.json',
+  '/catalog/surgery-trauma-completion-audit.json',
   '/catalog/training-value.schema.json',
   '/catalog/authored-defaults.schema.json',
   '/catalog/scenario-hazard.schema.json',
@@ -38,6 +39,7 @@ export const PUBLIC_CATALOG_ARTIFACTS = [
   '/catalog/infectious-disease-quality-audit.json',
   '/catalog/medical-surgical-nursing-quality-audit.json',
   '/catalog/oncology-quality-audit.json',
+  '/catalog/surgery-trauma-quality-audit.json',
   '/catalog/maturity-record.schema.json',
   '/catalog/anesthesia-maturity.json',
   '/catalog/emergency-medicine-maturity.json',
@@ -54,6 +56,7 @@ export const PUBLIC_CATALOG_ARTIFACTS = [
   '/catalog/infectious-disease-maturity.json',
   '/catalog/medical-surgical-nursing-maturity.json',
   '/catalog/oncology-maturity.json',
+  '/catalog/surgery-trauma-maturity.json',
   '/catalog/asset-licenses.json',
   '/catalog/evidence-sources.json',
 ] as const;

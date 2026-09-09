@@ -26,6 +26,7 @@ import { RENAL_ELECTROLYTE_SCENARIOS } from '../../src/modules/renal-electrolyte
 import { INFECTIOUS_DISEASE_SCENARIOS } from '../../src/modules/infectious-disease/scenarios';
 import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../../src/modules/medical-surgical-nursing/scenarios';
 import { ONCOLOGY_SCENARIOS } from '../../src/modules/oncology/scenarios';
+import { SURGERY_TRAUMA_SCENARIOS } from '../../src/modules/surgery-trauma/scenarios';
 import { ANESTHESIA_LIMITATIONS } from '@platform/docs/limitations/anesthesia';
 import { EMERGENCY_MEDICINE_LIMITATIONS } from '@platform/docs/limitations/emergency-medicine';
 import { CRITICAL_CARE_LIMITATIONS } from '@platform/docs/limitations/critical-care';
@@ -41,6 +42,7 @@ import { RENAL_ELECTROLYTE_LIMITATIONS } from '@platform/docs/limitations/renal-
 import { INFECTIOUS_DISEASE_LIMITATIONS } from '@platform/docs/limitations/infectious-disease';
 import { MEDICAL_SURGICAL_NURSING_LIMITATIONS } from '@platform/docs/limitations/medical-surgical-nursing';
 import { ONCOLOGY_LIMITATIONS } from '@platform/docs/limitations/oncology';
+import { SURGERY_TRAUMA_LIMITATIONS } from '@platform/docs/limitations/surgery-trauma';
 import { SHARED_LIMITATIONS } from '@platform/docs/limitations/shared';
 
 /** Each module's own register, beside the scenarios it has to brief. */
@@ -60,6 +62,7 @@ const MODULE_REGISTERS = [
   ['infectious-disease', INFECTIOUS_DISEASE_LIMITATIONS, INFECTIOUS_DISEASE_SCENARIOS],
   ['medical-surgical-nursing', MEDICAL_SURGICAL_NURSING_LIMITATIONS, MEDICAL_SURGICAL_NURSING_SCENARIOS],
   ['oncology', ONCOLOGY_LIMITATIONS, ONCOLOGY_SCENARIOS],
+  ['surgery-trauma', SURGERY_TRAUMA_LIMITATIONS, SURGERY_TRAUMA_SCENARIOS],
 ] as const;
 
 const ALL_SCENARIOS = MODULE_REGISTERS.flatMap(([, , scenarios]) => [...scenarios]);
@@ -95,7 +98,7 @@ describe('what a scenario briefing names', () => {
   });
 
   // The register is split one file per module so a cockpit carries its own entries and not all
-  // fifteen modules'. That split is only safe while the parts still add up to the whole: an entry
+  // sixteen modules'. That split is only safe while the parts still add up to the whole: an entry
   // filed under no module would vanish from the limitations page, and one filed under the wrong
   // module would be missing from the briefing that needs it and shipped to a module that does not.
   it('files every entry under a module whose scenarios name it', () => {

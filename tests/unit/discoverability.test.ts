@@ -34,6 +34,7 @@ import { RENAL_ELECTROLYTE_SCENARIOS } from '../../src/modules/renal-electrolyte
 import { INFECTIOUS_DISEASE_SCENARIOS } from '../../src/modules/infectious-disease/scenarios';
 import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../../src/modules/medical-surgical-nursing/scenarios';
 import { ONCOLOGY_SCENARIOS } from '../../src/modules/oncology/scenarios';
+import { SURGERY_TRAUMA_SCENARIOS } from '../../src/modules/surgery-trauma/scenarios';
 import { Landing } from '@landing/Landing';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -201,7 +202,7 @@ describe('Requirement: One Screen, One Action', () => {
       + TOXICOLOGY_SCENARIOS.length + OBSTETRICS_SCENARIOS.length + NEONATOLOGY_SCENARIOS.length
       + ENDOCRINE_METABOLIC_SCENARIOS.length + RENAL_ELECTROLYTE_SCENARIOS.length
       + INFECTIOUS_DISEASE_SCENARIOS.length + MEDICAL_SURGICAL_NURSING_SCENARIOS.length
-      + ONCOLOGY_SCENARIOS.length,
+      + ONCOLOGY_SCENARIOS.length + SURGERY_TRAUMA_SCENARIOS.length,
     );
     for (const word of FORBIDDEN_MARKETING_WORDS) {
       expect(ONE_LINE_DESCRIPTION.toLowerCase(), `contains "${word}"`).not.toContain(word.toLowerCase());
@@ -245,8 +246,10 @@ describe('Requirement: The Hero Is The Product Running', () => {
 describe('Requirement: Modules Directory Is Honest About What Exists', () => {
   it('Scenario: Available and planned are visually distinct, with no date', () => {
     expect(availableModules().map((module) => module.id))
-      .toEqual(['anesthesia', 'emergency-medicine', 'cardiology', 'respiratory-medicine', 'pediatrics', 'neurology', 'toxicology', 'obstetrics', 'neonatology', 'endocrine-metabolic', 'renal-electrolyte', 'infectious-disease', 'medical-surgical-nursing', 'oncology', 'critical-care']);
-    expect(plannedModules().length).toBeGreaterThanOrEqual(1);
+      .toEqual(['anesthesia', 'emergency-medicine', 'cardiology', 'respiratory-medicine', 'pediatrics', 'neurology', 'toxicology', 'obstetrics', 'neonatology', 'endocrine-metabolic', 'renal-electrolyte', 'infectious-disease', 'medical-surgical-nursing', 'oncology', 'surgery-trauma', 'critical-care']);
+    // Every declared module is now built, so this list is empty. The assertion is not that
+    // one is always planned — a catalog with nothing outstanding is the honest end state — but
+    // that whatever IS planned describes its scope and promises no date.
     for (const module of plannedModules()) {
       const prose = moduleProse(module.id);
       expect(prose.plannedScope, `${module.id} needs a description of its scope`).toBeTruthy();
@@ -469,7 +472,7 @@ describe('Requirement: Footer Carries The Trust Signals', () => {
 describe('Requirement: Crawlability Basics', () => {
   it('Scenario: The sitemap is generated and complete', () => {
     const indexable = indexableRoutes();
-    expect(indexable).toHaveLength(267);
+    expect(indexable).toHaveLength(268);
     expect(indexable.every((route) => route.indexable)).toBe(true);
     expect(indexable.map((route) => route.path)).toContain('/');
     expect(indexable.map((route) => route.path)).toContain('/anesthesia');
@@ -712,7 +715,9 @@ describe('Requirement: One Screen, One Action', () => {
   it('Scenario: the front door names every module and promises no date', () => {
     const markup = renderToStaticMarkup(createElement(Landing));
     for (const module of MODULES) expect(markup).toContain(module.displayName);
-    expect(markup).toContain('planned. No dates.');
+    // The tail sentence exists only while something is planned. Nothing is, so it is absent —
+    // and the front door must not invent a roadmap to keep the sentence.
+    expect(markup.includes('planned. No dates.')).toBe(plannedModules().length > 0);
     const directory = moduleDirectory(markup);
     const availableCount = MODULES.filter((module) => module.status === 'available').length;
     // Each available module is its own control rather than an item in a
@@ -753,6 +758,7 @@ describe('Requirement: One Screen, One Action', () => {
       ['infectious-disease', INFECTIOUS_DISEASE_SCENARIOS.length],
       ['medical-surgical-nursing', MEDICAL_SURGICAL_NURSING_SCENARIOS.length],
       ['oncology', ONCOLOGY_SCENARIOS.length],
+      ['surgery-trauma', SURGERY_TRAUMA_SCENARIOS.length],
     ]);
     for (const module of availableModules()) {
       expect(actual.get(module.id), `${module.id} needs a scenario array here`).toBeDefined();
@@ -816,10 +822,13 @@ describe('Requirement: One Screen, One Action', () => {
     // because it is a sentence rather than a door, and it used to be excluded
     // here by virtue of being wrapped INSIDE the directory paragraph. Moving it
     // out of the tile grid must not quietly spend six words of the copy budget.
+    // Absent entirely once nothing is planned, which is the current state; while something is
+    // planned it is one element, and excluded from the copy budget for the same reason the
+    // directory is.
     const plannedLine = markup.match(/<p class="landing__module-planned">[\s\S]*?<\/p>/)?.[0];
-    expect(plannedLine, 'the planned module should render as one element').toBeTruthy();
+    expect(!!plannedLine).toBe(plannedModules().length > 0);
     const prose = count(
-      markup.replace(directory!, ' ').replace(skipLink!, ' ').replace(plannedLine!, ' '),
+      markup.replace(directory!, ' ').replace(skipLink!, ' ').replace(plannedLine ?? '\u0000', ' '),
     );
     // 90, raised from 80 for one sentence and no more: the invitation to a
     // clinician to review this, which sits under the line saying nothing here is

@@ -120,7 +120,7 @@ export const MODULE_PROSE: Readonly<Record<string, ModuleProse>> = {
       + 'treatment record.',
   },
   'surgery-trauma': {
-    description: 'Planned.',
+    description: 'Practice the surgical patient who never declares himself: a recovery that has quietly stopped following the operation that predicted it, and an investigation that cannot say no.',
     audience: 'Medical students, surgical and emergency trainees, and teams receiving injured patients.',
     prerequisites: 'Primary-survey familiarity, basic resuscitation, and escalation to a surgical team.',
     plannedScope: 'Ten bounded surgery and trauma rehearsals spanning the deteriorating post-operative patient, '

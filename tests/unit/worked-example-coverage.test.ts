@@ -55,6 +55,7 @@ import { join } from 'node:path';
 import { ENGINE_VERSION } from '@anesthesia/engine';
 import { buildModuleCompletionCatalog } from '@anesthesia/catalog/scenario-completion';
 import { ONCOLOGY_SCENARIOS } from '../../src/modules/oncology/scenarios';
+import { SURGERY_TRAUMA_SCENARIOS } from '../../src/modules/surgery-trauma/scenarios';
 import { RENAL_ELECTROLYTE_SCENARIOS } from '../../src/modules/renal-electrolyte/scenarios';
 import { ENDOCRINE_METABOLIC_SCENARIOS } from '../../src/modules/endocrine-metabolic/scenarios';
 import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../../src/modules/medical-surgical-nursing/scenarios';
@@ -280,12 +281,29 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
     for (const [scenarios, moduleId] of modules) {
       expect(uncovered(scenarios, moduleId), moduleId).toEqual([]);
     }
-    expect(readme).toContain('All fifteen specialties are now complete on both');
+    expect(readme).toContain('Fifteen of the sixteen specialties are complete on both');
     expect(readme).toContain('emergency-medicine, and anesthesia, whose thirty-nine labs were the last to be finished.');
     // The hedge this sentence used to carry belongs to a state the audit has
     // left behind. If it comes back, one of the tests above is failing too.
     expect(readme).not.toContain('and most\nendocrine ones');
     // And the older fourteen-module form must not survive alongside the new one.
     expect(readme).not.toContain('and emergency-medicine lab has both.');
+    // The sentence used to say all fifteen, before a sixteenth module opened without either. If
+    // that older, now-overclaiming form comes back, this catches it.
+    expect(readme).not.toContain('All fifteen specialties are now complete on both');
+  });
+
+  // The sixteenth module opened with neither a tutor nor a worked example. That is allowed, and
+  // it is the first lesson in the catalog to say so — but the README's exception sentence has to
+  // disappear the moment the audit stops agreeing with it.
+  it('says the surgery and trauma lab has neither, for exactly as long as that is true', () => {
+    const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');
+    const covered = coveredCount(SURGERY_TRAUMA_SCENARIOS, 'surgery-trauma');
+    if (covered === 0) {
+      expect(readme).toContain('The\nexception is the one lab that opened surgery and trauma');
+      expect(readme).toContain('Almost every lab also carries');
+      return;
+    }
+    expect(readme).not.toContain('exception is the one lab that opened surgery and trauma');
   });
 });

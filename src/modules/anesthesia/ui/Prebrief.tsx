@@ -40,7 +40,7 @@ export interface PrebriefProps {
    * not drag all fifteen modules' entries into every module's chunk.
    */
   readonly limitations: readonly Limitation[];
-  readonly environment?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics' | 'neonatology' | 'endocrine-metabolic' | 'renal-electrolyte' | 'infectious-disease' | 'medical-surgical-nursing' | 'oncology';
+  readonly environment?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics' | 'neonatology' | 'endocrine-metabolic' | 'renal-electrolyte' | 'infectious-disease' | 'medical-surgical-nursing' | 'oncology' | 'surgery-trauma';
   readonly onStart: () => void;
   /**
    * Offered only where the demonstration was authored. A "watch this" control on

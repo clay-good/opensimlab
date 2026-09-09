@@ -1940,7 +1940,21 @@ credited toward the catalog until every item in the completion contract passes.
   worse, so the answer is neither treating nor waiting but refusing the sequence they are offered
   in. The last of these is a deliberate counterweight: four of the others teach a learner to hold
   a position while somebody urges action, and a module that only ever teaches that is teaching a
-  reflex rather than a judgement. Surgery/trauma is declared planned and has not started. Every
+  reflex rather than a judgement. Surgery and trauma has now opened with the first of its ten: a fifth
+  postoperative day after a colorectal anastomosis where the reflex on one side is that a
+  raised heart rate means a leak, the reflex on the other is that abnormal signs after bowel
+  resection are routine and mean nothing, and the reported abdominal scan settles neither. The
+  published positive predictive value of any single aberrant sign is 4 to 11 percent in 452
+  resections, and the negative predictive value of the scan is 0.70 in one series and 88 percent
+  in another, so nothing available to the learner can carry the decision alone; what is left is
+  whether the patient is following the course his own operation predicts, and the decision that
+  follows belongs to the team that made the anastomosis. The lesson deliberately never lets him
+  deteriorate, because a crash would make the decision for the learner. It opens without a tutor
+  or a worked example, its completion audit records `guidance-and-demonstration` as missing, and
+  the product offers no example for it — the first lesson in the catalog to say so rather than
+  claim one. Opening it also emptied the planned list: every declared module is now built, so
+  the front door's planned sentence is gone rather than being kept alive by inventing a
+  seventeenth module. Every
   scenario in this wave remains preview: none carries clinical review, a state-space matrix, or
   inclusive-runtime evidence, so the wave's completion count is still zero.
   Two budgets were the binding constraint on the remaining oncology lessons, and both have been

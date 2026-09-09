@@ -30,6 +30,7 @@ import { RENAL_ELECTROLYTE_LIMITATIONS } from './limitations/renal-electrolyte';
 import { INFECTIOUS_DISEASE_LIMITATIONS } from './limitations/infectious-disease';
 import { MEDICAL_SURGICAL_NURSING_LIMITATIONS } from './limitations/medical-surgical-nursing';
 import { ONCOLOGY_LIMITATIONS } from './limitations/oncology';
+import { SURGERY_TRAUMA_LIMITATIONS } from './limitations/surgery-trauma';
 import { SHARED_LIMITATIONS } from './limitations/shared';
 
 export type { Limitation } from './limitations/types';
@@ -72,6 +73,7 @@ const REGISTERS: readonly LimitationGroup[] = [
   { label: 'Infectious disease', entries: INFECTIOUS_DISEASE_LIMITATIONS },
   { label: 'Nursing', entries: MEDICAL_SURGICAL_NURSING_LIMITATIONS },
   { label: 'Oncology', entries: ONCOLOGY_LIMITATIONS },
+  { label: 'Surgery and trauma', entries: SURGERY_TRAUMA_LIMITATIONS },
 ];
 
 /**

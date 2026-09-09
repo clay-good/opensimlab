@@ -4066,6 +4066,23 @@
       "limitationManifestHash": "sha256:a2fac1717c71d9139473457163b62e64223dd36b9b570ee22a3f17965cd9e686"
     },
     {
+      "scenarioId": "negative-scan-a-scan-that-cannot-say-no",
+      "contentVersion": "0.1.0",
+      "moduleId": "surgery-trauma",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:dd0448877ad527a4359c2ebfbee5330f7dc5289f73ee28d13ce8aac2ae7edfaa",
+      "defaultsHash": "sha256:231373dddad9847b2001b561854f7bea940618f0ea96670d7722cd4472144625",
+      "maturityHash": "sha256:fad6d3ab63faed791aae2543c6802935c45ad0643f8b5975f9259a6813ecb758",
+      "sourceManifestHash": "sha256:7e01e56c38157620f3ee00371481044eb129d4cd674664d673bb142ee7c8095c",
+      "limitationManifestHash": "sha256:ed5376a44d639ef97231fff102db316b52462baab8cfc2edeac48f08d241095f"
+    },
+    {
       "scenarioId": "acetaminophen-clock-and-nomogram",
       "contentVersion": "0.1.0",
       "moduleId": "toxicology",

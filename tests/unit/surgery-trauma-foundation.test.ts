@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { getModule, availableModules } from '@platform/modules/registry';
+import { getModule, availableModules, plannedModules } from '@platform/modules/registry';
 import { PUBLIC_CATALOG_ARTIFACTS } from '@platform/catalog/public-artifacts';
 import { reviewableItems } from '@platform/governance/records';
 import { structuredDataFor } from '@platform/docs/structured-data';
@@ -16,30 +16,33 @@ import { PrerenderedBody } from '@routes/Prerendered';
 import { validateScenario } from '@anesthesia/scenarios/schema';
 import { moduleProse } from '@platform/modules/module-prose';
 import {
-  DEFAULT_ONCOLOGY_SCENARIO_ID, ONCOLOGY_SCENARIOS, getOncologyScenario,
-} from '../../src/modules/oncology/scenarios';
+  DEFAULT_SURGERY_TRAUMA_SCENARIO_ID, SURGERY_TRAUMA_SCENARIOS, getSurgeryTraumaScenario,
+} from '../../src/modules/surgery-trauma/scenarios';
 
-const id = 'delayed-immune-event-a-drug-that-stopped-months-ago';
-const path = `/oncology/scenario/${id}`;
-const scenario = ONCOLOGY_SCENARIOS[0]!;
+const id = 'negative-scan-a-scan-that-cannot-say-no';
+const path = `/surgery-trauma/scenario/${id}`;
+const scenario = SURGERY_TRAUMA_SCENARIOS[0]!;
 const read = (file: string) => readFileSync(join(process.cwd(), file), 'utf8');
 const json = (file: string) => JSON.parse(read(file));
 
-describe('Oncology module foundation', () => {
-  it('registers all eleven planned lessons', () => {
-    expect(getModule('oncology')).toMatchObject({
-      route: 'oncology', displayName: 'Oncology', status: 'available',
+describe('Surgery and trauma module foundation', () => {
+  it('opens the sixteenth module and leaves nothing declared but unbuilt', () => {
+    expect(getModule('surgery-trauma')).toMatchObject({
+      route: 'surgery-trauma', displayName: 'Surgery and trauma', status: 'available',
       timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
     });
-    expect(moduleProse('oncology').plannedScope).toContain('Eleven bounded');
+    expect(moduleProse('surgery-trauma').plannedScope).toContain('Ten bounded');
     // The prose must no longer read as an unbuilt module, because the route now runs one.
-    expect(moduleProse('oncology').description).not.toBe('Planned.');
-    expect(ONCOLOGY_SCENARIOS).toHaveLength(11);
-    expect(DEFAULT_ONCOLOGY_SCENARIO_ID).toBe(id);
-    expect(getOncologyScenario(id)).toBe(scenario);
-    expect(getOncologyScenario('not-a-scenario')).toBeUndefined();
-    expect(availableModules().map((entry) => entry.id)).toContain('oncology');
+    expect(moduleProse('surgery-trauma').description).not.toBe('Planned.');
+    expect(SURGERY_TRAUMA_SCENARIOS).toHaveLength(1);
+    expect(DEFAULT_SURGERY_TRAUMA_SCENARIO_ID).toBe(id);
+    expect(getSurgeryTraumaScenario(id)).toBe(scenario);
+    expect(getSurgeryTraumaScenario('not-a-scenario')).toBeUndefined();
+    expect(availableModules().map((entry) => entry.id)).toContain('surgery-trauma');
     expect(READY_MODULE_COUNT).toBe(16);
+    // This was the last module the registry declared as planned. Nothing is now declared and
+    // unbuilt, and the front door must not invent a roadmap to keep its planned sentence.
+    expect(plannedModules()).toEqual([]);
   });
 
   it('validates against the shared scenario schema', () => {
@@ -49,31 +52,31 @@ describe('Oncology module foundation', () => {
   // A module is only reachable if every surface knows about it. Each of these has been a
   // separate omission in past module launches.
   it('is reachable from the nav, the routes, and the prerendered markup', () => {
-    expect(SITE_BAR_LINKS.map((link) => link.href)).toContain('/oncology');
-    expect(routeFor('/oncology')).toMatchObject({
-      indexable: true, heading: 'Oncology simulator',
+    expect(SITE_BAR_LINKS.map((link) => link.href)).toContain('/surgery-trauma');
+    expect(routeFor('/surgery-trauma')).toMatchObject({
+      indexable: true, heading: 'Surgery and trauma simulator',
     });
     const route = routeFor(path)!;
     expect(route.indexable).toBe(true);
     expect(route.description.length).toBeGreaterThanOrEqual(110);
     expect(route.description.length).toBeLessThanOrEqual(160);
-    expect(ROUTES.filter((entry) => entry.path.startsWith('/oncology'))).toHaveLength(12);
+    expect(ROUTES.filter((entry) => entry.path.startsWith('/surgery-trauma'))).toHaveLength(2);
     const markup = renderToStaticMarkup(createElement(PrerenderedBody, { path }));
-    expect(markup).toContain('a drug that stopped months ago');
-    const moduleMarkup = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/oncology' }));
-    expect(moduleMarkup).toContain('Oncology simulator');
+    expect(markup).toContain('a scan that cannot say no');
+    const moduleMarkup = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/surgery-trauma' }));
+    expect(moduleMarkup).toContain('Surgery and trauma simulator');
   });
 
   it('publishes structured data and its own catalog artifacts', () => {
     const data = structuredDataFor(['LearningResource'], path);
     expect(data.some((entry) => JSON.stringify(entry).includes(id))).toBe(true);
     for (const artifact of ['completion-audit', 'quality-audit', 'maturity']) {
-      expect(PUBLIC_CATALOG_ARTIFACTS).toContain(`/catalog/oncology-${artifact}.json`);
+      expect(PUBLIC_CATALOG_ARTIFACTS).toContain(`/catalog/surgery-trauma-${artifact}.json`);
     }
-    const completion = json('public/catalog/oncology-completion-audit.json');
-    expect(completion.scenarioCount).toBe(11);
+    const completion = json('public/catalog/surgery-trauma-completion-audit.json');
+    expect(completion.scenarioCount).toBe(1);
     expect(completion.scenarios[0].scenarioId).toBe(id);
-    expect(completion.scenarios[0].environment).toBe('clinic');
+    expect(completion.scenarios[0].environment).toBe('ward');
     // The two report catalogs must stay byte-identical, or a report can resolve in one and not the other.
     expect(read('public/catalog/scenario-report-catalog.json'))
       .toBe(read('workers/reports/src/report-catalog.generated.json'));
@@ -81,27 +84,36 @@ describe('Oncology module foundation', () => {
 
   it('enters the governance record under its own domain', () => {
     const item = reviewableItems().find((entry) => entry.id === id);
-    expect(item).toMatchObject({ kind: 'scenario', domains: ['oncology'] });
+    expect(item).toMatchObject({ kind: 'scenario', domains: ['surgery-trauma'] });
     expect(item!.review.reviewer).toBe('UNSIGNED');
   });
 
   it('declares its limitations and resolves every cited source', () => {
     const limitations = limitationsFor(id);
     expect(limitations).toHaveLength(3);
-    expect(limitations.map((entry) => entry.id)).toContain('delayed-immune-event-series-figures-are-not-an-incidence');
-    for (const source of ['oncology-delayed-immune-related-events-2019',
-      'oncology-sitc-checkpoint-adverse-events-2021', 'oncology-fatal-checkpoint-toxicity-2018']) {
-      expect(requireSource(source).verifiedOn).toBe('2026-08-29');
+    expect(limitations.map((entry) => entry.id))
+      .toContain('negative-scan-single-centre-figures-are-not-a-decision-rule');
+    for (const source of ['surgery-trauma-vital-signs-after-bowel-resection-2014',
+      'surgery-trauma-false-negative-ct-colonic-2014',
+      'surgery-trauma-delayed-reintervention-false-negative-ct-2017']) {
+      expect(requireSource(source).verifiedOn).toBe('2026-09-09');
     }
+  });
+
+  it('does not yet claim a worked example it has not built', () => {
+    const completion = json('public/catalog/surgery-trauma-completion-audit.json');
+    const requirement = completion.scenarios[0].requirements
+      .find((entry: { id: string }) => entry.id === 'guidance-and-demonstration');
+    expect(requirement.status).toBe('missing');
   });
 
   it('makes every scenario in the module reportable, not just the first', () => {
     const catalog = json('public/catalog/scenario-report-catalog.json');
-    for (const entry of ONCOLOGY_SCENARIOS) {
+    for (const entry of SURGERY_TRAUMA_SCENARIOS) {
       const record = catalog.scenarios.find((row: { scenarioId: string; contentVersion: string }) =>
         row.scenarioId === entry.metadata.id && row.contentVersion === entry.metadata.version);
       expect(record, `${entry.metadata.id} is missing from the report catalog at its current version`).toMatchObject({
-        moduleId: 'oncology', contentVersion: entry.metadata.version, maturity: 'preview',
+        moduleId: 'surgery-trauma', contentVersion: entry.metadata.version, maturity: 'preview',
       });
     }
   });

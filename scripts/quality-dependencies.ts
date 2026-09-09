@@ -40,6 +40,7 @@ export const QUALITY_SHARED_DEPENDENCIES = [
   'src/platform/docs/limitations/infectious-disease.ts',
   'src/platform/docs/limitations/medical-surgical-nursing.ts',
   'src/platform/docs/limitations/oncology.ts',
+  'src/platform/docs/limitations/surgery-trauma.ts',
   'src/platform/docs/limitations/shared.ts',
   'src/platform/governance/records.ts',
   'src/platform/governance/review-gate.ts',

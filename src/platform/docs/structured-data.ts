@@ -26,6 +26,7 @@ import { getRenalElectrolyteScenario } from '../../modules/renal-electrolyte/sce
 import { getInfectiousDiseaseScenario } from '../../modules/infectious-disease/scenarios';
 import { getMedicalSurgicalNursingScenario } from '../../modules/medical-surgical-nursing/scenarios';
 import { getOncologyScenario } from '../../modules/oncology/scenarios';
+import { getSurgeryTraumaScenario } from '../../modules/surgery-trauma/scenarios';
 import { ONE_LINE_DESCRIPTION } from '@landing/content';
 import { ROUTES, SITE_NAME, SITE_ORIGIN, canonicalUrl } from '@routes/routes';
 import { moduleProse } from '@platform/modules/module-prose';
@@ -88,7 +89,7 @@ export function softwareApplicationJsonLd(path = '/anesthesia'): JsonLd {
  * the site does not make.
  */
 type ScenarioModuleRoute = 'anesthesia' | 'emergency-medicine' | 'critical-care'
-  | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics' | 'neonatology' | 'endocrine-metabolic' | 'renal-electrolyte' | 'infectious-disease' | 'medical-surgical-nursing' | 'oncology';
+  | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics' | 'neonatology' | 'endocrine-metabolic' | 'renal-electrolyte' | 'infectious-disease' | 'medical-surgical-nursing' | 'oncology' | 'surgery-trauma';
 
 export function learningResourceJsonLd(
   scenarioId: string = DEFAULT_SCENARIO_ID,
@@ -114,6 +115,8 @@ export function learningResourceJsonLd(
             ? getMedicalSurgicalNursingScenario(scenarioId)
           : moduleRoute === 'oncology'
             ? getOncologyScenario(scenarioId)
+          : moduleRoute === 'surgery-trauma'
+            ? getSurgeryTraumaScenario(scenarioId)
           : moduleRoute === 'pediatrics'
             ? getPediatricsScenario(scenarioId)
             : moduleRoute === 'neurology'
@@ -185,7 +188,7 @@ export function breadcrumbJsonLd(path: string): JsonLd | undefined {
 export function structuredDataFor(types: readonly string[], path?: string): JsonLd[] {
   const out: JsonLd[] = [];
   const scenarioMatch = path?.match(
-    /^\/(anesthesia|emergency-medicine|critical-care|cardiology|respiratory-medicine|pediatrics|neurology|toxicology|obstetrics|neonatology|endocrine-metabolic|renal-electrolyte|infectious-disease|medical-surgical-nursing|oncology)\/scenario\/([^/]+)$/,
+    /^\/(anesthesia|emergency-medicine|critical-care|cardiology|respiratory-medicine|pediatrics|neurology|toxicology|obstetrics|neonatology|endocrine-metabolic|renal-electrolyte|infectious-disease|medical-surgical-nursing|oncology|surgery-trauma)\/scenario\/([^/]+)$/,
   );
   const moduleRoute = scenarioMatch?.[1] as ScenarioModuleRoute | undefined;
   const scenarioId = scenarioMatch?.[2];

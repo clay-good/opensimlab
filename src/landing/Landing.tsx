@@ -119,8 +119,10 @@ export function Landing() {
           ))}
         </nav>
 
-        {/* The sixteenth keeps its honest tail: named, not a door, no date. */}
-        <p className="landing__module-planned">
+        {/* Every declared module is now built, so there is no tail to keep. While one is
+            planned it is named here — not a door, no date — and when none is, the front door
+            says nothing rather than inventing a roadmap to fill the space. */}
+        {planned.length > 0 && <p className="landing__module-planned">
           {planned.map((module, index) => (
             <span key={module.id}>
               {index > 0 && ', '}
@@ -130,7 +132,7 @@ export function Landing() {
           {/* A non-breaking space, so the module name and the two words that
               qualify it wrap together rather than breaking across a line. */}
           {'\u00A0planned. No dates.'}
-        </p>
+        </p>}
 
         {/* For the visitor who has not decided which door is theirs. It sits
             after the choices rather than before them, because it is the fallback

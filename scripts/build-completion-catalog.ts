@@ -23,6 +23,7 @@ import { RENAL_ELECTROLYTE_SCENARIOS } from '../src/modules/renal-electrolyte/sc
 import { INFECTIOUS_DISEASE_SCENARIOS } from '../src/modules/infectious-disease/scenarios';
 import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../src/modules/medical-surgical-nursing/scenarios';
 import { ONCOLOGY_SCENARIOS } from '../src/modules/oncology/scenarios';
+import { SURGERY_TRAUMA_SCENARIOS } from '../src/modules/surgery-trauma/scenarios';
 import { SCENARIO_COMPLETION_SCHEMA } from '@platform/catalog/scenario-completion';
 import { buildScenarioQualityCatalogs, QUALITY_SCHEMAS } from '@platform/catalog/scenario-quality';
 import { QUALITY_DEPENDENCY_RECEIPTS, QUALITY_RECORDS } from './quality-records';
@@ -92,6 +93,9 @@ const medicalSurgicalNursingCompletion = buildModuleCompletionCatalog(
 const oncologyCompletion = buildModuleCompletionCatalog(
   ONCOLOGY_SCENARIOS, ENGINE_VERSION, 'oncology', 'clinic', 'state_transition',
 );
+const surgeryTraumaCompletion = buildModuleCompletionCatalog(
+  SURGERY_TRAUMA_SCENARIOS, ENGINE_VERSION, 'surgery-trauma', 'ward', 'state_transition',
+);
 
 const qualityCatalogs = buildScenarioQualityCatalogs([
   completion,
@@ -109,6 +113,7 @@ const qualityCatalogs = buildScenarioQualityCatalogs([
   infectiousDiseaseCompletion,
   medicalSurgicalNursingCompletion,
   oncologyCompletion,
+  surgeryTraumaCompletion,
 ], QUALITY_RECORDS);
 assertQualityDependencies(QUALITY_RECORDS, QUALITY_DEPENDENCY_RECEIPTS, root);
 const quality = qualityCatalogs.get('anesthesia')!;
@@ -126,6 +131,7 @@ const renalElectrolyteQuality = qualityCatalogs.get('renal-electrolyte')!;
 const infectiousDiseaseQuality = qualityCatalogs.get('infectious-disease')!;
 const medicalSurgicalNursingQuality = qualityCatalogs.get('medical-surgical-nursing')!;
 const oncologyQuality = qualityCatalogs.get('oncology')!;
+const surgeryTraumaQuality = qualityCatalogs.get('surgery-trauma')!;
 
 function stableJson(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(stableJson).join(',')}]`;
@@ -156,6 +162,7 @@ const authoredScenarios = [
   ['infectious-disease', INFECTIOUS_DISEASE_SCENARIOS],
   ['medical-surgical-nursing', MEDICAL_SURGICAL_NURSING_SCENARIOS],
   ['oncology', ONCOLOGY_SCENARIOS],
+  ['surgery-trauma', SURGERY_TRAUMA_SCENARIOS],
 ] as const;
 const authoredByKey = new Map<string, Scenario>(authoredScenarios.flatMap(([moduleId, scenarios]) => scenarios.map(
   (scenario) => [`${moduleId}:${scenario.metadata.id}@${scenario.metadata.version}`, scenario] as const,
@@ -165,6 +172,7 @@ const currentReportRecords = [
   respiratoryMedicineCompletion, pediatricsCompletion, neurologyCompletion, toxicologyCompletion,
   obstetricsCompletion, neonatologyCompletion, endocrineMetabolicCompletion, renalElectrolyteCompletion,
   infectiousDiseaseCompletion, medicalSurgicalNursingCompletion, oncologyCompletion,
+  surgeryTraumaCompletion,
 ].flatMap((catalog) => catalog.scenarios).map((scenario) => {
   const key = `${scenario.moduleId}:${scenario.scenarioId}@${scenario.contentVersion}`;
   const authored = authoredByKey.get(key);
@@ -337,6 +345,10 @@ writeFileSync(join(target, 'oncology-completion-audit.json'),
   `${JSON.stringify(oncologyCompletion, null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'oncology-quality-audit.json'),
   `${JSON.stringify(oncologyQuality, null, 2)}\n`, 'utf8');
+writeFileSync(join(target, 'surgery-trauma-completion-audit.json'),
+  `${JSON.stringify(surgeryTraumaCompletion, null, 2)}\n`, 'utf8');
+writeFileSync(join(target, 'surgery-trauma-quality-audit.json'),
+  `${JSON.stringify(surgeryTraumaQuality, null, 2)}\n`, 'utf8');
 writeFileSync(
   join(target, 'maturity-record.schema.json'),
   `${JSON.stringify(MATURITY_RECORD_SCHEMA, null, 2)}\n`,
@@ -378,9 +390,11 @@ writeFileSync(join(target, 'medical-surgical-nursing-maturity.json'),
   `${JSON.stringify(buildMaturityCatalog(medicalSurgicalNursingCompletion, medicalSurgicalNursingQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'oncology-maturity.json'),
   `${JSON.stringify(buildMaturityCatalog(oncologyCompletion, oncologyQuality), null, 2)}\n`, 'utf8');
+writeFileSync(join(target, 'surgery-trauma-maturity.json'),
+  `${JSON.stringify(buildMaturityCatalog(surgeryTraumaCompletion, surgeryTraumaQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'asset-licenses.json'), `${JSON.stringify(ASSET_LICENSE_MANIFEST, null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'evidence-sources.json'), `${JSON.stringify(buildEvidenceSourceManifest(SOURCES), null, 2)}\n`, 'utf8');
 
 process.stdout.write(
-  `catalog: audited ${SCENARIOS.length} anesthesia, ${EMERGENCY_MEDICINE_SCENARIOS.length} emergency medicine, ${CRITICAL_CARE_SCENARIOS.length} critical care, ${CARDIOLOGY_SCENARIOS.length} cardiology, ${RESPIRATORY_MEDICINE_SCENARIOS.length} respiratory medicine, ${PEDIATRICS_SCENARIOS.length} pediatrics, ${NEUROLOGY_SCENARIOS.length} neurology, ${TOXICOLOGY_SCENARIOS.length} toxicology, ${OBSTETRICS_SCENARIOS.length} obstetrics, ${NEONATOLOGY_SCENARIOS.length} neonatology, ${ENDOCRINE_METABOLIC_SCENARIOS.length} endocrine/metabolic, ${RENAL_ELECTROLYTE_SCENARIOS.length} renal/electrolyte, ${INFECTIOUS_DISEASE_SCENARIOS.length} infectious-disease, ${MEDICAL_SURGICAL_NURSING_SCENARIOS.length} nursing, and ${ONCOLOGY_SCENARIOS.length} oncology scenarios\n`,
+  `catalog: audited ${SCENARIOS.length} anesthesia, ${EMERGENCY_MEDICINE_SCENARIOS.length} emergency medicine, ${CRITICAL_CARE_SCENARIOS.length} critical care, ${CARDIOLOGY_SCENARIOS.length} cardiology, ${RESPIRATORY_MEDICINE_SCENARIOS.length} respiratory medicine, ${PEDIATRICS_SCENARIOS.length} pediatrics, ${NEUROLOGY_SCENARIOS.length} neurology, ${TOXICOLOGY_SCENARIOS.length} toxicology, ${OBSTETRICS_SCENARIOS.length} obstetrics, ${NEONATOLOGY_SCENARIOS.length} neonatology, ${ENDOCRINE_METABOLIC_SCENARIOS.length} endocrine/metabolic, ${RENAL_ELECTROLYTE_SCENARIOS.length} renal/electrolyte, ${INFECTIOUS_DISEASE_SCENARIOS.length} infectious-disease, ${MEDICAL_SURGICAL_NURSING_SCENARIOS.length} nursing, ${ONCOLOGY_SCENARIOS.length} oncology, and ${SURGERY_TRAUMA_SCENARIOS.length} surgery/trauma scenarios\n`,
 );

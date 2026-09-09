@@ -38,6 +38,7 @@ export const SITE_BAR_LINKS: readonly SiteBarLink[] = [
   { href: '/infectious-disease', label: 'Infectious disease' },
   { href: '/medical-surgical-nursing', label: 'Nursing' },
   { href: '/oncology', label: 'Oncology' },
+  { href: '/surgery-trauma', label: 'Surgery + trauma' },
   { href: '/about', label: 'About' },
   { href: '/for-educators', label: 'For educators' },
   { href: '/curriculum', label: 'Curriculum' },

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "moduleId": "surgery-trauma",
+  "recordCount": 1,
+  "records": [
+    {
+      "recordId": "scenario:negative-scan-a-scan-that-cannot-say-no@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "negative-scan-a-scan-that-cannot-say-no",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/surgery-trauma-completion-audit.json#negative-scan-a-scan-that-cannot-say-no@0.1.0",
+        "/catalog/surgery-trauma-quality-audit.json#negative-scan-a-scan-that-cannot-say-no@0.1.0"
+      ]
+    }
+  ]
+}

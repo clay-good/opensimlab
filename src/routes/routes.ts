@@ -23,6 +23,7 @@ import { RENAL_ELECTROLYTE_SCENARIOS } from '../modules/renal-electrolyte/scenar
 import { INFECTIOUS_DISEASE_SCENARIOS } from '../modules/infectious-disease/scenarios';
 import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../modules/medical-surgical-nursing/scenarios';
 import { ONCOLOGY_SCENARIOS } from '../modules/oncology/scenarios';
+import { SURGERY_TRAUMA_SCENARIOS } from '../modules/surgery-trauma/scenarios';
 import type { Scenario } from '@anesthesia/scenarios/types';
 import { ROOT_ROUTE, formatTitle } from './site-metadata';
 import type { RouteMetadata } from './site-metadata';
@@ -325,6 +326,23 @@ export const ROUTES: readonly RouteMetadata[] = [
   },
   ...ONCOLOGY_SCENARIOS.map((scenario) => ({
     path: `/oncology/scenario/${scenario.metadata.id}`,
+    title: formatTitle(scenario.metadata.title.length > 44
+      ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
+    description: scenarioDescription(scenario),
+    indexable: true,
+    structuredData: ['LearningResource'] as const,
+    heading: scenario.metadata.title,
+  })),
+  {
+    path: '/surgery-trauma',
+    title: formatTitle('Surgery and trauma simulator'),
+    description: 'Practice reading a surgical patient against the course his own operation predicts, and what a reported negative scan can and cannot exclude.',
+    indexable: true,
+    structuredData: ['SoftwareApplication'],
+    heading: 'Surgery and trauma simulator',
+  },
+  ...SURGERY_TRAUMA_SCENARIOS.map((scenario) => ({
+    path: `/surgery-trauma/scenario/${scenario.metadata.id}`,
     title: formatTitle(scenario.metadata.title.length > 44
       ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
     description: scenarioDescription(scenario),

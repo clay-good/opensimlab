@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 397,
+  "sourceCount": 400,
   "sources": [
     {
       "id": "renal-hypermagnesemia-series-2018",
@@ -5140,6 +5140,45 @@
       "verifiedAgainst": "PubMed PMID 32776542 bibliographic record and indexed abstract (PMC8631180). All 13 included studies are retrospective and two-arm; the pooled estimate is therefore subject to confounding by indication, which the paper measures rather than removes.",
       "verifiedOn": "2026-08-29",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/32776542/"
+    },
+    {
+      "id": "surgery-trauma-vital-signs-after-bowel-resection-2014",
+      "pmid": "24680576",
+      "authors": "Erb L, Hyman NH, Osler T",
+      "title": "Abnormal vital signs are common after bowel resection and do not predict anastomotic leak",
+      "publication": "Journal of the American College of Surgeons",
+      "year": 2014,
+      "locator": "218(6):1195-9; doi:10.1016/j.jamcollsurg.2013.12.059; 452 consecutive patients undergoing intestinal anastomosis, July 2009 to July 2011; 141 (31.2%) suffered 271 complications including 19 anastomotic leaks; tachycardia and tachypnea almost routine, occurring in more than half of patients frequently throughout the postoperative period; positive predictive value of any aberrant vital sign or white blood cell count between 4% and 11%",
+      "usedFor": "That a single abnormal observation after bowel resection is close to routine and cannot establish a leak, quoted with its denominator and the number of leaks it rests on. The paper is used to refuse acting on one reading, never to license ignoring a patient; the lesson states that distinction explicitly. No threshold, escalation rule, or probability for an individual patient is adopted.",
+      "verifiedAgainst": "PubMed PMID 24680576 bibliographic record retrieved from the NCBI E-utilities API, with author, title, journal, year, volume, issue and pages compared field by field, and the indexed abstract read for every figure quoted.",
+      "verifiedOn": "2026-09-09",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/24680576/"
+    },
+    {
+      "id": "surgery-trauma-false-negative-ct-colonic-2014",
+      "pmid": "24356897",
+      "authors": "Kornmann VN, van Ramshorst B, Smits AB, Bollen TL, Boerma D",
+      "title": "Beware of false-negative CT scan for anastomotic leakage after colonic surgery",
+      "publication": "International Journal of Colorectal Disease",
+      "year": 2014,
+      "locator": "29(4):445-51; doi:10.1007/s00384-013-1815-5; 524 patients; leakage rate 10.9% (n=57); mortality after leakage 21.1% (n=12); CT sensitivity 0.59 (95% CI 0.43-0.73), specificity 0.88 (95% CI 0.75-0.95), positive predictive value 0.82 (95% CI 0.64-0.92), negative predictive value 0.70 (95% CI 0.57-0.81), accuracy 74%; delayed reintervention due to a false-negative CT resulted in death in 62.5% (n=5)",
+      "usedFor": "That a reported negative abdominal CT cannot exclude an anastomotic leak, quoted with its confidence intervals and the leak rate the predictive values are conditioned on, and that the harm of relying on it is the delay itself. No imaging protocol, timing, or reoperation criterion is adopted.",
+      "verifiedAgainst": "PubMed PMID 24356897 bibliographic record retrieved from the NCBI E-utilities API, with author, title, journal, year, volume, issue and pages compared field by field, and the indexed abstract read for every figure quoted. Its sensitivity differs from the 2017 series below by fourteen points; both are carried, and neither is presented as the value.",
+      "verifiedOn": "2026-09-09",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/24356897/"
+    },
+    {
+      "id": "surgery-trauma-delayed-reintervention-false-negative-ct-2017",
+      "pmid": "28929306",
+      "authors": "Marres CCM, van de Ven AWH, Leijssen LGJ, Verbeek PCM, Bemelman WA, Buskens CJ",
+      "title": "Colorectal anastomotic leak: delay in reintervention after false-negative computed tomography scan is a reason for concern",
+      "publication": "Techniques in Coloproctology",
+      "year": 2017,
+      "locator": "21(9):709-714; doi:10.1007/s10151-017-1689-6; 628 patients reviewed, CT performed in 127, leakage in 49 (7.8%); positive and negative predictive values 78% and 88%, sensitivity 73%, specificity 91%; mortality after a false-negative scan 5/11 (45.5%) against 1/24 (4.2%) (p<0.005), with a significant increase in length of stay",
+      "usedFor": "The second, disagreeing estimate of what this scan can exclude, and the mortality difference associated with reintervention delayed by a false-negative result. Both series are single-centre with small numerators; neither is adopted as a decision rule, and the lesson says so.",
+      "verifiedAgainst": "PubMed PMID 28929306 bibliographic record retrieved from the NCBI E-utilities API, with author, title, journal, year, volume, issue, pages and DOI compared field by field, and the indexed abstract read for every figure quoted.",
+      "verifiedOn": "2026-09-09",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/28929306/"
     }
   ]
 }

@@ -20,6 +20,7 @@ import { RENAL_ELECTROLYTE_SCENARIOS } from '../../src/modules/renal-electrolyte
 import { INFECTIOUS_DISEASE_SCENARIOS } from '../../src/modules/infectious-disease/scenarios';
 import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../../src/modules/medical-surgical-nursing/scenarios';
 import { ONCOLOGY_SCENARIOS } from '../../src/modules/oncology/scenarios';
+import { SURGERY_TRAUMA_SCENARIOS } from '../../src/modules/surgery-trauma/scenarios';
 import { buildScenarioQualityCatalog } from '@platform/catalog/scenario-quality';
 import {
   buildMaturityCatalog, MATURITY_RECORD_SCHEMA, MATURITY_STATUSES,
@@ -116,6 +117,12 @@ const oncologyCompletion = buildModuleCompletionCatalog(
 const oncologyCatalog = buildMaturityCatalog(
   oncologyCompletion, buildScenarioQualityCatalog(oncologyCompletion),
 );
+const surgeryTraumaCompletion = buildModuleCompletionCatalog(
+  SURGERY_TRAUMA_SCENARIOS, ENGINE_VERSION, 'surgery-trauma', 'ward', 'state_transition',
+);
+const surgeryTraumaCatalog = buildMaturityCatalog(
+  surgeryTraumaCompletion, buildScenarioQualityCatalog(surgeryTraumaCompletion),
+);
 
 describe('exact-version maturity records', () => {
   it('supports the complete public vocabulary and records every clinical item honestly', () => {
@@ -129,7 +136,8 @@ describe('exact-version maturity records', () => {
       + pediatricsCatalog.recordCount + neurologyCatalog.recordCount + toxicologyCatalog.recordCount
       + obstetricsCatalog.recordCount + neonatologyCatalog.recordCount + endocrineMetabolicCatalog.recordCount
       + renalElectrolyteCatalog.recordCount + infectiousDiseaseCatalog.recordCount
-      + medicalSurgicalNursingCatalog.recordCount + oncologyCatalog.recordCount)
+      + medicalSurgicalNursingCatalog.recordCount + oncologyCatalog.recordCount
+      + surgeryTraumaCatalog.recordCount)
       .toBe(reviewableItems().length);
     expect(catalog.recordCount).toBe(54);
     expect(catalog.records.filter((record) => record.subjectKind === 'scenario')

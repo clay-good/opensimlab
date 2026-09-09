@@ -16,7 +16,7 @@ any device, with or without a network.
 
 ## What it covers
 
-240 bounded labs across 15 specialties:
+241 bounded labs across 16 specialties:
 
 | Module | Labs | Where |
 | --- | --- | --- |
@@ -35,21 +35,25 @@ any device, with or without a network.
 | Nursing | 9 | `/medical-surgical-nursing` |
 | Renal & electrolyte | 6 | `/renal-electrolyte` |
 | Oncology | 11 | `/oncology` |
+| Surgery and trauma | 1 | `/surgery-trauma` |
 
-Counts are the registered scenarios the build audits, not a roadmap. Every module above is now
-registered at its full planned count. A sixteenth, surgery and trauma, is declared and has not
-started, so it has no scenarios and no row here.
+Counts are the registered scenarios the build audits, not a roadmap. Every module above except
+surgery and trauma is registered at its full planned count; surgery and trauma has just opened,
+with one lab of a planned ten. Nothing else is declared and unbuilt, so the front door no longer
+carries a planned line.
 
 Each lab is a closed-loop scenario: the physiology keeps running while you decide, and
 what you do changes where the patient goes next.
 
-Every lab also carries a **worked example** you can watch and take the controls back from at
-any point, and a private tutor that reads only what you have actually done. The tutor is silent
+Almost every lab also carries a **worked example** you can watch and take the controls back from
+at any point, and a private tutor that reads only what you have actually done. The tutor is silent
 unless you ask for it, says nothing at all on the unassisted setting, and never supplies the
-diagnosis a lesson exists to leave open. All fifteen specialties are now complete on both
+diagnosis a lesson exists to leave open. Fifteen of the sixteen specialties are complete on both
 counts -- renal, oncology, endocrine, nursing, infectious-disease, neonatology, toxicology,
 neurology, obstetrics, respiratory-medicine, pediatrics, cardiology, critical-care,
-emergency-medicine, and anesthesia, whose thirty-nine labs were the last to be finished.
+emergency-medicine, and anesthesia, whose thirty-nine labs were the last to be finished. The
+exception is the one lab that opened surgery and trauma: it has neither yet, its completion audit
+says so, and the product offers no example for it.
 
 ## How it works
 

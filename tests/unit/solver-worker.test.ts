@@ -93,8 +93,8 @@ describe('Requirement: A Counterfactual Runs Where The Engine Already Is', () =>
 });
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: diagnosis-of-exclusion state has protocol version 209', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(209);
+  it('Scenario: negative-scan state has protocol version 210', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(210);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

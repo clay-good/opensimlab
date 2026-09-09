@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Version 209 adds the authored diagnosis-of-exclusion snapshot. */
-export const WORKER_PROTOCOL_VERSION = 209;
+/** Version 210 adds the authored negative-scan postoperative recognition snapshot. */
+export const WORKER_PROTOCOL_VERSION = 210;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1092,6 +1092,52 @@ export interface DelayedImmuneEventSnapshot {
     readonly checkpointInhibitorCycles: number; readonly weeksSinceLastDose: number;
     readonly onCurrentMedicationList: boolean; readonly referralAttribution: string;
     readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
+}
+
+export interface NegativeScanSnapshot {
+  readonly operativeCourseRecordedAtTick: number | null;
+  readonly progressRecordedAtTick: number | null;
+  readonly scanLimitsRecordedAtTick: number | null;
+  readonly escalationAtTick: number | null;
+  readonly surgicalIntentAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly postoperativeDay: number;
+  readonly tachycardiaHours: number;
+  readonly imagingReportedNegative: boolean;
+  readonly flatusPassed: boolean;
+  readonly roundCompleted: boolean;
+  readonly teamResponded: boolean;
+  readonly teamObserved: boolean;
+  readonly scanExclusionAttempted: boolean;
+  readonly routineDismissalAttempted: boolean;
+  readonly rescanDeferralAttempted: boolean;
+  readonly treatTheNumbersAttempted: boolean;
+  readonly observationRecord: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+    readonly tachycardiaHours: number;
+  } | null;
+  readonly operativeRecord: {
+    readonly atTick: number; readonly procedure: string; readonly postoperativeDay: number;
+    readonly diverted: boolean; readonly flatusPassed: boolean; readonly tolerating: boolean;
+    readonly imagingReport: string;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+    readonly tachycardiaHours: number; readonly procedure: string;
+    readonly postoperativeDay: number; readonly diverted: boolean;
+    readonly flatusPassed: boolean; readonly tolerating: boolean;
+    readonly imagingReport: string; readonly alertness: string;
   } | null;
   readonly alertness: string;
   readonly choiceFeedback: string | null;
@@ -4816,6 +4862,7 @@ export interface EquipmentSnapshot {
     readonly meningitisImaging?: MeningitisImagingSnapshot;
     readonly lowScore?: LowScoreSnapshot;
     readonly delayedImmuneEvent?: DelayedImmuneEventSnapshot;
+    readonly negativeScan?: NegativeScanSnapshot;
     readonly incidentalClot?: IncidentalClotSnapshot;
     readonly normalTestToxicity?: NormalTestToxicitySnapshot;
     readonly prognosisQuestion?: PrognosisQuestionSnapshot;

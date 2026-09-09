@@ -60,6 +60,7 @@ import { supportsLastKnownWell } from '../../medical-surgical-nursing/last-known
 import { supportsOxygenTargetScale } from '../../medical-surgical-nursing/oxygen-target-scale';
 import { supportsLostContingency } from '../../medical-surgical-nursing/lost-contingency';
 import { supportsDelayedImmuneEvent } from '../../oncology/delayed-immune-event';
+import { supportsNegativeScan } from '../../surgery-trauma/negative-scan';
 import { supportsIncidentalClot } from '../../oncology/incidental-clot';
 import { supportsNormalTestToxicity } from '../../oncology/normal-test-toxicity';
 import { supportsPrognosisQuestion } from '../../oncology/prognosis-question';
@@ -1081,6 +1082,50 @@ export function objectiveFindings(
         'handoff-oncology-incidental-clot-an-unresolved-decision': { met: !!handoff, tick: handoff?.tick,
           finding: (handoff ? 'The finding, its route, the conditional strength and very low certainty, the figures in both directions, and his bleeding history all travelled. ' : 'Current full findings, the recorded certainty, or continuing-care ownership remains incomplete. ')
             + 'The decision was handed over open, which is what an unresolved decision looks like when it is handed over honestly rather than closed to make the handoff tidy.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id.includes('-surgery-trauma-negative-scan-')) {
+      if (!supportsNegativeScan(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The surgery and trauma negative-scan lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^negative-scan-${id}-\\d+$`).test(entry.eventId));
+      const course = event('operative-course-recorded'); const progress = event('progress-recorded');
+      const limits = event('scan-limits-recorded'); const escalation = event('escalation-requested');
+      const intent = event('surgical-intent-recorded'); const boundaries = event('boundary-review');
+      const handoff = event('handoff'); const round = event('round-completed');
+      const answered = log.find((entry) => /^negative-scan-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedExclusion = event('scan-exclusion-refused'); const refusedRoutine = event('routine-dismissal-refused');
+      const refusedRescan = event('rescan-deferral-refused'); const refusedNumbers = event('treat-the-numbers-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'record-surgery-trauma-negative-scan-the-course-the-operation-predicts': { met: !!course, tick: course?.tick,
+          finding: (course ? 'The operation, the day, and the course that operation predicts were recorded as the reference. ' : 'The operation was never recorded as the course everything else is read against. ')
+            + 'By the fifth day this operation predicts flatus, tolerated oral intake, and a falling analgesia requirement. Without that reference an observation is a number with nothing to be abnormal against.' },
+        'record-surgery-trauma-negative-scan-a-trajectory-not-a-reading': { met: !!progress && !refusedRoutine, tick: progress?.tick,
+          finding: (progress ? 'No flatus, intake not tolerated, a rising analgesia requirement, and 36 hours of tachycardia were recorded together as one divergence. ' : 'The failure to progress was never recorded, so nothing in the notes says he has stopped following his own course. ')
+            + (refusedRoutine ? 'Dismissing this as the ordinary postoperative noise was attempted and refused: the premise is right and the conclusion does not follow. ' : '')
+            + 'Any one of those findings alone carries a positive predictive value of 4 to 11 percent. Together, and with a duration, they are a different statement.' },
+        'recognize-surgery-trauma-negative-scan-a-report-is-not-an-exclusion': { met: !!limits && !refusedRescan, tick: limits?.tick,
+          finding: (limits ? 'What the reported scan does and does not exclude was recorded explicitly. ' : 'The limits of the reported scan were never recorded, so the report was allowed to stand as a verdict. ')
+            + (refusedExclusion ? 'Excluding a leak on the strength of the report was attempted and refused. ' : '')
+            + (refusedRescan ? 'Repeating the scan tomorrow was attempted and refused; the harm being avoided is measured in the delay itself. ' : '')
+            + 'Published negative predictive values were 0.70 and 88 percent, and the report says no evidence of a leak rather than none.' },
+        'activate-surgery-trauma-negative-scan-the-team-that-made-the-anastomosis': { met: !!escalation, tick: escalation?.tick,
+          finding: (escalation ? 'The team that made the anastomosis was contacted with the operation, the course, and the limits of the scan stated together. ' : 'The operating team was never contacted. ')
+            + (refusedNumbers ? 'Treating the observations on the ward overnight was attempted and refused; it moves the only signs anyone is following. ' : '')
+            + (course ? '' : 'The operative course was never recorded, so the call, if made, carried observations with nothing to read them against. ')
+            + 'This is not asking radiology to look again. It returns the patient to the people who know what was done to him.' },
+        'record-surgery-trauma-negative-scan-bounded-surgical-intent': { met: !!intent, tick: intent?.tick,
+          finding: (intent ? 'Re-imaging, direct assessment of the anastomosis, and any return to theatre were recorded as the qualified surgical team’s decisions. ' : 'Bounded qualified-team surgical intent was never recorded. ')
+            + 'Nothing was ordered and no investigation, drug, dose, route, or operation was chosen or displayed here.' },
+        'review-surgery-trauma-negative-scan-two-small-literatures': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The boundaries were reviewed with their certainty attached, in both directions. ' : 'The boundary and certainty review is missing. ')
+            + 'One study of 452 bowel resections found abnormal signs almost routine and poorly predictive, with 19 leaks among 271 complications; it licenses refusing to act on a single reading, not refusing to look. Against it, delayed reintervention after a false-negative scan carried mortality of 62.5 percent in eight patients and 45.5 against 4.2 percent in another series. All are small single-centre numbers and none is about this abdomen.' },
+        'handoff-surgery-trauma-negative-scan-a-course-that-travels': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The operation and the day, the failure to progress, the limits of the scan, the contact made, and the bounded intent all travelled. ' : 'Current full findings, the recorded course, or continuing-care ownership remains incomplete. ')
+            + (round ? 'The observations were repeated unchanged during this run and he vomited once, which is what a patient who is quietly not recovering looks like. ' : '')
+            + (answered ? 'The operating team confirmed the procedure and the anastomosis from its own record and stated that a report of no evidence of a leak does not override the course. ' : 'The operating team had not answered by the end of this run, and the handoff had to survive that. ')
+            + 'No leak, operative decision, or outcome is certified.' },
       };
       const result = results[objective.id]!;
       return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;

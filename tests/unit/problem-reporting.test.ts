@@ -26,6 +26,7 @@ import { RENAL_ELECTROLYTE_SCENARIOS } from '../../src/modules/renal-electrolyte
 import { INFECTIOUS_DISEASE_SCENARIOS } from '../../src/modules/infectious-disease/scenarios';
 import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../../src/modules/medical-surgical-nursing/scenarios';
 import { ONCOLOGY_SCENARIOS } from '../../src/modules/oncology/scenarios';
+import { SURGERY_TRAUMA_SCENARIOS } from '../../src/modules/surgery-trauma/scenarios';
 
 /**
  * The module list the report catalog is built from is hand-maintained in
@@ -44,6 +45,7 @@ const PLAYABLE_MODULES = [
   ['infectious-disease', INFECTIOUS_DISEASE_SCENARIOS],
   ['medical-surgical-nursing', MEDICAL_SURGICAL_NURSING_SCENARIOS],
   ['oncology', ONCOLOGY_SCENARIOS],
+  ['surgery-trauma', SURGERY_TRAUMA_SCENARIOS],
 ] as const;
 
 const context: ScenarioReportContext = {
@@ -175,9 +177,9 @@ describe('scenario report contract', () => {
     // against it still resolves to the evidence it was filed against. It held
     // 250 rows; correcting a citation is a content change, so four scenarios
     // moved to 0.1.1 and their 0.1.0 rows remain beside them.
-    expect(catalog.scenarios).toHaveLength(254);
+    expect(catalog.scenarios).toHaveLength(255);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(254);
+      .toBe(255);
     for (const contentVersion of ['0.1.0', '0.1.1', '0.1.2']) {
       expect(catalog.scenarios).toContainEqual(expect.objectContaining({
         moduleId: 'endocrine-metabolic', scenarioId: 'adrenal-crisis-treatment-before-tests', contentVersion,
