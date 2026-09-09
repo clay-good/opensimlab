@@ -409,6 +409,8 @@ import { useArterialTransducerDemonstration } from '@anesthesia/demo/useArterial
 import { supportsArterialTransducerDemonstration } from '@anesthesia/demo/arterial-transducer-demonstration';
 import { useHypothermiaRewarmingDemonstration } from '@anesthesia/demo/useHypothermiaRewarmingDemonstration';
 import { supportsHypothermiaRewarmingDemonstration } from '@anesthesia/demo/hypothermia-rewarming-demonstration';
+import { usePerioperativeHyperglycemiaDemonstration } from '@anesthesia/demo/usePerioperativeHyperglycemiaDemonstration';
+import { supportsPerioperativeHyperglycemiaDemonstration } from '@anesthesia/demo/perioperative-hyperglycemia-demonstration';
 import { useLastDemonstration } from '@anesthesia/demo/useLastDemonstration';
 import { supportsLastDemonstration } from '@anesthesia/demo/last-demonstration';
 import { useMalignantHyperthermiaDemonstration } from '@anesthesia/demo/useMalignantHyperthermiaDemonstration';
@@ -820,6 +822,7 @@ export function Cockpit({
   const bloodBankDemoSupported = supportsBloodBankHandoffDemonstration(scenario);
   const arterialTransducerDemoSupported = supportsArterialTransducerDemonstration(scenario);
   const hypothermiaDemoSupported = supportsHypothermiaRewarmingDemonstration(scenario);
+  const hyperglycemiaDemoSupported = supportsPerioperativeHyperglycemiaDemonstration(scenario);
   const lastDemoSupported = supportsLastDemonstration(scenario);
   const malignantHyperthermiaDemoSupported = supportsMalignantHyperthermiaDemonstration(scenario);
   const anaphylaxisDemoSupported = supportsAnaphylaxisDemonstration(scenario);
@@ -1031,6 +1034,7 @@ export function Cockpit({
     || bloodBankDemoSupported
     || arterialTransducerDemoSupported
     || hypothermiaDemoSupported
+    || hyperglycemiaDemoSupported
     || lastDemoSupported
     || malignantHyperthermiaDemoSupported
     || anaphylaxisDemoSupported
@@ -2019,6 +2023,12 @@ export function Cockpit({
     patient: repeatedLaryngoscopyProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  const hyperglycemiaDemonstration = usePerioperativeHyperglycemiaDemonstration({
+    active: demonstrating && hyperglycemiaDemoSupported,
+    running: session.transport === 'running',
+    patient: session.equipment?.resuscitation.glycemicResponse,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const hypothermiaProgress = session.state && session.equipment ? {
     targetTemperatureC:
       session.equipment.resuscitation.thermalResponse?.targetTemperatureC ?? null,
@@ -2980,6 +2990,7 @@ export function Cockpit({
     : bloodBankDemoSupported ? bloodBankDemonstration
     : arterialTransducerDemoSupported ? arterialTransducerDemonstration
     : hypothermiaDemoSupported ? hypothermiaDemonstration
+    : hyperglycemiaDemoSupported ? hyperglycemiaDemonstration
     : lastDemoSupported ? lastDemonstration
     : malignantHyperthermiaDemoSupported ? malignantHyperthermiaDemonstration
     : anaphylaxisDemoSupported ? anaphylaxisDemonstration
