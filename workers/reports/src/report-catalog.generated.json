@@ -4151,6 +4151,23 @@
       "limitationManifestHash": "sha256:a70cd273cab4eaeee8f6e1c0db362ca95e17f022ef5b98c51d5c4668caf31dd3"
     },
     {
+      "scenarioId": "unowned-delay-a-wait-that-nobody-decided",
+      "contentVersion": "0.1.0",
+      "moduleId": "surgery-trauma",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:591e63a3e3eae66db3e29ebd1ad2359a4db21d6eb6c737f53d5cf9178b748ea4",
+      "defaultsHash": "sha256:e1ef5a5750725af26694ff7180688c09d3b01b731323b7b6dedc6a60067de783",
+      "maturityHash": "sha256:d85206f989cc4df776a17019ca5c771752d40383e7b5b2c45fb30cfd5d96e3d7",
+      "sourceManifestHash": "sha256:3b09e238e95e097e3ac19f1020d420e66ecadb795a46629b926cd1b2a3471a36",
+      "limitationManifestHash": "sha256:f3b439e63e2c47cccc0099d0097df6e25a04d52170a0fa0e8805f3afe4d4ab7d"
+    },
+    {
       "scenarioId": "acetaminophen-clock-and-nomogram",
       "contentVersion": "0.1.0",
       "moduleId": "toxicology",

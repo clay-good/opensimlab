@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot, DelayedImmuneEventSnapshot, IncidentalClotSnapshot, NormalTestToxicitySnapshot, PrognosisQuestionSnapshot, LaboratoryTlsSnapshot, RareEarlyMyocarditisSnapshot, LoweringTheCountSnapshot, InheritedUrgencySnapshot, TrialRuleSnapshot, SilentInteractionSnapshot, EasyLabelSnapshot, NegativeScanSnapshot, RisingRequirementSnapshot, UnfinishedSurveySnapshot, TransientResponseSnapshot, QuietChestSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot, DelayedImmuneEventSnapshot, IncidentalClotSnapshot, NormalTestToxicitySnapshot, PrognosisQuestionSnapshot, LaboratoryTlsSnapshot, RareEarlyMyocarditisSnapshot, LoweringTheCountSnapshot, InheritedUrgencySnapshot, TrialRuleSnapshot, SilentInteractionSnapshot, EasyLabelSnapshot, NegativeScanSnapshot, RisingRequirementSnapshot, UnfinishedSurveySnapshot, TransientResponseSnapshot, QuietChestSnapshot, UnownedDelaySnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -145,6 +145,7 @@ export function stateSummary(
     readonly unfinishedSurvey?: UnfinishedSurveySnapshot;
     readonly transientResponse?: TransientResponseSnapshot;
     readonly quietChest?: QuietChestSnapshot;
+    readonly unownedDelay?: UnownedDelaySnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -198,7 +199,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale || options.lostContingency || options.delayedImmuneEvent || options.incidentalClot || options.normalTestToxicity || options.prognosisQuestion || options.laboratoryTls || options.rareEarlyMyocarditis || options.loweringTheCount || options.inheritedUrgency || options.trialRule || options.silentInteraction || options.easyLabel || options.negativeScan || options.risingRequirement || options.unfinishedSurvey || options.transientResponse || options.quietChest) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale || options.lostContingency || options.delayedImmuneEvent || options.incidentalClot || options.normalTestToxicity || options.prognosisQuestion || options.laboratoryTls || options.rareEarlyMyocarditis || options.loweringTheCount || options.inheritedUrgency || options.trialRule || options.silentInteraction || options.easyLabel || options.negativeScan || options.risingRequirement || options.unfinishedSurvey || options.transientResponse || options.quietChest || options.unownedDelay) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -221,6 +222,25 @@ export function stateSummary(
           + (reversal.doseMgPerKg === null ? '' : ` ${reversal.doseMgPerKg} milligrams per kilogram`)
           + ' intravenous.');
       }
+    }
+  }
+  if (options.unownedDelay) {
+    const patient = options.unownedDelay;
+    // The total, the authors, and what is genuinely outstanding — the only things that move.
+    lines.push(`Displaced femoral neck fracture, aged 84, admitted ${patient.hoursSinceAdmission} hours ago and not yet operated. ${patient.cancellations} cancellations. ${patient.fastedHours} hours fasted across those days.`);
+    lines.push(`Echocardiogram ${patient.echoRequested ? 'requested' : 'not requested'} and ${patient.echoBooked ? 'booked' : 'not booked'}; requesting clinician ${patient.echoRequesterNamed ? 'named' : 'not named in the record'}; outstanding medical question ${patient.medicalQuestionOutstanding ? 'documented' : 'none documented'}. Nobody in these notes argues that she should not have the operation.`);
+    lines.push('Supplied observations were pulse 92 per minute, blood pressure 132 over 70, respiratory rate 18 per minute, temperature 36.4 degrees Celsius, and oxygen saturation 95 percent on air. These are the same numbers as on admission.');
+    lines.push(`Current state: ${patient.alertness}.`);
+    lines.push(`Fracture and clock recorded: ${patient.fractureRecordedAtTick === null ? 'no' : 'yes'}. What each delay was for recorded: ${patient.delayReasonsRecordedAtTick === null ? 'no' : 'yes'}. What is still being waited for recorded: ${patient.pendingRecordedAtTick === null ? 'no' : 'yes'}. Team that owns the list: ${patient.escalationAtTick === null ? 'not asked' : 'asked'}. Bounded intent: ${patient.schedulingIntentAtTick === null ? 'not recorded' : 'recorded as the qualified teams\u2019 decision'}. Boundaries: ${patient.boundariesReviewedAtTick === null ? 'not reviewed' : 'reviewed'}.`);
+    if (patient.listLost) {
+      lines.push('The emergency theatre has taken another case and this evening is gone, which makes tomorrow the third day and this the third cancellation. Every monitored number is exactly what it was on admission.');
+    }
+    lines.push('In 42,230 population-cohort hip fracture patients complications rose once the wait passed 24 hours, with matched 30-day mortality 6.5 against 5.8 percent; a meta-analysis of sixteen observational studies put the adjusted relative risk of death with earlier surgery at 0.81; and a randomised trial of 2,970 patients that moved the median wait from 24 hours to 6 found no significant difference in mortality or major complications. The scheduling, any preoperative investigation actually wanted, the anaesthetic assessment, and the fasting instruction belong to the qualified teams; no operation, time, technique, drug, dose, route, or investigation is selected here, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: pulse ${patient.observation.heartRateBpm} per minute; ${patient.observation.hoursSinceAdmission} hours since admission; ${patient.observation.cancellations} cancellations; ${patient.observation.fastedHours} hours fasted.`
+      : 'No new full assessment has been requested.');
+    if (patient.teamObserved) {
+      lines.push('The team that owns the list has answered, had not known she was still waiting, has her against a named slot with a named consultant, does not recognise the echocardiogram as a gate, and owns the scheduling and the fasting instruction.');
     }
   }
   if (options.quietChest) {

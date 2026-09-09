@@ -130,4 +130,28 @@ export const SURGERY_TRAUMA_LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Both cohorts are retrospective and single-centre, covering different eras and different populations, and the first reports the odds of pneumonia per additional rib as 1.16 in its results while its conclusion states 27 percent, which do not match; the figures are quoted for direction rather than for magnitude. The epidural review is about one analgesic technique and says nothing about whether observation helps, because nobody has randomised that. Together they establish that this injury is more dangerous in older patients than its first evening suggests, and they give no threshold and no probability for this patient.',
     briefIn: ['quiet-chest-an-injury-whose-severity-is-not-yet-visible'],
   },
+  {
+    id: 'unowned-delay-presentation-and-team-response-are-authored',
+    headline: 'One ward round, one lost theatre evening, and one telephone call that works.',
+    simplification: 'The case supplies a fixed set of observations identical to the admission set that never change, one authored loss of the evening list at 10 minutes which makes a third cancellation and nineteen fasted hours, and a list team that answers twelve minutes after it is asked with a fixed reply and a named slot. No physiological, fasting, or scheduling model runs underneath, and no operation ever happens.',
+    whereItMisleads: 'A learner concludes that the list team always answers, always answers quickly, always has a slot, or that one telephone call reliably fixes a delay of this kind.',
+    correctUnderstanding: 'The reply is authored and generous on purpose, so that the lesson is about naming the wait rather than about winning an argument. In practice the call may not be answered, the person who holds the list may have nothing to give, and the honest outcome may be a delay that is still a delay but is now somebody\u2019s. Nothing the learner does changes her physiology, because nothing was going to.',
+    briefIn: ['unowned-delay-a-wait-that-nobody-decided'],
+  },
+  {
+    id: 'unowned-delay-controls-are-recording-and-escalation-only',
+    headline: 'No operation is booked, no investigation is cancelled, and no fasting rule is set.',
+    simplification: 'The learner records the fracture with its clock, records what each delay was for and who asked, records what is still actually outstanding, calls the team that owns the list and asks it to own the wait, records bounded qualified-team intent, and reviews the boundaries.',
+    whereItMisleads: 'The escalation control is read as booking a slot or overriding a list, the echocardiogram refusal is read as the learner cancelling an investigation, or the fasting refusal is read as the learner setting a fasting rule.',
+    correctUnderstanding: 'The scheduling and the order of the list, whether any preoperative investigation is actually wanted, the anaesthetic assessment, and the fasting instruction that follows a real slot all belong to the qualified teams, and this lesson exposes no operation, time, technique, drug, dose, route, or investigation. The echocardiogram refusal objects to treating an unbooked request with no documented consequence as a fitness gate, not to the test; the list refusal objects to filing a wait under nobody, not to the constraint, and both say so in the refusal itself.',
+    briefIn: ['unowned-delay-a-wait-that-nobody-decided'],
+  },
+  {
+    id: 'unowned-delay-the-randomised-trial-does-not-license-the-wait',
+    headline: 'A large observational signal, and a randomised trial that did not reproduce it.',
+    simplification: 'The lesson quotes complications rising beyond a 24-hour wait in 42,230 population-cohort patients with matched 30-day mortality of 6.5 against 5.8 percent, an adjusted relative risk of death of 0.81 with earlier surgery across sixteen observational studies covering 13,478 patients, and a randomised trial of 2,970 patients in which moving the median wait from 24 hours to 6 produced mortality of 9 against 10 percent with no difference in major complications.',
+    whereItMisleads: 'A learner reads the observational figures as a causal target and treats 24 hours as a deadline, or reads the randomised trial as evidence that waiting does not matter and that this delay is therefore harmless.',
+    correctUnderstanding: 'The observational studies cannot separate delay from the reasons patients are delayed, and the randomised trial tested something narrower than the lesson: it accelerated an already prompt pathway from a median of 24 hours to 6, in patients who were being operated on. Neither design speaks to a patient in her third day for whom no clinical question is documented. The lesson draws no threshold from any of them; what it asserts is only that a wait with no author is not a plan, which is a statement about accountability rather than about hours.',
+    briefIn: ['unowned-delay-a-wait-that-nobody-decided'],
+  },
 ];

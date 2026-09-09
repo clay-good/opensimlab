@@ -1193,6 +1193,56 @@ export interface UnfinishedSurveySnapshot {
   readonly durableRecoveryProven: boolean;
 }
 
+export interface UnownedDelaySnapshot {
+  readonly fractureRecordedAtTick: number | null;
+  readonly delayReasonsRecordedAtTick: number | null;
+  readonly pendingRecordedAtTick: number | null;
+  readonly escalationAtTick: number | null;
+  readonly schedulingIntentAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly hoursSinceAdmission: number;
+  readonly cancellations: number;
+  readonly fastedHours: number;
+  readonly echoRequested: boolean;
+  readonly echoBooked: boolean;
+  readonly echoRequesterNamed: boolean;
+  readonly medicalQuestionOutstanding: boolean;
+  readonly listLost: boolean;
+  readonly teamResponded: boolean;
+  readonly teamObserved: boolean;
+  readonly echoGateAttempted: boolean;
+  readonly listFullAttempted: boolean;
+  readonly oneMoreNightAttempted: boolean;
+  readonly keepFastedAttempted: boolean;
+  readonly observationRecord: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+  } | null;
+  readonly delayRecord: {
+    readonly atTick: number; readonly injury: string; readonly hoursSinceAdmission: number;
+    readonly cancellations: number; readonly fastedHours: number;
+    readonly echoRequested: boolean; readonly echoBooked: boolean;
+    readonly echoRequesterNamed: boolean; readonly medicalQuestionOutstanding: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+    readonly injury: string; readonly hoursSinceAdmission: number;
+    readonly cancellations: number; readonly fastedHours: number;
+    readonly echoRequested: boolean; readonly echoBooked: boolean;
+    readonly echoRequesterNamed: boolean; readonly medicalQuestionOutstanding: boolean;
+    readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
+}
+
 export interface QuietChestSnapshot {
   readonly injuryRecordedAtTick: number | null;
   readonly comfortLimitsRecordedAtTick: number | null;
@@ -5053,6 +5103,7 @@ export interface EquipmentSnapshot {
     readonly unfinishedSurvey?: UnfinishedSurveySnapshot;
     readonly transientResponse?: TransientResponseSnapshot;
     readonly quietChest?: QuietChestSnapshot;
+    readonly unownedDelay?: UnownedDelaySnapshot;
     readonly incidentalClot?: IncidentalClotSnapshot;
     readonly normalTestToxicity?: NormalTestToxicitySnapshot;
     readonly prognosisQuestion?: PrognosisQuestionSnapshot;

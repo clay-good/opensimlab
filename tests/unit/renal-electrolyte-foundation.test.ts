@@ -295,13 +295,13 @@ describe('Renal and electrolyte medicine module foundation', () => {
   it('keeps registry, landing, routes, and published artifact counts aligned', () => {
     expect(availableModules()).toHaveLength(16);
     expect(READY_MODULE_COUNT).toBe(16);
-    expect(READY_SCENARIO_COUNT).toBe(245);
-    expect(reviewableItems().filter((item) => item.kind === 'scenario')).toHaveLength(245);
+    expect(READY_SCENARIO_COUNT).toBe(246);
+    expect(reviewableItems().filter((item) => item.kind === 'scenario')).toHaveLength(246);
     // Net plus one: the module index and its lab arrived, and the planned-module page for
     // surgery and trauma went away, because there is no longer a planned module to describe.
     // Each surgery and trauma lesson since then adds one route and one indexable page.
-    expect(ROUTES).toHaveLength(275);
-    expect(indexableRoutes()).toHaveLength(272);
+    expect(ROUTES).toHaveLength(276);
+    expect(indexableRoutes()).toHaveLength(273);
     expect(PUBLIC_CATALOG_ARTIFACTS).toHaveLength(59);
     expect(new Set(PUBLIC_CATALOG_ARTIFACTS).size).toBe(59);
     expect(PUBLIC_CATALOG_ARTIFACTS).toEqual(expect.arrayContaining([
@@ -404,7 +404,7 @@ describe('Renal and electrolyte medicine module foundation', () => {
     // against it still resolves to the evidence it was filed against. It held
     // 250 rows; correcting a citation is a content change, so four scenarios
     // moved to 0.1.1 and their 0.1.0 rows remain beside them.
-    expect(reports.scenarios).toHaveLength(259);
+    expect(reports.scenarios).toHaveLength(260);
     // Every earlier module's published evidence must survive a later module launch byte for byte.
     // The four rows added by the citation correction are excluded here, not
     // because they do not count, but because this assertion is about the rows

@@ -65,6 +65,7 @@ import { supportsRisingRequirement } from '../../surgery-trauma/rising-requireme
 import { supportsUnfinishedSurvey } from '../../surgery-trauma/unfinished-survey';
 import { supportsTransientResponse } from '../../surgery-trauma/transient-response';
 import { supportsQuietChest } from '../../surgery-trauma/quiet-chest';
+import { supportsUnownedDelay } from '../../surgery-trauma/unowned-delay';
 import { supportsIncidentalClot } from '../../oncology/incidental-clot';
 import { supportsNormalTestToxicity } from '../../oncology/normal-test-toxicity';
 import { supportsPrognosisQuestion } from '../../oncology/prognosis-question';
@@ -1086,6 +1087,51 @@ export function objectiveFindings(
         'handoff-oncology-incidental-clot-an-unresolved-decision': { met: !!handoff, tick: handoff?.tick,
           finding: (handoff ? 'The finding, its route, the conditional strength and very low certainty, the figures in both directions, and his bleeding history all travelled. ' : 'Current full findings, the recorded certainty, or continuing-care ownership remains incomplete. ')
             + 'The decision was handed over open, which is what an unresolved decision looks like when it is handed over honestly rather than closed to make the handoff tidy.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id.includes('-surgery-trauma-unowned-delay-')) {
+      if (!supportsUnownedDelay(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The surgery and trauma unowned-delay lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^unowned-delay-${id}-\\d+$`).test(entry.eventId));
+      const fracture = event('fracture-recorded'); const reasons = event('delay-reasons-recorded');
+      const pending = event('pending-recorded'); const escalation = event('escalation-requested');
+      const intent = event('scheduling-intent-recorded'); const boundaries = event('boundary-review');
+      const handoff = event('handoff'); const lost = event('list-lost');
+      const answered = log.find((entry) => /^unowned-delay-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedEcho = event('echo-gate-refused'); const refusedList = event('list-full-refused');
+      const refusedNight = event('one-more-night-refused'); const refusedFasting = event('keep-fasted-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'record-surgery-trauma-unowned-delay-the-fracture-and-the-clock': { met: !!fracture, tick: fracture?.tick,
+          finding: (fracture ? 'The fracture was recorded with the elapsed hours, the cancellations and the fasted hours as one total. ' : 'The total was never recorded, so the wait stayed a series of separate days belonging to separate shifts. ')
+            + 'Nobody had ever seen that sentence, which is how two days passed with nobody doing anything wrong.' },
+        'record-surgery-trauma-unowned-delay-what-each-delay-was-for': { met: !!reasons, tick: reasons?.tick,
+          finding: (reasons ? 'Each delay was recorded with its stated reason, and the missing authors were recorded as missing. ' : 'What each delay was for and who asked for it was never recorded. ')
+            + 'A scan for an undocumented murmur, a review by no named person, and a list nobody rebooked her from: reasonable-sounding, and authorless.' },
+        'recognize-surgery-trauma-unowned-delay-a-clinical-label-is-not-a-clinical-reason': { met: !!reasons && !refusedEcho, tick: reasons?.tick,
+          finding: (refusedEcho ? 'Treating the unbooked echocardiogram as a fitness gate was attempted and refused. ' : reasons ? 'The echocardiogram was read as an unbooked request with no stated consequence rather than as a gate. ' : 'The echocardiogram was never read against what it would change. ')
+            + 'An investigation whose result has no documented consequence for management is a delay with a clinical-sounding label.' },
+        'record-surgery-trauma-unowned-delay-what-is-still-being-waited-for': { met: !!pending, tick: pending?.tick,
+          finding: (pending ? 'What is still outstanding was recorded separately from what is merely still written down. ' : 'Outstanding clinical questions were never separated from outstanding paperwork. ')
+            + 'The scan is unbooked with no stated consequence, no medical question is documented, and what remains is a slot; an organisational wait and a clinical wait are fixed by different telephone calls.' },
+        'activate-surgery-trauma-unowned-delay-give-the-wait-an-owner': { met: !!escalation && !refusedList && !refusedNight, tick: escalation?.tick,
+          finding: (escalation ? 'The team that owns the list was asked for a named slot with a named person, with the cancellations and the clock stated together. ' : 'Nobody was asked to own the wait. ')
+            + (refusedList ? 'Filing the full list as out of anybody\u2019s hands was attempted and refused; the list is somebody\u2019s, and they had not been told. ' : '')
+            + (refusedNight ? 'One more night was offered as a reason and refused: it is the sentence that produced the first two. ' : '')
+            + (refusedFasting ? 'Keeping her fasted against a slot that does not exist was attempted and refused. ' : '')
+            + 'General escalation produces sympathy; a name produces a place on a list.' },
+        'record-surgery-trauma-unowned-delay-bounded-scheduling-intent': { met: !!intent, tick: intent?.tick,
+          finding: (intent ? 'The scheduling, any preoperative investigation actually wanted, the anaesthetic assessment and the fasting instruction were recorded as the qualified teams\u2019. ' : 'Bounded qualified-team intent was never recorded. ')
+            + 'Nothing was arranged and no operation, time, technique, drug, dose, route, or investigation was chosen or displayed here.' },
+        'review-surgery-trauma-unowned-delay-evidence-that-contradicts-itself': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The observational signal and the randomised test were both reviewed, and the contradiction was kept. ' : 'The boundary and certainty review is missing. ')
+            + 'Complications rose beyond 24 hours in 42,230 patients, with matched 30-day mortality 6.5 against 5.8 percent; sixteen observational studies gave an adjusted relative risk of death of 0.81 with earlier surgery; and a randomised trial of 2,970 that moved the median from 24 hours to 6 found nothing. Going faster than prompt is not proven to help, and none of it describes a third day nobody signed for.' },
+        'handoff-surgery-trauma-unowned-delay-a-wait-that-now-has-an-author': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The total in hours, each delay with its missing author, what remains outstanding, the owner the wait now has, and the bounded intent all travelled. ' : 'Current full findings, the recorded total, or continuing-care ownership remains incomplete. ')
+            + (lost ? 'The evening was lost to another case during this run, making a third cancellation and nineteen fasted hours, with every monitored number unchanged. ' : '')
+            + (answered ? 'The list team answered quickly, had not known she was still waiting, and has her against a named slot. ' : 'The list team had not answered by the end of this run, and the handoff had to survive that. ')
+            + 'No operation, theatre time, or outcome is certified.' },
       };
       const result = results[objective.id]!;
       return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;

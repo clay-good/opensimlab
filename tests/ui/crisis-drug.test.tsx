@@ -363,6 +363,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       hasUnfinishedSurveyResponse: false,
       hasTransientResponseResponse: false,
       hasQuietChestResponse: false,
+      hasUnownedDelayResponse: false,
       hasRareEarlyMyocarditisResponse: false,
       hasPrognosisQuestionResponse: false,
       hasDelayedVasopressorDeliveryResponse: false,
