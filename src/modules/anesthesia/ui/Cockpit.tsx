@@ -393,6 +393,8 @@ import { useRepeatedLaryngoscopyDemonstration } from '@anesthesia/demo/useRepeat
 import { supportsRepeatedLaryngoscopyDemonstration } from '@anesthesia/demo/repeated-laryngoscopy-demonstration';
 import { useSupraglotticRescueDemonstration } from '@anesthesia/demo/useSupraglotticRescueDemonstration';
 import { supportsSupraglotticRescueDemonstration } from '@anesthesia/demo/supraglottic-rescue-demonstration';
+import { useHighSpinalDemonstration } from '@anesthesia/demo/useHighSpinalDemonstration';
+import { supportsHighSpinalDemonstration } from '@anesthesia/demo/high-spinal-demonstration';
 import { useLastDemonstration } from '@anesthesia/demo/useLastDemonstration';
 import { supportsLastDemonstration } from '@anesthesia/demo/last-demonstration';
 import { useMalignantHyperthermiaDemonstration } from '@anesthesia/demo/useMalignantHyperthermiaDemonstration';
@@ -796,6 +798,7 @@ export function Cockpit({
   const pneumothoraxDemoSupported = supportsPneumothoraxUnderPositivePressureDemonstration(scenario);
   const repeatedLaryngoscopyDemoSupported = supportsRepeatedLaryngoscopyDemonstration(scenario);
   const supraglotticRescueDemoSupported = supportsSupraglotticRescueDemonstration(scenario);
+  const highSpinalDemoSupported = supportsHighSpinalDemonstration(scenario);
   const lastDemoSupported = supportsLastDemonstration(scenario);
   const malignantHyperthermiaDemoSupported = supportsMalignantHyperthermiaDemonstration(scenario);
   const anaphylaxisDemoSupported = supportsAnaphylaxisDemonstration(scenario);
@@ -999,6 +1002,7 @@ export function Cockpit({
     || pneumothoraxDemoSupported
     || repeatedLaryngoscopyDemoSupported
     || supraglotticRescueDemoSupported
+    || highSpinalDemoSupported
     || lastDemoSupported
     || malignantHyperthermiaDemoSupported
     || anaphylaxisDemoSupported
@@ -1987,6 +1991,20 @@ export function Cockpit({
     patient: repeatedLaryngoscopyProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  const highSpinalProgress = session.state && session.equipment ? {
+    severity: session.equipment.resuscitation.highSpinalFraction ?? 0,
+    helpRequestedAtTick: session.equipment.airway.helpRequestedAtTick ?? null,
+    ventilatorDelivering: session.equipment.ventilator.delivering,
+    inspiredOxygenFraction: session.equipment.ventilator.fio2,
+    crystalloidTotalMl: session.equipment.resuscitation.crystalloidTotalMl ?? 0,
+    ephedrineTotalMg: session.equipment.resuscitation.ephedrineTotalMg ?? 0,
+  } : undefined;
+  const highSpinalDemonstration = useHighSpinalDemonstration({
+    active: demonstrating && highSpinalDemoSupported,
+    running: session.transport === 'running',
+    patient: highSpinalProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const pneumothoraxProgress = session.state && session.equipment ? {
     severity: session.equipment.resuscitation.tensionPneumothoraxFraction ?? 0,
     assessedAtTick: session.equipment.resuscitation.pneumothoraxAssessedAtTick ?? null,
@@ -2830,6 +2848,7 @@ export function Cockpit({
     : pneumothoraxDemoSupported ? pneumothoraxDemonstration
     : repeatedLaryngoscopyDemoSupported ? repeatedLaryngoscopyDemonstration
     : supraglotticRescueDemoSupported ? supraglotticRescueDemonstration
+    : highSpinalDemoSupported ? highSpinalDemonstration
     : lastDemoSupported ? lastDemonstration
     : malignantHyperthermiaDemoSupported ? malignantHyperthermiaDemonstration
     : anaphylaxisDemoSupported ? anaphylaxisDemonstration

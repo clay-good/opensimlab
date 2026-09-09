@@ -1811,9 +1811,9 @@
         },
         {
           "id": "deterministic-seed-policy",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a seed policy."
+            "high-spinal-after-epidural-top-up-fixtures.ts binds seed 6041 and content 0.1.0 to expert, circulation-only error, late-breathing recovery, and no-action paths over 4,000 ticks. The saturations the counterfactual turns on are solver output on the bounded high-spinal trajectory the scenario declares: 97% where breathing is supported early, 93% where it is supported at the last accepted moment, and 0% where it is never supported at all. tests/integration/anesthesia-high-spinal-after-epidural-top-up-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
@@ -1825,9 +1825,9 @@
         },
         {
           "id": "meaningful-actions-and-choices",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+            "A one-drug formulary and four controls: the high-spinal help request, the ventilator, the crystalloid bolus, and the bounded ephedrine action. The last is deliberately narrow -- it accepts 6 or 12 mg intravenously, refuses anything else, caps cumulative dosing at 30 mg, and is unavailable entirely before the scripted event, so the transcripts exercise a listed decision rather than a dosing search. What the lesson leaves genuinely open is the ORDER, and the order is where the whole counterfactual lives."
           ]
         },
         {
@@ -1839,23 +1839,23 @@
         },
         {
           "id": "bounded-stop-condition",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+            "The scripted block begins at tick 600 and the transcripts end at 4,000, past the scenario's own reassessment prompt at 2,400 and well past the point where each path has reached its settled value -- the supported paths hold a saturation of 100% and a mean arterial pressure near 35 mmHg from roughly tick 1,500 onward, and the unsupported paths have reached 0%. The fourth objective is a constraint across the whole post-event trace rather than a moment, so the run must continue long enough for it to be falsifiable."
           ]
         },
         {
           "id": "guidance-and-demonstration",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Guidance rules and an expert demonstration are not bound to this content version."
+            "The nine authored tutor rules at version 0.1.0 in tutor/guidance.ts apply here and are silent on the unassisted setting and suppressed while any alarm is active. None of them names the ordering this lesson turns on, which is correct: that breathing precedes circulation in a climbing block is the judgement being taught rather than a prompt to supply at the moment it would give the answer away. Worked example 0.1.0 is the module's twenty-sixth observed-state one and the third to open with a beat that deliberately does nothing -- here because the bounded ephedrine action is refused outright before the scripted event and every objective is timed from it. Its crystalloid beat names the ordering explicitly as the difference between a saturation in the nineties and one that reaches zero, rather than presenting it as sequence. Its closing beat declines three credits: it reports the error path's earned objective beside its 0% saturation, states that the mean arterial pressure settles near 35 mmHg on every path including the one just demonstrated, and names the missing gradient in the saturation objective. tests/unit/anesthesia-high-spinal-worked-example.test.ts drives every beat through the real engine from both a fresh start and a handover, and tests/unit/worked-example-offer.test.ts pins that what this audit claims is what the product actually offers."
           ]
         },
         {
           "id": "debrief-and-counterfactual",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+            "src/modules/anesthesia/ui/Debrief.tsx derives all four objectives from the replayed state trace and the recorded actions rather than from a score kept during the run. The counterfactual is a treatment done correctly that saves nobody. The error path calls for help at 10 seconds, gives 500 mL of crystalloid and 12 mg of ephedrine inside the 60-second window, and earns the circulation objective outright -- and never starts breath delivery. Measured, it is met, not met, MET, not met, and its saturation reaches 0%. The mirror measurement is in a test: a path that ventilates and gives no fluid and no ephedrine at all holds 97%, identical to the expert path, and loses only the circulation objective. The expert path meets all four; the recovery path adds breath delivery at tick 1,200 -- exactly 60 seconds, the last moment the objective accepts -- and meets all four with a lowest saturation of 93%."
           ]
         },
         {
@@ -1874,23 +1874,23 @@
         },
         {
           "id": "reference-transcripts",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+            "high-spinal-after-epidural-top-up-fixtures.ts binds exact-content expert, circulation-only error, late-breathing recovery, and no-action pathways to seed 6041 for deterministic replay through the shared engine. Three readings are pinned by tests because none is visible from the objective statements. The first is the one above: the circulation objective is fully earned on a path whose patient reaches 0% saturation, and omitting that treatment entirely costs nothing except the objective itself. The second is that the mean arterial pressure settles near 35 mmHg on EVERY path, including the expert one that gives both the fluid and the ephedrine -- the bounded model calibrates a response rather than restoring a number, so the evidence does not let a reader infer that the circulation treatment fixed the pressure. It did not. The third is that the fourth objective has no gradient: a run that ventilates 80 seconds after the event reaches 87% and fails it exactly as the 0% path does, so between a saved patient and a dead one the rubric records the same outcome. That is a limit of the measure rather than a defect -- the threshold is a threshold -- but it is stated rather than left to be discovered."
           ]
         },
         {
           "id": "inclusive-runtime-verification",
           "status": "missing",
           "evidence": [
-            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+            "Automated observed-state and replay checks exist. Exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation remains pending."
           ]
         },
         {
           "id": "report-control-coverage",
           "status": "missing",
           "evidence": [
-            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+            "The scenario inherits the shared report control and has an exact-version Worker catalog record. Complete four-surface runtime evidence is not yet bound."
           ]
         }
       ]

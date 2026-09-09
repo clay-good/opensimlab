@@ -162,6 +162,7 @@ import { opioidInducedVentilatoryImpairmentCompletionEvidence } from '../opioid-
 import { pneumothoraxUnderPositivePressureCompletionEvidence } from '../pneumothorax-under-positive-pressure-completion';
 import { repeatedLaryngoscopyHarmCompletionEvidence } from '../repeated-laryngoscopy-harm-completion';
 import { difficultAirwaySupraglotticRescueCompletionEvidence } from '../difficult-airway-supraglottic-rescue-completion';
+import { highSpinalAfterEpiduralTopUpCompletionEvidence } from '../high-spinal-after-epidural-top-up-completion';
 import { lastCompletionEvidence } from '../local-anesthetic-systemic-toxicity-completion';
 import { earlyMalignantHyperthermiaCompletionEvidence } from '../early-malignant-hyperthermia-completion';
 import { perioperativeAnaphylaxisCompletionEvidence } from '../perioperative-anaphylaxis-completion';
@@ -491,6 +492,7 @@ export function auditClinicalScenario(
     ...pneumothoraxUnderPositivePressureCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...repeatedLaryngoscopyHarmCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...difficultAirwaySupraglotticRescueCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...highSpinalAfterEpiduralTopUpCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...lastCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...earlyMalignantHyperthermiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...perioperativeAnaphylaxisCompletionEvidence(scenario, capabilityVersion, moduleId),
