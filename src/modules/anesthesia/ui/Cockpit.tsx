@@ -413,6 +413,8 @@ import { usePerioperativeHyperglycemiaDemonstration } from '@anesthesia/demo/use
 import { supportsPerioperativeHyperglycemiaDemonstration } from '@anesthesia/demo/perioperative-hyperglycemia-demonstration';
 import { useInhalationalMaintenanceDemonstration } from '@anesthesia/demo/useInhalationalMaintenanceDemonstration';
 import { supportsInhalationalMaintenanceDemonstration } from '@anesthesia/demo/inhalational-maintenance-demonstration';
+import { usePersistentVfCardiacArrestDemonstration } from '@anesthesia/demo/usePersistentVfCardiacArrestDemonstration';
+import { supportsPersistentVfCardiacArrestDemonstration } from '@anesthesia/demo/persistent-vf-cardiac-arrest-demonstration';
 import { useLastDemonstration } from '@anesthesia/demo/useLastDemonstration';
 import { supportsLastDemonstration } from '@anesthesia/demo/last-demonstration';
 import { useMalignantHyperthermiaDemonstration } from '@anesthesia/demo/useMalignantHyperthermiaDemonstration';
@@ -826,6 +828,7 @@ export function Cockpit({
   const hypothermiaDemoSupported = supportsHypothermiaRewarmingDemonstration(scenario);
   const hyperglycemiaDemoSupported = supportsPerioperativeHyperglycemiaDemonstration(scenario);
   const inhalationalMaintenanceDemoSupported = supportsInhalationalMaintenanceDemonstration(scenario);
+  const vfCardiacArrestDemoSupported = supportsPersistentVfCardiacArrestDemonstration(scenario);
   const lastDemoSupported = supportsLastDemonstration(scenario);
   const malignantHyperthermiaDemoSupported = supportsMalignantHyperthermiaDemonstration(scenario);
   const anaphylaxisDemoSupported = supportsAnaphylaxisDemonstration(scenario);
@@ -1039,6 +1042,7 @@ export function Cockpit({
     || hypothermiaDemoSupported
     || hyperglycemiaDemoSupported
     || inhalationalMaintenanceDemoSupported
+    || vfCardiacArrestDemoSupported
     || lastDemoSupported
     || malignantHyperthermiaDemoSupported
     || anaphylaxisDemoSupported
@@ -2027,6 +2031,19 @@ export function Cockpit({
     patient: repeatedLaryngoscopyProgress,
     pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
   });
+  const vfCardiacArrestProgress = session.state && session.equipment ? {
+    arrestActive: session.equipment.resuscitation.cardiacArrestActive ?? false,
+    compressionsActive: session.equipment.resuscitation.chestCompressionsActive ?? false,
+    arrestEpinephrineTotalMg: session.equipment.resuscitation.arrestEpinephrineTotalMg ?? 0,
+    defibrillationShockCount: session.equipment.resuscitation.defibrillationShockCount ?? 0,
+    roscAtTick: session.equipment.resuscitation.roscAtTick ?? null,
+  } : undefined;
+  const vfCardiacArrestDemonstration = usePersistentVfCardiacArrestDemonstration({
+    active: demonstrating && vfCardiacArrestDemoSupported,
+    running: session.transport === 'running',
+    patient: vfCardiacArrestProgress,
+    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+  });
   const inhalationalMaintenanceProgress = session.state && session.equipment ? {
     tick: session.tick ?? 0,
     stimulusActive: (session.state.surgicalStimulus ?? 0) > 0,
@@ -3010,6 +3027,7 @@ export function Cockpit({
     : hypothermiaDemoSupported ? hypothermiaDemonstration
     : hyperglycemiaDemoSupported ? hyperglycemiaDemonstration
     : inhalationalMaintenanceDemoSupported ? inhalationalMaintenanceDemonstration
+    : vfCardiacArrestDemoSupported ? vfCardiacArrestDemonstration
     : lastDemoSupported ? lastDemonstration
     : malignantHyperthermiaDemoSupported ? malignantHyperthermiaDemonstration
     : anaphylaxisDemoSupported ? anaphylaxisDemonstration

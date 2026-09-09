@@ -25,6 +25,7 @@ import { supportsArterialTransducerDemonstration } from './arterial-transducer-d
 import { supportsHypothermiaRewarmingDemonstration } from './hypothermia-rewarming-demonstration';
 import { supportsPerioperativeHyperglycemiaDemonstration } from './perioperative-hyperglycemia-demonstration';
 import { supportsInhalationalMaintenanceDemonstration } from './inhalational-maintenance-demonstration';
+import { supportsPersistentVfCardiacArrestDemonstration } from './persistent-vf-cardiac-arrest-demonstration';
 import { supportsLastDemonstration } from './last-demonstration';
 import { supportsMalignantHyperthermiaDemonstration } from './malignant-hyperthermia-demonstration';
 import { supportsAnaphylaxisDemonstration } from './anaphylaxis-demonstration';
@@ -285,6 +286,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsHypothermiaRewarmingDemonstration,
     supportsPerioperativeHyperglycemiaDemonstration,
     supportsInhalationalMaintenanceDemonstration,
+    supportsPersistentVfCardiacArrestDemonstration,
     supportsLastDemonstration,
     supportsMalignantHyperthermiaDemonstration,
     supportsAnaphylaxisDemonstration,
