@@ -16,11 +16,11 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "4c7a74d00ea83d6ad2ffbd558216b9a2d8ab29309d13c0a2beef759bcb8dd0a5"
+        "sha256": "b06b54fd0744fb0d413ea939f98bbff08fdeb1d78e6eecc3ef6043c58f83b6e2"
       },
       {
         "path": "src/modules/anesthesia/engine.ts",
-        "sha256": "61ebedca53a97288901df931ee0c0b49f92d6252b95b0b72e12fe59b3eac7ee1"
+        "sha256": "4ae76119b5ae91bfe20da909e8c96395144bbd18669d7b256970f3a96ab3ee52"
       },
       {
         "path": "src/modules/anesthesia/region/profiles.ts",
@@ -28,7 +28,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "284bd1e826404346ef9818fd51d443a600e3f2ab3f07233f2d349659cc7b5fe8"
+        "sha256": "37b26daae763d0e9008c4371bfff143abfb5304958de46f8ceda928ad6228936"
       },
       {
         "path": "src/modules/endocrine-metabolic/HypocalcemiaTray.tsx",
@@ -136,7 +136,7 @@
       },
       {
         "path": "src/platform/docs/limitations/surgery-trauma.ts",
-        "sha256": "ae0841b31bfb3ccdfbc2e579006d2f2688076341700d237156ad24ff9724dc31"
+        "sha256": "d4a612a5eb1291198aae50b9e4acf50355ce1cd84115e8d084ba796c6f5d2e9d"
       },
       {
         "path": "src/platform/docs/limitations/toxicology.ts",
@@ -225,7 +225,7 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "4c7a74d00ea83d6ad2ffbd558216b9a2d8ab29309d13c0a2beef759bcb8dd0a5"
+        "sha256": "b06b54fd0744fb0d413ea939f98bbff08fdeb1d78e6eecc3ef6043c58f83b6e2"
       },
       {
         "path": "src/modules/anesthesia/demo/useObservedDemonstration.ts",
@@ -233,7 +233,7 @@
       },
       {
         "path": "src/modules/anesthesia/engine.ts",
-        "sha256": "61ebedca53a97288901df931ee0c0b49f92d6252b95b0b72e12fe59b3eac7ee1"
+        "sha256": "4ae76119b5ae91bfe20da909e8c96395144bbd18669d7b256970f3a96ab3ee52"
       },
       {
         "path": "src/modules/anesthesia/region/profiles.ts",
@@ -245,15 +245,15 @@
       },
       {
         "path": "src/modules/anesthesia/ui/ActionCockpit.tsx",
-        "sha256": "7b123c103d012f30e1506bdfed46da6841a2060e97f286a6d37893f20ebb7729"
+        "sha256": "714b551d3e0bf776ca2afbc38fcccb8b53643bc8788e1540b38dd2fb16bf0d9e"
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "0e43860dcf28b736bae8b67430c0d33ea9f30c8f392bdf8aa266d08171c1f6ee"
+        "sha256": "12989c8df32d4b4710013464011d7057d7183bb6aeaa96f1234908780a13f062"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "284bd1e826404346ef9818fd51d443a600e3f2ab3f07233f2d349659cc7b5fe8"
+        "sha256": "37b26daae763d0e9008c4371bfff143abfb5304958de46f8ceda928ad6228936"
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
@@ -377,7 +377,7 @@
       },
       {
         "path": "src/platform/docs/limitations/surgery-trauma.ts",
-        "sha256": "ae0841b31bfb3ccdfbc2e579006d2f2688076341700d237156ad24ff9724dc31"
+        "sha256": "d4a612a5eb1291198aae50b9e4acf50355ce1cd84115e8d084ba796c6f5d2e9d"
       },
       {
         "path": "src/platform/docs/limitations/toxicology.ts",
@@ -409,7 +409,7 @@
       },
       {
         "path": "src/platform/kernel/protocol.ts",
-        "sha256": "84631c7c978678a66939739dcefe90d3b895401fcfccbff348567bd6ad967515"
+        "sha256": "d1e215a115001c0aeaeb0d1bca91a0ad68abe7791b29b6e0115809b6a899fe55"
       },
       {
         "path": "src/platform/log/event-log.ts",
@@ -490,7 +490,7 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "4c7a74d00ea83d6ad2ffbd558216b9a2d8ab29309d13c0a2beef759bcb8dd0a5"
+        "sha256": "b06b54fd0744fb0d413ea939f98bbff08fdeb1d78e6eecc3ef6043c58f83b6e2"
       },
       {
         "path": "src/modules/anesthesia/demo/useDemonstration.ts",
@@ -502,7 +502,7 @@
       },
       {
         "path": "src/modules/anesthesia/engine.ts",
-        "sha256": "61ebedca53a97288901df931ee0c0b49f92d6252b95b0b72e12fe59b3eac7ee1"
+        "sha256": "4ae76119b5ae91bfe20da909e8c96395144bbd18669d7b256970f3a96ab3ee52"
       },
       {
         "path": "src/modules/anesthesia/region/profiles.ts",
@@ -510,15 +510,15 @@
       },
       {
         "path": "src/modules/anesthesia/ui/ActionCockpit.tsx",
-        "sha256": "7b123c103d012f30e1506bdfed46da6841a2060e97f286a6d37893f20ebb7729"
+        "sha256": "714b551d3e0bf776ca2afbc38fcccb8b53643bc8788e1540b38dd2fb16bf0d9e"
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "0e43860dcf28b736bae8b67430c0d33ea9f30c8f392bdf8aa266d08171c1f6ee"
+        "sha256": "12989c8df32d4b4710013464011d7057d7183bb6aeaa96f1234908780a13f062"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "284bd1e826404346ef9818fd51d443a600e3f2ab3f07233f2d349659cc7b5fe8"
+        "sha256": "37b26daae763d0e9008c4371bfff143abfb5304958de46f8ceda928ad6228936"
       },
       {
         "path": "src/modules/anesthesia/ui/DemonstrationBar.tsx",
@@ -530,7 +530,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/accessibility.ts",
-        "sha256": "cbc0ecdefdaf9bb65092649f98886eb42aeb8bb18f2d54deef6cbd7f5d87a20a"
+        "sha256": "e40ec60afdf7c97b7d06fc6de191cee57da6888f72e66eb01aa726045797d5e5"
       },
       {
         "path": "src/modules/anesthesia/ui/cockpit.css",
@@ -654,7 +654,7 @@
       },
       {
         "path": "src/platform/docs/limitations/surgery-trauma.ts",
-        "sha256": "ae0841b31bfb3ccdfbc2e579006d2f2688076341700d237156ad24ff9724dc31"
+        "sha256": "d4a612a5eb1291198aae50b9e4acf50355ce1cd84115e8d084ba796c6f5d2e9d"
       },
       {
         "path": "src/platform/docs/limitations/toxicology.ts",
@@ -686,7 +686,7 @@
       },
       {
         "path": "src/platform/kernel/protocol.ts",
-        "sha256": "84631c7c978678a66939739dcefe90d3b895401fcfccbff348567bd6ad967515"
+        "sha256": "d1e215a115001c0aeaeb0d1bca91a0ad68abe7791b29b6e0115809b6a899fe55"
       },
       {
         "path": "src/platform/reporting/ScenarioProblemReport.tsx",

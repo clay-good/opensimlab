@@ -14,10 +14,13 @@ import { UnfinishedSurveyTray } from './UnfinishedSurveyTray';
 import { supportsUnfinishedSurvey } from './unfinished-survey';
 import { TransientResponseTray } from './TransientResponseTray';
 import { supportsTransientResponse } from './transient-response';
+import { QuietChestTray } from './QuietChestTray';
+import { supportsQuietChest } from './quiet-chest';
 
 export const SURGERY_TRAUMA_TRAYS: readonly LessonTray[] = [
   { id: 'NegativeScan', actionType: 'negative-scan-response', supports: supportsNegativeScan, assessment: (r) => r?.negativeScan, Component: NegativeScanTray as LessonTray['Component'] },
   { id: 'RisingRequirement', actionType: 'rising-requirement-response', supports: supportsRisingRequirement, assessment: (r) => r?.risingRequirement, Component: RisingRequirementTray as LessonTray['Component'] },
   { id: 'UnfinishedSurvey', actionType: 'unfinished-survey-response', supports: supportsUnfinishedSurvey, assessment: (r) => r?.unfinishedSurvey, Component: UnfinishedSurveyTray as LessonTray['Component'] },
   { id: 'TransientResponse', actionType: 'transient-response-response', supports: supportsTransientResponse, assessment: (r) => r?.transientResponse, Component: TransientResponseTray as LessonTray['Component'] },
+  { id: 'QuietChest', actionType: 'quiet-chest-response', supports: supportsQuietChest, assessment: (r) => r?.quietChest, Component: QuietChestTray as LessonTray['Component'] },
 ];

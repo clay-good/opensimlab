@@ -106,4 +106,28 @@ export const SURGERY_TRAUMA_LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'None of the three is randomised. Two are about penetrating injury or injury isolated to the abdomen, and the registry series reverses direction beyond ninety minutes because the patients who lasted that long were a different group. The gunshot-wound paper\u2019s own conclusion describes its 1.89 hazard ratio as almost threefold, which the ratio does not say, and the lesson keeps the ratio. Together they establish only the shape: that intervals cost something here, and that imaging is generally good for injured patients and still cannot stop bleeding. They give no threshold and no probability for this patient.',
     briefIn: ['transient-response-a-patient-who-will-not-stay-up'],
   },
+  {
+    id: 'quiet-chest-presentation-and-team-response-are-authored',
+    headline: 'One evening, one telephone call from a daughter, and a chart that never moves.',
+    simplification: 'The case supplies a fixed set of entirely normal resting observations that do not change at any point, one authored telephone call at 15 minutes in which her daughter says she cannot stay tonight, and an admitting team that answers thirty minutes after it is asked with a fixed reply. No respiratory, pain, healing, or complication model runs underneath, and no complication is ever confirmed or excluded.',
+    whereItMisleads: 'A learner concludes that these patients always stay comfortable for the first evening, that a social problem always appears to justify admission, that the admitting team always answers, or that asking for the bed is what prevented a complication.',
+    correctUnderstanding: 'Nothing the learner does changes her course, because nothing was going to. The observations are held normal so that reading a count and an age is the only thing being tested; a real patient may be in obvious difficulty on arrival, may have a haemothorax that declares itself overnight, or may be entirely fine all week. The daughter\u2019s call is authored and arrives whether or not anybody was waiting for it, and in practice no such convenient reason to admit turns up — the count and the age have to be enough on their own.',
+    briefIn: ['quiet-chest-an-injury-whose-severity-is-not-yet-visible'],
+  },
+  {
+    id: 'quiet-chest-controls-are-recording-and-escalation-only',
+    headline: 'No analgesia is chosen, no block is requested, and no admission is booked.',
+    simplification: 'The learner records the fall and what it broke with the age beside the count, records what being comfortable at rest does and does not measure, records what the count and the age predict, asks the admitting team for a bed and a plan over the right interval, records bounded qualified-team intent, and reviews the boundaries.',
+    whereItMisleads: 'The bounded admission-intent control is read as booking a bed, the refusal of discharge is read as refusing to let her go home, or the boundary review is read as a recommendation for continuous epidural analgesia.',
+    correctUnderstanding: 'The analgesia plan and its route, the observation interval, any respiratory or physiotherapy input, and the timing of discharge belong to the qualified team, and this lesson exposes no drug, dose, route, block, oxygen target, or discharge date. The discharge refusal objects to the one-week interval and to recording her this evening as a minor injury safely managed at home, not to her going home, and it says so in the refusal itself. The epidural evidence is quoted precisely because it does not support an intervention.',
+    briefIn: ['quiet-chest-an-injury-whose-severity-is-not-yet-visible'],
+  },
+  {
+    id: 'quiet-chest-retrospective-cohorts-are-not-an-admission-rule',
+    headline: 'Two retrospective single-centre cohorts, one of which disagrees with itself.',
+    simplification: 'The lesson quotes 31 percent pneumonia against 17 and 22 percent mortality against 10 in 277 patients aged 65 and over against 187 younger ones at matched fracture count and injury severity, five times the adjusted odds of death in 113 of 405 registry patients, and no significant difference in mortality, pneumonia or ventilation days across six randomised trials of continuous epidural analgesia totalling 223 patients at high risk of bias.',
+    whereItMisleads: 'A learner carries the figures to the bedside as an admission rule — a fracture count at which to admit, or a percentage risk for this patient — or reads the epidural review as evidence that admission itself does not help.',
+    correctUnderstanding: 'Both cohorts are retrospective and single-centre, covering different eras and different populations, and the first reports the odds of pneumonia per additional rib as 1.16 in its results while its conclusion states 27 percent, which do not match; the figures are quoted for direction rather than for magnitude. The epidural review is about one analgesic technique and says nothing about whether observation helps, because nobody has randomised that. Together they establish that this injury is more dangerous in older patients than its first evening suggests, and they give no threshold and no probability for this patient.',
+    briefIn: ['quiet-chest-an-injury-whose-severity-is-not-yet-visible'],
+  },
 ];

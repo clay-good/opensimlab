@@ -64,6 +64,7 @@ import { supportsNegativeScan } from '../../surgery-trauma/negative-scan';
 import { supportsRisingRequirement } from '../../surgery-trauma/rising-requirement';
 import { supportsUnfinishedSurvey } from '../../surgery-trauma/unfinished-survey';
 import { supportsTransientResponse } from '../../surgery-trauma/transient-response';
+import { supportsQuietChest } from '../../surgery-trauma/quiet-chest';
 import { supportsIncidentalClot } from '../../oncology/incidental-clot';
 import { supportsNormalTestToxicity } from '../../oncology/normal-test-toxicity';
 import { supportsPrognosisQuestion } from '../../oncology/prognosis-question';
@@ -1085,6 +1086,51 @@ export function objectiveFindings(
         'handoff-oncology-incidental-clot-an-unresolved-decision': { met: !!handoff, tick: handoff?.tick,
           finding: (handoff ? 'The finding, its route, the conditional strength and very low certainty, the figures in both directions, and his bleeding history all travelled. ' : 'Current full findings, the recorded certainty, or continuing-care ownership remains incomplete. ')
             + 'The decision was handed over open, which is what an unresolved decision looks like when it is handed over honestly rather than closed to make the handoff tidy.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id.includes('-surgery-trauma-quiet-chest-')) {
+      if (!supportsQuietChest(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The surgery and trauma quiet-chest lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^quiet-chest-${id}-\\d+$`).test(entry.eventId));
+      const injury = event('injury-recorded'); const comfort = event('comfort-limits-recorded');
+      const count = event('count-recorded'); const escalation = event('escalation-requested');
+      const intent = event('admission-intent-recorded'); const boundaries = event('boundary-review');
+      const handoff = event('handoff'); const family = event('family-called');
+      const answered = log.find((entry) => /^quiet-chest-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedNumbers = event('normal-numbers-refused'); const refusedFilm = event('film-claim-refused');
+      const refusedPain = event('pain-report-refused'); const refusedDischarge = event('discharge-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'record-surgery-trauma-quiet-chest-the-fall-and-what-it-broke': { met: !!injury, tick: injury?.tick,
+          finding: (injury ? 'The fall, the fracture count and her age were recorded in one place rather than across three fields. ' : 'The fall and what it broke were never recorded together, so the count and the age never met on the page. ')
+            + 'Four ribs at 81 with chronic lung disease and nobody at home is a different injury from four ribs at 30.' },
+        'record-surgery-trauma-quiet-chest-what-comfortable-at-rest-measures': { met: !!comfort, tick: comfort?.tick,
+          finding: (comfort ? 'What the resting chart measures was recorded beside it: no full breath asked for, no cough, no walking. ' : 'Nothing recorded what the observations were taken during, so a chart made at rest was left to speak for exertion. ')
+            + 'A resting respiratory rate reports on the work being done, and she was doing none.' },
+        'recognize-surgery-trauma-quiet-chest-a-normal-chart-is-not-a-small-injury': { met: !!comfort && !refusedNumbers && !refusedFilm, tick: comfort?.tick,
+          finding: (refusedNumbers ? 'Discharging her on the strength of normal observations was attempted and refused. ' : comfort ? 'The normal chart was read as a statement about tonight rather than about the week. ' : 'The chart was never read against the question it was answering. ')
+            + (refusedFilm ? 'Reasoning from the absent pneumothorax to a minor injury was attempted and refused; the film reports the pleural space today. ' : '')
+            + (refusedPain ? 'Taking her report of manageable pain as reassurance was attempted and refused. ' : '')
+            + 'In the cohort quoted here the older and younger groups had the same mean chest injury scores and their outcomes differed by a factor of two.' },
+        'record-surgery-trauma-quiet-chest-what-the-count-predicts': { met: !!count, tick: count?.tick,
+          finding: (count ? 'What the count and the age predict was recorded with its figures attached. ' : 'What the fracture count predicts was never recorded, so the number stayed a description instead of a reason. ')
+            + 'Pneumonia 31 percent against 17 and mortality 22 against 10 at matched severity, and five times the adjusted odds of death in a separate registry.' },
+        'activate-surgery-trauma-quiet-chest-ask-the-team-that-owns-the-plan': { met: !!escalation && !refusedDischarge, tick: escalation?.tick,
+          finding: (escalation ? 'The admitting team was asked for a bed, an analgesia plan and an observation interval covering the next two to three days. ' : 'The admitting team was never asked. ')
+            + (refusedDischarge ? 'Home with tablets and a review in a week was attempted and refused: a week is longer than the interval the risk lives in. ' : '')
+            + 'The request names the interval, because a bed for tonight would miss the days that matter.' },
+        'record-surgery-trauma-quiet-chest-bounded-admission-intent': { met: !!intent, tick: intent?.tick,
+          finding: (intent ? 'The analgesia plan and its route, the observation interval, any respiratory input and the timing of discharge were recorded as the qualified team\u2019s. ' : 'Bounded qualified-team intent was never recorded. ')
+            + 'Nothing was ordered and no drug, dose, route, block, oxygen target, or discharge date was chosen or displayed here.' },
+        'review-surgery-trauma-quiet-chest-a-real-risk-without-a-proven-remedy': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'Both halves were reviewed: the risk, and the absence of a proven remedy for it. ' : 'The boundary and certainty review is missing. ')
+            + 'Two retrospective single-centre cohorts agree on the danger, and one of them reports the odds of pneumonia per additional rib as 1.16 in its results and 27 percent in its conclusion. Six randomised trials of continuous epidural analgesia in 223 patients, all at high risk of bias, found no significant difference in mortality, pneumonia or ventilation days. The case for admission is the risk, not a remedy.' },
+        'handoff-surgery-trauma-quiet-chest-a-plan-that-covers-the-third-day': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The fall and its hours, the count beside the age, what the resting chart measures, that she will be alone, and the bounded intent all travelled. ' : 'Current full findings, the recorded count, or continuing-care ownership remains incomplete. ')
+            + (family ? 'Her daughter telephoned during this run to say she could not stay, and every monitored number was identical either side of the call. ' : '')
+            + (answered ? 'The team confirmed the count and the age from its own record and has taken it on. ' : 'The team had not answered by the end of this run, and the handoff had to survive that. ')
+            + 'No complication, discharge date, or outcome is certified.' },
       };
       const result = results[objective.id]!;
       return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;

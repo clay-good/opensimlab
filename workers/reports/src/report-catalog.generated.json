@@ -4083,6 +4083,23 @@
       "limitationManifestHash": "sha256:ed5376a44d639ef97231fff102db316b52462baab8cfc2edeac48f08d241095f"
     },
     {
+      "scenarioId": "quiet-chest-an-injury-whose-severity-is-not-yet-visible",
+      "contentVersion": "0.1.0",
+      "moduleId": "surgery-trauma",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:e952715f81ea48d175ff23c2e3e41008f3ba3f2767eda02b828fe568600a3e0d",
+      "defaultsHash": "sha256:89bb5ee3079abd2eab0457ca9ee889433780e3511e4f08faa334f94b5368b172",
+      "maturityHash": "sha256:d1533614a8f187482054c924f368e1157c15a51949a7fb37dba14846f1632e3e",
+      "sourceManifestHash": "sha256:c738d2b11cf72879a877aec986a1b08d3db8d68295620382c2269dd32ff3cd50",
+      "limitationManifestHash": "sha256:f00742b2721cb9c1f638dc0d425bd0ee50fdc92b385b1346b3fff69123f4ceab"
+    },
+    {
       "scenarioId": "rising-requirement-a-number-that-under-calls",
       "contentVersion": "0.1.0",
       "moduleId": "surgery-trauma",

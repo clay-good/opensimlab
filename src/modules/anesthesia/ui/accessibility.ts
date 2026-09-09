@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot, DelayedImmuneEventSnapshot, IncidentalClotSnapshot, NormalTestToxicitySnapshot, PrognosisQuestionSnapshot, LaboratoryTlsSnapshot, RareEarlyMyocarditisSnapshot, LoweringTheCountSnapshot, InheritedUrgencySnapshot, TrialRuleSnapshot, SilentInteractionSnapshot, EasyLabelSnapshot, NegativeScanSnapshot, RisingRequirementSnapshot, UnfinishedSurveySnapshot, TransientResponseSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot, DelayedImmuneEventSnapshot, IncidentalClotSnapshot, NormalTestToxicitySnapshot, PrognosisQuestionSnapshot, LaboratoryTlsSnapshot, RareEarlyMyocarditisSnapshot, LoweringTheCountSnapshot, InheritedUrgencySnapshot, TrialRuleSnapshot, SilentInteractionSnapshot, EasyLabelSnapshot, NegativeScanSnapshot, RisingRequirementSnapshot, UnfinishedSurveySnapshot, TransientResponseSnapshot, QuietChestSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -144,6 +144,7 @@ export function stateSummary(
     readonly risingRequirement?: RisingRequirementSnapshot;
     readonly unfinishedSurvey?: UnfinishedSurveySnapshot;
     readonly transientResponse?: TransientResponseSnapshot;
+    readonly quietChest?: QuietChestSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -197,7 +198,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale || options.lostContingency || options.delayedImmuneEvent || options.incidentalClot || options.normalTestToxicity || options.prognosisQuestion || options.laboratoryTls || options.rareEarlyMyocarditis || options.loweringTheCount || options.inheritedUrgency || options.trialRule || options.silentInteraction || options.easyLabel || options.negativeScan || options.risingRequirement || options.unfinishedSurvey || options.transientResponse) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia || options.renalHypocalcemia || options.renalHypermagnesemia || options.meningococcalSepsis || options.obstructedKidney || options.febrileNeutropenia || options.necrotizingInfection || options.endocarditisHeartFailure || options.severePneumonia || options.toxicShock || options.possibleSepsis || options.septicShockLabel || options.meningitisImaging || options.lowScore || options.countedRate || options.pairedReading || options.afferentLimb || options.quietPatient || options.proxyScale || options.lastKnownWell || options.oxygenTargetScale || options.lostContingency || options.delayedImmuneEvent || options.incidentalClot || options.normalTestToxicity || options.prognosisQuestion || options.laboratoryTls || options.rareEarlyMyocarditis || options.loweringTheCount || options.inheritedUrgency || options.trialRule || options.silentInteraction || options.easyLabel || options.negativeScan || options.risingRequirement || options.unfinishedSurvey || options.transientResponse || options.quietChest) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -220,6 +221,25 @@ export function stateSummary(
           + (reversal.doseMgPerKg === null ? '' : ` ${reversal.doseMgPerKg} milligrams per kilogram`)
           + ' intravenous.');
       }
+    }
+  }
+  if (options.quietChest) {
+    const patient = options.quietChest;
+    // The count, the age and the interval, because nothing measured here ever moves.
+    lines.push(`Fall down four steps at home ${patient.hoursSinceFall} hours ago, aged 81. ${patient.fracturedRibs} left-sided rib fractures on reported imaging. Pneumothorax ${patient.pneumothoraxReported ? 'reported' : 'not reported'}. Mild chronic obstructive pulmonary disease, and she ${patient.livesAlone ? 'lives alone' : 'lives with family'}.`);
+    lines.push('Supplied observations were pulse 84 per minute, blood pressure 138 over 76, respiratory rate 18 per minute at rest, temperature 36.6 degrees Celsius, and oxygen saturation 96 percent on air. Every one is normal and every one was recorded while she was lying still.');
+    lines.push(`A full breath and a cough have ${patient.effortObserved ? 'been observed' : 'not been asked for or observed'}. She would like to be at home tonight.`);
+    lines.push(`Current state: ${patient.alertness}.`);
+    lines.push(`Fall and fracture count recorded: ${patient.injuryRecordedAtTick === null ? 'no' : 'yes'}. What comfortable at rest measures recorded: ${patient.comfortLimitsRecordedAtTick === null ? 'no' : 'yes'}. What the count predicts recorded: ${patient.countRecordedAtTick === null ? 'no' : 'yes'}. Admitting team: ${patient.escalationAtTick === null ? 'not asked' : 'asked'}. Bounded intent: ${patient.admissionIntentAtTick === null ? 'not recorded' : 'recorded as the qualified team\u2019s decision'}. Boundaries: ${patient.boundariesReviewedAtTick === null ? 'not reviewed' : 'reviewed'}.`);
+    if (patient.familyCalled) {
+      lines.push('Her daughter has telephoned to say she cannot stay tonight after all. The rate, the saturation and the comfort are exactly as they were.');
+    }
+    lines.push('In 277 patients aged 65 and over against 187 younger ones of the same mean fracture count and injury severity, pneumonia occurred in 31 percent against 17 and mortality was 22 percent against 10; a separate registry put the adjusted odds of death in the older group at five times. Against that, six randomised trials of continuous epidural analgesia in 223 patients, all at high risk of bias, found no significant difference in mortality, pneumonia or ventilation days. The analgesia plan, the observation interval, any respiratory input, and the timing of discharge belong to the qualified team; no drug, dose, route, block, or discharge date is selected here, and oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: pulse ${patient.observation.heartRateBpm} per minute; respiratory rate ${patient.observation.respiratoryRateBpm} per minute at rest; ${patient.observation.hoursSinceFall} hours since the fall; ${patient.observation.fracturedRibs} fractures.`
+      : 'No new full assessment has been requested.');
+    if (patient.teamObserved) {
+      lines.push('The admitting team has answered, confirmed the fracture count and her age from its own record, and owns the analgesia plan, the observation interval, any respiratory input, and the timing of discharge. The risk it is admitting her for is the next two to three days.');
     }
   }
   if (options.transientResponse) {
