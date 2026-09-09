@@ -29,6 +29,7 @@ import { DemonstrationBar } from './DemonstrationBar';
 import { useDemonstration } from '@anesthesia/demo/useDemonstration';
 import { useObservedDemonstration, type ObservedStep } from '@anesthesia/demo/useObservedDemonstration';
 import type { LessonDemonstration } from '@anesthesia/demo/lesson-demonstration';
+import type { LessonTray } from './lesson-tray';
 import { useStatusEpilepticusDemonstration as useCriticalCareStatusEpilepticusDemonstration } from '../../critical-care/demo/useStatusEpilepticusDemonstration';
 import { supportsStatusEpilepticusDemonstration as supportsCriticalCareStatusEpilepticusDemonstration } from '../../critical-care/demo/status-epilepticus-demonstration';
 import { usePeaArrestDemonstration } from '../../emergency-medicine/demo/usePeaArrestDemonstration';
@@ -161,6 +162,8 @@ export interface CockpitProps {
    * more than the resuscitation snapshot and have not moved yet.
    */
   readonly demonstrations?: readonly LessonDemonstration[];
+  /** This module's lesson trays, supplied by its route beside its worked examples. */
+  readonly trays?: readonly LessonTray[];
   readonly moduleId?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics' | 'neonatology' | 'endocrine-metabolic' | 'renal-electrolyte' | 'infectious-disease' | 'medical-surgical-nursing' | 'oncology' | 'surgery-trauma';
 }
 
@@ -247,6 +250,7 @@ export function Cockpit({
   scenario, region, audio, demonstrating = false, onTakeControls, onEnd, onReportSource,
   onSourceVisibilityChange,
   demonstrations,
+  trays,
   moduleId = 'anesthesia',
 }: CockpitProps) {
   const session = useSession();
@@ -1745,18 +1749,13 @@ export function Cockpit({
 
       <div className="cockpit__actions">
         <ActionCockpit
-          thyroidGuidance={session.guidance}
-          myxedemaGuidance={session.guidance}
-          hypercalcemiaGuidance={session.guidance}
-          hypocalcemiaGuidance={session.guidance}
-          hyponatremiaCorrectionGuidance={session.guidance}
-          avpDeficiencyGuidance={session.guidance}
-          refeedingGuidance={session.guidance}
-          perioperativeDiabetesGuidance={session.guidance}
+          lessonTrays={trays}
+          guidance={session.guidance}
+          demonstratingLessonId={demonstrating ? registryDemo?.id : undefined}
+          onLessonTutorSource={session.pause}
+          onLessonAction={(type, action) => session.act({ type, payload: { action } })}
           renalHyperkalemia={equipment?.resuscitation.renalHyperkalemia}
-          renalHyperkalemiaGuidance={session.guidance}
           renalHypokalemia={equipment?.resuscitation.renalHypokalemia}
-          renalHypokalemiaGuidance={session.guidance}
           renalHyponatremia={equipment?.resuscitation.renalHyponatremia}
           renalHypernatremia={equipment?.resuscitation.renalHypernatremia}
           renalHypocalcemia={equipment?.resuscitation.renalHypocalcemia}
@@ -1772,35 +1771,6 @@ export function Cockpit({
           septicShockLabel={equipment?.resuscitation.septicShockLabel}
           meningitisImaging={equipment?.resuscitation.meningitisImaging}
           lowScore={equipment?.resuscitation.lowScore}
-          lowScoreGuidance={session.guidance}
-          countedRateGuidance={session.guidance}
-          pairedReadingGuidance={session.guidance}
-          afferentLimbGuidance={session.guidance}
-          quietPatientGuidance={session.guidance}
-          proxyScaleGuidance={session.guidance}
-          lastKnownWellGuidance={session.guidance}
-          oxygenTargetScaleGuidance={session.guidance}
-          lostContingencyGuidance={session.guidance}
-          meningococcalSepsisGuidance={session.guidance}
-          meningococcalSepsisDemonstrating={demonstrating && registryDemo?.id === 'MeningococcalSepsis'}
-          obstructedKidneyGuidance={session.guidance}
-          obstructedKidneyDemonstrating={demonstrating && registryDemo?.id === 'ObstructedKidney'}
-          febrileNeutropeniaGuidance={session.guidance}
-          febrileNeutropeniaDemonstrating={demonstrating && registryDemo?.id === 'FebrileNeutropenia'}
-          necrotizingInfectionGuidance={session.guidance}
-          necrotizingInfectionDemonstrating={demonstrating && registryDemo?.id === 'NecrotizingInfection'}
-          endocarditisHeartFailureGuidance={session.guidance}
-          endocarditisHeartFailureDemonstrating={demonstrating && registryDemo?.id === 'EndocarditisHeartFailure'}
-          severePneumoniaGuidance={session.guidance}
-          severePneumoniaDemonstrating={demonstrating && registryDemo?.id === 'SeverePneumonia'}
-          toxicShockGuidance={session.guidance}
-          toxicShockDemonstrating={demonstrating && registryDemo?.id === 'ToxicShock'}
-          possibleSepsisGuidance={session.guidance}
-          possibleSepsisDemonstrating={demonstrating && registryDemo?.id === 'PossibleSepsis'}
-          septicShockLabelGuidance={session.guidance}
-          septicShockLabelDemonstrating={demonstrating && registryDemo?.id === 'SepticShockLabel'}
-          meningitisImagingGuidance={session.guidance}
-          meningitisImagingDemonstrating={demonstrating && registryDemo?.id === 'MeningitisImaging'}
           neonatologyNicuHandoffGuidance={session.guidance}
           neonatologyNicuHandoffDemonstrating={demonstrating && registryDemo?.id === 'NicuHandoff'}
           neonatologyThermoregulationGuidance={session.guidance}
@@ -2107,15 +2077,6 @@ export function Cockpit({
           statusEpilepticusDemonstrating={demonstrating && registryDemo?.id === 'StatusEpilepticus'}
           emergencySepticShockGuidance={session.guidance}
           emergencySepticShockDemonstrating={demonstrating && registryDemo?.id === 'SepticShock'}
-          lostContingencyDemonstrating={demonstrating && registryDemo?.id === 'LostContingency'}
-          oxygenTargetScaleDemonstrating={demonstrating && registryDemo?.id === 'OxygenTargetScale'}
-          lastKnownWellDemonstrating={demonstrating && registryDemo?.id === 'LastKnownWell'}
-          proxyScaleDemonstrating={demonstrating && registryDemo?.id === 'ProxyScale'}
-          quietPatientDemonstrating={demonstrating && registryDemo?.id === 'QuietPatient'}
-          afferentLimbDemonstrating={demonstrating && registryDemo?.id === 'AfferentLimb'}
-          pairedReadingDemonstrating={demonstrating && registryDemo?.id === 'PairedReading'}
-          countedRateDemonstrating={demonstrating && registryDemo?.id === 'CountedRate'}
-          lowScoreDemonstrating={demonstrating && registryDemo?.id === 'LowScore'}
           countedRate={equipment?.resuscitation.countedRate}
           pairedReading={equipment?.resuscitation.pairedReading}
           afferentLimb={equipment?.resuscitation.afferentLimb}
@@ -2136,62 +2097,11 @@ export function Cockpit({
           silentInteraction={equipment?.resuscitation.silentInteraction}
           easyLabel={equipment?.resuscitation.easyLabel}
           negativeScan={equipment?.resuscitation.negativeScan}
-          negativeScanGuidance={session.guidance}
-          negativeScanDemonstrating={demonstrating && registryDemo?.id === 'NegativeScan'}
           risingRequirement={equipment?.resuscitation.risingRequirement}
-          risingRequirementGuidance={session.guidance}
-          risingRequirementDemonstrating={demonstrating && registryDemo?.id === 'RisingRequirement'}
-          renalHyponatremiaGuidance={session.guidance}
-          delayedImmuneEventGuidance={session.guidance}
-          incidentalClotGuidance={session.guidance}
-          normalTestToxicityGuidance={session.guidance}
-          prognosisQuestionGuidance={session.guidance}
-          laboratoryTlsGuidance={session.guidance}
-          rareEarlyMyocarditisGuidance={session.guidance}
-          loweringTheCountGuidance={session.guidance}
-          inheritedUrgencyGuidance={session.guidance}
-          trialRuleGuidance={session.guidance}
-          silentInteractionGuidance={session.guidance}
-          easyLabelGuidance={session.guidance}
           endocrineDkaResolutionGuidance={session.guidance}
           endocrineDkaResolutionDemonstrating={demonstrating && registryDemo?.id === 'DkaResolution'}
           endocrineHhsGuidance={session.guidance}
           endocrineHhsDemonstrating={demonstrating && registryDemo?.id === 'HhsOsmolality'}
-          renalHypernatremiaGuidance={session.guidance}
-          renalHypocalcemiaGuidance={session.guidance}
-          renalHypermagnesemiaGuidance={session.guidance}
-          renalHyponatremiaDemonstrating={demonstrating && registryDemo?.id === 'RenalHyponatremia'}
-          renalHypernatremiaDemonstrating={demonstrating && registryDemo?.id === 'RenalHypernatremia'}
-          renalHypocalcemiaDemonstrating={demonstrating && registryDemo?.id === 'RenalHypocalcemia'}
-          renalHypermagnesemiaDemonstrating={demonstrating && registryDemo?.id === 'RenalHypermagnesemia'}
-          onRenalHyponatremiaTutorSource={session.pause}
-          onRenalHypernatremiaTutorSource={session.pause}
-          onRenalHypocalcemiaTutorSource={session.pause}
-          onRenalHypermagnesemiaTutorSource={session.pause}
-          renalHypokalemiaDemonstrating={demonstrating && registryDemo?.id === 'RenalHypokalemia'}
-          onRenalHypokalemiaTutorSource={session.pause}
-          renalHyperkalemiaDemonstrating={demonstrating && registryDemo?.id === 'RenalHyperkalemia'}
-          onRenalHyperkalemiaTutorSource={session.pause}
-          perioperativeDiabetesDemonstrating={demonstrating && registryDemo?.id === 'PerioperativeDiabetes'}
-          onPerioperativeDiabetesTutorSource={session.pause}
-          refeedingDemonstrating={demonstrating && registryDemo?.id === 'Refeeding'}
-          onRefeedingTutorSource={session.pause}
-          avpDeficiencyDemonstrating={demonstrating && registryDemo?.id === 'AvpDeficiency'}
-          onAvpDeficiencyTutorSource={session.pause}
-          hyponatremiaCorrectionDemonstrating={demonstrating && registryDemo?.id === 'HyponatremiaCorrection'}
-          onHyponatremiaCorrectionTutorSource={session.pause}
-          hypocalcemiaDemonstrating={demonstrating && registryDemo?.id === 'Hypocalcemia'}
-          onHypocalcemiaTutorSource={session.pause}
-          hypercalcemiaDemonstrating={demonstrating && registryDemo?.id === 'Hypercalcemia'}
-          onHypercalcemiaTutorSource={session.pause}
-          myxedemaDemonstrating={demonstrating && registryDemo?.id === 'Myxedema'}
-          onMyxedemaTutorSource={session.pause}
-          thyroidDemonstrating={demonstrating && registryDemo?.id === 'Thyroid'}
-          onThyroidTutorSource={session.pause}
-          adrenalGuidance={session.guidance}
-          adrenalDemonstrating={demonstrating && registryDemo?.id === 'Adrenal'}
-          onAdrenalTutorSource={session.pause}
-          hypoglycemiaDemonstrating={demonstrating && registryDemo?.id === 'Hypoglycemia'}
           scenario={scenario}
           region={region}
           infusions={infusions}
@@ -2748,150 +2658,6 @@ export function Cockpit({
           })}
           onEndocrineHhsResponse={(action) => session.act({
             type: 'hhs-osmolality-trajectory-response', payload: { action },
-          })}
-          onSevereHypoglycemiaResponse={(action) => session.act({
-            type: 'severe-hypoglycemia-response', payload: { action },
-          })}
-          onAdrenalCrisisResponse={(action) => session.act({
-            type: 'adrenal-crisis-response', payload: { action },
-          })}
-          onThyroidStormResponse={(action) => session.act({
-            type: 'thyroid-storm-response', payload: { action },
-          })}
-          onMyxedemaResponse={(action) => session.act({
-            type: 'myxedema-response', payload: { action },
-          })}
-          onHypercalcemiaResponse={(action) => session.act({
-            type: 'hypercalcemia-response', payload: { action },
-          })}
-          onHyponatremiaCorrectionResponse={(action) => session.act({
-            type: 'hyponatremia-correction-response', payload: { action },
-          })}
-          onRenalHyponatremiaResponse={(action) => session.act({
-            type: 'renal-hyponatremia-response', payload: { action },
-          })}
-          onRenalHypernatremiaResponse={(action) => session.act({
-            type: 'renal-hypernatremia-response', payload: { action },
-          })}
-          onRenalHypocalcemiaResponse={(action) => session.act({
-            type: 'renal-hypocalcemia-response', payload: { action },
-          })}
-          onRenalHypermagnesemiaResponse={(action) => session.act({
-            type: 'renal-hypermagnesemia-response', payload: { action },
-          })}
-          onMeningococcalSepsisResponse={(action) => session.act({
-            type: 'meningococcal-sepsis-response', payload: { action },
-          })}
-          onObstructedKidneyResponse={(action) => session.act({
-            type: 'obstructed-kidney-response', payload: { action },
-          })}
-          onFebrileNeutropeniaResponse={(action) => session.act({
-            type: 'febrile-neutropenia-response', payload: { action },
-          })}
-          onNecrotizingInfectionResponse={(action) => session.act({
-            type: 'necrotizing-infection-response', payload: { action },
-          })}
-          onEndocarditisHeartFailureResponse={(action) => session.act({
-            type: 'endocarditis-heart-failure-response', payload: { action },
-          })}
-          onSeverePneumoniaResponse={(action) => session.act({
-            type: 'severe-pneumonia-response', payload: { action },
-          })}
-          onToxicShockResponse={(action) => session.act({
-            type: 'toxic-shock-response', payload: { action },
-          })}
-          onPossibleSepsisResponse={(action) => session.act({
-            type: 'possible-sepsis-response', payload: { action },
-          })}
-          onSepticShockLabelResponse={(action) => session.act({
-            type: 'septic-shock-label-response', payload: { action },
-          })}
-          onMeningitisImagingResponse={(action) => session.act({
-            type: 'meningitis-imaging-response', payload: { action },
-          })}
-          onLowScoreResponse={(action) => session.act({
-            type: 'low-score-response', payload: { action },
-          })}
-          onCountedRateResponse={(action) => session.act({
-            type: 'counted-rate-response', payload: { action },
-          })}
-          onPairedReadingResponse={(action) => session.act({
-            type: 'paired-reading-response', payload: { action },
-          })}
-          onAfferentLimbResponse={(action) => session.act({
-            type: 'afferent-limb-response', payload: { action },
-          })}
-          onQuietPatientResponse={(action) => session.act({
-            type: 'quiet-patient-response', payload: { action },
-          })}
-          onProxyScaleResponse={(action) => session.act({
-            type: 'proxy-scale-response', payload: { action },
-          })}
-          onLostContingencyResponse={(action) => session.act({
-            type: 'lost-contingency-response', payload: { action },
-          })}
-          onDelayedImmuneEventResponse={(action) => session.act({
-            type: 'delayed-immune-event-response', payload: { action },
-          })}
-          onIncidentalClotResponse={(action) => session.act({
-            type: 'incidental-clot-response', payload: { action },
-          })}
-          onNormalTestToxicityResponse={(action) => session.act({
-            type: 'normal-test-toxicity-response', payload: { action },
-          })}
-          onPrognosisQuestionResponse={(action) => session.act({
-            type: 'prognosis-question-response', payload: { action },
-          })}
-          onLaboratoryTlsResponse={(action) => session.act({
-            type: 'laboratory-tls-response', payload: { action },
-          })}
-          onRareEarlyMyocarditisResponse={(action) => session.act({
-            type: 'rare-early-myocarditis-response', payload: { action },
-          })}
-          onLoweringTheCountResponse={(action) => session.act({
-            type: 'lowering-the-count-response', payload: { action },
-          })}
-          onInheritedUrgencyResponse={(action) => session.act({
-            type: 'inherited-urgency-response', payload: { action },
-          })}
-          onTrialRuleResponse={(action) => session.act({
-            type: 'trial-rule-response', payload: { action },
-          })}
-          onSilentInteractionResponse={(action) => session.act({
-            type: 'silent-interaction-response', payload: { action },
-          })}
-          onEasyLabelResponse={(action) => session.act({
-            type: 'easy-label-response', payload: { action },
-          })}
-          onNegativeScanResponse={(action) => session.act({
-            type: 'negative-scan-response', payload: { action },
-          })}
-          onRisingRequirementResponse={(action) => session.act({
-            type: 'rising-requirement-response', payload: { action },
-          })}
-          onOxygenTargetScaleResponse={(action) => session.act({
-            type: 'oxygen-target-scale-response', payload: { action },
-          })}
-          onLastKnownWellResponse={(action) => session.act({
-            type: 'last-known-well-response', payload: { action },
-          })}
-          onRenalHypokalemiaResponse={(action) => session.act({
-            type: 'renal-hypokalemia-response', payload: { action },
-          })}
-          onRenalHyperkalemiaResponse={(action) => session.act({
-            type: 'renal-hyperkalemia-response', payload: { action },
-          })}
-          onPerioperativeDiabetesResponse={(action) => session.act({
-            type: 'perioperative-diabetes-response', payload: { action },
-          })}
-          onRefeedingResponse={(action) => session.act({
-            type: 'refeeding-response', payload: { action },
-          })}
-          onAvpDeficiencyResponse={(action) => session.act({
-            type: 'avp-deficiency-response', payload: { action },
-          })}
-          onHypocalcemiaResponse={(action) => session.act({
-            type: 'hypocalcemia-response', payload: { action },
           })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },

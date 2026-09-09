@@ -13,6 +13,7 @@ import { AdrenalCrisis } from '../../src/modules/endocrine-metabolic/adrenal-cri
 import { ADRENAL_FIXTURES } from '../../src/modules/endocrine-metabolic/adrenal-crisis-fixtures';
 import { ADRENAL_CRISIS_TREATMENT_BEFORE_TESTS as SCENARIO } from '../../src/modules/endocrine-metabolic/scenarios/adrenal-crisis-treatment-before-tests';
 import { LIMITATIONS } from '@platform/docs/limitations';
+import { ENDOCRINE_METABOLIC_TRAYS } from '../../src/modules/endocrine-metabolic/trays';
 
 describe('Adrenal crisis experience', () => {
   it('opens the debrief in this emergency-care context rather than claiming anesthesia was performed', () => {
@@ -39,8 +40,8 @@ describe('Adrenal crisis experience', () => {
     const briefing = renderToStaticMarkup(createElement(Prebrief, { limitations: LIMITATIONS, scenario: SCENARIO, region: UNITED_STATES,
       environment: 'endocrine-metabolic', guidance: 'guided', onGuidance: () => {}, onStart: () => {} }));
     expect(briefing).toContain('No test result unlocks');
-    expect(crisisResponseAvailability(SCENARIO).hasAdrenalCrisisResponse).toBe(true);
-    expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasAdrenalCrisisResponse).toBe(false);
+    expect(crisisResponseAvailability(SCENARIO, [], ENDOCRINE_METABOLIC_TRAYS).hasAdrenalCrisisResponse).toBe(true);
+    expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }, [], ENDOCRINE_METABOLIC_TRAYS).hasAdrenalCrisisResponse).toBe(false);
   });
   it('keeps immediate treatment enabled before the record, shows refusals, and uses accepted model state', () => {
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;

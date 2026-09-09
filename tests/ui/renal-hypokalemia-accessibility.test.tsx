@@ -12,6 +12,7 @@ import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import { RENAL_HYPOKALEMIA_MAGNESIUM_AND_ONGOING_LOSSES as SCENARIO } from '../../src/modules/renal-electrolyte/scenarios/hypokalemia-magnesium-and-ongoing-losses';
 import { RenalHypokalemia, RENAL_HYPOKALEMIA_POTASSIUM_TICKS as EARLY,
   RENAL_HYPOKALEMIA_RESPONSE_TICKS as RESPONSE, RENAL_HYPOKALEMIA_RECURRENCE_TICKS as RECURRENCE } from '../../src/modules/renal-electrolyte/hypokalemia';
+import { RENAL_ELECTROLYTE_TRAYS } from '../../src/modules/renal-electrolyte/trays';
 
 vi.mock('@anesthesia/ui/MonitorRegion', () => ({ MonitorRegion: ({ onWhy }: { onWhy: (field: StateField) => void }) => <>
   {(['etco2MmHg', 'fio2', 'heartRateBpm'] as const).map((field) =>
@@ -33,7 +34,7 @@ describe('Renal hypokalemia nonvisual observation boundaries', () => {
       state: frame.state, equipment: frame.equipment, tick: frame.tick, play, pause, act: perform, alarms: [],
     });
     act(() => root.render(<Cockpit scenario={SCENARIO} region={UNITED_STATES}
-      moduleId="renal-electrolyte" audio={new SonificationEngine()} onEnd={() => {}} />));
+      moduleId="renal-electrolyte" trays={RENAL_ELECTROLYTE_TRAYS} audio={new SonificationEngine()} onEnd={() => {}} />));
   });
   afterEach(() => {
     act(() => root.unmount()); container.remove(); useSession.setState(initialSession, true);

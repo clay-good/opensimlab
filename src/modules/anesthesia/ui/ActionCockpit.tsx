@@ -18,99 +18,52 @@ import { FLUIDS } from '@anesthesia/content/fluids';
 import { BLOOD_PRODUCTS } from '@anesthesia/content/blood-products';
 import { JAW_THRUST_CPAP_SECONDS } from '@anesthesia/physiology';
 import type { SevereHypoglycemiaSnapshot } from '@platform/kernel/protocol';
-import { supportsSevereHypoglycemia, type HypoglycemiaAction } from '../../endocrine-metabolic/severe-hypoglycemia';
-import { SevereHypoglycemiaTray } from '../../endocrine-metabolic/SevereHypoglycemiaTray';
-import { supportsAdrenalCrisis, type AdrenalCrisisAction } from '../../endocrine-metabolic/adrenal-crisis';
-import { AdrenalCrisisTray } from '../../endocrine-metabolic/AdrenalCrisisTray';
-import { supportsThyroidStorm, type ThyroidStormAction, type ThyroidStormSnapshot } from '../../endocrine-metabolic/thyroid-storm';
-import { ThyroidStormTray } from '../../endocrine-metabolic/ThyroidStormTray';
-import { supportsMyxedema, type MyxedemaAction, type MyxedemaSnapshot } from '../../endocrine-metabolic/myxedema';
-import { MyxedemaTray } from '../../endocrine-metabolic/MyxedemaTray';
-import { supportsHypercalcemia, type HypercalcemiaAction, type HypercalcemiaSnapshot } from '../../endocrine-metabolic/hypercalcemia';
-import { supportsHypocalcemia, type HypocalcemiaAction, type HypocalcemiaSnapshot } from '../../endocrine-metabolic/hypocalcemia';
-import { HypocalcemiaTray } from '../../endocrine-metabolic/HypocalcemiaTray';
-import { supportsHyponatremiaCorrection, type HyponatremiaCorrectionAction, type HyponatremiaCorrectionSnapshot } from '../../endocrine-metabolic/hyponatremia-correction';
-import { HyponatremiaCorrectionTray } from '../../endocrine-metabolic/HyponatremiaCorrectionTray';
-import { supportsAvpDeficiency, type AvpDeficiencyAction, type AvpDeficiencySnapshot } from '../../endocrine-metabolic/avp-deficiency';
-import { AvpDeficiencyTray } from '../../endocrine-metabolic/AvpDeficiencyTray';
-import { supportsRefeeding, type RefeedingAction, type RefeedingSnapshot } from '../../endocrine-metabolic/refeeding';
-import { RefeedingTray } from '../../endocrine-metabolic/RefeedingTray';
-import { supportsPerioperativeDiabetes, type PerioperativeDiabetesAction, type PerioperativeDiabetesSnapshot } from '../../endocrine-metabolic/perioperative-diabetes';
-import { PerioperativeDiabetesTray } from '../../endocrine-metabolic/PerioperativeDiabetesTray';
-import { supportsRenalHyperkalemia, type RenalHyperkalemiaAction, type RenalHyperkalemiaSnapshot } from '../../renal-electrolyte/hyperkalemia';
-import { RenalHyperkalemiaTray } from '../../renal-electrolyte/RenalHyperkalemiaTray';
-import { supportsRenalHypokalemia, type RenalHypokalemiaAction, type RenalHypokalemiaSnapshot } from '../../renal-electrolyte/hypokalemia';
-import { RenalHypokalemiaTray } from '../../renal-electrolyte/RenalHypokalemiaTray';
-import { supportsRenalHyponatremia, type RenalHyponatremiaAction, type RenalHyponatremiaSnapshot } from '../../renal-electrolyte/hyponatremia';
-import { supportsRenalHypernatremia, type RenalHypernatremiaAction, type RenalHypernatremiaSnapshot } from '../../renal-electrolyte/hypernatremia';
-import { supportsRenalHypocalcemia, type RenalHypocalcemiaAction, type RenalHypocalcemiaSnapshot } from '../../renal-electrolyte/hypocalcemia';
-import { supportsRenalHypermagnesemia, type RenalHypermagnesemiaAction, type RenalHypermagnesemiaSnapshot } from '../../renal-electrolyte/hypermagnesemia';
-import { supportsMeningococcalSepsis, type MeningococcalSepsisAction, type MeningococcalSepsisSnapshot } from '../../infectious-disease/meningococcal-sepsis';
-import { supportsObstructedKidney, type ObstructedKidneyAction, type ObstructedKidneySnapshot } from '../../infectious-disease/obstructed-kidney';
-import { supportsFebrileNeutropenia, type FebrileNeutropeniaAction, type FebrileNeutropeniaSnapshot } from '../../infectious-disease/febrile-neutropenia';
-import { supportsNecrotizingInfection, type NecrotizingInfectionAction, type NecrotizingInfectionSnapshot } from '../../infectious-disease/necrotizing-infection';
-import { supportsEndocarditisHeartFailure, type EndocarditisHeartFailureAction, type EndocarditisHeartFailureSnapshot } from '../../infectious-disease/endocarditis-heart-failure';
-import { supportsSeverePneumonia, type SeverePneumoniaAction, type SeverePneumoniaSnapshot } from '../../infectious-disease/severe-pneumonia';
-import { supportsToxicShock, type ToxicShockAction, type ToxicShockSnapshot } from '../../infectious-disease/toxic-shock';
-import { supportsPossibleSepsis, type PossibleSepsisAction, type PossibleSepsisSnapshot } from '../../infectious-disease/possible-sepsis';
-import { RenalHyponatremiaTray } from '../../renal-electrolyte/RenalHyponatremiaTray';
-import { RenalHypernatremiaTray } from '../../renal-electrolyte/RenalHypernatremiaTray';
-import { RenalHypocalcemiaTray } from '../../renal-electrolyte/RenalHypocalcemiaTray';
-import { RenalHypermagnesemiaTray } from '../../renal-electrolyte/RenalHypermagnesemiaTray';
-import { MeningococcalSepsisTray } from '../../infectious-disease/MeningococcalSepsisTray';
-import { ObstructedKidneyTray } from '../../infectious-disease/ObstructedKidneyTray';
-import { FebrileNeutropeniaTray } from '../../infectious-disease/FebrileNeutropeniaTray';
-import { NecrotizingInfectionTray } from '../../infectious-disease/NecrotizingInfectionTray';
-import { EndocarditisHeartFailureTray } from '../../infectious-disease/EndocarditisHeartFailureTray';
-import { SeverePneumoniaTray } from '../../infectious-disease/SeverePneumoniaTray';
-import { ToxicShockTray } from '../../infectious-disease/ToxicShockTray';
-import { PossibleSepsisTray } from '../../infectious-disease/PossibleSepsisTray';
-import { SepticShockLabelTray } from '../../infectious-disease/SepticShockLabelTray';
-import { MeningitisImagingTray } from '../../infectious-disease/MeningitisImagingTray';
-import { LowScoreTray } from '../../medical-surgical-nursing/LowScoreTray';
-import { CountedRateTray } from '../../medical-surgical-nursing/CountedRateTray';
-import { PairedReadingTray } from '../../medical-surgical-nursing/PairedReadingTray';
-import { AfferentLimbTray } from '../../medical-surgical-nursing/AfferentLimbTray';
-import { QuietPatientTray } from '../../medical-surgical-nursing/QuietPatientTray';
-import { ProxyScaleTray } from '../../medical-surgical-nursing/ProxyScaleTray';
-import { LastKnownWellTray } from '../../medical-surgical-nursing/LastKnownWellTray';
-import { OxygenTargetScaleTray } from '../../medical-surgical-nursing/OxygenTargetScaleTray';
-import { LostContingencyTray } from '../../medical-surgical-nursing/LostContingencyTray';
-import { DelayedImmuneEventTray } from '../../oncology/DelayedImmuneEventTray';
-import { IncidentalClotTray } from '../../oncology/IncidentalClotTray';
-import { NormalTestToxicityTray } from '../../oncology/NormalTestToxicityTray';
-import { PrognosisQuestionTray } from '../../oncology/PrognosisQuestionTray';
-import { LaboratoryTlsTray } from '../../oncology/LaboratoryTlsTray';
-import { RareEarlyMyocarditisTray } from '../../oncology/RareEarlyMyocarditisTray';
-import { LoweringTheCountTray } from '../../oncology/LoweringTheCountTray';
-import { InheritedUrgencyTray } from '../../oncology/InheritedUrgencyTray';
-import { TrialRuleTray } from '../../oncology/TrialRuleTray';
-import { SilentInteractionTray } from '../../oncology/SilentInteractionTray';
-import { EasyLabelTray } from '../../oncology/EasyLabelTray';
-import { NegativeScanTray } from '../../surgery-trauma/NegativeScanTray';
-import { RisingRequirementTray } from '../../surgery-trauma/RisingRequirementTray';
-import { supportsLastKnownWell, type LastKnownWellAction, type LastKnownWellSnapshot } from '../../medical-surgical-nursing/last-known-well';
-import { supportsOxygenTargetScale, type OxygenTargetScaleAction, type OxygenTargetScaleSnapshot } from '../../medical-surgical-nursing/oxygen-target-scale';
-import { supportsLostContingency, type LostContingencyAction, type LostContingencySnapshot } from '../../medical-surgical-nursing/lost-contingency';
-import { supportsDelayedImmuneEvent, type DelayedImmuneEventAction } from '../../oncology/delayed-immune-event';
+import { type HypoglycemiaAction } from '../../endocrine-metabolic/severe-hypoglycemia';
+import { type AdrenalCrisisAction } from '../../endocrine-metabolic/adrenal-crisis';
+import { type ThyroidStormAction, type ThyroidStormSnapshot } from '../../endocrine-metabolic/thyroid-storm';
+import { type MyxedemaAction, type MyxedemaSnapshot } from '../../endocrine-metabolic/myxedema';
+import { type HypercalcemiaAction, type HypercalcemiaSnapshot } from '../../endocrine-metabolic/hypercalcemia';
+import { type HypocalcemiaAction, type HypocalcemiaSnapshot } from '../../endocrine-metabolic/hypocalcemia';
+import { type HyponatremiaCorrectionAction, type HyponatremiaCorrectionSnapshot } from '../../endocrine-metabolic/hyponatremia-correction';
+import { type AvpDeficiencyAction, type AvpDeficiencySnapshot } from '../../endocrine-metabolic/avp-deficiency';
+import { type RefeedingAction, type RefeedingSnapshot } from '../../endocrine-metabolic/refeeding';
+import { type PerioperativeDiabetesAction, type PerioperativeDiabetesSnapshot } from '../../endocrine-metabolic/perioperative-diabetes';
+import { type RenalHyperkalemiaAction, type RenalHyperkalemiaSnapshot } from '../../renal-electrolyte/hyperkalemia';
+import { type RenalHypokalemiaAction, type RenalHypokalemiaSnapshot } from '../../renal-electrolyte/hypokalemia';
+import { type RenalHyponatremiaAction, type RenalHyponatremiaSnapshot } from '../../renal-electrolyte/hyponatremia';
+import { type RenalHypernatremiaAction, type RenalHypernatremiaSnapshot } from '../../renal-electrolyte/hypernatremia';
+import { type RenalHypocalcemiaAction, type RenalHypocalcemiaSnapshot } from '../../renal-electrolyte/hypocalcemia';
+import { type RenalHypermagnesemiaAction, type RenalHypermagnesemiaSnapshot } from '../../renal-electrolyte/hypermagnesemia';
+import { type MeningococcalSepsisAction, type MeningococcalSepsisSnapshot } from '../../infectious-disease/meningococcal-sepsis';
+import { type ObstructedKidneyAction, type ObstructedKidneySnapshot } from '../../infectious-disease/obstructed-kidney';
+import { type FebrileNeutropeniaAction, type FebrileNeutropeniaSnapshot } from '../../infectious-disease/febrile-neutropenia';
+import { type NecrotizingInfectionAction, type NecrotizingInfectionSnapshot } from '../../infectious-disease/necrotizing-infection';
+import { type EndocarditisHeartFailureAction, type EndocarditisHeartFailureSnapshot } from '../../infectious-disease/endocarditis-heart-failure';
+import { type SeverePneumoniaAction, type SeverePneumoniaSnapshot } from '../../infectious-disease/severe-pneumonia';
+import { type ToxicShockAction, type ToxicShockSnapshot } from '../../infectious-disease/toxic-shock';
+import { type PossibleSepsisAction, type PossibleSepsisSnapshot } from '../../infectious-disease/possible-sepsis';
+import { type LastKnownWellAction, type LastKnownWellSnapshot } from '../../medical-surgical-nursing/last-known-well';
+import { type OxygenTargetScaleAction, type OxygenTargetScaleSnapshot } from '../../medical-surgical-nursing/oxygen-target-scale';
+import { type LostContingencyAction, type LostContingencySnapshot } from '../../medical-surgical-nursing/lost-contingency';
+import { type DelayedImmuneEventAction } from '../../oncology/delayed-immune-event';
 import type { DelayedImmuneEventSnapshot } from '@platform/kernel/protocol';
-import { supportsIncidentalClot, type IncidentalClotAction } from '../../oncology/incidental-clot';
+import { type IncidentalClotAction } from '../../oncology/incidental-clot';
 import type { IncidentalClotSnapshot } from '@platform/kernel/protocol';
-import { supportsNormalTestToxicity, type NormalTestToxicityAction } from '../../oncology/normal-test-toxicity';
+import { type NormalTestToxicityAction } from '../../oncology/normal-test-toxicity';
 import type { NormalTestToxicitySnapshot } from '@platform/kernel/protocol';
-import { supportsPrognosisQuestion, type PrognosisQuestionAction } from '../../oncology/prognosis-question';
+import { type PrognosisQuestionAction } from '../../oncology/prognosis-question';
 import type { PrognosisQuestionSnapshot } from '@platform/kernel/protocol';
-import { supportsLaboratoryTls, type LaboratoryTlsAction } from '../../oncology/laboratory-tls';
+import { type LaboratoryTlsAction } from '../../oncology/laboratory-tls';
 import type { LaboratoryTlsSnapshot } from '@platform/kernel/protocol';
-import { supportsRareEarlyMyocarditis, type RareEarlyMyocarditisAction } from '../../oncology/rare-early-myocarditis';
+import { type RareEarlyMyocarditisAction } from '../../oncology/rare-early-myocarditis';
 import type { RareEarlyMyocarditisSnapshot } from '@platform/kernel/protocol';
-import { supportsLoweringTheCount, type LoweringTheCountAction } from '../../oncology/lowering-the-count';
-import { supportsInheritedUrgency, type InheritedUrgencyAction } from '../../oncology/inherited-urgency';
-import { supportsTrialRule, type TrialRuleAction } from '../../oncology/trial-rule';
-import { supportsSilentInteraction, type SilentInteractionAction } from '../../oncology/silent-interaction';
-import { supportsEasyLabel, type EasyLabelAction } from '../../oncology/easy-label';
-import { supportsNegativeScan, type NegativeScanAction } from '../../surgery-trauma/negative-scan';
-import { supportsRisingRequirement, type RisingRequirementAction } from '../../surgery-trauma/rising-requirement';
+import { type LoweringTheCountAction } from '../../oncology/lowering-the-count';
+import { type InheritedUrgencyAction } from '../../oncology/inherited-urgency';
+import { type TrialRuleAction } from '../../oncology/trial-rule';
+import { type SilentInteractionAction } from '../../oncology/silent-interaction';
+import { type EasyLabelAction } from '../../oncology/easy-label';
+import { type NegativeScanAction } from '../../surgery-trauma/negative-scan';
+import { type RisingRequirementAction } from '../../surgery-trauma/rising-requirement';
 import { dkaResolutionInlinePrompt } from '../../endocrine-metabolic/tutor/dka-resolution-guidance';
 import { hhsOsmolalityInlinePrompt } from '../../endocrine-metabolic/tutor/hhs-osmolality-guidance';
 import { nicuHandoffInlinePrompt } from '../../neonatology/tutor/delivery-room-to-nicu-handoff-guidance';
@@ -274,17 +227,18 @@ import type { SilentInteractionSnapshot } from '@platform/kernel/protocol';
 import type { EasyLabelSnapshot } from '@platform/kernel/protocol';
 import type { NegativeScanSnapshot } from '@platform/kernel/protocol';
 import type { RisingRequirementSnapshot } from '@platform/kernel/protocol';
-import { supportsProxyScale, type ProxyScaleAction, type ProxyScaleSnapshot } from '../../medical-surgical-nursing/proxy-scale';
-import { supportsQuietPatient, type QuietPatientAction, type QuietPatientSnapshot } from '../../medical-surgical-nursing/quiet-patient';
-import { supportsAfferentLimb, type AfferentLimbAction, type AfferentLimbSnapshot } from '../../medical-surgical-nursing/afferent-limb';
-import { supportsPairedReading, type PairedReadingAction, type PairedReadingSnapshot } from '../../medical-surgical-nursing/paired-reading';
-import { supportsCountedRate, type CountedRateAction, type CountedRateSnapshot } from '../../medical-surgical-nursing/counted-rate';
-import { supportsLowScore, type LowScoreAction, type LowScoreSnapshot } from '../../medical-surgical-nursing/low-score';
-import { supportsMeningitisImaging, type MeningitisImagingAction, type MeningitisImagingSnapshot } from '../../infectious-disease/meningitis-imaging';
-import { supportsSepticShockLabel, type SepticShockLabelAction, type SepticShockLabelSnapshot } from '../../infectious-disease/septic-shock-label';
-import { HypercalcemiaTray } from '../../endocrine-metabolic/HypercalcemiaTray';
+import { type ProxyScaleAction, type ProxyScaleSnapshot } from '../../medical-surgical-nursing/proxy-scale';
+import { type QuietPatientAction, type QuietPatientSnapshot } from '../../medical-surgical-nursing/quiet-patient';
+import { type AfferentLimbAction, type AfferentLimbSnapshot } from '../../medical-surgical-nursing/afferent-limb';
+import { type PairedReadingAction, type PairedReadingSnapshot } from '../../medical-surgical-nursing/paired-reading';
+import { type CountedRateAction, type CountedRateSnapshot } from '../../medical-surgical-nursing/counted-rate';
+import { type LowScoreAction, type LowScoreSnapshot } from '../../medical-surgical-nursing/low-score';
+import { type MeningitisImagingAction, type MeningitisImagingSnapshot } from '../../infectious-disease/meningitis-imaging';
+import { type SepticShockLabelAction, type SepticShockLabelSnapshot } from '../../infectious-disease/septic-shock-label';
 import type { AdrenalCrisisSnapshot } from '@platform/kernel/protocol';
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
+import type { LessonTray } from './lesson-tray';
+import type { EquipmentSnapshot } from '@platform/kernel/protocol';
 
 export type TrayId = 'syringes' | 'infusions' | 'fluids' | 'airway' | 'monitor' | 'circuit' | 'crisis';
 
@@ -2883,6 +2837,19 @@ export interface ActionCockpitProps {
   readonly onAdrenalCrisisResponse?: (action: AdrenalCrisisAction) => void;
   readonly onThyroidStormResponse?: (action: ThyroidStormAction) => void;
   readonly onMyxedemaResponse?: (action: MyxedemaAction) => void;
+  /**
+   * This module's lesson trays, supplied by its route.
+   *
+   * The cockpit used to import all 48 and write out a gated block for each,
+   * which measured 98.9 KB gz of the chunk every module downloads. The five
+   * props a lesson tray takes are the same five for all of them, so they render
+   * here without any lesson being named.
+   */
+  readonly lessonTrays?: readonly LessonTray[];
+  readonly guidance?: GuidanceLevel;
+  readonly demonstratingLessonId?: string | undefined;
+  readonly onLessonAction?: (actionType: string, action: string) => void;
+  readonly onLessonTutorSource?: (() => void) | undefined;
   readonly myxedemaGuidance?: GuidanceLevel;
   readonly myxedemaDemonstrating?: boolean;
   readonly onMyxedemaTutorSource?: () => void;
@@ -3377,6 +3344,8 @@ export function scenarioSupportsCoagulation(scenario: Scenario): boolean {
 export function crisisResponseAvailability(
   scenario: Scenario,
   injectedCrisisIds: readonly string[] = [],
+  /** The module's lesson trays, so a lesson's own gate needs no import here. */
+  lessonTrays: readonly LessonTray[] = [],
 ) {
   const injected = new Set(injectedCrisisIds);
   const hasObstetricsMaternalArrestResponse =
@@ -3489,54 +3458,55 @@ export function crisisResponseAvailability(
     && scenario.timeline.every((event) => event.type === 'narrative')
     && scenario.timeline.filter((event) => event.target === 'hhs-osmolality-trajectory').length === 1
     && scenario.timeline.filter((event) => event.target === 'hhs-osmolality-trajectory-boundary').length === 1;
-  const hasSevereHypoglycemiaResponse = supportsSevereHypoglycemia(scenario);
-  const hasAdrenalCrisisResponse = supportsAdrenalCrisis(scenario);
-  const hasThyroidStormResponse = supportsThyroidStorm(scenario);
-  const hasMyxedemaResponse = supportsMyxedema(scenario);
-  const hasHypercalcemiaResponse = supportsHypercalcemia(scenario);
-  const hasHypocalcemiaResponse = supportsHypocalcemia(scenario);
-  const hasHyponatremiaCorrectionResponse = supportsHyponatremiaCorrection(scenario);
-  const hasAvpDeficiencyResponse = supportsAvpDeficiency(scenario);
-  const hasRefeedingResponse = supportsRefeeding(scenario);
-  const hasPerioperativeDiabetesResponse = supportsPerioperativeDiabetes(scenario);
-  const hasRenalHyperkalemiaResponse = supportsRenalHyperkalemia(scenario);
-  const hasRenalHypokalemiaResponse = supportsRenalHypokalemia(scenario);
-  const hasRenalHyponatremiaResponse = supportsRenalHyponatremia(scenario);
-  const hasRenalHypernatremiaResponse = supportsRenalHypernatremia(scenario);
-  const hasRenalHypocalcemiaResponse = supportsRenalHypocalcemia(scenario);
-  const hasRenalHypermagnesemiaResponse = supportsRenalHypermagnesemia(scenario);
-  const hasMeningococcalSepsisResponse = supportsMeningococcalSepsis(scenario);
-  const hasObstructedKidneyResponse = supportsObstructedKidney(scenario);
-  const hasFebrileNeutropeniaResponse = supportsFebrileNeutropenia(scenario);
-  const hasNecrotizingInfectionResponse = supportsNecrotizingInfection(scenario);
-  const hasEndocarditisHeartFailureResponse = supportsEndocarditisHeartFailure(scenario);
-  const hasSeverePneumoniaResponse = supportsSeverePneumonia(scenario);
-  const hasToxicShockResponse = supportsToxicShock(scenario);
-  const hasPossibleSepsisResponse = supportsPossibleSepsis(scenario);
-  const hasSepticShockLabelResponse = supportsSepticShockLabel(scenario);
-  const hasMeningitisImagingResponse = supportsMeningitisImaging(scenario);
-  const hasLowScoreResponse = supportsLowScore(scenario);
-  const hasCountedRateResponse = supportsCountedRate(scenario);
-  const hasPairedReadingResponse = supportsPairedReading(scenario);
-  const hasAfferentLimbResponse = supportsAfferentLimb(scenario);
-  const hasQuietPatientResponse = supportsQuietPatient(scenario);
-  const hasProxyScaleResponse = supportsProxyScale(scenario);
-  const hasLastKnownWellResponse = supportsLastKnownWell(scenario);
-  const hasOxygenTargetScaleResponse = supportsOxygenTargetScale(scenario);
-  const hasLostContingencyResponse = supportsLostContingency(scenario);
-  const hasDelayedImmuneEventResponse = supportsDelayedImmuneEvent(scenario);
-  const hasIncidentalClotResponse = supportsIncidentalClot(scenario);
-  const hasNormalTestToxicityResponse = supportsNormalTestToxicity(scenario);
-  const hasPrognosisQuestionResponse = supportsPrognosisQuestion(scenario);
-  const hasLaboratoryTlsResponse = supportsLaboratoryTls(scenario);
-  const hasRareEarlyMyocarditisResponse = supportsRareEarlyMyocarditis(scenario);
-  const hasLoweringTheCountResponse = supportsLoweringTheCount(scenario);
-  const hasInheritedUrgencyResponse = supportsInheritedUrgency(scenario);
-  const hasTrialRuleResponse = supportsTrialRule(scenario);
-  const hasSilentInteractionResponse = supportsSilentInteraction(scenario);
-  const hasEasyLabelResponse = supportsEasyLabel(scenario);
-  const hasNegativeScanResponse = supportsNegativeScan(scenario);
-  const hasRisingRequirementResponse = supportsRisingRequirement(scenario);
+  const moduleTray = lessonTrays.find((tray) => tray.supports(scenario));
+  const hasSevereHypoglycemiaResponse = moduleTray?.id === 'SevereHypoglycemia';
+  const hasAdrenalCrisisResponse = moduleTray?.id === 'AdrenalCrisis';
+  const hasThyroidStormResponse = moduleTray?.id === 'ThyroidStorm';
+  const hasMyxedemaResponse = moduleTray?.id === 'Myxedema';
+  const hasHypercalcemiaResponse = moduleTray?.id === 'Hypercalcemia';
+  const hasHypocalcemiaResponse = moduleTray?.id === 'Hypocalcemia';
+  const hasHyponatremiaCorrectionResponse = moduleTray?.id === 'HyponatremiaCorrection';
+  const hasAvpDeficiencyResponse = moduleTray?.id === 'AvpDeficiency';
+  const hasRefeedingResponse = moduleTray?.id === 'Refeeding';
+  const hasPerioperativeDiabetesResponse = moduleTray?.id === 'PerioperativeDiabetes';
+  const hasRenalHyperkalemiaResponse = moduleTray?.id === 'RenalHyperkalemia';
+  const hasRenalHypokalemiaResponse = moduleTray?.id === 'RenalHypokalemia';
+  const hasRenalHyponatremiaResponse = moduleTray?.id === 'RenalHyponatremia';
+  const hasRenalHypernatremiaResponse = moduleTray?.id === 'RenalHypernatremia';
+  const hasRenalHypocalcemiaResponse = moduleTray?.id === 'RenalHypocalcemia';
+  const hasRenalHypermagnesemiaResponse = moduleTray?.id === 'RenalHypermagnesemia';
+  const hasMeningococcalSepsisResponse = moduleTray?.id === 'MeningococcalSepsis';
+  const hasObstructedKidneyResponse = moduleTray?.id === 'ObstructedKidney';
+  const hasFebrileNeutropeniaResponse = moduleTray?.id === 'FebrileNeutropenia';
+  const hasNecrotizingInfectionResponse = moduleTray?.id === 'NecrotizingInfection';
+  const hasEndocarditisHeartFailureResponse = moduleTray?.id === 'EndocarditisHeartFailure';
+  const hasSeverePneumoniaResponse = moduleTray?.id === 'SeverePneumonia';
+  const hasToxicShockResponse = moduleTray?.id === 'ToxicShock';
+  const hasPossibleSepsisResponse = moduleTray?.id === 'PossibleSepsis';
+  const hasSepticShockLabelResponse = moduleTray?.id === 'SepticShockLabel';
+  const hasMeningitisImagingResponse = moduleTray?.id === 'MeningitisImaging';
+  const hasLowScoreResponse = moduleTray?.id === 'LowScore';
+  const hasCountedRateResponse = moduleTray?.id === 'CountedRate';
+  const hasPairedReadingResponse = moduleTray?.id === 'PairedReading';
+  const hasAfferentLimbResponse = moduleTray?.id === 'AfferentLimb';
+  const hasQuietPatientResponse = moduleTray?.id === 'QuietPatient';
+  const hasProxyScaleResponse = moduleTray?.id === 'ProxyScale';
+  const hasLastKnownWellResponse = moduleTray?.id === 'LastKnownWell';
+  const hasOxygenTargetScaleResponse = moduleTray?.id === 'OxygenTargetScale';
+  const hasLostContingencyResponse = moduleTray?.id === 'LostContingency';
+  const hasDelayedImmuneEventResponse = moduleTray?.id === 'DelayedImmuneEvent';
+  const hasIncidentalClotResponse = moduleTray?.id === 'IncidentalClot';
+  const hasNormalTestToxicityResponse = moduleTray?.id === 'NormalTestToxicity';
+  const hasPrognosisQuestionResponse = moduleTray?.id === 'PrognosisQuestion';
+  const hasLaboratoryTlsResponse = moduleTray?.id === 'LaboratoryTls';
+  const hasRareEarlyMyocarditisResponse = moduleTray?.id === 'RareEarlyMyocarditis';
+  const hasLoweringTheCountResponse = moduleTray?.id === 'LoweringTheCount';
+  const hasInheritedUrgencyResponse = moduleTray?.id === 'InheritedUrgency';
+  const hasTrialRuleResponse = moduleTray?.id === 'TrialRule';
+  const hasSilentInteractionResponse = moduleTray?.id === 'SilentInteraction';
+  const hasEasyLabelResponse = moduleTray?.id === 'EasyLabel';
+  const hasNegativeScanResponse = moduleTray?.id === 'NegativeScan';
+  const hasRisingRequirementResponse = moduleTray?.id === 'RisingRequirement';
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -4517,7 +4487,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasArdsLungProtectiveResponse,
     hasEscalatingHypoxemiaResponse,
     hasVentilatorDyssynchronyResponse,
-  } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
+  } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds, props.lessonTrays ?? []);
+  // The same lookup the gates above used, for the one block that renders it.
+  const moduleTray = props.lessonTrays?.find((tray) => tray.supports(props.scenario));
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
   );
@@ -6751,325 +6723,65 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 demonstrating={props.endocrineHhsDemonstrating}
                 onAction={props.onEndocrineHhsResponse ?? (() => {})} />
             )}
-            {hasAdrenalCrisisResponse && (
-              <AdrenalCrisisTray assessment={props.resuscitation.adrenalCrisis} guidance={props.adrenalGuidance}
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            {moduleTray && (
+              <moduleTray.Component assessment={moduleTray.assessment(
+                  // This file declares its own structural `resuscitation` shape, which is the
+                  // snapshot's with a few lesson fields written out differently. A tray reads
+                  // one field of it, so the cast is here rather than in all 48 registrations.
+                  props.resuscitation as unknown as EquipmentSnapshot['resuscitation'],
+                )}
+                guidance={props.guidance}
                 scenarioVersion={props.scenario.metadata.version}
-                demonstrating={props.adrenalDemonstrating}
-                onOpenSource={props.onAdrenalTutorSource}
-                onAction={props.onAdrenalCrisisResponse ?? (() => {})} />
-            )}
-            {hasPerioperativeDiabetesResponse && (
-              <PerioperativeDiabetesTray assessment={props.resuscitation.perioperativeDiabetes} guidance={props.perioperativeDiabetesGuidance}
-                demonstrating={props.perioperativeDiabetesDemonstrating}
-                scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onPerioperativeDiabetesTutorSource}
-                onAction={props.onPerioperativeDiabetesResponse ?? (() => {})} />
-            )}
-            {hasRenalHyperkalemiaResponse && (
-              <RenalHyperkalemiaTray assessment={props.renalHyperkalemia} guidance={props.renalHyperkalemiaGuidance}
-                demonstrating={props.renalHyperkalemiaDemonstrating}
-                scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onRenalHyperkalemiaTutorSource}
-                onAction={props.onRenalHyperkalemiaResponse ?? (() => {})} />
-            )}
-            {hasRenalHypokalemiaResponse && (
-              <RenalHypokalemiaTray assessment={props.renalHypokalemia} guidance={props.renalHypokalemiaGuidance}
-                demonstrating={props.renalHypokalemiaDemonstrating}
-                scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onRenalHypokalemiaTutorSource}
-                onAction={props.onRenalHypokalemiaResponse ?? (() => {})} />
-            )}
-            {hasPossibleSepsisResponse && (
-              <PossibleSepsisTray assessment={props.possibleSepsis}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.possibleSepsisGuidance}
-                demonstrating={props.possibleSepsisDemonstrating}
-                onAction={props.onPossibleSepsisResponse ?? (() => {})} />
-            )}
-            {hasSepticShockLabelResponse && (
-              <SepticShockLabelTray assessment={props.septicShockLabel}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.septicShockLabelGuidance}
-                demonstrating={props.septicShockLabelDemonstrating}
-                onAction={props.onSepticShockLabelResponse ?? (() => {})} />
-            )}
-            {hasMeningitisImagingResponse && (
-              <MeningitisImagingTray assessment={props.meningitisImaging}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.meningitisImagingGuidance}
-                demonstrating={props.meningitisImagingDemonstrating}
-                onAction={props.onMeningitisImagingResponse ?? (() => {})} />
-            )}
-            {hasLowScoreResponse && (
-              <LowScoreTray assessment={props.lowScore}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.lowScoreGuidance}
-                demonstrating={props.lowScoreDemonstrating}
-                onAction={props.onLowScoreResponse ?? (() => {})} />
-            )}
-            {hasCountedRateResponse && (
-              <CountedRateTray assessment={props.countedRate}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.countedRateGuidance}
-                demonstrating={props.countedRateDemonstrating}
-                onAction={props.onCountedRateResponse ?? (() => {})} />
-            )}
-            {hasPairedReadingResponse && (
-              <PairedReadingTray assessment={props.pairedReading}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.pairedReadingGuidance}
-                demonstrating={props.pairedReadingDemonstrating}
-                onAction={props.onPairedReadingResponse ?? (() => {})} />
-            )}
-            {hasAfferentLimbResponse && (
-              <AfferentLimbTray assessment={props.afferentLimb}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.afferentLimbGuidance}
-                demonstrating={props.afferentLimbDemonstrating}
-                onAction={props.onAfferentLimbResponse ?? (() => {})} />
-            )}
-            {hasQuietPatientResponse && (
-              <QuietPatientTray assessment={props.quietPatient}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.quietPatientGuidance}
-                demonstrating={props.quietPatientDemonstrating}
-                onAction={props.onQuietPatientResponse ?? (() => {})} />
-            )}
-            {hasProxyScaleResponse && (
-              <ProxyScaleTray assessment={props.proxyScale}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.proxyScaleGuidance}
-                demonstrating={props.proxyScaleDemonstrating}
-                onAction={props.onProxyScaleResponse ?? (() => {})} />
-            )}
-            {hasRisingRequirementResponse && (
-              <RisingRequirementTray assessment={props.risingRequirement}
-                guidance={props.risingRequirementGuidance}
-                scenarioVersion={props.scenario.metadata.version}
-                demonstrating={props.risingRequirementDemonstrating}
-                onAction={props.onRisingRequirementResponse ?? (() => {})} />
-            )}
-            {hasNegativeScanResponse && (
-              <NegativeScanTray assessment={props.negativeScan}
-                guidance={props.negativeScanGuidance}
-                scenarioVersion={props.scenario.metadata.version}
-                demonstrating={props.negativeScanDemonstrating}
-                onAction={props.onNegativeScanResponse ?? (() => {})} />
-            )}
-            {hasEasyLabelResponse && (
-              <EasyLabelTray assessment={props.easyLabel}
-                guidance={props.easyLabelGuidance}
-                scenarioVersion={props.scenario.metadata.version}
-                demonstrating={props.easyLabelDemonstrating}
-                onAction={props.onEasyLabelResponse ?? (() => {})} />
-            )}
-            {hasSilentInteractionResponse && (
-              <SilentInteractionTray assessment={props.silentInteraction}
-                guidance={props.silentInteractionGuidance}
-                scenarioVersion={props.scenario.metadata.version}
-                demonstrating={props.silentInteractionDemonstrating}
-                onAction={props.onSilentInteractionResponse ?? (() => {})} />
-            )}
-            {hasTrialRuleResponse && (
-              <TrialRuleTray assessment={props.trialRule}
-                guidance={props.trialRuleGuidance}
-                scenarioVersion={props.scenario.metadata.version}
-                demonstrating={props.trialRuleDemonstrating}
-                onAction={props.onTrialRuleResponse ?? (() => {})} />
-            )}
-            {hasInheritedUrgencyResponse && (
-              <InheritedUrgencyTray assessment={props.inheritedUrgency}
-                guidance={props.inheritedUrgencyGuidance}
-                scenarioVersion={props.scenario.metadata.version}
-                demonstrating={props.inheritedUrgencyDemonstrating}
-                onAction={props.onInheritedUrgencyResponse ?? (() => {})} />
-            )}
-            {hasLoweringTheCountResponse && (
-              <LoweringTheCountTray assessment={props.loweringTheCount}
-                guidance={props.loweringTheCountGuidance}
-                scenarioVersion={props.scenario.metadata.version}
-                demonstrating={props.loweringTheCountDemonstrating}
-                onAction={props.onLoweringTheCountResponse ?? (() => {})} />
-            )}
-            {hasRareEarlyMyocarditisResponse && (
-              <RareEarlyMyocarditisTray assessment={props.rareEarlyMyocarditis}
-                guidance={props.rareEarlyMyocarditisGuidance}
-                scenarioVersion={props.scenario.metadata.version}
-                demonstrating={props.rareEarlyMyocarditisDemonstrating}
-                onAction={props.onRareEarlyMyocarditisResponse ?? (() => {})} />
-            )}
-            {hasLaboratoryTlsResponse && (
-              <LaboratoryTlsTray assessment={props.laboratoryTls}
-                guidance={props.laboratoryTlsGuidance}
-                scenarioVersion={props.scenario.metadata.version}
-                demonstrating={props.laboratoryTlsDemonstrating}
-                onAction={props.onLaboratoryTlsResponse ?? (() => {})} />
-            )}
-            {hasPrognosisQuestionResponse && (
-              <PrognosisQuestionTray assessment={props.prognosisQuestion}
-                guidance={props.prognosisQuestionGuidance}
-                scenarioVersion={props.scenario.metadata.version}
-                demonstrating={props.prognosisQuestionDemonstrating}
-                onAction={props.onPrognosisQuestionResponse ?? (() => {})} />
-            )}
-            {hasNormalTestToxicityResponse && (
-              <NormalTestToxicityTray assessment={props.normalTestToxicity}
-                guidance={props.normalTestToxicityGuidance}
-                demonstrating={props.normalTestToxicityDemonstrating}
-                scenarioVersion={props.scenario.metadata.version}
-                onAction={props.onNormalTestToxicityResponse ?? (() => {})} />
-            )}
-            {hasIncidentalClotResponse && (
-              <IncidentalClotTray assessment={props.incidentalClot}
-                guidance={props.incidentalClotGuidance}
-                demonstrating={props.incidentalClotDemonstrating}
-                scenarioVersion={props.scenario.metadata.version}
-                onAction={props.onIncidentalClotResponse ?? (() => {})} />
-            )}
-            {hasDelayedImmuneEventResponse && (
-              <DelayedImmuneEventTray assessment={props.delayedImmuneEvent}
-                guidance={props.delayedImmuneEventGuidance}
-                demonstrating={props.delayedImmuneEventDemonstrating}
-                scenarioVersion={props.scenario.metadata.version}
-                onAction={props.onDelayedImmuneEventResponse ?? (() => {})} />
-            )}
-            {hasLostContingencyResponse && (
-              <LostContingencyTray assessment={props.lostContingency}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.lostContingencyGuidance}
-                demonstrating={props.lostContingencyDemonstrating}
-                onAction={props.onLostContingencyResponse ?? (() => {})} />
-            )}
-            {hasOxygenTargetScaleResponse && (
-              <OxygenTargetScaleTray assessment={props.oxygenTargetScale}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.oxygenTargetScaleGuidance}
-                demonstrating={props.oxygenTargetScaleDemonstrating}
-                onAction={props.onOxygenTargetScaleResponse ?? (() => {})} />
-            )}
-            {hasLastKnownWellResponse && (
-              <LastKnownWellTray assessment={props.lastKnownWell}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.lastKnownWellGuidance}
-                demonstrating={props.lastKnownWellDemonstrating}
-                onAction={props.onLastKnownWellResponse ?? (() => {})} />
-            )}
-            {hasToxicShockResponse && (
-              <ToxicShockTray assessment={props.toxicShock}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.toxicShockGuidance}
-                demonstrating={props.toxicShockDemonstrating}
-                onAction={props.onToxicShockResponse ?? (() => {})} />
-            )}
-            {hasSeverePneumoniaResponse && (
-              <SeverePneumoniaTray assessment={props.severePneumonia}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.severePneumoniaGuidance}
-                demonstrating={props.severePneumoniaDemonstrating}
-                onAction={props.onSeverePneumoniaResponse ?? (() => {})} />
-            )}
-            {hasEndocarditisHeartFailureResponse && (
-              <EndocarditisHeartFailureTray assessment={props.endocarditisHeartFailure}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.endocarditisHeartFailureGuidance}
-                demonstrating={props.endocarditisHeartFailureDemonstrating}
-                onAction={props.onEndocarditisHeartFailureResponse ?? (() => {})} />
-            )}
-            {hasNecrotizingInfectionResponse && (
-              <NecrotizingInfectionTray assessment={props.necrotizingInfection}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.necrotizingInfectionGuidance}
-                demonstrating={props.necrotizingInfectionDemonstrating}
-                onAction={props.onNecrotizingInfectionResponse ?? (() => {})} />
-            )}
-            {hasFebrileNeutropeniaResponse && (
-              <FebrileNeutropeniaTray assessment={props.febrileNeutropenia}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.febrileNeutropeniaGuidance}
-                demonstrating={props.febrileNeutropeniaDemonstrating}
-                onAction={props.onFebrileNeutropeniaResponse ?? (() => {})} />
-            )}
-            {hasObstructedKidneyResponse && (
-              <ObstructedKidneyTray assessment={props.obstructedKidney}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.obstructedKidneyGuidance}
-                demonstrating={props.obstructedKidneyDemonstrating}
-                onAction={props.onObstructedKidneyResponse ?? (() => {})} />
-            )}
-            {hasMeningococcalSepsisResponse && (
-              <MeningococcalSepsisTray assessment={props.meningococcalSepsis}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.meningococcalSepsisGuidance}
-                demonstrating={props.meningococcalSepsisDemonstrating}
-                onAction={props.onMeningococcalSepsisResponse ?? (() => {})} />
-            )}
-            {hasRenalHypermagnesemiaResponse && (
-              <RenalHypermagnesemiaTray assessment={props.renalHypermagnesemia} guidance={props.renalHypermagnesemiaGuidance}
-                demonstrating={props.renalHypermagnesemiaDemonstrating}
-                scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onRenalHypermagnesemiaTutorSource}
-                onAction={props.onRenalHypermagnesemiaResponse ?? (() => {})} />
-            )}
-            {hasRenalHypocalcemiaResponse && (
-              <RenalHypocalcemiaTray assessment={props.renalHypocalcemia} guidance={props.renalHypocalcemiaGuidance}
-                demonstrating={props.renalHypocalcemiaDemonstrating}
-                scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onRenalHypocalcemiaTutorSource}
-                onAction={props.onRenalHypocalcemiaResponse ?? (() => {})} />
-            )}
-            {hasRenalHypernatremiaResponse && (
-              <RenalHypernatremiaTray assessment={props.renalHypernatremia} guidance={props.renalHypernatremiaGuidance}
-                demonstrating={props.renalHypernatremiaDemonstrating}
-                scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onRenalHypernatremiaTutorSource}
-                onAction={props.onRenalHypernatremiaResponse ?? (() => {})} />
-            )}
-            {hasRenalHyponatremiaResponse && (
-              <RenalHyponatremiaTray assessment={props.renalHyponatremia} guidance={props.renalHyponatremiaGuidance}
-                demonstrating={props.renalHyponatremiaDemonstrating}
-                scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onRenalHyponatremiaTutorSource}
-                onAction={props.onRenalHyponatremiaResponse ?? (() => {})} />
-            )}
-            {hasRefeedingResponse && (
-              <RefeedingTray assessment={props.resuscitation.refeeding} guidance={props.refeedingGuidance}
-                demonstrating={props.refeedingDemonstrating}
-                scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onRefeedingTutorSource}
-                onAction={props.onRefeedingResponse ?? (() => {})} />
-            )}
-            {hasAvpDeficiencyResponse && (
-              <AvpDeficiencyTray assessment={props.resuscitation.avpDeficiency} guidance={props.avpDeficiencyGuidance}
-                demonstrating={props.avpDeficiencyDemonstrating}
-                scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onAvpDeficiencyTutorSource}
-                onAction={props.onAvpDeficiencyResponse ?? (() => {})} />
-            )}
-            {hasHyponatremiaCorrectionResponse && (
-              <HyponatremiaCorrectionTray assessment={props.resuscitation.hyponatremiaCorrection} guidance={props.hyponatremiaCorrectionGuidance}
-                demonstrating={props.hyponatremiaCorrectionDemonstrating}
-                scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onHyponatremiaCorrectionTutorSource}
-                onAction={props.onHyponatremiaCorrectionResponse ?? (() => {})} />
-            )}
-            {hasHypocalcemiaResponse && (
-              <HypocalcemiaTray assessment={props.resuscitation.hypocalcemia} guidance={props.hypocalcemiaGuidance}
-                demonstrating={props.hypocalcemiaDemonstrating}
-                scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onHypocalcemiaTutorSource}
-                onAction={props.onHypocalcemiaResponse ?? (() => {})} />
-            )}
-            {hasHypercalcemiaResponse && (
-              <HypercalcemiaTray assessment={props.resuscitation.hypercalcemia} guidance={props.hypercalcemiaGuidance}
-                demonstrating={props.hypercalcemiaDemonstrating}
-                scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onHypercalcemiaTutorSource}
-                onAction={props.onHypercalcemiaResponse ?? (() => {})} />
-            )}
-            {hasMyxedemaResponse && (
-              <MyxedemaTray assessment={props.resuscitation.myxedema} guidance={props.myxedemaGuidance}
-                demonstrating={props.myxedemaDemonstrating}
-                scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onMyxedemaTutorSource}
-                onAction={props.onMyxedemaResponse ?? (() => {})} />
-            )}
-            {hasThyroidStormResponse && (
-              <ThyroidStormTray assessment={props.resuscitation.thyroidStorm} guidance={props.thyroidGuidance}
-                demonstrating={props.thyroidDemonstrating}
-                scenarioVersion={props.scenario.metadata.version} onOpenSource={props.onThyroidTutorSource}
-                onAction={props.onThyroidStormResponse ?? (() => {})} />
-            )}
-            {hasSevereHypoglycemiaResponse && (
-              <SevereHypoglycemiaTray assessment={props.resuscitation.severeHypoglycemia}
-                demonstrating={props.hypoglycemiaDemonstrating}
-                onAction={props.onSevereHypoglycemiaResponse ?? (() => {})} />
+                demonstrating={props.demonstratingLessonId === moduleTray.id}
+                onOpenSource={moduleTray.opensSource ? props.onLessonTutorSource : undefined}
+                onAction={(action: string) => props.onLessonAction?.(moduleTray.actionType, action)} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray

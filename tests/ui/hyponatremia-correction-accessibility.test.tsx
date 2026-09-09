@@ -11,6 +11,7 @@ import { useSession } from '@platform/session/session-store';
 import { HYPONATREMIA_AQUARESIS_AND_OVERCORRECTION as SCENARIO } from '../../src/modules/endocrine-metabolic/scenarios/hyponatremia-aquaresis-and-overcorrection';
 import { HyponatremiaCorrection } from '../../src/modules/endocrine-metabolic/hyponatremia-correction';
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
+import { ENDOCRINE_METABOLIC_TRAYS } from '../../src/modules/endocrine-metabolic/trays';
 
 vi.mock('@anesthesia/ui/MonitorRegion', () => ({ MonitorRegion: ({ onWhy }: { onWhy: (field: StateField) => void }) => <>
   {(['etco2MmHg', 'fio2', 'heartRateBpm'] as const).map((field) =>
@@ -33,7 +34,7 @@ describe('Post-rescue sodium nonvisual observation boundaries', () => {
       state: frame.state, equipment: frame.equipment, tick: frame.tick, play, pause, act: perform, alarms: [],
     });
     act(() => root.render(<Cockpit scenario={SCENARIO} region={UNITED_STATES}
-      moduleId="endocrine-metabolic" audio={new SonificationEngine()} onEnd={() => {}} />));
+      moduleId="endocrine-metabolic" trays={ENDOCRINE_METABOLIC_TRAYS} audio={new SonificationEngine()} onEnd={() => {}} />));
   });
   afterEach(() => {
     act(() => root.unmount()); container.remove(); useSession.setState(initialSession, true);

@@ -12,6 +12,7 @@ import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import { RENAL_HYPERNATREMIA_WATER_ACCESS_AND_LOSSES as SCENARIO } from '../../src/modules/renal-electrolyte/scenarios/hypernatremia-water-access-and-losses';
 import { RenalHypernatremia, RENAL_HYPERNATREMIA_VOLUME_TICKS as INITIAL,
   RENAL_HYPERNATREMIA_COMBINED_TICKS as COMBINED } from '../../src/modules/renal-electrolyte/hypernatremia';
+import { RENAL_ELECTROLYTE_TRAYS } from '../../src/modules/renal-electrolyte/trays';
 
 vi.mock('@anesthesia/ui/MonitorRegion', () => ({ MonitorRegion: ({ onWhy }: { onWhy: (field: StateField) => void }) => <>
   {(['etco2MmHg', 'fio2', 'heartRateBpm'] as const).map((field) =>
@@ -33,7 +34,7 @@ describe('Renal hypernatremia nonvisual observation boundaries', () => {
       state: frame.state, equipment: frame.equipment, tick: frame.tick, play, pause, act: perform, alarms: [],
     });
     act(() => root.render(<Cockpit scenario={SCENARIO} region={UNITED_STATES}
-      moduleId="renal-electrolyte" audio={new SonificationEngine()} onEnd={() => {}} />));
+      moduleId="renal-electrolyte" trays={RENAL_ELECTROLYTE_TRAYS} audio={new SonificationEngine()} onEnd={() => {}} />));
   });
   afterEach(() => {
     act(() => root.unmount()); container.remove(); useSession.setState(initialSession, true);

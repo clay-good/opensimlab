@@ -12,6 +12,7 @@ import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import { RENAL_HYPERMAGNESEMIA_ANTAGONISM_AND_REMOVAL as SCENARIO } from '../../src/modules/renal-electrolyte/scenarios/hypermagnesemia-antagonism-and-removal';
 import { RenalHypermagnesemia, RENAL_HYPERMAGNESEMIA_CALCIUM_TICKS as CALCIUM,
   RENAL_HYPERMAGNESEMIA_REMOVAL_TICKS as REMOVAL } from '../../src/modules/renal-electrolyte/hypermagnesemia';
+import { RENAL_ELECTROLYTE_TRAYS } from '../../src/modules/renal-electrolyte/trays';
 
 vi.mock('@anesthesia/ui/MonitorRegion', () => ({ MonitorRegion: ({ onWhy }: { onWhy: (field: StateField) => void }) => <>
   {(['etco2MmHg', 'fio2', 'heartRateBpm'] as const).map((field) =>
@@ -33,7 +34,7 @@ describe('Renal hypermagnesemia nonvisual observation boundaries', () => {
       state: frame.state, equipment: frame.equipment, tick: frame.tick, play, pause, act: perform, alarms: [],
     });
     act(() => root.render(<Cockpit scenario={SCENARIO} region={UNITED_STATES}
-      moduleId="renal-electrolyte" audio={new SonificationEngine()} onEnd={() => {}} />));
+      moduleId="renal-electrolyte" trays={RENAL_ELECTROLYTE_TRAYS} audio={new SonificationEngine()} onEnd={() => {}} />));
   });
   afterEach(() => {
     act(() => root.unmount()); container.remove(); useSession.setState(initialSession, true);

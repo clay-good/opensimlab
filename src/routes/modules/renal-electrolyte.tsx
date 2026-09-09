@@ -8,6 +8,7 @@ import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRou
 import { DEFAULT_RENAL_ELECTROLYTE_SCENARIO_ID, RENAL_ELECTROLYTE_SCENARIOS, getRenalElectrolyteScenario } from '../../modules/renal-electrolyte/scenarios';
 import { RENAL_ELECTROLYTE_LIMITATIONS } from '@platform/docs/limitations/renal-electrolyte';
 import { RENAL_ELECTROLYTE_DEMONSTRATIONS } from '../../modules/renal-electrolyte/demo/demonstrations';
+import { RENAL_ELECTROLYTE_TRAYS } from '../../modules/renal-electrolyte/trays';
 
 const RENAL_ELECTROLYTE_CONFIG: ClinicalModuleConfig = {
   id: 'renal-electrolyte', basePath: '/renal-electrolyte',
@@ -19,6 +20,7 @@ const RENAL_ELECTROLYTE_CONFIG: ClinicalModuleConfig = {
   defaultScenarioId: DEFAULT_RENAL_ELECTROLYTE_SCENARIO_ID,
   getScenario: getRenalElectrolyteScenario,
   demonstrations: RENAL_ELECTROLYTE_DEMONSTRATIONS,
+  trays: RENAL_ELECTROLYTE_TRAYS,
 };
 
 export function RenalElectrolyteRoute({ path }: { path: string }) {

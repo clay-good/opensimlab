@@ -38,10 +38,22 @@ through `ClinicalModuleConfig.demonstrations`, so nothing else needs wiring, and
 `moduleId:scenarioId@version` key to `src/modules/anesthesia/demo/worked-example-keys.ts` so the
 prebrief offers it.
 
-Do not add a `use<Lesson>Demonstration` call to `Cockpit.tsx`. Every lesson that has one puts its
-narration in the chunk all sixteen modules download, which is what
-`tests/unit/module-chunking.test.ts` guards. A handful of older lessons still read more than the
-resuscitation snapshot and keep their hooks there; a new lesson should not join them.
+Register the lesson's action tray the same way, in `src/modules/<module>/trays.ts`:
+
+```ts
+{ id: 'YourLesson', actionType: 'your-lesson-response', supports: supportsYourLesson,
+  assessment: (r) => r?.yourLesson, Component: YourLessonTray as LessonTray['Component'] },
+```
+
+Use the same `id` in both files — that is how the cockpit knows which tray a worked example is
+driving. The tray gets `guidance`, `scenarioVersion`, `demonstrating` and `onAction` from the
+cockpit; set `opensSource: true` if it shows a source link.
+
+Do not add a `use<Lesson>Demonstration` call to `Cockpit.tsx` or a tray block to
+`ActionCockpit.tsx`. Every lesson written into either puts its narration and controls in the chunk
+all sixteen modules download, which is what `tests/unit/module-chunking.test.ts` guards. Older
+lessons still written out there are ones that read more than the resuscitation snapshot; a new
+lesson should not join them.
 
 ## Publish quality evidence
 

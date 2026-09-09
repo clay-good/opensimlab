@@ -97,11 +97,20 @@ describe('Requirement: One Module Downloads One Catalogue', () => {
     // 878.5 KB gz and the shared cockpit chunk from 652.2 to 538.3, so the guard comes down to
     // 900 rather than staying loose at 1000.
     //
-    // Two things are still shared and are the next lever, in this order: `ActionCockpit.tsx`
-    // statically imports all 48 lesson trays, and a tray pulls its lesson's tutor. Moving those
-    // is harder than this was — 294 test files render `ActionCockpit` through
-    // `renderToStaticMarkup`, which will not serve Suspense, so `React.lazy` is not available.
-    // Raising this number is not the answer to either; measure the graph and move the boundary.
-    expect(gzipBytes(anesthesia) / 1024).toBeLessThan(900);
+    // The 48 lesson trays followed, by the same route: a module supplies them through
+    // `ClinicalModuleConfig.trays` and the cockpit renders whichever one the scenario matches,
+    // naming no lesson. It could be one block because the props are uniform — `guidance` was
+    // `session.guidance` at all 202 call sites and the handler was the same
+    // `session.act({ type, payload: { action } })` at 198 of 201. Stubbing the trays first
+    // measured the prize at 98.9 KB gz; the migration collected 101.5. The graph fell from
+    // 878.5 to 776.9 KB gz and the shared chunk from 538.3 to 436.8, so the guard comes down
+    // again, to 800.
+    //
+    // What is left is the ~167 lesson trays written inline in `ActionCockpit.tsx` itself,
+    // which is why that file is still 164 KB gz of source. They are the next lever, and the
+    // seam above is the one to extend to them. Note `React.lazy` is NOT available for any of
+    // this: 294 test files render `ActionCockpit` through `renderToStaticMarkup`, which will
+    // not serve Suspense. Raising this number is not the answer; measure and move the boundary.
+    expect(gzipBytes(anesthesia) / 1024).toBeLessThan(800);
   });
 });

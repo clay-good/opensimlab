@@ -21,6 +21,7 @@ import { hyponatremiaCorrectionDemonstrationStep, supportsHyponatremiaCorrection
   HYPONATREMIA_CORRECTION_DEMONSTRATION_VERSION } from '../../src/modules/endocrine-metabolic/demo/hyponatremia-correction-demonstration';
 import { useHyponatremiaCorrectionDemonstration } from '../../src/modules/endocrine-metabolic/demo/useHyponatremiaCorrectionDemonstration';
 import { LIMITATIONS } from '@platform/docs/limitations';
+import { ENDOCRINE_METABOLIC_TRAYS } from '../../src/modules/endocrine-metabolic/trays';
 
 const VERSION = '0.1.0';
 const labels: Record<HyponatremiaCorrectionAction, string> = {
@@ -76,7 +77,7 @@ describe('Post-rescue sodium correction experience', () => {
     expect(container.textContent).not.toContain('90-second');
     const example = [...container.querySelectorAll('button')].find((button) => button.textContent === 'Watch a worked example')!;
     act(() => example.click()); expect(watch).toHaveBeenCalledOnce(); expect(start).not.toHaveBeenCalled();
-    expect(crisisResponseAvailability(SCENARIO)).toMatchObject({ hasHyponatremiaCorrectionResponse: true, hasSevereHyponatremiaResponse: false });
+    expect(crisisResponseAvailability(SCENARIO, [], ENDOCRINE_METABOLIC_TRAYS)).toMatchObject({ hasHyponatremiaCorrectionResponse: true, hasSevereHyponatremiaResponse: false });
   });
 
   it('keeps the original baseline and supplied first hour without leaking new results', () => {

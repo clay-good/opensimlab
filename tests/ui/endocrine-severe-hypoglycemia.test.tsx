@@ -10,6 +10,7 @@ import { SevereHypoglycemia } from '../../src/modules/endocrine-metabolic/severe
 import { HYPOGLYCEMIA_FIXTURES } from '../../src/modules/endocrine-metabolic/severe-hypoglycemia-fixtures';
 import { SEVERE_HYPOGLYCEMIA_RECURRENCE as SCENARIO } from '../../src/modules/endocrine-metabolic/scenarios/severe-hypoglycemia-recurrence';
 import { LIMITATIONS } from '@platform/docs/limitations';
+import { ENDOCRINE_METABOLIC_TRAYS } from '../../src/modules/endocrine-metabolic/trays';
 
 const markup = (model: SevereHypoglycemia, tick: number) => renderToStaticMarkup(createElement(SevereHypoglycemiaTray, { assessment: model.snapshot(tick), onAction: () => {} }));
 
@@ -21,8 +22,8 @@ describe('Severe hypoglycemia experience', () => {
     const briefing = renderToStaticMarkup(createElement(Prebrief, { limitations: LIMITATIONS, scenario: SCENARIO, region: UNITED_STATES, environment: 'endocrine-metabolic', guidance: 'coached', onGuidance: () => {}, onStart: () => {} }));
     expect(briefing).not.toContain('prompts are not yet available');
     expect(briefing).toContain('Guided — prompt me');
-    expect(crisisResponseAvailability(SCENARIO).hasSevereHypoglycemiaResponse).toBe(true);
-    expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasSevereHypoglycemiaResponse).toBe(false);
+    expect(crisisResponseAvailability(SCENARIO, [], ENDOCRINE_METABOLIC_TRAYS).hasSevereHypoglycemiaResponse).toBe(true);
+    expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }, [], ENDOCRINE_METABOLIC_TRAYS).hasSevereHypoglycemiaResponse).toBe(false);
   });
   it('offers distinct choices without exposing hidden glucose or medication findings', () => {
     const model = new SevereHypoglycemia(); const html = markup(model, 0);

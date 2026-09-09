@@ -107,6 +107,7 @@ import { renalHyponatremiaReportActions } from '../modules/renal-electrolyte/hyp
 import { renalHypokalemiaReportActions } from '../modules/renal-electrolyte/hypokalemia-reporting';
 import { offersWorkedExample } from '@anesthesia/demo/worked-examples';
 import type { LessonDemonstration } from '@anesthesia/demo/lesson-demonstration';
+import type { LessonTray } from '@anesthesia/ui/lesson-tray';
 import { Cockpit } from '@anesthesia/ui/Cockpit';
 import { Debrief } from '@anesthesia/ui/Debrief';
 import { assertTranscriptIsAnonymous, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
@@ -152,6 +153,8 @@ export interface ClinicalModuleConfig {
    * the cockpit's own hooks yet supplies nothing.
    */
   readonly demonstrations?: readonly LessonDemonstration[];
+  /** This module's lesson trays, carried for the same reason as its worked examples. */
+  readonly trays?: readonly LessonTray[];
 }
 
 /**
@@ -1058,6 +1061,7 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
       onEnd={session.end}
       moduleId={config.id}
       demonstrations={config.demonstrations}
+      trays={config.trays}
       onReportSource={() => requestReport('source')}
       onSourceVisibilityChange={setSourceOpen}
     />

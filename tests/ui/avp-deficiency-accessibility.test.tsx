@@ -14,6 +14,7 @@ import { AvpDeficiency, AVP_DEFICIENCY_VOLUME_TICKS as VOLUME, AVP_DEFICIENCY_DE
   AVP_DEFICIENCY_UNCONTROLLED_TICKS as UNCONTROLLED, AVP_DEFICIENCY_RESPONSE_TICKS as RESPONSE,
 } from '../../src/modules/endocrine-metabolic/avp-deficiency';
 import { AVP_DEFICIENCY_FIXTURES as FIXTURES } from '../../src/modules/endocrine-metabolic/avp-deficiency-fixtures';
+import { ENDOCRINE_METABOLIC_TRAYS } from '../../src/modules/endocrine-metabolic/trays';
 
 vi.mock('@anesthesia/ui/MonitorRegion', () => ({ MonitorRegion: ({ onWhy }: { onWhy: (field: StateField) => void }) => <>
   {(['etco2MmHg', 'fio2', 'heartRateBpm'] as const).map((field) =>
@@ -35,7 +36,7 @@ describe('Known AVP deficiency nonvisual observation boundaries', () => {
       state: frame.state, equipment: frame.equipment, tick: frame.tick, play, pause, act: perform, alarms: [],
     });
     act(() => root.render(<Cockpit scenario={SCENARIO} region={UNITED_STATES}
-      moduleId="endocrine-metabolic" audio={new SonificationEngine()} onEnd={() => {}} />));
+      moduleId="endocrine-metabolic" trays={ENDOCRINE_METABOLIC_TRAYS} audio={new SonificationEngine()} onEnd={() => {}} />));
   });
   afterEach(() => {
     act(() => root.unmount()); container.remove(); useSession.setState(initialSession, true);

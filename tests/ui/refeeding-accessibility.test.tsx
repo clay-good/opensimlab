@@ -12,6 +12,7 @@ import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import { REFEEDING_ELECTROLYTE_SHIFT as SCENARIO } from '../../src/modules/endocrine-metabolic/scenarios/refeeding-electrolyte-shift';
 import { Refeeding, REFEEDING_ELECTROLYTE_TICKS as EARLY, REFEEDING_RECURRENCE_TICKS as RECURRENCE,
   REFEEDING_RESPONSE_TICKS as RESPONSE } from '../../src/modules/endocrine-metabolic/refeeding';
+import { ENDOCRINE_METABOLIC_TRAYS } from '../../src/modules/endocrine-metabolic/trays';
 
 vi.mock('@anesthesia/ui/MonitorRegion', () => ({ MonitorRegion: ({ onWhy }: { onWhy: (field: StateField) => void }) => <>
   {(['etco2MmHg', 'fio2', 'heartRateBpm'] as const).map((field) =>
@@ -33,7 +34,7 @@ describe('Refeeding nonvisual observation boundaries', () => {
       state: frame.state, equipment: frame.equipment, tick: frame.tick, play, pause, act: perform, alarms: [],
     });
     act(() => root.render(<Cockpit scenario={SCENARIO} region={UNITED_STATES}
-      moduleId="endocrine-metabolic" audio={new SonificationEngine()} onEnd={() => {}} />));
+      moduleId="endocrine-metabolic" trays={ENDOCRINE_METABOLIC_TRAYS} audio={new SonificationEngine()} onEnd={() => {}} />));
   });
   afterEach(() => {
     act(() => root.unmount()); container.remove(); useSession.setState(initialSession, true);

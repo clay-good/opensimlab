@@ -13,6 +13,7 @@ import { PERIOPERATIVE_DIABETES_INSULIN_CONTINUITY as SCENARIO } from '../../src
 import { PerioperativeDiabetes, PERIOPERATIVE_DIABETES_EARLY_TICKS as EARLY,
   PERIOPERATIVE_DIABETES_RESPONSE_TICKS as RESPONSE, PERIOPERATIVE_DIABETES_DELAY_TICKS as DELAY,
   PERIOPERATIVE_DIABETES_WORSENING_TICKS as WORSENING } from '../../src/modules/endocrine-metabolic/perioperative-diabetes';
+import { ENDOCRINE_METABOLIC_TRAYS } from '../../src/modules/endocrine-metabolic/trays';
 
 vi.mock('@anesthesia/ui/MonitorRegion', () => ({ MonitorRegion: ({ onWhy }: { onWhy: (field: StateField) => void }) => <>
   {(['etco2MmHg', 'fio2', 'heartRateBpm'] as const).map((field) =>
@@ -34,7 +35,7 @@ describe('Perioperative diabetes nonvisual observation boundaries', () => {
       state: frame.state, equipment: frame.equipment, tick: frame.tick, play, pause, act: perform, alarms: [],
     });
     act(() => root.render(<Cockpit scenario={SCENARIO} region={UNITED_STATES}
-      moduleId="endocrine-metabolic" audio={new SonificationEngine()} onEnd={() => {}} />));
+      moduleId="endocrine-metabolic" trays={ENDOCRINE_METABOLIC_TRAYS} audio={new SonificationEngine()} onEnd={() => {}} />));
   });
   afterEach(() => {
     act(() => root.unmount()); container.remove(); useSession.setState(initialSession, true);

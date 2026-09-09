@@ -8,6 +8,7 @@ import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRou
 import { DEFAULT_ONCOLOGY_SCENARIO_ID, ONCOLOGY_SCENARIOS, getOncologyScenario } from '../../modules/oncology/scenarios';
 import { ONCOLOGY_LIMITATIONS } from '@platform/docs/limitations/oncology';
 import { ONCOLOGY_DEMONSTRATIONS } from '../../modules/oncology/demo/demonstrations';
+import { ONCOLOGY_TRAYS } from '../../modules/oncology/trays';
 
 const ONCOLOGY_CONFIG: ClinicalModuleConfig = {
   id: 'oncology', basePath: '/oncology',
@@ -20,6 +21,7 @@ const ONCOLOGY_CONFIG: ClinicalModuleConfig = {
   defaultScenarioId: DEFAULT_ONCOLOGY_SCENARIO_ID,
   getScenario: getOncologyScenario,
   demonstrations: ONCOLOGY_DEMONSTRATIONS,
+  trays: ONCOLOGY_TRAYS,
 };
 
 export function OncologyRoute({ path }: { path: string }) {

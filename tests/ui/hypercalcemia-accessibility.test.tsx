@@ -10,6 +10,7 @@ import { SonificationEngine } from '@platform/audio/sonification';
 import { useSession } from '@platform/session/session-store';
 import { HYPERCALCEMIC_CRISIS_VOLUME_AND_BRIDGE as SCENARIO } from '../../src/modules/endocrine-metabolic/scenarios/hypercalcemic-crisis-volume-and-bridge';
 import { Hypercalcemia, HYPERCALCEMIA_BRIDGE_RESPONSE_TICKS } from '../../src/modules/endocrine-metabolic/hypercalcemia';
+import { ENDOCRINE_METABOLIC_TRAYS } from '../../src/modules/endocrine-metabolic/trays';
 
 // Real Cockpit keyboard handlers, store subscription, live regions, and Why drawer.
 // Only the canvas regions are replaced; these buttons exercise the actual Why wiring.
@@ -41,7 +42,7 @@ describe('Hypercalcemia nonvisual care and observation boundaries', () => {
       state: frame.state, equipment: frame.equipment, tick: frame.tick, play, pause, act: perform, alarms: [],
     });
     act(() => root.render(<Cockpit scenario={SCENARIO} region={UNITED_STATES}
-      moduleId="endocrine-metabolic" audio={new SonificationEngine()} onEnd={() => {}} />));
+      moduleId="endocrine-metabolic" trays={ENDOCRINE_METABOLIC_TRAYS} audio={new SonificationEngine()} onEnd={() => {}} />));
     return frame;
   }
   function read(key: 's' | 'w') {

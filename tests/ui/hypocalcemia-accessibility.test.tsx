@@ -11,6 +11,7 @@ import { useSession } from '@platform/session/session-store';
 import { HYPOCALCEMIC_TETANY_RESCUE_AND_RECURRENCE as SCENARIO } from '../../src/modules/endocrine-metabolic/scenarios/hypocalcemic-tetany-rescue-and-recurrence';
 import { Hypocalcemia, HYPOCALCEMIA_RESPONSE_TICKS } from '../../src/modules/endocrine-metabolic/hypocalcemia';
 import { ENDOCRINE_METABOLIC_DEMONSTRATIONS } from '../../src/modules/endocrine-metabolic/demo/demonstrations';
+import { ENDOCRINE_METABOLIC_TRAYS } from '../../src/modules/endocrine-metabolic/trays';
 
 // Real Cockpit keyboard handlers, store subscription, live regions, and Why drawer.
 // Only the canvas regions are replaced; these buttons exercise the actual Why wiring.
@@ -42,7 +43,7 @@ describe('Hypocalcemia nonvisual care and observation boundaries', () => {
       state: frame.state, equipment: frame.equipment, tick: frame.tick, play, pause, act: perform, alarms: [],
     });
     act(() => root.render(<Cockpit scenario={SCENARIO} region={UNITED_STATES}
-      moduleId="endocrine-metabolic" audio={new SonificationEngine()} onEnd={() => {}} />));
+      moduleId="endocrine-metabolic" trays={ENDOCRINE_METABOLIC_TRAYS} audio={new SonificationEngine()} onEnd={() => {}} />));
     return frame;
   }
   function read(key: 's' | 'w') {
@@ -152,7 +153,7 @@ describe('Hypocalcemia nonvisual care and observation boundaries', () => {
     // this module's registry, rather than a hook the cockpit imports for every
     // lesson in the catalog.
     const render = (demonstrating: boolean) => root.render(<Cockpit scenario={SCENARIO} region={UNITED_STATES}
-      moduleId="endocrine-metabolic" audio={audio} demonstrating={demonstrating} onEnd={() => {}}
+      moduleId="endocrine-metabolic" trays={ENDOCRINE_METABOLIC_TRAYS} audio={audio} demonstrating={demonstrating} onEnd={() => {}}
       demonstrations={ENDOCRINE_METABOLIC_DEMONSTRATIONS}
       onTakeControls={() => { take(); render(false); }} />);
     act(() => render(true));
