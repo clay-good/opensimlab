@@ -13,6 +13,13 @@
  * describes the paper it points at, and only the second one protects a reader who
  * follows a citation to check a number.
  *
+ * A second pass covers the entries with no PMID. 79 of them record a DOI in their
+ * locator or in what they were verified against, and Crossref answers for a DOI with
+ * the same four fields NCBI answers with, so the same comparison holds them. That
+ * takes the audit from 173 of 400 entries to 252. The remaining 148 are drug labels,
+ * society guidance and web pages that carry no machine-resolvable identifier at all;
+ * the script says so rather than counting them as passing.
+ *
  * This is a script rather than a test because it needs the network. The test
  * suite must stay hermetic and offline; correctness of an external record is a
  * thing you go and ask about, on demand and before a release.
@@ -20,9 +27,22 @@
  * Run: npm run verify:citations
  */
 import { SOURCES } from '../src/platform/docs/sources.ts';
+import { compare } from './citation-matching.ts';
 
 const ENDPOINT = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi';
+const CROSSREF = 'https://api.crossref.org/works';
+/** Crossref asks for a contact address so it can reach a script that misbehaves. */
+const CONTACT = 'opensimlab-citation-audit (mailto:hi@claygood.com)';
 const BATCH = 150;
+
+/**
+ * A DOI as it appears inside a locator string, which is prose rather than a field:
+ * `27:329-337; doi:10.1097/MEJ.0000000000000691`. Trailing sentence punctuation is
+ * excluded because a DOI at the end of a clause picks it up.
+ */
+const DOI_IN_TEXT = /\b(10\.\d{4,9}\/[^\s;,)]+?)[.,;)]?(?=\s|$)/;
+const doiOf = (source: { readonly locator?: string; readonly verifiedAgainst?: string }) =>
+  DOI_IN_TEXT.exec(source.locator ?? '')?.[1] ?? DOI_IN_TEXT.exec(source.verifiedAgainst ?? '')?.[1];
 
 interface Summary {
   readonly uid: string;
@@ -30,19 +50,6 @@ interface Summary {
   readonly source?: string;
   readonly pubdate?: string;
   readonly authors?: readonly { readonly name: string }[];
-}
-
-/** Lowercase alphanumerics only, so punctuation and case never make a false mismatch. */
-const normalise = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-
-/** A surname is the part a human checks first and the part least likely to be reformatted. */
-function surnames(authors: string): string[] {
-  return authors
-    .split(/,|\band\b/)
-    .map((part) => part.trim().replace(/\bet al\.?$/i, '').trim())
-    .filter(Boolean)
-    .map((part) => normalise(part).split(' ')[0] ?? '')
-    .filter((name) => name.length > 2);
 }
 
 async function summaries(ids: readonly string[]): Promise<Map<string, Summary>> {
@@ -59,6 +66,28 @@ async function summaries(ids: readonly string[]): Promise<Map<string, Summary>> 
   return found;
 }
 
+interface CrossrefWork {
+  readonly title?: readonly string[];
+  readonly 'container-title'?: readonly string[];
+  readonly issued?: { readonly 'date-parts'?: readonly (readonly number[])[] };
+  readonly author?: readonly { readonly family?: string; readonly name?: string }[];
+}
+
+async function crossrefWork(doi: string): Promise<CrossrefWork | null> {
+  const response = await fetch(`${CROSSREF}/${encodeURIComponent(doi)}`,
+    { headers: { 'User-Agent': CONTACT } });
+  // Crossref answers 404 for a DOI it does not register, which is a finding, not an outage.
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error(`Crossref returned ${response.status} for ${doi}`);
+  const body = await response.json() as { message?: CrossrefWork };
+  return body.message ?? null;
+}
+
+/**
+ * The same three comparisons both passes make, so a DOI-checked entry is held to the
+ * standard a PMID-checked one is: the title names the same paper, the year is within a
+ * year of the record's, and the first author is on it.
+ */
 const problems: string[] = [];
 const cited = SOURCES.filter((source) => source.pmid);
 const records = await summaries(cited.map((source) => source.pmid!));
@@ -66,37 +95,37 @@ const records = await summaries(cited.map((source) => source.pmid!));
 for (const source of cited) {
   const record = records.get(source.pmid!);
   if (!record) { problems.push(`${source.id}: PMID ${source.pmid} returned no record`); continue; }
-
-  // The title is the strongest signal, so a mismatch here is reported first and
-  // on its own: it almost always means the PMID names a different paper.
-  const claimed = normalise(source.title);
-  const actual = normalise(record.title ?? '');
-  const shared = claimed.split(' ').filter((word) => word.length > 4 && actual.includes(word)).length;
-  const meaningful = claimed.split(' ').filter((word) => word.length > 4).length;
-  if (meaningful > 0 && shared / meaningful < 0.6) {
-    problems.push(`${source.id}: PMID ${source.pmid} is a different paper\n`
-      + `    register: ${source.title}\n    pubmed:   ${record.title ?? '(none)'}`);
-    continue;
-  }
-
-  const recordYear = Number.parseInt((record.pubdate ?? '').slice(0, 4), 10);
-  if (Number.isFinite(recordYear) && Math.abs(recordYear - source.year) > 1) {
-    problems.push(`${source.id}: year ${source.year} but PubMed says ${recordYear}`);
-  }
-
-  const claimedNames = surnames(source.authors);
-  const actualNames = (record.authors ?? []).map((author) => normalise(author.name).split(' ')[0] ?? '');
-  const firstClaimed = claimedNames[0];
-  // Only the FIRST author is enforced. Guideline writing committees reorder and
-  // abbreviate the tail constantly, and a rule that fires on that would be noise
-  // nobody reads. A wrong first author is the misattribution that matters.
-  if (firstClaimed && actualNames.length > 0 && !actualNames.includes(firstClaimed)) {
-    problems.push(`${source.id}: first author "${firstClaimed}" is not on PMID ${source.pmid}\n`
-      + `    pubmed: ${(record.authors ?? []).slice(0, 4).map((a) => a.name).join(', ')}`);
-  }
+  compare(source, `PMID ${source.pmid}`, {
+    title: record.title ?? '',
+    year: Number.parseInt((record.pubdate ?? '').slice(0, 4), 10),
+    authors: (record.authors ?? []).map((author) => author.name),
+  }, problems);
 }
 
+// The entries with no PMID. Those recording a DOI are held to the same comparison
+// against Crossref; the rest are counted and named as unresolvable by machine.
+const uncited = SOURCES.filter((source) => !source.pmid);
+const byDoi = uncited
+  .map((source) => ({ source, doi: doiOf(source) }))
+  .filter((entry): entry is { source: typeof entry.source; doi: string } => !!entry.doi);
+
+for (const { source, doi } of byDoi) {
+  const work = await crossrefWork(doi);
+  if (!work) { problems.push(`${source.id}: DOI ${doi} is not registered with Crossref`); continue; }
+  compare(source, `DOI ${doi}`, {
+    title: work.title?.[0] ?? '',
+    year: work.issued?.['date-parts']?.[0]?.[0] ?? Number.NaN,
+    authors: (work.author ?? []).map((author) => author.family ?? author.name ?? ''),
+  }, problems);
+  // Crossref asks for a courteous rate rather than publishing a hard limit.
+  await new Promise((resolve) => { setTimeout(resolve, 120); });
+}
+
+const unresolvable = uncited.length - byDoi.length;
 process.stdout.write(`check-citations: ${cited.length} PMID-bearing entries checked against NCBI\n`);
+process.stdout.write(`check-citations: ${byDoi.length} DOI-bearing entries checked against Crossref\n`);
+process.stdout.write(`check-citations: ${unresolvable} entries carry neither a PMID nor a DOI `
+  + '-- drug labels, society guidance and web pages, which only a person can check\n');
 if (problems.length > 0) {
   process.stdout.write(`\n${problems.length} problem(s):\n\n${problems.join('\n')}\n`);
   process.exitCode = 1;
