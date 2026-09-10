@@ -7,6 +7,12 @@ import { ActionCockpit, crisisResponseAvailability,
   type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { PEDIATRIC_HYPOGLYCEMIC_SEIZURE as SCENARIO } from '../../src/modules/pediatrics/scenarios/pediatric-hypoglycemic-seizure';
+import { PEDIATRICS_TRAYS } from '../../src/modules/pediatrics/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, PEDIATRICS_TRAYS);
 
 describe('pediatric hypoglycemic-seizure private-tutor surface', () => {
   let container: HTMLDivElement; let root: Root;
@@ -26,7 +32,7 @@ describe('pediatric hypoglycemic-seizure private-tutor surface', () => {
     laterResponseAtTick: step > 4 ? 5 : null, handoffAtTick: step > 5 ? 6 : null,
   });
   function props(step = 0, onAction = vi.fn(), state = assessment(step)): ActionCockpitProps {
-    return { scenario: SCENARIO, region: UNITED_STATES, infusions: [],
+    return { scenario: SCENARIO, region: UNITED_STATES, lessonTrays: PEDIATRICS_TRAYS, infusions: [],
       hypnoticLine: { connected: true, inspected: false }, resuscitation: {
         epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
         lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0,
@@ -42,7 +48,7 @@ describe('pediatric hypoglycemic-seizure private-tutor surface', () => {
       onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {},
       onCallForHelp: () => {}, onAirwayDevice: () => {}, onEpinephrine: () => {},
       onDantrolene: () => {}, onActiveCooling: () => {},
-      onPediatricHypoglycemicSeizureResponse: onAction, onDrugCard: () => {} };
+      onLessonAction: (_type: string, action: string) => onAction(action as never), onDrugCard: () => {} };
   }
 
   it('shows two calm named cards and the exact progressive actions at 320px', () => {
@@ -93,15 +99,15 @@ describe('pediatric hypoglycemic-seizure private-tutor surface', () => {
   });
 
   it('requires the exact scenario id and exact narrative target', () => {
-    expect(crisisResponseAvailability(SCENARIO, [])
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO)
       .hasPediatricHypoglycemicSeizureResponse).toBe(true);
     const wrongId = { ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'not-pediatric-hypoglycemia' } };
-    expect(crisisResponseAvailability(wrongId, [])
+    expect(crisisResponseAvailabilityWithTrays(wrongId, [])
       .hasPediatricHypoglycemicSeizureResponse).toBe(false);
     const wrongTarget = { ...SCENARIO, timeline: SCENARIO.timeline.map((event) => ({
       ...event, target: 'pediatric-hypoglycemic-seizure-reassessment-suffix',
     })) };
-    expect(crisisResponseAvailability(wrongTarget, [])
+    expect(crisisResponseAvailabilityWithTrays(wrongTarget, [])
       .hasPediatricHypoglycemicSeizureResponse).toBe(false);
   });
 });

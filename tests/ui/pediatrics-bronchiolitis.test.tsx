@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { PEDIATRICS_TRAYS } from '../../src/modules/pediatrics/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, PEDIATRICS_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { BRONCHIOLITIS as SCENARIO } from '../../src/modules/pediatrics/scenarios/bronchiolitis';
 
@@ -55,7 +61,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['bronchiolitisAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: PEDIATRICS_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, bronchiolitisAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 70, respiratoryRateBpm: 58, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -64,7 +70,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onBronchiolitisResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -84,8 +90,8 @@ describe('Pediatric bronchiolitis experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasBronchiolitisResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasBronchiolitisResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'bronchiolitis-reassessment'),
     }).hasBronchiolitisResponse).toBe(false);
@@ -130,49 +136,49 @@ describe('Pediatric bronchiolitis experience', () => {
 describe('Bronchiolitis tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { bronchiolitisGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { bronchiolitisGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('the feeding history with it');
-    const pattern = markup(RECOGNIZED, { bronchiolitisGuidance: 'guided' });
+    const pattern = markup(RECOGNIZED, { guidance: 'guided' });
     expect(pattern).toContain('supportive-care pattern it is');
     expect(pattern).not.toContain('the feeding history with it');
   });
 
   it('answers the two ways of avoiding the pattern differently', () => {
-    const xray = markup(AFTER_XRAY, { bronchiolitisGuidance: 'guided' });
+    const xray = markup(AFTER_XRAY, { guidance: 'guided' });
     expect(xray).toContain('A film will not change what he needs today');
     expect(xray).not.toContain('Watching the number is not the same');
-    const sat = markup(AFTER_SAT, { bronchiolitisGuidance: 'guided' });
+    const sat = markup(AFTER_SAT, { guidance: 'guided' });
     expect(sat).toContain('Watching the number is not the same as watching the baby');
     expect(sat).not.toContain('A film will not change what he needs today');
   });
 
   it('answers the two treatments differently', () => {
-    const alb = markup(AFTER_ALBUTEROL, { bronchiolitisGuidance: 'guided' });
+    const alb = markup(AFTER_ALBUTEROL, { guidance: 'guided' });
     expect(alb).toContain('It is not asthma, and this is his first episode');
     expect(alb).not.toContain('not a bacterial focus');
-    const abx = markup(AFTER_ANTIBIOTIC, { bronchiolitisGuidance: 'guided' });
+    const abx = markup(AFTER_ANTIBIOTIC, { guidance: 'guided' });
     expect(abx).toContain('is not a bacterial focus');
     expect(abx).not.toContain('It is not asthma, and this is his first episode');
   });
 
   it('answers discharge on a number', () => {
-    const html = markup(AFTER_DISCHARGE, { bronchiolitisGuidance: 'guided' });
+    const html = markup(AFTER_DISCHARGE, { guidance: 'guided' });
     expect(html).toContain('not a baby who is ready to go home');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(DONE, { bronchiolitisGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { bronchiolitisGuidance: 'guided', bronchiolitisDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'Bronchiolitis' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

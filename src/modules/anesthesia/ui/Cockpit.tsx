@@ -1853,38 +1853,6 @@ export function Cockpit({
           obstetricsMaternalNeonatalHandoffDemonstrating={demonstrating && registryDemo?.id === 'MaternalNeonatalHandoff'}
           obstetricsOxytocinTachysystoleGuidance={session.guidance}
           obstetricsOxytocinTachysystoleDemonstrating={demonstrating && registryDemo?.id === 'OxytocinTachysystole'}
-          pediatricRespiratoryDistressGuidance={session.guidance}
-          pediatricRespiratoryDistressDemonstrating={demonstrating && registryDemo?.id === 'PediatricRespiratoryDistress'}
-          bronchiolitisGuidance={session.guidance}
-          bronchiolitisDemonstrating={demonstrating && registryDemo?.id === 'Bronchiolitis'}
-          croupGuidance={session.guidance}
-          croupDemonstrating={demonstrating && registryDemo?.id === 'Croup'}
-          pediatricStatusAsthmaticusGuidance={session.guidance}
-          pediatricStatusAsthmaticusDemonstrating={demonstrating && registryDemo?.id === 'PediatricStatusAsthmaticus'}
-          pediatricSepsisGuidance={session.guidance}
-          pediatricSepsisDemonstrating={demonstrating && registryDemo?.id === 'PediatricSepsis'}
-          pediatricSepticShockGuidance={session.guidance}
-          pediatricSepticShockDemonstrating={demonstrating && registryDemo?.id === 'PediatricSepticShock'}
-          pediatricDehydrationGuidance={session.guidance}
-          pediatricDehydrationDemonstrating={demonstrating && registryDemo?.id === 'PediatricDehydration'}
-          pediatricDkaGuidance={session.guidance}
-          pediatricDkaDemonstrating={demonstrating && registryDemo?.id === 'PediatricDka'}
-          pediatricHypoglycemicSeizureGuidance={session.guidance}
-          pediatricHypoglycemicSeizureDemonstrating={demonstrating && registryDemo?.id === 'PediatricHypoglycemicSeizure'}
-          pediatricFebrileSeizureGuidance={session.guidance}
-          pediatricFebrileSeizureDemonstrating={demonstrating && registryDemo?.id === 'PediatricFebrileSeizure'}
-          pediatricStatusEpilepticusGuidance={session.guidance}
-          pediatricStatusEpilepticusDemonstrating={demonstrating && registryDemo?.id === 'PediatricStatusEpilepticus'}
-          pediatricAnaphylaxisGuidance={session.guidance}
-          pediatricAnaphylaxisDemonstrating={demonstrating && registryDemo?.id === 'PediatricAnaphylaxis'}
-          pediatricSvtGuidance={session.guidance}
-          pediatricSvtDemonstrating={demonstrating && registryDemo?.id === 'PediatricSvt'}
-          pediatricBradycardicArrestGuidance={session.guidance}
-          pediatricBradycardicArrestDemonstrating={demonstrating && registryDemo?.id === 'PediatricBradycardicArrest'}
-          pediatricFbaoGuidance={session.guidance}
-          pediatricFbaoDemonstrating={demonstrating && registryDemo?.id === 'PediatricFbao'}
-          pediatricInjurySafeguardingGuidance={session.guidance}
-          pediatricInjurySafeguardingDemonstrating={demonstrating && registryDemo?.id === 'PediatricInjurySafeguarding'}
           hemorrhagicShockGuidance={session.guidance}
           hemorrhagicShockDemonstrating={demonstrating && registryDemo?.id === 'HemorrhagicShock'}
           undifferentiatedShockGuidance={session.guidance}
@@ -2054,54 +2022,6 @@ export function Cockpit({
           })}
           onHyponatremiaResponse={(action) => session.act({
             type: 'hyponatremia-response', payload: { action },
-          })}
-          onPediatricRespiratoryDistressResponse={(action) => session.act({
-            type: 'pediatric-respiratory-distress-response', payload: { action },
-          })}
-          onBronchiolitisResponse={(action) => session.act({
-            type: 'bronchiolitis-response', payload: { action },
-          })}
-          onCroupResponse={(action) => session.act({
-            type: 'croup-response', payload: { action },
-          })}
-          onPediatricStatusAsthmaticusResponse={(action) => session.act({
-            type: 'pediatric-status-asthmaticus-response', payload: { action },
-          })}
-          onPediatricSepsisResponse={(action) => session.act({
-            type: 'pediatric-sepsis-response', payload: { action },
-          })}
-          onPediatricSepticShockResponse={(action) => session.act({
-            type: 'pediatric-septic-shock-response', payload: { action },
-          })}
-          onPediatricDehydrationResponse={(action) => session.act({
-            type: 'pediatric-dehydration-response', payload: { action },
-          })}
-          onPediatricDiabeticKetoacidosisResponse={(action) => session.act({
-            type: 'pediatric-diabetic-ketoacidosis-response', payload: { action },
-          })}
-          onPediatricHypoglycemicSeizureResponse={(action) => session.act({
-            type: 'pediatric-hypoglycemic-seizure-response', payload: { action },
-          })}
-          onPediatricFebrileSeizureResponse={(action) => session.act({
-            type: 'pediatric-febrile-seizure-response', payload: { action },
-          })}
-          onPediatricStatusEpilepticusResponse={(action) => session.act({
-            type: 'pediatric-status-epilepticus-response', payload: { action },
-          })}
-          onPediatricAnaphylaxisResponse={(action) => session.act({
-            type: 'pediatric-anaphylaxis-response', payload: { action },
-          })}
-          onPediatricSupraventricularTachycardiaResponse={(action) => session.act({
-            type: 'pediatric-supraventricular-tachycardia-response', payload: { action },
-          })}
-          onPediatricBradycardicArrestResponse={(action) => session.act({
-            type: 'pediatric-bradycardic-arrest-response', payload: { action },
-          })}
-          onPediatricForeignBodyAirwayObstructionResponse={(action) => session.act({
-            type: 'pediatric-foreign-body-airway-obstruction-response', payload: { action },
-          })}
-          onPediatricInjurySafeguardingResponse={(action) => session.act({
-            type: 'pediatric-injury-safeguarding-escalation-response', payload: { action },
           })}
           onToxicologyMethemoglobinemiaResponse={(action) => session.act({
             type: 'methemoglobinemia-saturation-gap-response', payload: { action },

@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { PEDIATRICS_TRAYS } from '../../src/modules/pediatrics/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, PEDIATRICS_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { PEDIATRIC_RESPIRATORY_DISTRESS as SCENARIO } from '../../src/modules/pediatrics/scenarios/pediatric-respiratory-distress';
 
@@ -54,7 +60,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['pediatricRespiratoryDistressAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: PEDIATRICS_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, pediatricRespiratoryDistressAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 140, respiratoryRateBpm: 46, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -63,7 +69,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onPediatricRespiratoryDistressResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -83,9 +89,9 @@ describe('Pediatric respiratory-distress experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasPediatricRespiratoryDistressResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasPediatricRespiratoryDistressResponse).toBe(true);
     // Throughout this module the targets carry a -reassessment suffix the ids do not.
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'pediatric-respiratory-distress-reassessment'),
     }).hasPediatricRespiratoryDistressResponse).toBe(false);
@@ -126,45 +132,45 @@ describe('Pediatric respiratory-distress experience', () => {
 describe('Pediatric respiratory-distress tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { pediatricRespiratoryDistressGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { pediatricRespiratoryDistressGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('let no single number speak for her');
-    const supporting = markup(RECOGNIZED, { pediatricRespiratoryDistressGuidance: 'guided' });
+    const supporting = markup(RECOGNIZED, { guidance: 'guided' });
     expect(supporting).toContain('qualified oxygenation started now');
     expect(supporting).not.toContain('let no single number speak for her');
   });
 
   it('answers the specific reading at the first decision point', () => {
-    const history = markup(AFTER_HISTORY, { pediatricRespiratoryDistressGuidance: 'guided' });
+    const history = markup(AFTER_HISTORY, { guidance: 'guided' });
     expect(history).toContain('Just not instead of this');
     expect(history).not.toContain('It will not help with the breathing');
-    const imaging = markup(AFTER_IMAGING, { pediatricRespiratoryDistressGuidance: 'guided' });
+    const imaging = markup(AFTER_IMAGING, { guidance: 'guided' });
     expect(imaging).toContain('It will not help with the breathing');
     expect(imaging).not.toContain('Just not instead of this');
   });
 
   it('answers the improved saturation and the falling rate differently', () => {
-    const single = markup(AFTER_SINGLE, { pediatricRespiratoryDistressGuidance: 'guided' });
+    const single = markup(AFTER_SINGLE, { guidance: 'guided' });
     expect(single).toContain('The number moved. The child did not.');
     expect(single).not.toContain('That is her running out');
-    const falling = markup(AFTER_FALLING, { pediatricRespiratoryDistressGuidance: 'guided' });
+    const falling = markup(AFTER_FALLING, { guidance: 'guided' });
     expect(falling).toContain('That is her running out');
     expect(falling).toContain('the most dangerous reassuring number in pediatrics');
     expect(falling).not.toContain('The number moved. The child did not.');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(DONE, { pediatricRespiratoryDistressGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { pediatricRespiratoryDistressGuidance: 'guided', pediatricRespiratoryDistressDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'PediatricRespiratoryDistress' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

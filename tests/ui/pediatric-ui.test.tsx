@@ -24,6 +24,12 @@ import { PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION } from '../../src/modules/ped
 import { PrerenderedBody } from '../../src/routes/Prerendered';
 import { ROUTES } from '../../src/routes/routes';
 import { LIMITATIONS } from '@platform/docs/limitations';
+import { PEDIATRICS_TRAYS } from '../../src/modules/pediatrics/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, PEDIATRICS_TRAYS);
 
 const CHILD_SCENARIO = {
   ...ROUTINE_INDUCTION,
@@ -75,6 +81,7 @@ describe('Requirement: pediatric controls expose their actual-weight conversions
     onFluid = vi.fn(), scenario: ActionCockpitProps['scenario'] = CHILD_SCENARIO,
   ) {
     const props: ActionCockpitProps = {
+      lessonTrays: PEDIATRICS_TRAYS,
       scenario,
       region: UNITED_STATES,
       infusions: [],
@@ -202,7 +209,7 @@ describe('Requirement: pediatric status epilepticus stays calm and bounded on a 
   });
   function statusProps(step = 0, onAction = vi.fn(), state = assessment(step)):
   ActionCockpitProps {
-    return { scenario: PEDIATRIC_STATUS_EPILEPTICUS, region: UNITED_STATES, infusions: [],
+    return { lessonTrays: PEDIATRICS_TRAYS, scenario: PEDIATRIC_STATUS_EPILEPTICUS, region: UNITED_STATES, infusions: [],
       hypnoticLine: { connected: true, inspected: false }, resuscitation: {
         epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
         lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0,
@@ -218,7 +225,7 @@ describe('Requirement: pediatric status epilepticus stays calm and bounded on a 
       onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {},
       onCallForHelp: () => {}, onAirwayDevice: () => {}, onEpinephrine: () => {},
       onDantrolene: () => {}, onActiveCooling: () => {},
-      onPediatricStatusEpilepticusResponse: onAction, onDrugCard: () => {} };
+      onLessonAction: (_type: string, action: string) => onAction(action as never), onDrugCard: () => {} };
   }
 
   it('uses two named cards, one live status, and exact progressive action density', () => {
@@ -264,17 +271,17 @@ describe('Requirement: pediatric status epilepticus stays calm and bounded on a 
     expect(container.textContent).toContain('Visible movements stopped.');
     expect(container.textContent).toContain('do not prove electrographic seizure control');
     expect(container.textContent).not.toMatch(/\b4 mg\b|mg\/kg|lorazepam|midazolam|levetiracetam|fosphenytoin|intravenous|intraosseous|oxygen flow|tube size/i);
-    expect(crisisResponseAvailability(PEDIATRIC_STATUS_EPILEPTICUS, [])
+    expect(crisisResponseAvailabilityWithTrays(PEDIATRIC_STATUS_EPILEPTICUS, [])
       .hasPediatricStatusEpilepticusResponse).toBe(true);
     const wrongId = { ...PEDIATRIC_STATUS_EPILEPTICUS,
       metadata: { ...PEDIATRIC_STATUS_EPILEPTICUS.metadata, id: 'not-pediatric-status' } };
-    expect(crisisResponseAvailability(wrongId, []).hasPediatricStatusEpilepticusResponse)
+    expect(crisisResponseAvailabilityWithTrays(wrongId, []).hasPediatricStatusEpilepticusResponse)
       .toBe(false);
     const wrongTarget = { ...PEDIATRIC_STATUS_EPILEPTICUS,
       timeline: PEDIATRIC_STATUS_EPILEPTICUS.timeline.map((event) => ({
         ...event, target: 'pediatric-status-epilepticus-reassessment-suffix',
       })) };
-    expect(crisisResponseAvailability(wrongTarget, []).hasPediatricStatusEpilepticusResponse)
+    expect(crisisResponseAvailabilityWithTrays(wrongTarget, []).hasPediatricStatusEpilepticusResponse)
       .toBe(false);
   });
 });
@@ -302,7 +309,7 @@ describe('Requirement: pediatric anaphylaxis keeps one calm action at a time', (
   });
   function anaphylaxisProps(step = 0, onAction = vi.fn(), state = assessment(step)):
   ActionCockpitProps {
-    return { scenario: PEDIATRIC_ANAPHYLAXIS, region: UNITED_STATES, infusions: [],
+    return { lessonTrays: PEDIATRICS_TRAYS, scenario: PEDIATRIC_ANAPHYLAXIS, region: UNITED_STATES, infusions: [],
       hypnoticLine: { connected: true, inspected: false }, resuscitation: {
         epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
         lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0,
@@ -318,7 +325,7 @@ describe('Requirement: pediatric anaphylaxis keeps one calm action at a time', (
       onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {},
       onCallForHelp: () => {}, onAirwayDevice: () => {}, onEpinephrine: () => {},
       onDantrolene: () => {}, onActiveCooling: () => {},
-      onPediatricAnaphylaxisResponse: onAction, onDrugCard: () => {} };
+      onLessonAction: (_type: string, action: string) => onAction(action as never), onDrugCard: () => {} };
   }
 
   it('shows exact serial action density with two cards and one live status', () => {
@@ -366,17 +373,17 @@ describe('Requirement: pediatric anaphylaxis keeps one calm action at a time', (
   });
 
   it('requires exact scenario, reassessment target, and boundary target', () => {
-    expect(crisisResponseAvailability(PEDIATRIC_ANAPHYLAXIS, [])
+    expect(crisisResponseAvailabilityWithTrays(PEDIATRIC_ANAPHYLAXIS, [])
       .hasPediatricAnaphylaxisResponse).toBe(true);
     const wrongId = { ...PEDIATRIC_ANAPHYLAXIS,
       metadata: { ...PEDIATRIC_ANAPHYLAXIS.metadata, id: 'not-pediatric-anaphylaxis' } };
-    expect(crisisResponseAvailability(wrongId, []).hasPediatricAnaphylaxisResponse).toBe(false);
+    expect(crisisResponseAvailabilityWithTrays(wrongId, []).hasPediatricAnaphylaxisResponse).toBe(false);
     for (const target of ['pediatric-anaphylaxis-reassessment',
       'pediatric-anaphylaxis-reassessment-boundary']) {
       const drifted = { ...PEDIATRIC_ANAPHYLAXIS,
         timeline: PEDIATRIC_ANAPHYLAXIS.timeline.map((event) => event.target === target
           ? { ...event, target: `${target}-suffix` } : event) };
-      expect(crisisResponseAvailability(drifted, []).hasPediatricAnaphylaxisResponse).toBe(false);
+      expect(crisisResponseAvailabilityWithTrays(drifted, []).hasPediatricAnaphylaxisResponse).toBe(false);
     }
   });
 });
@@ -403,7 +410,7 @@ describe('Requirement: pediatric SVT keeps one calm action at a time', () => {
     laterResponseAtTick: step > 4 ? 5 : null, handoffAtTick: step > 5 ? 6 : null,
   });
   function svtProps(step = 0, onAction = vi.fn()): ActionCockpitProps {
-    return { scenario: PEDIATRIC_SUPRAVENTRICULAR_TACHYCARDIA, region: UNITED_STATES,
+    return { lessonTrays: PEDIATRICS_TRAYS, scenario: PEDIATRIC_SUPRAVENTRICULAR_TACHYCARDIA, region: UNITED_STATES,
       infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: {
         epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
         lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0,
@@ -419,7 +426,7 @@ describe('Requirement: pediatric SVT keeps one calm action at a time', () => {
       onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {},
       onCallForHelp: () => {}, onAirwayDevice: () => {}, onEpinephrine: () => {},
       onDantrolene: () => {}, onActiveCooling: () => {},
-      onPediatricSupraventricularTachycardiaResponse: onAction, onDrugCard: () => {} };
+      onLessonAction: (_type: string, action: string) => onAction(action as never), onDrugCard: () => {} };
   }
 
   it('shows the exact serial density in two labelled cards with one live status', () => {
@@ -466,18 +473,18 @@ describe('Requirement: pediatric SVT keeps one calm action at a time', () => {
   });
 
   it('requires the exact scenario and both narrative targets', () => {
-    expect(crisisResponseAvailability(PEDIATRIC_SUPRAVENTRICULAR_TACHYCARDIA, [])
+    expect(crisisResponseAvailabilityWithTrays(PEDIATRIC_SUPRAVENTRICULAR_TACHYCARDIA, [])
       .hasPediatricSupraventricularTachycardiaResponse).toBe(true);
     const wrongId = { ...PEDIATRIC_SUPRAVENTRICULAR_TACHYCARDIA, metadata: {
       ...PEDIATRIC_SUPRAVENTRICULAR_TACHYCARDIA.metadata, id: 'not-pediatric-svt' } };
-    expect(crisisResponseAvailability(wrongId, [])
+    expect(crisisResponseAvailabilityWithTrays(wrongId, [])
       .hasPediatricSupraventricularTachycardiaResponse).toBe(false);
     for (const target of ['pediatric-supraventricular-tachycardia-reassessment',
       'pediatric-supraventricular-tachycardia-reassessment-boundary']) {
       const drifted = { ...PEDIATRIC_SUPRAVENTRICULAR_TACHYCARDIA,
         timeline: PEDIATRIC_SUPRAVENTRICULAR_TACHYCARDIA.timeline.map((event) =>
           event.target === target ? { ...event, target: `${target}-suffix` } : event) };
-      expect(crisisResponseAvailability(drifted, [])
+      expect(crisisResponseAvailabilityWithTrays(drifted, [])
         .hasPediatricSupraventricularTachycardiaResponse).toBe(false);
     }
   });
@@ -526,7 +533,7 @@ describe('Requirement: pediatric bradycardic arrest keeps one calm action at a t
     laterResponseAtTick: step > 4 ? 5 : null, handoffAtTick: step > 5 ? 6 : null,
   });
   function bradycardicArrestProps(step = 0, onAction = vi.fn()): ActionCockpitProps {
-    return { scenario: PEDIATRIC_BRADYCARDIC_ARREST, region: UNITED_STATES,
+    return { lessonTrays: PEDIATRICS_TRAYS, scenario: PEDIATRIC_BRADYCARDIC_ARREST, region: UNITED_STATES,
       infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: {
         epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
         lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0,
@@ -542,7 +549,7 @@ describe('Requirement: pediatric bradycardic arrest keeps one calm action at a t
       onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {},
       onCallForHelp: () => {}, onAirwayDevice: () => {}, onEpinephrine: () => {},
       onDantrolene: () => {}, onActiveCooling: () => {},
-      onPediatricBradycardicArrestResponse: onAction, onDrugCard: () => {} };
+      onLessonAction: (_type: string, action: string) => onAction(action as never), onDrugCard: () => {} };
   }
 
   it('shows exact serial actions in two labelled cards with one live status', () => {
@@ -593,18 +600,18 @@ describe('Requirement: pediatric bradycardic arrest keeps one calm action at a t
   });
 
   it('requires the exact scenario and both narrative targets', () => {
-    expect(crisisResponseAvailability(PEDIATRIC_BRADYCARDIC_ARREST, [])
+    expect(crisisResponseAvailabilityWithTrays(PEDIATRIC_BRADYCARDIC_ARREST, [])
       .hasPediatricBradycardicArrestResponse).toBe(true);
     const wrongId = { ...PEDIATRIC_BRADYCARDIC_ARREST,
       metadata: { ...PEDIATRIC_BRADYCARDIC_ARREST.metadata, id: 'not-pediatric-arrest' } };
-    expect(crisisResponseAvailability(wrongId, []).hasPediatricBradycardicArrestResponse)
+    expect(crisisResponseAvailabilityWithTrays(wrongId, []).hasPediatricBradycardicArrestResponse)
       .toBe(false);
     for (const target of ['pediatric-bradycardic-arrest-reassessment',
       'pediatric-bradycardic-arrest-reassessment-boundary']) {
       const drifted = { ...PEDIATRIC_BRADYCARDIC_ARREST,
         timeline: PEDIATRIC_BRADYCARDIC_ARREST.timeline.map((event) =>
           event.target === target ? { ...event, target: `${target}-suffix` } : event) };
-      expect(crisisResponseAvailability(drifted, []).hasPediatricBradycardicArrestResponse)
+      expect(crisisResponseAvailabilityWithTrays(drifted, []).hasPediatricBradycardicArrestResponse)
         .toBe(false);
     }
   });
@@ -635,7 +642,7 @@ describe('Requirement: pediatric foreign-body obstruction keeps one calm action 
     handoffAtTick: step > 5 ? 4 : null,
   });
   function fbaoProps(step = 0, onAction = vi.fn()): ActionCockpitProps {
-    return { scenario: PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION, region: UNITED_STATES,
+    return { lessonTrays: PEDIATRICS_TRAYS, scenario: PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION, region: UNITED_STATES,
       infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: {
         epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
         lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0,
@@ -651,7 +658,7 @@ describe('Requirement: pediatric foreign-body obstruction keeps one calm action 
       onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
       onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onCallForHelp: () => {},
       onAirwayDevice: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
-      onActiveCooling: () => {}, onPediatricForeignBodyAirwayObstructionResponse: onAction,
+      onActiveCooling: () => {}, onLessonAction: (_type: string, action: string) => onAction(action as never),
       onDrugCard: () => {} };
   }
 
@@ -700,18 +707,18 @@ describe('Requirement: pediatric foreign-body obstruction keeps one calm action 
   });
 
   it('requires the exact scenario and both narrative targets', () => {
-    expect(crisisResponseAvailability(PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION, [])
+    expect(crisisResponseAvailabilityWithTrays(PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION, [])
       .hasPediatricForeignBodyAirwayObstructionResponse).toBe(true);
     const wrongId = { ...PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION, metadata: {
       ...PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION.metadata, id: 'not-pediatric-fbao' } };
-    expect(crisisResponseAvailability(wrongId, [])
+    expect(crisisResponseAvailabilityWithTrays(wrongId, [])
       .hasPediatricForeignBodyAirwayObstructionResponse).toBe(false);
     for (const target of ['pediatric-foreign-body-airway-obstruction-reassessment',
       'pediatric-foreign-body-airway-obstruction-reassessment-boundary']) {
       const drifted = { ...PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION,
         timeline: PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION.timeline.map((event) =>
           event.target === target ? { ...event, target: `${target}-suffix` } : event) };
-      expect(crisisResponseAvailability(drifted, [])
+      expect(crisisResponseAvailabilityWithTrays(drifted, [])
         .hasPediatricForeignBodyAirwayObstructionResponse).toBe(false);
     }
   });
@@ -740,7 +747,7 @@ describe('Requirement: pediatric safeguarding stays calm, bounded, and input-fre
     laterSafetyAtTick: step > 4 ? 5 : null, handoffAtTick: step > 5 ? 6 : null,
   });
   function safeguardingProps(step = 0, onAction = vi.fn()): ActionCockpitProps {
-    return { scenario: PEDIATRIC_INJURY_SAFEGUARDING_ESCALATION, region: UNITED_STATES,
+    return { lessonTrays: PEDIATRICS_TRAYS, scenario: PEDIATRIC_INJURY_SAFEGUARDING_ESCALATION, region: UNITED_STATES,
       infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: {
         epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
         lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0,
@@ -756,7 +763,7 @@ describe('Requirement: pediatric safeguarding stays calm, bounded, and input-fre
       onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {},
       onCallForHelp: () => {}, onAirwayDevice: () => {}, onEpinephrine: () => {},
       onDantrolene: () => {}, onActiveCooling: () => {},
-      onPediatricInjurySafeguardingResponse: onAction, onDrugCard: () => {} };
+      onLessonAction: (_type: string, action: string) => onAction(action as never), onDrugCard: () => {} };
   }
 
   it('shows one calm action at every stage in two labelled cards', () => {
@@ -805,18 +812,18 @@ describe('Requirement: pediatric safeguarding stays calm, bounded, and input-fre
   });
 
   it('requires the exact safeguarding scenario and both narrative targets', () => {
-    expect(crisisResponseAvailability(PEDIATRIC_INJURY_SAFEGUARDING_ESCALATION, [])
+    expect(crisisResponseAvailabilityWithTrays(PEDIATRIC_INJURY_SAFEGUARDING_ESCALATION, [])
       .hasPediatricInjurySafeguardingResponse).toBe(true);
     const wrongId = { ...PEDIATRIC_INJURY_SAFEGUARDING_ESCALATION, metadata: {
       ...PEDIATRIC_INJURY_SAFEGUARDING_ESCALATION.metadata, id: 'not-safeguarding' } };
-    expect(crisisResponseAvailability(wrongId, []).hasPediatricInjurySafeguardingResponse)
+    expect(crisisResponseAvailabilityWithTrays(wrongId, []).hasPediatricInjurySafeguardingResponse)
       .toBe(false);
     for (const target of ['pediatric-injury-safeguarding-escalation-reassessment',
       'pediatric-injury-safeguarding-escalation-reassessment-boundary']) {
       const drifted = { ...PEDIATRIC_INJURY_SAFEGUARDING_ESCALATION,
         timeline: PEDIATRIC_INJURY_SAFEGUARDING_ESCALATION.timeline.map((event) =>
           event.target === target ? { ...event, target: `${target}-suffix` } : event) };
-      expect(crisisResponseAvailability(drifted, []).hasPediatricInjurySafeguardingResponse)
+      expect(crisisResponseAvailabilityWithTrays(drifted, []).hasPediatricInjurySafeguardingResponse)
         .toBe(false);
     }
   });

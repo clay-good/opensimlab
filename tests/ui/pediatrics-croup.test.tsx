@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { PEDIATRICS_TRAYS } from '../../src/modules/pediatrics/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, PEDIATRICS_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { CROUP as SCENARIO } from '../../src/modules/pediatrics/scenarios/croup';
 
@@ -52,7 +58,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['croupAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: PEDIATRICS_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, croupAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 105, respiratoryRateBpm: 34, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -61,7 +67,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onCroupResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -81,8 +87,8 @@ describe('Pediatric croup experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasCroupResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasCroupResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'croup-reassessment'),
     }).hasCroupResponse).toBe(false);
@@ -121,44 +127,44 @@ describe('Pediatric croup experience', () => {
 describe('Croup tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { croupGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { croupGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('Leave her where she is');
-    const severity = markup(PATTERN, { croupGuidance: 'guided' });
+    const severity = markup(PATTERN, { guidance: 'guided' });
     expect(severity).toContain('Grade her without touching her');
     expect(severity).not.toContain('Leave her where she is');
   });
 
   it('answers the two distressing choices differently', () => {
-    const alb = markup(AFTER_ALBUTEROL, { croupGuidance: 'guided' });
+    const alb = markup(AFTER_ALBUTEROL, { guidance: 'guided' });
     expect(alb).toContain('above the vocal cords');
     expect(alb).not.toContain('a child who will scream');
-    const xray = markup(AFTER_XRAY, { croupGuidance: 'guided' });
+    const xray = markup(AFTER_XRAY, { guidance: 'guided' });
     expect(xray).toContain('a child who will scream');
     expect(xray).not.toContain('above the vocal cords');
   });
 
   it('answers the two misreadings differently', () => {
-    const disc = markup(AFTER_DISCHARGE, { croupGuidance: 'guided' });
+    const disc = markup(AFTER_DISCHARGE, { guidance: 'guided' });
     expect(disc).toContain('Nebulized epinephrine wears off');
     expect(disc).not.toContain('the saturation falls last');
-    const sat = markup(AFTER_NORMAL_SAT, { croupGuidance: 'guided' });
+    const sat = markup(AFTER_NORMAL_SAT, { guidance: 'guided' });
     expect(sat).toContain('the saturation falls last');
     expect(sat).not.toContain('Nebulized epinephrine wears off');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(DONE, { croupGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { croupGuidance: 'guided', croupDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'Croup' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

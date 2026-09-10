@@ -7,6 +7,12 @@ import { ActionCockpit, crisisResponseAvailability,
   type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { PEDIATRIC_FEBRILE_SEIZURE as SCENARIO } from '../../src/modules/pediatrics/scenarios/pediatric-febrile-seizure';
+import { PEDIATRICS_TRAYS } from '../../src/modules/pediatrics/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, PEDIATRICS_TRAYS);
 
 describe('pediatric febrile-seizure private-tutor surface', () => {
   let container: HTMLDivElement; let root: Root;
@@ -26,7 +32,7 @@ describe('pediatric febrile-seizure private-tutor surface', () => {
     laterResponseAtTick: step > 4 ? 5 : null, handoffAtTick: step > 5 ? 6 : null,
   });
   function props(step = 0, onAction = vi.fn(), state = assessment(step)): ActionCockpitProps {
-    return { scenario: SCENARIO, region: UNITED_STATES, infusions: [],
+    return { scenario: SCENARIO, region: UNITED_STATES, lessonTrays: PEDIATRICS_TRAYS, infusions: [],
       hypnoticLine: { connected: true, inspected: false }, resuscitation: {
         epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
         lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0,
@@ -42,7 +48,7 @@ describe('pediatric febrile-seizure private-tutor surface', () => {
       onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {},
       onCallForHelp: () => {}, onAirwayDevice: () => {}, onEpinephrine: () => {},
       onDantrolene: () => {}, onActiveCooling: () => {},
-      onPediatricFebrileSeizureResponse: onAction, onDrugCard: () => {} };
+      onLessonAction: (_type: string, action: string) => onAction(action as never), onDrugCard: () => {} };
   }
 
   it('shows two calm named cards and exact progressive actions at 320px', () => {
@@ -97,16 +103,16 @@ describe('pediatric febrile-seizure private-tutor surface', () => {
   });
 
   it('requires the exact scenario id and exact narrative target', () => {
-    expect(crisisResponseAvailability(SCENARIO, []).hasPediatricFebrileSeizureResponse)
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasPediatricFebrileSeizureResponse)
       .toBe(true);
     const wrongId = { ...SCENARIO,
       metadata: { ...SCENARIO.metadata, id: 'not-pediatric-febrile-seizure' } };
-    expect(crisisResponseAvailability(wrongId, []).hasPediatricFebrileSeizureResponse)
+    expect(crisisResponseAvailabilityWithTrays(wrongId, []).hasPediatricFebrileSeizureResponse)
       .toBe(false);
     const wrongTarget = { ...SCENARIO, timeline: SCENARIO.timeline.map((event) => ({
       ...event, target: 'pediatric-febrile-seizure-reassessment-suffix',
     })) };
-    expect(crisisResponseAvailability(wrongTarget, []).hasPediatricFebrileSeizureResponse)
+    expect(crisisResponseAvailabilityWithTrays(wrongTarget, []).hasPediatricFebrileSeizureResponse)
       .toBe(false);
   });
 });

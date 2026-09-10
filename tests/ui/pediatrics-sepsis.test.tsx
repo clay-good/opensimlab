@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { PEDIATRICS_TRAYS } from '../../src/modules/pediatrics/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, PEDIATRICS_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { PEDIATRIC_SEPSIS as SCENARIO } from '../../src/modules/pediatrics/scenarios/pediatric-sepsis';
 
@@ -56,7 +62,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['pediatricSepsisAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: PEDIATRICS_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, pediatricSepsisAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 140, respiratoryRateBpm: 28, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -65,7 +71,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onPediatricSepsisResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -85,8 +91,8 @@ describe('Pediatric sepsis experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasPediatricSepsisResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasPediatricSepsisResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'pediatric-sepsis-reassessment'),
     }).hasPediatricSepsisResponse).toBe(false);
@@ -116,38 +122,38 @@ describe('Pediatric sepsis experience', () => {
 describe('Pediatric sepsis tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { pediatricSepsisGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { pediatricSepsisGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('does not look like the emergency his blood results say he is');
-    const boundary = markup(PATTERN, { pediatricSepsisGuidance: 'guided' });
+    const boundary = markup(PATTERN, { guidance: 'guided' });
     expect(boundary).toContain('Say what this is and what it is not, in both directions');
     expect(boundary).not.toContain('does not look like the emergency his blood results say he is');
   });
 
   it('argues the boundary in both directions on the same beat', () => {
-    const html = markup(PATTERN, { pediatricSepsisGuidance: 'guided' });
+    const html = markup(PATTERN, { guidance: 'guided' });
     expect(html).toContain('buys nothing and costs something');
     expect(html).toContain('do not establish low risk');
   });
 
   it('separates improved physiology from unchanged organ dysfunction', () => {
-    const html = markup(SOURCE, { pediatricSepsisGuidance: 'guided' });
+    const html = markup(SOURCE, { guidance: 'guided' });
     expect(html).toContain('read the fixed report against what has not moved');
     expect(html).toContain('The physiology got better and the organ dysfunction did not');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(DONE, { pediatricSepsisGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { pediatricSepsisGuidance: 'guided', pediatricSepsisDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'PediatricSepsis' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

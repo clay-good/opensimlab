@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { PEDIATRICS_TRAYS } from '../../src/modules/pediatrics/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, PEDIATRICS_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { PEDIATRIC_STATUS_EPILEPTICUS as SCENARIO } from '../../src/modules/pediatrics/scenarios/pediatric-status-epilepticus';
 
@@ -57,7 +63,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['pediatricStatusEpilepticusAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: PEDIATRICS_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, pediatricStatusEpilepticusAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 140, respiratoryRateBpm: 24, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -66,7 +72,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onPediatricStatusEpilepticusResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -86,8 +92,8 @@ describe('Pediatric status-epilepticus experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasPediatricStatusEpilepticusResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasPediatricStatusEpilepticusResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'pediatric-status-epilepticus-reassessment'),
     }).hasPediatricStatusEpilepticusResponse).toBe(false);
@@ -119,49 +125,49 @@ describe('Pediatric status-epilepticus experience', () => {
 describe('Pediatric status-epilepticus tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { pediatricStatusEpilepticusGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { pediatricStatusEpilepticusGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('the clock is what decides the next drug');
-    const recognition = markup(TRAJECTORY, { pediatricStatusEpilepticusGuidance: 'guided' });
+    const recognition = markup(TRAJECTORY, { guidance: 'guided' });
     expect(recognition).toContain('it changes the drug class');
     expect(recognition).not.toContain('the clock is what decides the next drug');
   });
 
   it('stops the third benzodiazepine by name', () => {
-    const html = markup(TRAJECTORY, { pediatricStatusEpilepticusGuidance: 'guided' });
+    const html = markup(TRAJECTORY, { guidance: 'guided' });
     expect(html).toContain('reaching for a third benzodiazepine');
     expect(html).toContain('More of the same is not the next step');
   });
 
   it('answers the three ways the unordered pair can be half done', () => {
-    const neither = markup(RECOGNIZED, { pediatricStatusEpilepticusGuidance: 'guided' });
+    const neither = markup(RECOGNIZED, { guidance: 'guided' });
     expect(neither).toContain('do not queue behind each other');
-    const drugMissing = markup(SAFETY_ONLY, { pediatricStatusEpilepticusGuidance: 'guided' });
+    const drugMissing = markup(SAFETY_ONLY, { guidance: 'guided' });
     expect(drugMissing).toContain('She is still convulsing');
     expect(drugMissing).not.toContain('do not queue behind each other');
-    const airwayMissing = markup(DRUG_ONLY, { pediatricStatusEpilepticusGuidance: 'guided' });
+    const airwayMissing = markup(DRUG_ONLY, { guidance: 'guided' });
     expect(airwayMissing).toContain('hold the airway, the causes, and the refractory line');
     expect(airwayMissing).not.toContain('She is still convulsing');
   });
 
   it('is careful about what stillness means', () => {
-    const html = markup(BOTH, { pediatricStatusEpilepticusGuidance: 'guided' });
+    const html = markup(BOTH, { guidance: 'guided' });
     expect(html).toContain('be careful about what stillness means');
     expect(html).toContain('the most over-read finding in this lesson');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(DONE, { pediatricStatusEpilepticusGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { pediatricStatusEpilepticusGuidance: 'guided', pediatricStatusEpilepticusDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'PediatricStatusEpilepticus' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

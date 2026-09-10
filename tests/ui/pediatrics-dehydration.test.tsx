@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { PEDIATRICS_TRAYS } from '../../src/modules/pediatrics/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, PEDIATRICS_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { PEDIATRIC_DEHYDRATION_WITH_HYPOVOLEMIA as SCENARIO } from '../../src/modules/pediatrics/scenarios/pediatric-dehydration-with-hypovolemia';
 
@@ -58,7 +64,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['pediatricDehydrationAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: PEDIATRICS_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, pediatricDehydrationAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 84, respiratoryRateBpm: 28, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -67,7 +73,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onPediatricDehydrationResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -87,8 +93,8 @@ describe('Pediatric dehydration experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasPediatricDehydrationResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasPediatricDehydrationResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'pediatric-dehydration-with-hypovolemia-reassessment'),
     }).hasPediatricDehydrationResponse).toBe(false);
@@ -119,43 +125,43 @@ describe('Pediatric dehydration experience', () => {
 describe('Pediatric dehydration tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { pediatricDehydrationGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { pediatricDehydrationGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('Resist turning them into a percentage');
-    const recognition = markup(TRAJECTORY, { pediatricDehydrationGuidance: 'guided' });
+    const recognition = markup(TRAJECTORY, { guidance: 'guided' });
     expect(recognition).toContain('say plainly that this is not shock');
     expect(recognition).not.toContain('Resist turning them into a percentage');
   });
 
   it('answers the three ways the unordered pair can be half done', () => {
-    const neither = markup(RECOGNIZED, { pediatricDehydrationGuidance: 'guided' });
+    const neither = markup(RECOGNIZED, { guidance: 'guided' });
     expect(neither).toContain('the watch for being wrong');
-    const fluidMissing = markup(SAFETY_ONLY, { pediatricDehydrationGuidance: 'guided' });
+    const fluidMissing = markup(SAFETY_ONLY, { guidance: 'guided' });
     expect(fluidMissing).toContain('Nobody owns the fluid yet');
     expect(fluidMissing).not.toContain('the watch for being wrong');
-    const watchMissing = markup(REHYDRATION_ONLY, { pediatricDehydrationGuidance: 'guided' });
+    const watchMissing = markup(REHYDRATION_ONLY, { guidance: 'guided' });
     expect(watchMissing).toContain('Oral rehydration is the plan, not a guarantee');
     expect(watchMissing).not.toContain('Nobody owns the fluid yet');
   });
 
   it('names what improved and then what was never supplied', () => {
-    const html = markup(BOTH, { pediatricDehydrationGuidance: 'guided' });
+    const html = markup(BOTH, { guidance: 'guided' });
     expect(html).toContain('reassess before you reassure');
     expect(html).toContain('Partial improvement is the honest description');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(DONE, { pediatricDehydrationGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { pediatricDehydrationGuidance: 'guided', pediatricDehydrationDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'PediatricDehydration' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

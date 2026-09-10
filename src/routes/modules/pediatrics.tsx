@@ -7,6 +7,7 @@
 import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRoute';
 import { DEFAULT_PEDIATRICS_SCENARIO_ID, PEDIATRICS_SCENARIOS, getPediatricsScenario } from '../../modules/pediatrics/scenarios';
 import { PEDIATRICS_LIMITATIONS } from '@platform/docs/limitations/pediatrics';
+import { PEDIATRICS_TRAYS } from '../../modules/pediatrics/trays';
 import { PEDIATRICS_DEMONSTRATIONS } from '../../modules/pediatrics/demo/demonstrations';
 
 const PEDIATRICS_CONFIG: ClinicalModuleConfig = {
@@ -14,6 +15,7 @@ const PEDIATRICS_CONFIG: ClinicalModuleConfig = {
   limitations: PEDIATRICS_LIMITATIONS,
   catalogIntroduction: 'Gentle, focused rehearsals for noticing when a child is changing. Read the whole child, support early, and make every reassessment count.',
   catalogStatus: `${PEDIATRICS_SCENARIOS.length} of 16 bounded Pediatrics labs is playable.`,
+  trays: PEDIATRICS_TRAYS,
   scenarios: PEDIATRICS_SCENARIOS, defaultScenarioId: DEFAULT_PEDIATRICS_SCENARIO_ID,
   getScenario: getPediatricsScenario,
   demonstrations: PEDIATRICS_DEMONSTRATIONS,

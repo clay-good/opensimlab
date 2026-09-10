@@ -7,6 +7,12 @@ import { ActionCockpit, crisisResponseAvailability,
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { PEDIATRIC_DIABETIC_KETOACIDOSIS as SCENARIO } from '../../src/modules/pediatrics/scenarios/pediatric-diabetic-ketoacidosis';
 import { DIABETIC_KETOACIDOSIS } from '../../src/modules/emergency-medicine/scenarios/diabetic-ketoacidosis';
+import { PEDIATRICS_TRAYS } from '../../src/modules/pediatrics/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, PEDIATRICS_TRAYS);
 
 describe('pediatric DKA private-tutor surface', () => {
   let container: HTMLDivElement; let root: Root;
@@ -20,7 +26,7 @@ describe('pediatric DKA private-tutor surface', () => {
     laterResponseAtTick: step > 4 ? 5 : null, handoffAtTick: step > 5 ? 6 : null,
   });
   function props(step = 0, onAction = vi.fn(), state = assessment(step)): ActionCockpitProps {
-    return { scenario: SCENARIO, region: UNITED_STATES, infusions: [],
+    return { scenario: SCENARIO, region: UNITED_STATES, lessonTrays: PEDIATRICS_TRAYS, infusions: [],
       hypnoticLine: { connected: true, inspected: false }, resuscitation: {
         epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
         lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0,
@@ -36,7 +42,7 @@ describe('pediatric DKA private-tutor surface', () => {
       onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {},
       onCallForHelp: () => {}, onAirwayDevice: () => {}, onEpinephrine: () => {},
       onDantrolene: () => {}, onActiveCooling: () => {},
-      onPediatricDiabeticKetoacidosisResponse: onAction, onDrugCard: () => {} };
+      onLessonAction: (_type: string, action: string) => onAction(action as never), onDrugCard: () => {} };
   }
 
   it('shows two calm named cards and only the intended actions at each state', () => {
@@ -88,13 +94,13 @@ describe('pediatric DKA private-tutor surface', () => {
   });
 
   it('requires exact identity for both the pediatric and adult DKA trays', () => {
-    expect(crisisResponseAvailability(SCENARIO, [])).toMatchObject({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO)).toMatchObject({
       hasPediatricDiabeticKetoacidosisResponse: true,
       hasDiabeticKetoacidosisResponse: false,
     });
     const adultWithWrongId = { ...DIABETIC_KETOACIDOSIS,
       metadata: { ...DIABETIC_KETOACIDOSIS.metadata, id: 'not-adult-dka' } };
-    expect(crisisResponseAvailability(adultWithWrongId, [])).toMatchObject({
+    expect(crisisResponseAvailabilityWithTrays(adultWithWrongId, [])).toMatchObject({
       hasPediatricDiabeticKetoacidosisResponse: false,
       hasDiabeticKetoacidosisResponse: false,
     });
@@ -102,7 +108,7 @@ describe('pediatric DKA private-tutor surface', () => {
       event.target === 'pediatric-diabetic-ketoacidosis-reassessment'
         ? { ...event, target: 'pediatric-diabetic-ketoacidosis-reassessment-suffix' }
         : event) };
-    expect(crisisResponseAvailability(pediatricWithWrongTarget, [])
+    expect(crisisResponseAvailabilityWithTrays(pediatricWithWrongTarget, [])
       .hasPediatricDiabeticKetoacidosisResponse).toBe(false);
   });
 });

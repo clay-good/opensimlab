@@ -17,6 +17,7 @@ import { DELAYED_EMERGENCE_DIFFERENTIAL } from '@anesthesia/scenarios/delayed-em
 import { EXTUBATION_READINESS } from '@anesthesia/scenarios/extubation-readiness';
 import { AnesthesiaEngine } from '@anesthesia/engine';
 import { UNITED_KINGDOM, UNITED_STATES } from '@anesthesia/region/profiles';
+import { PEDIATRICS_TRAYS } from '../../src/modules/pediatrics/trays';
 import { PEDIATRIC_BRADYCARDIC_ARREST } from '../../src/modules/pediatrics/scenarios/pediatric-bradycardic-arrest';
 import { PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION } from '../../src/modules/pediatrics/scenarios/pediatric-foreign-body-airway-obstruction';
 
@@ -59,6 +60,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
   ) => {
     const props: ActionCockpitProps = {
       scenario: CRISIS_SCENARIO,
+      lessonTrays: PEDIATRICS_TRAYS,
       region,
       infusions: [],
       hypnoticLine: { connected: true, inspected: false },
@@ -877,7 +879,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
     const frame = subject.step();
 
     expect(frame.equipment.resuscitation.cardiacArrestActive).toBe(true);
-    expect(crisisResponseAvailability(PEDIATRIC_BRADYCARDIC_ARREST))
+    expect(crisisResponseAvailability(PEDIATRIC_BRADYCARDIC_ARREST, [], PEDIATRICS_TRAYS))
       .toMatchObject({ hasCardiacArrestResponse: false,
         hasPediatricBradycardicArrestResponse: true });
     renderCockpit(UNITED_STATES, vi.fn(), { scenario: PEDIATRIC_BRADYCARDIC_ARREST,
@@ -911,7 +913,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
 
     expect(frame.equipment.resuscitation).toMatchObject({ cardiacArrestActive: false,
       chestCompressionsActive: false, roscAtTick: null });
-    expect(crisisResponseAvailability(PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION))
+    expect(crisisResponseAvailability(PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION, [], PEDIATRICS_TRAYS))
       .toMatchObject({ hasCardiacArrestResponse: false,
         hasPediatricForeignBodyAirwayObstructionResponse: true });
     renderCockpit(UNITED_STATES, vi.fn(), {

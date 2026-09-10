@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { PEDIATRICS_TRAYS } from '../../src/modules/pediatrics/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, PEDIATRICS_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { PEDIATRIC_STATUS_ASTHMATICUS as SCENARIO } from '../../src/modules/pediatrics/scenarios/pediatric-status-asthmaticus';
 
@@ -53,7 +59,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['pediatricStatusAsthmaticusAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: PEDIATRICS_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, pediatricStatusAsthmaticusAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 220, respiratoryRateBpm: 40, fio2: 0.35, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -62,7 +68,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onPediatricStatusAsthmaticusResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -82,8 +88,8 @@ describe('Pediatric status-asthmaticus experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasPediatricStatusAsthmaticusResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasPediatricStatusAsthmaticusResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'pediatric-status-asthmaticus-reassessment'),
     }).hasPediatricStatusAsthmaticusResponse).toBe(false);
@@ -123,46 +129,46 @@ describe('Pediatric status-asthmaticus experience', () => {
 describe('Status-asthmaticus tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { pediatricStatusAsthmaticusGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { pediatricStatusAsthmaticusGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('Start from what it did not fix');
-    const nonresponse = markup(TRAJECTORY, { pediatricStatusAsthmaticusGuidance: 'guided' });
+    const nonresponse = markup(TRAJECTORY, { guidance: 'guided' });
     expect(nonresponse).toContain('Say plainly that first-line treatment has not worked');
     expect(nonresponse).not.toContain('Start from what it did not fix');
   });
 
   it('answers the two measurement delays differently', () => {
-    const pef = markup(AFTER_PEF, { pediatricStatusAsthmaticusGuidance: 'guided' });
+    const pef = markup(AFTER_PEF, { guidance: 'guided' });
     expect(pef).toContain('She cannot do it, and making her try costs her breath');
     expect(pef).not.toContain('answers a question you are not currently asking');
-    const xray = markup(AFTER_XRAY, { pediatricStatusAsthmaticusGuidance: 'guided' });
+    const xray = markup(AFTER_XRAY, { guidance: 'guided' });
     expect(xray).toContain('answers a question you are not currently asking');
     expect(xray).not.toContain('She cannot do it');
   });
 
   it('answers the trigger review without dismissing the questions', () => {
-    const html = markup(AFTER_TRIGGER, { pediatricStatusAsthmaticusGuidance: 'guided' });
+    const html = markup(AFTER_TRIGGER, { guidance: 'guided' });
     expect(html).toContain('Those questions matter');
     expect(html).toContain('a sequencing judgment rather than a dismissal');
   });
 
   it('answers the discharge with what the saturation cannot tell you', () => {
-    const html = markup(AFTER_DISCHARGE, { pediatricStatusAsthmaticusGuidance: 'guided' });
+    const html = markup(AFTER_DISCHARGE, { guidance: 'guided' });
     expect(html).toContain('not a child ready to leave');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(DONE, { pediatricStatusAsthmaticusGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { pediatricStatusAsthmaticusGuidance: 'guided', pediatricStatusAsthmaticusDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'PediatricStatusAsthmaticus' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

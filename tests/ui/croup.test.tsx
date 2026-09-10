@@ -3,6 +3,7 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { PEDIATRICS_TRAYS } from '../../src/modules/pediatrics/trays';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { CROUP as SCENARIO } from '../../src/modules/pediatrics/scenarios/croup';
 
@@ -23,7 +24,7 @@ describe('croup private-tutor surface', () => {
     lastUnsupportedChoice: value.lastUnsupportedChoice ?? null,
   });
   function props(value = assessment(), onAction = vi.fn()): ActionCockpitProps {
-    return { scenario: SCENARIO, region: UNITED_STATES, infusions: [],
+    return { scenario: SCENARIO, region: UNITED_STATES, lessonTrays: PEDIATRICS_TRAYS, infusions: [],
       hypnoticLine: { connected: true, inspected: false }, resuscitation: {
         epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
         lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0,
@@ -38,7 +39,7 @@ describe('croup private-tutor surface', () => {
       onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
       onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onCallForHelp: () => {},
       onAirwayDevice: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
-      onActiveCooling: () => {}, onCroupResponse: onAction, onDrugCard: () => {} };
+      onActiveCooling: () => {}, onLessonAction: (_type: string, action: string) => onAction(action as never), onDrugCard: () => {} };
   }
   const button = (label: string) => [...container.querySelectorAll('button')]
     .find((entry) => entry.textContent?.trim() === label) as HTMLButtonElement | undefined;

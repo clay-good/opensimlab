@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { PEDIATRICS_TRAYS } from '../../src/modules/pediatrics/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, PEDIATRICS_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { PEDIATRIC_ANAPHYLAXIS as SCENARIO } from '../../src/modules/pediatrics/scenarios/pediatric-anaphylaxis';
 
@@ -58,7 +64,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['pediatricAnaphylaxisAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: PEDIATRICS_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, pediatricAnaphylaxisAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 140, respiratoryRateBpm: 34, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -67,7 +73,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onPediatricAnaphylaxisResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -87,8 +93,8 @@ describe('Pediatric anaphylaxis experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasPediatricAnaphylaxisResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasPediatricAnaphylaxisResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'pediatric-anaphylaxis-reassessment'),
     }).hasPediatricAnaphylaxisResponse).toBe(false);
@@ -116,48 +122,48 @@ describe('Pediatric anaphylaxis experience', () => {
 describe('Pediatric anaphylaxis tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { pediatricAnaphylaxisGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { pediatricAnaphylaxisGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('There are no hives');
-    const recognition = markup(TRAJECTORY, { pediatricAnaphylaxisGuidance: 'guided' });
+    const recognition = markup(TRAJECTORY, { guidance: 'guided' });
     expect(recognition).toContain('Sudden onset, more than one system, after a plausible exposure');
     expect(recognition).not.toContain('There are no hives');
   });
 
   it('treats the absent skin findings as a known presentation', () => {
-    const html = markup(TRAJECTORY, { pediatricAnaphylaxisGuidance: 'guided' });
+    const html = markup(TRAJECTORY, { guidance: 'guided' });
     expect(html).toContain('one of the reasons the diagnosis gets missed');
   });
 
   it('argues the ordering it is enforced by', () => {
-    const html = markup(RECOGNIZED, { pediatricAnaphylaxisGuidance: 'guided' });
+    const html = markup(RECOGNIZED, { guidance: 'guided' });
     expect(html).toContain('The second one does not wait for anything else');
     expect(html).toContain('the interval is the treatment');
   });
 
   it('names the asthma trap once the dose is owned', () => {
-    const html = markup(DOSED, { pediatricAnaphylaxisGuidance: 'guided' });
+    const html = markup(DOSED, { guidance: 'guided' });
     expect(html).toContain('invites the comfortable explanation');
   });
 
   it('treats improvement after epinephrine as the dangerous moment', () => {
-    const html = markup(REVIEWED, { pediatricAnaphylaxisGuidance: 'guided' });
+    const html = markup(REVIEWED, { guidance: 'guided' });
     expect(html).toContain('where this diagnosis is most dangerous');
     expect(html).toContain('does not exclude a biphasic reaction');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(DONE, { pediatricAnaphylaxisGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { pediatricAnaphylaxisGuidance: 'guided', pediatricAnaphylaxisDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'PediatricAnaphylaxis' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

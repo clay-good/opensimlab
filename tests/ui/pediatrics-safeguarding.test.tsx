@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { PEDIATRICS_TRAYS } from '../../src/modules/pediatrics/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, PEDIATRICS_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { PEDIATRIC_INJURY_SAFEGUARDING_ESCALATION as SCENARIO } from '../../src/modules/pediatrics/scenarios/pediatric-injury-safeguarding-escalation';
 
@@ -72,7 +78,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['pediatricInjurySafeguardingAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: PEDIATRICS_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, pediatricInjurySafeguardingAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 84, respiratoryRateBpm: 22, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -81,7 +87,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onPediatricInjurySafeguardingResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -101,8 +107,8 @@ describe('Pediatric safeguarding-escalation experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasPediatricInjurySafeguardingResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasPediatricInjurySafeguardingResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'pediatric-injury-safeguarding-escalation-reassessment'),
     }).hasPediatricInjurySafeguardingResponse).toBe(false);
@@ -131,44 +137,44 @@ describe('Pediatric safeguarding-escalation experience', () => {
 describe('Pediatric safeguarding tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { pediatricInjurySafeguardingGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { pediatricInjurySafeguardingGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('keep it separate from what it might mean');
-    const concern = markup(TRAJECTORY, { pediatricInjurySafeguardingGuidance: 'guided' });
+    const concern = markup(TRAJECTORY, { guidance: 'guided' });
     expect(concern).toContain('narrower than the one you are tempted to say');
     expect(concern).not.toContain('keep it separate from what it might mean');
   });
 
   it('refuses both widening and narrowing the concern', () => {
-    const html = markup(TRAJECTORY, { pediatricInjurySafeguardingGuidance: 'guided' });
+    const html = markup(TRAJECTORY, { guidance: 'guided' });
     expect(html).toContain('Widening it invents a finding nobody has made');
     expect(html).toContain('is how these are missed');
   });
 
   it('names the process steps that are not the learner’s', () => {
-    const html = markup(CONCERN, { pediatricInjurySafeguardingGuidance: 'guided' });
+    const html = markup(CONCERN, { guidance: 'guided' });
     expect(html).toContain('no confronting the caregiver');
     expect(html).toContain('this lab teaches none of them as the answer');
   });
 
   it('keeps the medical alternatives open and the information narrow', () => {
-    const html = markup(OWNED, { pediatricInjurySafeguardingGuidance: 'guided' });
+    const html = markup(OWNED, { guidance: 'guided' });
     expect(html).toContain('a child with a coagulopathy nobody has tested for looks exactly like this');
     expect(html).toContain('You solicit no disclosure and collect no free text');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(DONE, { pediatricInjurySafeguardingGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { pediatricInjurySafeguardingGuidance: 'guided', pediatricInjurySafeguardingDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'PediatricInjurySafeguarding' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');
