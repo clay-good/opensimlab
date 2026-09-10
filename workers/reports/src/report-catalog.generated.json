@@ -3692,6 +3692,23 @@
       "limitationManifestHash": "sha256:203d1b752628e3ffdd19ceb6de98e240f3083a4cb2f471d460245f782a13a3c9"
     },
     {
+      "scenarioId": "contrast-attribution-a-label-that-stopped-the-search",
+      "contentVersion": "0.1.0",
+      "moduleId": "renal-electrolyte",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:c7e37b099dec6bcd94b73ffea2d36b68442c144c7d901c03ffe31a184f10167b",
+      "defaultsHash": "sha256:b04be92409f2f7df9ada5586217f9699751ec719f253a2cf40dd8a4450ec0f40",
+      "maturityHash": "sha256:55a282cd55ff2c4fdbff8ed1c48b9845ea219c947dd996ca01276b399db600f7",
+      "sourceManifestHash": "sha256:6be1b467facca5a65e85b6327eacee1c93c9cda099d7ba41a2eff493572d9cd7",
+      "limitationManifestHash": "sha256:4133facc060e837c79a97ed86122e93a2c09cc71445b7f46450f11d0437967f1"
+    },
+    {
       "scenarioId": "hyperkalemia-cardioprotection-and-rebound",
       "contentVersion": "0.1.0",
       "moduleId": "renal-electrolyte",

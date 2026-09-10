@@ -64,6 +64,30 @@ const CHECKED = '2026-08-20';
 
 export const SOURCES: readonly Source[] = [
   {
+    id: 'renal-contrast-consensus-2020', pmid: '31961246', authors: 'Davenport MS, Perazella MA, Yee J, Dillman JR, et al',
+    title: 'Use of Intravenous Iodinated Contrast Media in Patients with Kidney Disease: Consensus Statements from the American College of Radiology and the National Kidney Foundation', publication: 'Radiology', year: 2020,
+    locator: '294(3):660\u2013668; doi:10.1148/radiol.2019192094; consensus statements and supporting discussion',
+    usedFor: 'The risk of acute kidney injury after intravenous iodinated contrast in patients with reduced kidney function has been overstated, primarily because historic studies lacked control groups able to separate injury caused by contrast from injury that would have happened anyway. The lesson uses this to teach that the label is a hypothesis, and adopts no threshold, protocol, or administration decision.',
+    verifiedAgainst: 'PubMed PMID 31961246 bibliographic record and abstract, read field by field through NCBI E-utilities. It is a consensus statement from two societies rather than a trial, it does not claim contrast-induced injury never occurs, and it retains a small group at genuine risk. The record itself lists six published comments on it, so the position is discussed rather than settled.',
+    verifiedOn: '2026-09-10',
+  },
+  {
+    id: 'renal-contrast-propensity-2017', pmid: '28131489', authors: 'Hinson JS, Ehmann MR, Fine DM, Fishman EK, et al',
+    title: 'Risk of Acute Kidney Injury After Intravenous Contrast Media Administration', publication: 'Annals of Emergency Medicine', year: 2017,
+    locator: '69(5):577\u2013586.e4; doi:10.1016/j.annemergmed.2016.11.021; methods, results and limitations',
+    usedFor: 'With contrast-enhanced, unenhanced and no-CT groups compared and propensity-score matching applied across 17,934 visits, contrast administration was not associated with an increased incidence of acute kidney injury. The lesson uses this to teach that an unmatched before-and-after rise attributes nothing.',
+    verifiedAgainst: 'PubMed PMID 28131489 bibliographic record and abstract, read field by field through NCBI E-utilities. Single-centre and retrospective, with treatment decisions made by clinicians who could see the patient: the sickest patients are the least likely to have been given contrast, and propensity matching narrows that confounding by indication rather than removing it. It is evidence against a strong causal claim, not proof of no effect.',
+    verifiedOn: '2026-09-10',
+  },
+  {
+    id: 'renal-contrast-prophylaxis-2017', pmid: '28233565', authors: 'Nijssen EC, Rennenberg RJ, Nelemans PJ, Essers BA, et al',
+    title: 'Prophylactic hydration to protect renal function from intravascular iodinated contrast material in patients at high risk of contrast-induced nephropathy (AMACING): a prospective, randomised, phase 3, controlled, open-label, non-inferiority trial', publication: 'The Lancet', year: 2017,
+    locator: '389(10076):1312\u20131322; doi:10.1016/S0140-6736(17)30057-0; methods and findings',
+    usedFor: 'A randomised comparison against no prophylaxis in guideline-defined high-risk patients, which is the comparison the guidelines themselves were never tested against. The lesson uses this only to show that a widely followed practice can rest on untested ground, and adopts no fluid decision.',
+    verifiedAgainst: 'PubMed PMID 28233565 bibliographic record and abstract, read field by field through NCBI E-utilities. Single-centre, open-label, elective procedures only, and it excluded an eGFR below 30, previous dialysis, and anyone not referred for hydration \u2014 so it says nothing about the patients at highest risk. A non-inferiority result is not evidence of equivalence, and the record lists eleven published comments on this trial.',
+    verifiedOn: '2026-09-10',
+  },
+  {
     id: 'renal-hypomagnesemia-potassium-mechanism-2007', pmid: '17804670', authors: 'Huang CL, Kuo E',
     title: 'Mechanism of hypokalemia in magnesium deficiency', publication: 'Journal of the American Society of Nephrology', year: 2007,
     locator: '18(10):2649\u20132652; doi:10.1681/ASN.2007070792; review of distal potassium secretion in magnesium deficiency',

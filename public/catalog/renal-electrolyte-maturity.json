@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "renal-electrolyte",
-  "recordCount": 7,
+  "recordCount": 8,
   "records": [
     {
       "recordId": "scenario:hyperkalemia-cardioprotection-and-rebound@0.1.0",
@@ -78,6 +78,17 @@
       "evidence": [
         "/catalog/renal-electrolyte-completion-audit.json#hypomagnesemia-refractory-potassium-and-the-normal-number@0.1.0",
         "/catalog/renal-electrolyte-quality-audit.json#hypomagnesemia-refractory-potassium-and-the-normal-number@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:contrast-attribution-a-label-that-stopped-the-search@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "contrast-attribution-a-label-that-stopped-the-search",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/renal-electrolyte-completion-audit.json#contrast-attribution-a-label-that-stopped-the-search@0.1.0",
+        "/catalog/renal-electrolyte-quality-audit.json#contrast-attribution-a-label-that-stopped-the-search@0.1.0"
       ]
     }
   ]

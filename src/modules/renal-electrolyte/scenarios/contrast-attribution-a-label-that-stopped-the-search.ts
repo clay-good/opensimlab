@@ -1,0 +1,62 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+
+export const RENAL_CONTRAST_ATTRIBUTION_LABEL: Scenario = {
+  schemaVersion: 1,
+  metadata: {
+    id: 'contrast-attribution-a-label-that-stopped-the-search', version: '0.1.0', maturity: 'preview',
+    title: 'A label that stopped the search: attributing a rising creatinine to contrast', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
+    estimatedMinutes: 60, difficulty: 'intermediate',
+    objectives: [
+      { id: 'renal-contrast-attribution', statement: 'Treat the written label as a hypothesis rather than a finding.', measure: 'Record explicitly that "contrast-induced nephropathy" in the notes is an attribution someone made, not a result that was reported. Nothing about the timing of the rise establishes what caused it, and this lesson establishes no alternative cause either.' },
+      { id: 'renal-contrast-alternatives', statement: 'Review what the label did not exclude.', measure: 'Review the two recorded hypotensive episodes, the continued renin-angiotensin blocker, the three days of a non-steroidal anti-inflammatory, and the fever with a rising inflammatory marker, with qualified support. Each is a competing explanation the label leaves untouched; none of them is thereby the answer.' },
+      { id: 'renal-contrast-evidence', statement: 'Separate what controlled comparison shows from what a before-and-after rise shows.', measure: 'Review that a rise after exposure attributes nothing without a comparison group, that controlled and propensity-matched work has not found the association the label assumes, and that a consensus statement calling the risk overstated is a position rather than a settled fact. No threshold, protocol, imaging decision, or fluid decision follows.' },
+      { id: 'renal-contrast-reassessment', statement: 'Distinguish a current picture from a partial recheck, and know what a trend does not settle.', measure: 'Request fresh full reassessment after care. A creatinine-only or perfusion-only check does not refresh the others. A creatinine that keeps rising does not confirm the label, and one that falls does not confirm it either; the label predicted a course, and a course is not a cause.' },
+      { id: 'renal-contrast-handoff', statement: 'Transfer an open question with the search explicitly still open.', measure: 'Hand off the withdrawn nephrotoxic exposures, the recorded alternatives, the evidence review, and current full findings, with the cause named as unresolved. Attributing the injury before leaving, a normal creatinine, and a completed cause are not handoff gates.' },
+    ],
+    clinicalReview: {
+      reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED', competingInterests: 'None declared',
+      reviewedOn: '1970-01-01', reviewBy: '1970-01-01', contentVersion: '0.1.0',
+      sources: [
+        'Davenport MS, Perazella MA, Yee J, Dillman JR, et al. Use of Intravenous Iodinated Contrast Media in Patients with Kidney Disease: Consensus Statements from the American College of Radiology and the National Kidney Foundation. Radiology. 2020;294:660–668. doi:10.1148/radiol.2019192094. A consensus statement rather than a trial. It says the risk has been overstated because historic studies lacked adequate control groups; it does not claim contrast-induced injury never occurs, it retains a small group at genuine risk, and the record lists six published comments on it.',
+        'Hinson JS, Ehmann MR, Fine DM, Fishman EK, et al. Risk of Acute Kidney Injury After Intravenous Contrast Media Administration. Annals of Emergency Medicine. 2017;69:577–586.e4. doi:10.1016/j.annemergmed.2016.11.021. Single-centre and retrospective. Clinicians chose who received contrast and could see the patient, so the sickest are the least likely to have received it; propensity matching narrows that confounding rather than removing it. Evidence against a strong causal claim, not proof of no effect.',
+        'Nijssen EC, Rennenberg RJ, Nelemans PJ, Essers BA, et al. Prophylactic hydration to protect renal function from intravascular iodinated contrast material in patients at high risk of contrast-induced nephropathy (AMACING). The Lancet. 2017;389:1312–1322. doi:10.1016/S0140-6736(17)30057-0. Single-centre, open-label, elective procedures only, and it excluded an eGFR below 30 and previous dialysis, so it says nothing about the highest-risk patients. Non-inferiority is not equivalence, and the record lists eleven published comments.',
+      ],
+    },
+    limitations: ['renal-contrast-attribution-bounds', 'renal-contrast-authored-contrasts', 'renal-contrast-continuing-care'],
+  },
+  patient: {
+    ageYears: 66, sex: 'male', heightCm: 176, weightKg: 84, asaClass: 3,
+    diagnosis: 'Acute kidney injury of unresolved cause on the third day after a contrast-enhanced CT, recorded in the notes as contrast-induced nephropathy',
+    procedure: 'Review of the written attribution, review of the competing explanations it did not exclude, withdrawal of continuing nephrotoxic exposures, reassessment, and handoff of an unresolved cause',
+    comorbidities: ['Contrast-enhanced CT three days ago for suspected acute aortic syndrome; the study was negative and no aortic disease was found',
+      'Creatinine 96 µmol/L before the study and 168 µmol/L now; no earlier trend beyond these two values is supplied',
+      'Two recorded ward episodes with a systolic pressure below 90 mmHg on the first and second nights',
+      'Renin-angiotensin blocker continued throughout admission; three days of a non-steroidal anti-inflammatory given for back pain',
+      'Temperature 38.4°C last night with C-reactive protein rising from 22 to 141 mg/L; no source is supplied and no culture result is available',
+      'The ward notes record "contrast-induced nephropathy" as the cause; no result reports that, and no nephrology opinion is recorded'],
+    medications: ['Renin-angiotensin blocker, continued; no dose is supplied', 'Non-steroidal anti-inflammatory for three days; no dose is supplied'],
+    allergies: ['No known drug allergies'], fasting: 'Not a fasting lesson; nothing here turns on the airway or on oral intake',
+    baseline: { heartRateBpm: 92, meanArterialMmHg: 74, strokeVolumeMl: 68, hemoglobinGPerDl: 11.4,
+      bloodVolumeMl: 5000, coreTemperatureC: 37.8, arterialStiffness: 1, baroreflexGain: 1, fixedStrokeVolume: true },
+    airway: { difficulty: 0.1, difficultMaskVentilation: false, assessment: 'Awake, oriented, and comfortable; the airway is not the problem in this lesson' },
+    respiratory: { profile: 'healthy' },
+  },
+  equipment: { monitoring: ['ecg', 'nibp', 'pulse-oximetry', 'temperature'], ventilator: { mode: 'manual', fio2: 0.21,
+    tidalVolumeMl: 500, respiratoryRateBpm: 18, freshGasFlowLPerMin: 10, delivering: false } },
+  formulary: [],
+  timeline: [
+    { id: 'renal-contrast-presentation', type: 'narrative', target: 'renal-contrast', atTick: 0, severity: 'critical',
+      message: 'A fictional 66-year-old man is three days past a contrast-enhanced CT done for suspected acute aortic syndrome. The study was negative. His creatinine was 96 µmol/L before it and is 168 µmol/L now. The ward notes record the cause as "contrast-induced nephropathy"; no result reports that, and no nephrology opinion is recorded. He had two episodes with a systolic pressure below 90 mmHg on the first and second nights, has continued a renin-angiotensin blocker throughout, has had three days of a non-steroidal anti-inflammatory for back pain, and spiked to 38.4°C last night with C-reactive protein rising from 22 to 141 mg/L with no source supplied. Decide what the label in the notes is, and what it left unexamined.' },
+    { id: 'renal-contrast-boundary', type: 'narrative', target: 'renal-contrast-boundary', atTick: 0, severity: 'warning',
+      message: 'The label is an attribution someone wrote, not a result that was reported, and this lesson does not replace it with a different cause: the hypotension, the drugs, and the fever are competing explanations that remain open at the end. Nothing here decides whether contrast should be given to anyone, prescribes or withholds fluid, sets a threshold or an eGFR cutoff, orders or cancels imaging, or adopts a protocol. A rise after an exposure attributes nothing without a comparison group; controlled and propensity-matched work has not found the association the label assumes, and a consensus statement calling the risk overstated is a position that is discussed rather than settled. The 60-minute record-review checkpoint and the 5-minute unexamined contrast are authored teaching intervals, not pharmacokinetics, safe waits, or grading deadlines. The creatinine keeps rising across this rehearsal whatever is done, because the lesson is about the reasoning and not about a treatment response; that rise is authored and predicts nothing about any patient. Partial checks do not refresh full assessment. No cause, culture result, imaging decision, dialysis decision, recovery, or discharge clearance is claimed. Exhaled CO2 and FiO2 are unavailable.' },
+  ],
+  replayPoints: [{ id: 'renal-contrast-first-response', label: 'Return to the label and what it excluded', objectiveId: 'renal-contrast-attribution', atTick: 1,
+    reason: 'Separate reading the written attribution from reviewing the explanations it left untouched.' }],
+  debrief: { rubric: [
+    { id: 'renal-contrast-attribution-review', objectiveId: 'renal-contrast-attribution', question: 'What was the label in the notes, and what result reported it?' },
+    { id: 'renal-contrast-alternatives-review', objectiveId: 'renal-contrast-alternatives', question: 'Which competing explanations did the label leave untouched, and which of them did this rehearsal establish?' },
+    { id: 'renal-contrast-evidence-review', objectiveId: 'renal-contrast-evidence', question: 'What does a rise after an exposure show without a comparison group, and what do the controlled comparisons still leave open?' },
+    { id: 'renal-contrast-reassessment-review', objectiveId: 'renal-contrast-reassessment', question: 'The creatinine kept rising. What did that confirm, and what would a fall have confirmed?' },
+    { id: 'renal-contrast-handoff-review', objectiveId: 'renal-contrast-handoff', question: 'Who owns the open cause, the withdrawn exposures, and the continuing search?' },
+  ] },
+};

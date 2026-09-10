@@ -7,8 +7,8 @@ credited toward the catalog until every item in the completion contract passes.
 
 - [ ] Approve the product position, 256-scenario target catalog, training-versus-runtime-tool
   boundary, fidelity classes, maturity vocabulary,
-  privacy exception, report retention, and no-hosted-MCP decision. The catalogue stands at 251 of
-  the 256, and the five missing labs are all renal and electrolyte, at slice 7 of 12.
+  privacy exception, report retention, and no-hosted-MCP decision. The catalogue stands at 252 of
+  the 256, and the four missing labs are all renal and electrolyte, at slice 8 of 12.
 - [ ] Resolve every conflict between this change and the master clinical-governance, privacy,
   delivery, module, curriculum, pedagogy, safety, adoption, and sustainability specifications.
 - [x] Publish a machine-readable scenario completion schema and validate all existing anesthesia
@@ -704,8 +704,8 @@ credited toward the catalog until every item in the completion contract passes.
     transport, communication, documentation, counseling, procedure, diagnosis, disposition, or
     outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
-  Neurology is 15 of 15 and endocrine and metabolic is 12 of 12. **Renal and electrolyte is 7 of
-  12**, and the five remaining labs are the whole of the gap between the catalogue's 251 and the
+  Neurology is 15 of 15 and endocrine and metabolic is 12 of 12. **Renal and electrolyte is 8 of
+  12**, and the four remaining labs are the whole of the gap between the catalogue's 252 and the
   256 target in section 0.
 
   The thirteen sub-tasks left open below are independent clinical review and inclusive-runtime
@@ -1339,6 +1339,22 @@ credited toward the catalog until every item in the completion contract passes.
     A third potassium replacement on its own and the claim that an in-range value excludes
     depletion are both refused with reasons. Three sources verified through NCBI E-utilities,
     each carrying the half that undercuts the taught step.
+  - [x] Renal/electrolyte slice 8/12 registers
+    `contrast-attribution-a-label-that-stopped-the-search@0.1.0`, a fictional 66-year-old man
+    three days past a contrast-enhanced CT whose creatinine has gone from 96 to 168 micromol/L
+    and whose ward notes record the cause as "contrast-induced nephropathy" -- with no result,
+    report, or opinion saying so. Two nights below a systolic 90 mmHg, a renin-angiotensin
+    blocker that never stopped, three days of an anti-inflammatory, and a fever with a rising
+    inflammatory marker are all left untouched by that label. The learner reads the note as an
+    attribution, reviews what it did not exclude, withdraws the exposures that are still
+    running, reviews what a rise after an exposure shows without a comparison group, and hands
+    over an open question. The lesson names no cause: refusing the contrast attribution is not
+    an attribution to anything else. The creatinine rises whatever the learner does, so
+    reasoning well is never rewarded with a better number; what the search changes is the
+    record, which holds four hypotensive episodes rather than the summary's two. Nothing here
+    decides whether contrast should be given to anyone, prescribes or withholds fluid, sets a
+    threshold, or orders or cancels imaging. Three sources verified through NCBI E-utilities,
+    each carrying its own limits.
   - [ ] Complete hypermagnesemia independent clinical review, four exact-version quality records,
     complete inclusive-runtime validation, and production Turnstile/D1 evidence. Local checks
     do not replace those requirements. Publish the additive Worker identity catalog before

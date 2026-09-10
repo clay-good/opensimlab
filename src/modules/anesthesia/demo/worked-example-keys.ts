@@ -220,6 +220,7 @@ export const WORKED_EXAMPLE_KEYS: readonly string[] = [
   'pediatrics:pediatric-status-asthmaticus@0.1.0',
   'pediatrics:pediatric-status-epilepticus@0.1.0',
   'pediatrics:pediatric-supraventricular-tachycardia@0.1.0',
+  'renal-electrolyte:contrast-attribution-a-label-that-stopped-the-search@0.1.0',
   'renal-electrolyte:hyperkalemia-cardioprotection-and-rebound@0.1.0',
   'renal-electrolyte:hypermagnesemia-antagonism-and-removal@0.1.0',
   'renal-electrolyte:hypernatremia-water-access-and-losses@0.1.0',

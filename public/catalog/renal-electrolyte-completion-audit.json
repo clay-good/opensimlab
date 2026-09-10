@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "moduleId": "renal-electrolyte",
   "capabilityVersion": "0.1.0-alpha.48",
-  "scenarioCount": 7,
+  "scenarioCount": 8,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -869,6 +869,132 @@
           "status": "satisfied",
           "evidence": [
             "hypomagnesemia-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "contrast-attribution-a-label-that-stopped-the-search",
+      "title": "A label that stopped the search: attributing a rising creatinine to contrast",
+      "moduleId": "renal-electrolyte",
+      "environment": "ward",
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario contrast-attribution-a-label-that-stopped-the-search carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "5 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "contrast-attribution-fixtures.ts binds seed 5023 and content 0.1.0 to expert, incomplete-search, recovery, and no-action contrasts. No stochastic injury model is claimed."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "contrast-attribution.ts changes the record rather than the patient: reviewing the alternatives opens the full observation and drug charts, which hold four hypotensive episodes rather than the two the summary showed. The creatinine rises whatever the learner does, so reasoning well is never rewarded with a better number."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "Reading the written label, reviewing what it did not exclude, reviewing what a rise after an exposure shows, and withdrawing the exposures that are still running are four distinct recorded steps. Attributing the injury to contrast and closing the search are both refused with an explanation, and the refusals name no alternative cause."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "The label review, the alternatives, the evidence review, withdrawn exposures, support ownership, monitoring, and a current full assessment once the charts are open permit handoff of an unresolved cause. Naming a cause and a falling creatinine are not gates. Instructor takeover bounds a run in which the label is never read at 30 minutes, or an unfinished session at 180 minutes."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "satisfied",
+          "evidence": [
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary recorded actions. Unassisted mode remains silent; prompts do not reveal the unopened chart before it is retrieved."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "Five event-bound objectives distinguish reading the attribution, reviewing what it left untouched, separating controlled comparison from a before-and-after rise, current reassessment, and handing over an open question. Refused shortcuts and the authored unexamined contrast remain available after later care."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "3 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "contrast-attribution-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
           ]
         },
         {
