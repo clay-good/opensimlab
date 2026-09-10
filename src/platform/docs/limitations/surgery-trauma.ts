@@ -178,4 +178,28 @@ export const SURGERY_TRAUMA_LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'The paediatric series is a single-centre study of children and is quoted for its mechanism rather than its rate; the adult cohort is administrative claims data, which identifies patterns rather than errors, and its 6 percent is conditioned on eventually having the diagnosis. The return-visit analysis says plainly that admissions after a return visit do not adequately capture deficits in care, and those patients did better, not worse. Returning is common and is not a verdict on anybody. Nothing here gives a probability for this patient, and the reason to look again is that a third examination has not been done.',
     briefIn: ['third-attendance-a-question-two-people-have-already-answered'],
   },
+  {
+    id: 'deferred-step-presentation-and-team-response-are-authored',
+    headline: 'One night shift, one telephone call from theatre, and observations that never move.',
+    simplification: 'The case supplies a fixed set of entirely normal observations that never change, one authored slip at 8 minutes in which theatre says the registrar will not be free until half past five, and a team that answers six minutes after it is called and agrees to decide without seeing her. No infection, healing, wound, or pharmacological model runs underneath, no antibiotic is ever given, and no infection is ever confirmed or excluded.',
+    whereItMisleads: 'A learner concludes that the review always slips, that whoever is called always answers in minutes, that a decision like this is always given over the telephone, or that asking is what prevented an infection.',
+    correctUnderstanding: 'The reply is authored and deliberately generous, so that the lesson is about noticing the attachment rather than about winning an argument; in practice the call may not be answered, the answer may be to wait, and the plan has to survive both. The slip is authored and arrives whether or not anybody was watching for it — and the deferral was already the problem before it happened, which is why the worked example calls first. Nothing the learner does changes her physiology, because nothing was going to.',
+    briefIn: ['deferred-step-a-decision-attached-to-a-person'],
+  },
+  {
+    id: 'deferred-step-controls-are-recording-and-escalation-only',
+    headline: 'Nothing is prescribed, nothing is given, no dressing is chosen, and no operation is booked.',
+    simplification: 'The learner records the injury against the clock the published thresholds use, records the outstanding step as outstanding, records what the interval is attached to, calls the team that can decide and asks for a decision rather than a visit, records bounded qualified-team intent, and reviews the boundaries.',
+    whereItMisleads: 'The escalation control is read as the learner prescribing or giving an antibiotic, the refusals are read as criticism of the registrar in theatre, or the morning-chart refusal is read as an objection to written prescribing.',
+    correctUnderstanding: 'Whether an antibiotic is given, which one, at what dose and by what route, the wound dressing and any photography, and the debridement and its timing all belong to the qualified team, and this lesson exposes no agent, dose, route, interval, or dressing. Nobody in the case has done anything wrong: the registrar is operating and the board entry is an ordinary sentence. The finding is that a step with a window measured in minutes was attached to a person becoming free, and the refusals object to that attachment rather than to any individual or to the real constraint on theatre time.',
+    briefIn: ['deferred-step-a-decision-attached-to-a-person'],
+  },
+  {
+    id: 'deferred-step-two-thresholds-measured-from-two-clocks',
+    headline: 'Two retrospective series, two different thresholds, and two different starting points.',
+    simplification: 'The lesson quotes an odds ratio of 3.78 (95% CI 1.16-12.31) for deep infection beyond 66 minutes from injury in 137 type III open tibial fractures, with 1 infection in 36 when neither antibiotics nor coverage were delayed against 17 in 42 when both were; a 2.4-fold hazard of surgical site infection beyond 120 minutes from emergency department arrival in 230 open fractures, whose underlying median comparison of 61 against 83 minutes reached only p=0.053; and an older series of 1,104 open fracture wounds with 77 infections naming early antibiotics as the single most important factor without any threshold.',
+    whereItMisleads: 'A learner carries either number to the bedside as a deadline, mixes the two clocks by measuring from arrival against the 66-minute figure, or reads the older series as supplying a target it does not report.',
+    correctUnderstanding: 'Both modern series are retrospective and single-centre, they define their windows from different moments — one from injury, one from arrival — and they disagree by nearly an hour; the second reports a significant modelled hazard while its own median comparison did not reach significance. The 1989 series reports no threshold at all in its indexed abstract and none is quoted from it. Together they establish only that the interval is not free, which is a reason not to attach it to somebody\u2019s arrival, and not a stopwatch for this patient.',
+    briefIn: ['deferred-step-a-decision-attached-to-a-person'],
+  },
 ];

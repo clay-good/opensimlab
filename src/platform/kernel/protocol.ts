@@ -1193,6 +1193,56 @@ export interface UnfinishedSurveySnapshot {
   readonly durableRecoveryProven: boolean;
 }
 
+export interface DeferredStepSnapshot {
+  readonly injuryRecordedAtTick: number | null;
+  readonly pendingStepRecordedAtTick: number | null;
+  readonly attachmentRecordedAtTick: number | null;
+  readonly escalationAtTick: number | null;
+  readonly prescribingIntentAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly minutesSinceInjury: number;
+  readonly minutesSinceArrival: number;
+  readonly antibioticGiven: boolean;
+  readonly objectionRecorded: boolean;
+  readonly pulsesPresent: boolean;
+  readonly reviewSlipped: boolean;
+  readonly teamResponded: boolean;
+  readonly teamObserved: boolean;
+  readonly reviewGateAttempted: boolean;
+  readonly noHurryAttempted: boolean;
+  readonly morningChartAttempted: boolean;
+  readonly theatreAttempted: boolean;
+  readonly observationRecord: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+  } | null;
+  readonly woundRecord: {
+    readonly atTick: number; readonly injury: string; readonly minutesSinceInjury: number;
+    readonly minutesSinceArrival: number; readonly woundLengthCm: number;
+    readonly contaminated: boolean; readonly pulsesPresent: boolean;
+    readonly antibioticGiven: boolean; readonly allergyDocumented: boolean;
+    readonly objectionRecorded: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+    readonly injury: string; readonly minutesSinceInjury: number;
+    readonly minutesSinceArrival: number; readonly woundLengthCm: number;
+    readonly contaminated: boolean; readonly pulsesPresent: boolean;
+    readonly antibioticGiven: boolean; readonly allergyDocumented: boolean;
+    readonly objectionRecorded: boolean;
+    readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
+}
+
 export interface ThirdAttendanceSnapshot {
   readonly attendancesRecordedAtTick: number | null;
   readonly priorLimitsRecordedAtTick: number | null;
@@ -5152,6 +5202,7 @@ export interface EquipmentSnapshot {
     readonly quietChest?: QuietChestSnapshot;
     readonly unownedDelay?: UnownedDelaySnapshot;
     readonly thirdAttendance?: ThirdAttendanceSnapshot;
+    readonly deferredStep?: DeferredStepSnapshot;
     readonly incidentalClot?: IncidentalClotSnapshot;
     readonly normalTestToxicity?: NormalTestToxicitySnapshot;
     readonly prognosisQuestion?: PrognosisQuestionSnapshot;

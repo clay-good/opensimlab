@@ -67,6 +67,7 @@ import { supportsTransientResponse } from '../../surgery-trauma/transient-respon
 import { supportsQuietChest } from '../../surgery-trauma/quiet-chest';
 import { supportsUnownedDelay } from '../../surgery-trauma/unowned-delay';
 import { supportsThirdAttendance } from '../../surgery-trauma/third-attendance';
+import { supportsDeferredStep } from '../../surgery-trauma/deferred-step';
 import { supportsIncidentalClot } from '../../oncology/incidental-clot';
 import { supportsNormalTestToxicity } from '../../oncology/normal-test-toxicity';
 import { supportsPrognosisQuestion } from '../../oncology/prognosis-question';
@@ -1088,6 +1089,51 @@ export function objectiveFindings(
         'handoff-oncology-incidental-clot-an-unresolved-decision': { met: !!handoff, tick: handoff?.tick,
           finding: (handoff ? 'The finding, its route, the conditional strength and very low certainty, the figures in both directions, and his bleeding history all travelled. ' : 'Current full findings, the recorded certainty, or continuing-care ownership remains incomplete. ')
             + 'The decision was handed over open, which is what an unresolved decision looks like when it is handed over honestly rather than closed to make the handoff tidy.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id.includes('-surgery-trauma-deferred-step-')) {
+      if (!supportsDeferredStep(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The surgery and trauma deferred-step lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^deferred-step-${id}-\\d+$`).test(entry.eventId));
+      const injury = event('injury-recorded'); const pending = event('pending-step-recorded');
+      const attachment = event('attachment-recorded'); const escalation = event('escalation-requested');
+      const intent = event('prescribing-intent-recorded'); const boundaries = event('boundary-review');
+      const handoff = event('handoff'); const slipped = event('review-slipped');
+      const answered = log.find((entry) => /^deferred-step-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedReview = event('review-gate-refused'); const refusedHurry = event('no-hurry-refused');
+      const refusedChart = event('morning-chart-refused'); const refusedTheatre = event('theatre-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'record-surgery-trauma-deferred-step-the-injury-and-the-clock': { met: !!injury, tick: injury?.tick,
+          finding: (injury ? 'The injury was recorded with the minutes counted from the injury rather than from arrival. ' : 'The injury was never recorded against a clock, or was recorded against the wrong one. ')
+            + 'The published thresholds are measured from injury, and the two clocks differ by nineteen minutes here.' },
+        'record-surgery-trauma-deferred-step-the-step-that-is-waiting': { met: !!pending, tick: pending?.tick,
+          finding: (pending ? 'The outstanding step was recorded as outstanding: no antibiotic, no decision against one, no allergy, no contraindication, no disagreement. ' : 'The outstanding step was never named, so a step everybody agreed with and nobody had taken stayed invisible. ')
+            + 'A step with no argument anywhere against it is the hardest kind to notice.' },
+        'recognize-surgery-trauma-deferred-step-a-window-tied-to-an-arrival': { met: !!attachment && !refusedReview && !refusedTheatre, tick: attachment?.tick,
+          finding: (refusedReview ? 'Leaving the step attached to the review was attempted and refused. ' : attachment ? 'The plan was read as tying a timed step to the moment a person becomes free. ' : 'The plan was never read against the window it was spending. ')
+            + (refusedTheatre ? 'Waiting for theatre was attempted and refused: the same error with a longer interval on it. ' : '')
+            + 'The decision needed a telephone call rather than a pair of eyes.' },
+        'record-surgery-trauma-deferred-step-what-the-interval-is-attached-to': { met: !!attachment, tick: attachment?.tick,
+          finding: (attachment ? 'What the interval was attached to was recorded, together with the fact that nobody in the sentence was at fault. ' : 'What the interval was attached to was never recorded. ')
+            + 'The registrar is operating; the problem is the attachment, not a person.' },
+        'activate-surgery-trauma-deferred-step-ask-for-a-decision-not-a-visit': { met: !!escalation && !refusedChart, tick: escalation?.tick,
+          finding: (escalation ? 'The team that could decide was called and asked to decide without seeing her, with the injury, its time, and the absence of any documented allergy stated. ' : 'Nobody was asked to make the decision. ')
+            + (refusedChart ? 'Deferring it to the morning drug chart was attempted and refused: it converts an outstanding step into completed administration. ' : '')
+            + (refusedHurry ? 'Her stability was offered as time in hand and refused; the outcome the interval is spent against is ninety days away. ' : '')
+            + 'What was asked for was a decision, not a visit.' },
+        'record-surgery-trauma-deferred-step-bounded-prescribing-intent': { met: !!intent, tick: intent?.tick,
+          finding: (intent ? 'Whether anything is given, which, at what dose and route, the dressing and photography, and the debridement and its timing were recorded as the qualified team\u2019s. ' : 'Bounded qualified-team intent was never recorded. ')
+            + 'Nothing was prescribed and no agent, dose, route, interval, or dressing was chosen or displayed here.' },
+        'review-surgery-trauma-deferred-step-two-thresholds-and-two-clocks': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'Both thresholds were reviewed, and so was the fact that they are measured from different moments. ' : 'The boundary and certainty review is missing. ')
+            + 'Sixty-six minutes from injury in 137 type III tibias with an odds ratio of 3.78 and 1 infection in 36 against 17 in 42; 120 minutes from arrival in 230 others with a 2.4-fold hazard whose underlying median comparison missed significance at p=0.053; and an older series of 1,104 wounds naming early antibiotics with no threshold at all. Retrospective throughout, and no stopwatch.' },
+        'handoff-surgery-trauma-deferred-step-a-step-that-is-no-longer-waiting-on-a-person': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The injury with the minutes measured from it, the outstanding step, what the interval had been attached to, and the bounded intent all travelled. ' : 'Current full findings, the recorded attachment, or continuing-care ownership remains incomplete. ')
+            + (slipped ? 'The review slipped to half past five during this run, and the patient was identical either side of it. ' : '')
+            + (answered ? 'The team answered within minutes without needing to see her and has taken the decision on. ' : 'The team had not answered by the end of this run, and the handoff had to survive that. ')
+            + 'No infection, effect, or outcome is certified.' },
       };
       const result = results[objective.id]!;
       return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;

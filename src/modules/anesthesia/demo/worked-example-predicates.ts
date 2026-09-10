@@ -72,6 +72,7 @@ import { supportsTransientResponseDemonstration } from '../../surgery-trauma/dem
 import { supportsQuietChestDemonstration } from '../../surgery-trauma/demo/quiet-chest-demonstration';
 import { supportsUnownedDelayDemonstration } from '../../surgery-trauma/demo/unowned-delay-demonstration';
 import { supportsThirdAttendanceDemonstration } from '../../surgery-trauma/demo/third-attendance-demonstration';
+import { supportsDeferredStepDemonstration } from '../../surgery-trauma/demo/deferred-step-demonstration';
 import { supportsLowScoreDemonstration } from '../../medical-surgical-nursing/demo/low-score-demonstration';
 import { supportsCountedRateDemonstration } from '../../medical-surgical-nursing/demo/counted-rate-demonstration';
 import { supportsPairedReadingDemonstration } from '../../medical-surgical-nursing/demo/paired-reading-demonstration';
@@ -351,6 +352,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsQuietChestDemonstration,
     supportsUnownedDelayDemonstration,
     supportsThirdAttendanceDemonstration,
+    supportsDeferredStepDemonstration,
   ],
   'medical-surgical-nursing': [
     supportsLowScoreDemonstration,

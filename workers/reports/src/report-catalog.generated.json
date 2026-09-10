@@ -4066,6 +4066,23 @@
       "limitationManifestHash": "sha256:a2fac1717c71d9139473457163b62e64223dd36b9b570ee22a3f17965cd9e686"
     },
     {
+      "scenarioId": "deferred-step-a-decision-attached-to-a-person",
+      "contentVersion": "0.1.0",
+      "moduleId": "surgery-trauma",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:979bfb37c4a71b08a5c75f0eb745a487742d5e248392280ab304e099adbec786",
+      "defaultsHash": "sha256:bdda72d2435e2d9a636e8da0fdaf1b2d856fe7288e0aa4c48be20f369f9c6fd6",
+      "maturityHash": "sha256:a9a8aa171c7ce4f8f11ca80413a196b4494daac41f83a47221c69496cbb9f96b",
+      "sourceManifestHash": "sha256:9df637ed8b1246c03dc89c252fb1420cd00d327ed45ea8d462deb90581f6e5ab",
+      "limitationManifestHash": "sha256:7966d240c8e0c36aef6c70afa419b0b4c93a05c8e8d7310fd35f589862e56363"
+    },
+    {
       "scenarioId": "negative-scan-a-scan-that-cannot-say-no",
       "contentVersion": "0.1.0",
       "moduleId": "surgery-trauma",

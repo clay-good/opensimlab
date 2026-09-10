@@ -282,7 +282,7 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
       expect(uncovered(scenarios, moduleId), moduleId).toEqual([]);
     }
     expect(readme).toContain('All sixteen specialties are complete on both counts');
-    expect(readme).toContain('anesthesia, and surgery and trauma, whose seven labs are the newest.');
+    expect(readme).toContain('anesthesia, and surgery and trauma, whose eight labs are the newest.');
     // The hedge this sentence used to carry belongs to a state the audit has
     // left behind. If it comes back, one of the tests above is failing too.
     expect(readme).not.toContain('and most\nendocrine ones');
@@ -297,7 +297,7 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
   // carried an exception sentence saying so. Both are now bound, so that sentence has to be
   // gone — and the hedge in front of it with it.
   it('covers the surgery and trauma lab, and drops the exception that described it', () => {
-    expect(SURGERY_TRAUMA_SCENARIOS).toHaveLength(7);
+    expect(SURGERY_TRAUMA_SCENARIOS).toHaveLength(8);
     expect(uncovered(SURGERY_TRAUMA_SCENARIOS, 'surgery-trauma')).toEqual([]);
     expect(coveredCount(SURGERY_TRAUMA_SCENARIOS, 'surgery-trauma')).toBe(SURGERY_TRAUMA_SCENARIOS.length);
     const readme = readFileSync(join(process.cwd(), 'README.md'), 'utf8');

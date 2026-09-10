@@ -120,7 +120,7 @@ export const MODULE_PROSE: Readonly<Record<string, ModuleProse>> = {
       + 'treatment record.',
   },
   'surgery-trauma': {
-    description: 'Practice the surgical patient who never declares himself: a recovery that has quietly stopped, an investigation that cannot say no, an examination he could not take part in, a blood pressure that answers and will not hold, an injury whose severity is not visible on the evening it is assessed, a wait that nobody decided, and a question two colleagues have already answered.',
+    description: 'Practice the surgical patient who never declares himself: a recovery that has quietly stopped, an investigation that cannot say no, an examination he could not take part in, a blood pressure that answers and will not hold, an injury whose severity is not visible on the evening it is assessed, a wait that nobody decided, a question two colleagues have already answered, and a step attached to somebody\u2019s arrival.',
     audience: 'Medical students, surgical and emergency trainees, and teams receiving injured patients.',
     prerequisites: 'Primary-survey familiarity, basic resuscitation, and escalation to a surgical team.',
     plannedScope: 'Ten bounded surgery and trauma rehearsals spanning the deteriorating post-operative patient, '

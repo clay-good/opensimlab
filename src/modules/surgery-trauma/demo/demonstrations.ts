@@ -13,6 +13,7 @@ import { transientResponseDemonstrationStep, supportsTransientResponseDemonstrat
 import { quietChestDemonstrationStep, supportsQuietChestDemonstration } from './quiet-chest-demonstration';
 import { unownedDelayDemonstrationStep, supportsUnownedDelayDemonstration } from './unowned-delay-demonstration';
 import { thirdAttendanceDemonstrationStep, supportsThirdAttendanceDemonstration } from './third-attendance-demonstration';
+import { deferredStepDemonstrationStep, supportsDeferredStepDemonstration } from './deferred-step-demonstration';
 
 export const SURGERY_TRAUMA_DEMONSTRATIONS: readonly LessonDemonstration[] = [
   { id: 'NegativeScan', supports: supportsNegativeScanDemonstration, actionType: 'negative-scan-response', step: (r) => negativeScanDemonstrationStep(r?.negativeScan) },
@@ -22,4 +23,5 @@ export const SURGERY_TRAUMA_DEMONSTRATIONS: readonly LessonDemonstration[] = [
   { id: 'QuietChest', supports: supportsQuietChestDemonstration, actionType: 'quiet-chest-response', step: (r) => quietChestDemonstrationStep(r?.quietChest) },
   { id: 'UnownedDelay', supports: supportsUnownedDelayDemonstration, actionType: 'unowned-delay-response', step: (r) => unownedDelayDemonstrationStep(r?.unownedDelay) },
   { id: 'ThirdAttendance', supports: supportsThirdAttendanceDemonstration, actionType: 'third-attendance-response', step: (r) => thirdAttendanceDemonstrationStep(r?.thirdAttendance) },
+  { id: 'DeferredStep', supports: supportsDeferredStepDemonstration, actionType: 'deferred-step-response', step: (r) => deferredStepDemonstrationStep(r?.deferredStep) },
 ];
