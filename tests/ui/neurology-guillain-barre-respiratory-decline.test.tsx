@@ -84,7 +84,7 @@ describe('Guillain-Barré tutor and worked example', () => {
   it('leaves the controls visible but inert while the example runs', () => {
     const label = 'Review ascending trajectory';
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'NeurologyGbs' });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'Gbs' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

@@ -52,6 +52,7 @@ export const CRITICAL_CARE_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'VentilatorDyssynchrony',
+    demoId: 'Dyssynchrony',
     actionType: 'ventilator-dyssynchrony-response',
     supports: (scenario) => scenario.timeline.some(
     (event) => event.type === 'narrative' && event.target === 'ventilator-dyssynchrony',
@@ -124,6 +125,7 @@ export const CRITICAL_CARE_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'RightVentricularFailure',
+    demoId: 'RvFailure',
     actionType: 'right-ventricular-failure-response',
     supports: (scenario) => scenario.timeline.some(
     (event) => event.type === 'narrative' && event.target === 'right-ventricular-failure',
@@ -133,6 +135,7 @@ export const CRITICAL_CARE_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'MassivePulmonaryEmbolism',
+    demoId: 'MassivePe',
     actionType: 'massive-pulmonary-embolism-response',
     supports: (scenario) => scenario.timeline.some(
     (event) => event.type === 'narrative' && event.target === 'massive-pulmonary-embolism',
@@ -160,6 +163,7 @@ export const CRITICAL_CARE_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'PostArrestTemperature',
+    demoId: 'TargetedTemperatureManagement',
     actionType: 'targeted-temperature-management-response',
     supports: (scenario) => scenario.timeline.some(
     (event) => event.type === 'narrative' && event.target === 'targeted-temperature-management',
@@ -197,6 +201,7 @@ export const CRITICAL_CARE_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'IcuHiddenDeteriorationHandoff',
+    demoId: 'IcuHandoff',
     actionType: 'icu-hidden-deterioration-handoff-response',
     supports: (scenario) => scenario.timeline.some(
     (event) => event.type === 'narrative'
@@ -207,6 +212,7 @@ export const CRITICAL_CARE_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'VentilatorCircuitDisconnection',
+    demoId: 'CircuitDisconnection',
     actionType: 'ventilator-circuit-disconnection-response',
     supports: (scenario) => scenario.timeline.some(
     (event) => event.type === 'narrative'
@@ -237,6 +243,7 @@ export const CRITICAL_CARE_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'EndotrachealTubeMigration',
+    demoId: 'TubeMigration',
     actionType: 'endotracheal-tube-migration-response',
     supports: (scenario) => scenario.timeline.some(
     (event) => event.type === 'narrative'

@@ -84,7 +84,7 @@ describe('Focal-motor-status tutor and worked example', () => {
   it('leaves the controls visible but inert while the example runs', () => {
     const label = 'Review clock + motor evolution';
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'NeurologyFocalMotorStatus' });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'FocalMotorStatus' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

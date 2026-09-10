@@ -4716,7 +4716,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 )}
                 guidance={props.guidance}
                 scenarioVersion={props.scenario.metadata.version}
-                demonstrating={props.demonstratingLessonId === moduleTray.id}
+                demonstrating={props.demonstratingLessonId === (moduleTray.demoId ?? moduleTray.id)}
                 onOpenSource={moduleTray.opensSource ? props.onLessonTutorSource : undefined}
                 onAction={(action: string) => props.onLessonAction?.(moduleTray.actionType, action)} />
             )}

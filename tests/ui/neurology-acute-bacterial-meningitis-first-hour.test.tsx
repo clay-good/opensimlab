@@ -84,7 +84,7 @@ describe('Bacterial-meningitis tutor and worked example', () => {
   it('leaves the controls visible but inert while the example runs', () => {
     const label = 'Review the acute trajectory';
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'NeurologyMeningitis' });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'Meningitis' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

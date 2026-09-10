@@ -141,7 +141,7 @@ describe('Emergency exertional heat stroke tutor and worked example', () => {
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'HeatStroke' });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'ExertionalHeatStroke' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

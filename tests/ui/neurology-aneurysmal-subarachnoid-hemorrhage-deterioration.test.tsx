@@ -84,7 +84,7 @@ describe('Delayed-deterioration tutor and worked example', () => {
   it('leaves the controls visible but inert while the example runs', () => {
     const label = 'Review SAH course + new deficit';
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'NeurologyAsahDeterioration' });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'Asah' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

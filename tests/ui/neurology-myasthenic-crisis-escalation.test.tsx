@@ -84,7 +84,7 @@ describe('Myasthenic-crisis tutor and worked example', () => {
   it('leaves the controls visible but inert while the example runs', () => {
     const label = 'Review rapid weakness trajectory';
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'NeurologyMyasthenicCrisis' });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'Myasthenia' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

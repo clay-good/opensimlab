@@ -29,6 +29,12 @@ export interface LessonTrayProps {
 export interface LessonTray {
   /** The lesson id, shared with `LessonDemonstration` so one demo drives one tray. */
   readonly id: string;
+  /**
+   * The demonstration whose worked example drives this tray, when its id differs
+   * from the tray's. A tray gates its own controls off `demonstrating`, so a tray
+   * named differently from its demonstration would stay live while the example ran.
+   */
+  readonly demoId?: string;
   /** The action type this tray's controls dispatch. */
   readonly actionType: string;
   /** True for the scenarios this tray belongs to. */

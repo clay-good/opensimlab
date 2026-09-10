@@ -17,6 +17,7 @@ import { ObstetricsPostpartumPreeclampsiaTray } from './ObstetricsPostpartumPree
 export const OBSTETRICS_TRAYS: readonly LessonTray[] = [
   {
     id: 'ObstetricsAfe',
+    demoId: 'Afe',
     actionType: 'suspected-amniotic-fluid-embolism-pattern-response',
     supports: (scenario) => scenario.metadata.id === 'suspected-amniotic-fluid-embolism-pattern'
     && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'suspected-amniotic-fluid-embolism-pattern-transition')
@@ -26,6 +27,7 @@ export const OBSTETRICS_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'ObstetricsAtony',
+    demoId: 'Atony',
     actionType: 'postpartum-hemorrhage-uterine-atony-response',
     supports: (scenario) => scenario.metadata.id === 'postpartum-hemorrhage-uterine-atony'
     && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-hemorrhage-uterine-atony-transition')
@@ -35,6 +37,7 @@ export const OBSTETRICS_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'ObstetricsConcealedAbruption',
+    demoId: 'ConcealedAbruption',
     actionType: 'concealed-placental-abruption-hemorrhage-response',
     supports: (scenario) => scenario.metadata.id === 'concealed-placental-abruption-hemorrhage'
     && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'concealed-placental-abruption-hemorrhage-transition')
@@ -44,6 +47,7 @@ export const OBSTETRICS_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'ObstetricsEclampsia',
+    demoId: 'Eclampsia',
     actionType: 'eclampsia-first-seizure-response',
     supports: (scenario) => scenario.metadata.id === 'eclampsia-first-seizure-response'
     && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'eclampsia-first-seizure-response-transition')
@@ -53,6 +57,7 @@ export const OBSTETRICS_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'ObstetricsMaternalSepsis',
+    demoId: 'MaternalSepsis',
     actionType: 'maternal-sepsis-postpartum-deterioration-response',
     supports: (scenario) => scenario.metadata.id === 'maternal-sepsis-postpartum-deterioration'
     && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'maternal-sepsis-postpartum-deterioration-transition')
@@ -62,6 +67,7 @@ export const OBSTETRICS_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'ObstetricsPostpartumPreeclampsia',
+    demoId: 'PostpartumPreeclampsia',
     actionType: 'postpartum-severe-preeclampsia-warning-signs-response',
     supports: (scenario) => scenario.metadata.id === 'postpartum-severe-preeclampsia-warning-signs'
     && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-severe-preeclampsia-warning-signs-transition')

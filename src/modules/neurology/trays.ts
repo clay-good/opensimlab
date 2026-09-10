@@ -25,6 +25,7 @@ import { NeurologyAutonomicDysreflexiaTray } from './NeurologyAutonomicDysreflex
 export const NEUROLOGY_TRAYS: readonly LessonTray[] = [
   {
     id: 'NeurologyMinorStroke',
+    demoId: 'MinorStroke',
     actionType: 'minor-nondisabling-acute-ischemic-stroke-response',
     supports: (scenario) => scenario.metadata.id === 'minor-nondisabling-acute-ischemic-stroke'
     && scenario.timeline.some((event) => event.type === 'narrative'
@@ -36,6 +37,7 @@ export const NEUROLOGY_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'NeurologyBasilarLvo',
+    demoId: 'BasilarLvo',
     actionType: 'basilar-artery-occlusion-escalation-response',
     supports: (scenario) => scenario.metadata.id === 'basilar-artery-occlusion-escalation'
     && scenario.timeline.some((event) => event.type === 'narrative'
@@ -47,6 +49,7 @@ export const NEUROLOGY_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'NeurologyCerebellarIch',
+    demoId: 'CerebellarIch',
     actionType: 'spontaneous-cerebellar-intracerebral-hemorrhage-response',
     supports: (scenario) => scenario.metadata.id === 'spontaneous-cerebellar-intracerebral-hemorrhage'
     && scenario.timeline.some((event) => event.type === 'narrative'
@@ -58,6 +61,7 @@ export const NEUROLOGY_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'NeurologyAsahDeterioration',
+    demoId: 'Asah',
     actionType: 'aneurysmal-subarachnoid-hemorrhage-deterioration-response',
     supports: (scenario) => scenario.metadata.id === 'aneurysmal-subarachnoid-hemorrhage-deterioration'
     && scenario.timeline.some((event) => event.type === 'narrative'
@@ -69,6 +73,7 @@ export const NEUROLOGY_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'NeurologyFocalMotorStatus',
+    demoId: 'FocalMotorStatus',
     actionType: 'focal-motor-status-epilepticus-escalation-response',
     supports: (scenario) => scenario.metadata.id === 'focal-motor-status-epilepticus-escalation'
     && scenario.timeline.some((event) => event.type === 'narrative'
@@ -80,6 +85,7 @@ export const NEUROLOGY_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'NeurologyNcse',
+    demoId: 'Ncse',
     actionType: 'nonconvulsive-status-epilepticus-recognition-response',
     supports: (scenario) => scenario.metadata.id === 'nonconvulsive-status-epilepticus-recognition'
     && scenario.timeline.some((event) => event.type === 'narrative'
@@ -91,6 +97,7 @@ export const NEUROLOGY_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'NeurologyMyasthenicCrisis',
+    demoId: 'Myasthenia',
     actionType: 'myasthenic-crisis-escalation-response',
     supports: (scenario) => scenario.metadata.id === 'myasthenic-crisis-escalation'
     && scenario.timeline.some((event) => event.type === 'narrative'
@@ -102,6 +109,7 @@ export const NEUROLOGY_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'NeurologyGbs',
+    demoId: 'Gbs',
     actionType: 'guillain-barre-respiratory-decline-response',
     supports: (scenario) => scenario.metadata.id === 'guillain-barre-respiratory-decline'
     && scenario.timeline.some((event) => event.type === 'narrative'
@@ -113,6 +121,7 @@ export const NEUROLOGY_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'NeurologyMeningitis',
+    demoId: 'Meningitis',
     actionType: 'acute-bacterial-meningitis-first-hour-response',
     supports: (scenario) => scenario.metadata.id === 'acute-bacterial-meningitis-first-hour'
     && scenario.timeline.some((event) => event.type === 'narrative'
@@ -124,6 +133,7 @@ export const NEUROLOGY_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'NeurologyEncephalitis',
+    demoId: 'Encephalitis',
     actionType: 'suspected-herpes-simplex-encephalitis-response',
     supports: (scenario) => scenario.metadata.id === 'suspected-herpes-simplex-encephalitis'
     && scenario.timeline.some((event) => event.type === 'narrative'
@@ -135,6 +145,7 @@ export const NEUROLOGY_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'NeurologyRaisedIcp',
+    demoId: 'RaisedIcp',
     actionType: 'raised-intracranial-pressure-visual-threat-response',
     supports: (scenario) => scenario.metadata.id === 'raised-intracranial-pressure-visual-threat'
     && scenario.timeline.some((event) => event.type === 'narrative'
@@ -146,6 +157,7 @@ export const NEUROLOGY_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'NeurologyHerniation',
+    demoId: 'Herniation',
     actionType: 'acute-transtentorial-herniation-pattern-response',
     supports: (scenario) => scenario.metadata.id === 'acute-transtentorial-herniation-pattern'
     && scenario.timeline.some((event) => event.type === 'narrative'
@@ -157,6 +169,7 @@ export const NEUROLOGY_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'NeurologyMscc',
+    demoId: 'Mscc',
     actionType: 'metastatic-spinal-cord-compression-response',
     supports: (scenario) => scenario.metadata.id === 'metastatic-spinal-cord-compression'
     && scenario.timeline.some((event) => event.type === 'narrative'
@@ -168,6 +181,7 @@ export const NEUROLOGY_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'NeurologyDelirium',
+    demoId: 'Delirium',
     actionType: 'acute-delirium-reversible-causes-response',
     supports: (scenario) => scenario.metadata.id === 'acute-delirium-reversible-causes'
     && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acute-delirium-reversible-causes-reassessment')
@@ -177,6 +191,7 @@ export const NEUROLOGY_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'NeurologyAutonomicDysreflexia',
+    demoId: 'Dysreflexia',
     actionType: 'autonomic-dysreflexia-authored-trigger-response',
     supports: (scenario) => scenario.metadata.id === 'autonomic-dysreflexia-authored-trigger'
     && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'autonomic-dysreflexia-authored-trigger-transition')

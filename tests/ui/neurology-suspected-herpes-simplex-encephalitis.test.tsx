@@ -157,7 +157,7 @@ describe('Encephalitis tutor and worked example', () => {
   it('leaves the controls visible but inert while the example runs', () => {
     const label = 'Review encephalitic trajectory';
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'NeurologyEncephalitis' });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'Encephalitis' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

@@ -121,7 +121,7 @@ describe('Raised-pressure tutor and worked example', () => {
   it('leaves the controls visible but inert while the example runs', () => {
     const label = 'Review the pressure clock';
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'NeurologyRaisedIcp' });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'RaisedIcp' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

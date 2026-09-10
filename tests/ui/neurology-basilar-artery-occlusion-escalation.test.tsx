@@ -84,7 +84,7 @@ describe('Basilar-occlusion tutor and worked example', () => {
   it('leaves the controls visible but inert while the example runs', () => {
     const label = 'Review clock + posterior syndrome';
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'NeurologyBasilarLvo' });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'BasilarLvo' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

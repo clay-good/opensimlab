@@ -84,7 +84,7 @@ describe('Minor-stroke tutor and worked example', () => {
   it('leaves the controls visible but inert while the example runs', () => {
     const label = 'Review clock + deficit + function';
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'NeurologyMinorStroke' });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'MinorStroke' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

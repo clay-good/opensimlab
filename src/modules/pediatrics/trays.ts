@@ -90,6 +90,7 @@ export const PEDIATRICS_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'PediatricDiabeticKetoacidosis',
+    demoId: 'PediatricDka',
     actionType: 'pediatric-diabetic-ketoacidosis-response',
     supports: (scenario) => scenario.metadata.id === 'pediatric-diabetic-ketoacidosis'
     && scenario.timeline.some((event) => event.type === 'narrative'
@@ -137,6 +138,7 @@ export const PEDIATRICS_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'PediatricSupraventricularTachycardia',
+    demoId: 'PediatricSvt',
     actionType: 'pediatric-supraventricular-tachycardia-response',
     supports: (scenario) => scenario.metadata.id === 'pediatric-supraventricular-tachycardia'
     && scenario.timeline.some((event) => event.type === 'narrative'
@@ -159,6 +161,7 @@ export const PEDIATRICS_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'PediatricForeignBodyAirwayObstruction',
+    demoId: 'PediatricFbao',
     actionType: 'pediatric-foreign-body-airway-obstruction-response',
     supports: (scenario) => scenario.metadata.id === 'pediatric-foreign-body-airway-obstruction'
     && scenario.timeline.some((event) => event.type === 'narrative'

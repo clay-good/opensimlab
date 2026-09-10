@@ -101,7 +101,7 @@ describe('Dysreflexia tutor and worked example', () => {
   it('leaves the controls visible but inert while the example runs', () => {
     const label = 'Connect baseline + pattern';
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'NeurologyAutonomicDysreflexia' });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'Dysreflexia' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

@@ -128,6 +128,7 @@ export const EMERGENCY_MEDICINE_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'Hyperkalemia',
+    demoId: 'HyperkalemiaWithEcgChange',
     actionType: 'hyperkalemia-response',
     supports: (scenario) => scenario.timeline.some(
     (event) => event.type === 'narrative' && event.target === 'hyperkalemia-with-ecg-change',
@@ -146,6 +147,7 @@ export const EMERGENCY_MEDICINE_TRAYS: readonly LessonTray[] = [
   },
   {
     id: 'HeatStroke',
+    demoId: 'ExertionalHeatStroke',
     actionType: 'heat-stroke-response',
     supports: (scenario) => scenario.timeline.some(
     (event) => event.type === 'narrative' && event.target === 'exertional-heat-stroke',

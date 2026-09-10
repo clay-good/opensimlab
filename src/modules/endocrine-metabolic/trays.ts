@@ -28,7 +28,7 @@ import { supportsSevereHypoglycemia } from './severe-hypoglycemia';
 import { supportsThyroidStorm } from './thyroid-storm';
 
 export const ENDOCRINE_METABOLIC_TRAYS: readonly LessonTray[] = [
-  { id: 'AdrenalCrisis', actionType: 'adrenal-crisis-response', supports: supportsAdrenalCrisis, assessment: (r) => r?.adrenalCrisis, opensSource: true, Component: AdrenalCrisisTray as LessonTray['Component'] },
+  { id: 'AdrenalCrisis', demoId: 'Adrenal', actionType: 'adrenal-crisis-response', supports: supportsAdrenalCrisis, assessment: (r) => r?.adrenalCrisis, opensSource: true, Component: AdrenalCrisisTray as LessonTray['Component'] },
   { id: 'AvpDeficiency', actionType: 'avp-deficiency-response', supports: supportsAvpDeficiency, assessment: (r) => r?.avpDeficiency, opensSource: true, Component: AvpDeficiencyTray as LessonTray['Component'] },
   { id: 'Hypercalcemia', actionType: 'hypercalcemia-response', supports: supportsHypercalcemia, assessment: (r) => r?.hypercalcemia, opensSource: true, Component: HypercalcemiaTray as LessonTray['Component'] },
   { id: 'Hypocalcemia', actionType: 'hypocalcemia-response', supports: supportsHypocalcemia, assessment: (r) => r?.hypocalcemia, opensSource: true, Component: HypocalcemiaTray as LessonTray['Component'] },
@@ -36,6 +36,6 @@ export const ENDOCRINE_METABOLIC_TRAYS: readonly LessonTray[] = [
   { id: 'Myxedema', actionType: 'myxedema-response', supports: supportsMyxedema, assessment: (r) => r?.myxedema, opensSource: true, Component: MyxedemaTray as LessonTray['Component'] },
   { id: 'PerioperativeDiabetes', actionType: 'perioperative-diabetes-response', supports: supportsPerioperativeDiabetes, assessment: (r) => r?.perioperativeDiabetes, opensSource: true, Component: PerioperativeDiabetesTray as LessonTray['Component'] },
   { id: 'Refeeding', actionType: 'refeeding-response', supports: supportsRefeeding, assessment: (r) => r?.refeeding, opensSource: true, Component: RefeedingTray as LessonTray['Component'] },
-  { id: 'SevereHypoglycemia', actionType: 'severe-hypoglycemia-response', supports: supportsSevereHypoglycemia, assessment: (r) => r?.severeHypoglycemia, Component: SevereHypoglycemiaTray as LessonTray['Component'] },
-  { id: 'ThyroidStorm', actionType: 'thyroid-storm-response', supports: supportsThyroidStorm, assessment: (r) => r?.thyroidStorm, opensSource: true, Component: ThyroidStormTray as LessonTray['Component'] },
+  { id: 'SevereHypoglycemia', demoId: 'Hypoglycemia', actionType: 'severe-hypoglycemia-response', supports: supportsSevereHypoglycemia, assessment: (r) => r?.severeHypoglycemia, Component: SevereHypoglycemiaTray as LessonTray['Component'] },
+  { id: 'ThyroidStorm', demoId: 'Thyroid', actionType: 'thyroid-storm-response', supports: supportsThyroidStorm, assessment: (r) => r?.thyroidStorm, opensSource: true, Component: ThyroidStormTray as LessonTray['Component'] },
 ];

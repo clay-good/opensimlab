@@ -84,7 +84,7 @@ describe('Cerebellar-hemorrhage tutor and worked example', () => {
   it('leaves the controls visible but inert while the example runs', () => {
     const label = 'Review clock + neurologic trajectory';
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'NeurologyCerebellarIch' });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'CerebellarIch' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

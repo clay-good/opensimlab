@@ -130,7 +130,7 @@ describe('Eclampsia tutor and worked example', () => {
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'ObstetricsEclampsia' });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'Eclampsia' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');
