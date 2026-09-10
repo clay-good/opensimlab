@@ -47,6 +47,10 @@ import { RESPIRATORY_MEDICINE_DEMONSTRATIONS } from '../../src/modules/respirato
 import { SURGERY_TRAUMA_TRAYS } from '../../src/modules/surgery-trauma/trays';
 import { SURGERY_TRAUMA_DEMONSTRATIONS } from '../../src/modules/surgery-trauma/demo/demonstrations';
 
+/**
+ * Anesthesia is absent on purpose: its five trays predate the demonstration
+ * registry and take no `demonstrating` prop, so there is no pairing to hold.
+ */
 const MODULES: readonly {
   readonly id: string;
   readonly trays: readonly LessonTray[];

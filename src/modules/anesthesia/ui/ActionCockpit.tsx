@@ -1591,23 +1591,9 @@ export interface ActionCockpitProps {
   readonly onPneumothoraxResponse?: (
     action: 'assess-bilateral-ventilation' | 'decompress-left-chest',
   ) => void;
-  readonly onAspirationRiskAssessment?: (
-    action: 'review-cues' | 'classify-elevated' | 'classify-routine'
-      | 'defer-and-replan' | 'proceed-routine',
-  ) => void;
   readonly onEmergenceResidualBlockAssessment?: (
     action: 'review-quantitative-monitor' | 'classify-residual' | 'classify-recovered'
       | 'defer-extubation-and-support' | 'proceed-to-extubation',
-  ) => void;
-  readonly onDelayedEmergenceAssessment?: (
-    action: 'review-support' | 'review-exposure-and-block' | 'check-metabolic-causes'
-      | 'perform-focused-neurologic-exam' | 'urgent-neurologic-evaluation'
-      | 'continue-routine-recovery',
-  ) => void;
-  readonly onExtubationReadinessAssessment?: (
-    action: 'review-quantitative-recovery' | 'review-awake-airway-protection'
-      | 'review-spontaneous-gas-exchange' | 'review-airway-risk-and-rescue'
-      | 'ready-for-planned-awake-extubation' | 'continue-support-and-reassess',
   ) => void;
   readonly onOpioidVentilatoryResponse?: (
     response: 'hold-further-opioid' | 'record-naloxone-titration',
@@ -1619,16 +1605,6 @@ export interface ActionCockpitProps {
   readonly onGlycemicResponse?: (
     response: 'confirm-point-of-care-glucose' | 'record-insulin-protocol-intent'
       | 'repeat-point-of-care-glucose',
-  ) => void;
-  readonly onCiedPlanningAssessment?: (
-    action: 'review-device-record' | 'review-procedure-emi'
-      | 'coordinate-asynchronous-pacing' | 'apply-unverified-magnet'
-      | 'proceed-no-change' | 'document-backup-and-restoration',
-  ) => void;
-  readonly onPostoperativeHandoffAssessment?: (
-    action: 'confirm-receiver-readiness' | 'share-patient-and-course'
-      | 'share-current-state' | 'share-risks-actions-ownership'
-      | 'receiver-readback' | 'accept-transfer',
   ) => void;
   readonly onHyponatremiaResponse?: (
     action: 'review-hyponatremia-pattern' | 'record-hyponatremia-stabilization'
@@ -1862,6 +1838,11 @@ export function crisisResponseAvailability(
   const injected = new Set(injectedCrisisIds);
   const moduleTray = lessonTrays.find((tray) => tray.supports(scenario));
   const hasSevereHypoglycemiaResponse = moduleTray?.id === 'SevereHypoglycemia';
+  const hasAspirationRiskResponse = moduleTray?.id === 'AspirationRisk';
+  const hasCiedPlanningResponse = moduleTray?.id === 'CiedPlanning';
+  const hasPostoperativeHandoffResponse = moduleTray?.id === 'PostoperativeHandoff';
+  const hasDelayedEmergenceResponse = moduleTray?.id === 'DelayedEmergence';
+  const hasExtubationReadinessResponse = moduleTray?.id === 'ExtubationReadiness';
   const hasUndifferentiatedShockResponse = moduleTray?.id === 'UndifferentiatedShock';
   const hasSepticShockResponse = moduleTray?.id === 'SepticShock';
   const hasHemorrhagicShockResponse = moduleTray?.id === 'HemorrhagicShock';
@@ -2089,23 +2070,8 @@ export function crisisResponseAvailability(
     hasPneumothoraxResponse: scenario.timeline.some(
       (event) => event.type === 'tension-pneumothorax',
     ),
-    hasAspirationRiskResponse: scenario.timeline.some(
-      (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
-    ),
     hasEmergenceResidualBlockResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'emergence-residual-blockade',
-    ),
-    hasDelayedEmergenceResponse: scenario.timeline.some(
-      (event) => event.type === 'narrative' && event.target === 'delayed-emergence-differential',
-    ),
-    hasExtubationReadinessResponse: scenario.timeline.some(
-      (event) => event.type === 'narrative' && event.target === 'extubation-readiness',
-    ),
-    hasCiedPlanningResponse: scenario.timeline.some(
-      (event) => event.type === 'narrative' && event.target === 'cied-cautery-planning',
-    ),
-    hasPostoperativeHandoffResponse: scenario.timeline.some(
-      (event) => event.type === 'narrative' && event.target === 'postoperative-handoff',
     ),
     hasSevereHyponatremiaResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'severe-hyponatremia-with-seizure',
@@ -2242,6 +2208,11 @@ export function crisisResponseAvailability(
     hasPediatricForeignBodyAirwayObstructionResponse,
     hasPediatricInjurySafeguardingResponse,
     hasSevereHypoglycemiaResponse,
+    hasAspirationRiskResponse,
+    hasCiedPlanningResponse,
+    hasPostoperativeHandoffResponse,
+    hasDelayedEmergenceResponse,
+    hasExtubationReadinessResponse,
     hasUndifferentiatedShockResponse,
     hasSepticShockResponse,
     hasHemorrhagicShockResponse,
@@ -3756,24 +3727,6 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 onOxygen={() => props.onVentilator({ fio2: 1 })}
               />
             )}
-            {hasAspirationRiskResponse && (
-              <AspirationRiskTray
-                assessment={props.resuscitation.aspirationRiskAssessment}
-                onAction={props.onAspirationRiskAssessment ?? (() => {})}
-              />
-            )}
-            {hasCiedPlanningResponse && (
-              <CiedPlanningTray
-                assessment={props.resuscitation.ciedPlanningAssessment}
-                onAction={props.onCiedPlanningAssessment ?? (() => {})}
-              />
-            )}
-            {hasPostoperativeHandoffResponse && (
-              <PostoperativeHandoffTray
-                assessment={props.resuscitation.postoperativeHandoffAssessment}
-                onAction={props.onPostoperativeHandoffAssessment ?? (() => {})}
-              />
-            )}
             {hasSevereHyponatremiaResponse && (
               <HyponatremiaTray
                 scenarioVersion={props.scenario.metadata.version}
@@ -3847,18 +3800,6 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 trainOfFourCount={props.trainOfFourCount ?? 4}
                 trainOfFourRatio={props.trainOfFourRatio ?? 1}
                 onAction={props.onEmergenceResidualBlockAssessment ?? (() => {})}
-              />
-            )}
-            {hasDelayedEmergenceResponse && (
-              <DelayedEmergenceTray
-                assessment={props.resuscitation.delayedEmergenceAssessment}
-                onAction={props.onDelayedEmergenceAssessment ?? (() => {})}
-              />
-            )}
-            {hasExtubationReadinessResponse && (
-              <ExtubationReadinessTray
-                assessment={props.resuscitation.extubationReadinessAssessment}
-                onAction={props.onExtubationReadinessAssessment ?? (() => {})}
               />
             )}
             {hasBronchospasmResponse && (
@@ -4745,198 +4686,8 @@ function PneumothoraxResponseTray({
   );
 }
 
-function AspirationRiskTray({
-  assessment, onAction,
-}: {
-  assessment?: {
-    readonly cuesReviewedAtTick: number | null;
-    readonly classification: 'elevated' | 'routine' | null;
-    readonly classifiedAtTick: number | null;
-    readonly plan: 'defer-and-replan' | 'proceed-routine' | null;
-    readonly planAtTick: number | null;
-  };
-  onAction: (
-    action: 'review-cues' | 'classify-elevated' | 'classify-routine'
-      | 'defer-and-replan' | 'proceed-routine',
-  ) => void;
-}) {
-  const [pendingPlan, setPendingPlan] = useState<'defer-and-replan' | 'proceed-routine' | null>(null);
-  const reviewed = assessment?.cuesReviewedAtTick !== null
-    && assessment?.cuesReviewedAtTick !== undefined;
-  const classification = assessment?.classification ?? null;
-  const plan = assessment?.plan ?? null;
-  return (
-    <div className="tray-grid">
-      <section className="syringe" aria-labelledby="aspiration-cues-title">
-        <div id="aspiration-cues-title" className="syringe__name">Read the whole pattern</div>
-        <Badge kind="teaching">Focused vignette</Badge>
-        <div className="syringe__meta">Medication phase · symptoms · fasting · urgency</div>
-        <p className="syringe__remaining" role="status">
-          {reviewed
-            ? 'Week 3 escalation · dose increased 3 days ago · nausea + bloating · fasted 10 h/2 h · elective case'
-            : 'Combined cue review pending'}
-        </p>
-        <Button className="crisis-drug__action" disabled={reviewed}
-          onClick={() => onAction('review-cues')}>Review aspiration-risk cues</Button>
-        <p className="field__hint">
-          This case asks whether ordinary fasting instructions settle the question for this patient.
-          It does not estimate gastric volume or teach ultrasound.
-        </p>
-      </section>
-      <section className="syringe" aria-labelledby="aspiration-decision-title">
-        <div id="aspiration-decision-title" className="syringe__name">Classify, then choose</div>
-        <div className="syringe__meta">One classification · one disposition</div>
-        <p className="syringe__remaining" role="status">
-          {plan === 'defer-and-replan' ? 'Elective deferral + shared replanning recorded'
-            : plan === 'proceed-routine' ? 'Routine same-day progression recorded'
-              : classification === 'elevated' ? 'Elevated risk classified · disposition pending'
-                : classification === 'routine' ? 'Routine fasting risk classified · disposition pending'
-                  : 'Classification pending'}
-        </p>
-        {classification === null && (
-          <div className="syringe__presets">
-            <Button className="crisis-drug__action" disabled={!reviewed}
-              onClick={() => onAction('classify-elevated')}>Elevated delayed-emptying risk</Button>
-            <Button className="crisis-drug__action" disabled={!reviewed}
-              onClick={() => onAction('classify-routine')}>Routine fasting risk</Button>
-          </div>
-        )}
-        {classification !== null && plan === null && pendingPlan === null && (
-          <div className="syringe__presets">
-            <Button className="crisis-drug__action"
-              onClick={() => setPendingPlan('defer-and-replan')}>Defer elective case</Button>
-            <Button className="crisis-drug__action"
-              onClick={() => setPendingPlan('proceed-routine')}>Proceed routinely today</Button>
-          </div>
-        )}
-        {pendingPlan !== null && (
-          <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
-            <span>{pendingPlan === 'defer-and-replan'
-              ? 'Record elective deferral and shared replanning?'
-              : 'Record routine same-day progression?'}</span>
-            <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-              <Button variant="primary" className="crisis-drug__action" onClick={() => {
-                onAction(pendingPlan);
-                setPendingPlan(null);
-              }}>Confirm choice</Button>
-              <Button variant="ghost" className="crisis-drug__action"
-                onClick={() => setPendingPlan(null)}>Cancel</Button>
-            </div>
-          </div>
-        )}
-        <p className="field__hint">
-          The patient-specific choice is not a universal GLP-1 medication rule. Shared decision-making,
-          future preparation, gastric assessment, and anesthetic technique remain outside this screen.
-        </p>
-      </section>
-    </div>
-  );
-}
 
-function CiedPlanningTray({ assessment, onAction }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['ciedPlanningAssessment']>;
-  onAction: NonNullable<ActionCockpitProps['onCiedPlanningAssessment']>;
-}) {
-  const deviceReviewed = assessment?.deviceRecordReviewedAtTick != null;
-  const procedureReviewed = assessment?.procedureRiskReviewedAtTick != null;
-  const plan = assessment?.plan ?? null;
-  const restoration = assessment?.backupAndRestorationDocumentedAtTick != null;
-  return (
-    <div className="tray-grid">
-      <section className="syringe" aria-labelledby="cied-facts-title">
-        <div id="cied-facts-title" className="syringe__name">Build the device picture</div>
-        <Badge kind="teaching">Focused vignette</Badge>
-        <div className="syringe__meta">Device · dependence · procedure · interference</div>
-        <p className="syringe__remaining" role="status">
-          {!deviceReviewed ? 'Device-record review pending'
-            : !procedureReviewed ? 'Dual-chamber pacemaker · pacing dependent · documented magnet response'
-              : 'Right shoulder · above umbilicus · anticipated monopolar electrosurgery'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={deviceReviewed}
-            onClick={() => onAction('review-device-record')}>Review device record</Button>
-          <Button className="crisis-drug__action" disabled={procedureReviewed}
-            onClick={() => onAction('review-procedure-emi')}>Review procedure + EMI</Button>
-        </div>
-        <p className="field__hint">No interrogation, programming, magnet effect, cautery technique, or current-path calculation is simulated.</p>
-      </section>
-      <section className="syringe" aria-labelledby="cied-plan-title">
-        <div id="cied-plan-title" className="syringe__name">Coordinate the whole plan</div>
-        <div className="syringe__meta">Pacing strategy · backup · restoration</div>
-        <p className="syringe__remaining" role="status">
-          {restoration ? 'Backup, monitoring, and restoration documented'
-            : plan === 'coordinate-asynchronous-pacing' ? 'Coordinated asynchronous pacing plan recorded'
-              : plan ? 'Unsafe shortcut recorded for debrief' : 'Plan pending both reviews'}
-        </p>
-        {plan === null && <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={!deviceReviewed || !procedureReviewed}
-            onClick={() => onAction('coordinate-asynchronous-pacing')}>Coordinate asynchronous pacing</Button>
-          <Button className="crisis-drug__action" disabled={!deviceReviewed || !procedureReviewed}
-            onClick={() => onAction('apply-unverified-magnet')}>Apply magnet without confirmation</Button>
-          <Button className="crisis-drug__action" disabled={!deviceReviewed || !procedureReviewed}
-            onClick={() => onAction('proceed-no-change')}>Proceed with no device change</Button>
-        </div>}
-        <Button className="crisis-drug__action" disabled={plan === null || restoration}
-          onClick={() => onAction('document-backup-and-restoration')}>Document backup + restoration</Button>
-        <p className="field__hint">This case supports a patient-specific team plan, never a universal magnet rule or device order.</p>
-      </section>
-    </div>
-  );
-}
 
-function PostoperativeHandoffTray({ assessment, onAction }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['postoperativeHandoffAssessment']>;
-  onAction: NonNullable<ActionCockpitProps['onPostoperativeHandoffAssessment']>;
-}) {
-  const ready = assessment?.receiverReadyAtTick != null;
-  const course = assessment?.patientAndCourseAtTick != null;
-  const current = assessment?.currentStateAtTick != null;
-  const risks = assessment?.risksActionsOwnershipAtTick != null;
-  const readback = assessment?.receiverReadbackAtTick != null;
-  const accepted = assessment?.transferAcceptedAtTick != null;
-  return (
-    <div className="tray-grid">
-      <section className="syringe" aria-labelledby="handoff-content-title">
-        <div id="handoff-content-title" className="syringe__name">Create shared attention</div>
-        <Badge kind="teaching">Focused vignette</Badge>
-        <div className="syringe__meta">Ready · course · current state</div>
-        <p className="syringe__remaining" role="status">
-          {!ready ? 'Receiver and monitoring readiness pending'
-            : !course || !current ? 'Receiver ready · critical content incomplete'
-              : 'Patient, perioperative course, and current state shared'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={ready}
-            onClick={() => onAction('confirm-receiver-readiness')}>Confirm receiver readiness</Button>
-          <Button className="crisis-drug__action" disabled={!ready || course}
-            onClick={() => onAction('share-patient-and-course')}>Share patient + course</Button>
-          <Button className="crisis-drug__action" disabled={!ready || current}
-            onClick={() => onAction('share-current-state')}>Share current state</Button>
-        </div>
-        <p className="field__hint">The content blocks are fixed. Voice, interruptions, nonverbal behavior, workload, and bedside examination are not scored.</p>
-      </section>
-      <section className="syringe" aria-labelledby="handoff-closure-title">
-        <div id="handoff-closure-title" className="syringe__name">Close the loop</div>
-        <div className="syringe__meta">Risk · timing · ownership · synthesis</div>
-        <p className="syringe__remaining" role="status">
-          {accepted ? 'Transfer acknowledged + accepted'
-            : readback ? 'Receiver synthesis recorded · acceptance pending'
-              : risks ? 'Risks, actions, timing, and ownership shared'
-                : 'Unresolved-risk ownership pending core content'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={!course || !current || risks}
-            onClick={() => onAction('share-risks-actions-ownership')}>Share risks + ownership</Button>
-          <Button className="crisis-drug__action" disabled={!risks || readback}
-            onClick={() => onAction('receiver-readback')}>Record receiver synthesis</Button>
-          <Button className="crisis-drug__action" disabled={!readback || accepted}
-            onClick={() => onAction('accept-transfer')}>Acknowledge + accept transfer</Button>
-        </div>
-        <p className="field__hint">Responsibility changes only after explicit acknowledgment here. This is a teaching-state transition, not a real clinical transfer.</p>
-      </section>
-    </div>
-  );
-}
 
 
 
@@ -5247,200 +4998,7 @@ function EmergenceResidualBlockTray({
   );
 }
 
-function DelayedEmergenceTray({ assessment, onAction }: {
-  assessment?: {
-    readonly supportReviewedAtTick: number | null;
-    readonly exposureReviewedAtTick: number | null;
-    readonly metabolicReviewedAtTick: number | null;
-    readonly neurologicExamAtTick: number | null;
-    readonly escalation: 'urgent-neurologic-evaluation' | 'continue-routine-recovery' | null;
-    readonly escalatedAtTick: number | null;
-  };
-  onAction: NonNullable<ActionCockpitProps['onDelayedEmergenceAssessment']>;
-}) {
-  const [pendingEscalation, setPendingEscalation] = useState<
-    'urgent-neurologic-evaluation' | 'continue-routine-recovery' | null
-  >(null);
-  const support = assessment?.supportReviewedAtTick != null;
-  const exposure = assessment?.exposureReviewedAtTick != null;
-  const metabolic = assessment?.metabolicReviewedAtTick != null;
-  const neurologic = assessment?.neurologicExamAtTick != null;
-  const escalation = assessment?.escalation ?? null;
-  return (
-    <div className="tray-grid">
-      <section className="syringe" aria-labelledby="delayed-emergence-review-title">
-        <div id="delayed-emergence-review-title" className="syringe__name">
-          Stabilize, then narrow
-        </div>
-        <Badge kind="teaching">Focused vignette</Badge>
-        <div className="syringe__meta">Support · exposure · reversible categories</div>
-        <p className="syringe__remaining" role="status">
-          {!support ? 'Immediate support review pending'
-            : !exposure ? 'Tube + ventilation established · physiology stable'
-              : !metabolic ? 'Agents off · no benzodiazepine · TOF ratio 0.95'
-                : 'Glucose 102 · PaCO₂ 41 · sodium 139 · 36.7°C'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={support}
-            onClick={() => onAction('review-support')}>Review immediate support</Button>
-          <Button className="crisis-drug__action" disabled={!support || exposure}
-            onClick={() => onAction('review-exposure-and-block')}>Reconcile drugs + block</Button>
-          <Button className="crisis-drug__action" disabled={!exposure || metabolic}
-            onClick={() => onAction('check-metabolic-causes')}>Check reversible causes</Button>
-        </div>
-        <p className="field__hint">
-          The fixed values organize a differential. They do not simulate laboratory testing or
-          exclude every real cause of delayed emergence.
-        </p>
-      </section>
-      <section className="syringe" aria-labelledby="delayed-emergence-exam-title">
-        <div id="delayed-emergence-exam-title" className="syringe__name">
-          Look for what changes urgency
-        </div>
-        <div className="syringe__meta">Focused examination · escalation</div>
-        <p className="syringe__remaining" role="status">
-          {escalation === 'urgent-neurologic-evaluation'
-            ? 'Urgent neurologic evaluation · airway support continues'
-            : escalation === 'continue-routine-recovery'
-              ? 'Routine recovery observation recorded'
-              : neurologic
-                ? 'Left arm localizes · right absent · left gaze preference'
-                : 'Focused neurologic examination pending'}
-        </p>
-        <Button className="crisis-drug__action" disabled={!metabolic || neurologic}
-          onClick={() => onAction('perform-focused-neurologic-exam')}>
-          Perform focused neurologic exam
-        </Button>
-        {neurologic && escalation === null && pendingEscalation === null && (
-          <div className="syringe__presets">
-            <Button className="crisis-drug__action"
-              onClick={() => setPendingEscalation('urgent-neurologic-evaluation')}>
-              Escalate urgently
-            </Button>
-            <Button className="crisis-drug__action"
-              onClick={() => setPendingEscalation('continue-routine-recovery')}>
-              Continue routine recovery
-            </Button>
-          </div>
-        )}
-        {pendingEscalation !== null && (
-          <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
-            <span>{pendingEscalation === 'urgent-neurologic-evaluation'
-              ? 'Record urgent neurologic evaluation while support continues?'
-              : 'Record routine observation despite the new asymmetry?'}</span>
-            <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-              <Button variant="primary" className="crisis-drug__action" onClick={() => {
-                onAction(pendingEscalation);
-                setPendingEscalation(null);
-              }}>Confirm choice</Button>
-              <Button variant="ghost" className="crisis-drug__action"
-                onClick={() => setPendingEscalation(null)}>Cancel</Button>
-            </div>
-          </div>
-        )}
-        <p className="field__hint">
-          This screen recognizes a lateralizing pattern. Diagnosis, imaging, treatment, team
-          workflow, and outcome remain outside the vignette.
-        </p>
-      </section>
-    </div>
-  );
-}
 
-function ExtubationReadinessTray({ assessment, onAction }: {
-  assessment?: {
-    readonly quantitativeRecoveryReviewedAtTick: number | null;
-    readonly awakeAirwayReviewedAtTick: number | null;
-    readonly gasExchangeReviewedAtTick: number | null;
-    readonly airwayPlanReviewedAtTick: number | null;
-    readonly decision: 'ready-for-planned-awake-extubation'
-      | 'continue-support-and-reassess' | null;
-    readonly decidedAtTick: number | null;
-  };
-  onAction: NonNullable<ActionCockpitProps['onExtubationReadinessAssessment']>;
-}) {
-  const [pendingDecision, setPendingDecision] = useState<
-    'ready-for-planned-awake-extubation' | 'continue-support-and-reassess' | null
-  >(null);
-  const recovery = assessment?.quantitativeRecoveryReviewedAtTick != null;
-  const awakeAirway = assessment?.awakeAirwayReviewedAtTick != null;
-  const gasExchange = assessment?.gasExchangeReviewedAtTick != null;
-  const airwayPlan = assessment?.airwayPlanReviewedAtTick != null;
-  const decision = assessment?.decision ?? null;
-  return (
-    <div className="tray-grid">
-      <section className="syringe" aria-labelledby="extubation-readiness-title">
-        <div id="extubation-readiness-title" className="syringe__name">Build the readiness picture</div>
-        <Badge kind="teaching">Focused vignette</Badge>
-        <div className="syringe__meta">Recovery · awake airway · gas exchange</div>
-        <p className="syringe__remaining" role="status">
-          {!recovery ? 'Quantitative recovery review pending'
-            : !awakeAirway ? 'TOF ratio 0.93 · necessary, not sufficient'
-              : !gasExchange ? 'Eyes open · follows commands · strong cough · secretions cleared'
-                : 'Spontaneous 14/min · 420 mL · EtCO₂ 39 · SpO₂ 98% on FiO₂ 0.40'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={recovery}
-            onClick={() => onAction('review-quantitative-recovery')}>Review quantitative recovery</Button>
-          <Button className="crisis-drug__action" disabled={!recovery || awakeAirway}
-            onClick={() => onAction('review-awake-airway-protection')}>Review awake airway</Button>
-          <Button className="crisis-drug__action" disabled={!awakeAirway || gasExchange}
-            onClick={() => onAction('review-spontaneous-gas-exchange')}>Review gas exchange</Button>
-        </div>
-        <p className="field__hint">
-          These are fixed readiness findings. The screen does not measure consciousness,
-          respiratory effort, airway reflexes, or secretion burden.
-        </p>
-      </section>
-      <section className="syringe" aria-labelledby="extubation-plan-title">
-        <div id="extubation-plan-title" className="syringe__name">Make removal a plan</div>
-        <div className="syringe__meta">Airway risk · rescue · decision</div>
-        <p className="syringe__remaining" role="status">
-          {decision === 'ready-for-planned-awake-extubation'
-            ? 'Ready for planned awake extubation · tube remains in place here'
-            : decision === 'continue-support-and-reassess'
-              ? 'Continue support + reassess recorded'
-              : airwayPlan
-                ? 'Low risk · skilled help + oxygen + monitoring + reintubation plan available'
-                : 'Airway risk and rescue-plan review pending'}
-        </p>
-        <Button className="crisis-drug__action" disabled={!gasExchange || airwayPlan}
-          onClick={() => onAction('review-airway-risk-and-rescue')}>Review airway risk + rescue</Button>
-        {airwayPlan && decision === null && pendingDecision === null && (
-          <div className="syringe__presets">
-            <Button className="crisis-drug__action"
-              onClick={() => setPendingDecision('ready-for-planned-awake-extubation')}>
-              Ready for planned awake extubation
-            </Button>
-            <Button className="crisis-drug__action"
-              onClick={() => setPendingDecision('continue-support-and-reassess')}>
-              Continue support + reassess
-            </Button>
-          </div>
-        )}
-        {pendingDecision !== null && (
-          <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
-            <span>{pendingDecision === 'ready-for-planned-awake-extubation'
-              ? 'Record readiness after all declared checkpoints?'
-              : 'Continue support despite all declared low-risk checkpoints?'}</span>
-            <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-              <Button variant="primary" className="crisis-drug__action" onClick={() => {
-                onAction(pendingDecision);
-                setPendingDecision(null);
-              }}>Confirm choice</Button>
-              <Button variant="ghost" className="crisis-drug__action"
-                onClick={() => setPendingDecision(null)}>Cancel</Button>
-            </div>
-          </div>
-        )}
-        <p className="field__hint">
-          Tube removal, technique, advanced at-risk strategies, reintubation, and post-extubation
-          monitoring or outcome remain outside this screen.
-        </p>
-      </section>
-    </div>
-  );
-}
 
 function EpinephrineCrisisTray({
   region, epinephrineTotalMicrograms, lastExposure, lastMaximumMicrograms, onEpinephrine,

@@ -1894,17 +1894,8 @@ export function Cockpit({
           onPneumothoraxResponse={(action) => session.act({
             type: 'pneumothorax-response', payload: { action },
           })}
-          onAspirationRiskAssessment={(action) => session.act({
-            type: 'aspiration-risk-assessment', payload: { action },
-          })}
           onEmergenceResidualBlockAssessment={(action) => session.act({
             type: 'emergence-residual-block-assessment', payload: { action },
-          })}
-          onDelayedEmergenceAssessment={(action) => session.act({
-            type: 'delayed-emergence-assessment', payload: { action },
-          })}
-          onExtubationReadinessAssessment={(action) => session.act({
-            type: 'extubation-readiness-assessment', payload: { action },
           })}
           onOpioidVentilatoryResponse={(response) => session.act({
             type: 'opioid-ventilatory-response', payload: { response },
@@ -1914,12 +1905,6 @@ export function Cockpit({
           })}
           onGlycemicResponse={(response) => session.act({
             type: 'glycemic-response', payload: { response },
-          })}
-          onCiedPlanningAssessment={(action) => session.act({
-            type: 'cied-planning-assessment', payload: { action },
-          })}
-          onPostoperativeHandoffAssessment={(action) => session.act({
-            type: 'postoperative-handoff-assessment', payload: { action },
           })}
           onHyponatremiaResponse={(action) => session.act({
             type: 'hyponatremia-response', payload: { action },

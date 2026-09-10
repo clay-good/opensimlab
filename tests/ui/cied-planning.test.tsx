@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { PACEMAKER_AND_CAUTERY_PLANNING } from '@anesthesia/scenarios/pacemaker-and-cautery-planning';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { ANESTHESIA_TRAYS } from '@anesthesia/trays';
 
 describe('Requirement: CIED planning is ordered and device-specific', () => {
   let container: HTMLDivElement;
@@ -25,6 +26,7 @@ describe('Requirement: CIED planning is ordered and device-specific', () => {
   it('opens to the focused device plan and withholds choices until both reviews', () => {
     const onCiedPlanningAssessment = vi.fn();
     const props: ActionCockpitProps = {
+      lessonTrays: ANESTHESIA_TRAYS,
       scenario: PACEMAKER_AND_CAUTERY_PLANNING, region: UNITED_STATES,
       infusions: [], hypnoticLine: { connected: true, inspected: false },
       resuscitation: {
@@ -50,7 +52,8 @@ describe('Requirement: CIED planning is ordered and device-specific', () => {
       onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {},
       onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {},
       onAirwayManeuver: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {},
-      onCiedPlanningAssessment, onEpinephrine: () => {}, onDantrolene: () => {},
+      onLessonAction: (_type: string, action: string) => onCiedPlanningAssessment(action as never),
+      onEpinephrine: () => {}, onDantrolene: () => {},
       onActiveCooling: () => {}, onDrugCard: () => {},
     };
     act(() => root.render(createElement(ActionCockpit, props)));

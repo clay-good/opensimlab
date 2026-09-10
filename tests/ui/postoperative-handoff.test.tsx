@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { POSTOPERATIVE_HANDOFF } from '@anesthesia/scenarios/postoperative-handoff';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { ANESTHESIA_TRAYS } from '@anesthesia/trays';
 
 describe('Requirement: postoperative handoff is ordered and closed loop', () => {
   let container: HTMLDivElement;
@@ -25,6 +26,7 @@ describe('Requirement: postoperative handoff is ordered and closed loop', () => 
   it('opens to handoff and withholds content and acceptance until prerequisites are met', () => {
     const onPostoperativeHandoffAssessment = vi.fn();
     const props: ActionCockpitProps = {
+      lessonTrays: ANESTHESIA_TRAYS,
       scenario: POSTOPERATIVE_HANDOFF, region: UNITED_STATES,
       infusions: [], hypnoticLine: { connected: true, inspected: false },
       resuscitation: {
@@ -51,7 +53,8 @@ describe('Requirement: postoperative handoff is ordered and closed loop', () => 
       onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {},
       onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {},
       onAirwayManeuver: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {},
-      onPostoperativeHandoffAssessment, onEpinephrine: () => {}, onDantrolene: () => {},
+      onLessonAction: (_type: string, action: string) => onPostoperativeHandoffAssessment(action as never),
+      onEpinephrine: () => {}, onDantrolene: () => {},
       onActiveCooling: () => {}, onDrugCard: () => {},
     };
     act(() => root.render(createElement(ActionCockpit, props)));

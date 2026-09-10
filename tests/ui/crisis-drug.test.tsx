@@ -18,6 +18,7 @@ import { EXTUBATION_READINESS } from '@anesthesia/scenarios/extubation-readiness
 import { AnesthesiaEngine } from '@anesthesia/engine';
 import { UNITED_KINGDOM, UNITED_STATES } from '@anesthesia/region/profiles';
 import { PEDIATRICS_TRAYS } from '../../src/modules/pediatrics/trays';
+import { ANESTHESIA_TRAYS } from '@anesthesia/trays';
 import { PEDIATRIC_BRADYCARDIC_ARREST } from '../../src/modules/pediatrics/scenarios/pediatric-bradycardic-arrest';
 import { PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION } from '../../src/modules/pediatrics/scenarios/pediatric-foreign-body-airway-obstruction';
 
@@ -60,7 +61,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
   ) => {
     const props: ActionCockpitProps = {
       scenario: CRISIS_SCENARIO,
-      lessonTrays: PEDIATRICS_TRAYS,
+      lessonTrays: [...PEDIATRICS_TRAYS, ...ANESTHESIA_TRAYS],
       region,
       infusions: [],
       hypnoticLine: { connected: true, inspected: false },
@@ -593,7 +594,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
     const onAspirationRiskAssessment = vi.fn();
     const base = {
       scenario: ASPIRATION_RISK_RECOGNITION,
-      onAspirationRiskAssessment,
+      onLessonAction: (_type: string, action: string) => onAspirationRiskAssessment(action as never),
     };
     renderCockpit(UNITED_STATES, vi.fn(), {
       ...base,
@@ -720,7 +721,8 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
   it('reveals the delayed-emergence differential in order and confirms escalation', () => {
     const onDelayedEmergenceAssessment = vi.fn();
     const base = {
-      scenario: DELAYED_EMERGENCE_DIFFERENTIAL, onDelayedEmergenceAssessment,
+      scenario: DELAYED_EMERGENCE_DIFFERENTIAL,
+      onLessonAction: (_type: string, action: string) => onDelayedEmergenceAssessment(action as never),
     };
     const assessment = (values: Partial<NonNullable<
       ActionCockpitProps['resuscitation']['delayedEmergenceAssessment']
@@ -777,7 +779,8 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
 
   it('integrates extubation checkpoints before confirming awake readiness', () => {
     const onExtubationReadinessAssessment = vi.fn();
-    const base = { scenario: EXTUBATION_READINESS, onExtubationReadinessAssessment };
+    const base = { scenario: EXTUBATION_READINESS,
+      onLessonAction: (_type: string, action: string) => onExtubationReadinessAssessment(action as never) };
     const assessment = (values: Partial<NonNullable<
       ActionCockpitProps['resuscitation']['extubationReadinessAssessment']
     >> = {}) => ({
