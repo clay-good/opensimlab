@@ -9,6 +9,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { EMERGENCY_MEDICINE_TRAYS } from '../../src/modules/emergency-medicine/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, EMERGENCY_MEDICINE_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { OPIOID_TOXICITY as SCENARIO } from '../../src/modules/emergency-medicine/scenarios/opioid-toxicity';
 
@@ -31,7 +37,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['opioidToxicityAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: EMERGENCY_MEDICINE_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, opioidToxicityAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 480, respiratoryRateBpm: 18, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 10 },
@@ -40,7 +46,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onOpioidToxicityResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -57,8 +63,8 @@ describe('Emergency opioid toxicity experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasOpioidToxicityResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasOpioidToxicityResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO, timeline: SCENARIO.timeline.filter((event) => event.target !== 'opioid-toxicity'),
     }).hasOpioidToxicityResponse).toBe(false);
   });
@@ -67,34 +73,34 @@ describe('Emergency opioid toxicity experience', () => {
 describe('Emergency opioid toxicity tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { opioidToxicityGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { opioidToxicityGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('which supplemental oxygen can paper over');
-    const ventilation = markup(PATTERN, { opioidToxicityGuidance: 'guided' });
+    const ventilation = markup(PATTERN, { guidance: 'guided' });
     expect(ventilation).toContain('Nothing about naloxone is faster than a bag-mask');
     expect(ventilation).not.toContain('which supplemental oxygen can paper over');
   });
 
   it('aims the antagonist at breathing rather than arousal', () => {
-    expect(markup(VENTILATED, { opioidToxicityGuidance: 'guided' }))
+    expect(markup(VENTILATED, { guidance: 'guided' }))
       .toContain('Full arousal is not the target');
   });
 
   it('warns that the antagonist wears off before the opioid does', () => {
-    expect(markup(INITIAL, { opioidToxicityGuidance: 'guided' }))
+    expect(markup(INITIAL, { guidance: 'guided' }))
       .toContain('the antagonist wears off while the agonist is still bound');
   });
 
   it('goes quiet once the safety plan is recorded', () => {
-    expect(markup(DONE, { opioidToxicityGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
-    const watching = markup(EMPTY, { opioidToxicityGuidance: 'guided', opioidToxicityDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'OpioidToxicity' });
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');
     expect(watching).not.toContain('A moment to think');

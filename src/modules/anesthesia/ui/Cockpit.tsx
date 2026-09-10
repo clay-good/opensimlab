@@ -1919,10 +1919,6 @@ export function Cockpit({
           pacemakerCaptureFailureDemonstrating={demonstrating && registryDemo?.id === 'PacemakerCaptureFailure'}
           transcutaneousPacingCaptureGuidance={session.guidance}
           transcutaneousPacingCaptureDemonstrating={demonstrating && registryDemo?.id === 'TranscutaneousPacingCapture'}
-          acuteAorticSyndromeGuidance={session.guidance}
-          acuteAorticSyndromeDemonstrating={demonstrating && registryDemo?.id === 'AcuteAorticSyndrome'}
-          acuteIschemicStrokeGuidance={session.guidance}
-          acuteIschemicStrokeDemonstrating={demonstrating && registryDemo?.id === 'AcuteIschemicStroke'}
           hemorrhagicShockGuidance={session.guidance}
           hemorrhagicShockDemonstrating={demonstrating && registryDemo?.id === 'HemorrhagicShock'}
           undifferentiatedShockGuidance={session.guidance}
@@ -1931,36 +1927,16 @@ export function Cockpit({
           peaArrestDemonstrating={demonstrating && peaArrestDemoSupported}
           persistentVfGuidance={session.guidance}
           persistentVfDemonstrating={demonstrating && persistentVfDemoSupported}
-          acutePulmonaryEdemaGuidance={session.guidance}
-          acutePulmonaryEdemaDemonstrating={demonstrating && registryDemo?.id === 'AcutePulmonaryEdema'}
-          adultAsthmaGuidance={session.guidance}
-          adultAsthmaDemonstrating={demonstrating && registryDemo?.id === 'AdultAsthma'}
-          emergencyAnaphylaxisGuidance={session.guidance}
-          emergencyAnaphylaxisDemonstrating={demonstrating && registryDemo?.id === 'EmergencyAnaphylaxis'}
           cardiacTamponadeGuidance={session.guidance}
           cardiacTamponadeDemonstrating={demonstrating && registryDemo?.id === 'CardiacTamponade'}
-          copdExacerbationGuidance={session.guidance}
-          copdExacerbationDemonstrating={demonstrating && registryDemo?.id === 'CopdExacerbation'}
-          diabeticKetoacidosisGuidance={session.guidance}
-          diabeticKetoacidosisDemonstrating={demonstrating && registryDemo?.id === 'DiabeticKetoacidosis'}
           exertionalHeatStrokeGuidance={session.guidance}
           exertionalHeatStrokeDemonstrating={demonstrating && registryDemo?.id === 'ExertionalHeatStroke'}
           hyperkalemiaEcgGuidance={session.guidance}
           hyperkalemiaEcgDemonstrating={demonstrating && registryDemo?.id === 'HyperkalemiaWithEcgChange'}
-          intracranialHemorrhageGuidance={session.guidance}
-          intracranialHemorrhageDemonstrating={demonstrating && registryDemo?.id === 'IntracranialHemorrhage'}
-          opioidToxicityGuidance={session.guidance}
-          opioidToxicityDemonstrating={demonstrating && registryDemo?.id === 'OpioidToxicity'}
-          pulmonaryEmbolismGuidance={session.guidance}
-          pulmonaryEmbolismDemonstrating={demonstrating && registryDemo?.id === 'PulmonaryEmbolism'}
           severeHyponatremiaGuidance={session.guidance}
           severeHyponatremiaDemonstrating={demonstrating && registryDemo?.id === 'SevereHyponatremia'}
           emergencyStemiGuidance={session.guidance}
           emergencyStemiDemonstrating={demonstrating && registryDemo?.id === 'Stemi'}
-          traumaPrimarySurveyGuidance={session.guidance}
-          traumaPrimarySurveyDemonstrating={demonstrating && registryDemo?.id === 'TraumaPrimarySurvey'}
-          unstableBradycardiaGuidance={session.guidance}
-          unstableBradycardiaDemonstrating={demonstrating && registryDemo?.id === 'UnstableBradycardia'}
           emergencySvtGuidance={session.guidance}
           emergencySvtDemonstrating={demonstrating && emergencySvtDemoSupported}
           obstructivePleuralShockGuidance={session.guidance}
@@ -2107,59 +2083,11 @@ export function Cockpit({
           onCardiacTamponadeAssessment={(action) => session.act({
             type: 'cardiac-tamponade-assessment', payload: { action },
           })}
-          onEmergencyAnaphylaxisResponse={(action) => session.act({
-            type: 'emergency-anaphylaxis-response', payload: { action },
-          })}
-          onAdultAsthmaResponse={(action) => session.act({
-            type: 'adult-asthma-response', payload: { action },
-          })}
-          onCopdExacerbationResponse={(action) => session.act({
-            type: 'copd-exacerbation-response', payload: { action },
-          })}
-          onAcutePulmonaryEdemaResponse={(action) => session.act({
-            type: 'acute-pulmonary-edema-response', payload: { action },
-          })}
-          onPulmonaryEmbolismResponse={(action) => session.act({
-            type: 'pulmonary-embolism-deterioration-response', payload: { action },
-          })}
-          onStemiResponse={(action) => session.act({
-            type: 'stemi-response', payload: { action },
-          })}
-          onUnstableNarrowTachycardiaResponse={(action) => session.act({
-            type: 'unstable-narrow-tachycardia-response', payload: { action },
-          })}
-          onUnstableBradycardiaResponse={(action) => session.act({
-            type: 'unstable-bradycardia-response', payload: { action },
-          })}
           onStatusEpilepticusResponse={(action) => session.act({
             type: 'status-epilepticus-response', payload: { action },
           })}
-          onAcuteIschemicStrokeResponse={(action) => session.act({
-            type: 'acute-ischemic-stroke-response', payload: { action },
-          })}
-          onIntracranialHemorrhageResponse={(action) => session.act({
-            type: 'intracranial-hemorrhage-response', payload: { action },
-          })}
-          onDiabeticKetoacidosisResponse={(action) => session.act({
-            type: 'diabetic-ketoacidosis-response', payload: { action },
-          })}
-          onHyperkalemiaResponse={(action) => session.act({
-            type: 'hyperkalemia-response', payload: { action },
-          })}
           onHyponatremiaResponse={(action) => session.act({
             type: 'hyponatremia-response', payload: { action },
-          })}
-          onOpioidToxicityResponse={(action) => session.act({
-            type: 'opioid-toxicity-response', payload: { action },
-          })}
-          onHeatStrokeResponse={(action) => session.act({
-            type: 'heat-stroke-response', payload: { action },
-          })}
-          onTraumaPrimarySurveyResponse={(action) => session.act({
-            type: 'trauma-primary-survey-response', payload: { action },
-          })}
-          onAcuteAorticSyndromeResponse={(action) => session.act({
-            type: 'acute-aortic-syndrome-response', payload: { action },
           })}
           onStableChestPainResponse={(action) => session.act({
             type: 'stable-chest-pain-response', payload: { action },

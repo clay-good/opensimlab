@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { EMERGENCY_MEDICINE_TRAYS } from '../../src/modules/emergency-medicine/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, EMERGENCY_MEDICINE_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { ADULT_ASTHMA as SCENARIO } from '../../src/modules/emergency-medicine/scenarios/adult-asthma';
 
@@ -30,7 +36,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['adultAsthmaAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: EMERGENCY_MEDICINE_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, adultAsthmaAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 480, respiratoryRateBpm: 18, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 10 },
@@ -39,7 +45,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onAdultAsthmaResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -63,8 +69,8 @@ describe('Emergency adult asthma experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasAdultAsthmaResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasAdultAsthmaResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO, timeline: SCENARIO.timeline.filter((event) => event.type !== 'narrative'),
     }).hasAdultAsthmaResponse).toBe(false);
   });
@@ -111,41 +117,41 @@ describe('Emergency adult asthma experience', () => {
 describe('Emergency adult asthma tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { adultAsthmaGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { adultAsthmaGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('Speech and peak flow are the two that grade it');
-    const treating = markup(SEVERITY, { adultAsthmaGuidance: 'guided' });
+    const treating = markup(SEVERITY, { guidance: 'guided' });
     expect(treating).toContain('They are unordered on purpose');
     expect(treating).not.toContain('Speech and peak flow are the two that grade it');
   });
 
   it('puts the load-bearing claim where every path passes through', () => {
-    const treating = markup(SEVERITY, { adultAsthmaGuidance: 'guided' });
+    const treating = markup(SEVERITY, { guidance: 'guided' });
     expect(treating).toContain('they act on three different clocks');
     expect(treating).toContain('the only deferral here you cannot recover later in the same visit');
   });
 
   it('picks up the missing lane whichever one the learner left', () => {
-    expect(markup(NEBS_ONLY, { adultAsthmaGuidance: 'guided' }))
+    expect(markup(NEBS_ONLY, { guidance: 'guided' }))
       .toContain('a target you can miss in both directions');
-    expect(markup(OXYGEN, { adultAsthmaGuidance: 'guided' }))
+    expect(markup(OXYGEN, { guidance: 'guided' }))
       .toContain('only if the decision was made hours earlier');
-    expect(markup(STEROID, { adultAsthmaGuidance: 'guided' }))
+    expect(markup(STEROID, { guidance: 'guided' }))
       .toContain('The spacer is not the budget option');
   });
 
   it('goes quiet once the reassessment is recorded', () => {
-    expect(markup(DONE, { adultAsthmaGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { adultAsthmaGuidance: 'guided', adultAsthmaDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'AdultAsthma' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

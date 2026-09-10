@@ -3,6 +3,7 @@ import { act, createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import { describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { EMERGENCY_MEDICINE_TRAYS } from '../../src/modules/emergency-medicine/trays';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { OPIOID_TOXICITY as SCENARIO } from '../../src/modules/emergency-medicine/scenarios/opioid-toxicity';
 
@@ -11,7 +12,7 @@ describe('Requirement: opioid toxicity opens a focused breathe-antagonize-observ
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
     const container = document.createElement('div'); document.body.appendChild(container);
     const root = createRoot(container); const onAction = vi.fn();
-    const props = { scenario: SCENARIO, region: UNITED_STATES, infusions: [],
+    const props = { scenario: SCENARIO, region: UNITED_STATES, lessonTrays: EMERGENCY_MEDICINE_TRAYS, infusions: [],
       hypnoticLine: { connected: true, inspected: false }, resuscitation: {
         epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null,
         crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
@@ -28,7 +29,7 @@ describe('Requirement: opioid toxicity opens a focused breathe-antagonize-observ
       onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
       onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onCallForHelp: () => {},
       onAirwayDevice: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
-      onActiveCooling: () => {}, onOpioidToxicityResponse: onAction, onDrugCard: () => {} } satisfies ActionCockpitProps;
+      onActiveCooling: () => {}, onLessonAction: (_type: string, action: string) => onAction(action as never), onDrugCard: () => {} } satisfies ActionCockpitProps;
     act(() => root.render(createElement(ActionCockpit, props)));
     expect(container.querySelector('[role="tablist"]')).toBeNull();
     expect(container.textContent).toContain('Breathe first. Antidote without delay.');

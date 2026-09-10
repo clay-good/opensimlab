@@ -3,6 +3,7 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { EMERGENCY_MEDICINE_TRAYS } from '../../src/modules/emergency-medicine/trays';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { COPD_EXACERBATION } from '../../src/modules/emergency-medicine/scenarios/copd-exacerbation';
 
@@ -14,6 +15,7 @@ describe('Requirement: COPD exacerbation is a focused controlled-oxygen lab', ()
   it('starts with severity and blood-gas review and excludes generic perioperative dosing', () => {
     const onAction = vi.fn();
     const props: ActionCockpitProps = {
+      lessonTrays: EMERGENCY_MEDICINE_TRAYS,
       scenario: COPD_EXACERBATION, region: UNITED_STATES, infusions: [],
       hypnoticLine: { connected: true, inspected: false },
       resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
@@ -32,7 +34,7 @@ describe('Requirement: COPD exacerbation is a focused controlled-oxygen lab', ()
       muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {},
       onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
       onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onCallForHelp: () => {},
-      onAirwayDevice: () => {}, onCopdExacerbationResponse: onAction,
+      onAirwayDevice: () => {}, onLessonAction: (_type: string, action: string) => onAction(action as never),
       onEpinephrine: () => {}, onDantrolene: () => {}, onActiveCooling: () => {},
       onDrugCard: () => {},
     };

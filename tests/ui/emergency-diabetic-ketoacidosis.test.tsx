@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { EMERGENCY_MEDICINE_TRAYS } from '../../src/modules/emergency-medicine/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, EMERGENCY_MEDICINE_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { DIABETIC_KETOACIDOSIS as SCENARIO } from '../../src/modules/emergency-medicine/scenarios/diabetic-ketoacidosis';
 
@@ -30,7 +36,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['diabeticKetoacidosisAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: EMERGENCY_MEDICINE_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, diabeticKetoacidosisAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 480, respiratoryRateBpm: 18, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 10 },
@@ -39,7 +45,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onDiabeticKetoacidosisResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -63,8 +69,8 @@ describe('Emergency diabetic ketoacidosis experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasDiabeticKetoacidosisResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasDiabeticKetoacidosisResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'diabetic-ketoacidosis'),
     }).hasDiabeticKetoacidosisResponse).toBe(false);
@@ -105,36 +111,36 @@ describe('Emergency diabetic ketoacidosis experience', () => {
 describe('Emergency diabetic ketoacidosis tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { diabeticKetoacidosisGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { diabeticKetoacidosisGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('A precipitant you can name is a recurrence you can prevent');
-    const fluids = markup(PRESENTATION, { diabeticKetoacidosisGuidance: 'guided' });
+    const fluids = markup(PRESENTATION, { guidance: 'guided' });
     expect(fluids).toContain('what looks like a glucose problem is a water problem');
     expect(fluids).not.toContain('A precipitant you can name is a recurrence you can prevent');
   });
 
   it('names the potassium gate as the lesson', () => {
-    expect(markup(FLUIDS, { diabeticKetoacidosisGuidance: 'guided' }))
+    expect(markup(FLUIDS, { guidance: 'guided' }))
       .toContain('does not risk hypokalaemia, it produces it');
   });
 
   it('names stopping insulin on an improved glucose as the next error', () => {
-    expect(markup(INSULIN, { diabeticKetoacidosisGuidance: 'guided' }))
+    expect(markup(INSULIN, { guidance: 'guided' }))
       .toContain('the commonest way this goes wrong after the potassium');
   });
 
   it('goes quiet once the transition is recorded', () => {
-    expect(markup(DONE, { diabeticKetoacidosisGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { diabeticKetoacidosisGuidance: 'guided', diabeticKetoacidosisDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'DiabeticKetoacidosis' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

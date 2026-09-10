@@ -9,6 +9,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { EMERGENCY_MEDICINE_TRAYS } from '../../src/modules/emergency-medicine/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, EMERGENCY_MEDICINE_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { TRAUMA_PRIMARY_SURVEY as SCENARIO } from '../../src/modules/emergency-medicine/scenarios/trauma-primary-survey';
 
@@ -31,7 +37,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['traumaPrimarySurveyAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: EMERGENCY_MEDICINE_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, traumaPrimarySurveyAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 480, respiratoryRateBpm: 18, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 10 },
@@ -40,7 +46,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onTraumaPrimarySurveyResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -57,8 +63,8 @@ describe('Emergency trauma primary survey experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasTraumaPrimarySurveyResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasTraumaPrimarySurveyResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'trauma-primary-survey'),
     }).hasTraumaPrimarySurveyResponse).toBe(false);
@@ -75,39 +81,39 @@ describe('Emergency trauma primary survey experience', () => {
 describe('Emergency trauma primary survey tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { traumaPrimarySurveyGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { traumaPrimarySurveyGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('A handoff interrupted is a handoff repeated');
-    const hemorrhage = markup(ACTIVATED, { traumaPrimarySurveyGuidance: 'guided' });
+    const hemorrhage = markup(ACTIVATED, { guidance: 'guided' });
     expect(hemorrhage).toContain('Stop the bleeding first');
     expect(hemorrhage).not.toContain('A handoff interrupted is a handoff repeated');
   });
 
   it('carries the reason the C comes first', () => {
-    expect(markup(ACTIVATED, { traumaPrimarySurveyGuidance: 'guided' }))
+    expect(markup(ACTIVATED, { guidance: 'guided' }))
       .toContain('the airway of a patient who has bled out is not a problem anyone gets to solve');
   });
 
   it('reads persistent shock after external control as internal bleeding', () => {
-    expect(markup(AIRWAY, { traumaPrimarySurveyGuidance: 'guided' }))
+    expect(markup(AIRWAY, { guidance: 'guided' }))
       .toContain('That means it is inside');
   });
 
   it('treats re-covering as treatment', () => {
-    expect(markup(CIRCULATION, { traumaPrimarySurveyGuidance: 'guided' }))
+    expect(markup(CIRCULATION, { guidance: 'guided' }))
       .toContain('cold blood does not clot');
   });
 
   it('goes quiet once the repeat survey is recorded', () => {
-    expect(markup(DONE, { traumaPrimarySurveyGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
-    const watching = markup(EMPTY, { traumaPrimarySurveyGuidance: 'guided', traumaPrimarySurveyDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'TraumaPrimarySurvey' });
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');
     expect(watching).not.toContain('A moment to think');

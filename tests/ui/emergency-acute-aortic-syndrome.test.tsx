@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { EMERGENCY_MEDICINE_TRAYS } from '../../src/modules/emergency-medicine/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, EMERGENCY_MEDICINE_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { ACUTE_AORTIC_SYNDROME as SCENARIO } from '../../src/modules/emergency-medicine/scenarios/acute-aortic-syndrome';
 
@@ -30,7 +36,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['acuteAorticSyndromeAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: EMERGENCY_MEDICINE_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, acuteAorticSyndromeAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 500, respiratoryRateBpm: 20, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 10 },
@@ -39,7 +45,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onAcuteAorticSyndromeResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -59,8 +65,8 @@ describe('Acute aortic syndrome experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasAcuteAorticSyndromeResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasAcuteAorticSyndromeResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'acute-aortic-syndrome'),
     }).hasAcuteAorticSyndromeResponse).toBe(false);
@@ -95,36 +101,36 @@ describe('Acute aortic syndrome experience', () => {
 describe('Acute aortic syndrome tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { acuteAorticSyndromeGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { acuteAorticSyndromeGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('the drug you would least like to have given');
-    const evolution = markup(INITIAL, { acuteAorticSyndromeGuidance: 'guided' });
+    const evolution = markup(INITIAL, { guidance: 'guided' });
     expect(evolution).toContain('a fact about a moment and not a promise');
     expect(evolution).not.toContain('the drug you would least like to have given');
   });
 
   it('distinguishes pausing a pathway from ruling it out', () => {
-    expect(markup(EVOLUTION, { acuteAorticSyndromeGuidance: 'guided' }))
+    expect(markup(EVOLUTION, { guidance: 'guided' }))
       .toContain('Pausing is not the same as ruling out');
   });
 
   it('explains why rate comes before pressure', () => {
-    expect(markup(ESCALATED, { acuteAorticSyndromeGuidance: 'guided' }))
+    expect(markup(ESCALATED, { guidance: 'guided' }))
       .toContain('increases the force of each ejection');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(DONE, { acuteAorticSyndromeGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { acuteAorticSyndromeGuidance: 'guided', acuteAorticSyndromeDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'AcuteAorticSyndrome' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

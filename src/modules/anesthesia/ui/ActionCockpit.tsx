@@ -134,28 +134,12 @@ import { rightVentricularInfarctionInlinePrompt } from '../../cardiology/tutor/r
 import { hypertensiveEmergencyInlinePrompt } from '../../cardiology/tutor/hypertensive-emergency-guidance';
 import { pacemakerCaptureFailureInlinePrompt } from '../../cardiology/tutor/pacemaker-capture-failure-guidance';
 import { transcutaneousPacingCaptureInlinePrompt } from '../../cardiology/tutor/transcutaneous-pacing-capture-guidance';
-import { acuteAorticSyndromeInlinePrompt } from '../../emergency-medicine/tutor/acute-aortic-syndrome-guidance';
-import { acuteIschemicStrokeInlinePrompt } from '../../emergency-medicine/tutor/acute-ischemic-stroke-guidance';
 import { hemorrhagicShockInlinePrompt } from '../../emergency-medicine/tutor/hemorrhagic-shock-guidance';
 import { undifferentiatedShockInlinePrompt } from '../../emergency-medicine/tutor/undifferentiated-shock-guidance';
 import { peaArrestInlinePrompt } from '../../emergency-medicine/tutor/pea-arrest-guidance';
 import { persistentVfInlinePrompt } from '../../emergency-medicine/tutor/persistent-vf-arrest-guidance';
-import { acutePulmonaryEdemaInlinePrompt } from '../../emergency-medicine/tutor/acute-pulmonary-edema-guidance';
-import { adultAsthmaInlinePrompt } from '../../emergency-medicine/tutor/adult-asthma-guidance';
-import { emergencyAnaphylaxisInlinePrompt } from '../../emergency-medicine/tutor/emergency-anaphylaxis-guidance';
 import { cardiacTamponadeInlinePrompt } from '../../emergency-medicine/tutor/cardiac-tamponade-guidance';
-import { copdExacerbationInlinePrompt } from '../../emergency-medicine/tutor/copd-exacerbation-guidance';
-import { diabeticKetoacidosisInlinePrompt } from '../../emergency-medicine/tutor/diabetic-ketoacidosis-guidance';
-import { exertionalHeatStrokeInlinePrompt } from '../../emergency-medicine/tutor/exertional-heat-stroke-guidance';
-import { hyperkalemiaWithEcgChangeInlinePrompt } from '../../emergency-medicine/tutor/hyperkalemia-with-ecg-change-guidance';
-import { intracranialHemorrhageInlinePrompt } from '../../emergency-medicine/tutor/intracranial-hemorrhage-deterioration-guidance';
-import { opioidToxicityInlinePrompt } from '../../emergency-medicine/tutor/opioid-toxicity-guidance';
-import { pulmonaryEmbolismInlinePrompt } from '../../emergency-medicine/tutor/pulmonary-embolism-deterioration-guidance';
 import { severeHyponatremiaInlinePrompt } from '../../emergency-medicine/tutor/severe-hyponatremia-with-seizure-guidance';
-import { stemiInlinePrompt } from '../../emergency-medicine/tutor/stemi-guidance';
-import { traumaPrimarySurveyInlinePrompt } from '../../emergency-medicine/tutor/trauma-primary-survey-guidance';
-import { unstableBradycardiaInlinePrompt } from '../../emergency-medicine/tutor/unstable-bradycardia-guidance';
-import { unstableNarrowTachycardiaInlinePrompt } from '../../emergency-medicine/tutor/unstable-narrow-complex-tachycardia-guidance';
 import { obstructivePleuralShockInlinePrompt } from '../../emergency-medicine/tutor/obstructive-shock-tension-pneumothorax-guidance';
 import { statusEpilepticusInlinePrompt } from '../../emergency-medicine/tutor/status-epilepticus-guidance';
 import { septicShockInlinePrompt } from '../../emergency-medicine/tutor/septic-shock-guidance';
@@ -1742,92 +1726,14 @@ export interface ActionCockpitProps {
     action: 'review-context-and-perfusion' | 'review-fixed-pocus'
       | 'record-definitive-control-intent' | 'reassess-perfusion',
   ) => void;
-  readonly onEmergencyAnaphylaxisResponse?: (
-    action: 'review-systemic-pattern' | 'position-and-call-for-help'
-      | 'give-im-epinephrine' | 'give-high-flow-oxygen'
-      | 'begin-fixed-crystalloid' | 'reassess-response',
-  ) => void;
-  readonly onAdultAsthmaResponse?: (
-    action: 'review-severity-and-mimics' | 'record-controlled-oxygen'
-      | 'give-fixed-inhaled-bronchodilators' | 'record-early-corticosteroid-intent'
-      | 'reassess-after-initial-treatment',
-  ) => void;
-  readonly onCopdExacerbationResponse?: (
-    action: 'review-severity-and-mimics' | 'record-controlled-oxygen'
-      | 'give-air-driven-bronchodilators' | 'record-five-day-corticosteroid-intent'
-      | 'record-antibiotic-indication' | 'reassess-and-review-ventilatory-support',
-  ) => void;
-  readonly onAcutePulmonaryEdemaResponse?: (
-    action: 'review-pattern-mimics-and-precipitants' | 'record-niv-and-titrated-oxygen'
-      | 'record-loop-diuretic-intent' | 'record-vasodilator-intent'
-      | 'reassess-breathing-pressure-and-perfusion',
-  ) => void;
-  readonly onPulmonaryEmbolismResponse?: (
-    action: 'review-confirmed-pe-severity' | 'record-titrated-oxygen'
-      | 'record-therapeutic-anticoagulation-intent' | 'reassess-for-deterioration'
-      | 'activate-pert-and-record-reperfusion-intent',
-  ) => void;
-  readonly onStemiResponse?: (
-    action: 'review-stemi-pattern' | 'activate-stemi-pathway' | 'record-aspirin-load'
-      | 'record-p2y12-anticoagulation-intent' | 'reassess-and-handoff',
-  ) => void;
-  readonly onUnstableNarrowTachycardiaResponse?: (
-    action: 'review-rhythm-and-instability' | 'prepare-synchronized-cardioversion'
-      | 'record-synchronized-cardioversion-intent' | 'reassess-rhythm-and-perfusion',
-  ) => void;
-  readonly onUnstableBradycardiaResponse?: (
-    action: 'review-bradycardia-and-compromise' | 'record-bradycardia-support'
-      | 'record-atropine-intent' | 'reassess-bradycardia-response',
-  ) => void;
   readonly onStatusEpilepticusResponse?: (
     action: 'review-convulsive-status' | 'record-status-stabilization'
       | 'give-lorazepam-4-mg-iv' | 'reassess-after-lorazepam',
-  ) => void;
-  readonly onAcuteIschemicStrokeResponse?: (
-    action: 'review-stroke-presentation' | 'activate-stroke-system'
-      | 'review-stroke-imaging-and-eligibility' | 'record-tenecteplase-20-mg-intent'
-      | 'activate-thrombectomy-transfer' | 'reassess-and-handoff-stroke',
-  ) => void;
-  readonly onIntracranialHemorrhageResponse?: (
-    action: 'review-ich-deterioration' | 'activate-ich-pathway'
-      | 'review-ich-findings-and-coagulopathy' | 'record-warfarin-reversal-intent'
-      | 'record-smooth-ich-pressure-control' | 'escalate-ich-neurocritical-care',
-  ) => void;
-  readonly onDiabeticKetoacidosisResponse?: (
-    action: 'review-dka-presentation' | 'record-dka-fluids-and-monitoring'
-      | 'record-dka-potassium-replacement' | 'record-dka-insulin-intent'
-      | 'add-dextrose-and-continue-insulin' | 'confirm-dka-resolution-and-transition',
-  ) => void;
-  readonly onHyperkalemiaResponse?: (
-    action: 'review-hyperkalemia-pattern' | 'record-hyperkalemia-calcium-intent'
-      | 'review-hyperkalemia-post-calcium-ecg'
-      | 'record-hyperkalemia-insulin-glucose' | 'record-hyperkalemia-beta-agonist'
-      | 'record-hyperkalemia-removal-and-cause-control' | 'reassess-hyperkalemia',
   ) => void;
   readonly onHyponatremiaResponse?: (
     action: 'review-hyponatremia-pattern' | 'record-hyponatremia-stabilization'
       | 'record-hypertonic-saline-intent' | 'reassess-hyponatremia-first-hour'
       | 'record-hyponatremia-guardrails-and-cause-plan',
-  ) => void;
-  readonly onOpioidToxicityResponse?: (
-    action: 'review-opioid-toxicity-pattern' | 'record-opioid-ventilation-support'
-      | 'record-opioid-naloxone-intent' | 'reassess-opioid-initial-response'
-      | 'review-opioid-recurrence' | 'record-opioid-recurrence-and-safety-plan',
-  ) => void;
-  readonly onHeatStrokeResponse?: (
-    action: 'review-heat-stroke-pattern' | 'record-heat-stroke-support'
-      | 'record-cold-water-immersion' | 'reassess-heat-stroke-cooling-target'
-      | 'record-heat-stroke-organ-surveillance',
-  ) => void;
-  readonly onTraumaPrimarySurveyResponse?: (
-    action: 'activate-trauma-primary-survey' | 'control-trauma-catastrophic-hemorrhage'
-      | 'review-trauma-airway-and-breathing' | 'record-trauma-circulation-response'
-      | 'review-trauma-disability-and-exposure' | 'repeat-trauma-primary-survey',
-  ) => void;
-  readonly onAcuteAorticSyndromeResponse?: (
-    action: 'review-aortic-initial-pattern' | 'repeat-aortic-asymmetry-exam'
-      | 'activate-aortic-pathway' | 'record-aortic-anti-impulse-intent'
-      | 'prioritize-aortic-imaging' | 'repeat-and-handoff-aortic-evolution',
   ) => void;
   readonly onStableChestPainResponse?: (
     action: 'verify-stable-chest-pain-trajectory' | 'characterize-stable-chest-pain-pattern'
@@ -2534,27 +2440,15 @@ export interface ActionCockpitProps {
   readonly hypertensiveEmergencyGuidance?: GuidanceLevel;
   readonly pacemakerCaptureFailureGuidance?: GuidanceLevel;
   readonly transcutaneousPacingCaptureGuidance?: GuidanceLevel;
-  readonly acuteAorticSyndromeGuidance?: GuidanceLevel;
-  readonly acuteIschemicStrokeGuidance?: GuidanceLevel;
   readonly hemorrhagicShockGuidance?: GuidanceLevel;
   readonly undifferentiatedShockGuidance?: GuidanceLevel;
   readonly peaArrestGuidance?: GuidanceLevel;
   readonly persistentVfGuidance?: GuidanceLevel;
-  readonly acutePulmonaryEdemaGuidance?: GuidanceLevel;
-  readonly adultAsthmaGuidance?: GuidanceLevel;
-  readonly emergencyAnaphylaxisGuidance?: GuidanceLevel;
   readonly cardiacTamponadeGuidance?: GuidanceLevel;
-  readonly copdExacerbationGuidance?: GuidanceLevel;
-  readonly diabeticKetoacidosisGuidance?: GuidanceLevel;
   readonly exertionalHeatStrokeGuidance?: GuidanceLevel;
   readonly hyperkalemiaEcgGuidance?: GuidanceLevel;
-  readonly intracranialHemorrhageGuidance?: GuidanceLevel;
-  readonly opioidToxicityGuidance?: GuidanceLevel;
-  readonly pulmonaryEmbolismGuidance?: GuidanceLevel;
   readonly severeHyponatremiaGuidance?: GuidanceLevel;
   readonly emergencyStemiGuidance?: GuidanceLevel;
-  readonly traumaPrimarySurveyGuidance?: GuidanceLevel;
-  readonly unstableBradycardiaGuidance?: GuidanceLevel;
   readonly emergencySvtGuidance?: GuidanceLevel;
   readonly obstructivePleuralShockGuidance?: GuidanceLevel;
   readonly statusEpilepticusGuidance?: GuidanceLevel;
@@ -2689,27 +2583,15 @@ export interface ActionCockpitProps {
   readonly hypertensiveEmergencyDemonstrating?: boolean;
   readonly pacemakerCaptureFailureDemonstrating?: boolean;
   readonly transcutaneousPacingCaptureDemonstrating?: boolean;
-  readonly acuteAorticSyndromeDemonstrating?: boolean;
-  readonly acuteIschemicStrokeDemonstrating?: boolean;
   readonly hemorrhagicShockDemonstrating?: boolean;
   readonly undifferentiatedShockDemonstrating?: boolean;
   readonly peaArrestDemonstrating?: boolean;
   readonly persistentVfDemonstrating?: boolean;
-  readonly acutePulmonaryEdemaDemonstrating?: boolean;
-  readonly adultAsthmaDemonstrating?: boolean;
-  readonly emergencyAnaphylaxisDemonstrating?: boolean;
   readonly cardiacTamponadeDemonstrating?: boolean;
-  readonly copdExacerbationDemonstrating?: boolean;
-  readonly diabeticKetoacidosisDemonstrating?: boolean;
   readonly exertionalHeatStrokeDemonstrating?: boolean;
   readonly hyperkalemiaEcgDemonstrating?: boolean;
-  readonly intracranialHemorrhageDemonstrating?: boolean;
-  readonly opioidToxicityDemonstrating?: boolean;
-  readonly pulmonaryEmbolismDemonstrating?: boolean;
   readonly severeHyponatremiaDemonstrating?: boolean;
   readonly emergencyStemiDemonstrating?: boolean;
-  readonly traumaPrimarySurveyDemonstrating?: boolean;
-  readonly unstableBradycardiaDemonstrating?: boolean;
   readonly emergencySvtDemonstrating?: boolean;
   readonly obstructivePleuralShockDemonstrating?: boolean;
   readonly statusEpilepticusDemonstrating?: boolean;
@@ -2943,6 +2825,22 @@ export function crisisResponseAvailability(
   const hasDeferredStepResponse = moduleTray?.id === 'DeferredStep';
   const hasKnownLabelResponse = moduleTray?.id === 'KnownLabel';
   const hasUnspokenDoubtResponse = moduleTray?.id === 'UnspokenDoubt';
+  const hasEmergencyAnaphylaxisResponse = moduleTray?.id === 'EmergencyAnaphylaxis';
+  const hasAdultAsthmaResponse = moduleTray?.id === 'AdultAsthma';
+  const hasCopdExacerbationResponse = moduleTray?.id === 'CopdExacerbation';
+  const hasAcutePulmonaryEdemaResponse = moduleTray?.id === 'AcutePulmonaryEdema';
+  const hasPulmonaryEmbolismResponse = moduleTray?.id === 'PulmonaryEmbolism';
+  const hasStemiResponse = moduleTray?.id === 'Stemi';
+  const hasUnstableNarrowTachycardiaResponse = moduleTray?.id === 'UnstableNarrowTachycardia';
+  const hasUnstableBradycardiaResponse = moduleTray?.id === 'UnstableBradycardia';
+  const hasAcuteIschemicStrokeResponse = moduleTray?.id === 'AcuteIschemicStroke';
+  const hasIntracranialHemorrhageResponse = moduleTray?.id === 'IntracranialHemorrhage';
+  const hasDiabeticKetoacidosisResponse = moduleTray?.id === 'DiabeticKetoacidosis';
+  const hasHyperkalemiaResponse = moduleTray?.id === 'Hyperkalemia';
+  const hasOpioidToxicityResponse = moduleTray?.id === 'OpioidToxicity';
+  const hasHeatStrokeResponse = moduleTray?.id === 'HeatStroke';
+  const hasTraumaPrimarySurveyResponse = moduleTray?.id === 'TraumaPrimarySurvey';
+  const hasAcuteAorticSyndromeResponse = moduleTray?.id === 'AcuteAorticSyndrome';
   const hasArdsLungProtectiveResponse = moduleTray?.id === 'ArdsLungProtective';
   const hasEscalatingHypoxemiaResponse = moduleTray?.id === 'EscalatingHypoxemia';
   const hasVentilatorDyssynchronyResponse = moduleTray?.id === 'VentilatorDyssynchrony';
@@ -3054,62 +2952,11 @@ export function crisisResponseAvailability(
     hasCardiacTamponadeResponse: scenario.timeline.some(
       (event) => event.type === 'cardiac-tamponade',
     ),
-    hasEmergencyAnaphylaxisResponse: scenario.timeline.some(
-      (event) => event.type === 'narrative' && event.target === 'emergency-anaphylaxis',
-    ),
-    hasAdultAsthmaResponse: scenario.timeline.some(
-      (event) => event.type === 'narrative' && event.target === 'adult-asthma',
-    ),
-    hasCopdExacerbationResponse: scenario.timeline.some(
-      (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
-    ),
-    hasAcutePulmonaryEdemaResponse: scenario.timeline.some(
-      (event) => event.type === 'narrative' && event.target === 'acute-pulmonary-edema',
-    ),
-    hasPulmonaryEmbolismResponse: scenario.timeline.some(
-      (event) => event.type === 'narrative' && event.target === 'pulmonary-embolism-deterioration',
-    ),
-    hasStemiResponse: scenario.timeline.some(
-      (event) => event.type === 'narrative' && event.target === 'stemi',
-    ),
-    hasUnstableNarrowTachycardiaResponse: scenario.timeline.some(
-      (event) => event.type === 'narrative'
-        && event.target === 'unstable-narrow-complex-tachycardia',
-    ),
-    hasUnstableBradycardiaResponse: scenario.timeline.some(
-      (event) => event.type === 'narrative' && event.target === 'unstable-bradycardia',
-    ),
     hasStatusEpilepticusResponse: scenario.timeline.some(
       (event) => event.type === 'status-epilepticus',
     ),
-    hasAcuteIschemicStrokeResponse: scenario.timeline.some(
-      (event) => event.type === 'narrative' && event.target === 'acute-ischemic-stroke',
-    ),
-    hasIntracranialHemorrhageResponse: scenario.timeline.some(
-      (event) => event.type === 'narrative'
-        && event.target === 'intracranial-hemorrhage-deterioration',
-    ),
-    hasDiabeticKetoacidosisResponse: scenario.metadata.id === 'diabetic-ketoacidosis'
-      && scenario.timeline.some(
-        (event) => event.type === 'narrative' && event.target === 'diabetic-ketoacidosis',
-      ),
-    hasHyperkalemiaResponse: scenario.timeline.some(
-      (event) => event.type === 'narrative' && event.target === 'hyperkalemia-with-ecg-change',
-    ),
     hasSevereHyponatremiaResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'severe-hyponatremia-with-seizure',
-    ),
-    hasOpioidToxicityResponse: scenario.timeline.some(
-      (event) => event.type === 'narrative' && event.target === 'opioid-toxicity',
-    ),
-    hasHeatStrokeResponse: scenario.timeline.some(
-      (event) => event.type === 'narrative' && event.target === 'exertional-heat-stroke',
-    ),
-    hasTraumaPrimarySurveyResponse: scenario.timeline.some(
-      (event) => event.type === 'narrative' && event.target === 'trauma-primary-survey',
-    ),
-    hasAcuteAorticSyndromeResponse: scenario.timeline.some(
-      (event) => event.type === 'narrative' && event.target === 'acute-aortic-syndrome',
     ),
     hasStableChestPainResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'stable-chest-pain-evaluation',
@@ -3385,6 +3232,22 @@ export function crisisResponseAvailability(
     hasPulseOximeterArtifactResponse,
     hasEndotrachealTubeMigrationResponse,
     hasSepticShockResuscitationResponse,
+    hasEmergencyAnaphylaxisResponse,
+    hasAdultAsthmaResponse,
+    hasCopdExacerbationResponse,
+    hasAcutePulmonaryEdemaResponse,
+    hasPulmonaryEmbolismResponse,
+    hasStemiResponse,
+    hasUnstableNarrowTachycardiaResponse,
+    hasUnstableBradycardiaResponse,
+    hasAcuteIschemicStrokeResponse,
+    hasIntracranialHemorrhageResponse,
+    hasDiabeticKetoacidosisResponse,
+    hasHyperkalemiaResponse,
+    hasOpioidToxicityResponse,
+    hasHeatStrokeResponse,
+    hasTraumaPrimarySurveyResponse,
+    hasAcuteAorticSyndromeResponse,
     hasSevereHypoglycemiaResponse,
     hasAdrenalCrisisResponse,
     hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse, hasToxicShockResponse, hasPossibleSepsisResponse, hasSepticShockLabelResponse, hasMeningitisImagingResponse, hasLowScoreResponse, hasCountedRateResponse, hasPairedReadingResponse, hasAfferentLimbResponse, hasQuietPatientResponse, hasProxyScaleResponse, hasLastKnownWellResponse, hasOxygenTargetScaleResponse, hasLostContingencyResponse, hasDelayedImmuneEventResponse, hasIncidentalClotResponse, hasNormalTestToxicityResponse, hasPrognosisQuestionResponse, hasLaboratoryTlsResponse, hasRareEarlyMyocarditisResponse, hasLoweringTheCountResponse, hasInheritedUrgencyResponse, hasTrialRuleResponse, hasSilentInteractionResponse, hasEasyLabelResponse, hasNegativeScanResponse, hasRisingRequirementResponse, hasUnfinishedSurveyResponse, hasTransientResponseResponse, hasQuietChestResponse, hasUnownedDelayResponse, hasThirdAttendanceResponse, hasDeferredStepResponse, hasKnownLabelResponse, hasUnspokenDoubtResponse,
@@ -4935,73 +4798,6 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 onAction={props.onCardiacTamponadeAssessment ?? (() => {})}
               />
             )}
-            {hasEmergencyAnaphylaxisResponse && (
-              <EmergencyAnaphylaxisTray
-                assessment={props.resuscitation.emergencyAnaphylaxisAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.emergencyAnaphylaxisGuidance}
-                demonstrating={props.emergencyAnaphylaxisDemonstrating}
-                onAction={props.onEmergencyAnaphylaxisResponse ?? (() => {})}
-              />
-            )}
-            {hasAdultAsthmaResponse && (
-              <AdultAsthmaTray
-                assessment={props.resuscitation.adultAsthmaAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.adultAsthmaGuidance}
-                demonstrating={props.adultAsthmaDemonstrating}
-                onAction={props.onAdultAsthmaResponse ?? (() => {})}
-              />
-            )}
-            {hasCopdExacerbationResponse && (
-              <CopdExacerbationTray
-                assessment={props.resuscitation.copdExacerbationAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.copdExacerbationGuidance}
-                demonstrating={props.copdExacerbationDemonstrating}
-                onAction={props.onCopdExacerbationResponse ?? (() => {})}
-              />
-            )}
-            {hasAcutePulmonaryEdemaResponse && (
-              <AcutePulmonaryEdemaTray
-                assessment={props.resuscitation.acutePulmonaryEdemaAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.acutePulmonaryEdemaGuidance}
-                demonstrating={props.acutePulmonaryEdemaDemonstrating}
-                onAction={props.onAcutePulmonaryEdemaResponse ?? (() => {})}
-              />
-            )}
-            {hasPulmonaryEmbolismResponse && (
-              <PulmonaryEmbolismTray
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.pulmonaryEmbolismGuidance}
-                demonstrating={props.pulmonaryEmbolismDemonstrating}
-                assessment={props.resuscitation.pulmonaryEmbolismAssessment}
-                onAction={props.onPulmonaryEmbolismResponse ?? (() => {})}
-              />
-            )}
-            {hasStemiResponse && (
-              <StemiTray
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.emergencyStemiGuidance}
-                demonstrating={props.emergencyStemiDemonstrating} assessment={props.resuscitation.stemiAssessment}
-                onAction={props.onStemiResponse ?? (() => {})} />
-            )}
-            {hasUnstableNarrowTachycardiaResponse && (
-              <UnstableNarrowTachycardiaTray
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.emergencySvtGuidance}
-                demonstrating={props.emergencySvtDemonstrating}
-                assessment={props.resuscitation.unstableNarrowTachycardiaAssessment}
-                onAction={props.onUnstableNarrowTachycardiaResponse ?? (() => {})} />
-            )}
-            {hasUnstableBradycardiaResponse && (
-              <UnstableBradycardiaTray
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.unstableBradycardiaGuidance}
-                demonstrating={props.unstableBradycardiaDemonstrating} assessment={props.resuscitation.unstableBradycardiaAssessment}
-                onAction={props.onUnstableBradycardiaResponse ?? (() => {})} />
-            )}
             {hasStatusEpilepticusResponse && (
               <StatusEpilepticusTray
                 scenarioVersion={props.scenario.metadata.version}
@@ -5011,71 +4807,12 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 seizureActivityFraction={props.resuscitation.seizureActivityFraction ?? 0}
                 onAction={props.onStatusEpilepticusResponse ?? (() => {})} />
             )}
-            {hasAcuteIschemicStrokeResponse && (
-              <AcuteIschemicStrokeTray
-                assessment={props.resuscitation.acuteIschemicStrokeAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.acuteIschemicStrokeGuidance}
-                demonstrating={props.acuteIschemicStrokeDemonstrating}
-                onAction={props.onAcuteIschemicStrokeResponse ?? (() => {})} />
-            )}
-            {hasIntracranialHemorrhageResponse && (
-              <IntracranialHemorrhageTray
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.intracranialHemorrhageGuidance}
-                demonstrating={props.intracranialHemorrhageDemonstrating}
-                assessment={props.resuscitation.intracranialHemorrhageAssessment}
-                onAction={props.onIntracranialHemorrhageResponse ?? (() => {})} />
-            )}
-            {hasDiabeticKetoacidosisResponse && (
-              <DiabeticKetoacidosisTray
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.diabeticKetoacidosisGuidance}
-                demonstrating={props.diabeticKetoacidosisDemonstrating}
-                assessment={props.resuscitation.diabeticKetoacidosisAssessment}
-                onAction={props.onDiabeticKetoacidosisResponse ?? (() => {})} />
-            )}
-            {hasHyperkalemiaResponse && (
-              <HyperkalemiaTray assessment={props.resuscitation.hyperkalemiaAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.hyperkalemiaEcgGuidance}
-                demonstrating={props.hyperkalemiaEcgDemonstrating}
-                onAction={props.onHyperkalemiaResponse ?? (() => {})} />
-            )}
             {hasSevereHyponatremiaResponse && (
               <HyponatremiaTray
                 scenarioVersion={props.scenario.metadata.version}
                 guidance={props.severeHyponatremiaGuidance}
                 demonstrating={props.severeHyponatremiaDemonstrating} assessment={props.resuscitation.hyponatremiaAssessment}
                 onAction={props.onHyponatremiaResponse ?? (() => {})} />
-            )}
-            {hasOpioidToxicityResponse && (
-              <OpioidToxicityTray assessment={props.resuscitation.opioidToxicityAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.opioidToxicityGuidance}
-                demonstrating={props.opioidToxicityDemonstrating}
-                onAction={props.onOpioidToxicityResponse ?? (() => {})} />
-            )}
-            {hasHeatStrokeResponse && (
-              <HeatStrokeTray assessment={props.resuscitation.heatStrokeAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.exertionalHeatStrokeGuidance}
-                demonstrating={props.exertionalHeatStrokeDemonstrating}
-                onAction={props.onHeatStrokeResponse ?? (() => {})} />
-            )}
-            {hasTraumaPrimarySurveyResponse && (
-              <TraumaPrimarySurveyTray
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.traumaPrimarySurveyGuidance}
-                demonstrating={props.traumaPrimarySurveyDemonstrating} assessment={props.resuscitation.traumaPrimarySurveyAssessment}
-                onAction={props.onTraumaPrimarySurveyResponse ?? (() => {})} />
-            )}
-            {hasAcuteAorticSyndromeResponse && (
-              <AcuteAorticSyndromeTray assessment={props.resuscitation.acuteAorticSyndromeAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.acuteAorticSyndromeGuidance}
-                demonstrating={props.acuteAorticSyndromeDemonstrating}
-                onAction={props.onAcuteAorticSyndromeResponse ?? (() => {})} />
             )}
             {hasStableChestPainResponse && (
               <StableChestPainTray assessment={props.resuscitation.stableChestPainAssessment}
@@ -7048,573 +6785,13 @@ function CardiacTamponadeTray({ fraction, assessment, scenarioVersion, guidance 
   );
 }
 
-function EmergencyAnaphylaxisTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['emergencyAnaphylaxisAssessment']>;
-  scenarioVersion: string;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-  onAction: NonNullable<ActionCockpitProps['onEmergencyAnaphylaxisResponse']>;
-}) {
-  const reviewed = assessment?.patternReviewedAtTick != null;
-  const positioned = assessment?.positionedAndHelpedAtTick != null;
-  const epinephrine = assessment?.imEpinephrineAtTick != null;
-  const oxygen = assessment?.oxygenAtTick != null;
-  const fluid = assessment?.crystalloidAtTick != null;
-  const reassessed = assessment?.reassessedAtTick != null;
-  const prompt = demonstrating ? null
-    : emergencyAnaphylaxisInlinePrompt(guidance, { scenarioVersion, patient: assessment });
-  const act = demonstrating ? undefined : onAction;
-  return (
-    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      <WatchingNotice demonstrating={demonstrating} />
-      <TutorPanel prompt={prompt} />
-      <div className="tray-grid">
-      <section className="syringe" aria-labelledby="ed-anaphylaxis-recognition-title">
-        <div id="ed-anaphylaxis-recognition-title" className="syringe__name">Recognize and lead</div>
-        <Badge kind="teaching">Fixed community vignette</Badge>
-        <div className="syringe__meta">Airway · breathing · circulation · exposure</div>
-        <p className="syringe__remaining" role="status">
-          {epinephrine ? 'First-line IM epinephrine recorded'
-            : positioned ? 'Support mobilized · first-line treatment next'
-              : reviewed ? 'Systemic pattern reviewed · lead the response'
-                : 'Abrupt multisystem deterioration'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={reviewed}
-            aria-disabled={demonstrating} onClick={act ? () => act('review-systemic-pattern') : undefined}>
-            Review systemic pattern
-          </Button>
-          <Button className="crisis-drug__action" disabled={!reviewed || positioned}
-            aria-disabled={demonstrating} onClick={act ? () => act('position-and-call-for-help') : undefined}>
-            Position + call for help
-          </Button>
-          <Button className="crisis-drug__action" disabled={!positioned || epinephrine}
-            aria-disabled={demonstrating} onClick={act ? () => act('give-im-epinephrine') : undefined}>
-            Give 500 µg epinephrine IM
-          </Button>
-        </div>
-        <p className="field__hint">This is a fixed adult first-line action, not a dosing calculator or injection-technique trainer. IV bolus epinephrine is not offered.</p>
-      </section>
-      <section className="syringe" aria-labelledby="ed-anaphylaxis-support-title">
-        <div id="ed-anaphylaxis-support-title" className="syringe__name">Support and reassess</div>
-        <div className="syringe__meta">Oxygen · isotonic crystalloid · serial review</div>
-        <p className="syringe__remaining" role="status">
-          {reassessed ? 'Initial response reassessed'
-            : oxygen && fluid ? 'Parallel support recorded · reassess next'
-              : epinephrine ? 'First-line treatment recorded · parallel support open'
-                : 'First-line treatment pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={!epinephrine || oxygen}
-            aria-disabled={demonstrating} onClick={act ? () => act('give-high-flow-oxygen') : undefined}>
-            Record high-flow oxygen
-          </Button>
-          <Button className="crisis-drug__action" disabled={!epinephrine || fluid}
-            aria-disabled={demonstrating} onClick={act ? () => act('begin-fixed-crystalloid') : undefined}>
-            Begin fixed 1,500 mL crystalloid
-          </Button>
-          <Button className="crisis-drug__action" disabled={!oxygen || !fluid || reassessed}
-            aria-disabled={demonstrating} onClick={act ? () => act('reassess-response') : undefined}>
-            Reassess airway + perfusion
-          </Button>
-        </div>
-        <p className="field__hint">No repeat-dose clock, refractory infusion, bronchodilator, antihistamine, steroid, airway procedure, observation, discharge, referral, or outcome is offered.</p>
-      </section>
-      </div>
-    </div>
-  );
-}
 
-function AdultAsthmaTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['adultAsthmaAssessment']>;
-  scenarioVersion: string;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-  onAction: NonNullable<ActionCockpitProps['onAdultAsthmaResponse']>;
-}) {
-  const reviewed = assessment?.severityReviewedAtTick != null;
-  const oxygen = assessment?.controlledOxygenAtTick != null;
-  const bronchodilators = assessment?.bronchodilatorBundleAtTick != null;
-  const corticosteroid = assessment?.corticosteroidIntentAtTick != null;
-  const reassessed = assessment?.reassessedAtTick != null;
-  const prompt = demonstrating ? null
-    : adultAsthmaInlinePrompt(guidance, { scenarioVersion, patient: assessment });
-  const act = demonstrating ? undefined : onAction;
-  return (
-    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      <WatchingNotice demonstrating={demonstrating} />
-      <TutorPanel prompt={prompt} />
-      <div className="tray-grid">
-      <section className="syringe" aria-labelledby="adult-asthma-assessment-title">
-        <div id="adult-asthma-assessment-title" className="syringe__name">Read severity, not wheeze alone</div>
-        <Badge kind="teaching">Fixed ED vignette</Badge>
-        <div className="syringe__meta">Speech · work · SpO₂ · PEF · immediate mimics</div>
-        <p className="syringe__remaining" role="status">
-          {oxygen ? 'Controlled oxygen target recorded'
-            : reviewed ? 'Severe pattern reviewed · initial treatment open'
-              : 'Whole-patient severity review pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={reviewed}
-            aria-disabled={demonstrating} onClick={act ? () => act('review-severity-and-mimics') : undefined}>
-            Review severity + immediate mimics
-          </Button>
-          <Button className="crisis-drug__action" disabled={!reviewed || oxygen}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-controlled-oxygen') : undefined}>
-            Target controlled oxygen · 92–95%
-          </Button>
-        </div>
-        <p className="field__hint">Findings and peak flow are authored. The screen does not perform examination, spirometry, blood gas, imaging, or differential diagnosis.</p>
-      </section>
-      <section className="syringe" aria-labelledby="adult-asthma-treatment-title">
-        <div id="adult-asthma-treatment-title" className="syringe__name">Treat, then look again</div>
-        <div className="syringe__meta">Conservative inhaled bundle · early anti-inflammatory intent</div>
-        <p className="syringe__remaining" role="status">
-          {reassessed ? 'Initial response reassessed · repeat PEF 55%'
-            : bronchodilators && corticosteroid ? 'Initial treatment complete · reassess next'
-              : reviewed ? 'Parallel initial treatment open' : 'Severity review pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={!reviewed || bronchodilators}
-            aria-disabled={demonstrating} onClick={act ? () => act('give-fixed-inhaled-bronchodilators') : undefined}>
-            Give fixed pMDI + spacer bundle
-          </Button>
-          <Button className="crisis-drug__action" disabled={!reviewed || corticosteroid}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-early-corticosteroid-intent') : undefined}>
-            Record early corticosteroid intent
-          </Button>
-          <Button className="crisis-drug__action"
-            disabled={!oxygen || !bronchodilators || !corticosteroid || reassessed}
-            aria-disabled={demonstrating} onClick={act ? () => act('reassess-after-initial-treatment') : undefined}>
-            Reassess symptoms + PEF
-          </Button>
-        </div>
-        <p className="field__hint">No inhaler technique, individualized dose, repeat cycle, toxicity, magnesium, ventilatory support, disposition, discharge prescription, or prevention plan is offered.</p>
-      </section>
-      </div>
-    </div>
-  );
-}
 
-function CopdExacerbationTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['copdExacerbationAssessment']>;
-  scenarioVersion: string;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-  onAction: NonNullable<ActionCockpitProps['onCopdExacerbationResponse']>;
-}) {
-  const reviewed = assessment?.severityReviewedAtTick != null;
-  const oxygen = assessment?.controlledOxygenAtTick != null;
-  const bronchodilators = assessment?.bronchodilatorBundleAtTick != null;
-  const corticosteroid = assessment?.corticosteroidIntentAtTick != null;
-  const antibiotic = assessment?.antibioticIntentAtTick != null;
-  const reassessed = assessment?.reassessedAtTick != null;
-  const prompt = demonstrating ? null
-    : copdExacerbationInlinePrompt(guidance, { scenarioVersion, patient: assessment });
-  const act = demonstrating ? undefined : onAction;
-  return (
-    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      <WatchingNotice demonstrating={demonstrating} />
-      <TutorPanel prompt={prompt} />
-      <div className="tray-grid">
-      <section className="syringe" aria-labelledby="copd-assessment-title">
-        <div id="copd-assessment-title" className="syringe__name">Read the whole respiratory story</div>
-        <Badge kind="teaching">Fixed ED vignette</Badge>
-        <div className="syringe__meta">Symptoms · work · SpO₂ · sputum · blood gas · mimics</div>
-        <p className="syringe__remaining" role="status">
-          {oxygen ? 'Controlled oxygen target recorded'
-            : reviewed ? 'Moderate pattern reviewed · initial treatment open'
-              : 'Severity and blood-gas review pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={reviewed}
-            aria-disabled={demonstrating} onClick={act ? () => act('review-severity-and-mimics') : undefined}>
-            Review severity + blood gas + mimics
-          </Button>
-          <Button className="crisis-drug__action" disabled={!reviewed || oxygen}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-controlled-oxygen') : undefined}>
-            Target controlled oxygen · 88–92%
-          </Button>
-        </div>
-        <p className="field__hint">Findings and blood gases are authored. The screen does not perform examination, sampling, imaging, ECG, microbiology, or differential diagnosis.</p>
-      </section>
-      <section className="syringe" aria-labelledby="copd-treatment-title">
-        <div id="copd-treatment-title" className="syringe__name">Open the airways, then look again</div>
-        <div className="syringe__meta">Air-driven inhaled intent · short anti-inflammatory course · indication check</div>
-        <p className="syringe__remaining" role="status">
-          {reassessed ? 'Initial response reassessed · repeat pH 7.38'
-            : bronchodilators && corticosteroid && antibiotic
-              ? 'Initial treatment recorded · reassess next'
-              : reviewed ? 'Parallel initial treatment open' : 'Severity review pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={!reviewed || bronchodilators}
-            aria-disabled={demonstrating} onClick={act ? () => act('give-air-driven-bronchodilators') : undefined}>
-            Give air-driven SABA + SAMA intent
-          </Button>
-          <Button className="crisis-drug__action" disabled={!reviewed || corticosteroid}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-five-day-corticosteroid-intent') : undefined}>
-            Record 5-day corticosteroid intent
-          </Button>
-          <Button className="crisis-drug__action" disabled={!reviewed || antibiotic}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-antibiotic-indication') : undefined}>
-            Record antibiotic indication · purulence
-          </Button>
-          <Button className="crisis-drug__action"
-            disabled={!oxygen || !bronchodilators || !corticosteroid || !antibiotic || reassessed}
-            aria-disabled={demonstrating} onClick={act ? () => act('reassess-and-review-ventilatory-support') : undefined}>
-            Reassess blood gas + ventilatory need
-          </Button>
-        </div>
-        <p className="field__hint">No device technique, individualized or repeat dose, toxicity, antibiotic selection, NIV setup, disposition, maintenance plan, or outcome is offered.</p>
-      </section>
-      </div>
-    </div>
-  );
-}
 
-function AcutePulmonaryEdemaTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['acutePulmonaryEdemaAssessment']>;
-  scenarioVersion: string;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-  onAction: NonNullable<ActionCockpitProps['onAcutePulmonaryEdemaResponse']>;
-}) {
-  const reviewed = assessment?.patternReviewedAtTick != null;
-  const niv = assessment?.nivAtTick != null;
-  const diuretic = assessment?.diureticIntentAtTick != null;
-  const vasodilator = assessment?.vasodilatorIntentAtTick != null;
-  const reassessed = assessment?.reassessedAtTick != null;
-  const prompt = demonstrating ? null
-    : acutePulmonaryEdemaInlinePrompt(guidance, { scenarioVersion, patient: assessment });
-  const act = demonstrating ? undefined : onAction;
-  return (
-    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      <WatchingNotice demonstrating={demonstrating} />
-      <TutorPanel prompt={prompt} />
-      <div className="tray-grid">
-      <section className="syringe" aria-labelledby="pulmonary-edema-pattern-title">
-        <div id="pulmonary-edema-pattern-title" className="syringe__name">See lungs, pressure, and perfusion together</div>
-        <Badge kind="teaching">Fixed ED vignette</Badge>
-        <div className="syringe__meta">Work · SpO₂ · congestion · BP · perfusion · mimics</div>
-        <p className="syringe__remaining" role="status">
-          {niv ? 'Early positive-pressure support recorded'
-            : reviewed ? 'Pulmonary-edema pattern reviewed · support open'
-              : 'Whole-patient pattern review pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={reviewed}
-            aria-disabled={demonstrating} onClick={act ? () => act('review-pattern-mimics-and-precipitants') : undefined}>
-            Review pattern + mimics + precipitants
-          </Button>
-          <Button className="crisis-drug__action" disabled={!reviewed || niv}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-niv-and-titrated-oxygen') : undefined}>
-            Start NIV + titrated oxygen intent
-          </Button>
-        </div>
-        <p className="field__hint">Findings, ECG, radiograph, and focused ultrasound are authored. The screen does not acquire an examination, test, image, or diagnosis.</p>
-      </section>
-      <section className="syringe" aria-labelledby="pulmonary-edema-treatment-title">
-        <div id="pulmonary-edema-treatment-title" className="syringe__name">Unload, decongest, then re-read the patient</div>
-        <div className="syringe__meta">Congestion intent · pressure-safe vasodilation · serial response</div>
-        <p className="syringe__remaining" role="status">
-          {reassessed ? 'Initial response reassessed · BP 146/86'
-            : diuretic && vasodilator ? 'Initial treatment recorded · reassess next'
-              : reviewed ? 'Parallel initial treatment open' : 'Pattern review pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={!reviewed || diuretic}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-loop-diuretic-intent') : undefined}>
-            Record IV loop-diuretic intent
-          </Button>
-          <Button className="crisis-drug__action" disabled={!reviewed || vasodilator}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-vasodilator-intent') : undefined}>
-            Record IV vasodilator intent · SBP &gt;110
-          </Button>
-          <Button className="crisis-drug__action"
-            disabled={!niv || !diuretic || !vasodilator || reassessed}
-            aria-disabled={demonstrating} onClick={act ? () => act('reassess-breathing-pressure-and-perfusion') : undefined}>
-            Reassess breathing + BP + perfusion
-          </Button>
-        </div>
-        <p className="field__hint">No NIV technique, drug dose or titration, urine output, precipitant treatment, intubation, shock pathway, disposition, or outcome is offered.</p>
-      </section>
-      </div>
-    </div>
-  );
-}
 
-function PulmonaryEmbolismTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['pulmonaryEmbolismAssessment']>;
-  scenarioVersion: string;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-  onAction: NonNullable<ActionCockpitProps['onPulmonaryEmbolismResponse']>;
-}) {
-  const reviewed = assessment?.severityReviewedAtTick != null;
-  const oxygen = assessment?.oxygenAtTick != null;
-  const anticoagulated = assessment?.anticoagulationAtTick != null;
-  const deteriorated = assessment?.deteriorationAtTick != null;
-  const escalated = assessment?.escalationAtTick != null;
-  const prompt = demonstrating ? null
-    : pulmonaryEmbolismInlinePrompt(guidance, { scenarioVersion, patient: assessment });
-  const act = demonstrating ? undefined : onAction;
-  return (
-    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      <WatchingNotice demonstrating={demonstrating} />
-      <TutorPanel prompt={prompt} />
-      <div className="tray-grid">
-      <section className="syringe" aria-labelledby="pe-severity-title">
-        <div id="pe-severity-title" className="syringe__name">Read the right ventricle, lungs, and circulation together</div>
-        <Badge kind="teaching">Fixed confirmed PE</Badge>
-        <div className="syringe__meta">CTPA · RV · biomarkers · RR · SpO₂ · perfusion</div>
-        <p className="syringe__remaining" role="status">
-          {deteriorated ? 'Deterioration recognized · Category E1'
-            : reviewed ? 'Initial Category C3R pattern reviewed' : 'Serial severity review pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={reviewed}
-            aria-disabled={demonstrating} onClick={act ? () => act('review-confirmed-pe-severity') : undefined}>
-            Review confirmed PE + severity
-          </Button>
-          <Button className="crisis-drug__action" disabled={!reviewed || oxygen}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-titrated-oxygen') : undefined}>
-            Record titrated oxygen intent
-          </Button>
-          <Button className="crisis-drug__action" disabled={!reviewed || anticoagulated}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-therapeutic-anticoagulation-intent') : undefined}>
-            Record therapeutic anticoagulation intent
-          </Button>
-        </div>
-        <p className="field__hint">Imaging, echocardiography, biomarkers, and category are authored. No live diagnostic or risk calculator is implied.</p>
-      </section>
-      <section className="syringe" aria-labelledby="pe-deterioration-title">
-        <div id="pe-deterioration-title" className="syringe__name">Catch the turn, then bring the whole team</div>
-        <div className="syringe__meta">Serial BP · perfusion · PERT · reperfusion strategy</div>
-        <p className="syringe__remaining" role="status">
-          {escalated ? 'PERT + urgent reperfusion intent recorded'
-            : deteriorated ? 'Persistent hypotension + shock · escalate now'
-              : oxygen && anticoagulated ? 'Initial response recorded · reassess now'
-                : 'Initial response pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action"
-            disabled={!oxygen || !anticoagulated || deteriorated}
-            aria-disabled={demonstrating} onClick={act ? () => act('reassess-for-deterioration') : undefined}>
-            Reassess pressure + perfusion
-          </Button>
-          <Button className="crisis-drug__action" disabled={!deteriorated || escalated}
-            aria-disabled={demonstrating} onClick={act ? () => act('activate-pert-and-record-reperfusion-intent') : undefined}>
-            Activate PERT + reperfusion intent
-          </Button>
-        </div>
-        <p className="field__hint">No anticoagulant or reperfusion dose, contraindication decision, airway technique, procedure selection, transfer, disposition, or outcome is offered.</p>
-      </section>
-      </div>
-    </div>
-  );
-}
 
-function StemiTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['stemiAssessment']>;
-  scenarioVersion: string;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-  onAction: NonNullable<ActionCockpitProps['onStemiResponse']>;
-}) {
-  const reviewed = assessment?.patternReviewedAtTick != null;
-  const activated = assessment?.pathwayActivatedAtTick != null;
-  const aspirin = assessment?.aspirinAtTick != null;
-  const antithrombotics = assessment?.additionalAntithromboticsAtTick != null;
-  const reassessed = assessment?.reassessedAtTick != null;
-  const prompt = demonstrating ? null
-    : stemiInlinePrompt(guidance, { scenarioVersion, patient: assessment });
-  const act = demonstrating ? undefined : onAction;
-  return (
-    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      <WatchingNotice demonstrating={demonstrating} />
-      <TutorPanel prompt={prompt} />
-      <div className="tray-grid">
-      <section className="syringe" aria-labelledby="stemi-pattern-title">
-        <div id="stemi-pattern-title" className="syringe__name">See the pattern, start the clock</div>
-        <Badge kind="teaching">Fixed PCI-capable ED</Badge>
-        <div className="syringe__meta">45 min · fixed 12-lead · pressure · perfusion · mimics</div>
-        <p className="syringe__remaining" role="status">
-          {activated ? 'STEMI pathway + primary PCI intent active'
-            : reviewed ? 'Anterior STEMI pattern reviewed · pathway open'
-              : 'Time-critical pattern review pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={reviewed}
-            aria-disabled={demonstrating} onClick={act ? () => act('review-stemi-pattern') : undefined}>
-            Review symptoms + fixed 12-lead
-          </Button>
-          <Button className="crisis-drug__action" disabled={!reviewed || activated}
-            aria-disabled={demonstrating} onClick={act ? () => act('activate-stemi-pathway') : undefined}>
-            Activate STEMI pathway + primary PCI
-          </Button>
-        </div>
-        <p className="field__hint">The diagnostic 12-lead and PCI-capable setting are authored. The bedside lead-II monitor is not a live 12-lead interpreter.</p>
-      </section>
-      <section className="syringe" aria-labelledby="stemi-treatment-title">
-        <div id="stemi-treatment-title" className="syringe__name">Protect the pathway, then hand off clearly</div>
-        <div className="syringe__meta">Aspirin · P2Y12 · anticoagulation · serial complications</div>
-        <p className="syringe__remaining" role="status">
-          {reassessed ? 'Reassessed + reperfusion handoff recorded · BP 146/92'
-            : activated && aspirin && antithrombotics ? 'Immediate sequence complete · reassess now'
-              : 'Parallel pathway preparation pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={!reviewed || aspirin}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-aspirin-load') : undefined}>
-            Record aspirin load · 162–325 mg
-          </Button>
-          <Button className="crisis-drug__action" disabled={!reviewed || antithrombotics}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-p2y12-anticoagulation-intent') : undefined}>
-            Record P2Y12 + anticoagulation intent
-          </Button>
-          <Button className="crisis-drug__action"
-            disabled={!activated || !aspirin || !antithrombotics || reassessed}
-            aria-disabled={demonstrating} onClick={act ? () => act('reassess-and-handoff') : undefined}>
-            Reassess + hand off for reperfusion
-          </Button>
-        </div>
-        <p className="field__hint">SpO₂ is 95%, so routine oxygen is not selected. No agent selection, individualized dose, nitrate or opioid pathway, PCI technique, complication treatment, disposition, or outcome is offered.</p>
-      </section>
-      </div>
-    </div>
-  );
-}
 
-function UnstableNarrowTachycardiaTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['unstableNarrowTachycardiaAssessment']>;
-  scenarioVersion: string;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-  onAction: NonNullable<ActionCockpitProps['onUnstableNarrowTachycardiaResponse']>;
-}) {
-  const reviewed = assessment?.reviewedAtTick != null;
-  const prepared = assessment?.preparedAtTick != null;
-  const cardioverted = assessment?.cardiovertedAtTick != null;
-  const reassessed = assessment?.reassessedAtTick != null;
-  const prompt = demonstrating ? null
-    : unstableNarrowTachycardiaInlinePrompt(guidance, { scenarioVersion, patient: assessment });
-  const act = demonstrating ? undefined : onAction;
-  return (
-    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      <WatchingNotice demonstrating={demonstrating} />
-      <TutorPanel prompt={prompt} />
-      <div className="tray-grid">
-      <section className="syringe" aria-labelledby="unstable-nct-recognition-title">
-        <div id="unstable-nct-recognition-title" className="syringe__name">Read the rhythm through the patient</div>
-        <Badge kind="teaching">Fixed unstable NCT</Badge>
-        <div className="syringe__meta">188/min · QRS 0.08 s · BP · brain · chest · perfusion</div>
-        <p className="syringe__remaining" role="status">
-          {prepared ? 'Immediate support + synchronized pads prepared'
-            : reviewed ? 'Instability recognized · prepare now'
-              : 'Rhythm + whole-patient review pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={reviewed}
-            aria-disabled={demonstrating} onClick={act ? () => act('review-rhythm-and-instability') : undefined}>
-            Review rhythm + instability
-          </Button>
-          <Button className="crisis-drug__action" disabled={!reviewed || prepared}
-            aria-disabled={demonstrating} onClick={act ? () => act('prepare-synchronized-cardioversion') : undefined}>
-            Prepare support + synchronized pads
-          </Button>
-        </div>
-        <p className="field__hint">The fixed 12-lead supplies width and regularity. The teaching waveform does not diagnose the atrial mechanism.</p>
-      </section>
-      <section className="syringe" aria-labelledby="unstable-nct-response-title">
-        <div id="unstable-nct-response-title" className="syringe__name">Synchronize, restore, reassess</div>
-        <div className="syringe__meta">Sedate if feasible · do not delay · rhythm + perfusion</div>
-        <p className="syringe__remaining" role="status">
-          {reassessed ? 'Response reassessed · HR 92 · BP 118/72'
-            : cardioverted ? 'Synchronized-cardioversion intent recorded · reassess next'
-              : prepared ? 'Ready for prompt synchronized intent' : 'Preparation pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={!prepared || cardioverted}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-synchronized-cardioversion-intent') : undefined}>
-            Record synchronized cardioversion intent
-          </Button>
-          <Button className="crisis-drug__action" disabled={!cardioverted || reassessed}
-            aria-disabled={demonstrating} onClick={act ? () => act('reassess-rhythm-and-perfusion') : undefined}>
-            Reassess rhythm + whole-patient perfusion
-          </Button>
-        </div>
-        <p className="field__hint">SpO₂ is 94%, so routine oxygen is not selected. No energy, sedation drug, device operation, shock technique, adenosine, refractory pathway, recurrence, disposition, or outcome is offered.</p>
-      </section>
-      </div>
-    </div>
-  );
-}
 
-function UnstableBradycardiaTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['unstableBradycardiaAssessment']>;
-  scenarioVersion: string;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-  onAction: NonNullable<ActionCockpitProps['onUnstableBradycardiaResponse']>;
-}) {
-  const reviewed = assessment?.reviewedAtTick != null;
-  const supported = assessment?.supportedAtTick != null;
-  const atropine = assessment?.atropineAtTick != null;
-  const reassessed = assessment?.reassessedAtTick != null;
-  const prompt = demonstrating ? null
-    : unstableBradycardiaInlinePrompt(guidance, { scenarioVersion, patient: assessment });
-  const act = demonstrating ? undefined : onAction;
-  return (
-    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      <WatchingNotice demonstrating={demonstrating} />
-      <TutorPanel prompt={prompt} />
-      <div className="tray-grid">
-      <section className="syringe" aria-labelledby="unstable-bradycardia-recognition-title">
-        <div id="unstable-bradycardia-recognition-title" className="syringe__name">Read the rate through the patient</div>
-        <Badge kind="teaching">Fixed unstable bradycardia</Badge>
-        <div className="syringe__meta">38/min · palpable pulse · BP · brain · chest · perfusion</div>
-        <p className="syringe__remaining" role="status">
-          {supported ? 'Airway + oxygen + monitors + pulse + access recorded'
-            : reviewed ? 'Compromise recognized · support now'
-              : 'Rate + whole-patient review pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={reviewed}
-            aria-disabled={demonstrating} onClick={act ? () => act('review-bradycardia-and-compromise') : undefined}>
-            Review bradycardia + compromise
-          </Button>
-          <Button className="crisis-drug__action" disabled={!reviewed || supported}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-bradycardia-support') : undefined}>
-            Record immediate support + access
-          </Button>
-        </div>
-        <p className="field__hint">The fixed rhythm has a pulse. The case authors compromise but does not diagnose its cause.</p>
-      </section>
-      <section className="syringe" aria-labelledby="unstable-bradycardia-response-title">
-        <div id="unstable-bradycardia-response-title" className="syringe__name">Treat, observe, keep looking</div>
-        <div className="syringe__meta">Fixed 1 mg IV intent · reversible causes · escalation</div>
-        <p className="syringe__remaining" role="status">
-          {reassessed ? 'Response reassessed · HR 68 · BP 112/70'
-            : atropine ? 'Atropine intent recorded · reassess next'
-              : supported ? 'Persistent compromise · atropine intent available' : 'Support pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={!supported || atropine}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-atropine-intent') : undefined}>
-            Record atropine 1 mg IV intent
-          </Button>
-          <Button className="crisis-drug__action" disabled={!atropine || reassessed}
-            aria-disabled={demonstrating} onClick={act ? () => act('reassess-bradycardia-response') : undefined}>
-            Reassess rhythm + whole-patient perfusion
-          </Button>
-        </div>
-        <p className="field__hint">No medication delivery, repeat dose, pacing, capture, adrenergic infusion, definitive cause, procedure, recurrence, disposition, or outcome is offered.</p>
-      </section>
-      </div>
-    </div>
-  );
-}
 
 function StatusEpilepticusTray({ assessment, seizureActivityFraction, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   scenarioVersion: string;
@@ -7682,269 +6859,9 @@ function StatusEpilepticusTray({ assessment, seizureActivityFraction, scenarioVe
   );
 }
 
-function AcuteIschemicStrokeTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['acuteIschemicStrokeAssessment']>;
-  scenarioVersion: string;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-  onAction: NonNullable<ActionCockpitProps['onAcuteIschemicStrokeResponse']>;
-}) {
-  const reviewed = assessment?.presentationReviewedAtTick != null;
-  const activated = assessment?.systemActivatedAtTick != null;
-  const imaging = assessment?.imagingReviewedAtTick != null;
-  const tenecteplase = assessment?.tenecteplaseAtTick != null;
-  const thrombectomy = assessment?.thrombectomyActivatedAtTick != null;
-  const reassessed = assessment?.reassessedAtTick != null;
-  const prompt = demonstrating ? null
-    : acuteIschemicStrokeInlinePrompt(guidance, { scenarioVersion, patient: assessment });
-  const act = demonstrating ? undefined : onAction;
-  return (
-    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      <WatchingNotice demonstrating={demonstrating} />
-      <TutorPanel prompt={prompt} />
-      <div className="tray-grid">
-      <section className="syringe" aria-labelledby="acute-stroke-recognition-title">
-        <div id="acute-stroke-recognition-title" className="syringe__name">Time is tissue. Facts before treatment.</div>
-        <Badge kind="teaching">Disabling deficit · 70-minute clock</Badge>
-        <div className="syringe__meta">Aphasia + right weakness · glucose 112 · BP 168/94</div>
-        <p className="syringe__remaining" role="status">
-          {imaging ? 'No hemorrhage · left M1 occlusion · authored eligible'
-            : activated ? 'Stroke system active · CT + CTA ready'
-              : reviewed ? 'Acute disabling stroke recognized · activate now'
-                : 'Last-known-well + deficit + glucose review pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={reviewed}
-            aria-disabled={demonstrating} onClick={act ? () => act('review-stroke-presentation') : undefined}>Review deficit + clock</Button>
-          <Button className="crisis-drug__action" disabled={!reviewed || activated}
-            aria-disabled={demonstrating} onClick={act ? () => act('activate-stroke-system') : undefined}>Activate stroke system</Button>
-          <Button className="crisis-drug__action" disabled={!activated || imaging}
-            aria-disabled={demonstrating} onClick={act ? () => act('review-stroke-imaging-and-eligibility') : undefined}>Review CT + CTA + eligibility</Button>
-        </div>
-        <p className="field__hint">The findings are authored. This screen does not examine the patient, calculate a stroke score, interpret imaging, or adjudicate a real contraindication.</p>
-      </section>
-      <section className="syringe" aria-labelledby="acute-stroke-reperfusion-title">
-        <div id="acute-stroke-reperfusion-title" className="syringe__name">Two reperfusion tracks. One clock.</div>
-        <div className="syringe__meta">80 kg · tenecteplase 0.25 mg/kg · left M1 LVO</div>
-        <p className="syringe__remaining" role="status">
-          {reassessed ? 'Surveillance + clock-explicit handoff recorded'
-            : thrombectomy ? 'Thrombolysis intent + thrombectomy transfer active'
-              : tenecteplase ? '20 mg intent recorded · do not wait for response'
-                : imaging ? 'Both reperfusion tracks ready' : 'Eligibility review pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={!imaging || tenecteplase}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-tenecteplase-20-mg-intent') : undefined}>Record tenecteplase 20 mg IV intent</Button>
-          <Button className="crisis-drug__action" disabled={!tenecteplase || thrombectomy}
-            aria-disabled={demonstrating} onClick={act ? () => act('activate-thrombectomy-transfer') : undefined}>Activate thrombectomy transfer</Button>
-          <Button className="crisis-drug__action" disabled={!thrombectomy || reassessed}
-            aria-disabled={demonstrating} onClick={act ? () => act('reassess-and-handoff-stroke') : undefined}>Reassess + hand off with clocks</Button>
-        </div>
-        <p className="field__hint">No drug delivery, neurologic improvement, thrombectomy, reperfusion, complication, disposition, or outcome is simulated.</p>
-      </section>
-      </div>
-    </div>
-  );
-}
 
-function IntracranialHemorrhageTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['intracranialHemorrhageAssessment']>;
-  scenarioVersion: string;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-  onAction: NonNullable<ActionCockpitProps['onIntracranialHemorrhageResponse']>;
-}) {
-  const reviewed = assessment?.deteriorationReviewedAtTick != null;
-  const activated = assessment?.pathwayActivatedAtTick != null;
-  const findings = assessment?.findingsReviewedAtTick != null;
-  const reversal = assessment?.reversalAtTick != null;
-  const pressure = assessment?.pressureControlAtTick != null;
-  const escalated = assessment?.escalatedAtTick != null;
-  const prompt = demonstrating ? null
-    : intracranialHemorrhageInlinePrompt(guidance, { scenarioVersion, patient: assessment });
-  const act = demonstrating ? undefined : onAction;
-  return (
-    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      <WatchingNotice demonstrating={demonstrating} />
-      <TutorPanel prompt={prompt} />
-      <div className="tray-grid">
-      <section className="syringe" aria-labelledby="ich-deterioration-title">
-        <div id="ich-deterioration-title" className="syringe__name">Notice the change. Protect the next minute.</div>
-        <Badge kind="teaching">Worsening alertness · airway watch</Badge>
-        <div className="syringe__meta">15-minute decline · BP 202/112 · glucose 126</div>
-        <p className="syringe__remaining" role="status">
-          {findings ? '28 mL thalamic ICH · IVH · early hydrocephalus · INR 3.2'
-            : activated ? 'ICH pathway active · fixed findings ready'
-              : reviewed ? 'Deterioration recognized · activate now'
-                : 'Serial neurologic + whole-patient review pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={reviewed}
-            aria-disabled={demonstrating} onClick={act ? () => act('review-ich-deterioration') : undefined}>Review serial deterioration</Button>
-          <Button className="crisis-drug__action" disabled={!reviewed || activated}
-            aria-disabled={demonstrating} onClick={act ? () => act('activate-ich-pathway') : undefined}>Activate ICH pathway + support</Button>
-          <Button className="crisis-drug__action" disabled={!activated || findings}
-            aria-disabled={demonstrating} onClick={act ? () => act('review-ich-findings-and-coagulopathy') : undefined}>Review CT + warfarin + INR</Button>
-        </div>
-        <p className="field__hint">Airway protection can fail despite adequate oxygenation. The screen does not examine, score consciousness, interpret CT, or operate airway equipment.</p>
-      </section>
-      <section className="syringe" aria-labelledby="ich-control-title">
-        <div id="ich-control-title" className="syringe__name">Reverse the driver. Smooth the pressure.</div>
-        <div className="syringe__meta">Stop warfarin · urgent reversal · neurosurgical capability</div>
-        <p className="syringe__remaining" role="status">
-          {escalated ? 'Neurocritical + neurosurgical handoff active'
-            : pressure ? 'Reversal + smooth pressure intents recorded'
-              : reversal ? 'Reversal intent recorded · pressure track open'
-                : findings ? 'Two urgent treatment tracks ready' : 'Fixed findings review pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={!findings || reversal}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-warfarin-reversal-intent') : undefined}>Stop warfarin + record reversal intent</Button>
-          <Button className="crisis-drug__action" disabled={!reversal || pressure}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-smooth-ich-pressure-control') : undefined}>Record smooth SBP control</Button>
-          <Button className="crisis-drug__action" disabled={!pressure || escalated}
-            aria-disabled={demonstrating} onClick={act ? () => act('escalate-ich-neurocritical-care') : undefined}>Escalate + hand off serial findings</Button>
-        </div>
-        <p className="field__hint">No dose, drug delivery, pressure response, hematoma expansion, airway procedure, ventricular drain, evacuation, complication, disposition, or outcome is simulated.</p>
-      </section>
-      </div>
-    </div>
-  );
-}
 
-function DiabeticKetoacidosisTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['diabeticKetoacidosisAssessment']>;
-  scenarioVersion: string;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-  onAction: NonNullable<ActionCockpitProps['onDiabeticKetoacidosisResponse']>;
-}) {
-  const reviewed = assessment?.presentationReviewedAtTick != null;
-  const fluids = assessment?.fluidsAtTick != null;
-  const potassium = assessment?.potassiumAtTick != null;
-  const insulin = assessment?.insulinAtTick != null;
-  const dextrose = assessment?.dextroseAtTick != null;
-  const transitioned = assessment?.transitionAtTick != null;
-  const prompt = demonstrating ? null
-    : diabeticKetoacidosisInlinePrompt(guidance, { scenarioVersion, patient: assessment });
-  const act = demonstrating ? undefined : onAction;
-  return (
-    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      <WatchingNotice demonstrating={demonstrating} />
-      <TutorPanel prompt={prompt} />
-      <div className="tray-grid">
-      <section className="syringe" aria-labelledby="dka-foundation-title">
-        <div id="dka-foundation-title" className="syringe__name">Three signals name the crisis.</div>
-        <Badge kind="teaching">Glucose + ketones + acidosis</Badge>
-        <div className="syringe__meta">486 · β-OHB 5.4 · pH 7.16 · HCO₃ 11 · K 3.2</div>
-        <p className="syringe__remaining" role="status">
-          {potassium ? 'Fixed repeat K 3.7 · insulin gate open'
-            : fluids ? 'Fluids + serial panels active · correct K first'
-              : reviewed ? 'Moderate DKA recognized · support next'
-                : 'Triad + severity + precipitant review pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={reviewed}
-            aria-disabled={demonstrating} onClick={act ? () => act('review-dka-presentation') : undefined}>Review DKA triad + cause</Button>
-          <Button className="crisis-drug__action" disabled={!reviewed || fluids}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-dka-fluids-and-monitoring') : undefined}>Record fluids + serial monitoring</Button>
-          <Button className="crisis-drug__action" disabled={!fluids || potassium}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-dka-potassium-replacement') : undefined}>Replace K + recheck before insulin</Button>
-        </div>
-        <p className="field__hint">Potassium 3.2 mmol/L keeps insulin locked. The screen does not examine, sample, choose a fluid or electrolyte dose, or deliver treatment.</p>
-      </section>
-      <section className="syringe" aria-labelledby="dka-clearance-title">
-        <div id="dka-clearance-title" className="syringe__name">Treat the ketones, not just the glucose.</div>
-        <div className="syringe__meta">Insulin after K · dextrose before resolution · safe overlap</div>
-        <p className="syringe__remaining" role="status">
-          {transitioned ? 'Resolved · β-OHB 0.4 · pH 7.32 · HCO₃ 19'
-            : dextrose ? 'Glucose 238 · ketoacidosis persists · continue insulin'
-              : insulin ? 'Insulin intent active · interval panel ready'
-                : potassium ? 'K gate cleared · insulin intent available' : 'Potassium gate pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={!potassium || insulin}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-dka-insulin-intent') : undefined}>Record IV insulin protocol intent</Button>
-          <Button className="crisis-drug__action" disabled={!insulin || dextrose}
-            aria-disabled={demonstrating} onClick={act ? () => act('add-dextrose-and-continue-insulin') : undefined}>Add dextrose + continue insulin</Button>
-          <Button className="crisis-drug__action" disabled={!dextrose || transitioned}
-            aria-disabled={demonstrating} onClick={act ? () => act('confirm-dka-resolution-and-transition') : undefined}>Confirm resolution + transition safely</Button>
-        </div>
-        <p className="field__hint">Resolution uses plasma ketone plus pH or bicarbonate, not anion gap or urine ketones alone. No infusion, lab kinetics, complication, disposition, or outcome is simulated.</p>
-      </section>
-      </div>
-    </div>
-  );
-}
 
-function HyperkalemiaTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['hyperkalemiaAssessment']>;
-  scenarioVersion: string;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-  onAction: NonNullable<ActionCockpitProps['onHyperkalemiaResponse']>;
-}) {
-  const reviewed = assessment?.patternReviewedAtTick != null;
-  const calcium = assessment?.calciumAtTick != null;
-  const postCalcium = assessment?.postCalciumEcgAtTick != null;
-  const insulin = assessment?.insulinGlucoseAtTick != null;
-  const betaAgonist = assessment?.betaAgonistAtTick != null;
-  const removal = assessment?.removalAtTick != null;
-  const reassessed = assessment?.reassessedAtTick != null;
-  const prompt = demonstrating ? null
-    : hyperkalemiaWithEcgChangeInlinePrompt(guidance, { scenarioVersion, patient: assessment });
-  const act = demonstrating ? undefined : onAction;
-  return (
-    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      <WatchingNotice demonstrating={demonstrating} />
-      <TutorPanel prompt={prompt} />
-      <div className="tray-grid">
-      <section className="syringe" aria-labelledby="hyperkalemia-heart-title">
-        <div id="hyperkalemia-heart-title" className="syringe__name">Protect the heart first.</div>
-        <Badge kind="teaching">K 7.1 · ECG toxicity · no arrest</Badge>
-        <div className="syringe__meta">HR 48 · peaked T · flat P · QRS 140 ms</div>
-        <p className="syringe__remaining" role="status">
-          {postCalcium ? 'Reported ECG response · QRS 104 ms · K still 7.1'
-            : calcium ? 'Calcium intent recorded · no ECG or K change claimed'
-            : reviewed ? 'Severe toxicity recognized · calcium intent next'
-              : 'Confirmed K + ECG + driver review pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={reviewed}
-            aria-disabled={demonstrating} onClick={act ? () => act('review-hyperkalemia-pattern') : undefined}>Review K + ECG + drivers</Button>
-          <Button className="crisis-drug__action" disabled={!reviewed || calcium}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-hyperkalemia-calcium-intent') : undefined}>Record IV calcium-salt intent</Button>
-          <Button className="crisis-drug__action" disabled={!calcium || postCalcium}
-            aria-disabled={demonstrating} onClick={act ? () => act('review-hyperkalemia-post-calcium-ecg') : undefined}>Review post-team ECG</Button>
-        </div>
-        <p className="field__hint">Calcium protects the myocardium; it does not lower potassium. Salt, dose, access, delivery, and repeat dosing follow local protocol and are not simulated.</p>
-      </section>
-      <section className="syringe" aria-labelledby="hyperkalemia-potassium-title">
-        <div id="hyperkalemia-potassium-title" className="syringe__name">Shift now. Remove next. Watch for return.</div>
-        <div className="syringe__meta">Insulin-glucose · adjunct shift · removal · rebound</div>
-        <p className="syringe__remaining" role="status">
-          {reassessed ? '1-hour K 5.8 · glucose 92 · QRS 98 ms · keep watching'
-            : postCalcium && insulin && betaAgonist && removal
-              ? 'All lanes recorded · allow time before the fixed 1-hour panel'
-              : calcium ? 'ECG review · shifting · removal can proceed in parallel'
-                : 'Calcium intent pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={!calcium || insulin}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-hyperkalemia-insulin-glucose') : undefined}>Record insulin-glucose + surveillance</Button>
-          <Button className="crisis-drug__action" disabled={!calcium || betaAgonist}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-hyperkalemia-beta-agonist') : undefined}>Record adjunct beta-2 shift</Button>
-          <Button className="crisis-drug__action" disabled={!calcium || removal}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-hyperkalemia-removal-and-cause-control') : undefined}>Remove K + stop drivers + renal help</Button>
-          <Button className="crisis-drug__action" disabled={!postCalcium || !insulin || !betaAgonist || !removal || reassessed}
-            aria-disabled={demonstrating} onClick={act ? () => act('reassess-hyperkalemia') : undefined}>Recheck ECG + K + glucose</Button>
-        </div>
-        <p className="field__hint">No ECG reading, dose, delivery, potassium kinetics, glucose complication, binder, diuresis, dialysis, recurrence, disposition, or outcome is simulated.</p>
-      </section>
-      </div>
-    </div>
-  );
-}
 
 function HyponatremiaTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
   assessment?: NonNullable<ActionCockpitProps['resuscitation']['hyponatremiaAssessment']>;
@@ -8008,265 +6925,9 @@ function HyponatremiaTray({ assessment, scenarioVersion, guidance = 'unassisted'
   );
 }
 
-function OpioidToxicityTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['opioidToxicityAssessment']>;
-  scenarioVersion: string;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-  onAction: NonNullable<ActionCockpitProps['onOpioidToxicityResponse']>;
-}) {
-  const reviewed = assessment?.patternReviewedAtTick != null;
-  const ventilated = assessment?.ventilationAtTick != null;
-  const antagonist = assessment?.antagonistAtTick != null;
-  const initial = assessment?.initialReassessmentAtTick != null;
-  const recurrence = assessment?.recurrenceReviewedAtTick != null;
-  const plan = assessment?.recurrencePlanAtTick != null;
-  const prompt = demonstrating ? null
-    : opioidToxicityInlinePrompt(guidance, { scenarioVersion, patient: assessment });
-  const act = demonstrating ? undefined : onAction;
-  return (
-    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      <WatchingNotice demonstrating={demonstrating} />
-      <TutorPanel prompt={prompt} />
-      <div className="tray-grid">
-      <section className="syringe" aria-labelledby="opioid-breathe-title">
-        <div id="opioid-breathe-title" className="syringe__name">Breathe first. Antidote without delay.</div>
-        <Badge kind="teaching">Pulse 58 · RR 4 · SpO₂ 78% · ETCO₂ 68</Badge>
-        <div className="syringe__meta">Unresponsive · pinpoint pupils · glucose 102 · no arrest</div>
-        <p className="syringe__remaining" role="status">
-          {initial ? 'RR 14 · SpO₂ 97% · ETCO₂ 43 · responds to voice'
-            : antagonist ? 'Ventilation continues · initial response next'
-              : ventilated ? 'Breathing supported · naloxone intent next'
-                : reviewed ? 'Respiratory emergency recognized · ventilate now'
-                  : 'Pulse + breathing + oxygenation + mimics review pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={reviewed}
-            aria-disabled={demonstrating} onClick={act ? () => act('review-opioid-toxicity-pattern') : undefined}>Review pulse + breathing + pattern</Button>
-          <Button className="crisis-drug__action" disabled={!reviewed || ventilated}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-opioid-ventilation-support') : undefined}>Open airway + oxygen + ventilate</Button>
-          <Button className="crisis-drug__action" disabled={!ventilated || antagonist}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-opioid-naloxone-intent') : undefined}>Record naloxone toward breathing</Button>
-          <Button className="crisis-drug__action" disabled={!antagonist || initial}
-            aria-disabled={demonstrating} onClick={act ? () => act('reassess-opioid-initial-response') : undefined}>Recheck breathing + CO₂ + pulse</Button>
-        </div>
-        <p className="field__hint">Ventilation does not wait for naloxone. Normal spontaneous breathing and airway reflexes are the endpoint; full arousal is not required.</p>
-      </section>
-      <section className="syringe" aria-labelledby="opioid-recurrence-title">
-        <div id="opioid-recurrence-title" className="syringe__name">The opioid can outlast the antidote.</div>
-        <div className="syringe__meta">Observe · detect recurrence · rescue again · leave safer</div>
-        <p className="syringe__remaining" role="status">
-          {plan ? 'Renewed rescue + observation + discharge safety handed off'
-            : recurrence ? 'RR 7 · SpO₂ 90% · ETCO₂ 58 · respiratory depression is back'
-              : initial ? 'Initial response is not the finish line · advance observation'
-                : 'Initial breathing response pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={!initial || recurrence}
-            aria-disabled={demonstrating} onClick={act ? () => act('review-opioid-recurrence') : undefined}>Review 25-minute recurrence</Button>
-          <Button className="crisis-drug__action" disabled={!recurrence || plan}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-opioid-recurrence-and-safety-plan') : undefined}>Ventilate again + repeat + observe</Button>
-        </div>
-        <p className="field__hint">Keep co-exposures and complications open. Eventual discharge requires low recurrence risk, normal consciousness and vital signs, antagonist access with instruction, and treatment linkage.</p>
-      </section>
-      </div>
-    </div>
-  );
-}
 
-function HeatStrokeTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['heatStrokeAssessment']>;
-  scenarioVersion: string;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-  onAction: NonNullable<ActionCockpitProps['onHeatStrokeResponse']>;
-}) {
-  const reviewed = assessment?.patternReviewedAtTick != null;
-  const supported = assessment?.supportAtTick != null;
-  const cooling = assessment?.coolingAtTick != null;
-  const target = assessment?.targetAtTick != null;
-  const surveillance = assessment?.surveillanceAtTick != null;
-  const prompt = demonstrating ? null
-    : exertionalHeatStrokeInlinePrompt(guidance, { scenarioVersion, patient: assessment });
-  const act = demonstrating ? undefined : onAction;
-  return (
-    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      <WatchingNotice demonstrating={demonstrating} />
-      <TutorPanel prompt={prompt} />
-      <div className="tray-grid">
-      <section className="syringe" aria-labelledby="heat-cool-title">
-        <div id="heat-cool-title" className="syringe__name">Hot brain. Cool now.</div>
-        <Badge kind="teaching">Rectal 41.3°C · confused · HR 146</Badge>
-        <div className="syringe__meta">Exertion · glucose 110 · sodium 139 · no trauma</div>
-        <p className="syringe__remaining" role="status">
-          {target ? '14 min · 38.9°C · coherent · stop active cooling'
-            : cooling ? 'Whole-body cooling active · watch rectal core'
-              : supported ? 'Support ready · immersion now'
-                : reviewed ? 'Heat stroke recognized · support while cooling starts'
-                  : 'Brain + core + glucose + sodium + mimics review pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={reviewed}
-            aria-disabled={demonstrating} onClick={act ? () => act('review-heat-stroke-pattern') : undefined}>Review brain + rectal core + mimics</Button>
-          <Button className="crisis-drug__action" disabled={!reviewed || supported}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-heat-stroke-support') : undefined}>Support ABCs + strip + prepare</Button>
-          <Button className="crisis-drug__action" disabled={!supported || cooling}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-cold-water-immersion') : undefined}>Immerse + monitor core + coordinate</Button>
-          <Button className="crisis-drug__action" disabled={!cooling || target}
-            aria-disabled={demonstrating} onClick={act ? () => act('reassess-heat-stroke-cooling-target') : undefined}>Review cooling target</Button>
-        </div>
-        <p className="field__hint">Whole-body cold-water immersion is the fastest cooling path. Preserve airway access, monitor rectal core continuously, and organize transport around cooling.</p>
-      </section>
-      <section className="syringe" aria-labelledby="heat-surveillance-title">
-        <div id="heat-surveillance-title" className="syringe__name">Stop the cooling, not the surveillance.</div>
-        <div className="syringe__meta">Below 39°C · prevent overshoot · watch delayed injury</div>
-        <p className="syringe__remaining" role="status">
-          {surveillance ? 'Thermal rescue closed · multiorgan surveillance handed off'
-            : target ? 'Temperature target met · organ-injury plan next'
-              : 'Cooling target pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={!target || surveillance}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-heat-stroke-organ-surveillance') : undefined}>Watch kidney + liver + clotting + muscle</Button>
-        </div>
-        <p className="field__hint">Temperature recovery does not exclude delayed injury. Antipyretics and dantrolene do not treat heat stroke and are outside this path.</p>
-      </section>
-      </div>
-    </div>
-  );
-}
 
-function TraumaPrimarySurveyTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['traumaPrimarySurveyAssessment']>;
-  scenarioVersion: string;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-  onAction: NonNullable<ActionCockpitProps['onTraumaPrimarySurveyResponse']>;
-}) {
-  const activated = assessment?.activatedAtTick != null;
-  const hemorrhage = assessment?.catastrophicHemorrhageAtTick != null;
-  const airwayBreathing = assessment?.airwayBreathingAtTick != null;
-  const circulation = assessment?.circulationAtTick != null;
-  const disabilityExposure = assessment?.disabilityExposureAtTick != null;
-  const repeated = assessment?.repeatedAtTick != null;
-  const prompt = demonstrating ? null
-    : traumaPrimarySurveyInlinePrompt(guidance, { scenarioVersion, patient: assessment });
-  const act = demonstrating ? undefined : onAction;
-  return (
-    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      <WatchingNotice demonstrating={demonstrating} />
-      <TutorPanel prompt={prompt} />
-      <div className="tray-grid">
-      <section className="syringe" aria-labelledby="trauma-sweep-title">
-        <div id="trauma-sweep-title" className="syringe__name">Stop the leak. Keep the sweep moving.</div>
-        <Badge kind="teaching">&lt;C&gt; · A · B</Badge>
-        <div className="syringe__meta">35 min · failed pressure · pulse 128 · BP 86/54</div>
-        <p className="syringe__remaining" role="status">
-          {airwayBreathing ? 'Bleed controlled · airway patent · bilateral breathing present'
-            : hemorrhage ? 'No visible limb flow · continue A + B'
-              : activated ? 'Team ready · catastrophic hemorrhage first'
-                : 'Mechanism + injuries + signs + treatment handoff pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={activated}
-            aria-disabled={demonstrating} onClick={act ? () => act('activate-trauma-primary-survey') : undefined}>Receive handoff + activate + declare sweep</Button>
-          <Button className="crisis-drug__action" disabled={!activated || hemorrhage}
-            aria-disabled={demonstrating} onClick={act ? () => act('control-trauma-catastrophic-hemorrhage') : undefined}>Control limb bleed + record time</Button>
-          <Button className="crisis-drug__action" disabled={!hemorrhage || airwayBreathing}
-            aria-disabled={demonstrating} onClick={act ? () => act('review-trauma-airway-and-breathing') : undefined}>Review airway + spine + breathing</Button>
-        </div>
-        <p className="field__hint">Catastrophic hemorrhage comes first. A currently patent airway and bilateral breathing are findings to recheck, not permission to skip A or B.</p>
-      </section>
-      <section className="syringe" aria-labelledby="trauma-repeat-title">
-        <div id="trauma-repeat-title" className="syringe__name">Every intervention earns another survey.</div>
-        <Badge kind="teaching">C · D · E · repeat</Badge>
-        <div className="syringe__meta">Pelvis · blood · brain · back · warmth · trends</div>
-        <p className="syringe__remaining" role="status">
-          {repeated ? 'Repeat complete · trends + uncertainty handed to definitive control'
-            : disabilityExposure ? 'D + E complete · repeat &lt;C&gt;ABCDE now'
-              : circulation ? 'Hemorrhage path active · complete D + E'
-                : airwayBreathing ? 'Persistent shock · circulation next' : 'A + B pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={!airwayBreathing || circulation}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-trauma-circulation-response') : undefined}>Pelvis + blood + TXA + control</Button>
-          <Button className="crisis-drug__action" disabled={!circulation || disabilityExposure}
-            aria-disabled={demonstrating} onClick={act ? () => act('review-trauma-disability-and-exposure') : undefined}>Review brain + glucose + back + warmth</Button>
-          <Button className="crisis-drug__action" disabled={!disabilityExposure || repeated}
-            aria-disabled={demonstrating} onClick={act ? () => act('repeat-trauma-primary-survey') : undefined}>Repeat sweep + hand off change</Button>
-        </div>
-        <p className="field__hint">Use only imaging that directs intervention in persistent instability. A negative FAST would not exclude bleeding; the authored positive statement does not replace definitive control.</p>
-      </section>
-      </div>
-    </div>
-  );
-}
 
-function AcuteAorticSyndromeTray({ assessment, scenarioVersion, guidance = 'unassisted', demonstrating = false, onAction }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['acuteAorticSyndromeAssessment']>;
-  scenarioVersion: string;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-  onAction: NonNullable<ActionCockpitProps['onAcuteAorticSyndromeResponse']>;
-}) {
-  const initial = assessment?.initialReviewedAtTick != null;
-  const evolution = assessment?.evolutionReviewedAtTick != null;
-  const escalated = assessment?.escalatedAtTick != null;
-  const antiImpulse = assessment?.antiImpulseAtTick != null;
-  const imaging = assessment?.imagingAtTick != null;
-  const handedOff = assessment?.handedOffAtTick != null;
-  const prompt = demonstrating ? null
-    : acuteAorticSyndromeInlinePrompt(guidance, { scenarioVersion, patient: assessment });
-  const act = demonstrating ? undefined : onAction;
-  return (
-    <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-      <WatchingNotice demonstrating={demonstrating} />
-      <TutorPanel prompt={prompt} />
-      <div className="tray-grid">
-      <section className="syringe" aria-labelledby="aortic-drift-title">
-        <div id="aortic-drift-title" className="syringe__name">The first exam is a timestamp.</div>
-        <Badge kind="teaching">pain · pressure · pulse · perfusion · brain</Badge>
-        <div className="syringe__meta">18 min · abrupt maximum · ECG nondiagnostic · initially symmetric</div>
-        <p className="syringe__remaining" role="status">
-          {escalated ? 'Aortic + critical-care teams activated · unsupported defaults paused'
-            : evolution ? 'ΔBP 36 · weak right radial · cool left foot · left-arm drift'
-              : initial ? 'Danger remains open · repeat every territory'
-                : 'Incomplete presentation · no diagnosis leaked'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={initial}
-            aria-disabled={demonstrating} onClick={act ? () => act('review-aortic-initial-pattern') : undefined}>Review pain + ECG + symmetric baseline</Button>
-          <Button className="crisis-drug__action" disabled={!initial || evolution}
-            aria-disabled={demonstrating} onClick={act ? () => act('repeat-aortic-asymmetry-exam') : undefined}>Repeat both arms + pulses + brain</Button>
-          <Button className="crisis-drug__action" disabled={!evolution || escalated}
-            aria-disabled={demonstrating} onClick={act ? () => act('activate-aortic-pathway') : undefined}>Escalate aortic concern + pause defaults</Button>
-        </div>
-        <p className="field__hint">A normal first pulse or neurologic exam does not stay normal by promise. Recheck discordant territories when the story changes.</p>
-      </section>
-      <section className="syringe" aria-labelledby="aortic-protect-title">
-        <div id="aortic-protect-title" className="syringe__name">Quiet the impulse. Protect the organs.</div>
-        <Badge kind="teaching">rate first · pressure second · perfusion always</Badge>
-        <div className="syringe__meta">analgesia · arterial line · urgent CT · serial handoff</div>
-        <p className="syringe__remaining" role="status">
-          {handedOff ? 'Evolution + uncertainty handed off · scan still unavailable'
-            : imaging ? 'Definitive imaging prioritized · repeat before leaving'
-              : antiImpulse ? 'HR 60–80 target · SBP &lt;120 only with organ perfusion'
-                : escalated ? 'Monitored anti-impulse intent next' : 'Escalation pending'}
-        </p>
-        <div className="syringe__presets">
-          <Button className="crisis-drug__action" disabled={!escalated || antiImpulse}
-            aria-disabled={demonstrating} onClick={act ? () => act('record-aortic-anti-impulse-intent') : undefined}>Analgesia + rate-first anti-impulse</Button>
-          <Button className="crisis-drug__action" disabled={!antiImpulse || imaging}
-            aria-disabled={demonstrating} onClick={act ? () => act('prioritize-aortic-imaging') : undefined}>Prioritize definitive aortic imaging</Button>
-          <Button className="crisis-drug__action" disabled={!imaging || handedOff}
-            aria-disabled={demonstrating} onClick={act ? () => act('repeat-and-handoff-aortic-evolution') : undefined}>Repeat territories + hand off uncertainty</Button>
-        </div>
-        <p className="field__hint">CT is the authored first imaging intent while transportable; TEE or MRI may fit another context. This lesson ends before any result or operative choice.</p>
-      </section>
-      </div>
-    </div>
-  );
-}
 
 
 

@@ -3,6 +3,7 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { EMERGENCY_MEDICINE_TRAYS } from '../../src/modules/emergency-medicine/trays';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { UNSTABLE_BRADYCARDIA } from '../../src/modules/emergency-medicine/scenarios/unstable-bradycardia';
 
@@ -14,6 +15,7 @@ describe('Requirement: unstable bradycardia is a focused response lab', () => {
   it('starts with whole-patient compromise review and hides unsupported escalation', () => {
     const onAction = vi.fn();
     const props: ActionCockpitProps = {
+      lessonTrays: EMERGENCY_MEDICINE_TRAYS,
       scenario: UNSTABLE_BRADYCARDIA, region: UNITED_STATES, infusions: [],
       hypnoticLine: { connected: true, inspected: false },
       resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
@@ -30,7 +32,7 @@ describe('Requirement: unstable bradycardia is a focused response lab', () => {
       muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {},
       onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
       onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onCallForHelp: () => {},
-      onAirwayDevice: () => {}, onUnstableBradycardiaResponse: onAction,
+      onAirwayDevice: () => {}, onLessonAction: (_type: string, action: string) => onAction(action as never),
       onEpinephrine: () => {}, onDantrolene: () => {}, onActiveCooling: () => {},
       onDrugCard: () => {},
     };

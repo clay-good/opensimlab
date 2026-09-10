@@ -9,6 +9,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { EMERGENCY_MEDICINE_TRAYS } from '../../src/modules/emergency-medicine/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, EMERGENCY_MEDICINE_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { PULMONARY_EMBOLISM_DETERIORATION as SCENARIO } from '../../src/modules/emergency-medicine/scenarios/pulmonary-embolism-deterioration';
 
@@ -31,7 +37,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['pulmonaryEmbolismAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: EMERGENCY_MEDICINE_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, pulmonaryEmbolismAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 480, respiratoryRateBpm: 18, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 10 },
@@ -40,7 +46,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onPulmonaryEmbolismResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -57,8 +63,8 @@ describe('Emergency pulmonary embolism experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasPulmonaryEmbolismResponse).toBe(true);
-    expect(crisisResponseAvailability({ ...SCENARIO, timeline: [] })
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasPulmonaryEmbolismResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, timeline: [] })
       .hasPulmonaryEmbolismResponse).toBe(false);
   });
 
@@ -73,41 +79,41 @@ describe('Emergency pulmonary embolism experience', () => {
 describe('Emergency pulmonary embolism tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { pulmonaryEmbolismGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { pulmonaryEmbolismGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('he is still compensating');
-    const initial = markup(SEVERITY, { pulmonaryEmbolismGuidance: 'guided' });
+    const initial = markup(SEVERITY, { guidance: 'guided' });
     expect(initial).toContain('the airway intervention is the more dangerous choice');
     expect(initial).not.toContain('he is still compensating');
   });
 
   it('puts the intubation claim where every path passes through', () => {
-    expect(markup(SEVERITY, { pulmonaryEmbolismGuidance: 'guided' }))
+    expect(markup(SEVERITY, { guidance: 'guided' }))
       .toContain('can convert a compensating circulation into an arrest in under a minute');
   });
 
   it('picks up the missing intent whichever one the learner left', () => {
-    expect(markup(ANTICOAG_ONLY, { pulmonaryEmbolismGuidance: 'guided' }))
+    expect(markup(ANTICOAG_ONLY, { guidance: 'guided' }))
       .toContain('not a reflex response to a saturation of 90%');
-    expect(markup(OXYGEN, { pulmonaryEmbolismGuidance: 'guided' }))
+    expect(markup(OXYGEN, { guidance: 'guided' }))
       .toContain('an interval in which more clot forms on the existing one');
   });
 
   it('names the trap in miniature before the escalation', () => {
-    expect(markup(BOTH, { pulmonaryEmbolismGuidance: 'guided' }))
+    expect(markup(BOTH, { guidance: 'guided' }))
       .toContain('the number you were watching got better and the patient got worse');
   });
 
   it('goes quiet once the escalation is recorded', () => {
-    expect(markup(DONE, { pulmonaryEmbolismGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
-    const watching = markup(EMPTY, { pulmonaryEmbolismGuidance: 'guided', pulmonaryEmbolismDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'PulmonaryEmbolism' });
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');
     expect(watching).not.toContain('A moment to think');

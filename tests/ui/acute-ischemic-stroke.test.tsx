@@ -3,6 +3,7 @@ import { act, createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import { describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { EMERGENCY_MEDICINE_TRAYS } from '../../src/modules/emergency-medicine/trays';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { ACUTE_ISCHEMIC_STROKE } from '../../src/modules/emergency-medicine/scenarios/acute-ischemic-stroke';
 
@@ -30,8 +31,8 @@ describe('Requirement: acute ischemic stroke opens a focused dual-reperfusion su
       onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
       onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onCallForHelp: () => {},
       onAirwayDevice: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
-      onActiveCooling: () => {}, onAcuteIschemicStrokeResponse: onAction,
-      onDrugCard: () => {} } satisfies ActionCockpitProps;
+      onActiveCooling: () => {}, onLessonAction: (_type: string, action: string) => onAction(action as never),
+      onDrugCard: () => {}, lessonTrays: EMERGENCY_MEDICINE_TRAYS } satisfies ActionCockpitProps;
     act(() => root.render(createElement(ActionCockpit, props)));
     expect(container.querySelector('[role="tablist"]')).toBeNull();
     expect(container.textContent).toContain('Time is tissue. Facts before treatment.');

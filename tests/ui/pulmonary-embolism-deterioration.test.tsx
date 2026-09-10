@@ -3,6 +3,7 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { EMERGENCY_MEDICINE_TRAYS } from '../../src/modules/emergency-medicine/trays';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { PULMONARY_EMBOLISM_DETERIORATION } from '../../src/modules/emergency-medicine/scenarios/pulmonary-embolism-deterioration';
 
@@ -14,6 +15,7 @@ describe('Requirement: deteriorating pulmonary embolism is a focused serial lab'
   it('starts with severity review and keeps unsupported treatment selection out', () => {
     const onAction = vi.fn();
     const props: ActionCockpitProps = {
+      lessonTrays: EMERGENCY_MEDICINE_TRAYS,
       scenario: PULMONARY_EMBOLISM_DETERIORATION, region: UNITED_STATES, infusions: [],
       hypnoticLine: { connected: true, inspected: false },
       resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
@@ -30,7 +32,7 @@ describe('Requirement: deteriorating pulmonary embolism is a focused serial lab'
       muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {},
       onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
       onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onCallForHelp: () => {},
-      onAirwayDevice: () => {}, onPulmonaryEmbolismResponse: onAction,
+      onAirwayDevice: () => {}, onLessonAction: (_type: string, action: string) => onAction(action as never),
       onEpinephrine: () => {}, onDantrolene: () => {}, onActiveCooling: () => {},
       onDrugCard: () => {},
     };

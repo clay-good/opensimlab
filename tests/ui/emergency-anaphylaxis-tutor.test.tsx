@@ -8,6 +8,12 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { EMERGENCY_MEDICINE_TRAYS } from '../../src/modules/emergency-medicine/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, EMERGENCY_MEDICINE_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { ANAPHYLAXIS as SCENARIO } from '../../src/modules/emergency-medicine/scenarios/anaphylaxis';
 
@@ -35,7 +41,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['emergencyAnaphylaxisAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: EMERGENCY_MEDICINE_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, emergencyAnaphylaxisAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 480, respiratoryRateBpm: 18, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 10 },
@@ -44,7 +50,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onEmergencyAnaphylaxisResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -61,8 +67,8 @@ const openCount = (html: string) => [...html.matchAll(/<button[^>]*>(.*?)<\/butt
 
 describe('Emergency anaphylaxis tray gates', () => {
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasEmergencyAnaphylaxisResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasEmergencyAnaphylaxisResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO, timeline: SCENARIO.timeline.filter((event) => event.type !== 'narrative'),
     }).hasEmergencyAnaphylaxisResponse).toBe(false);
   });
@@ -98,45 +104,45 @@ describe('Emergency anaphylaxis tray gates', () => {
 describe('Emergency anaphylaxis tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { emergencyAnaphylaxisGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { emergencyAnaphylaxisGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('What is absent is the skin');
-    const positioning = markup(PATTERN, { emergencyAnaphylaxisGuidance: 'guided' });
+    const positioning = markup(PATTERN, { guidance: 'guided' });
     expect(positioning).toContain('in the act of sitting or standing them');
     expect(positioning).not.toContain('What is absent is the skin');
   });
 
   it('names the refusal on the adjuncts as the lesson', () => {
-    const drug = markup(POSITIONED, { emergencyAnaphylaxisGuidance: 'guided' });
+    const drug = markup(POSITIONED, { guidance: 'guided' });
     expect(drug).toContain('the interval most consistently found in the fatal cases');
     expect(drug).toContain('the control does not offer it');
   });
 
   it('puts the fluid claim where every path passes through', () => {
-    const adjuncts = markup(DRUG, { emergencyAnaphylaxisGuidance: 'guided' });
+    const adjuncts = markup(DRUG, { guidance: 'guided' });
     expect(adjuncts).toContain('the fluid is not an afterthought');
     expect(adjuncts).toContain('neither adjunct is a substitute for a second dose of epinephrine');
   });
 
   it('picks up the missing adjunct whichever one the learner left', () => {
-    expect(markup(FLUID_ONLY, { emergencyAnaphylaxisGuidance: 'guided' }))
+    expect(markup(FLUID_ONLY, { guidance: 'guided' }))
       .toContain('It buys time; it does not treat the mechanism');
-    expect(markup(OXYGEN, { emergencyAnaphylaxisGuidance: 'guided' }))
+    expect(markup(OXYGEN, { guidance: 'guided' }))
       .toContain('replacing something that has genuinely gone');
   });
 
   it('goes quiet once the reassessment is recorded', () => {
-    expect(markup(DONE, { emergencyAnaphylaxisGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { emergencyAnaphylaxisGuidance: 'guided', emergencyAnaphylaxisDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'EmergencyAnaphylaxis' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');
