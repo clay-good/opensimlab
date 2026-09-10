@@ -5,6 +5,10 @@ import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { RESPIRATORY_MEDICINE_TRAYS } from '../../src/modules/respiratory-medicine/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (scenario: Parameters<typeof crisisResponseAvailability>[0]) =>
+  crisisResponseAvailability(scenario, [], RESPIRATORY_MEDICINE_TRAYS);
 import { ACUTE_PULMONARY_EDEMA_RESPIRATORY_SUPPORT_REASSESSMENT as SCENARIO } from '../../src/modules/respiratory-medicine/scenarios/acute-pulmonary-edema-respiratory-support-reassessment';
 
 /** The constants this lesson never moves, spread into every state below. */
@@ -29,7 +33,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['apeSupportAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: RESPIRATORY_MEDICINE_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, apeSupportAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 360, respiratoryRateBpm: 18, fio2: 0.35, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 10 },
@@ -38,7 +42,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onApeSupportResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -58,8 +62,8 @@ describe('Respiratory pulmonary-edema support experience', () => {
   });
 
   it('fails closed and never offers a setting, a drug, or an airway', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasApeSupportResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasApeSupportResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'acute-pulmonary-edema-respiratory-support-reassessment'),
     }).hasApeSupportResponse).toBe(false);
@@ -75,32 +79,32 @@ describe('Respiratory pulmonary-edema support experience', () => {
 describe('Pulmonary-edema support tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { apeSupportGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { apeSupportGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('Separate what the team did from where she has ended up');
-    const next = markup(STATES[1]!, { apeSupportGuidance: 'guided' });
+    const next = markup(STATES[1]!, { guidance: 'guided' });
     expect(next).toContain('the mentation, the effort and the gas together');
     expect(next).not.toContain('Separate what the team did from where she has ended up');
   });
 
   it('reads the falling respiratory rate as fatigue', () => {
-    const html = markup(STATES[1]!, { apeSupportGuidance: 'guided' });
+    const html = markup(STATES[1]!, { guidance: 'guided' });
     expect(html).toContain('The rate fell because she is tiring, not because she is better.');
     expect(html).toContain('the specific situation the support does not fix');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(STATES[5]!, { apeSupportGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(STATES[5]!, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { apeSupportGuidance: 'guided', apeSupportDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'ApeSupport' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

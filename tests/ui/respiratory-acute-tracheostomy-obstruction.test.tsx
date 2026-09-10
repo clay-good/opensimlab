@@ -5,6 +5,10 @@ import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { RESPIRATORY_MEDICINE_TRAYS } from '../../src/modules/respiratory-medicine/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (scenario: Parameters<typeof crisisResponseAvailability>[0]) =>
+  crisisResponseAvailability(scenario, [], RESPIRATORY_MEDICINE_TRAYS);
 import { ACUTE_TRACHEOSTOMY_OBSTRUCTION as SCENARIO } from '../../src/modules/respiratory-medicine/scenarios/acute-tracheostomy-obstruction';
 
 /** The constants this lesson never moves, spread into every state below. */
@@ -54,7 +58,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['acuteTracheostomyObstructionAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: RESPIRATORY_MEDICINE_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, acuteTracheostomyObstructionAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 420, respiratoryRateBpm: 34, fio2: 0.4, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -63,7 +67,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onAcuteTracheostomyObstructionResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -83,9 +87,9 @@ describe('Respiratory tracheostomy-patency experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasAcuteTracheostomyObstructionResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasAcuteTracheostomyObstructionResponse).toBe(true);
     // The targets carry a -reassessment suffix the scenario id does not.
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'acute-tracheostomy-obstruction-reassessment'),
     }).hasAcuteTracheostomyObstructionResponse).toBe(false);
@@ -124,45 +128,45 @@ describe('Respiratory tracheostomy-patency experience', () => {
 describe('Tracheostomy-patency tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { acuteTracheostomyObstructionGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { acuteTracheostomyObstructionGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('Read the bedhead sign first');
-    const supporting = markup(RECOGNIZED, { acuteTracheostomyObstructionGuidance: 'guided' });
+    const supporting = markup(RECOGNIZED, { guidance: 'guided' });
     expect(supporting).toContain('oxygenate both routes at once');
     expect(supporting).not.toContain('Read the bedhead sign first');
   });
 
   it('answers the specific harm at the first decision point', () => {
-    const imaging = markup(AFTER_IMAGING, { acuteTracheostomyObstructionGuidance: 'guided' });
+    const imaging = markup(AFTER_IMAGING, { guidance: 'guided' });
     expect(imaging).toContain('A picture cannot help him in the next two minutes');
     expect(imaging).not.toContain('inflate tissue rather than lung');
-    const unverified = markup(AFTER_UNVERIFIED, { acuteTracheostomyObstructionGuidance: 'guided' });
+    const unverified = markup(AFTER_UNVERIFIED, { guidance: 'guided' });
     expect(unverified).toContain('inflate tissue rather than lung');
     expect(unverified).not.toContain('A picture cannot help him in the next two minutes');
   });
 
   it('answers the specific harm at the second decision point', () => {
-    const force = markup(AFTER_FORCE, { acuteTracheostomyObstructionGuidance: 'guided' });
+    const force = markup(AFTER_FORCE, { guidance: 'guided' });
     expect(force).toContain('Resistance is information');
     expect(force).not.toContain('Not the whole tube');
-    const whole = markup(AFTER_WHOLE_TUBE, { acuteTracheostomyObstructionGuidance: 'guided' });
+    const whole = markup(AFTER_WHOLE_TUBE, { guidance: 'guided' });
     expect(whole).toContain('Not the whole tube');
     expect(whole).toContain('a real and sometimes necessary step');
     expect(whole).not.toContain('Resistance is information');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(DONE, { acuteTracheostomyObstructionGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { acuteTracheostomyObstructionGuidance: 'guided', acuteTracheostomyObstructionDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'AcuteTracheostomyObstruction' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

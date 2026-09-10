@@ -7,6 +7,7 @@
 import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRoute';
 import { DEFAULT_RESPIRATORY_MEDICINE_SCENARIO_ID, RESPIRATORY_MEDICINE_SCENARIOS, getRespiratoryMedicineScenario } from '../../modules/respiratory-medicine/scenarios';
 import { RESPIRATORY_MEDICINE_LIMITATIONS } from '@platform/docs/limitations/respiratory-medicine';
+import { RESPIRATORY_MEDICINE_TRAYS } from '../../modules/respiratory-medicine/trays';
 import { RESPIRATORY_MEDICINE_DEMONSTRATIONS } from '../../modules/respiratory-medicine/demo/demonstrations';
 
 const RESPIRATORY_MEDICINE_CONFIG: ClinicalModuleConfig = {
@@ -15,6 +16,7 @@ const RESPIRATORY_MEDICINE_CONFIG: ClinicalModuleConfig = {
   limitations: RESPIRATORY_MEDICINE_LIMITATIONS,
   catalogIntroduction: 'Calm respiratory reassessment labs for the moment a familiar pattern changes. Read the trajectory, act on danger early, and leave the next team a clear map.',
   catalogStatus: `${RESPIRATORY_MEDICINE_SCENARIOS.length} bounded respiratory medicine labs are playable.`,
+  trays: RESPIRATORY_MEDICINE_TRAYS,
   scenarios: RESPIRATORY_MEDICINE_SCENARIOS,
   defaultScenarioId: DEFAULT_RESPIRATORY_MEDICINE_SCENARIO_ID,
   getScenario: getRespiratoryMedicineScenario,

@@ -5,6 +5,10 @@ import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { RESPIRATORY_MEDICINE_TRAYS } from '../../src/modules/respiratory-medicine/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (scenario: Parameters<typeof crisisResponseAvailability>[0]) =>
+  crisisResponseAvailability(scenario, [], RESPIRATORY_MEDICINE_TRAYS);
 import { NONINVASIVE_VENTILATION_SELECTION as SCENARIO } from '../../src/modules/respiratory-medicine/scenarios/noninvasive-ventilation-selection';
 
 /** The constants this lesson never moves, spread into every state below. */
@@ -50,7 +54,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['noninvasiveVentilationSelectionAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: RESPIRATORY_MEDICINE_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, noninvasiveVentilationSelectionAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 400, respiratoryRateBpm: 30, fio2: 0.28, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -59,7 +63,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onNoninvasiveVentilationSelectionResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -79,8 +83,8 @@ describe('Respiratory support-selection experience', () => {
   });
 
   it('offers all three support goals only once suitability is held', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasNoninvasiveVentilationSelectionResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasNoninvasiveVentilationSelectionResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'noninvasive-ventilation-selection'),
     }).hasNoninvasiveVentilationSelectionResponse).toBe(false);
@@ -112,45 +116,45 @@ describe('Respiratory support-selection experience', () => {
 describe('Support-selection tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { noninvasiveVentilationSelectionGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { noninvasiveVentilationSelectionGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('has already failed to fix');
-    const ready = markup(SUITABLE, { noninvasiveVentilationSelectionGuidance: 'guided' });
+    const ready = markup(SUITABLE, { guidance: 'guided' });
     expect(ready).toContain('not just her oxygen');
     expect(ready).not.toContain('has already failed to fix');
   });
 
   it('answers the specific wrong device the learner just chose', () => {
-    const cpap = markup(AFTER_CPAP, { noninvasiveVentilationSelectionGuidance: 'guided' });
+    const cpap = markup(AFTER_CPAP, { guidance: 'guided' });
     expect(cpap).toContain('It does not do the breathing');
     expect(cpap).toContain('cardiogenic pulmonary edema');
     expect(cpap).not.toContain('not her ventilation');
-    const hfno = markup(AFTER_HFNO, { noninvasiveVentilationSelectionGuidance: 'guided' });
+    const hfno = markup(AFTER_HFNO, { guidance: 'guided' });
     expect(hfno).toContain('not her ventilation');
     expect(hfno).toContain('a saturation that looks better while the acidosis carries on');
     expect(hfno).not.toContain('It does not do the breathing');
   });
 
   it('will not let a trial run without a failure guard', () => {
-    const html = markup(SELECTED, { noninvasiveVentilationSelectionGuidance: 'guided' });
+    const html = markup(SELECTED, { guidance: 'guided' });
     expect(html).toContain('read the response you were given');
     const guards = markup(base({ trajectoryAtTick: 0, suitabilityAtTick: 1, selectionAtTick: 2, responseAtTick: 3, bilevelNivSelectedByLearner: true }),
-      { noninvasiveVentilationSelectionGuidance: 'guided' });
+      { guidance: 'guided' });
     expect(guards).toContain('just an assumption with a mask on it');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(DONE, { noninvasiveVentilationSelectionGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { noninvasiveVentilationSelectionGuidance: 'guided', noninvasiveVentilationSelectionDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'NoninvasiveVentilationSelection' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

@@ -5,6 +5,10 @@ import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { RESPIRATORY_MEDICINE_TRAYS } from '../../src/modules/respiratory-medicine/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (scenario: Parameters<typeof crisisResponseAvailability>[0]) =>
+  crisisResponseAvailability(scenario, [], RESPIRATORY_MEDICINE_TRAYS);
 import { OXYGEN_DEVICE_FAILURE as SCENARIO } from '../../src/modules/respiratory-medicine/scenarios/oxygen-device-failure';
 
 /** The constants this lesson never moves, spread into every state below. */
@@ -50,7 +54,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['oxygenDeviceFailureAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: RESPIRATORY_MEDICINE_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, oxygenDeviceFailureAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 420, respiratoryRateBpm: 30, fio2: 0.4, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -59,7 +63,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onOxygenDeviceFailureResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -79,8 +83,8 @@ describe('Respiratory portable-oxygen-failure experience', () => {
   });
 
   it('offers each set of reflexes only at the moment it belongs to', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasOxygenDeviceFailureResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasOxygenDeviceFailureResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'oxygen-device-failure'),
     }).hasOxygenDeviceFailureResponse).toBe(false);
@@ -116,45 +120,45 @@ describe('Respiratory portable-oxygen-failure experience', () => {
 describe('Portable-oxygen-failure tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { oxygenDeviceFailureGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { oxygenDeviceFailureGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('before you believe the equipment');
-    const bridging = markup(RECONCILED, { oxygenDeviceFailureGuidance: 'guided' });
+    const bridging = markup(RECONCILED, { guidance: 'guided' });
     expect(bridging).toContain('get oxygen from somewhere else, now');
     expect(bridging).not.toContain('before you believe the equipment');
   });
 
   it('answers the specific reflex at the first decision point', () => {
-    const gas = markup(AFTER_GAS, { oxygenDeviceFailureGuidance: 'guided' });
+    const gas = markup(AFTER_GAS, { guidance: 'guided' });
     expect(gas).toContain('A gas would only confirm it later');
     expect(gas).not.toContain('Stop the trolley');
-    const transport = markup(AFTER_TRANSPORT, { oxygenDeviceFailureGuidance: 'guided' });
+    const transport = markup(AFTER_TRANSPORT, { guidance: 'guided' });
     expect(transport).toContain('Stop the trolley');
     expect(transport).toContain('the least monitored place in the hospital');
     expect(transport).not.toContain('A gas would only confirm it later');
   });
 
   it('answers the specific reflex at the second decision point', () => {
-    const increase = markup(AFTER_INCREASE, { oxygenDeviceFailureGuidance: 'guided' });
+    const increase = markup(AFTER_INCREASE, { guidance: 'guided' });
     expect(increase).toContain('nothing behind the number to turn up');
     expect(increase).not.toContain('The problem is upstream of it');
-    const reseat = markup(AFTER_RESEAT, { oxygenDeviceFailureGuidance: 'guided' });
+    const reseat = markup(AFTER_RESEAT, { guidance: 'guided' });
     expect(reseat).toContain('The problem is upstream of it');
     expect(reseat).not.toContain('nothing behind the number to turn up');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(DONE, { oxygenDeviceFailureGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { oxygenDeviceFailureGuidance: 'guided', oxygenDeviceFailureDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'OxygenDeviceFailure' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

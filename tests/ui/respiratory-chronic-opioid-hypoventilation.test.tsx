@@ -5,6 +5,10 @@ import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { RESPIRATORY_MEDICINE_TRAYS } from '../../src/modules/respiratory-medicine/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (scenario: Parameters<typeof crisisResponseAvailability>[0]) =>
+  crisisResponseAvailability(scenario, [], RESPIRATORY_MEDICINE_TRAYS);
 import { CHRONIC_OPIOID_RELATED_HYPOVENTILATION_REASSESSMENT as SCENARIO } from '../../src/modules/respiratory-medicine/scenarios/chronic-opioid-related-hypoventilation-reassessment';
 
 /** The constants this lesson never moves, spread into every state below. */
@@ -41,7 +45,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['chronicOpioidHypoventilationAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: RESPIRATORY_MEDICINE_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, chronicOpioidHypoventilationAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 360, respiratoryRateBpm: 18, fio2: 0.35, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 10 },
@@ -50,7 +54,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onChronicOpioidHypoventilationResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -70,8 +74,8 @@ describe('Respiratory opioid-hypoventilation experience', () => {
   });
 
   it('fails closed and never offers a dose change, a taper, naloxone, or a device', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasChronicOpioidHypoventilationResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasChronicOpioidHypoventilationResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'chronic-opioid-related-hypoventilation-reassessment'),
     }).hasChronicOpioidHypoventilationResponse).toBe(false);
@@ -87,38 +91,38 @@ describe('Respiratory opioid-hypoventilation experience', () => {
 describe('Opioid-hypoventilation tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { chronicOpioidHypoventilationGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { chronicOpioidHypoventilationGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('eight years of stable therapy');
-    const next = markup(STATES[1]!, { chronicOpioidHypoventilationGuidance: 'guided' });
+    const next = markup(STATES[1]!, { guidance: 'guided' });
     expect(next).toContain('what the daytime numbers cannot');
     expect(next).not.toContain('eight years of stable therapy');
   });
 
   it('refuses the obvious cause rather than confirming it', () => {
-    const html = markup(STATES[2]!, { chronicOpioidHypoventilationGuidance: 'guided' });
+    const html = markup(STATES[2]!, { guidance: 'guided' });
     expect(html).toContain('Refuse the obvious cause');
     expect(html).toContain('a contributor, not a proven cause');
   });
 
   it('warns against changing eight years of analgesia in one visit', () => {
-    const html = markup(STATES[3]!, { chronicOpioidHypoventilationGuidance: 'guided' });
+    const html = markup(STATES[3]!, { guidance: 'guided' });
     expect(html).toContain('Name every owner');
     expect(html).toContain('in a single visit');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(STATES[5]!, { chronicOpioidHypoventilationGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(STATES[5]!, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { chronicOpioidHypoventilationGuidance: 'guided', chronicOpioidHypoventilationDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'ChronicOpioidHypoventilation' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

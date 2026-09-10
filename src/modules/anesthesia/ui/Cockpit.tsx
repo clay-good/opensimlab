@@ -1879,36 +1879,6 @@ export function Cockpit({
           obstetricsMaternalNeonatalHandoffDemonstrating={demonstrating && registryDemo?.id === 'MaternalNeonatalHandoff'}
           obstetricsOxytocinTachysystoleGuidance={session.guidance}
           obstetricsOxytocinTachysystoleDemonstrating={demonstrating && registryDemo?.id === 'OxytocinTachysystole'}
-          acuteSevereAsthmaGuidance={session.guidance}
-          acuteSevereAsthmaDemonstrating={demonstrating && registryDemo?.id === 'AcuteSevereAsthma'}
-          copdTransitionGuidance={session.guidance}
-          copdTransitionDemonstrating={demonstrating && registryDemo?.id === 'CopdTransition'}
-          capHypoxemiaGuidance={session.guidance}
-          capHypoxemiaDemonstrating={demonstrating && registryDemo?.id === 'CapHypoxemia'}
-          postPeDyspneaGuidance={session.guidance}
-          postPeDyspneaDemonstrating={demonstrating && registryDemo?.id === 'PostPeDyspnea'}
-          apeSupportGuidance={session.guidance}
-          apeSupportDemonstrating={demonstrating && registryDemo?.id === 'ApeSupport'}
-          postTensionPneumothoraxGuidance={session.guidance}
-          postTensionPneumothoraxDemonstrating={demonstrating && registryDemo?.id === 'PostTensionPneumothorax'}
-          largePleuralEffusionGuidance={session.guidance}
-          largePleuralEffusionDemonstrating={demonstrating && registryDemo?.id === 'LargePleuralEffusion'}
-          bronchiectasisMucusPluggingGuidance={session.guidance}
-          bronchiectasisMucusPluggingDemonstrating={demonstrating && registryDemo?.id === 'BronchiectasisMucusPlugging'}
-          chronicOpioidHypoventilationGuidance={session.guidance}
-          chronicOpioidHypoventilationDemonstrating={demonstrating && registryDemo?.id === 'ChronicOpioidHypoventilation'}
-          neuromuscularRespiratoryFailureGuidance={session.guidance}
-          neuromuscularRespiratoryFailureDemonstrating={demonstrating && registryDemo?.id === 'NeuromuscularRespiratoryFailure'}
-          obesityHypoventilationGuidance={session.guidance}
-          obesityHypoventilationDemonstrating={demonstrating && registryDemo?.id === 'ObesityHypoventilation'}
-          noninvasiveVentilationSelectionGuidance={session.guidance}
-          noninvasiveVentilationSelectionDemonstrating={demonstrating && registryDemo?.id === 'NoninvasiveVentilationSelection'}
-          highFlowOxygenEscalationGuidance={session.guidance}
-          highFlowOxygenEscalationDemonstrating={demonstrating && registryDemo?.id === 'HighFlowOxygenEscalation'}
-          oxygenDeviceFailureGuidance={session.guidance}
-          oxygenDeviceFailureDemonstrating={demonstrating && registryDemo?.id === 'OxygenDeviceFailure'}
-          acuteTracheostomyObstructionGuidance={session.guidance}
-          acuteTracheostomyObstructionDemonstrating={demonstrating && registryDemo?.id === 'AcuteTracheostomyObstruction'}
           pediatricRespiratoryDistressGuidance={session.guidance}
           pediatricRespiratoryDistressDemonstrating={demonstrating && registryDemo?.id === 'PediatricRespiratoryDistress'}
           bronchiolitisGuidance={session.guidance}
@@ -2387,51 +2357,6 @@ export function Cockpit({
           })}
           onTranscutaneousPacingCaptureResponse={(action) => session.act({
             type: 'transcutaneous-pacing-capture-response', payload: { action },
-          })}
-          onAcuteSevereAsthmaResponse={(action) => session.act({
-            type: 'acute-severe-asthma-response', payload: { action },
-          })}
-          onCopdTransitionResponse={(action) => session.act({
-            type: 'copd-exacerbation-transition-response', payload: { action },
-          })}
-          onCapHypoxemiaResponse={(action) => session.act({
-            type: 'community-acquired-pneumonia-hypoxemia-response', payload: { action },
-          })}
-          onPostPeDyspneaResponse={(action) => session.act({
-            type: 'post-pulmonary-embolism-persistent-dyspnea-response', payload: { action },
-          })}
-          onApeSupportResponse={(action) => session.act({
-            type: 'acute-pulmonary-edema-respiratory-support-response', payload: { action },
-          })}
-          onPostTensionPneumothoraxResponse={(action) => session.act({
-            type: 'spontaneous-tension-pneumothorax-post-drainage-response', payload: { action },
-          })}
-          onLargePleuralEffusionResponse={(action) => session.act({
-            type: 'large-unilateral-pleural-effusion-response', payload: { action },
-          })}
-          onBronchiectasisMucusPluggingResponse={(action) => session.act({
-            type: 'bronchiectasis-mucus-plugging-response', payload: { action },
-          })}
-          onChronicOpioidHypoventilationResponse={(action) => session.act({
-            type: 'chronic-opioid-related-hypoventilation-response', payload: { action },
-          })}
-          onNeuromuscularRespiratoryFailureResponse={(action) => session.act({
-            type: 'neuromuscular-respiratory-failure-response', payload: { action },
-          })}
-          onObesityHypoventilationResponse={(action) => session.act({
-            type: 'obesity-hypoventilation-response', payload: { action },
-          })}
-          onNoninvasiveVentilationSelectionResponse={(action) => session.act({
-            type: 'noninvasive-ventilation-selection-response', payload: { action },
-          })}
-          onHighFlowOxygenEscalationResponse={(action) => session.act({
-            type: 'high-flow-nasal-oxygen-escalation-response', payload: { action },
-          })}
-          onOxygenDeviceFailureResponse={(action) => session.act({
-            type: 'oxygen-device-failure-response', payload: { action },
-          })}
-          onAcuteTracheostomyObstructionResponse={(action) => session.act({
-            type: 'acute-tracheostomy-obstruction-response', payload: { action },
           })}
           onPediatricRespiratoryDistressResponse={(action) => session.act({
             type: 'pediatric-respiratory-distress-response', payload: { action },

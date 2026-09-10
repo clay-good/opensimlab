@@ -5,6 +5,10 @@ import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { RESPIRATORY_MEDICINE_TRAYS } from '../../src/modules/respiratory-medicine/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (scenario: Parameters<typeof crisisResponseAvailability>[0]) =>
+  crisisResponseAvailability(scenario, [], RESPIRATORY_MEDICINE_TRAYS);
 import { HIGH_FLOW_NASAL_OXYGEN_ESCALATION as SCENARIO } from '../../src/modules/respiratory-medicine/scenarios/high-flow-nasal-oxygen-escalation';
 
 /** The constants this lesson never moves, spread into every state below. */
@@ -52,7 +56,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['highFlowOxygenEscalationAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: RESPIRATORY_MEDICINE_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, highFlowOxygenEscalationAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 400, respiratoryRateBpm: 34, fio2: 0.5, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -61,7 +65,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onHighFlowOxygenEscalationResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -81,8 +85,8 @@ describe('Respiratory high-flow escalation experience', () => {
   });
 
   it('offers each set of choices only at the moment it belongs to', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasHighFlowOxygenEscalationResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasHighFlowOxygenEscalationResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'high-flow-nasal-oxygen-escalation'),
     }).hasHighFlowOxygenEscalationResponse).toBe(false);
@@ -119,46 +123,46 @@ describe('Respiratory high-flow escalation experience', () => {
 describe('High-flow escalation tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { highFlowOxygenEscalationGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { highFlowOxygenEscalationGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('He is still not managing');
-    const ready = markup(SUITABLE, { highFlowOxygenEscalationGuidance: 'guided' });
+    const ready = markup(SUITABLE, { guidance: 'guided' });
     expect(ready).toContain('keep the rescue plan next to it');
     expect(ready).not.toContain('He is still not managing');
   });
 
   it('answers the specific wrong choice at the first decision point', () => {
-    const conventional = markup(AFTER_CONVENTIONAL, { highFlowOxygenEscalationGuidance: 'guided' });
+    const conventional = markup(AFTER_CONVENTIONAL, { guidance: 'guided' });
     expect(conventional).toContain('Staying is a decision too');
     expect(conventional).not.toContain('Not a bad instinct');
-    const bilevel = markup(AFTER_BILEVEL, { highFlowOxygenEscalationGuidance: 'guided' });
+    const bilevel = markup(AFTER_BILEVEL, { guidance: 'guided' });
     expect(bilevel).toContain('Not a bad instinct');
     expect(bilevel).toContain('not a misunderstanding of the physiology');
     expect(bilevel).not.toContain('Staying is a decision too');
   });
 
   it('answers the specific wrong choice at the second decision point', () => {
-    const resolved = markup(AFTER_RESOLVED, { highFlowOxygenEscalationGuidance: 'guided' });
+    const resolved = markup(AFTER_RESOLVED, { guidance: 'guided' });
     expect(resolved).toContain('Better is not resolved');
     expect(resolved).not.toContain('earns its keep');
-    const reduced = markup(AFTER_REDUCED, { highFlowOxygenEscalationGuidance: 'guided' });
+    const reduced = markup(AFTER_REDUCED, { guidance: 'guided' });
     expect(reduced).toContain('earns its keep');
     expect(reduced).toContain('the window in which delayed intubation happens');
     expect(reduced).not.toContain('Better is not resolved');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(DONE, { highFlowOxygenEscalationGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { highFlowOxygenEscalationGuidance: 'guided', highFlowOxygenEscalationDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'HighFlowOxygenEscalation' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');
