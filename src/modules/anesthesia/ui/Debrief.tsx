@@ -69,6 +69,7 @@ import { supportsUnownedDelay } from '../../surgery-trauma/unowned-delay';
 import { supportsThirdAttendance } from '../../surgery-trauma/third-attendance';
 import { supportsDeferredStep } from '../../surgery-trauma/deferred-step';
 import { supportsKnownLabel } from '../../surgery-trauma/known-label';
+import { supportsUnspokenDoubt } from '../../surgery-trauma/unspoken-doubt';
 import { supportsIncidentalClot } from '../../oncology/incidental-clot';
 import { supportsNormalTestToxicity } from '../../oncology/normal-test-toxicity';
 import { supportsPrognosisQuestion } from '../../oncology/prognosis-question';
@@ -1090,6 +1091,51 @@ export function objectiveFindings(
         'handoff-oncology-incidental-clot-an-unresolved-decision': { met: !!handoff, tick: handoff?.tick,
           finding: (handoff ? 'The finding, its route, the conditional strength and very low certainty, the figures in both directions, and his bleeding history all travelled. ' : 'Current full findings, the recorded certainty, or continuing-care ownership remains incomplete. ')
             + 'The decision was handed over open, which is what an unresolved decision looks like when it is handed over honestly rather than closed to make the handoff tidy.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id.includes('-surgery-trauma-unspoken-doubt-')) {
+      if (!supportsUnspokenDoubt(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The surgery and trauma unspoken-doubt lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^unspoken-doubt-${id}-\\d+$`).test(entry.eventId));
+      const noticed = event('observation-recorded'); const fallibility = event('fallibility-recorded');
+      const asymmetry = event('asymmetry-recorded'); const spoken = event('spoken');
+      const intent = event('team-intent-recorded'); const boundaries = event('boundary-review');
+      const handoff = event('handoff'); const knife = event('knife-requested');
+      const answered = log.find((entry) => /^unspoken-doubt-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedSenior = event('wait-for-senior-refused'); const refusedSelf = event('self-doubt-refused');
+      const refusedAfter = event('afterwards-refused'); const refusedQuiet = event('quiet-ask-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'record-surgery-trauma-unspoken-doubt-what-you-have-noticed': { met: !!noticed, tick: noticed?.tick,
+          finding: (noticed ? 'The observation was stated plainly: consent and marking agree, the label on the displayed image does not. ' : 'The observation was never put into words. ')
+            + 'It is a discrepancy, not a claim that anybody made a mistake, and keeping those apart is what makes it sayable.' },
+        'record-surgery-trauma-unspoken-doubt-what-would-make-you-wrong': { met: !!fallibility && !refusedSelf, tick: fallibility?.tick,
+          finding: (fallibility ? 'The ways of being wrong were stated first: another patient\u2019s image, a display artefact, a mirrored view, a misreading. ' : 'The ways of being wrong were never stated. ')
+            + (refusedSelf ? 'Settling it privately by deciding the reading was probably mistaken was attempted and refused: probably wrong is a reason to check, not a reason to be quiet. ' : '')
+            + 'Saying them first is what turns an interruption into something a team can answer in seconds.' },
+        'recognize-surgery-trauma-unspoken-doubt-the-two-mistakes-are-not-comparable': { met: !!asymmetry && !refusedSenior, tick: asymmetry?.tick,
+          finding: (refusedSenior ? 'Waiting for somebody more senior to notice was attempted and refused; seniority is not a queue for observations. ' : asymmetry ? 'The two mistakes were weighed against each other rather than the decision being left to depend on confidence. ' : 'The two possible mistakes were never compared. ')
+            + 'Ninety seconds and some embarrassment against the other side of a person.' },
+        'record-surgery-trauma-unspoken-doubt-the-cost-of-each-mistake': { met: !!asymmetry, tick: asymmetry?.tick,
+          finding: (asymmetry ? 'The asymmetry was stated as the calculation that settles it. ' : 'The asymmetry was never stated. ')
+            + 'That comparison is what makes this a small decision rather than a brave one.' },
+        'activate-surgery-trauma-unspoken-doubt-say-it-in-the-room': { met: !!spoken && !refusedAfter && !refusedQuiet, tick: spoken?.tick,
+          finding: (spoken ? 'It was said in the room, to everybody, before anything was cut. ' : 'It was never said aloud, and the observation stayed where it started. ')
+            + (refusedAfter ? 'Mentioning it afterwards was attempted and refused: afterwards turns a ninety-second re-check into an incident report. ' : '')
+            + (refusedQuiet ? 'Checking quietly with one colleague first was attempted and refused; it spends the interval twice. ' : '')
+            + (knife ? 'The knife had been asked for by then, which is later than it needed to be. ' : 'Nothing had been asked for yet, so there was nothing to undo. ')
+            + 'Not a hint, and not a question aimed at nobody.' },
+        'record-surgery-trauma-unspoken-doubt-bounded-team-intent': { met: !!intent, tick: intent?.tick,
+          finding: (intent ? 'The re-check, the imaging, and whether the operation proceeds were recorded as the team\u2019s. ' : 'Bounded team intent was never recorded. ')
+            + 'Nothing was stopped and nothing was chosen here; what was contributed was a sentence.' },
+        'review-surgery-trauma-unspoken-doubt-evidence-that-includes-this-exercise': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The evidence was reviewed, including the review that doubts exercises like this one. ' : 'The boundary and certainty review is missing. ')
+            + 'A narrative synthesis of 31 studies from 4,822 screened; three intrapersonal factors accounting for 73 percent of the variance with training level significantly associated; and fourteen interventions with mixed results and specific doubt that education alone changes deeply rooted speaking-up behaviour.' },
+        'handoff-surgery-trauma-unspoken-doubt-a-sentence-that-travelled': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'What was noticed, the ways of being wrong stated first, the asymmetry, that it was said before the incision, and the bounded intent all travelled. ' : 'Current full findings, the stated observation, or the decision left with the team remains incomplete. ')
+            + (answered ? 'The room stopped, nobody was annoyed, and the side was re-checked against the consent, the mark and the imaging. ' : 'Nobody had answered by the end of this run, and the handoff had to survive that. ')
+            + 'Nothing here settles whether the reading was right, and no error, effect, or outcome is certified.' },
       };
       const result = results[objective.id]!;
       return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;

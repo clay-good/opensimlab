@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "moduleId": "surgery-trauma",
   "capabilityVersion": "0.1.0-alpha.48",
-  "scenarioCount": 9,
+  "scenarioCount": 10,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -1121,6 +1121,132 @@
           "status": "satisfied",
           "evidence": [
             "known-label-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "unspoken-doubt-an-interval-nobody-else-can-see",
+      "title": "An unspoken doubt: an interval nobody else can see",
+      "moduleId": "surgery-trauma",
+      "environment": "ward",
+      "estimatedMinutes": 7,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario unspoken-doubt-an-interval-nobody-else-can-see carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "missing",
+          "evidence": [
+            "This scenario declares 8 objectives; the contract allows at most 5."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "unspoken-doubt-fixtures.ts binds seed 5063 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No physiological, surgical, or error model is claimed; both transitions are authored and neither is a patient event, and the discrepancy is never resolved in either direction."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "unspoken-doubt.ts runs two authored transitions on the shortest intervals in this module. At 25 seconds the consultant asks for the knife: nothing about the patient changes, nobody has done anything wrong, and the room is simply one step further along. If the learner has spoken, the team answers 40 seconds later — it stops, nobody is annoyed, and the side is re-checked against the consent, the mark and the imaging. That generosity is deliberate and is the finding the lesson exists to deliver: in the ordinary case the room stops the moment somebody says the words. Nothing arrives uncalled."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "The learner states the observation without a theory attached, states the ways they might be wrong first, states the cost of each of the two mistakes, says it aloud in the room before the incision, records bounded team intent, and reviews the boundaries. Waiting until somebody more senior notices, settling it privately by deciding the reading was probably mistaken, mentioning it afterwards, and checking quietly with one colleague first are each refused, and no refusal asserts that anybody has made an error. The quiet-ask refusal names the specific cost: it spends the interval twice and gives the room a whispered exchange to notice instead of a sentence to act on."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "The stated observation, the stated fallibility, the stated asymmetry, saying it before the incision, bounded team intent, the boundary review, and a current full assessment permit handoff with the discrepancy, the re-check and the operation all open. Instructor takeover bounds a run in which nothing was said at 10 minutes — by a wide margin the shortest takeover in this module, because the interval the lesson is about is measured in seconds — or an unfinished session at one hour."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "satisfied",
+          "evidence": [
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary recorded actions. Unassisted mode is silent and coached withholds the two non-urgent beats. The prompts read only the learner's own recorded steps, never say the team is about to operate on the wrong side, and never say anybody has made an error, because a learner who acts only once certain has not learned the thing this lesson teaches. The example is driven through the real engine in tests rather than asserted as a script, and it speaks before the knife is asked for, because one that waited would teach that the moment to say it is the last moment rather than the first."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "Eight event-bound objectives distinguish stating an observation without an accusation, stating fallibility first, recognising that the two possible mistakes are not the same size, stating the asymmetry as the thing that settles it, saying it aloud to the whole room before the incision, bounded team intent, evidence that questions the value of exercises like this one, and accountable handoff of a sentence with the decision left to the team. Refused shortcuts remain visible, and no error, effect, or outcome is certified."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "3 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "unspoken-doubt-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
           ]
         },
         {

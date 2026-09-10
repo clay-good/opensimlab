@@ -250,6 +250,7 @@ export const WORKED_EXAMPLE_KEYS: readonly string[] = [
   'surgery-trauma:transient-response-a-patient-who-will-not-stay-up@0.1.0',
   'surgery-trauma:unfinished-survey-a-patient-who-cannot-be-asked@0.1.0',
   'surgery-trauma:unowned-delay-a-wait-that-nobody-decided@0.1.0',
+  'surgery-trauma:unspoken-doubt-an-interval-nobody-else-can-see@0.1.0',
   'toxicology:acetaminophen-clock-and-nomogram@0.1.0',
   'toxicology:anticholinergic-hyperthermia-delirium@0.1.0',
   'toxicology:beta-blocker-cardiogenic-shock@0.1.0',

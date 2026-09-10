@@ -226,4 +226,28 @@ export const SURGERY_TRAUMA_LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'The prevalence study is cross-sectional in one Scottish health board and describes a population rather than a person; its value here is the structural point that a true label sits among roughly ten other true labels and excludes none of them. The confidential inquiry is a population-based review of deaths in five areas of southwest England with a matched comparator, and its p values come from comparisons of contributory factors rather than from an intervention. The third source is a narrative review for emergency physicians and is quoted for its framing rather than as evidence of effect size, which the citation states. None of the three gives a probability for this patient, and none of them says his constipation is absent.',
     briefIn: ['known-label-an-explanation-that-excludes-nothing'],
   },
+  {
+    id: 'unspoken-doubt-presentation-and-team-response-are-authored',
+    headline: 'One theatre, one request for the knife, and a room that stops without complaint.',
+    simplification: 'The case supplies a fixed set of stable anaesthetised observations that never change, one authored request for the knife at 90 seconds, and a team that answers 40 seconds after the learner speaks by stopping, thanking them, and re-checking the side. No physiological, surgical, or error model runs underneath, nothing is ever cut, and the discrepancy is never resolved in either direction.',
+    whereItMisleads: 'A learner concludes that speaking up is always received this well, that the side really was wrong, that somebody would have caught it anyway, or that a real theatre gives ninety seconds of grace.',
+    correctUnderstanding: 'The generous reply is authored on purpose, because the fear this lesson addresses is a prediction about how colleagues will react and the ordinary case really is that the room stops — but it is not the only case, and a plan that only works when the response is gracious is not a plan. The lesson never establishes whether the reading was right, which is deliberate: a learner who acts only once certain has not rehearsed the thing being taught. In practice nobody may answer, the answer may be irritation, and the observation may turn out to be a display artefact.',
+    briefIn: ['unspoken-doubt-an-interval-nobody-else-can-see'],
+  },
+  {
+    id: 'unspoken-doubt-controls-are-stating-and-escalation-only',
+    headline: 'Nothing is stopped, nothing is cut, and no error is asserted.',
+    simplification: 'The learner states the observation, states the ways they might be wrong, states the cost of each of the two mistakes, says it aloud in the room before the incision, records bounded team intent, and reviews the boundaries.',
+    whereItMisleads: 'The speaking control is read as the learner halting the operation, the refusals are read as criticism of the consultant or the team, or the lesson is read as teaching that theatre teams are unsafe.',
+    correctUnderstanding: 'The re-check and how it is done, the imaging, whether the operation proceeds, is delayed or changes, and everything about the operation itself belong to the team, and this lesson exposes no drug, dose, route, incision, imaging request, or procedure. Nobody in the case has done anything wrong and the text says so repeatedly: the team brief was completed, everybody is competent, and the learner can see the discrepancy only because of where they happen to be looking. What is contributed is a sentence, not a decision.',
+    briefIn: ['unspoken-doubt-an-interval-nobody-else-can-see'],
+  },
+  {
+    id: 'unspoken-doubt-the-evidence-questions-this-exercise',
+    headline: 'The third source doubts that rehearsals like this one change behaviour.',
+    simplification: 'The lesson quotes a narrative synthesis screening 4,822 publications and including 31 studies on challenging authority in the operating room; a scale study in which self-efficacy, social outcome expectations and assertive attitude accounted for 73 percent of the variance with training level significantly associated with two subscales at p<0.001; and a systematic review of fourteen interventions targeting psychological safety, speaking up and voice that found mixed results, no consistent improvement, a lack of objective outcome measures, and specific doubt that education alone changes deeply rooted speaking-up behaviour.',
+    whereItMisleads: 'A learner reads the 73 percent as a property of themselves, treats the scale as a validated measure of their own likelihood of speaking up, or concludes from the third source that nothing helps and therefore nothing is worth doing.',
+    correctUnderstanding: 'The synthesis is narrative rather than quantitative and its 31 studies vary widely in design. The scale study is a single-centre instrument-development paper in anaesthetists whose authors state plainly that it needs validation in other cohorts, and 73 percent is variance explained in a factor analysis rather than a statement about any individual. The systematic review is included precisely because this rehearsal is one of the interventions whose class it doubts; what it supports is modesty about what an exercise achieves, not the conclusion that the sentence in the room is worthless. Nothing here gives a probability for what any learner will actually do.',
+    briefIn: ['unspoken-doubt-an-interval-nobody-else-can-see'],
+  },
 ];

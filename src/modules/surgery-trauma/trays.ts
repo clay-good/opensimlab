@@ -24,6 +24,8 @@ import { DeferredStepTray } from './DeferredStepTray';
 import { supportsDeferredStep } from './deferred-step';
 import { KnownLabelTray } from './KnownLabelTray';
 import { supportsKnownLabel } from './known-label';
+import { UnspokenDoubtTray } from './UnspokenDoubtTray';
+import { supportsUnspokenDoubt } from './unspoken-doubt';
 
 export const SURGERY_TRAUMA_TRAYS: readonly LessonTray[] = [
   { id: 'NegativeScan', actionType: 'negative-scan-response', supports: supportsNegativeScan, assessment: (r) => r?.negativeScan, Component: NegativeScanTray as LessonTray['Component'] },
@@ -35,4 +37,5 @@ export const SURGERY_TRAUMA_TRAYS: readonly LessonTray[] = [
   { id: 'ThirdAttendance', actionType: 'third-attendance-response', supports: supportsThirdAttendance, assessment: (r) => r?.thirdAttendance, Component: ThirdAttendanceTray as LessonTray['Component'] },
   { id: 'DeferredStep', actionType: 'deferred-step-response', supports: supportsDeferredStep, assessment: (r) => r?.deferredStep, Component: DeferredStepTray as LessonTray['Component'] },
   { id: 'KnownLabel', actionType: 'known-label-response', supports: supportsKnownLabel, assessment: (r) => r?.knownLabel, Component: KnownLabelTray as LessonTray['Component'] },
+  { id: 'UnspokenDoubt', actionType: 'unspoken-doubt-response', supports: supportsUnspokenDoubt, assessment: (r) => r?.unspokenDoubt, Component: UnspokenDoubtTray as LessonTray['Component'] },
 ];

@@ -15,6 +15,7 @@ import { unownedDelayDemonstrationStep, supportsUnownedDelayDemonstration } from
 import { thirdAttendanceDemonstrationStep, supportsThirdAttendanceDemonstration } from './third-attendance-demonstration';
 import { deferredStepDemonstrationStep, supportsDeferredStepDemonstration } from './deferred-step-demonstration';
 import { knownLabelDemonstrationStep, supportsKnownLabelDemonstration } from './known-label-demonstration';
+import { unspokenDoubtDemonstrationStep, supportsUnspokenDoubtDemonstration } from './unspoken-doubt-demonstration';
 
 export const SURGERY_TRAUMA_DEMONSTRATIONS: readonly LessonDemonstration[] = [
   { id: 'NegativeScan', supports: supportsNegativeScanDemonstration, actionType: 'negative-scan-response', step: (r) => negativeScanDemonstrationStep(r?.negativeScan) },
@@ -26,4 +27,5 @@ export const SURGERY_TRAUMA_DEMONSTRATIONS: readonly LessonDemonstration[] = [
   { id: 'ThirdAttendance', supports: supportsThirdAttendanceDemonstration, actionType: 'third-attendance-response', step: (r) => thirdAttendanceDemonstrationStep(r?.thirdAttendance) },
   { id: 'DeferredStep', supports: supportsDeferredStepDemonstration, actionType: 'deferred-step-response', step: (r) => deferredStepDemonstrationStep(r?.deferredStep) },
   { id: 'KnownLabel', supports: supportsKnownLabelDemonstration, actionType: 'known-label-response', step: (r) => knownLabelDemonstrationStep(r?.knownLabel) },
+  { id: 'UnspokenDoubt', supports: supportsUnspokenDoubtDemonstration, actionType: 'unspoken-doubt-response', step: (r) => unspokenDoubtDemonstrationStep(r?.unspokenDoubt) },
 ];

@@ -35,7 +35,7 @@ describe('Surgery and trauma module foundation', () => {
     expect(moduleProse('surgery-trauma').plannedScope).toContain('Ten bounded');
     // The prose must no longer read as an unbuilt module, because the route now runs one.
     expect(moduleProse('surgery-trauma').description).not.toBe('Planned.');
-    expect(SURGERY_TRAUMA_SCENARIOS).toHaveLength(9);
+    expect(SURGERY_TRAUMA_SCENARIOS).toHaveLength(10);
     expect(DEFAULT_SURGERY_TRAUMA_SCENARIO_ID).toBe(id);
     expect(getSurgeryTraumaScenario(id)).toBe(scenario);
     expect(getSurgeryTraumaScenario('not-a-scenario')).toBeUndefined();
@@ -61,7 +61,7 @@ describe('Surgery and trauma module foundation', () => {
     expect(route.indexable).toBe(true);
     expect(route.description.length).toBeGreaterThanOrEqual(110);
     expect(route.description.length).toBeLessThanOrEqual(160);
-    expect(ROUTES.filter((entry) => entry.path.startsWith('/surgery-trauma'))).toHaveLength(10);
+    expect(ROUTES.filter((entry) => entry.path.startsWith('/surgery-trauma'))).toHaveLength(11);
     const markup = renderToStaticMarkup(createElement(PrerenderedBody, { path }));
     expect(markup).toContain('a scan that cannot say no');
     const moduleMarkup = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/surgery-trauma' }));
@@ -75,7 +75,7 @@ describe('Surgery and trauma module foundation', () => {
       expect(PUBLIC_CATALOG_ARTIFACTS).toContain(`/catalog/surgery-trauma-${artifact}.json`);
     }
     const completion = json('public/catalog/surgery-trauma-completion-audit.json');
-    expect(completion.scenarioCount).toBe(9);
+    expect(completion.scenarioCount).toBe(10);
     expect(completion.scenarios[0].scenarioId).toBe(id);
     expect(completion.scenarios[0].environment).toBe('ward');
     // The two report catalogs must stay byte-identical, or a report can resolve in one and not the other.
@@ -122,7 +122,7 @@ describe('Surgery and trauma module foundation', () => {
     // A module that only ever taught "keep looking" would teach a learner to sit on a limb
     // that needed decompressing an hour ago, and a module that only ever taught "escalate now"
     // would teach the reverse reflex. The order is the teaching, so it is asserted.
-    const [first, second, third, fourth, fifth, sixth, seventh, eighth, ninth] = SURGERY_TRAUMA_SCENARIOS;
+    const [first, second, third, fourth, fifth, sixth, seventh, eighth, ninth, tenth] = SURGERY_TRAUMA_SCENARIOS;
     expect(first!.metadata.id).toBe('negative-scan-a-scan-that-cannot-say-no');
     expect(second!.metadata.id).toBe('rising-requirement-a-number-that-under-calls');
     expect(third!.metadata.id).toBe('unfinished-survey-a-patient-who-cannot-be-asked');
@@ -132,6 +132,10 @@ describe('Surgery and trauma module foundation', () => {
     expect(seventh!.metadata.id).toBe('third-attendance-a-question-two-people-have-already-answered');
     expect(eighth!.metadata.id).toBe('deferred-step-a-decision-attached-to-a-person');
     expect(ninth!.metadata.id).toBe('known-label-an-explanation-that-excludes-nothing');
+    expect(tenth!.metadata.id).toBe('unspoken-doubt-an-interval-nobody-else-can-see');
+    // Ten of a planned ten: the module's declared scope is now met, and the alternation ran
+    // hold, don't-wait five times each without ever repeating a mechanism or a pressure.
+    expect(SURGERY_TRAUMA_SCENARIOS).toHaveLength(10);
     const ids = SURGERY_TRAUMA_SCENARIOS.flatMap((entry) => entry.metadata.objectives.map((o) => o.id));
     expect(new Set(ids).size).toBe(ids.length);
   });

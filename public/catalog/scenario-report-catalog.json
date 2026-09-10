@@ -4219,6 +4219,23 @@
       "limitationManifestHash": "sha256:f3b439e63e2c47cccc0099d0097df6e25a04d52170a0fa0e8805f3afe4d4ab7d"
     },
     {
+      "scenarioId": "unspoken-doubt-an-interval-nobody-else-can-see",
+      "contentVersion": "0.1.0",
+      "moduleId": "surgery-trauma",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:76857083336b9ce840545cd358c366e300f862dc73d9461949dd5f897aac17fc",
+      "defaultsHash": "sha256:eadf645b958c4b08439e7069b6fbf2c3b0b910a47b0259fb10e31e65abc1f09f",
+      "maturityHash": "sha256:7fb42cd82a0742c1fffca46882f6a3e3269fedd791de0839c928b7177911038b",
+      "sourceManifestHash": "sha256:36d9bded7244617dcda3dc1cfd1844fcdc304306c55d38132a3bc4cdc88f8dfe",
+      "limitationManifestHash": "sha256:13a2832ebc100b60dc6400629c92247664b5e471a00839835ec5b66baa57508e"
+    },
+    {
       "scenarioId": "acetaminophen-clock-and-nomogram",
       "contentVersion": "0.1.0",
       "moduleId": "toxicology",

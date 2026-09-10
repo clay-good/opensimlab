@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "surgery-trauma",
-  "recordCount": 9,
+  "recordCount": 10,
   "records": [
     {
       "recordId": "scenario:negative-scan-a-scan-that-cannot-say-no@0.1.0",
@@ -100,6 +100,17 @@
       "evidence": [
         "/catalog/surgery-trauma-completion-audit.json#known-label-an-explanation-that-excludes-nothing@0.1.0",
         "/catalog/surgery-trauma-quality-audit.json#known-label-an-explanation-that-excludes-nothing@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:unspoken-doubt-an-interval-nobody-else-can-see@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "unspoken-doubt-an-interval-nobody-else-can-see",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/surgery-trauma-completion-audit.json#unspoken-doubt-an-interval-nobody-else-can-see@0.1.0",
+        "/catalog/surgery-trauma-quality-audit.json#unspoken-doubt-an-interval-nobody-else-can-see@0.1.0"
       ]
     }
   ]
