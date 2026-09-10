@@ -202,4 +202,28 @@ export const SURGERY_TRAUMA_LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Both modern series are retrospective and single-centre, they define their windows from different moments — one from injury, one from arrival — and they disagree by nearly an hour; the second reports a significant modelled hazard while its own median comparison did not reach significance. The 1989 series reports no threshold at all in its indexed abstract and none is quoted from it. Together they establish only that the interval is not free, which is a reason not to attach it to somebody\u2019s arrival, and not a stopwatch for this patient.',
     briefIn: ['deferred-step-a-decision-attached-to-a-person'],
   },
+  {
+    id: 'known-label-presentation-and-team-response-are-authored',
+    headline: 'One afternoon, one shift change, and observations that never move.',
+    simplification: 'The case supplies a fixed set of very nearly normal observations that never change, one authored shift change at 14 minutes at which the support worker of six years leaves and a relief worker who has met him twice arrives, and a surgical team that answers thirty-five minutes after it is asked with a fixed reply. No bowel, pain, behavioural, or disease model runs underneath, no examination is ever achieved, and no diagnosis is ever confirmed or excluded.',
+    whereItMisleads: 'A learner concludes that an informant is always present at the start, that the change of shift is what makes the case urgent, that a surgical team always answers, or that this patient turned out to have something other than constipation.',
+    correctUnderstanding: 'Nothing the learner does changes his course, because nothing was going to, and the rehearsal never establishes what is wrong with him — that is deliberate, because the learner has to act while it is unknown. The shift change is authored and arrives whether or not anybody was ready for it; in practice the informant may never have come at all, may not be believed, or may be right about the change and wrong about its cause. The reply is authored and deliberately slow, so that waiting for it is never what preserves the account.',
+    briefIn: ['known-label-an-explanation-that-excludes-nothing'],
+  },
+  {
+    id: 'known-label-controls-are-recording-and-escalation-only',
+    headline: 'No examination is performed, nothing is prescribed, and no diagnosis is named.',
+    simplification: 'The learner records the label with the work it is doing, records what changed in the words of somebody able to compare, records what the label cannot exclude, asks the surgical team to see him, records bounded qualified-team intent including the adjustments the examination needs, and reviews the boundaries.',
+    whereItMisleads: 'The lesson is read as teaching that recorded diagnoses in this population should be distrusted, the refusals are read as asserting that the constipation is absent, or the escalation is read as the learner disputing a colleague\u2019s diagnosis.',
+    correctUnderstanding: 'The examination and whatever adjustments it needs, any investigation and how it is explained to him, any prescribing, and whether he stays all belong to the qualified team, and this lesson exposes no drug, dose, route, investigation, or procedure. No control and no refusal claims the constipation is absent; the engine and the worked example are both tested against that, and the evidence carried here argues that the label is very likely correct. The distinction being taught is that explaining and excluding are different operations, and the escalation text says explicitly that the diagnosis is not in dispute.',
+    briefIn: ['known-label-an-explanation-that-excludes-nothing'],
+  },
+  {
+    id: 'known-label-the-evidence-supports-the-label-it-warns-about',
+    headline: 'The strongest source in the lesson argues that the recorded diagnosis is right.',
+    simplification: 'The lesson quotes a mean of 11.04 physical conditions and multimorbidity in 98.7 percent of 1,023 adults with intellectual disabilities, with constipation among the five most prevalent; a confidential inquiry into 247 deaths reporting 22 percent dying before 50, median ages at death of 64 against 78 and 83 in the general population, 37 percent of deaths amenable to good healthcare against 13 percent, and carers not feeling listened to among factors differing significantly from a matched comparator at p=0.006; and a narrative review naming diagnostic overshadowing and describing carers as vital informants.',
+    whereItMisleads: 'A learner reads the prevalence figures as a probability for this patient, treats 37 percent as a risk attaching to him, or reads the third source as measured evidence of an effect when it is a narrative review.',
+    correctUnderstanding: 'The prevalence study is cross-sectional in one Scottish health board and describes a population rather than a person; its value here is the structural point that a true label sits among roughly ten other true labels and excludes none of them. The confidential inquiry is a population-based review of deaths in five areas of southwest England with a matched comparator, and its p values come from comparisons of contributory factors rather than from an intervention. The third source is a narrative review for emergency physicians and is quoted for its framing rather than as evidence of effect size, which the citation states. None of the three gives a probability for this patient, and none of them says his constipation is absent.',
+    briefIn: ['known-label-an-explanation-that-excludes-nothing'],
+  },
 ];

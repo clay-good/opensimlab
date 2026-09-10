@@ -242,6 +242,7 @@ export const WORKED_EXAMPLE_KEYS: readonly string[] = [
   'respiratory-medicine:post-pulmonary-embolism-persistent-dyspnea@0.1.0',
   'respiratory-medicine:spontaneous-tension-pneumothorax-post-drainage-reassessment@0.1.0',
   'surgery-trauma:deferred-step-a-decision-attached-to-a-person@0.1.0',
+  'surgery-trauma:known-label-an-explanation-that-excludes-nothing@0.1.0',
   'surgery-trauma:negative-scan-a-scan-that-cannot-say-no@0.1.0',
   'surgery-trauma:quiet-chest-an-injury-whose-severity-is-not-yet-visible@0.1.0',
   'surgery-trauma:rising-requirement-a-number-that-under-calls@0.1.0',

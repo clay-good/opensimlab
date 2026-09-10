@@ -177,9 +177,9 @@ describe('scenario report contract', () => {
     // against it still resolves to the evidence it was filed against. It held
     // 250 rows; correcting a citation is a content change, so four scenarios
     // moved to 0.1.1 and their 0.1.0 rows remain beside them.
-    expect(catalog.scenarios).toHaveLength(262);
+    expect(catalog.scenarios).toHaveLength(263);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(262);
+      .toBe(263);
     for (const contentVersion of ['0.1.0', '0.1.1', '0.1.2']) {
       expect(catalog.scenarios).toContainEqual(expect.objectContaining({
         moduleId: 'endocrine-metabolic', scenarioId: 'adrenal-crisis-treatment-before-tests', contentVersion,

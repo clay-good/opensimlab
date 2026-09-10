@@ -1193,6 +1193,54 @@ export interface UnfinishedSurveySnapshot {
   readonly durableRecoveryProven: boolean;
 }
 
+export interface KnownLabelSnapshot {
+  readonly labelRecordedAtTick: number | null;
+  readonly carerAccountRecordedAtTick: number | null;
+  readonly exclusionLimitsRecordedAtTick: number | null;
+  readonly escalationAtTick: number | null;
+  readonly adjustmentIntentAtTick: number | null;
+  readonly boundariesReviewedAtTick: number | null;
+  readonly labelYears: number;
+  readonly informantYears: number;
+  readonly examinationAchieved: boolean;
+  readonly labelPresent: boolean;
+  readonly informantPresent: boolean;
+  readonly carerLeft: boolean;
+  readonly teamResponded: boolean;
+  readonly teamObserved: boolean;
+  readonly baselineClaimAttempted: boolean;
+  readonly labelClaimAttempted: boolean;
+  readonly cannotAssessAttempted: boolean;
+  readonly laxativeAttempted: boolean;
+  readonly observationRecord: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+  } | null;
+  readonly behaviourRecord: {
+    readonly atTick: number; readonly label: string; readonly labelYears: number;
+    readonly usualDistress: string; readonly todayDescription: string;
+    readonly eatingToday: boolean; readonly informantYears: number;
+    readonly informantPresent: boolean; readonly examinationAchieved: boolean;
+  } | null;
+  readonly observation: {
+    readonly atTick: number; readonly heartRateBpm: number; readonly systolicMmHg: number;
+    readonly diastolicMmHg: number; readonly respiratoryRateBpm: number;
+    readonly spo2Percent: number; readonly coreTemperatureC: number;
+    readonly label: string; readonly labelYears: number;
+    readonly usualDistress: string; readonly todayDescription: string;
+    readonly eatingToday: boolean; readonly informantYears: number;
+    readonly informantPresent: boolean; readonly examinationAchieved: boolean;
+    readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: boolean;
+  readonly doseModelAvailable: boolean;
+  readonly durableRecoveryProven: boolean;
+}
+
 export interface DeferredStepSnapshot {
   readonly injuryRecordedAtTick: number | null;
   readonly pendingStepRecordedAtTick: number | null;
@@ -5203,6 +5251,7 @@ export interface EquipmentSnapshot {
     readonly unownedDelay?: UnownedDelaySnapshot;
     readonly thirdAttendance?: ThirdAttendanceSnapshot;
     readonly deferredStep?: DeferredStepSnapshot;
+    readonly knownLabel?: KnownLabelSnapshot;
     readonly incidentalClot?: IncidentalClotSnapshot;
     readonly normalTestToxicity?: NormalTestToxicitySnapshot;
     readonly prognosisQuestion?: PrognosisQuestionSnapshot;

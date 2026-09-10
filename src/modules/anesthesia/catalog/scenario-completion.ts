@@ -239,6 +239,7 @@ import { quietChestCompletionEvidence } from '../../surgery-trauma/quiet-chest-c
 import { unownedDelayCompletionEvidence } from '../../surgery-trauma/unowned-delay-completion';
 import { thirdAttendanceCompletionEvidence } from '../../surgery-trauma/third-attendance-completion';
 import { deferredStepCompletionEvidence } from '../../surgery-trauma/deferred-step-completion';
+import { knownLabelCompletionEvidence } from '../../surgery-trauma/known-label-completion';
 import { countedRateCompletionEvidence } from '../../medical-surgical-nursing/counted-rate-completion';
 import { pairedReadingCompletionEvidence } from '../../medical-surgical-nursing/paired-reading-completion';
 import { afferentLimbCompletionEvidence } from '../../medical-surgical-nursing/afferent-limb-completion';
@@ -589,6 +590,7 @@ export function auditClinicalScenario(
     ...unownedDelayCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...thirdAttendanceCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...deferredStepCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...knownLabelCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...countedRateCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...pairedReadingCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...afferentLimbCompletionEvidence(scenario, capabilityVersion, moduleId),

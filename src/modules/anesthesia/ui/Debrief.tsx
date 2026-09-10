@@ -68,6 +68,7 @@ import { supportsQuietChest } from '../../surgery-trauma/quiet-chest';
 import { supportsUnownedDelay } from '../../surgery-trauma/unowned-delay';
 import { supportsThirdAttendance } from '../../surgery-trauma/third-attendance';
 import { supportsDeferredStep } from '../../surgery-trauma/deferred-step';
+import { supportsKnownLabel } from '../../surgery-trauma/known-label';
 import { supportsIncidentalClot } from '../../oncology/incidental-clot';
 import { supportsNormalTestToxicity } from '../../oncology/normal-test-toxicity';
 import { supportsPrognosisQuestion } from '../../oncology/prognosis-question';
@@ -1089,6 +1090,51 @@ export function objectiveFindings(
         'handoff-oncology-incidental-clot-an-unresolved-decision': { met: !!handoff, tick: handoff?.tick,
           finding: (handoff ? 'The finding, its route, the conditional strength and very low certainty, the figures in both directions, and his bleeding history all travelled. ' : 'Current full findings, the recorded certainty, or continuing-care ownership remains incomplete. ')
             + 'The decision was handed over open, which is what an unresolved decision looks like when it is handed over honestly rather than closed to make the handoff tidy.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id.includes('-surgery-trauma-known-label-')) {
+      if (!supportsKnownLabel(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The surgery and trauma known-label lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^known-label-${id}-\\d+$`).test(entry.eventId));
+      const label = event('label-recorded'); const carer = event('carer-account-recorded');
+      const limits = event('exclusion-limits-recorded'); const escalation = event('escalation-requested');
+      const intent = event('adjustment-intent-recorded'); const boundaries = event('boundary-review');
+      const handoff = event('handoff'); const left = event('carer-left');
+      const answered = log.find((entry) => /^known-label-reviewed-reassessment-\d+$/.test(entry.eventId));
+      const refusedBaseline = event('baseline-claim-refused'); const refusedLabel = event('label-claim-refused');
+      const refusedAssess = event('cannot-assess-refused'); const refusedLaxative = event('laxative-trial-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'record-surgery-trauma-known-label-what-the-label-explains': { met: !!label, tick: label?.tick,
+          finding: (label ? 'The label was recorded together with the work it does: it accounts for the abdomen, the not eating and the distress at once. ' : 'The label was never recorded as an explanation, so it did its work unexamined. ')
+            + 'A diagnosis that explains every feature leaves no remainder for anybody to be curious about.' },
+        'record-surgery-trauma-known-label-what-changed-and-who-says-so': { met: !!carer, tick: carer?.tick,
+          finding: (carer ? 'The account of the person able to compare today with every other day was recorded as history, with her name and her six years attached. ' : 'The only comparative account available was never recorded, and its author goes home at four. ')
+            + (left ? 'The support worker left during this run and the relief worker had met him twice. ' : '')
+            + 'Quiet when he is usually loud, refusing what he never refuses: that is an observation nobody else in the building can make.' },
+        'recognize-surgery-trauma-known-label-explaining-is-not-excluding': { met: !!label && !refusedBaseline && !refusedLabel, tick: label?.tick,
+          finding: (refusedLabel ? 'Letting the recorded diagnosis close the assessment was attempted and refused. ' : label ? 'The label was treated as explaining rather than as excluding. ' : 'The label was never separated from what it could rule out. ')
+            + (refusedBaseline ? 'Filing today as his baseline was attempted and refused; the person with six years of baseline says it is not. ' : '')
+            + 'Nothing here disputes the constipation, and nothing here lets it answer the question.' },
+        'record-surgery-trauma-known-label-what-the-label-cannot-exclude': { met: !!limits, tick: limits?.tick,
+          finding: (limits ? 'What the label cannot exclude was recorded with its figures. ' : 'What the label cannot exclude was never recorded. ')
+            + 'A mean of 11.04 physical conditions each and multimorbidity in 98.7 percent of 1,023 adults, with constipation among the five most prevalent: a true label here is one of about eleven, and no member of that set rules out any other.' },
+        'activate-surgery-trauma-known-label-ask-for-an-examination-he-can-take-part-in': { met: !!escalation && !refusedAssess && !refusedLaxative, tick: escalation?.tick,
+          finding: (escalation ? 'The surgical team was asked to see him, with the documented change and the absence of any examination he could take part in stated, and no suggestion that the constipation is absent. ' : 'The surgical team was never asked. ')
+            + (refusedAssess ? 'Recording him as unable to be assessed was attempted and refused: it converts an adjustment nobody made into a property of the patient. ' : '')
+            + (refusedLaxative ? 'Treating the label and reviewing was attempted and refused; used as a test it confirms the label whichever way it goes. ' : '')
+            + 'The request is for an examination, not for an argument about a diagnosis.' },
+        'record-surgery-trauma-known-label-bounded-adjustment-intent': { met: !!intent, tick: intent?.tick,
+          finding: (intent ? 'The examination and the time, quiet and familiar person it needs, any investigation and how it is explained to him, any prescribing, and whether he stays were recorded as the qualified team\u2019s. ' : 'Bounded qualified-team intent was never recorded. ')
+            + 'Nothing was ordered and no drug, dose, route, investigation, or procedure was chosen or displayed here.' },
+        'review-surgery-trauma-known-label-the-label-is-probably-right': { met: !!boundaries, tick: boundaries?.tick,
+          finding: (boundaries ? 'The evidence was reviewed including the strongest finding, which supports the label. ' : 'The boundary and certainty review is missing. ')
+            + 'Mean 11.04 conditions and 98.7 percent multimorbidity make betting on the constipation a good bet; a confidential inquiry into 247 deaths found 22 percent dying before 50 and 37 percent of deaths amenable to good healthcare against 13 percent, with carers not feeling listened to significant at p=0.006; and a narrative review names the pattern diagnostic overshadowing. Being usually right is how a label stops anybody looking.' },
+        'handoff-surgery-trauma-known-label-an-examination-that-has-not-happened': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The label with its work, the recorded account and its author, the limits of what a label excludes, and the bounded intent all travelled. ' : 'Current full findings, the recorded account, or continuing-care ownership remains incomplete. ')
+            + (answered ? 'The team read the constipation the same way and is coming to examine him with the adjustments it needs. ' : 'The team had not answered by the end of this run, and the handoff had to survive that. ')
+            + 'No diagnosis, disposition, or outcome is certified, and nothing asserts that the constipation is absent.' },
       };
       const result = results[objective.id]!;
       return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;

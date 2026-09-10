@@ -4083,6 +4083,23 @@
       "limitationManifestHash": "sha256:7966d240c8e0c36aef6c70afa419b0b4c93a05c8e8d7310fd35f589862e56363"
     },
     {
+      "scenarioId": "known-label-an-explanation-that-excludes-nothing",
+      "contentVersion": "0.1.0",
+      "moduleId": "surgery-trauma",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:16de513dc380fef2c1abd4d678cf493ccd11faa182e3baf684325cfad384be56",
+      "defaultsHash": "sha256:b8dc6718cf7059b83029a031c36ee22bfcf0afeae101e0c9032f4022d02f8d82",
+      "maturityHash": "sha256:7674995d946c06b14d064877198248603ff11c00b9d5e861c751ddbf07bf8e61",
+      "sourceManifestHash": "sha256:7bbeea09f5bc1f1bdf1dcb73fdf84fa2616514a062b8f5d9180398876304f5ee",
+      "limitationManifestHash": "sha256:5a387194a02358373190f512f1d7d0d6ccefa59c71435026bf89029d829d9230"
+    },
+    {
       "scenarioId": "negative-scan-a-scan-that-cannot-say-no",
       "contentVersion": "0.1.0",
       "moduleId": "surgery-trauma",

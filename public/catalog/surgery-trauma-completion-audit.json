@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "moduleId": "surgery-trauma",
   "capabilityVersion": "0.1.0-alpha.48",
-  "scenarioCount": 8,
+  "scenarioCount": 9,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -995,6 +995,132 @@
           "status": "satisfied",
           "evidence": [
             "deferred-step-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "known-label-an-explanation-that-excludes-nothing",
+      "title": "A known label: an explanation that excludes nothing",
+      "moduleId": "surgery-trauma",
+      "environment": "ward",
+      "estimatedMinutes": 9,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario known-label-an-explanation-that-excludes-nothing carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "missing",
+          "evidence": [
+            "This scenario declares 8 objectives; the contract allows at most 5."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "known-label-fixtures.ts binds seed 3628 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No bowel, pain, behavioural, or disease model is claimed; both transitions are authored and neither is a patient event."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "known-label.ts runs two authored transitions and neither changes the patient. At 14 minutes the support worker’s shift ends and a relief worker who has met him twice arrives — the only beat in this module in which what changes is who is in the room rather than anything about the case, and the rocking, the hand on the abdomen and every monitored number are identical either side of it. The surgical team answers 35 minutes after it is asked, slowly enough that waiting for it is never what preserves the account, reads the constipation as explaining rather than excluding, and takes ownership of the examination with its adjustments, of any investigation, and of whether he stays. Nothing arrives uncalled."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "The learner records the label with the work it is doing, records what changed in the words of somebody able to compare, records what the label cannot exclude, asks the surgical team for an examination he can take part in without disputing the diagnosis, records bounded qualified-team intent including the adjustments the examination needs, and reviews the boundaries. Filing today as his baseline, letting the recorded diagnosis close the assessment, recording him as unable to be assessed, and treating the label and reviewing are each refused, and no refusal asserts that the constipation is absent. The cannot-assess refusal names the specific harm: it converts an adjustment nobody made into a property of the patient."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "The recorded label, the recorded account and its author, the recorded limits of what a label excludes, the request to the surgical team, bounded adjustment intent, the boundary review, and a current full assessment permit handoff with the diagnosis, the examination and the disposition all open. Instructor takeover bounds a run with no escalation at 150 minutes, or an unfinished session at eight hours."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "satisfied",
+          "evidence": [
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary recorded actions. Unassisted mode is silent and coached withholds the two non-urgent beats. The prompts read only the learner’s own recorded steps, never say the label is wrong, and never name a competing diagnosis, because a learner who leaves believing that recorded diagnoses in this population should be distrusted has learned the wrong thing. The example is driven through the real engine in tests rather than asserted as a script, and it takes the history while the support worker is still present, because one that recorded the account after she left would teach that the account keeps."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "Eight event-bound objectives distinguish recording a label with the work it does, taking history from the only person able to compare, refusing explanation as exclusion, recording what a true label cannot rule out, asking for an adjusted examination without disputing the diagnosis, bounded qualified-team intent, evidence whose strongest finding supports the label it warns about, and accountable handoff of an assessment recorded as adjusted-for rather than impossible. Refused shortcuts remain visible, and no diagnosis, disposition, or outcome is certified."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "3 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "known-label-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
           ]
         },
         {
