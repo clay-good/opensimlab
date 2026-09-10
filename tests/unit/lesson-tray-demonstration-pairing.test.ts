@@ -28,6 +28,10 @@ import { INFECTIOUS_DISEASE_TRAYS } from '../../src/modules/infectious-disease/t
 import { INFECTIOUS_DISEASE_DEMONSTRATIONS } from '../../src/modules/infectious-disease/demo/demonstrations';
 import { MEDICAL_SURGICAL_NURSING_TRAYS } from '../../src/modules/medical-surgical-nursing/trays';
 import { MEDICAL_SURGICAL_NURSING_DEMONSTRATIONS } from '../../src/modules/medical-surgical-nursing/demo/demonstrations';
+import { NEONATOLOGY_TRAYS } from '../../src/modules/neonatology/trays';
+import { NEONATOLOGY_DEMONSTRATIONS } from '../../src/modules/neonatology/demo/demonstrations';
+import { TOXICOLOGY_TRAYS } from '../../src/modules/toxicology/trays';
+import { TOXICOLOGY_DEMONSTRATIONS } from '../../src/modules/toxicology/demo/demonstrations';
 import { NEUROLOGY_TRAYS } from '../../src/modules/neurology/trays';
 import { NEUROLOGY_DEMONSTRATIONS } from '../../src/modules/neurology/demo/demonstrations';
 import { OBSTETRICS_TRAYS } from '../../src/modules/obstetrics/trays';
@@ -54,6 +58,8 @@ const MODULES: readonly {
   { id: 'endocrine-metabolic', trays: ENDOCRINE_METABOLIC_TRAYS, demonstrations: ENDOCRINE_METABOLIC_DEMONSTRATIONS },
   { id: 'infectious-disease', trays: INFECTIOUS_DISEASE_TRAYS, demonstrations: INFECTIOUS_DISEASE_DEMONSTRATIONS },
   { id: 'medical-surgical-nursing', trays: MEDICAL_SURGICAL_NURSING_TRAYS, demonstrations: MEDICAL_SURGICAL_NURSING_DEMONSTRATIONS },
+  { id: 'neonatology', trays: NEONATOLOGY_TRAYS, demonstrations: NEONATOLOGY_DEMONSTRATIONS },
+  { id: 'toxicology', trays: TOXICOLOGY_TRAYS, demonstrations: TOXICOLOGY_DEMONSTRATIONS },
   { id: 'neurology', trays: NEUROLOGY_TRAYS, demonstrations: NEUROLOGY_DEMONSTRATIONS },
   { id: 'obstetrics', trays: OBSTETRICS_TRAYS, demonstrations: OBSTETRICS_DEMONSTRATIONS },
   { id: 'oncology', trays: ONCOLOGY_TRAYS, demonstrations: ONCOLOGY_DEMONSTRATIONS },

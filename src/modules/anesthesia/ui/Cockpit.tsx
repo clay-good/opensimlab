@@ -1779,28 +1779,6 @@ export function Cockpit({
           septicShockLabel={equipment?.resuscitation.septicShockLabel}
           meningitisImaging={equipment?.resuscitation.meningitisImaging}
           lowScore={equipment?.resuscitation.lowScore}
-          neonatologyNicuHandoffGuidance={session.guidance}
-          neonatologyNicuHandoffDemonstrating={demonstrating && registryDemo?.id === 'NicuHandoff'}
-          neonatologyThermoregulationGuidance={session.guidance}
-          neonatologyThermoregulationDemonstrating={demonstrating && registryDemo?.id === 'Thermoregulation'}
-          neonatologySepsisGuidance={session.guidance}
-          neonatologySepsisDemonstrating={demonstrating && registryDemo?.id === 'NeonatalSepsis'}
-          neonatologyHypoglycemiaGuidance={session.guidance}
-          neonatologyHypoglycemiaDemonstrating={demonstrating && registryDemo?.id === 'NeonatalHypoglycemia'}
-          neonatologyPretermRespiratoryGuidance={session.guidance}
-          neonatologyPretermRespiratoryDemonstrating={demonstrating && registryDemo?.id === 'PretermRespiratoryDistress'}
-          neonatologyMeconiumGuidance={session.guidance}
-          neonatologyMeconiumDemonstrating={demonstrating && registryDemo?.id === 'MeconiumTransition'}
-          neonatologyBradycardiaGuidance={session.guidance}
-          neonatologyBradycardiaDemonstrating={demonstrating && registryDemo?.id === 'NeonatalBradycardia'}
-          neonatologyIneffectiveVentilationGuidance={session.guidance}
-          neonatologyIneffectiveVentilationDemonstrating={demonstrating && registryDemo?.id === 'IneffectiveVentilation'}
-          neonatologyApneaGuidance={session.guidance}
-          neonatologyApneaDemonstrating={demonstrating && registryDemo?.id === 'NeonatalApnea'}
-          neonatologyTermTransitionGuidance={session.guidance}
-          neonatologyTermTransitionDemonstrating={demonstrating && registryDemo?.id === 'TermTransition'}
-          neonatologyTensionPneumothoraxGuidance={session.guidance}
-          neonatologyTensionPneumothoraxDemonstrating={demonstrating && registryDemo?.id === 'TensionPneumothorax'}
           neurologyMyastheniaGuidance={session.guidance}
           neurologyMyastheniaDemonstrating={demonstrating && registryDemo?.id === 'Myasthenia'}
           neurologyDysreflexiaGuidance={session.guidance}
@@ -2019,39 +1997,6 @@ export function Cockpit({
           })}
           onObstetricsOxytocinTachysystoleResponse={(action) => session.act({
             type: 'oxytocin-associated-uterine-tachysystole-response', payload: { action },
-          })}
-          onNeonatologyTermTransitionResponse={(action) => session.act({
-            type: 'term-newborn-transition-response', payload: { action },
-          })}
-          onNeonatologyApneaResponse={(action) => session.act({
-            type: 'neonatal-apnea-response', payload: { action },
-          })}
-          onNeonatologyIneffectiveVentilationResponse={(action) => session.act({
-            type: 'ineffective-ventilation-correction-response', payload: { action },
-          })}
-          onNeonatologyBradycardiaResponse={(action) => session.act({
-            type: 'neonatal-bradycardia-response', payload: { action },
-          })}
-          onNeonatologyMeconiumTransitionResponse={(action) => session.act({
-            type: 'meconium-stained-transition-response', payload: { action },
-          })}
-          onNeonatologyPretermRespiratoryDistressResponse={(action) => session.act({
-            type: 'preterm-respiratory-distress-response', payload: { action },
-          })}
-          onNeonatologyHypoglycemiaResponse={(action) => session.act({
-            type: 'neonatal-hypoglycemia-response', payload: { action },
-          })}
-          onNeonatologySepsisResponse={(action) => session.act({
-            type: 'neonatal-sepsis-response', payload: { action },
-          })}
-          onNeonatologyThermoregulationResponse={(action) => session.act({
-            type: 'neonatal-thermoregulation-response', payload: { action },
-          })}
-          onNeonatologyNicuHandoffResponse={(action) => session.act({
-            type: 'delivery-room-to-nicu-handoff-response', payload: { action },
-          })}
-          onNeonatologyTensionPneumothoraxResponse={(action) => session.act({
-            type: 'neonatal-tension-pneumothorax-response', payload: { action },
           })}
           onEndocrineDkaResolutionResponse={(action) => session.act({
             type: 'dka-resolution-transition-response', payload: { action },

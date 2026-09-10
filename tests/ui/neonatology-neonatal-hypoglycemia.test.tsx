@@ -4,14 +4,20 @@ import { describe, expect, it } from 'vitest';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { NEONATOLOGY_TRAYS } from '../../src/modules/neonatology/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, NEONATOLOGY_TRAYS);
 import { NEONATAL_HYPOGLYCEMIA as SCENARIO } from '../../src/modules/neonatology/scenarios/neonatal-hypoglycemia';
 const markup = (assessment: NonNullable<ActionCockpitProps['resuscitation']['neonatologyHypoglycemiaAssessment']>, extra: {
-  neonatologyHypoglycemiaGuidance?: ActionCockpitProps['neonatologyHypoglycemiaGuidance'];
-  neonatologyHypoglycemiaDemonstrating?: boolean;
-} = {}) => renderToStaticMarkup(createElement(ActionCockpit, { scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, neonatologyHypoglycemiaAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 24, respiratoryRateBpm: 40, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 2 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onNeonatologyHypoglycemiaResponse: () => {}, ...extra } satisfies ActionCockpitProps));
+  guidance?: ActionCockpitProps['guidance'];
+  demonstratingLessonId?: string | undefined;
+} = {}) => renderToStaticMarkup(createElement(ActionCockpit, { scenario: SCENARIO, region: UNITED_STATES, lessonTrays: NEONATOLOGY_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, neonatologyHypoglycemiaAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 24, respiratoryRateBpm: 40, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 2 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onLessonAction: () => {}, ...extra } satisfies ActionCockpitProps));
 describe('Neonatology neonatal-hypoglycemia experience', () => {
   it('is discoverable at its exact calm route', () => { const index = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/neonatology' })); expect(index).toContain('href="/neonatology/scenario/neonatal-hypoglycemia"'); expect(index).toContain('Neonatal hypoglycemia: signs, value, and trajectory'); const route = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/neonatology/scenario/neonatal-hypoglycemia' })); expect(route).toContain('<h1>Neonatal hypoglycemia: signs, value, and trajectory</h1>'); });
-  it('fails closed and exposes one calm cognitive action at a time', () => { expect(crisisResponseAvailability(SCENARIO).hasNeonatologyHypoglycemiaResponse).toBe(true); expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasNeonatologyHypoglycemiaResponse).toBe(false); const states = [{ supportAtTick: null, contextAtTick: null, recognitionAtTick: null, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: null, recognitionAtTick: null, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, recognitionAtTick: null, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, recognitionAtTick: 1, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, recognitionAtTick: 1, readinessAtTick: 1, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, recognitionAtTick: 1, readinessAtTick: 1, reassessmentAtTick: 2, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, recognitionAtTick: 1, readinessAtTick: 1, reassessmentAtTick: 2, handoffAtTick: 3 }]; expect(states.map((state) => (markup(state).match(/<button/g) ?? []).length)).toEqual([1,1,1,1,1,1,0]); expect(markup(states[0]!)).toContain('Read the sign and the number together.'); const later = markup(states[4]!); expect(later).toContain('One better value is a checkpoint, not closure.'); expect(later).toContain('Review the fixed 30-minute report'); expect((later.match(/role="status"/g) ?? [])).toHaveLength(1); for (const html of states.map((state) => markup(state))) { const buttons = [...html.matchAll(/<button[^>]*>(.*?)<\/button>/g)].map((match) => match[1]); expect(buttons.join(' ')).not.toMatch(/history|examin|score|monitor|measure|glucose|test|feed|dextrose|fluid|drug|dose|access|warm|cool|device|oxygen|ventilat|airway|resuscitat|transport|procedure|diagnos|disposition/iu); } });
+  it('fails closed and exposes one calm cognitive action at a time', () => { expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasNeonatologyHypoglycemiaResponse).toBe(true); expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasNeonatologyHypoglycemiaResponse).toBe(false); const states = [{ supportAtTick: null, contextAtTick: null, recognitionAtTick: null, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: null, recognitionAtTick: null, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, recognitionAtTick: null, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, recognitionAtTick: 1, readinessAtTick: null, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, recognitionAtTick: 1, readinessAtTick: 1, reassessmentAtTick: null, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, recognitionAtTick: 1, readinessAtTick: 1, reassessmentAtTick: 2, handoffAtTick: null }, { supportAtTick: 1, contextAtTick: 1, recognitionAtTick: 1, readinessAtTick: 1, reassessmentAtTick: 2, handoffAtTick: 3 }]; expect(states.map((state) => (markup(state).match(/<button/g) ?? []).length)).toEqual([1,1,1,1,1,1,0]); expect(markup(states[0]!)).toContain('Read the sign and the number together.'); const later = markup(states[4]!); expect(later).toContain('One better value is a checkpoint, not closure.'); expect(later).toContain('Review the fixed 30-minute report'); expect((later.match(/role="status"/g) ?? [])).toHaveLength(1); for (const html of states.map((state) => markup(state))) { const buttons = [...html.matchAll(/<button[^>]*>(.*?)<\/button>/g)].map((match) => match[1]); expect(buttons.join(' ')).not.toMatch(/history|examin|score|monitor|measure|glucose|test|feed|dextrose|fluid|drug|dose|access|warm|cool|device|oxygen|ventilat|airway|resuscitat|transport|procedure|diagnos|disposition/iu); } });
 });
 
 describe('Neonatal hypoglycemia tutor and worked example', () => {
@@ -21,39 +27,39 @@ describe('Neonatal hypoglycemia tutor and worked example', () => {
 
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(start)).not.toContain('A moment to think');
-    expect(markup(start, { neonatologyHypoglycemiaGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(start, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner\u2019s own recorded steps when guidance is on', () => {
-    const opening = markup(start, { neonatologyHypoglycemiaGuidance: 'guided' });
+    const opening = markup(start, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('Confirm the glucose pathway and the feeding pathway');
-    const next = markup(connected, { neonatologyHypoglycemiaGuidance: 'guided' });
+    const next = markup(connected, { guidance: 'guided' });
     expect(next).toContain('Escalate now, and refuse the threshold');
     expect(next).not.toContain('Confirm the glucose pathway and the feeding pathway');
   });
 
   it('holds both statements together without letting either cancel the other', () => {
-    const html = markup(connected, { neonatologyHypoglycemiaGuidance: 'guided' });
+    const html = markup(connected, { guidance: 'guided' });
     expect(html).toContain('No single glucose concentration universally defines');
     expect(html).toContain('Both are true');
     expect(html).toContain('stay open');
   });
 
   it('reviews the pathway rather than naming a dose', () => {
-    const html = markup(recognized, { neonatologyHypoglycemiaGuidance: 'guided' });
+    const html = markup(recognized, { guidance: 'guided' });
     expect(html).toContain('names no gel, no bolus and no dose');
   });
 
   it('goes quiet once the handoff is recorded', () => {
     const ended = { ...recognized, readinessAtTick: 3, reassessmentAtTick: 4, handoffAtTick: 5 };
-    expect(markup(ended, { neonatologyHypoglycemiaGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(ended, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = 'Confirm prepared support';
     expect(markup(start)).toContain(label);
-    const watching = markup(start, { neonatologyHypoglycemiaGuidance: 'guided', neonatologyHypoglycemiaDemonstrating: true });
+    const watching = markup(start, { guidance: 'guided', demonstratingLessonId: 'NeonatalHypoglycemia' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');
