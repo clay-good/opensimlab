@@ -1,0 +1,61 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+
+export const RENAL_RHABDOMYOLYSIS_NUMBER: Scenario = {
+  schemaVersion: 1,
+  metadata: {
+    id: 'rhabdomyolysis-a-number-that-does-not-carry-the-risk', version: '0.1.0', maturity: 'preview',
+    title: 'Rhabdomyolysis: a number that does not carry the risk', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
+    estimatedMinutes: 60, difficulty: 'intermediate',
+    objectives: [
+      { id: 'renal-rhabdomyolysis-cause', statement: 'Establish the cause, because the cause is what the observed risk tracks.', measure: 'Review the unaccustomed heavy training session, the absence of trauma, toxin, heat illness, sepsis, and arrest, and the supplied timeline, with qualified support. In the cohort this lesson draws on, exercise sat near the bottom of the observed range and compartment syndrome, sepsis, and post-arrest at the top. That is an observed distribution, not a prognosis for this fictional patient.' },
+      { id: 'renal-rhabdomyolysis-compartment', statement: 'Examine for the one thing here that is time-critical and is not a number.', measure: 'Perform and record a compartment examination of the affected limbs, independently of any laboratory result. A compartment syndrome is found at the bedside and released surgically; no creatine kinase value rules it in or out, and this lesson performs no procedure and prescribes no pressure threshold.' },
+      { id: 'renal-rhabdomyolysis-number', statement: 'Separate what the creatine kinase shows from what it decides.', measure: 'Record that the supplied value is one variable among several, that it did not set the treatment or the disposition in the sources reviewed, and that a rising value alongside a normal creatinine and preserved urine output is not deterioration. No threshold, cutoff, dialysis criterion, or discharge criterion is taught here.' },
+      { id: 'renal-rhabdomyolysis-additions', statement: 'Distinguish supported care from familiar additions that are not established.', measure: 'Arrange qualified individualized fluid resuscitation ownership, and review that neither bicarbonate nor mannitol improved renal failure or the need for dialysis in the systematic review examined, whose own evidence quality was rated very low. Absence of demonstrated benefit is not demonstrated absence of benefit; no volume, rate, product, or alkalinization target is selected.' },
+      { id: 'renal-rhabdomyolysis-handoff', statement: 'Transfer with the cause, the examination, and the fluid ownership explicit.', measure: 'Hand off the established cause, the recorded compartment examination, the fluid ownership, monitoring, and current full findings. A falling creatine kinase, a normal value, and a completed prognosis are not handoff gates; the number is not the discharge criterion and this rehearsal supplies none.' },
+    ],
+    clinicalReview: {
+      reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED', competingInterests: 'None declared',
+      reviewedOn: '1970-01-01', reviewBy: '1970-01-01', contentVersion: '0.1.0',
+      sources: [
+        'McMahon GM, Zeng X, Waikar SS. A risk prediction score for kidney failure or mortality in rhabdomyolysis. JAMA Internal Medicine. 2013;173:1821–1828. doi:10.1001/jamainternmed.2013.9774. Retrospective, two teaching hospitals in one city, restricted to a creatine kinase above 5,000 U/L within three days, so it says nothing about anyone below that. A C statistic of 0.82–0.83 is discrimination within the cohorts it was built and checked in, not a prediction for an individual, and the record lists two published comments on it.',
+        'Sawhney JS, Kasotakis G, Goldenberg A, Abramson S, et al. Management of rhabdomyolysis: a practice management guideline from the Eastern Association for the Surgery of Trauma. The American Journal of Surgery. 2022;224:196–204. doi:10.1016/j.amjsurg.2021.11.022. The authors rate the quality of evidence very low, note that the vast majority of the literature is retrospective, and open by saying the treatment remains controversial. Absence of demonstrated benefit is not demonstrated absence of benefit, and that cuts against confidence in either direction.',
+        'Oh RC, Arter JL, Tiglao SM, Larson SL. Exertional rhabdomyolysis: a case series of 30 hospitalized patients. Military Medicine. 2015;180:201–207. doi:10.7205/MILMED-D-14-00274. Thirty retrospective cases from a military population with trauma, toxin and heat illness excluded, so it generalises to almost nobody. The inverse correlation it reports between creatinine and creatine kinase is one finding in one small series and is not offered here as a rule.',
+      ],
+    },
+    limitations: ['renal-rhabdomyolysis-number-bounds', 'renal-rhabdomyolysis-authored-contrasts', 'renal-rhabdomyolysis-continuing-care'],
+  },
+  patient: {
+    ageYears: 24, sex: 'male', heightCm: 181, weightKg: 79, asaClass: 1,
+    diagnosis: 'Exertional rhabdomyolysis after an unaccustomed heavy training session, with a high creatine kinase and preserved kidney function',
+    procedure: 'Cause review, compartment examination, review of what the creatine kinase decides, qualified fluid ownership, reassessment, and handoff',
+    comorbidities: ['Unaccustomed heavy resistance training two days ago, first session in eight months; no trauma, no crush, no toxin, no heat illness, no seizure, no arrest, and no sepsis is supplied',
+      'Creatine kinase 48,000 U/L; creatinine 88 µmol/L, potassium 4.4 mmol/L, bicarbonate 24 mmol/L, calcium 2.28 mmol/L, phosphate 1.2 mmol/L',
+      'Urine output 1.4 mL/kg/h over the last six hours; urine is dark and dipstick-positive for blood with no red cells on microscopy',
+      'Thighs and shoulders are very sore and stiff; distal pulses are present and sensation is intact at the supplied examination',
+      'The admitting team has raised dialysis and urine alkalinization on the strength of the creatine kinase value'],
+    medications: ['No regular medications; no creatine or other supplement is supplied'],
+    allergies: ['No known drug allergies'], fasting: 'Not a fasting lesson; nothing here turns on the airway or on oral intake',
+    baseline: { heartRateBpm: 88, meanArterialMmHg: 88, strokeVolumeMl: 82, hemoglobinGPerDl: 14.6,
+      bloodVolumeMl: 5300, coreTemperatureC: 37.1, arterialStiffness: 1, baroreflexGain: 1, fixedStrokeVolume: true },
+    airway: { difficulty: 0.1, difficultMaskVentilation: false, assessment: 'Awake, oriented, uncomfortable from muscle pain; the airway is not the problem in this lesson' },
+    respiratory: { profile: 'healthy' },
+  },
+  equipment: { monitoring: ['ecg', 'nibp', 'pulse-oximetry', 'temperature'], ventilator: { mode: 'manual', fio2: 0.21,
+    tidalVolumeMl: 520, respiratoryRateBpm: 16, freshGasFlowLPerMin: 10, delivering: false } },
+  formulary: [],
+  timeline: [
+    { id: 'renal-rhabdomyolysis-presentation', type: 'narrative', target: 'renal-rhabdomyolysis', atTick: 0, severity: 'critical',
+      message: 'A fictional 24-year-old man is two days past his first heavy resistance session in eight months. His thighs and shoulders are very sore and stiff and his urine is dark. Creatine kinase is 48,000 U/L. Creatinine is 88 µmol/L, potassium 4.4 mmol/L, bicarbonate 24 mmol/L, calcium 2.28 mmol/L, and phosphate 1.2 mmol/L. Urine output has been 1.4 mL/kg/h over six hours; the dipstick is positive for blood with no red cells on microscopy. Distal pulses are present and sensation is intact at the supplied examination. No trauma, crush, toxin, heat illness, seizure, arrest, or sepsis is supplied. The admitting team has raised dialysis and urine alkalinization on the strength of the creatine kinase value.' },
+    { id: 'renal-rhabdomyolysis-boundary', type: 'narrative', target: 'renal-rhabdomyolysis-boundary', atTick: 0, severity: 'warning',
+      message: 'The cause review, the compartment examination, and qualified fluid ownership are independent decisions, and none of them waits for a laboratory result. In the cohort this lesson draws on, the observed rate of replacement therapy or death ran from 1.7% for myositis and 3.2% for exercise to 39.3% for sepsis, 41.2% for compartment syndrome and 58.5% after cardiac arrest, and the creatine kinase entered that model as one of eight variables. Those are observed distributions in retrospective cohorts, not a prognosis for this fictional patient, and no score, threshold, cutoff, dialysis criterion, or discharge criterion is taught here. A compartment syndrome is found at the bedside and released surgically; this lesson performs no procedure and supplies no pressure measurement. Neither bicarbonate nor mannitol improved renal failure or dialysis need in the systematic review examined, whose own evidence quality was rated very low — that is an absence of demonstrated benefit, not a demonstrated absence, and it is not a reason to withhold fluid. No volume, rate, product, or alkalinization target is selected. The 90-minute serial checkpoint and the 5-minute unexamined contrast are authored teaching intervals, not pharmacokinetics, safe waits, or grading deadlines. The creatine kinase keeps rising across this rehearsal while the creatinine and urine output hold, which is authored and predicts nothing about any patient. Partial checks do not refresh full assessment. No prognosis, biopsy, imaging, compartment pressure, recovery, or discharge clearance is claimed. Exhaled CO2 and FiO2 are unavailable.' },
+  ],
+  replayPoints: [{ id: 'renal-rhabdomyolysis-first-response', label: 'Return to the cause and the bedside', objectiveId: 'renal-rhabdomyolysis-cause', atTick: 1,
+    reason: 'Separate establishing the cause from examining the limbs, and both from what the creatine kinase decides.' }],
+  debrief: { rubric: [
+    { id: 'renal-rhabdomyolysis-cause-review', objectiveId: 'renal-rhabdomyolysis-cause', question: 'What was the cause, and what did the observed distribution by cause show without predicting this patient?' },
+    { id: 'renal-rhabdomyolysis-compartment-review', objectiveId: 'renal-rhabdomyolysis-compartment', question: 'What did the compartment examination look for, and which laboratory result could have replaced it?' },
+    { id: 'renal-rhabdomyolysis-number-review', objectiveId: 'renal-rhabdomyolysis-number', question: 'The creatine kinase rose while the creatinine and urine output held. What did that change?' },
+    { id: 'renal-rhabdomyolysis-additions-review', objectiveId: 'renal-rhabdomyolysis-additions', question: 'What did the review of bicarbonate and mannitol establish, and how strong was the evidence either way?' },
+    { id: 'renal-rhabdomyolysis-handoff-review', objectiveId: 'renal-rhabdomyolysis-handoff', question: 'Who owns the fluid, the repeat examination, and the decision about when he leaves?' },
+  ] },
+};

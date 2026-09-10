@@ -211,6 +211,7 @@ import { renalHypocalcemiaCompletionEvidence } from '../../renal-electrolyte/hyp
 import { renalHypermagnesemiaCompletionEvidence } from '../../renal-electrolyte/hypermagnesemia-completion';
 import { renalHypomagnesemiaCompletionEvidence } from '../../renal-electrolyte/hypomagnesemia-completion';
 import { renalContrastAttributionCompletionEvidence } from '../../renal-electrolyte/contrast-attribution-completion';
+import { renalRhabdomyolysisCompletionEvidence } from '../../renal-electrolyte/rhabdomyolysis-completion';
 import { meningococcalSepsisCompletionEvidence } from '../../infectious-disease/meningococcal-sepsis-completion';
 import { obstructedKidneyCompletionEvidence } from '../../infectious-disease/obstructed-kidney-completion';
 import { febrileNeutropeniaCompletionEvidence } from '../../infectious-disease/febrile-neutropenia-completion';
@@ -565,6 +566,7 @@ export function auditClinicalScenario(
     ...renalHypermagnesemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalHypomagnesemiaCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...renalContrastAttributionCompletionEvidence(scenario, capabilityVersion, moduleId),
+    ...renalRhabdomyolysisCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...meningococcalSepsisCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...obstructedKidneyCompletionEvidence(scenario, capabilityVersion, moduleId),
     ...febrileNeutropeniaCompletionEvidence(scenario, capabilityVersion, moduleId),

@@ -228,6 +228,7 @@ export const WORKED_EXAMPLE_KEYS: readonly string[] = [
   'renal-electrolyte:hypokalemia-magnesium-and-ongoing-losses@0.1.0',
   'renal-electrolyte:hypomagnesemia-refractory-potassium-and-the-normal-number@0.1.0',
   'renal-electrolyte:hyponatremia-symptoms-and-reassessment@0.1.0',
+  'renal-electrolyte:rhabdomyolysis-a-number-that-does-not-carry-the-risk@0.1.0',
   'respiratory-medicine:acute-pulmonary-edema-respiratory-support-reassessment@0.1.0',
   'respiratory-medicine:acute-severe-asthma@0.1.0',
   'respiratory-medicine:acute-tracheostomy-obstruction@0.1.0',

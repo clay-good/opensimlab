@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "renal-electrolyte",
-  "recordCount": 8,
+  "recordCount": 9,
   "records": [
     {
       "recordId": "scenario:hyperkalemia-cardioprotection-and-rebound@0.1.0",
@@ -89,6 +89,17 @@
       "evidence": [
         "/catalog/renal-electrolyte-completion-audit.json#contrast-attribution-a-label-that-stopped-the-search@0.1.0",
         "/catalog/renal-electrolyte-quality-audit.json#contrast-attribution-a-label-that-stopped-the-search@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:rhabdomyolysis-a-number-that-does-not-carry-the-risk@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "rhabdomyolysis-a-number-that-does-not-carry-the-risk",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/renal-electrolyte-completion-audit.json#rhabdomyolysis-a-number-that-does-not-carry-the-risk@0.1.0",
+        "/catalog/renal-electrolyte-quality-audit.json#rhabdomyolysis-a-number-that-does-not-carry-the-risk@0.1.0"
       ]
     }
   ]

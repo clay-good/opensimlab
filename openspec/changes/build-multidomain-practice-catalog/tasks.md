@@ -7,8 +7,8 @@ credited toward the catalog until every item in the completion contract passes.
 
 - [ ] Approve the product position, 256-scenario target catalog, training-versus-runtime-tool
   boundary, fidelity classes, maturity vocabulary,
-  privacy exception, report retention, and no-hosted-MCP decision. The catalogue stands at 252 of
-  the 256, and the four missing labs are all renal and electrolyte, at slice 8 of 12.
+  privacy exception, report retention, and no-hosted-MCP decision. The catalogue stands at 253 of
+  the 256, and the three missing labs are all renal and electrolyte, at slice 9 of 12.
 - [ ] Resolve every conflict between this change and the master clinical-governance, privacy,
   delivery, module, curriculum, pedagogy, safety, adoption, and sustainability specifications.
 - [x] Publish a machine-readable scenario completion schema and validate all existing anesthesia
@@ -704,8 +704,8 @@ credited toward the catalog until every item in the completion contract passes.
     transport, communication, documentation, counseling, procedure, diagnosis, disposition, or
     outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
-  Neurology is 15 of 15 and endocrine and metabolic is 12 of 12. **Renal and electrolyte is 8 of
-  12**, and the four remaining labs are the whole of the gap between the catalogue's 252 and the
+  Neurology is 15 of 15 and endocrine and metabolic is 12 of 12. **Renal and electrolyte is 9 of
+  12**, and the three remaining labs are the whole of the gap between the catalogue's 253 and the
   256 target in section 0.
 
   The thirteen sub-tasks left open below are independent clinical review and inclusive-runtime
@@ -1355,6 +1355,22 @@ credited toward the catalog until every item in the completion contract passes.
     decides whether contrast should be given to anyone, prescribes or withholds fluid, sets a
     threshold, or orders or cancels imaging. Three sources verified through NCBI E-utilities,
     each carrying its own limits.
+  - [x] Renal/electrolyte slice 9/12 registers
+    `rhabdomyolysis-a-number-that-does-not-carry-the-risk@0.1.0`, a fictional 24-year-old man
+    two days after his first heavy training session in eight months, with a creatine kinase of
+    48,000 U/L, a normal creatinine, preserved urine output, and an admitting team discussing
+    dialysis and urine alkalinization on the strength of the number. The learner examines the
+    limbs first, establishes the cause, arranges qualified fluid ownership, takes the number
+    apart, and reviews the two familiar additions. The creatine kinase rises to 61,000 across
+    the serial checkpoint while the creatinine and urine output hold exactly where they were:
+    the value that drove disposition in the series behind this lab was not the value that
+    tracked the kidney, and in one small series the two moved in opposite directions. Requesting
+    replacement therapy on the number and adding bicarbonate with mannitol as a pair are both
+    refused with reasons that state the limits of the evidence in either direction -- neither
+    refusal claims this patient will never need replacement therapy, and neither claims the two
+    agents are useless. No score, threshold, cutoff, dialysis criterion, discharge criterion,
+    fluid volume, rate, product, or alkalinization target is taught. Three sources verified
+    through NCBI E-utilities, each carrying its own weaknesses.
   - [ ] Complete hypermagnesemia independent clinical review, four exact-version quality records,
     complete inclusive-runtime validation, and production Turnstile/D1 evidence. Local checks
     do not replace those requirements. Publish the additive Worker identity catalog before

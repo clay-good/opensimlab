@@ -64,6 +64,30 @@ const CHECKED = '2026-08-20';
 
 export const SOURCES: readonly Source[] = [
   {
+    id: 'renal-rhabdomyolysis-risk-score-2013', pmid: '24000014', authors: 'McMahon GM, Zeng X, Waikar SS',
+    title: 'A risk prediction score for kidney failure or mortality in rhabdomyolysis', publication: 'JAMA Internal Medicine', year: 2013,
+    locator: '173(19):1821\u20131828; doi:10.1001/jamainternmed.2013.9774; results and validation cohort',
+    usedFor: 'Across 2,371 patients the composite of replacement therapy or in-hospital death varied by cause, from 1.7% for myositis and 3.2% for exercise to 39.3% for sepsis, 41.2% for compartment syndrome and 58.5% after cardiac arrest, and creatine kinase entered the model as one of eight variables rather than as the driver. The lesson uses this to teach that the cause carries the risk; it adopts no score, threshold, or disposition rule.',
+    verifiedAgainst: 'PubMed PMID 24000014 bibliographic record and abstract, read field by field through NCBI E-utilities. Retrospective, two teaching hospitals in one city, and restricted to a creatine kinase above 5,000 U/L within three days, so it says nothing about anyone below that. A C statistic of 0.82 to 0.83 is discrimination in the cohorts it was built and checked in, not a prediction for an individual, and the record lists two published comments on it.',
+    verifiedOn: '2026-09-10',
+  },
+  {
+    id: 'renal-rhabdomyolysis-additions-2022', pmid: '34836603', authors: 'Sawhney JS, Kasotakis G, Goldenberg A, Abramson S, et al',
+    title: 'Management of rhabdomyolysis: A practice management guideline from the Eastern Association for the Surgery of Trauma', publication: 'The American Journal of Surgery', year: 2022,
+    locator: '224(1):196\u2013204; doi:10.1016/j.amjsurg.2021.11.022; systematic review, meta-analysis and GRADE assessment',
+    usedFor: 'Across twelve studies, intravenous fluid resuscitation decreased acute renal failure and the need for dialysis, while neither bicarbonate nor mannitol improved either outcome. The lesson uses this to teach that two familiar additions are not established, and it adopts no fluid volume, rate, product, or alkalinization target.',
+    verifiedAgainst: 'PubMed PMID 34836603 bibliographic record and abstract, read field by field through NCBI E-utilities. The authors state the quality of evidence was very low, with the vast majority of the literature retrospective, and they open by saying the treatment of rhabdomyolysis remains controversial. That is an absence of demonstrated benefit rather than demonstrated absence of benefit, and it cuts against a confident claim in either direction.',
+    verifiedOn: '2026-09-10',
+  },
+  {
+    id: 'renal-rhabdomyolysis-exertional-series-2015', pmid: '25643388', authors: 'Oh RC, Arter JL, Tiglao SM, Larson SL',
+    title: 'Exertional rhabdomyolysis: a case series of 30 hospitalized patients', publication: 'Military Medicine', year: 2015,
+    locator: '180(2):201\u2013207; doi:10.7205/MILMED-D-14-00274; results and conclusion',
+    usedFor: 'In this series the mean admission creatine kinase was 61,391 U/L with most patients keeping a creatinine below 1.7 mg/dL, higher creatinine correlated with LOWER creatine kinase, and 29 of 30 were nonetheless discharged only once the creatine kinase was falling. The lesson uses this to show a number driving disposition while not tracking the kidney it is feared for.',
+    verifiedAgainst: 'PubMed PMID 25643388 bibliographic record and abstract, read field by field through NCBI E-utilities. Thirty retrospective cases from a military population, with trauma, toxin and heat illness excluded, so it generalises to almost nobody. The inverse correlation it reports is one finding in one small series and is not offered here as a rule; it is used only to show that the number and the kidney can move apart.',
+    verifiedOn: '2026-09-10',
+  },
+  {
     id: 'renal-contrast-consensus-2020', pmid: '31961246', authors: 'Davenport MS, Perazella MA, Yee J, Dillman JR, et al',
     title: 'Use of Intravenous Iodinated Contrast Media in Patients with Kidney Disease: Consensus Statements from the American College of Radiology and the National Kidney Foundation', publication: 'Radiology', year: 2020,
     locator: '294(3):660\u2013668; doi:10.1148/radiol.2019192094; consensus statements and supporting discussion',

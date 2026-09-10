@@ -270,6 +270,36 @@ export interface RenalContrastAttributionSnapshot {
   readonly durableRecoveryProven: false;
 }
 
+export interface RenalRhabdomyolysisSnapshot {
+  readonly supportActive: boolean;
+  readonly causeReviewedAtTick: number | null;
+  readonly compartmentExaminedAtTick: number | null;
+  readonly numberReviewedAtTick: number | null;
+  readonly additionsReviewedAtTick: number | null;
+  readonly fluidsArrangedAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly serialDueInSeconds: number | null;
+  readonly serialOpened: boolean;
+  readonly unexaminedContrastObserved: boolean;
+  readonly dialysisOnNumberAttempted: boolean;
+  readonly additionsAttempted: boolean;
+  readonly creatineKinaseObservation: { readonly atTick: number; readonly creatineKinaseUL: number } | null;
+  readonly renalObservation: { readonly atTick: number; readonly creatinineUmolL: number; readonly urineMlPerKgPerHour: number } | null;
+  readonly observation: {
+    readonly atTick: number; readonly creatineKinaseUL: number; readonly creatinineUmolL: number;
+    readonly urineMlPerKgPerHour: number; readonly potassiumMmolL: number; readonly compartmentConcern: boolean;
+    readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
+    readonly meanArterialMmHg: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true;
+  readonly doseModelAvailable: false;
+  readonly durableRecoveryProven: false;
+}
+
 export interface MeningococcalSepsisSnapshot {
   readonly rashRecognizedAtTick: number | null;
   readonly seniorAtTick: number | null;
@@ -5337,6 +5367,7 @@ export interface EquipmentSnapshot {
     readonly renalHypermagnesemia?: RenalHypermagnesemiaSnapshot;
     readonly renalHypomagnesemia?: RenalHypomagnesemiaSnapshot;
     readonly renalContrastAttribution?: RenalContrastAttributionSnapshot;
+    readonly renalRhabdomyolysis?: RenalRhabdomyolysisSnapshot;
     readonly meningococcalSepsis?: MeningococcalSepsisSnapshot;
     readonly obstructedKidney?: ObstructedKidneySnapshot;
     readonly febrileNeutropenia?: FebrileNeutropeniaSnapshot;

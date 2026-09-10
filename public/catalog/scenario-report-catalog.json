@@ -3828,6 +3828,23 @@
       "limitationManifestHash": "sha256:54ed8a115dc5342606f2fe0fd5ffeccb04813b4a2ad4d3a6395bc42e5facb5ce"
     },
     {
+      "scenarioId": "rhabdomyolysis-a-number-that-does-not-carry-the-risk",
+      "contentVersion": "0.1.0",
+      "moduleId": "renal-electrolyte",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:818b4c88e7b7c033e853409e278c09f43d494c9c1a559edd9802b0e031ff50f7",
+      "defaultsHash": "sha256:c45b42bf26ae1825015b82b83650c5e6bd962f71befe9462bbc45bb197a98f81",
+      "maturityHash": "sha256:51a138bea716437ad91aaaf5948bedc0974ec0e2b249d7cc4d4679ed593ee2f6",
+      "sourceManifestHash": "sha256:f0398d6e21bbbe18e60456cf5c61c834d33af7a516642260de414ad2ca5f59f0",
+      "limitationManifestHash": "sha256:be5b96ef9694c5cc26327c1a9d3eb78b1176a38d8e5214d59e2bd50e776e5a4f"
+    },
+    {
       "scenarioId": "acute-pulmonary-edema-respiratory-support-reassessment",
       "contentVersion": "0.1.0",
       "moduleId": "respiratory-medicine",
