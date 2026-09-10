@@ -1,0 +1,61 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+
+export const RENAL_ESTIMATED_FILTRATION: Scenario = {
+  schemaVersion: 1,
+  metadata: {
+    id: 'estimated-filtration-a-number-she-was-never-measured-by', version: '0.1.0', maturity: 'preview',
+    title: 'Estimated filtration: a number she was never measured by', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
+    estimatedMinutes: 60, difficulty: 'intermediate',
+    objectives: [
+      { id: 'renal-estimate-precision', statement: 'Read the reported estimate as an estimate, with the width it actually carries.', measure: 'Record that in the validation work behind the current equations, 85% or more of estimated values fell within 30% of measured filtration — which also means up to one in seven fell outside even that band. A single reported value therefore spans a wide range of possible true values, and no threshold decision for one person rests safely on it. No equation, threshold, or dosing rule is adopted here.' },
+      { id: 'renal-estimate-generation', statement: 'Ask what the estimate was built from before trusting it for this patient.', measure: 'Review that a creatinine-based estimate infers filtration from a marker whose production depends on muscle, and that low muscle mass, frailty, and a limb amputation all reduce that production without any change in the kidney. Note that the reported figure is indexed to 1.73 m², a population convention rather than her body. None of this establishes that her filtration is low.' },
+      { id: 'renal-estimate-discordance', statement: 'Request a differently generated marker, and read disagreement as information.', measure: 'Request the second marker with qualified support, and when the two estimates disagree, record that neither is a measurement and that the disagreement itself is the finding. Do not resolve it by choosing the more convenient value; a discordance of this size has been associated with drug exposure higher than predicted.' },
+      { id: 'renal-estimate-reassessment', statement: 'Distinguish a repeated marker from a narrower answer.', measure: 'Request fresh full reassessment after care. A second creatinine repeats the same inference from the same marker and narrows nothing. Only a differently derived measure changes what is known, and nothing in this rehearsal supplies a measured filtration rate.' },
+      { id: 'renal-estimate-handoff', statement: 'Transfer the uncertainty explicitly, with the medicine decision owned.', measure: 'Hand off the reviewed estimate, its width, what it was generated from, the discordance, and current full findings, with the renally eliminated medicine decision owned by the qualified team that has the whole picture. A single agreed number and a resolved discordance are not handoff gates, and none is supplied.' },
+    ],
+    clinicalReview: {
+      reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED', competingInterests: 'None declared',
+      reviewedOn: '1970-01-01', reviewBy: '1970-01-01', contentVersion: '0.1.0',
+      sources: [
+        'Inker LA, Eneanya ND, Coresh J, Tighiouart H, et al. New creatinine- and cystatin C-based equations to estimate GFR without race. The New England Journal of Medicine. 2021;385:1737–1749. doi:10.1056/NEJMoa2102953. The accuracy quoted here is a population statistic: 85% within 30% of measured also means up to one value in seven falls outside even that band, and median biases of a few mL/min/1.73 m² in either direction are reported. Accuracy in development and validation cohorts is not a guarantee for an individual.',
+        'Iversen E, Bengaard AK, Leegaard Andersen A, Tavenier J, et al. Performance of panel-estimated GFR among hospitalized older adults. American Journal of Kidney Diseases. 2023;82:715–724. doi:10.1053/j.ajkd.2023.05.004. One hundred and six patients at a single Danish hospital, a substudy of a trial rather than a designed accuracy study. The authors state that only White patients were included and that only a subset underwent GFR measurement, so the small biases it reports come from a narrow sample.',
+        'Ibe Y, Ishigo T, Aigami T, Fujii S, et al. Effect of discrepancy in estimated renal function on vancomycin area under the blood concentration-time curve. International Journal of Clinical Pharmacy. 2025;47:1458–1466. doi:10.1007/s11096-025-01960-w. Retrospective, one cohort, one drug, and association rather than causation: the patients whose estimates disagreed were also older and longer in hospital, which are the same features that make both markers harder to interpret. It does not establish that either marker is correct.',
+      ],
+    },
+    limitations: ['renal-estimate-precision-bounds', 'renal-estimate-authored-contrasts', 'renal-estimate-continuing-care'],
+  },
+  patient: {
+    ageYears: 81, sex: 'female', heightCm: 154, weightKg: 44, asaClass: 3,
+    diagnosis: 'A reported estimated filtration rate that the clinic is about to act on, in a patient the estimating equation was not built to describe',
+    procedure: 'Review of what the reported estimate claims, review of what it was generated from, a differently generated marker, reassessment, and handoff of an owned medicine decision with the uncertainty explicit',
+    comorbidities: ['Frail, housebound, and notably low muscle mass; below-knee amputation fourteen months ago',
+      'Creatinine 71 µmol/L, reported alongside an estimated filtration rate of 68 mL/min/1.73 m²',
+      'A renally eliminated medicine is due to be started today at the dose the reported estimate supports',
+      'Increasing confusion over three weeks; no delirium screen, imaging, or infection result is supplied',
+      'No measured filtration rate has ever been performed; no cystatin C has been sent'],
+    medications: ['Several long-term medicines; no dose, agent, or renal adjustment is supplied'],
+    allergies: ['No known drug allergies'], fasting: 'Not a fasting lesson; nothing here turns on the airway or on oral intake',
+    baseline: { heartRateBpm: 78, meanArterialMmHg: 82, strokeVolumeMl: 60, hemoglobinGPerDl: 11.2,
+      bloodVolumeMl: 3400, coreTemperatureC: 36.5, arterialStiffness: 1, baroreflexGain: 1, fixedStrokeVolume: true },
+    airway: { difficulty: 0.1, difficultMaskVentilation: false, assessment: 'Awake, slower than her baseline, and mildly confused; the airway is not the problem in this lesson' },
+    respiratory: { profile: 'healthy' },
+  },
+  equipment: { monitoring: ['ecg', 'nibp', 'pulse-oximetry', 'temperature'], ventilator: { mode: 'manual', fio2: 0.21,
+    tidalVolumeMl: 400, respiratoryRateBpm: 16, freshGasFlowLPerMin: 10, delivering: false } },
+  formulary: [],
+  timeline: [
+    { id: 'renal-estimate-presentation', type: 'narrative', target: 'renal-estimate', atTick: 0, severity: 'critical',
+      message: 'A fictional 81-year-old woman weighing 44 kg is frail, housebound, and has notably low muscle mass, with a below-knee amputation fourteen months ago. Her creatinine is 71 µmol/L and the laboratory has reported an estimated filtration rate of 68 mL/min/1.73 m². A renally eliminated medicine is due to be started today at the dose that estimate supports. She has become increasingly confused over three weeks; no delirium screen, imaging, or infection result is supplied. No measured filtration rate has ever been performed and no cystatin C has been sent. Decide what the reported number claims before anyone acts on it.' },
+    { id: 'renal-estimate-boundary', type: 'narrative', target: 'renal-estimate-boundary', atTick: 0, severity: 'warning',
+      message: 'This lesson selects no drug, no dose, no adjustment, no equation, and no marker, and it does not decide whether this medicine should be started. It teaches what a reported estimate claims: in the validation work behind the current equations, 85% or more of estimated values fell within 30% of measured filtration, which also means up to one value in seven fell outside even that band. A creatinine-based estimate infers filtration from a marker whose production depends on muscle, so low muscle mass, frailty, and an amputation all reduce that production without any change in the kidney — and none of that establishes that her filtration is low. The figure is indexed to 1.73 m², which is a population convention rather than her body. The second marker in this rehearsal returns a discordant estimate; neither value is a measurement, no measured filtration rate is supplied at any point, and the discordance is not resolved. A discordance of this size has been associated with drug exposure higher than predicted in one retrospective cohort of one drug, which is an association and not a rule. Her confusion is a supplied finding with no cause established and is not attributed to any medicine here. The 60-minute second-marker checkpoint and the 5-minute unreviewed contrast are authored teaching intervals, not pharmacokinetics, safe waits, or grading deadlines. Partial checks do not refresh full assessment. No cause, delirium assessment, measured filtration, dose, adjustment, or discharge clearance is claimed. Exhaled CO2 and FiO2 are unavailable.' },
+  ],
+  replayPoints: [{ id: 'renal-estimate-first-response', label: 'Return to what the number claims', objectiveId: 'renal-estimate-precision', atTick: 1,
+    reason: 'Separate reading the estimate as an estimate from asking what it was generated from.' }],
+  debrief: { rubric: [
+    { id: 'renal-estimate-precision-review', objectiveId: 'renal-estimate-precision', question: 'What range of true values is a single reported estimate compatible with, and how often is it outside even that?' },
+    { id: 'renal-estimate-generation-review', objectiveId: 'renal-estimate-generation', question: 'What was the estimate generated from, and which of her features change that input without changing her kidney?' },
+    { id: 'renal-estimate-discordance-review', objectiveId: 'renal-estimate-discordance', question: 'The two estimates disagreed. What did that establish, and what did it not?' },
+    { id: 'renal-estimate-reassessment-review', objectiveId: 'renal-estimate-reassessment', question: 'What would a repeated creatinine have added, and what did the rehearsal never supply?' },
+    { id: 'renal-estimate-handoff-review', objectiveId: 'renal-estimate-handoff', question: 'Who owns the medicine decision, and what uncertainty went with it?' },
+  ] },
+};

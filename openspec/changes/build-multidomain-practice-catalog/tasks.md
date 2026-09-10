@@ -7,8 +7,8 @@ credited toward the catalog until every item in the completion contract passes.
 
 - [ ] Approve the product position, 256-scenario target catalog, training-versus-runtime-tool
   boundary, fidelity classes, maturity vocabulary,
-  privacy exception, report retention, and no-hosted-MCP decision. The catalogue stands at 253 of
-  the 256, and the three missing labs are all renal and electrolyte, at slice 9 of 12.
+  privacy exception, report retention, and no-hosted-MCP decision. The catalogue stands at 254 of
+  the 256, and the two missing labs are all renal and electrolyte, at slice 10 of 12.
 - [ ] Resolve every conflict between this change and the master clinical-governance, privacy,
   delivery, module, curriculum, pedagogy, safety, adoption, and sustainability specifications.
 - [x] Publish a machine-readable scenario completion schema and validate all existing anesthesia
@@ -704,8 +704,8 @@ credited toward the catalog until every item in the completion contract passes.
     transport, communication, documentation, counseling, procedure, diagnosis, disposition, or
     outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
-  Neurology is 15 of 15 and endocrine and metabolic is 12 of 12. **Renal and electrolyte is 9 of
-  12**, and the three remaining labs are the whole of the gap between the catalogue's 253 and the
+  Neurology is 15 of 15 and endocrine and metabolic is 12 of 12. **Renal and electrolyte is 10 of
+  12**, and the two remaining labs are the whole of the gap between the catalogue's 254 and the
   256 target in section 0.
 
   The thirteen sub-tasks left open below are independent clinical review and inclusive-runtime
@@ -1371,6 +1371,20 @@ credited toward the catalog until every item in the completion contract passes.
     agents are useless. No score, threshold, cutoff, dialysis criterion, discharge criterion,
     fluid volume, rate, product, or alkalinization target is taught. Three sources verified
     through NCBI E-utilities, each carrying its own weaknesses.
+  - [x] Renal/electrolyte slice 10/12 registers
+    `estimated-filtration-a-number-she-was-never-measured-by@0.1.0`, a fictional 81-year-old
+    woman of 44 kg, frail and fourteen months past a below-knee amputation, whose creatinine of
+    71 micromol/L is reported alongside an estimated filtration rate of 68 mL/min/1.73 m2 -- and
+    a renally eliminated medicine due today at the dose that estimate supports. The learner reads
+    what the number claims (85% or more of estimates within 30% of measured, which is also up to
+    one in seven outside even that), asks what it was generated from, requests a differently
+    generated marker, records the disagreement the second estimate produces, and places the
+    medicine decision with the qualified team. The lesson never supplies a measured filtration
+    rate and never resolves the disagreement: the measured line is null in every observation the
+    engine can produce, which is the one thing a learner is meant to notice. Dosing on the
+    estimate and adopting whichever value suits the plan are both refused, and neither refusal
+    supplies an alternative. Nothing selects a drug, dose, adjustment, equation, or marker.
+    Three sources verified through NCBI E-utilities, each carrying its own limits.
   - [ ] Complete hypermagnesemia independent clinical review, four exact-version quality records,
     complete inclusive-runtime validation, and production Turnstile/D1 evidence. Local checks
     do not replace those requirements. Publish the additive Worker identity catalog before

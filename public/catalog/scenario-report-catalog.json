@@ -3709,6 +3709,23 @@
       "limitationManifestHash": "sha256:4133facc060e837c79a97ed86122e93a2c09cc71445b7f46450f11d0437967f1"
     },
     {
+      "scenarioId": "estimated-filtration-a-number-she-was-never-measured-by",
+      "contentVersion": "0.1.0",
+      "moduleId": "renal-electrolyte",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:e5d1800a61221b8147de2c4bd425af4b28f2ddfa0531fc99f5a61f612bdc9e62",
+      "defaultsHash": "sha256:f9f773118adc2c7637e75078622b9fab8643ce62dd509def4051b0ced973fc3d",
+      "maturityHash": "sha256:46ef33bfb08f521a5abaad9a3b7e8d31906dc0b2b181fffa6b3e3e11efa07dd0",
+      "sourceManifestHash": "sha256:868c34b4fb234046a3abcce98a1fe3304d0747f87099ed6d347a0148ccb64c37",
+      "limitationManifestHash": "sha256:1edd04c1448f99687ff4fe837512b1a7f0aba823c943509b18ebc818280246c5"
+    },
+    {
       "scenarioId": "hyperkalemia-cardioprotection-and-rebound",
       "contentVersion": "0.1.0",
       "moduleId": "renal-electrolyte",

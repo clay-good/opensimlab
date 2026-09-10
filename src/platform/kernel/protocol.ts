@@ -300,6 +300,36 @@ export interface RenalRhabdomyolysisSnapshot {
   readonly durableRecoveryProven: false;
 }
 
+export interface RenalEstimatedFiltrationSnapshot {
+  readonly supportActive: boolean;
+  readonly precisionReviewedAtTick: number | null;
+  readonly generationReviewedAtTick: number | null;
+  readonly secondMarkerRequestedAtTick: number | null;
+  readonly discordanceReviewedAtTick: number | null;
+  readonly medicineOwnedAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly secondMarkerDueInSeconds: number | null;
+  readonly secondMarkerReturned: boolean;
+  readonly unreviewedContrastObserved: boolean;
+  readonly doseOnEstimateAttempted: boolean;
+  readonly convenientNumberAttempted: boolean;
+  readonly creatinineObservation: { readonly atTick: number; readonly creatinineUmolL: number; readonly creatinineEstimate: number } | null;
+  readonly markerObservation: { readonly atTick: number; readonly cystatinEstimate: number | null } | null;
+  readonly observation: {
+    readonly atTick: number; readonly creatinineUmolL: number; readonly creatinineEstimate: number;
+    readonly cystatinEstimate: number | null; readonly measuredFiltration: null; readonly confusionPresent: boolean;
+    readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
+    readonly meanArterialMmHg: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true;
+  readonly doseModelAvailable: false;
+  readonly durableRecoveryProven: false;
+}
+
 export interface MeningococcalSepsisSnapshot {
   readonly rashRecognizedAtTick: number | null;
   readonly seniorAtTick: number | null;
@@ -5368,6 +5398,7 @@ export interface EquipmentSnapshot {
     readonly renalHypomagnesemia?: RenalHypomagnesemiaSnapshot;
     readonly renalContrastAttribution?: RenalContrastAttributionSnapshot;
     readonly renalRhabdomyolysis?: RenalRhabdomyolysisSnapshot;
+    readonly renalEstimatedFiltration?: RenalEstimatedFiltrationSnapshot;
     readonly meningococcalSepsis?: MeningococcalSepsisSnapshot;
     readonly obstructedKidney?: ObstructedKidneySnapshot;
     readonly febrileNeutropenia?: FebrileNeutropeniaSnapshot;

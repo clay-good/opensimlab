@@ -64,6 +64,30 @@ const CHECKED = '2026-08-20';
 
 export const SOURCES: readonly Source[] = [
   {
+    id: 'renal-estimate-equations-2021', pmid: '34554658', authors: 'Inker LA, Eneanya ND, Coresh J, Tighiouart H, et al',
+    title: 'New Creatinine- and Cystatin C-Based Equations to Estimate GFR without Race', publication: 'The New England Journal of Medicine', year: 2021,
+    locator: '385(19):1737\u20131749; doi:10.1056/NEJMoa2102953; validation-set accuracy results',
+    usedFor: 'In the validation data set, 85% or more of estimated values for every equation fell within 30% of measured GFR, and equations combining creatinine with cystatin C were more accurate than creatinine alone. The lesson uses this to teach what an estimate claims and what it does not; it adopts no equation, threshold, or dosing rule.',
+    verifiedAgainst: 'PubMed PMID 34554658 bibliographic record and abstract, read field by field through NCBI E-utilities. The stated accuracy is a population statistic: 85% within 30% of measured also means up to one value in seven falls outside even that band, and a median bias of a few mL/min/1.73 m\u00b2 in either direction is reported for several equations. Accuracy in development and validation cohorts is not a guarantee for an individual patient.',
+    verifiedOn: '2026-09-10',
+  },
+  {
+    id: 'renal-estimate-older-adults-2023', pmid: '37516299', authors: 'Iversen E, Bengaard AK, Leegaard Andersen A, Tavenier J, et al',
+    title: 'Performance of Panel-Estimated GFR Among Hospitalized Older Adults', publication: 'American Journal of Kidney Diseases', year: 2023,
+    locator: '82(6):715\u2013724; doi:10.1053/j.ajkd.2023.05.004; results and limitations',
+    usedFor: 'Estimating equations were compared against measured GFR by plasma clearance in adults 65 and over presenting to an emergency department, where inappropriate dosing of renally eliminated medicines is a recognised hazard. The lesson uses this to teach that the comparison is against a measurement the patient in front of you has not had.',
+    verifiedAgainst: 'PubMed PMID 37516299 bibliographic record and abstract, read field by field through NCBI E-utilities. One hundred and six patients at a single Danish hospital, a substudy of a trial rather than a designed accuracy study, and the authors state that only White patients were included and that only a subset underwent GFR measurement. The relative biases it reports are small but come from a narrow sample.',
+    verifiedOn: '2026-09-10',
+  },
+  {
+    id: 'renal-estimate-discordance-2025', pmid: '40632485', authors: 'Ibe Y, Ishigo T, Aigami T, Fujii S, et al',
+    title: 'Effect of discrepancy in estimated renal function on vancomycin area under the blood concentration-time curve: a retrospective cohort study comparing serum creatinine and serum cystatin C', publication: 'International Journal of Clinical Pharmacy', year: 2025,
+    locator: '47(6):1458\u20131466; doi:10.1007/s11096-025-01960-w; methods and results',
+    usedFor: 'Among 118 patients with both markers at the start of therapy, those whose creatinine-based estimate exceeded the cystatin C-based estimate by 30% or more had measured drug exposure significantly higher than predicted. The lesson uses this only to show that which estimate is chosen changes what a patient is exposed to; it selects no drug, dose, or marker.',
+    verifiedAgainst: 'PubMed PMID 40632485 bibliographic record and abstract, read field by field through NCBI E-utilities. Retrospective, single cohort, one drug, and it tests association rather than causation: the patients whose estimates disagreed were also older and longer in hospital, which are the same features that make both markers harder to interpret. It does not establish that either marker is correct.',
+    verifiedOn: '2026-09-10',
+  },
+  {
     id: 'renal-rhabdomyolysis-risk-score-2013', pmid: '24000014', authors: 'McMahon GM, Zeng X, Waikar SS',
     title: 'A risk prediction score for kidney failure or mortality in rhabdomyolysis', publication: 'JAMA Internal Medicine', year: 2013,
     locator: '173(19):1821\u20131828; doi:10.1001/jamainternmed.2013.9774; results and validation cohort',

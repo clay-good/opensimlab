@@ -10,6 +10,7 @@ import { renalHyperkalemiaDemonstrationStep, supportsRenalHyperkalemiaDemonstrat
 import { renalHypermagnesemiaDemonstrationStep, supportsRenalHypermagnesemiaDemonstration } from './renal-hypermagnesemia-demonstration';
 import { renalContrastAttributionDemonstrationStep, supportsRenalContrastAttributionDemonstration } from './renal-contrast-attribution-demonstration';
 import { renalRhabdomyolysisDemonstrationStep, supportsRenalRhabdomyolysisDemonstration } from './renal-rhabdomyolysis-demonstration';
+import { renalEstimatedFiltrationDemonstrationStep, supportsRenalEstimatedFiltrationDemonstration } from './renal-estimated-filtration-demonstration';
 import { renalHypomagnesemiaDemonstrationStep, supportsRenalHypomagnesemiaDemonstration } from './renal-hypomagnesemia-demonstration';
 import { renalHypernatremiaDemonstrationStep, supportsRenalHypernatremiaDemonstration } from './renal-hypernatremia-demonstration';
 import { renalHypocalcemiaDemonstrationStep, supportsRenalHypocalcemiaDemonstration } from './renal-hypocalcemia-demonstration';
@@ -20,6 +21,7 @@ export const RENAL_ELECTROLYTE_DEMONSTRATIONS: readonly LessonDemonstration[] = 
   { id: 'RenalHyperkalemia', supports: supportsRenalHyperkalemiaDemonstration, actionType: 'renal-hyperkalemia-response', step: (r) => renalHyperkalemiaDemonstrationStep(r?.renalHyperkalemia) },
   { id: 'RenalHypermagnesemia', supports: supportsRenalHypermagnesemiaDemonstration, actionType: 'renal-hypermagnesemia-response', step: (r) => renalHypermagnesemiaDemonstrationStep(r?.renalHypermagnesemia) },
   { id: 'RenalContrastAttribution', supports: supportsRenalContrastAttributionDemonstration, actionType: 'renal-contrast-attribution-response', step: (r) => renalContrastAttributionDemonstrationStep(r?.renalContrastAttribution) },
+  { id: 'RenalEstimatedFiltration', supports: supportsRenalEstimatedFiltrationDemonstration, actionType: 'renal-estimated-filtration-response', step: (r) => renalEstimatedFiltrationDemonstrationStep(r?.renalEstimatedFiltration) },
   { id: 'RenalRhabdomyolysis', supports: supportsRenalRhabdomyolysisDemonstration, actionType: 'renal-rhabdomyolysis-response', step: (r) => renalRhabdomyolysisDemonstrationStep(r?.renalRhabdomyolysis) },
   { id: 'RenalHypomagnesemia', supports: supportsRenalHypomagnesemiaDemonstration, actionType: 'renal-hypomagnesemia-response', step: (r) => renalHypomagnesemiaDemonstrationStep(r?.renalHypomagnesemia) },
   { id: 'RenalHypernatremia', supports: supportsRenalHypernatremiaDemonstration, actionType: 'renal-hypernatremia-response', step: (r) => renalHypernatremiaDemonstrationStep(r?.renalHypernatremia) },
