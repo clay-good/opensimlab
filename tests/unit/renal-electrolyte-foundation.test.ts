@@ -27,16 +27,17 @@ const read = (file: string) => readFileSync(join(process.cwd(), file), 'utf8');
 const json = (file: string) => JSON.parse(read(file));
 
 describe('Renal and electrolyte medicine module foundation', () => {
-  it('registers six separate previews toward twelve planned lessons without changing the default', () => {
+  it('registers seven separate previews toward twelve planned lessons without changing the default', () => {
     expect(getModule('renal-electrolyte')).toMatchObject({ route: 'renal-electrolyte',
       displayName: 'Renal and electrolyte medicine', status: 'available',
       timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] } });
     expect(moduleProse('renal-electrolyte').plannedScope).toContain('Twelve bounded');
-    expect(RENAL_ELECTROLYTE_SCENARIOS).toHaveLength(6);
+    expect(RENAL_ELECTROLYTE_SCENARIOS).toHaveLength(7);
     expect(RENAL_ELECTROLYTE_SCENARIOS.map(({ metadata }) => metadata.id)).toEqual([
       id, 'hypokalemia-magnesium-and-ongoing-losses', 'hyponatremia-symptoms-and-reassessment',
       'hypernatremia-water-access-and-losses', 'hypocalcemia-ionized-calcium-and-ckd',
       'hypermagnesemia-antagonism-and-removal',
+      'hypomagnesemia-refractory-potassium-and-the-normal-number',
     ]);
     expect(DEFAULT_RENAL_ELECTROLYTE_SCENARIO_ID).toBe(id);
     expect(getRenalElectrolyteScenario(id)).toBe(scenario);
@@ -254,7 +255,7 @@ describe('Renal and electrolyte medicine module foundation', () => {
   it('mounts the live module and preserves unknown-address feedback', async () => {
     const { RenalElectrolyteRoute } = await import('@routes/modules/renal-electrolyte');
     const directory = renderToStaticMarkup(createElement(RenalElectrolyteRoute, { path: '/renal-electrolyte' }));
-    expect(directory).toContain('6 of 12 planned Renal and electrolyte medicine labs');
+    expect(directory).toContain('7 of 12 planned Renal and electrolyte medicine labs');
     expect(directory).toContain(`href="${path}"`);
     vi.stubGlobal('localStorage', { getItem: (key: string) => key === ACKNOWLEDGEMENT_KEY ? 'true' : null });
     try {
@@ -295,13 +296,14 @@ describe('Renal and electrolyte medicine module foundation', () => {
   it('keeps registry, landing, routes, and published artifact counts aligned', () => {
     expect(availableModules()).toHaveLength(16);
     expect(READY_MODULE_COUNT).toBe(16);
-    expect(READY_SCENARIO_COUNT).toBe(250);
-    expect(reviewableItems().filter((item) => item.kind === 'scenario')).toHaveLength(250);
+    expect(READY_SCENARIO_COUNT).toBe(251);
+    expect(reviewableItems().filter((item) => item.kind === 'scenario')).toHaveLength(251);
     // Net plus one: the module index and its lab arrived, and the planned-module page for
     // surgery and trauma went away, because there is no longer a planned module to describe.
-    // Each surgery and trauma lesson since then adds one route and one indexable page.
-    expect(ROUTES).toHaveLength(280);
-    expect(indexableRoutes()).toHaveLength(277);
+    // Each surgery and trauma lesson since then adds one route and one indexable page, and so
+    // does the seventh renal lab.
+    expect(ROUTES).toHaveLength(281);
+    expect(indexableRoutes()).toHaveLength(278);
     expect(PUBLIC_CATALOG_ARTIFACTS).toHaveLength(59);
     expect(new Set(PUBLIC_CATALOG_ARTIFACTS).size).toBe(59);
     expect(PUBLIC_CATALOG_ARTIFACTS).toEqual(expect.arrayContaining([
@@ -384,10 +386,10 @@ describe('Renal and electrolyte medicine module foundation', () => {
     const quality = json('public/catalog/renal-electrolyte-quality-audit.json');
     const maturity = json('public/catalog/renal-electrolyte-maturity.json');
     const reports = json('workers/reports/src/report-catalog.generated.json');
-    expect(completion).toMatchObject({ moduleId: 'renal-electrolyte', scenarioCount: 6, completeScenarioCount: 0 });
-    expect(completion.scenarios).toHaveLength(6);
-    expect(quality).toMatchObject({ moduleId: 'renal-electrolyte', scenarioCount: 6, playableScenarioCount: 0 });
-    expect(maturity).toMatchObject({ moduleId: 'renal-electrolyte', recordCount: 6 });
+    expect(completion).toMatchObject({ moduleId: 'renal-electrolyte', scenarioCount: 7, completeScenarioCount: 0 });
+    expect(completion.scenarios).toHaveLength(7);
+    expect(quality).toMatchObject({ moduleId: 'renal-electrolyte', scenarioCount: 7, playableScenarioCount: 0 });
+    expect(maturity).toMatchObject({ moduleId: 'renal-electrolyte', recordCount: 7 });
     for (const { metadata } of RENAL_ELECTROLYTE_SCENARIOS) {
       expect(completion.scenarios).toContainEqual(expect.objectContaining({ scenarioId: metadata.id, moduleId: 'renal-electrolyte',
         contentVersion: metadata.version, maturity: 'preview', complete: false, fidelityClass: 'state_transition' }));
@@ -404,7 +406,7 @@ describe('Renal and electrolyte medicine module foundation', () => {
     // against it still resolves to the evidence it was filed against. It held
     // 250 rows; correcting a citation is a content change, so four scenarios
     // moved to 0.1.1 and their 0.1.0 rows remain beside them.
-    expect(reports.scenarios).toHaveLength(264);
+    expect(reports.scenarios).toHaveLength(265);
     // Every earlier module's published evidence must survive a later module launch byte for byte.
     // The four rows added by the citation correction are excluded here, not
     // because they do not count, but because this assertion is about the rows
@@ -418,11 +420,15 @@ describe('Renal and electrolyte medicine module foundation', () => {
       'cardiology:stemi-recognition-and-first-actions',
       'respiratory-medicine:oxygen-device-failure',
     ]);
-    const prior218 = reports.scenarios.filter((entry: { moduleId: string; scenarioId: string; contentVersion: string }) =>
+    const prior219 = reports.scenarios.filter((entry: { moduleId: string; scenarioId: string; contentVersion: string }) =>
       entry.moduleId !== 'infectious-disease'
       && entry.moduleId !== 'medical-surgical-nursing' && entry.moduleId !== 'oncology'
       && entry.moduleId !== 'surgery-trauma'
       && !(corrected.has(`${entry.moduleId}:${entry.scenarioId}`) && entry.contentVersion === '0.1.1'));
+    expect(prior219).toHaveLength(219);
+    const prior218 = prior219.filter((entry: { moduleId: string; scenarioId: string }) =>
+      !(entry.moduleId === 'renal-electrolyte'
+        && entry.scenarioId === 'hypomagnesemia-refractory-potassium-and-the-normal-number'));
     expect(prior218).toHaveLength(218);
     const prior217 = prior218.filter((entry: { moduleId: string; scenarioId: string }) =>
       !(entry.moduleId === 'renal-electrolyte' && entry.scenarioId === 'hypermagnesemia-antagonism-and-removal'));

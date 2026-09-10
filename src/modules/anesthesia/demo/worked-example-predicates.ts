@@ -54,6 +54,7 @@ import { supportsRenalHyponatremiaDemonstration } from '../../renal-electrolyte/
 import { supportsRenalHypernatremiaDemonstration } from '../../renal-electrolyte/demo/renal-hypernatremia-demonstration';
 import { supportsRenalHypocalcemiaDemonstration } from '../../renal-electrolyte/demo/renal-hypocalcemia-demonstration';
 import { supportsRenalHypermagnesemiaDemonstration } from '../../renal-electrolyte/demo/renal-hypermagnesemia-demonstration';
+import { supportsRenalHypomagnesemiaDemonstration } from '../../renal-electrolyte/demo/renal-hypomagnesemia-demonstration';
 import { supportsDelayedImmuneEventDemonstration } from '../../oncology/demo/delayed-immune-event-demonstration';
 import { supportsIncidentalClotDemonstration } from '../../oncology/demo/incidental-clot-demonstration';
 import { supportsNormalTestToxicityDemonstration } from '../../oncology/demo/normal-test-toxicity-demonstration';
@@ -332,6 +333,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsRenalHypernatremiaDemonstration,
     supportsRenalHypocalcemiaDemonstration,
     supportsRenalHypermagnesemiaDemonstration,
+    supportsRenalHypomagnesemiaDemonstration,
   ],
   oncology: [
         supportsDelayedImmuneEventDemonstration,

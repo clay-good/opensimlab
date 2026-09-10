@@ -7,9 +7,8 @@ credited toward the catalog until every item in the completion contract passes.
 
 - [ ] Approve the product position, 256-scenario target catalog, training-versus-runtime-tool
   boundary, fidelity classes, maturity vocabulary,
-  privacy exception, report retention, and no-hosted-MCP decision. The catalogue stands at 250 of
-  the 256: every module is at its declared count, and the six missing labs are all renal and
-  electrolyte, which stopped at slice 6 of 12.
+  privacy exception, report retention, and no-hosted-MCP decision. The catalogue stands at 251 of
+  the 256, and the five missing labs are all renal and electrolyte, at slice 7 of 12.
 - [ ] Resolve every conflict between this change and the master clinical-governance, privacy,
   delivery, module, curriculum, pedagogy, safety, adoption, and sustainability specifications.
 - [x] Publish a machine-readable scenario completion schema and validate all existing anesthesia
@@ -705,11 +704,9 @@ credited toward the catalog until every item in the completion contract passes.
     transport, communication, documentation, counseling, procedure, diagnosis, disposition, or
     outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
-  Neurology is 15 of 15 and endocrine and metabolic is 12 of 12. **Renal and electrolyte is 6 of
-  12**: the slices below are numbered out of twelve and stop at six, and the registry declaration
-  was brought down to six so the counts would audit. That is the whole of the gap between the
-  catalogue's 250 labs and the 256 target in section 0 -- six unwritten renal labs, not a target
-  that was revised.
+  Neurology is 15 of 15 and endocrine and metabolic is 12 of 12. **Renal and electrolyte is 7 of
+  12**, and the five remaining labs are the whole of the gap between the catalogue's 251 and the
+  256 target in section 0.
 
   The thirteen sub-tasks left open below are independent clinical review and inclusive-runtime
   verification. They need named clinicians, exact-version assistive technology and physical
@@ -1330,6 +1327,18 @@ credited toward the catalog until every item in the completion contract passes.
     contains 218 report identities. Fix the privacy test's accidental seed substring match
     with a precise forbidden-scalar assertion; preserve the exact field allowlist. Actual
     release still refuses 225 blockers. See the evidence brief for desktop QA and test details.
+  - [x] Renal/electrolyte slice 7/12 registers
+    `hypomagnesemia-refractory-potassium-and-the-normal-number@0.1.0`, a fictional 71-year-old
+    woman on long-term acid suppression with months of loose stool, a potassium of 2.7 mmol/L
+    that has not risen after two replacements elsewhere, a low ionized calcium, a QTc of 508 ms,
+    and a serum magnesium of 0.78 mmol/L -- inside a commonly printed reference range. The
+    learner arranges monitoring and qualified QT review, stops the suspected exposure, decides
+    what the in-range number does and does not exclude, requests qualified repletion, and hands
+    off an unresolved problem. The authored response appears in the potassium, the ionized
+    calcium and the bedside findings; the magnesium moves 0.78 to 0.81 and that is the point.
+    A third potassium replacement on its own and the claim that an in-range value excludes
+    depletion are both refused with reasons. Three sources verified through NCBI E-utilities,
+    each carrying the half that undercuts the taught step.
   - [ ] Complete hypermagnesemia independent clinical review, four exact-version quality records,
     complete inclusive-runtime validation, and production Turnstile/D1 evidence. Local checks
     do not replace those requirements. Publish the additive Worker identity catalog before

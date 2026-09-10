@@ -3777,6 +3777,23 @@
       "limitationManifestHash": "sha256:06248f950890ed2e1b755ab0489ba2cf7ffca0d34aa2169c192e05a134901aa1"
     },
     {
+      "scenarioId": "hypomagnesemia-refractory-potassium-and-the-normal-number",
+      "contentVersion": "0.1.0",
+      "moduleId": "renal-electrolyte",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:945c8ccc24edea6c1a2ad06595d87207ef45522d5de692d4b7c4abcd635dcbc3",
+      "defaultsHash": "sha256:68d7fe6d968d4bf7169f6cd6c9926f195f40c42a29f4f0d7a7941b5b38156210",
+      "maturityHash": "sha256:ae78e3a97a5d40f19a5c30614ba3007e61c40e585ee66f1cde4a6dc5607e919a",
+      "sourceManifestHash": "sha256:5ffd55b1b7dc094ef6b4c389fc4124e3a5e3db768585abb2009f78a26390f5c6",
+      "limitationManifestHash": "sha256:8888112506865a846e4ba382fb39c3e59f3200c6feae856ef19cc7c0e533d661"
+    },
+    {
       "scenarioId": "hyponatremia-symptoms-and-reassessment",
       "contentVersion": "0.1.0",
       "moduleId": "renal-electrolyte",

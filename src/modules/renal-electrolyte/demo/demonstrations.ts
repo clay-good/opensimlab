@@ -8,6 +8,7 @@
 import type { LessonDemonstration } from '@anesthesia/demo/lesson-demonstration';
 import { renalHyperkalemiaDemonstrationStep, supportsRenalHyperkalemiaDemonstration } from './renal-hyperkalemia-demonstration';
 import { renalHypermagnesemiaDemonstrationStep, supportsRenalHypermagnesemiaDemonstration } from './renal-hypermagnesemia-demonstration';
+import { renalHypomagnesemiaDemonstrationStep, supportsRenalHypomagnesemiaDemonstration } from './renal-hypomagnesemia-demonstration';
 import { renalHypernatremiaDemonstrationStep, supportsRenalHypernatremiaDemonstration } from './renal-hypernatremia-demonstration';
 import { renalHypocalcemiaDemonstrationStep, supportsRenalHypocalcemiaDemonstration } from './renal-hypocalcemia-demonstration';
 import { renalHypokalemiaDemonstrationStep, supportsRenalHypokalemiaDemonstration } from './renal-hypokalemia-demonstration';
@@ -16,6 +17,7 @@ import { renalHyponatremiaDemonstrationStep, supportsRenalHyponatremiaDemonstrat
 export const RENAL_ELECTROLYTE_DEMONSTRATIONS: readonly LessonDemonstration[] = [
   { id: 'RenalHyperkalemia', supports: supportsRenalHyperkalemiaDemonstration, actionType: 'renal-hyperkalemia-response', step: (r) => renalHyperkalemiaDemonstrationStep(r?.renalHyperkalemia) },
   { id: 'RenalHypermagnesemia', supports: supportsRenalHypermagnesemiaDemonstration, actionType: 'renal-hypermagnesemia-response', step: (r) => renalHypermagnesemiaDemonstrationStep(r?.renalHypermagnesemia) },
+  { id: 'RenalHypomagnesemia', supports: supportsRenalHypomagnesemiaDemonstration, actionType: 'renal-hypomagnesemia-response', step: (r) => renalHypomagnesemiaDemonstrationStep(r?.renalHypomagnesemia) },
   { id: 'RenalHypernatremia', supports: supportsRenalHypernatremiaDemonstration, actionType: 'renal-hypernatremia-response', step: (r) => renalHypernatremiaDemonstrationStep(r?.renalHypernatremia) },
   { id: 'RenalHypocalcemia', supports: supportsRenalHypocalcemiaDemonstration, actionType: 'renal-hypocalcemia-response', step: (r) => renalHypocalcemiaDemonstrationStep(r?.renalHypocalcemia) },
   { id: 'RenalHypokalemia', supports: supportsRenalHypokalemiaDemonstration, actionType: 'renal-hypokalemia-response', step: (r) => renalHypokalemiaDemonstrationStep(r?.renalHypokalemia) },

@@ -64,6 +64,30 @@ const CHECKED = '2026-08-20';
 
 export const SOURCES: readonly Source[] = [
   {
+    id: 'renal-hypomagnesemia-potassium-mechanism-2007', pmid: '17804670', authors: 'Huang CL, Kuo E',
+    title: 'Mechanism of hypokalemia in magnesium deficiency', publication: 'Journal of the American Society of Nephrology', year: 2007,
+    locator: '18(10):2649\u20132652; doi:10.1681/ASN.2007070792; review of distal potassium secretion in magnesium deficiency',
+    usedFor: 'Magnesium deficiency aggravates hypokalemia and renders it refractory to potassium alone, by releasing magnesium-mediated inhibition of ROMK channels. The lesson teaches that a potassium that will not rise is a reason to look at magnesium; it does not adopt any repletion dose, route, rate, or target.',
+    verifiedAgainst: 'PubMed PMID 17804670 bibliographic record and abstract, read field by field through NCBI E-utilities. This is a mechanistic review, not a trial: the abstract itself states that magnesium deficiency alone does not necessarily cause hypokalemia, and that increased distal sodium delivery or elevated aldosterone may be required. That limit is why the lesson keeps the causal claim bounded.',
+    verifiedOn: '2026-09-10',
+  },
+  {
+    id: 'renal-hypomagnesemia-reference-range-2021', pmid: '34463286', authors: 'Micke O, Vormann J, Kraus A, Kisters K',
+    title: 'Serum magnesium: time for a standardized and evidence-based reference range', publication: 'Magnesium Research', year: 2021,
+    locator: '34(2):84\u201389; doi:10.1684/mrh.2021.0486; discussion of reference-range limits',
+    usedFor: 'A serum magnesium inside a printed reference range does not exclude deficiency, because the serum concentration is held up for a long time by release from body pools. This is the lesson\u2019s central epistemic point and the reason a single in-range number is not treated as a normal result.',
+    verifiedAgainst: 'PubMed PMID 34463286 bibliographic record and abstract, read field by field through NCBI E-utilities. The paper is a position piece from officers of the German Society for Magnesium Research, with an author affiliated to a magnesium manufacturer, arguing to raise the lower reference limit to 0.85 mmol/L. That proposal is contested and is not adopted; only the weaker and well-supported claim -- an in-range value does not rule out deficiency -- is used.',
+    verifiedOn: '2026-09-10',
+  },
+  {
+    id: 'renal-hypomagnesemia-acid-suppression-2026', pmid: '41512442', authors: 'Okamoto N, Onishi S, Manabe T, Satoh S, Nara S',
+    title: 'Vonoprazan-associated hypomagnesemia presenting to the emergency department with altered mental status and a suspected seizure', publication: 'American Journal of Emergency Medicine', year: 2026,
+    locator: '101:131\u2013134; doi:10.1016/j.ajem.2025.12.034; case report and discussion',
+    usedFor: 'Long-term acid suppression is a reviewable cause of profound hypomagnesemia with low ionized calcium and a prolonged QTc, and withdrawal of the suspected agent belongs with repletion and monitoring. The fictional exposure, findings, and response are authored, not extracted from this patient.',
+    verifiedAgainst: 'PubMed PMID 41512442 bibliographic record and abstract, read field by field through NCBI E-utilities. One patient, reported after the fact, with imaging and electroencephalogram findings that are described as suggestive rather than diagnostic. A single case establishes no threshold, no repletion protocol, no expected time course, and no attribution rule; the lesson takes only the clinical shape from it.',
+    verifiedOn: '2026-09-10',
+  },
+  {
     id: 'renal-hypermagnesemia-series-2018', pmid: '29988705', authors: 'Nishikawa M, Shimada N, Kanzaki M, et al',
     title: 'The characteristics of patients with hypermagnesemia who underwent emergency hemodialysis', publication: 'Acute Medicine & Surgery', year: 2018,
     locator: '5(3):222–229; doi:10.1002/ams2.334; Methods, Results, and Discussion',

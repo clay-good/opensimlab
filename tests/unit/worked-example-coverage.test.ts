@@ -105,7 +105,7 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
   });
 
   it('covers every renal and electrolyte lab', () => {
-    expect(RENAL_ELECTROLYTE_SCENARIOS).toHaveLength(6);
+    expect(RENAL_ELECTROLYTE_SCENARIOS).toHaveLength(7);
     expect(uncovered(RENAL_ELECTROLYTE_SCENARIOS, 'renal-electrolyte')).toEqual([]);
   });
 
@@ -283,11 +283,16 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
     }
     expect(readme).toContain('All sixteen specialties are complete on both counts');
     expect(readme).toContain('anesthesia, and surgery and trauma, whose ten labs are the newest.');
-    // The catalogue is complete: no module is now short of its planned count, and the README
-    // must not go on describing surgery and trauma as the exception.
-    // Asserted on a fragment that does not straddle the README's line wrap.
-    expect(readme).toContain('full planned count. Nothing is declared and unbuilt any more');
+    // The README names the one module still short of its planned count, and names the right
+    // one. It said the catalogue was complete while surgery and trauma was the last gap; the
+    // seventh renal lab reopened a smaller one, and the front door has to say so rather than
+    // keep a claim that has stopped being true.
+    // Asserted on fragments that do not straddle the README's line wrap.
+    expect(readme).toContain('Renal and electrolyte is at');
+    expect(readme).toContain('every other module is at its full planned count');
     expect(readme).not.toContain('of a planned ten');
+    // Surgery and trauma finished; it must not come back as the module being excused.
+    expect(readme).not.toContain('surgery and trauma is at');
     // The hedge this sentence used to carry belongs to a state the audit has
     // left behind. If it comes back, one of the tests above is failing too.
     expect(readme).not.toContain('and most\nendocrine ones');

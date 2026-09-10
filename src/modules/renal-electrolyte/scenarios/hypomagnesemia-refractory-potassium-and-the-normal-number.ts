@@ -1,0 +1,61 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+
+export const RENAL_HYPOMAGNESEMIA_REFRACTORY_POTASSIUM: Scenario = {
+  schemaVersion: 1,
+  metadata: {
+    id: 'hypomagnesemia-refractory-potassium-and-the-normal-number', version: '0.1.0', maturity: 'preview',
+    title: 'Hypomagnesemia: a potassium that will not rise, and a number inside the range', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
+    estimatedMinutes: 60, difficulty: 'intermediate',
+    objectives: [
+      { id: 'renal-hypomagnesemia-support', statement: 'Protect the patient and stop the suspected exposure without waiting for a repeat number.', measure: 'Arrange continuous cardiac monitoring and qualified review for the supplied prolonged QT interval, and stop the acid-suppression agent with the responsible team, independently of any repeat measurement or administrative step. Neither action lowers the risk on its own, and neither is a diagnosis.' },
+      { id: 'renal-hypomagnesemia-context', statement: 'Read the exposure and the losses alongside the results that have not corrected.', measure: 'Review long-term acid suppression, months of loose stool, the two potassium replacements already given elsewhere, and the low ionized calcium, with qualified support. Do not infer a cause, a new renal diagnosis, a malabsorption diagnosis, or a drug attribution from the supplied history.' },
+      { id: 'renal-hypomagnesemia-number', statement: 'Separate what the magnesium value shows from what it excludes.', measure: 'Recognize that a serum magnesium inside a printed reference range does not exclude depletion, because the serum concentration is sustained from body pools. Use the supplied fractional excretion to separate renal from extrarenal loss without treating it as a diagnosis, a threshold, or a repletion instruction.' },
+      { id: 'renal-hypomagnesemia-reassessment', statement: 'Distinguish a partial recheck from a current picture, and know where a response would show.', measure: 'Request fresh full reassessment after care. A potassium-only or magnesium-only result does not refresh the others. Any authored response appears in the potassium, the ionized calcium, and the bedside findings, not in a magnesium value that barely moves; an unchanged magnesium is not evidence that repletion failed.' },
+      { id: 'renal-hypomagnesemia-handoff', statement: 'Transfer an unresolved problem with explicit ownership of repletion, drug review, and surveillance.', measure: 'Hand off stopped exposure, monitoring, delivered magnesium repletion, context, and current full findings after a response is actually observed. Pending repletion response, continuing QT surveillance, and the medication decision can all remain unresolved; earlier panels and a normal magnesium are not handoff gates.' },
+    ],
+    clinicalReview: {
+      reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED', competingInterests: 'None declared',
+      reviewedOn: '1970-01-01', reviewBy: '1970-01-01', contentVersion: '0.1.0',
+      sources: [
+        'Huang CL, Kuo E. Mechanism of hypokalemia in magnesium deficiency. Journal of the American Society of Nephrology. 2007;18:2649–2652. doi:10.1681/ASN.2007070792. A mechanistic review of distal potassium secretion, not a trial; its own abstract states that magnesium deficiency alone does not necessarily cause hypokalemia, which is why this lesson keeps the causal claim bounded and prescribes nothing.',
+        'Micke O, Vormann J, Kraus A, Kisters K. Serum magnesium: time for a standardized and evidence-based reference range. Magnesium Research. 2021;34:84–89. doi:10.1684/mrh.2021.0486. Supports only the weaker claim used here — an in-range value does not rule out deficiency. Its central proposal, to raise the lower reference limit to 0.85 mmol/L, comes from officers of a magnesium research society with a manufacturer-affiliated author, is contested, and is not adopted.',
+        'Okamoto N, Onishi S, Manabe T, Satoh S, Nara S. Vonoprazan-associated hypomagnesemia presenting to the emergency department with altered mental status and a suspected seizure. American Journal of Emergency Medicine. 2026;101:131–134. doi:10.1016/j.ajem.2025.12.034. One retrospectively reported patient. It establishes no threshold, repletion protocol, expected time course, or attribution rule; only the clinical shape is taken.',
+      ],
+    },
+    limitations: ['renal-hypomagnesemia-repletion', 'renal-hypomagnesemia-authored-contrasts', 'renal-hypomagnesemia-continuing-care'],
+  },
+  patient: {
+    ageYears: 71, sex: 'female', heightCm: 163, weightKg: 58, asaClass: 3,
+    diagnosis: 'Symptomatic magnesium depletion with refractory hypokalemia, low ionized calcium, and a prolonged QT interval during long-term acid suppression',
+    procedure: 'Cardiac monitoring and qualified QT review, exposure cessation, context review, qualified magnesium repletion, reassessment, and unresolved-risk handoff',
+    comorbidities: ['Long-term acid suppression for reflux; no dose, agent switch, or attribution is supplied',
+      'Loose stool most days for several months; no malabsorption diagnosis or endoscopy result is supplied',
+      'Potassium 2.7 mmol/L after two potassium replacements given elsewhere, with no rise recorded between them',
+      'Supplied ionized calcium 1.02 mmol/L, sodium 139 mmol/L, bicarbonate 26 mmol/L, creatinine 74 µmol/L, and QTc 508 ms',
+      'Supplied serum magnesium 0.78 mmol/L, inside a commonly printed reference range, with a supplied fractional excretion of magnesium of 1.4%'],
+    medications: ['Long-term potassium-competitive acid blocker; no dose is supplied', 'Two potassium replacements given before arrival; no dose or route is supplied'],
+    allergies: ['No known drug allergies'], fasting: 'Not a fasting lesson; swallowing safety and the individualized repletion route require qualified assessment',
+    baseline: { heartRateBpm: 96, meanArterialMmHg: 79, strokeVolumeMl: 66, hemoglobinGPerDl: 11.6,
+      bloodVolumeMl: 3900, coreTemperatureC: 36.6, arterialStiffness: 1, baroreflexGain: 1, fixedStrokeVolume: true },
+    airway: { difficulty: 0.1, difficultMaskVentilation: false, assessment: 'Awake but slowed and intermittently confused, with cramping and a positive bedside carpal sign; the airway is not the problem in this lesson' },
+    respiratory: { profile: 'healthy' },
+  },
+  equipment: { monitoring: ['ecg', 'nibp', 'pulse-oximetry', 'temperature'], ventilator: { mode: 'manual', fio2: 0.21,
+    tidalVolumeMl: 420, respiratoryRateBpm: 16, freshGasFlowLPerMin: 10, delivering: false } },
+  formulary: [],
+  timeline: [
+    { id: 'renal-hypomagnesemia-presentation', type: 'narrative', target: 'renal-hypomagnesemia', atTick: 0, severity: 'critical',
+      message: 'A fictional 71-year-old woman is awake but slowed and intermittently confused after an unwitnessed collapse at home. She cramps, and a bedside carpal sign is present. She has taken a potassium-competitive acid blocker long term and has had loose stool most days for several months. Two potassium replacements were given elsewhere; the potassium is still 2.7 mmol/L and no rise was recorded between them. Ionized calcium is 1.02 mmol/L, sodium 139 mmol/L, bicarbonate 26 mmol/L, creatinine 74 µmol/L, and the QTc is 508 ms. The serum magnesium is 0.78 mmol/L, which sits inside a commonly printed reference range, and the supplied fractional excretion of magnesium is 1.4%. Arrange monitoring and qualified review, and decide what this magnesium value does and does not exclude.' },
+    { id: 'renal-hypomagnesemia-boundary', type: 'narrative', target: 'renal-hypomagnesemia-boundary', atTick: 0, severity: 'warning',
+      message: 'Monitoring, stopping the suspected exposure, and qualified magnesium repletion are independent decisions; none waits for another and none waits for a repeat result. A magnesium inside the printed range does not exclude depletion, because the serum concentration is sustained from body pools; it also does not establish depletion, and no threshold is taught here. The supplied fractional excretion separates renal from extrarenal loss and is not a diagnosis, an attribution to any drug, or a repletion instruction. The 90-minute repletion checkpoint and the 5-minute untreated contrast are authored teaching intervals, not pharmacokinetics, safe waiting periods, dosing schedules, or grading deadlines. Any authored response appears in the potassium, the ionized calcium, and the bedside findings; the magnesium value barely moves, and that is not evidence that repletion failed. Repeating potassium alone is refused with an explanation, not silently. Partial checks do not refresh full assessment. No dose, route, rate, target, infusion product, cardiology decision, endoscopy result, malabsorption diagnosis, drug attribution, discharge clearance, or durable recovery is claimed. Exhaled CO2 and FiO2 are unavailable.' },
+  ],
+  replayPoints: [{ id: 'renal-hypomagnesemia-first-response', label: 'Return to monitoring, exposure, and the number', objectiveId: 'renal-hypomagnesemia-support', atTick: 1,
+    reason: 'Separate protecting the patient from stopping the exposure, and both from deciding what the in-range magnesium excludes.' }],
+  debrief: { rubric: [
+    { id: 'renal-hypomagnesemia-support-review', objectiveId: 'renal-hypomagnesemia-support', question: 'What did monitoring and stopping the exposure each protect against, and what did neither treat?' },
+    { id: 'renal-hypomagnesemia-context-review', objectiveId: 'renal-hypomagnesemia-context', question: 'How did the acid suppression, the months of loose stool, and the two potassium replacements inform qualified review without becoming a cause?' },
+    { id: 'renal-hypomagnesemia-number-review', objectiveId: 'renal-hypomagnesemia-number', question: 'What did a magnesium of 0.78 mmol/L show, what did it fail to exclude, and what did the fractional excretion add?' },
+    { id: 'renal-hypomagnesemia-reassessment-review', objectiveId: 'renal-hypomagnesemia-reassessment', question: 'Where did the response appear, and why was the barely moved magnesium not evidence that repletion failed?' },
+    { id: 'renal-hypomagnesemia-handoff-review', objectiveId: 'renal-hypomagnesemia-handoff', question: 'Who owns the repletion response, the medication decision, and continuing QT surveillance?' },
+  ] },
+};
