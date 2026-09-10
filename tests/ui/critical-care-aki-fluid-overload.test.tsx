@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { CRITICAL_CARE_TRAYS } from '../../src/modules/critical-care/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, CRITICAL_CARE_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { ACUTE_KIDNEY_INJURY_WITH_FLUID_OVERLOAD as SCENARIO } from '../../src/modules/critical-care/scenarios/acute-kidney-injury-with-fluid-overload';
 
@@ -29,7 +35,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['akiFluidOverloadAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: CRITICAL_CARE_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, akiFluidOverloadAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'volume-control', tidalVolumeMl: 440, respiratoryRateBpm: 18, fio2: 0.5, peep: 8, delivering: true, sevofluranePercent: 0, freshGasFlowLPerMin: 10 },
@@ -38,7 +44,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onAkiFluidOverloadResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -58,8 +64,8 @@ describe('AKI with fluid overload experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasAkiFluidOverloadResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasAkiFluidOverloadResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'acute-kidney-injury-with-fluid-overload'),
     }).hasAkiFluidOverloadResponse).toBe(false);
@@ -94,36 +100,36 @@ describe('AKI with fluid overload experience', () => {
 describe('AKI with fluid overload tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { akiFluidOverloadGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { akiFluidOverloadGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('the honest number');
-    const context = markup(RECOGNIZED, { akiFluidOverloadGuidance: 'guided' });
+    const context = markup(RECOGNIZED, { guidance: 'guided' });
     expect(context).toContain('the fluid becomes its own reason for the fluid');
     expect(context).not.toContain('the honest number');
   });
 
   it('says where the litres came from', () => {
-    expect(markup(CONTEXT, { akiFluidOverloadGuidance: 'guided' }))
+    expect(markup(CONTEXT, { guidance: 'guided' }))
       .toContain('Restriction is not the same as under-resuscitation');
   });
 
   it('keeps one thing unambiguous and calls the rest a position', () => {
-    expect(markup(FLUID, { akiFluidOverloadGuidance: 'guided' }))
+    expect(markup(FLUID, { guidance: 'guided' }))
       .toContain('is a position rather than a rule');
   });
 
   it('goes quiet once the trajectory is reassessed', () => {
-    expect(markup(DONE, { akiFluidOverloadGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { akiFluidOverloadGuidance: 'guided', akiFluidOverloadDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'AkiFluidOverload' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

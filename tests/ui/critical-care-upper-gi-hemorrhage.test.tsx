@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { CRITICAL_CARE_TRAYS } from '../../src/modules/critical-care/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, CRITICAL_CARE_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { UPPER_GI_HEMORRHAGE as SCENARIO } from '../../src/modules/critical-care/scenarios/upper-gi-hemorrhage';
 
@@ -29,7 +35,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['upperGiHemorrhageAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: CRITICAL_CARE_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, upperGiHemorrhageAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 450, respiratoryRateBpm: 24, fio2: 0.3, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 6 },
@@ -38,7 +44,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onUpperGiHemorrhageResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -58,8 +64,8 @@ describe('Recurrent upper GI hemorrhage experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasUpperGiHemorrhageResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasUpperGiHemorrhageResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'upper-gi-hemorrhage'),
     }).hasUpperGiHemorrhageResponse).toBe(false);
@@ -94,36 +100,36 @@ describe('Recurrent upper GI hemorrhage experience', () => {
 describe('Recurrent upper GI hemorrhage tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { upperGiHemorrhageGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { upperGiHemorrhageGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('the last to arrive and the easiest to argue with');
-    const pattern = markup(RECOGNIZED, { upperGiHemorrhageGuidance: 'guided' });
+    const pattern = markup(RECOGNIZED, { guidance: 'guided' });
     expect(pattern).toContain('a variceal bleed is a different pathway entirely');
     expect(pattern).not.toContain('the last to arrive and the easiest to argue with');
   });
 
   it('makes the transfusion threshold a default rather than a rule', () => {
-    expect(markup(PATTERN, { upperGiHemorrhageGuidance: 'guided' }))
+    expect(markup(PATTERN, { guidance: 'guided' }))
       .toContain('a default to reason from, not a rule to hide behind');
   });
 
   it('runs the endoscopy alongside and names the doors past it', () => {
-    expect(markup(RESUSCITATED, { upperGiHemorrhageGuidance: 'guided' }))
+    expect(markup(RESUSCITATED, { guidance: 'guided' }))
       .toContain('the bleeding is why she is unstable');
   });
 
   it('goes quiet once the trajectory is reassessed', () => {
-    expect(markup(DONE, { upperGiHemorrhageGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { upperGiHemorrhageGuidance: 'guided', upperGiHemorrhageDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'UpperGiHemorrhage' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

@@ -1919,54 +1919,6 @@ export function Cockpit({
           pacemakerCaptureFailureDemonstrating={demonstrating && registryDemo?.id === 'PacemakerCaptureFailure'}
           transcutaneousPacingCaptureGuidance={session.guidance}
           transcutaneousPacingCaptureDemonstrating={demonstrating && registryDemo?.id === 'TranscutaneousPacingCapture'}
-          septicShockResuscitationGuidance={session.guidance}
-          septicShockResuscitationDemonstrating={demonstrating && registryDemo?.id === 'SepticShockResuscitation'}
-          cardiogenicShockGuidance={session.guidance}
-          cardiogenicShockDemonstrating={demonstrating && registryDemo?.id === 'CardiogenicShock'}
-          mixedShockGuidance={session.guidance}
-          mixedShockDemonstrating={demonstrating && registryDemo?.id === 'MixedShock'}
-          rightVentricularFailureGuidance={session.guidance}
-          rightVentricularFailureDemonstrating={demonstrating && registryDemo?.id === 'RvFailure'}
-          massivePulmonaryEmbolismGuidance={session.guidance}
-          massivePulmonaryEmbolismDemonstrating={demonstrating && registryDemo?.id === 'MassivePe'}
-          autoPeepGuidance={session.guidance}
-          autoPeepDemonstrating={demonstrating && registryDemo?.id === 'AutoPeep'}
-          ventilatorDyssynchronyGuidance={session.guidance}
-          ventilatorDyssynchronyDemonstrating={demonstrating && registryDemo?.id === 'Dyssynchrony'}
-          mucusPluggingGuidance={session.guidance}
-          mucusPluggingDemonstrating={demonstrating && registryDemo?.id === 'MucusPlugging'}
-          escalatingHypoxemiaGuidance={session.guidance}
-          escalatingHypoxemiaDemonstrating={demonstrating && registryDemo?.id === 'EscalatingHypoxemia'}
-          unplannedExtubationGuidance={session.guidance}
-          unplannedExtubationDemonstrating={demonstrating && registryDemo?.id === 'UnplannedExtubation'}
-          ventilatorCircuitDisconnectionGuidance={session.guidance}
-          ventilatorCircuitDisconnectionDemonstrating={demonstrating && registryDemo?.id === 'CircuitDisconnection'}
-          postIntubationHypotensionGuidance={session.guidance}
-          postIntubationHypotensionDemonstrating={demonstrating && registryDemo?.id === 'PostIntubationHypotension'}
-          severeAcidemiaGuidance={session.guidance}
-          severeAcidemiaDemonstrating={demonstrating && registryDemo?.id === 'SevereAcidemia'}
-          delayedVasopressorDeliveryGuidance={session.guidance}
-          delayedVasopressorDeliveryDemonstrating={demonstrating && registryDemo?.id === 'DelayedVasopressorDelivery'}
-          intracranialHypertensionGuidance={session.guidance}
-          intracranialHypertensionDemonstrating={demonstrating && registryDemo?.id === 'IntracranialHypertension'}
-          spontaneousBreathingTrialGuidance={session.guidance}
-          spontaneousBreathingTrialDemonstrating={demonstrating && registryDemo?.id === 'SpontaneousBreathingTrial'}
-          criticalCareStatusEpilepticusGuidance={session.guidance}
-          criticalCareStatusEpilepticusDemonstrating={demonstrating && criticalCareStatusEpilepticusDemoSupported}
-          postArrestTemperatureGuidance={session.guidance}
-          postArrestTemperatureDemonstrating={demonstrating && registryDemo?.id === 'TargetedTemperatureManagement'}
-          upperGiHemorrhageGuidance={session.guidance}
-          upperGiHemorrhageDemonstrating={demonstrating && registryDemo?.id === 'UpperGiHemorrhage'}
-          akiFluidOverloadGuidance={session.guidance}
-          akiFluidOverloadDemonstrating={demonstrating && registryDemo?.id === 'AkiFluidOverload'}
-          endotrachealTubeMigrationGuidance={session.guidance}
-          endotrachealTubeMigrationDemonstrating={demonstrating && registryDemo?.id === 'TubeMigration'}
-          icuHiddenDeteriorationHandoffGuidance={session.guidance}
-          icuHiddenDeteriorationHandoffDemonstrating={demonstrating && registryDemo?.id === 'IcuHandoff'}
-          pulseOximeterArtifactGuidance={session.guidance}
-          pulseOximeterArtifactDemonstrating={demonstrating && registryDemo?.id === 'PulseOximeterArtifact'}
-          ardsLungProtectiveGuidance={session.guidance}
-          ardsLungProtectiveDemonstrating={demonstrating && registryDemo?.id === 'ArdsLungProtective'}
           acuteAorticSyndromeGuidance={session.guidance}
           acuteAorticSyndromeDemonstrating={demonstrating && registryDemo?.id === 'AcuteAorticSyndrome'}
           acuteIschemicStrokeGuidance={session.guidance}
@@ -2208,78 +2160,6 @@ export function Cockpit({
           })}
           onAcuteAorticSyndromeResponse={(action) => session.act({
             type: 'acute-aortic-syndrome-response', payload: { action },
-          })}
-          onArdsLungProtectiveResponse={(action) => session.act({
-            type: 'ards-lung-protective-response', payload: { action },
-          })}
-          onEscalatingHypoxemiaResponse={(action) => session.act({
-            type: 'escalating-hypoxemia-response', payload: { action },
-          })}
-          onVentilatorDyssynchronyResponse={(action) => session.act({
-            type: 'ventilator-dyssynchrony-response', payload: { action },
-          })}
-          onAutoPeepResponse={(action) => session.act({
-            type: 'auto-peep-response', payload: { action },
-          })}
-          onMucusPluggingResponse={(action) => session.act({
-            type: 'mucus-plugging-response', payload: { action },
-          })}
-          onUnplannedExtubationResponse={(action) => session.act({
-            type: 'unplanned-extubation-response', payload: { action },
-          })}
-          onSpontaneousBreathingTrialResponse={(action) => session.act({
-            type: 'spontaneous-breathing-trial-response', payload: { action },
-          })}
-          onPostIntubationHypotensionResponse={(action) => session.act({
-            type: 'post-intubation-hypotension-response', payload: { action },
-          })}
-          onCardiogenicShockResponse={(action) => session.act({
-            type: 'cardiogenic-shock-response', payload: { action },
-          })}
-          onMixedShockResponse={(action) => session.act({
-            type: 'mixed-shock-response', payload: { action },
-          })}
-          onRightVentricularFailureResponse={(action) => session.act({
-            type: 'right-ventricular-failure-response', payload: { action },
-          })}
-          onMassivePulmonaryEmbolismResponse={(action) => session.act({
-            type: 'massive-pulmonary-embolism-response', payload: { action },
-          })}
-          onUpperGiHemorrhageResponse={(action) => session.act({
-            type: 'upper-gi-hemorrhage-response', payload: { action },
-          })}
-          onCriticalCareStatusEpilepticusResponse={(action) => session.act({
-            type: 'critical-care-status-epilepticus-response', payload: { action },
-          })}
-          onPostArrestTemperatureResponse={(action) => session.act({
-            type: 'targeted-temperature-management-response', payload: { action },
-          })}
-          onIntracranialHypertensionResponse={(action) => session.act({
-            type: 'intracranial-hypertension-response', payload: { action },
-          })}
-          onAkiFluidOverloadResponse={(action) => session.act({
-            type: 'aki-fluid-overload-response', payload: { action },
-          })}
-          onSevereAcidemiaResponse={(action) => session.act({
-            type: 'severe-acidemia-response', payload: { action },
-          })}
-          onIcuHiddenDeteriorationHandoffResponse={(action) => session.act({
-            type: 'icu-hidden-deterioration-handoff-response', payload: { action },
-          })}
-          onVentilatorCircuitDisconnectionResponse={(action) => session.act({
-            type: 'ventilator-circuit-disconnection-response', payload: { action },
-          })}
-          onDelayedVasopressorDeliveryResponse={(action) => session.act({
-            type: 'delayed-vasopressor-delivery-response', payload: { action },
-          })}
-          onPulseOximeterArtifactResponse={(action) => session.act({
-            type: 'pulse-oximeter-artifact-response', payload: { action },
-          })}
-          onEndotrachealTubeMigrationResponse={(action) => session.act({
-            type: 'endotracheal-tube-migration-response', payload: { action },
-          })}
-          onSepticShockResuscitationResponse={(action) => session.act({
-            type: 'septic-shock-resuscitation-response', payload: { action },
           })}
           onStableChestPainResponse={(action) => session.act({
             type: 'stable-chest-pain-response', payload: { action },

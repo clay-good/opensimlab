@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { CRITICAL_CARE_TRAYS } from '../../src/modules/critical-care/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, CRITICAL_CARE_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { INTRACRANIAL_HYPERTENSION as SCENARIO } from '../../src/modules/critical-care/scenarios/intracranial-hypertension';
 
@@ -29,7 +35,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['intracranialHypertensionAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: CRITICAL_CARE_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, intracranialHypertensionAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'volume-control', tidalVolumeMl: 480, respiratoryRateBpm: 16, fio2: 0.35, peep: 6, delivering: true, sevofluranePercent: 0, freshGasFlowLPerMin: 10 },
@@ -38,7 +44,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onIntracranialHypertensionResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -58,8 +64,8 @@ describe('Intracranial hypertension experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasIntracranialHypertensionResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasIntracranialHypertensionResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'intracranial-hypertension'),
     }).hasIntracranialHypertensionResponse).toBe(false);
@@ -94,36 +100,36 @@ describe('Intracranial hypertension experience', () => {
 describe('Intracranial hypertension tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { intracranialHypertensionGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { intracranialHypertensionGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('the figure the brain actually experiences');
-    const context = markup(RECOGNIZED, { intracranialHypertensionGuidance: 'guided' });
+    const context = markup(RECOGNIZED, { guidance: 'guided' });
     expect(context).toContain('ask whether something is causing it');
     expect(context).not.toContain('the figure the brain actually experiences');
   });
 
   it('names the mechanical problem osmotherapy cannot fix', () => {
-    expect(markup(CONTEXT, { intracranialHypertensionGuidance: 'guided' }))
+    expect(markup(CONTEXT, { guidance: 'guided' }))
       .toContain('a partly obstructed drainage route that osmotherapy will not open');
   });
 
   it('states the lean without turning it into a rule', () => {
-    expect(markup(PROTECTED, { intracranialHypertensionGuidance: 'guided' }))
+    expect(markup(PROTECTED, { guidance: 'guided' }))
       .toContain('there is a lean, and it is not a rule');
   });
 
   it('goes quiet once the trajectory is reassessed', () => {
-    expect(markup(DONE, { intracranialHypertensionGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { intracranialHypertensionGuidance: 'guided', intracranialHypertensionDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'IntracranialHypertension' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

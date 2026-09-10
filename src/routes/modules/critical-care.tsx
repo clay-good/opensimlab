@@ -7,6 +7,7 @@
 import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRoute';
 import { CRITICAL_CARE_SCENARIOS, DEFAULT_CRITICAL_CARE_SCENARIO_ID, getCriticalCareScenario } from '../../modules/critical-care/scenarios';
 import { CRITICAL_CARE_LIMITATIONS } from '@platform/docs/limitations/critical-care';
+import { CRITICAL_CARE_TRAYS } from '../../modules/critical-care/trays';
 import { CRITICAL_CARE_DEMONSTRATIONS } from '../../modules/critical-care/demo/demonstrations';
 
 const CRITICAL_CARE_CONFIG: ClinicalModuleConfig = {
@@ -14,6 +15,7 @@ const CRITICAL_CARE_CONFIG: ClinicalModuleConfig = {
   limitations: CRITICAL_CARE_LIMITATIONS,
   catalogIntroduction: 'Quiet ICU rehearsals for the decisions that change organ support. Read the trend, make one purposeful change, then reassess what actually moved.',
   catalogStatus: 'Twenty-four bounded critical care labs are playable.',
+  trays: CRITICAL_CARE_TRAYS,
   scenarios: CRITICAL_CARE_SCENARIOS, defaultScenarioId: DEFAULT_CRITICAL_CARE_SCENARIO_ID,
   getScenario: getCriticalCareScenario,
   demonstrations: CRITICAL_CARE_DEMONSTRATIONS,

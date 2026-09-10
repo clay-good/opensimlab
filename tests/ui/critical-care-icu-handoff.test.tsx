@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { CRITICAL_CARE_TRAYS } from '../../src/modules/critical-care/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, CRITICAL_CARE_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { ICU_HANDOFF_WITH_HIDDEN_DETERIORATION as SCENARIO } from '../../src/modules/critical-care/scenarios/icu-handoff-with-hidden-deterioration';
 
@@ -29,7 +35,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['icuHiddenDeteriorationHandoffAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: CRITICAL_CARE_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, icuHiddenDeteriorationHandoffAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'volume-control', tidalVolumeMl: 420, respiratoryRateBpm: 18, fio2: 0.35, peep: 8, delivering: true, sevofluranePercent: 0, freshGasFlowLPerMin: 10 },
@@ -38,7 +44,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onIcuHiddenDeteriorationHandoffResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -58,8 +64,8 @@ describe('ICU handoff experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasIcuHiddenDeteriorationHandoffResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasIcuHiddenDeteriorationHandoffResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'icu-handoff-with-hidden-deterioration'),
     }).hasIcuHiddenDeteriorationHandoffResponse).toBe(false);
@@ -94,36 +100,36 @@ describe('ICU handoff experience', () => {
 describe('ICU handoff tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { icuHiddenDeteriorationHandoffGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { icuHiddenDeteriorationHandoffGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('stops being examined');
-    const content = markup(READY, { icuHiddenDeteriorationHandoffGuidance: 'guided' });
+    const content = markup(READY, { guidance: 'guided' });
     expect(content).toContain('you cannot cross-check what you did not hear');
     expect(content).not.toContain('stops being examined');
   });
 
   it('reads the pressure and the EtCO2 the hard way', () => {
-    expect(markup(CONTENT, { icuHiddenDeteriorationHandoffGuidance: 'guided' }))
+    expect(markup(CONTENT, { guidance: 'guided' }))
       .toContain('because the number was held up');
   });
 
   it('puts names on the tasks', () => {
-    expect(markup(CHECKED, { icuHiddenDeteriorationHandoffGuidance: 'guided' }))
+    expect(markup(CHECKED, { guidance: 'guided' }))
       .toContain('Unowned tasks at shift change are the ones that do not happen');
   });
 
   it('goes quiet once the handoff is accepted', () => {
-    expect(markup(DONE, { icuHiddenDeteriorationHandoffGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { icuHiddenDeteriorationHandoffGuidance: 'guided', icuHiddenDeteriorationHandoffDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'IcuHiddenDeteriorationHandoff' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

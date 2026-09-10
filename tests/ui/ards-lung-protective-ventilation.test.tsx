@@ -3,6 +3,7 @@ import { act, createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import { describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { CRITICAL_CARE_TRAYS } from '../../src/modules/critical-care/trays';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { ARDS_LUNG_PROTECTIVE_VENTILATION as SCENARIO } from '../../src/modules/critical-care/scenarios/ards-lung-protective-ventilation';
 
@@ -11,7 +12,7 @@ describe('Requirement: ARDS opens a focused protective-setting and response surf
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
     const container = document.createElement('div'); document.body.appendChild(container);
     const root = createRoot(container); const onAction = vi.fn();
-    const props = { scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+    const props = { scenario: SCENARIO, region: UNITED_STATES, lessonTrays: CRITICAL_CARE_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
       resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null,
         crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null,
         activeCooling: false, seizureSuppressed: false, ardsLungProtectiveAssessment: {
@@ -23,7 +24,7 @@ describe('Requirement: ARDS opens a focused protective-setting and response surf
       muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {},
       onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {},
       onCallForHelp: () => {}, onAirwayDevice: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
-      onActiveCooling: () => {}, onArdsLungProtectiveResponse: onAction, onDrugCard: () => {} } satisfies ActionCockpitProps;
+      onActiveCooling: () => {}, onLessonAction: (_type: string, action: string) => onAction(action as never), onDrugCard: () => {} } satisfies ActionCockpitProps;
     act(() => root.render(createElement(ActionCockpit, props)));
     expect(container.querySelector('[role="tablist"]')).toBeNull();
     expect(container.textContent).toContain('Size the breath to the lung.');

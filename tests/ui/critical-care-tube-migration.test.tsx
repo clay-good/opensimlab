@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { CRITICAL_CARE_TRAYS } from '../../src/modules/critical-care/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, CRITICAL_CARE_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { ENDOTRACHEAL_TUBE_MIGRATION_AFTER_REPOSITIONING as SCENARIO } from '../../src/modules/critical-care/scenarios/endotracheal-tube-migration-after-repositioning';
 
@@ -29,7 +35,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['endotrachealTubeMigrationAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: CRITICAL_CARE_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, endotrachealTubeMigrationAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'volume-control', tidalVolumeMl: 420, respiratoryRateBpm: 18, fio2: 0.5, peep: 8, delivering: true, sevofluranePercent: 0, freshGasFlowLPerMin: 10 },
@@ -38,7 +44,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onEndotrachealTubeMigrationResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -58,8 +64,8 @@ describe('Post-repositioning tube migration experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasEndotrachealTubeMigrationResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasEndotrachealTubeMigrationResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'endotracheal-tube-migration-after-repositioning'),
     }).hasEndotrachealTubeMigrationResponse).toBe(false);
@@ -94,36 +100,36 @@ describe('Post-repositioning tube migration experience', () => {
 describe('Post-repositioning tube migration tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { endotrachealTubeMigrationGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { endotrachealTubeMigrationGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('a resistance problem rather than a stiff lung');
-    const support = markup(RECOGNIZED, { endotrachealTubeMigrationGuidance: 'guided' });
+    const support = markup(RECOGNIZED, { guidance: 'guided' });
     expect(support).toContain('the answer can wait ninety seconds');
     expect(support).not.toContain('a resistance problem rather than a stiff lung');
   });
 
   it('calls the depth change persuasive rather than decisive', () => {
-    expect(markup(SUPPORTED, { endotrachealTubeMigrationGuidance: 'guided' }))
+    expect(markup(SUPPORTED, { guidance: 'guided' }))
       .toContain('a mark is a proxy for a position');
   });
 
   it('refuses to make 22 cm a rule', () => {
-    expect(markup(POSITION, { endotrachealTubeMigrationGuidance: 'guided' }))
+    expect(markup(POSITION, { guidance: 'guided' }))
       .toContain('not a depth to carry to the next patient');
   });
 
   it('goes quiet once the response is reassessed', () => {
-    expect(markup(DONE, { endotrachealTubeMigrationGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { endotrachealTubeMigrationGuidance: 'guided', endotrachealTubeMigrationDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'EndotrachealTubeMigration' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

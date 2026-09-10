@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { CRITICAL_CARE_TRAYS } from '../../src/modules/critical-care/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, CRITICAL_CARE_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { PULSE_OXIMETER_MOTION_ARTIFACT as SCENARIO } from '../../src/modules/critical-care/scenarios/pulse-oximeter-motion-artifact';
 
@@ -30,7 +36,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['pulseOximeterArtifactAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: CRITICAL_CARE_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, pulseOximeterArtifactAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 500, respiratoryRateBpm: 16, fio2: 0.28, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 4 },
@@ -39,7 +45,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onPulseOximeterArtifactResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -59,8 +65,8 @@ describe('Pulse-oximeter artifact experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasPulseOximeterArtifactResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasPulseOximeterArtifactResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'pulse-oximeter-motion-artifact'),
     }).hasPulseOximeterArtifactResponse).toBe(false);
@@ -98,36 +104,36 @@ describe('Pulse-oximeter artifact experience', () => {
 describe('Pulse-oximeter artifact tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { pulseOximeterArtifactGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { pulseOximeterArtifactGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('is not in a position to tell you what the blood is carrying');
-    const pleth = markup(DISCORDANCE, { pulseOximeterArtifactGuidance: 'guided' });
+    const pleth = markup(DISCORDANCE, { guidance: 'guided' });
     expect(pleth).toContain('this lowers confidence, and it does not diagnose artifact');
     expect(pleth).not.toContain('is not in a position to tell you what the blood is carrying');
   });
 
   it('states the limit of the probe review', () => {
-    expect(markup(PLETH, { pulseOximeterArtifactGuidance: 'guided' }))
+    expect(markup(PLETH, { guidance: 'guided' }))
       .toContain('has not been excluded by any of it');
   });
 
   it('makes the independent measurement the point of the chain', () => {
-    expect(markup(PROBE, { pulseOximeterArtifactGuidance: 'guided' }))
+    expect(markup(PROBE, { guidance: 'guided' }))
       .toContain('This is the step the whole chain exists for');
   });
 
   it('goes quiet once the clean site is recorded', () => {
-    expect(markup(DONE, { pulseOximeterArtifactGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { pulseOximeterArtifactGuidance: 'guided', pulseOximeterArtifactDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'PulseOximeterArtifact' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');
