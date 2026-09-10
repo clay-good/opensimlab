@@ -4,11 +4,17 @@ import { describe, expect, it } from 'vitest';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { TOXICOLOGY_TRAYS } from '../../src/modules/toxicology/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, TOXICOLOGY_TRAYS);
 import { METHEMOGLOBINEMIA_SATURATION_GAP as SCENARIO } from '../../src/modules/toxicology/scenarios/methemoglobinemia-saturation-gap';
 const markup = (assessment: NonNullable<ActionCockpitProps['resuscitation']['toxicologyMethemoglobinemiaAssessment']>, extra: {
-  toxicologyMethemoglobinemiaGuidance?: ActionCockpitProps['toxicologyMethemoglobinemiaGuidance'];
-  toxicologyMethemoglobinemiaDemonstrating?: boolean;
-} = {}) => renderToStaticMarkup(createElement(ActionCockpit, { scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, toxicologyMethemoglobinemiaAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 420, respiratoryRateBpm: 10, fio2: 1, peep: 0, delivering: true, sevofluranePercent: 0, freshGasFlowLPerMin: 10 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onToxicologyMethemoglobinemiaResponse: () => {}, ...extra } satisfies ActionCockpitProps));
+  guidance?: ActionCockpitProps['guidance'];
+  demonstratingLessonId?: string | undefined;
+} = {}) => renderToStaticMarkup(createElement(ActionCockpit, { scenario: SCENARIO, region: UNITED_STATES, lessonTrays: TOXICOLOGY_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, toxicologyMethemoglobinemiaAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 420, respiratoryRateBpm: 10, fio2: 1, peep: 0, delivering: true, sevofluranePercent: 0, freshGasFlowLPerMin: 10 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onLessonAction: () => {}, ...extra } satisfies ActionCockpitProps));
 
 const EMPTY = { trajectoryAtTick: null, recognitionAtTick: null, supportAtTick: null, hazardsAtTick: null, reassessmentAtTick: null, handoffAtTick: null };
 
@@ -22,8 +28,8 @@ describe('Toxicology methemoglobinemia experience', () => {
   });
 
   it('fails closed and exposes one calm cognitive action at a time', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasToxicologyMethemoglobinemiaResponse).toBe(true);
-    expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasToxicologyMethemoglobinemiaResponse).toBe(false);
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasToxicologyMethemoglobinemiaResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasToxicologyMethemoglobinemiaResponse).toBe(false);
     const states = [EMPTY,
       { ...EMPTY, trajectoryAtTick: 0 },
       { ...EMPTY, trajectoryAtTick: 0, recognitionAtTick: 1 },
@@ -54,20 +60,20 @@ describe('Methemoglobinemia tutor and worked example', () => {
 
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { toxicologyMethemoglobinemiaGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { toxicologyMethemoglobinemiaGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('Put both oxygen numbers in one sentence');
-    const next = markup(connected, { toxicologyMethemoglobinemiaGuidance: 'guided' });
+    const next = markup(connected, { guidance: 'guided' });
     expect(next).toContain('Read the co-oximetry');
     expect(next).not.toContain('Put both oxygen numbers in one sentence');
   });
 
   it('keeps the gap as the finding rather than picking a winner', () => {
-    const html = markup(EMPTY, { toxicologyMethemoglobinemiaGuidance: 'guided' });
+    const html = markup(EMPTY, { guidance: 'guided' });
     expect(html).toContain('are not arguing');
     expect(html).toContain('right about themselves');
     expect(html).not.toContain('The pulse oximeter is wrong');
@@ -75,13 +81,13 @@ describe('Methemoglobinemia tutor and worked example', () => {
 
   it('goes quiet once the handoff is recorded', () => {
     const ended = { trajectoryAtTick: 0, recognitionAtTick: 1, supportAtTick: 2, hazardsAtTick: 3, reassessmentAtTick: 4, handoffAtTick: 5 };
-    expect(markup(ended, { toxicologyMethemoglobinemiaGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(ended, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = 'Connect the discordant clues';
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { toxicologyMethemoglobinemiaGuidance: 'guided', toxicologyMethemoglobinemiaDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'Methemoglobinemia' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

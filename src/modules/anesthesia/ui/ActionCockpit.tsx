@@ -77,21 +77,6 @@ import { ineffectiveVentilationInlinePrompt } from '../../neonatology/tutor/inef
 import { neonatalApneaInlinePrompt } from '../../neonatology/tutor/neonatal-apnea-guidance';
 import { termTransitionInlinePrompt } from '../../neonatology/tutor/term-newborn-transition-guidance';
 import { tensionPneumothoraxInlinePrompt } from '../../neonatology/tutor/neonatal-tension-pneumothorax-guidance';
-import { methemoglobinemiaInlinePrompt } from '../../toxicology/tutor/methemoglobinemia-saturation-gap-guidance';
-import { carbonMonoxideInlinePrompt } from '../../toxicology/tutor/carbon-monoxide-reassuring-monitor-guidance';
-import { acetaminophenInlinePrompt } from '../../toxicology/tutor/acetaminophen-clock-and-nomogram-guidance';
-import { salicylateInlinePrompt } from '../../toxicology/tutor/salicylate-falling-number-guidance';
-import { tricyclicInlinePrompt } from '../../toxicology/tutor/tricyclic-sodium-channel-cardiotoxicity-guidance';
-import { betaBlockerInlinePrompt } from '../../toxicology/tutor/beta-blocker-cardiogenic-shock-guidance';
-import { calciumChannelBlockerInlinePrompt } from '../../toxicology/tutor/calcium-channel-blocker-shock-guidance';
-import { digoxinInlinePrompt } from '../../toxicology/tutor/digoxin-rhythm-potassium-guidance';
-import { cholinergicInlinePrompt } from '../../toxicology/tutor/cholinergic-pesticide-respiratory-failure-guidance';
-import { anticholinergicInlinePrompt } from '../../toxicology/tutor/anticholinergic-hyperthermia-delirium-guidance';
-import { serotoninInlinePrompt } from '../../toxicology/tutor/serotonin-toxicity-hyperthermia-clonus-guidance';
-import { sympathomimeticInlinePrompt } from '../../toxicology/tutor/sympathomimetic-hyperadrenergic-hyperthermia-guidance';
-import { methanolInlinePrompt } from '../../toxicology/tutor/methanol-visual-acidosis-gaps-guidance';
-import { delayedLastInlinePrompt } from '../../toxicology/tutor/delayed-local-anesthetic-cns-cardiac-toxicity-guidance';
-import { opioidXylazineInlinePrompt } from '../../toxicology/tutor/opioid-xylazine-persistent-sedation-guidance';
 import { maternalArrestInlinePrompt } from '../../obstetrics/tutor/maternal-cardiac-arrest-coordinated-response-guidance';
 import { shoulderDystociaInlinePrompt } from '../../obstetrics/tutor/shoulder-dystocia-cognitive-sequence-guidance';
 import { cordProlapseInlinePrompt } from '../../obstetrics/tutor/umbilical-cord-prolapse-urgent-birth-coordination-guidance';
@@ -1702,126 +1687,6 @@ export interface ActionCockpitProps {
       | 'record-hypertonic-saline-intent' | 'reassess-hyponatremia-first-hour'
       | 'record-hyponatremia-guardrails-and-cause-plan',
   ) => void;
-  readonly onToxicologyMethemoglobinemiaResponse?: (
-    action: 'reconcile-toxicology-methemoglobinemia-exposure-cyanosis-symptoms-pulse-ox-arterial-oxygen-and-whole-patient'
-      | 'recognize-toxicology-methemoglobinemia-dyshemoglobin-pattern-without-single-number-or-diagnostic-closure'
-      | 'activate-toxicology-methemoglobinemia-support-monitoring-source-control-poison-center-and-critical-care-ownership'
-      | 'review-toxicology-methemoglobinemia-supplied-cooximetry-and-methylene-blue-hazard-boundary'
-      | 'record-toxicology-methemoglobinemia-bounded-qualified-team-antidote-intent-and-strict-reassessment'
-      | 'handoff-toxicology-methemoglobinemia-exposure-rebound-hemolysis-serotonin-rescue-and-active-risk',
-  ) => void;
-  readonly onToxicologyCarbonMonoxideResponse?: (
-    action: 'reconcile-toxicology-carbon-monoxide-shared-exposure-clock-syncope-symptoms-pulse-ox-and-whole-patient'
-      | 'recognize-toxicology-carbon-monoxide-pattern-despite-reassuring-pulse-ox-without-single-value-closure'
-      | 'activate-toxicology-carbon-monoxide-source-safety-qualified-oxygen-monitoring-poison-center-and-emergency-ownership'
-      | 'review-toxicology-carbon-monoxide-supplied-cooximetry-neurologic-cardiac-and-severity-boundary'
-      | 'record-toxicology-carbon-monoxide-selected-patient-hyperbaric-consultation-and-strict-reassessment'
-      | 'handoff-toxicology-carbon-monoxide-delayed-neurologic-cardiac-exposure-followup-and-active-risk',
-  ) => void;
-  readonly onToxicologyAcetaminophenResponse?: (
-    action: 'reconcile-toxicology-acetaminophen-product-ingestion-window-clock-symptoms-and-whole-patient'
-      | 'recognize-toxicology-acetaminophen-acute-timed-pattern-and-nomogram-applicability-boundary'
-      | 'activate-toxicology-acetaminophen-poison-center-emergency-monitoring-and-nonjudgmental-safety-ownership'
-      | 'review-toxicology-acetaminophen-supplied-timed-level-nomogram-position-liver-and-coingestion-boundary'
-      | 'record-toxicology-acetaminophen-bounded-qualified-team-acetylcysteine-intent-and-strict-later-review'
-      | 'handoff-toxicology-acetaminophen-serial-level-liver-failure-stopping-safety-and-active-risk',
-  ) => void;
-  readonly onToxicologySalicylateResponse?: (
-    action: 'reconcile-toxicology-salicylate-product-exposure-clock-symptoms-breathing-and-whole-patient'
-      | 'recognize-toxicology-salicylate-mixed-acid-base-pattern-without-single-concentration-closure'
-      | 'activate-toxicology-salicylate-poison-center-emergency-critical-care-nephrology-and-safety-ownership'
-      | 'review-toxicology-salicylate-supplied-serial-level-acid-base-volume-electrolyte-and-airway-boundary'
-      | 'record-toxicology-salicylate-bounded-qualified-alkalinization-and-dialysis-preparedness-with-strict-later-review'
-      | 'handoff-toxicology-salicylate-cns-pulmonary-acidemia-absorption-extracorporeal-and-active-risk',
-  ) => void;
-  readonly onToxicologyTricyclicResponse?: (
-    action: 'reconcile-toxicology-tricyclic-product-clock-cns-seizure-perfusion-ecg-and-whole-patient'
-      | 'recognize-toxicology-tricyclic-sodium-channel-cardiotoxicity-pattern-without-qrs-only-closure'
-      | 'activate-toxicology-tricyclic-poison-center-resuscitation-cardiac-airway-seizure-and-safety-ownership'
-      | 'review-toxicology-tricyclic-supplied-ecg-perfusion-acid-base-electrolyte-coingestion-and-rescue-boundary'
-      | 'record-toxicology-tricyclic-bounded-qualified-bicarbonate-and-rescue-intent-with-strict-later-review'
-      | 'handoff-toxicology-tricyclic-recurrent-conduction-shock-seizure-acidemia-rescue-and-active-risk',
-  ) => void;
-  readonly onToxicologyBetaBlockerResponse?: (
-    action: 'reconcile-toxicology-beta-blocker-product-clock-pulse-perfusion-mentation-glucose-ecg-and-whole-patient'
-      | 'recognize-toxicology-beta-blocker-cardiogenic-shock-pattern-without-pulse-only-closure'
-      | 'activate-toxicology-beta-blocker-poison-center-resuscitation-cardiac-glucose-airway-and-safety-ownership'
-      | 'review-toxicology-beta-blocker-supplied-ecg-perfusion-contractility-glucose-electrolyte-prior-care-and-rescue-boundary'
-      | 'record-toxicology-beta-blocker-bounded-qualified-vasopressor-glucagon-insulin-euglycemia-and-rescue-intent-with-strict-later-review'
-      | 'handoff-toxicology-beta-blocker-recurrent-shock-bradycardia-hypoglycemia-electrolyte-volume-rescue-and-active-risk',
-  ) => void;
-  readonly onToxicologyCalciumChannelBlockerResponse?: (
-    action: 'reconcile-toxicology-calcium-channel-blocker-product-formulation-clock-perfusion-rhythm-glucose-and-whole-patient'
-      | 'recognize-toxicology-calcium-channel-blocker-mixed-shock-pattern-without-glucose-or-pulse-only-closure'
-      | 'activate-toxicology-calcium-channel-blocker-poison-center-resuscitation-cardiac-metabolic-airway-and-safety-ownership'
-      | 'review-toxicology-calcium-channel-blocker-supplied-ecg-perfusion-contractility-glucose-electrolyte-prior-care-and-rescue-boundary'
-      | 'record-toxicology-calcium-channel-blocker-bounded-qualified-vasopressor-calcium-insulin-euglycemia-and-rescue-intent-with-strict-later-review'
-      | 'handoff-toxicology-calcium-channel-blocker-recurrent-shock-av-block-hyperglycemia-electrolyte-volume-rescue-and-active-risk',
-  ) => void;
-  readonly onToxicologyDigoxinResponse?: (
-    action: 'reconcile-toxicology-digoxin-product-clock-gi-visual-perfusion-rhythm-potassium-and-whole-patient'
-      | 'recognize-toxicology-digoxin-life-threatening-pattern-without-level-rhythm-or-potassium-only-closure'
-      | 'activate-toxicology-digoxin-poison-center-resuscitation-cardiac-electrolyte-airway-and-safety-ownership'
-      | 'review-toxicology-digoxin-supplied-ecg-level-timing-potassium-renal-coingestion-and-antidote-boundary'
-      | 'record-toxicology-digoxin-bounded-qualified-immune-fab-surveillance-and-rescue-intent-with-strict-later-review'
-      | 'handoff-toxicology-digoxin-recurrent-arrhythmia-potassium-shift-level-interference-renal-rescue-and-active-risk',
-  ) => void;
-  readonly onToxicologyCholinergicResponse?: (
-    action: 'reconcile-toxicology-cholinergic-product-route-secondary-contamination-secretions-breathing-weakness-cns-and-whole-patient'
-      | 'recognize-toxicology-cholinergic-muscarinic-nicotinic-and-cns-pattern-without-mnemonic-or-cholinesterase-only-closure'
-      | 'activate-toxicology-cholinergic-ppe-decontamination-airway-resuscitation-poison-center-and-safety-ownership'
-      | 'review-toxicology-cholinergic-supplied-respiratory-neuromuscular-cns-exposure-cholinesterase-and-airway-boundary'
-      | 'record-toxicology-cholinergic-bounded-qualified-atropine-pralidoxime-benzodiazepine-airway-and-surveillance-intent-with-strict-later-review'
-      | 'handoff-toxicology-cholinergic-recurrent-secretions-bronchospasm-weakness-intermediate-syndrome-exposure-seizure-and-active-risk',
-  ) => void;
-  readonly onToxicologyAnticholinergicResponse?: (
-    action: 'reconcile-toxicology-anticholinergic-product-clock-delirium-temperature-dryness-retention-ecg-and-whole-patient'
-      | 'recognize-toxicology-anticholinergic-central-and-peripheral-pattern-without-mnemonic-temperature-or-pupil-only-closure'
-      | 'activate-toxicology-anticholinergic-resuscitation-cooling-airway-toxicology-monitoring-and-compassionate-safety-ownership'
-      | 'review-toxicology-anticholinergic-supplied-temperature-cns-ecg-renal-ck-retention-and-differential-boundary'
-      | 'record-toxicology-anticholinergic-bounded-qualified-cooling-support-sedation-seizure-surveillance-and-physostigmine-eligibility-intent-with-strict-later-review'
-      | 'handoff-toxicology-anticholinergic-rebound-delirium-hyperthermia-retention-rhabdomyolysis-seizure-coingestion-and-active-risk',
-  ) => void;
-  readonly onToxicologySerotoninResponse?: (
-    action: 'reconcile-toxicology-serotonin-agents-clock-mental-autonomic-neuromuscular-temperature-and-whole-patient'
-      | 'recognize-toxicology-serotonin-coupled-pattern-without-hunter-clonus-temperature-or-medication-list-only-closure'
-      | 'activate-toxicology-serotonin-resuscitation-cooling-airway-toxicology-monitoring-and-compassionate-safety-ownership'
-      | 'review-toxicology-serotonin-supplied-cns-autonomic-neuromuscular-temperature-ecg-renal-ck-and-differential-boundary'
-      | 'record-toxicology-serotonin-bounded-qualified-source-cessation-cooling-support-sedation-seizure-surveillance-airway-and-antagonist-intent-with-strict-later-review'
-      | 'handoff-toxicology-serotonin-rebound-hyperthermia-clonus-rigidity-seizure-rhabdomyolysis-coingestion-airway-and-active-risk',
-  ) => void;
-  readonly onToxicologySympathomimeticResponse?: (
-    action: 'reconcile-toxicology-sympathomimetic-exposure-clock-agitation-autonomic-temperature-and-whole-patient'
-      | 'recognize-toxicology-sympathomimetic-coupled-pattern-without-screen-pupil-pressure-temperature-or-agitation-only-closure'
-      | 'activate-toxicology-sympathomimetic-deescalation-resuscitation-cooling-airway-toxicology-monitoring-and-compassionate-safety-ownership'
-      | 'review-toxicology-sympathomimetic-supplied-mental-autonomic-cardiac-temperature-renal-ck-and-differential-boundary'
-      | 'record-toxicology-sympathomimetic-bounded-qualified-deescalation-support-sedation-cooling-surveillance-airway-and-adjunct-intent-with-strict-later-review'
-      | 'handoff-toxicology-sympathomimetic-rebound-agitation-psychosis-suicidality-ischemia-arrhythmia-hyperthermia-rhabdomyolysis-coingestion-airway-and-active-risk',
-  ) => void;
-  readonly onToxicologyMethanolResponse?: (
-    action: 'reconcile-toxicology-methanol-source-clock-vision-acid-base-gaps-and-whole-patient'
-      | 'recognize-toxicology-methanol-coupled-pattern-without-source-vision-anion-osmolar-or-level-only-closure'
-      | 'activate-toxicology-methanol-resuscitation-airway-antidote-extracorporeal-toxicology-laboratory-and-vision-ownership'
-      | 'review-toxicology-methanol-supplied-acid-base-osmolar-electrolyte-renal-visual-coingestion-and-differential-boundary'
-      | 'record-toxicology-methanol-bounded-qualified-source-antidote-cofactor-acid-base-extracorporeal-surveillance-and-airway-intent-with-strict-later-review'
-      | 'handoff-toxicology-methanol-rebound-acidosis-vision-neurologic-airway-renal-electrolyte-coingestion-and-active-risk',
-  ) => void;
-  readonly onToxicologyDelayedLastResponse?: (
-    action: 'reconcile-toxicology-delayed-last-source-clock-prodrome-seizure-cardiac-and-whole-patient'
-      | 'recognize-toxicology-delayed-last-coupled-pattern-without-classic-sequence-clock-symptom-or-ecg-only-closure'
-      | 'activate-toxicology-delayed-last-source-airway-seizure-cardiac-toxicology-lipid-and-refractory-rescue-ownership'
-      | 'review-toxicology-delayed-last-supplied-source-delivery-cns-ecg-perfusion-acid-base-electrolyte-and-differential-boundary'
-      | 'record-toxicology-delayed-last-bounded-qualified-source-airway-seizure-lipid-acid-base-modified-resuscitation-and-ecls-intent-with-strict-later-review'
-      | 'handoff-toxicology-delayed-last-recurrent-seizure-arrhythmia-shock-airway-acidemia-source-lipid-and-refractory-risk',
-  ) => void;
-  readonly onToxicologyOpioidXylazineResponse?: (
-    action: 'reconcile-toxicology-opioid-xylazine-exposure-rescue-breathing-sedation-perfusion-and-whole-patient'
-      | 'recognize-toxicology-opioid-xylazine-opioid-emergency-and-possible-adulterant-without-pupil-naloxone-response-or-screen-only-closure'
-      | 'activate-toxicology-opioid-xylazine-ventilation-oxygen-monitoring-toxicology-addiction-wound-and-dignity-ownership'
-      | 'review-toxicology-opioid-xylazine-supplied-respiratory-response-circulation-temperature-glucose-ecg-screen-wound-and-differential-boundary'
-      | 'record-toxicology-opioid-xylazine-bounded-qualified-continued-support-opioid-antagonist-symptomatic-care-no-veterinary-antagonist-and-strict-later-review'
-      | 'handoff-toxicology-opioid-xylazine-recurrent-depression-persistent-sedation-shock-hypothermia-wound-withdrawal-addiction-and-outcome-risk',
-  ) => void;
   readonly onObstetricsMaternalArrestResponse?: (
     action: 'activate-obstetrics-maternal-arrest-prepared-resuscitation-obstetric-anesthesia-delivery-newborn-and-dignity-response-now'
       | 'reconcile-obstetrics-maternal-arrest-clock-responsiveness-breathing-pulse-rhythm-pregnancy-and-whole-person'
@@ -2096,21 +1961,6 @@ export interface ActionCockpitProps {
   readonly neonatologyApneaGuidance?: GuidanceLevel;
   readonly neonatologyTermTransitionGuidance?: GuidanceLevel;
   readonly neonatologyTensionPneumothoraxGuidance?: GuidanceLevel;
-  readonly toxicologyMethemoglobinemiaGuidance?: GuidanceLevel;
-  readonly toxicologyCarbonMonoxideGuidance?: GuidanceLevel;
-  readonly toxicologyAcetaminophenGuidance?: GuidanceLevel;
-  readonly toxicologySalicylateGuidance?: GuidanceLevel;
-  readonly toxicologyTricyclicGuidance?: GuidanceLevel;
-  readonly toxicologyBetaBlockerGuidance?: GuidanceLevel;
-  readonly toxicologyCalciumChannelBlockerGuidance?: GuidanceLevel;
-  readonly toxicologyDigoxinGuidance?: GuidanceLevel;
-  readonly toxicologyCholinergicGuidance?: GuidanceLevel;
-  readonly toxicologyAnticholinergicGuidance?: GuidanceLevel;
-  readonly toxicologySerotoninGuidance?: GuidanceLevel;
-  readonly toxicologySympathomimeticGuidance?: GuidanceLevel;
-  readonly toxicologyMethanolGuidance?: GuidanceLevel;
-  readonly toxicologyDelayedLastGuidance?: GuidanceLevel;
-  readonly toxicologyOpioidXylazineGuidance?: GuidanceLevel;
   readonly neurologyMyastheniaGuidance?: GuidanceLevel;
   readonly neurologyDysreflexiaGuidance?: GuidanceLevel;
   readonly obstetricsMaternalArrestGuidance?: GuidanceLevel;
@@ -2206,21 +2056,6 @@ export interface ActionCockpitProps {
   readonly neonatologyApneaDemonstrating?: boolean;
   readonly neonatologyTermTransitionDemonstrating?: boolean;
   readonly neonatologyTensionPneumothoraxDemonstrating?: boolean;
-  readonly toxicologyMethemoglobinemiaDemonstrating?: boolean;
-  readonly toxicologyCarbonMonoxideDemonstrating?: boolean;
-  readonly toxicologyAcetaminophenDemonstrating?: boolean;
-  readonly toxicologySalicylateDemonstrating?: boolean;
-  readonly toxicologyTricyclicDemonstrating?: boolean;
-  readonly toxicologyBetaBlockerDemonstrating?: boolean;
-  readonly toxicologyCalciumChannelBlockerDemonstrating?: boolean;
-  readonly toxicologyDigoxinDemonstrating?: boolean;
-  readonly toxicologyCholinergicDemonstrating?: boolean;
-  readonly toxicologyAnticholinergicDemonstrating?: boolean;
-  readonly toxicologySerotoninDemonstrating?: boolean;
-  readonly toxicologySympathomimeticDemonstrating?: boolean;
-  readonly toxicologyMethanolDemonstrating?: boolean;
-  readonly toxicologyDelayedLastDemonstrating?: boolean;
-  readonly toxicologyOpioidXylazineDemonstrating?: boolean;
   readonly neurologyMyastheniaDemonstrating?: boolean;
   readonly neurologyDysreflexiaDemonstrating?: boolean;
   readonly obstetricsMaternalArrestDemonstrating?: boolean;
@@ -2419,6 +2254,21 @@ export function crisisResponseAvailability(
     && scenario.timeline.filter((event) => event.target === 'hhs-osmolality-trajectory-boundary').length === 1;
   const moduleTray = lessonTrays.find((tray) => tray.supports(scenario));
   const hasSevereHypoglycemiaResponse = moduleTray?.id === 'SevereHypoglycemia';
+  const hasToxicologyMethemoglobinemiaResponse = moduleTray?.id === 'ToxicologyMethemoglobinemia';
+  const hasToxicologyCarbonMonoxideResponse = moduleTray?.id === 'ToxicologyCarbonMonoxide';
+  const hasToxicologyAcetaminophenResponse = moduleTray?.id === 'ToxicologyAcetaminophen';
+  const hasToxicologySalicylateResponse = moduleTray?.id === 'ToxicologySalicylate';
+  const hasToxicologyTricyclicResponse = moduleTray?.id === 'ToxicologyTricyclic';
+  const hasToxicologyBetaBlockerResponse = moduleTray?.id === 'ToxicologyBetaBlocker';
+  const hasToxicologyCalciumChannelBlockerResponse = moduleTray?.id === 'ToxicologyCalciumChannelBlocker';
+  const hasToxicologyDigoxinResponse = moduleTray?.id === 'ToxicologyDigoxin';
+  const hasToxicologyCholinergicResponse = moduleTray?.id === 'ToxicologyCholinergic';
+  const hasToxicologyAnticholinergicResponse = moduleTray?.id === 'ToxicologyAnticholinergic';
+  const hasToxicologySerotoninResponse = moduleTray?.id === 'ToxicologySerotonin';
+  const hasToxicologySympathomimeticResponse = moduleTray?.id === 'ToxicologySympathomimetic';
+  const hasToxicologyMethanolResponse = moduleTray?.id === 'ToxicologyMethanol';
+  const hasToxicologyDelayedLastResponse = moduleTray?.id === 'ToxicologyDelayedLast';
+  const hasToxicologyOpioidXylazineResponse = moduleTray?.id === 'ToxicologyOpioidXylazine';
   const hasAdrenalCrisisResponse = moduleTray?.id === 'AdrenalCrisis';
   const hasThyroidStormResponse = moduleTray?.id === 'ThyroidStorm';
   const hasMyxedemaResponse = moduleTray?.id === 'Myxedema';
@@ -2640,66 +2490,6 @@ export function crisisResponseAvailability(
     hasSevereHyponatremiaResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'severe-hyponatremia-with-seizure',
     ),
-    hasToxicologyMethemoglobinemiaResponse:
-      scenario.metadata.id === 'methemoglobinemia-saturation-gap'
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methemoglobinemia-saturation-gap-transition')
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methemoglobinemia-saturation-gap-transition-boundary'),
-    hasToxicologyCarbonMonoxideResponse:
-      scenario.metadata.id === 'carbon-monoxide-reassuring-monitor'
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'carbon-monoxide-reassuring-monitor-transition')
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'carbon-monoxide-reassuring-monitor-transition-boundary'),
-    hasToxicologyAcetaminophenResponse:
-      scenario.metadata.id === 'acetaminophen-clock-and-nomogram'
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acetaminophen-clock-and-nomogram-transition')
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acetaminophen-clock-and-nomogram-transition-boundary'),
-    hasToxicologySalicylateResponse:
-      scenario.metadata.id === 'salicylate-falling-number'
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'salicylate-falling-number-transition')
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'salicylate-falling-number-transition-boundary'),
-    hasToxicologyTricyclicResponse:
-      scenario.metadata.id === 'tricyclic-sodium-channel-cardiotoxicity'
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'tricyclic-sodium-channel-cardiotoxicity-transition')
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'tricyclic-sodium-channel-cardiotoxicity-transition-boundary'),
-    hasToxicologyBetaBlockerResponse:
-      scenario.metadata.id === 'beta-blocker-cardiogenic-shock'
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'beta-blocker-cardiogenic-shock-transition')
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'beta-blocker-cardiogenic-shock-transition-boundary'),
-    hasToxicologyCalciumChannelBlockerResponse:
-      scenario.metadata.id === 'calcium-channel-blocker-shock'
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'calcium-channel-blocker-shock-transition')
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'calcium-channel-blocker-shock-transition-boundary'),
-    hasToxicologyDigoxinResponse:
-      scenario.metadata.id === 'digoxin-rhythm-potassium'
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'digoxin-rhythm-potassium-transition')
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'digoxin-rhythm-potassium-transition-boundary'),
-    hasToxicologyCholinergicResponse:
-      scenario.metadata.id === 'cholinergic-pesticide-respiratory-failure'
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'cholinergic-pesticide-respiratory-failure-transition')
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'cholinergic-pesticide-respiratory-failure-transition-boundary'),
-    hasToxicologyAnticholinergicResponse:
-      scenario.metadata.id === 'anticholinergic-hyperthermia-delirium'
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'anticholinergic-hyperthermia-delirium-transition')
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'anticholinergic-hyperthermia-delirium-transition-boundary'),
-    hasToxicologySerotoninResponse:
-      scenario.metadata.id === 'serotonin-toxicity-hyperthermia-clonus'
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'serotonin-toxicity-hyperthermia-clonus-transition')
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'serotonin-toxicity-hyperthermia-clonus-transition-boundary'),
-    hasToxicologySympathomimeticResponse:
-      scenario.metadata.id === 'sympathomimetic-hyperadrenergic-hyperthermia'
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'sympathomimetic-hyperadrenergic-hyperthermia-transition')
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'sympathomimetic-hyperadrenergic-hyperthermia-transition-boundary'),
-    hasToxicologyMethanolResponse:
-      scenario.metadata.id === 'methanol-visual-acidosis-gaps'
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methanol-visual-acidosis-gaps-transition')
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methanol-visual-acidosis-gaps-transition-boundary'),
-    hasToxicologyDelayedLastResponse:
-      scenario.metadata.id === 'delayed-local-anesthetic-cns-cardiac-toxicity'
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'delayed-local-anesthetic-cns-cardiac-toxicity-transition')
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'delayed-local-anesthetic-cns-cardiac-toxicity-transition-boundary'),
-    hasToxicologyOpioidXylazineResponse:
-      scenario.metadata.id === 'opioid-xylazine-persistent-sedation'
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'opioid-xylazine-persistent-sedation-transition')
-      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'opioid-xylazine-persistent-sedation-transition-boundary'),
     hasObstetricsMaternalArrestResponse,
     hasObstetricsShoulderDystociaResponse,
     hasObstetricsCordProlapseResponse,
@@ -2832,6 +2622,21 @@ export function crisisResponseAvailability(
     hasPediatricForeignBodyAirwayObstructionResponse,
     hasPediatricInjurySafeguardingResponse,
     hasSevereHypoglycemiaResponse,
+    hasToxicologyMethemoglobinemiaResponse,
+    hasToxicologyCarbonMonoxideResponse,
+    hasToxicologyAcetaminophenResponse,
+    hasToxicologySalicylateResponse,
+    hasToxicologyTricyclicResponse,
+    hasToxicologyBetaBlockerResponse,
+    hasToxicologyCalciumChannelBlockerResponse,
+    hasToxicologyDigoxinResponse,
+    hasToxicologyCholinergicResponse,
+    hasToxicologyAnticholinergicResponse,
+    hasToxicologySerotoninResponse,
+    hasToxicologySympathomimeticResponse,
+    hasToxicologyMethanolResponse,
+    hasToxicologyDelayedLastResponse,
+    hasToxicologyOpioidXylazineResponse,
     hasAdrenalCrisisResponse,
     hasThyroidStormResponse, hasMyxedemaResponse, hasHypercalcemiaResponse, hasHypocalcemiaResponse, hasHyponatremiaCorrectionResponse, hasAvpDeficiencyResponse, hasRefeedingResponse, hasPerioperativeDiabetesResponse, hasRenalHyperkalemiaResponse, hasRenalHypokalemiaResponse, hasRenalHyponatremiaResponse, hasRenalHypernatremiaResponse, hasRenalHypocalcemiaResponse, hasRenalHypermagnesemiaResponse, hasMeningococcalSepsisResponse, hasObstructedKidneyResponse, hasFebrileNeutropeniaResponse, hasNecrotizingInfectionResponse, hasEndocarditisHeartFailureResponse, hasSeverePneumoniaResponse, hasToxicShockResponse, hasPossibleSepsisResponse, hasSepticShockLabelResponse, hasMeningitisImagingResponse, hasLowScoreResponse, hasCountedRateResponse, hasPairedReadingResponse, hasAfferentLimbResponse, hasQuietPatientResponse, hasProxyScaleResponse, hasLastKnownWellResponse, hasOxygenTargetScaleResponse, hasLostContingencyResponse, hasDelayedImmuneEventResponse, hasIncidentalClotResponse, hasNormalTestToxicityResponse, hasPrognosisQuestionResponse, hasLaboratoryTlsResponse, hasRareEarlyMyocarditisResponse, hasLoweringTheCountResponse, hasInheritedUrgencyResponse, hasTrialRuleResponse, hasSilentInteractionResponse, hasEasyLabelResponse, hasNegativeScanResponse, hasRisingRequirementResponse, hasUnfinishedSurveyResponse, hasTransientResponseResponse, hasQuietChestResponse, hasUnownedDelayResponse, hasThirdAttendanceResponse, hasDeferredStepResponse, hasKnownLabelResponse, hasUnspokenDoubtResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
@@ -4396,115 +4201,6 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 guidance={props.severeHyponatremiaGuidance}
                 demonstrating={props.severeHyponatremiaDemonstrating} assessment={props.resuscitation.hyponatremiaAssessment}
                 onAction={props.onHyponatremiaResponse ?? (() => {})} />
-            )}
-            {hasToxicologyMethemoglobinemiaResponse && (
-              <ToxicologyMethemoglobinemiaTray
-                assessment={props.resuscitation.toxicologyMethemoglobinemiaAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.toxicologyMethemoglobinemiaGuidance}
-                demonstrating={props.toxicologyMethemoglobinemiaDemonstrating}
-                onAction={props.onToxicologyMethemoglobinemiaResponse ?? (() => {})} />
-            )}
-            {hasToxicologyCarbonMonoxideResponse && (
-              <ToxicologyCarbonMonoxideTray
-                assessment={props.resuscitation.toxicologyCarbonMonoxideAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.toxicologyCarbonMonoxideGuidance}
-                demonstrating={props.toxicologyCarbonMonoxideDemonstrating}
-                onAction={props.onToxicologyCarbonMonoxideResponse ?? (() => {})} />
-            )}
-            {hasToxicologyAcetaminophenResponse && (
-              <ToxicologyAcetaminophenTray
-                assessment={props.resuscitation.toxicologyAcetaminophenAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.toxicologyAcetaminophenGuidance}
-                demonstrating={props.toxicologyAcetaminophenDemonstrating}
-                onAction={props.onToxicologyAcetaminophenResponse ?? (() => {})} />
-            )}
-            {hasToxicologySalicylateResponse && (
-              <ToxicologySalicylateTray
-                assessment={props.resuscitation.toxicologySalicylateAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.toxicologySalicylateGuidance}
-                demonstrating={props.toxicologySalicylateDemonstrating}
-                onAction={props.onToxicologySalicylateResponse ?? (() => {})} />
-            )}
-            {hasToxicologyTricyclicResponse && (
-              <ToxicologyTricyclicTray assessment={props.resuscitation.toxicologyTricyclicAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.toxicologyTricyclicGuidance}
-                demonstrating={props.toxicologyTricyclicDemonstrating}
-                onAction={props.onToxicologyTricyclicResponse ?? (() => {})} />
-            )}
-            {hasToxicologyBetaBlockerResponse && (
-              <ToxicologyBetaBlockerTray assessment={props.resuscitation.toxicologyBetaBlockerAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.toxicologyBetaBlockerGuidance}
-                demonstrating={props.toxicologyBetaBlockerDemonstrating}
-                onAction={props.onToxicologyBetaBlockerResponse ?? (() => {})} />
-            )}
-            {hasToxicologyCalciumChannelBlockerResponse && (
-              <ToxicologyCalciumChannelBlockerTray assessment={props.resuscitation.toxicologyCalciumChannelBlockerAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.toxicologyCalciumChannelBlockerGuidance}
-                demonstrating={props.toxicologyCalciumChannelBlockerDemonstrating}
-                onAction={props.onToxicologyCalciumChannelBlockerResponse ?? (() => {})} />
-            )}
-            {hasToxicologyDigoxinResponse && (
-              <ToxicologyDigoxinTray assessment={props.resuscitation.toxicologyDigoxinAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.toxicologyDigoxinGuidance}
-                demonstrating={props.toxicologyDigoxinDemonstrating}
-                onAction={props.onToxicologyDigoxinResponse ?? (() => {})} />
-            )}
-            {hasToxicologyCholinergicResponse && (
-              <ToxicologyCholinergicTray assessment={props.resuscitation.toxicologyCholinergicAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.toxicologyCholinergicGuidance}
-                demonstrating={props.toxicologyCholinergicDemonstrating}
-                onAction={props.onToxicologyCholinergicResponse ?? (() => {})} />
-            )}
-            {hasToxicologyAnticholinergicResponse && (
-              <ToxicologyAnticholinergicTray assessment={props.resuscitation.toxicologyAnticholinergicAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.toxicologyAnticholinergicGuidance}
-                demonstrating={props.toxicologyAnticholinergicDemonstrating}
-                onAction={props.onToxicologyAnticholinergicResponse ?? (() => {})} />
-            )}
-            {hasToxicologySerotoninResponse && (
-              <ToxicologySerotoninTray assessment={props.resuscitation.toxicologySerotoninAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.toxicologySerotoninGuidance}
-                demonstrating={props.toxicologySerotoninDemonstrating}
-                onAction={props.onToxicologySerotoninResponse ?? (() => {})} />
-            )}
-            {hasToxicologySympathomimeticResponse && (
-              <ToxicologySympathomimeticTray assessment={props.resuscitation.toxicologySympathomimeticAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.toxicologySympathomimeticGuidance}
-                demonstrating={props.toxicologySympathomimeticDemonstrating}
-                onAction={props.onToxicologySympathomimeticResponse ?? (() => {})} />
-            )}
-            {hasToxicologyMethanolResponse && (
-              <ToxicologyMethanolTray assessment={props.resuscitation.toxicologyMethanolAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.toxicologyMethanolGuidance}
-                demonstrating={props.toxicologyMethanolDemonstrating}
-                onAction={props.onToxicologyMethanolResponse ?? (() => {})} />
-            )}
-            {hasToxicologyDelayedLastResponse && (
-              <ToxicologyDelayedLastTray assessment={props.resuscitation.toxicologyDelayedLastAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.toxicologyDelayedLastGuidance}
-                demonstrating={props.toxicologyDelayedLastDemonstrating}
-                onAction={props.onToxicologyDelayedLastResponse ?? (() => {})} />
-            )}
-            {hasToxicologyOpioidXylazineResponse && (
-              <ToxicologyOpioidXylazineTray assessment={props.resuscitation.toxicologyOpioidXylazineAssessment}
-                scenarioVersion={props.scenario.metadata.version}
-                guidance={props.toxicologyOpioidXylazineGuidance}
-                demonstrating={props.toxicologyOpioidXylazineDemonstrating}
-                onAction={props.onToxicologyOpioidXylazineResponse ?? (() => {})} />
             )}
             {hasObstetricsMaternalArrestResponse && (
               <ObstetricsMaternalArrestTray assessment={props.resuscitation.obstetricsMaternalArrestAssessment}
@@ -6342,590 +6038,20 @@ function HyponatremiaTray({ assessment, scenarioVersion, guidance = 'unassisted'
 
 
 
-function ToxicologyMethemoglobinemiaTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyMethemoglobinemiaAssessment']>;
-  scenarioVersion: string;
-  onAction: NonNullable<ActionCockpitProps['onToxicologyMethemoglobinemiaResponse']>;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-}) {
-  const prompt = methemoglobinemiaInlinePrompt(guidance, { scenarioVersion, methemoglobinemia: assessment });
-  const act = demonstrating ? undefined : onAction;
-  const trajectory = assessment?.trajectoryAtTick != null;
-  const recognition = assessment?.recognitionAtTick != null;
-  const support = assessment?.supportAtTick != null;
-  const hazards = assessment?.hazardsAtTick != null;
-  const reassessment = assessment?.reassessmentAtTick != null;
-  const handoff = assessment?.handoffAtTick != null;
-  return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    <TutorPanel prompt={demonstrating ? null : prompt} />
-    <section className="syringe" aria-labelledby="toxicology-methemoglobinemia-early-title">
-      <div id="toxicology-methemoglobinemia-early-title" className="syringe__name">The numbers disagree. The patient matters.</div>
-      <p className="syringe__remaining">Begin with the exposure, cyanosis, symptoms, pulse trace, arterial oxygen evidence, and the whole person.</p>
-      <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-toxicology-methemoglobinemia-exposure-cyanosis-symptoms-pulse-ox-arterial-oxygen-and-whole-patient') : undefined}>Connect the discordant clues</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-toxicology-methemoglobinemia-dyshemoglobin-pattern-without-single-number-or-diagnostic-closure') : undefined}>Recognize the urgent pattern</Button>}
-        {recognition && !support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-toxicology-methemoglobinemia-support-monitoring-source-control-poison-center-and-critical-care-ownership') : undefined}>Support + call toxicology</Button>}
-        {support && !hazards && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-toxicology-methemoglobinemia-supplied-cooximetry-and-methylene-blue-hazard-boundary') : undefined}>Review co-ox + hazards</Button>}
-      </div>
-    </section>
-    <section className="syringe" aria-labelledby="toxicology-methemoglobinemia-later-title">
-      <div id="toxicology-methemoglobinemia-later-title" className="syringe__name">Better is a trend, not an all-clear.</div>
-      <p className="syringe__remaining" role="status">{handoff ? 'Exposure, serial co-oximetry, rebound, hemolysis, serotonin, rescue, and outcome uncertainty handed off.' : reassessment ? 'Symptoms and co-oximetry improved in the fixed report. Rebound and treatment hazards remain open.' : hazards ? 'The co-ox result and methylene-blue hazards are visible. Record bounded intent after time passes.' : support ? 'Support and qualified ownership are active. Review the supplied co-oximetry and hazards.' : 'Complete recognition and immediate support before antidote review.'}</p>
-      <div className="crisis-drug__actions">
-        {hazards && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-toxicology-methemoglobinemia-bounded-qualified-team-antidote-intent-and-strict-reassessment') : undefined}>Record intent + reassess</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-toxicology-methemoglobinemia-exposure-rebound-hemolysis-serotonin-rescue-and-active-risk') : undefined}>Hand off what stays open</Button>}
-      </div>
-    </section>
-  </>;
-}
 
-function ToxicologyCarbonMonoxideTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyCarbonMonoxideAssessment']>;
-  scenarioVersion: string;
-  onAction: NonNullable<ActionCockpitProps['onToxicologyCarbonMonoxideResponse']>;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-}) {
-  const prompt = carbonMonoxideInlinePrompt(guidance, { scenarioVersion, carbonMonoxide: assessment });
-  const act = demonstrating ? undefined : onAction;
-  const trajectory = assessment?.trajectoryAtTick != null;
-  const recognition = assessment?.recognitionAtTick != null;
-  const support = assessment?.supportAtTick != null;
-  const severity = assessment?.severityAtTick != null;
-  const reassessment = assessment?.reassessmentAtTick != null;
-  const handoff = assessment?.handoffAtTick != null;
-  return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    <TutorPanel prompt={demonstrating ? null : prompt} />
-    <section className="syringe" aria-labelledby="toxicology-carbon-monoxide-early-title">
-      <div id="toxicology-carbon-monoxide-early-title" className="syringe__name">A calm monitor can still hide a poisoned patient.</div>
-      <p className="syringe__remaining">Begin with the shared exposure, clock, syncope, symptoms, conventional pulse oximetry, and whole person.</p>
-      <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-toxicology-carbon-monoxide-shared-exposure-clock-syncope-symptoms-pulse-ox-and-whole-patient') : undefined}>Connect exposure + patient</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-toxicology-carbon-monoxide-pattern-despite-reassuring-pulse-ox-without-single-value-closure') : undefined}>See past the pulse ox</Button>}
-        {recognition && !support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-toxicology-carbon-monoxide-source-safety-qualified-oxygen-monitoring-poison-center-and-emergency-ownership') : undefined}>Make the scene + patient safe</Button>}
-        {support && !severity && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-toxicology-carbon-monoxide-supplied-cooximetry-neurologic-cardiac-and-severity-boundary') : undefined}>Read severity in context</Button>}
-      </div>
-    </section>
-    <section className="syringe" aria-labelledby="toxicology-carbon-monoxide-later-title">
-      <div id="toxicology-carbon-monoxide-later-title" className="syringe__name">A lower number is progress, not permission to forget.</div>
-      <p className="syringe__remaining" role="status">{handoff ? 'Exposure, serial neurologic and cardiac findings, delayed risk, follow-up, and outcome uncertainty handed off.' : reassessment ? 'Symptoms and COHb improved in the fixed report. Delayed neurologic and cardiac risk remain open.' : severity ? 'The COHb is contextual evidence, not a severity score. Record selected-patient consultation after time passes.' : support ? 'Source safety, oxygen, monitoring, and qualified ownership are active. Review the supplied severity evidence.' : 'Complete recognition and immediate support before consultation review.'}</p>
-      <div className="crisis-drug__actions">
-        {severity && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-toxicology-carbon-monoxide-selected-patient-hyperbaric-consultation-and-strict-reassessment') : undefined}>Consult + reassess</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-toxicology-carbon-monoxide-delayed-neurologic-cardiac-exposure-followup-and-active-risk') : undefined}>Hand off what can emerge</Button>}
-      </div>
-    </section>
-  </>;
-}
 
-function ToxicologyAcetaminophenTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyAcetaminophenAssessment']>;
-  scenarioVersion: string;
-  onAction: NonNullable<ActionCockpitProps['onToxicologyAcetaminophenResponse']>;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-}) {
-  const prompt = acetaminophenInlinePrompt(guidance, { scenarioVersion, acetaminophen: assessment });
-  const act = demonstrating ? undefined : onAction;
-  const trajectory = assessment?.trajectoryAtTick != null;
-  const recognition = assessment?.recognitionAtTick != null;
-  const support = assessment?.supportAtTick != null;
-  const evidence = assessment?.evidenceAtTick != null;
-  const reassessment = assessment?.reassessmentAtTick != null;
-  const handoff = assessment?.handoffAtTick != null;
-  return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    <TutorPanel prompt={demonstrating ? null : prompt} />
-    <section className="syringe" aria-labelledby="toxicology-acetaminophen-early-title">
-      <div id="toxicology-acetaminophen-early-title" className="syringe__name">The clock gives the number its meaning.</div>
-      <p className="syringe__remaining">Begin with product, ingestion window, exact clock, symptoms, reported-quantity limits, and whole person.</p>
-      <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-toxicology-acetaminophen-product-ingestion-window-clock-symptoms-and-whole-patient') : undefined}>Connect product + clock</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-toxicology-acetaminophen-acute-timed-pattern-and-nomogram-applicability-boundary') : undefined}>Set the nomogram boundary</Button>}
-        {recognition && !support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-toxicology-acetaminophen-poison-center-emergency-monitoring-and-nonjudgmental-safety-ownership') : undefined}>Bring in toxicology + safety</Button>}
-        {support && !evidence && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-toxicology-acetaminophen-supplied-timed-level-nomogram-position-liver-and-coingestion-boundary') : undefined}>Review the timed evidence</Button>}
-      </div>
-    </section>
-    <section className="syringe" aria-labelledby="toxicology-acetaminophen-later-title">
-      <div id="toxicology-acetaminophen-later-title" className="syringe__name">A finished clock is not a stopping rule.</div>
-      <p className="syringe__remaining" role="status">{handoff ? 'Serial level, liver and failure markers, stopping criteria, safety, disposition, and outcome uncertainty handed off.' : reassessment ? 'The fixed later level and labs are reassuring. They do not create an automatic stop or prove treatment effect.' : evidence ? 'The supplied timed level and nomogram position are visible. Record bounded intent after time passes.' : support ? 'Qualified toxicology, emergency, monitoring, and safety ownership are active. Review the supplied evidence.' : 'Complete recognition and immediate ownership before antidote review.'}</p>
-      <div className="crisis-drug__actions">
-        {evidence && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-toxicology-acetaminophen-bounded-qualified-team-acetylcysteine-intent-and-strict-later-review') : undefined}>Record intent + review</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-toxicology-acetaminophen-serial-level-liver-failure-stopping-safety-and-active-risk') : undefined}>Hand off what stays open</Button>}
-      </div>
-    </section>
-  </>;
-}
 
-function ToxicologySalicylateTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologySalicylateAssessment']>;
-  scenarioVersion: string;
-  onAction: NonNullable<ActionCockpitProps['onToxicologySalicylateResponse']>;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-}) {
-  const prompt = salicylateInlinePrompt(guidance, { scenarioVersion, salicylate: assessment });
-  const act = demonstrating ? undefined : onAction;
-  const trajectory = assessment?.trajectoryAtTick != null;
-  const recognition = assessment?.recognitionAtTick != null;
-  const support = assessment?.supportAtTick != null;
-  const evidence = assessment?.evidenceAtTick != null;
-  const reassessment = assessment?.reassessmentAtTick != null;
-  const handoff = assessment?.handoffAtTick != null;
-  return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    <TutorPanel prompt={demonstrating ? null : prompt} />
-    <section className="syringe" aria-labelledby="toxicology-salicylate-early-title">
-      <div id="toxicology-salicylate-early-title" className="syringe__name">Read the patient and the number together.</div>
-      <p className="syringe__remaining">Begin with product, clock, tinnitus, vomiting, breathing, volume clues, units, and whole person.</p>
-      <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-toxicology-salicylate-product-exposure-clock-symptoms-breathing-and-whole-patient') : undefined}>Connect exposure + breathing</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-toxicology-salicylate-mixed-acid-base-pattern-without-single-concentration-closure') : undefined}>See the mixed pattern</Button>}
-        {recognition && !support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-toxicology-salicylate-poison-center-emergency-critical-care-nephrology-and-safety-ownership') : undefined}>Gather the right team early</Button>}
-        {support && !evidence && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-toxicology-salicylate-supplied-serial-level-acid-base-volume-electrolyte-and-airway-boundary') : undefined}>Review the coupled evidence</Button>}
-      </div>
-    </section>
-    <section className="syringe" aria-labelledby="toxicology-salicylate-later-title">
-      <div id="toxicology-salicylate-later-title" className="syringe__name">A lower number can travel with a sicker patient.</div>
-      <p className="syringe__remaining" role="status">{handoff ? 'CNS, pulmonary, acid-base, absorption, renal, electrolyte, extracorporeal, safety, and outcome uncertainty handed off.' : reassessment ? 'The concentration fell while pH and mentation worsened. The whole trajectory is ominous, not reassuring.' : evidence ? 'Serial concentration, pH, ventilation, volume, electrolytes, and airway risk are coupled. Record qualified intent after time passes.' : support ? 'Qualified toxicology, critical-care, nephrology, monitoring, and safety ownership are active. Review the supplied evidence.' : 'Complete recognition and early ownership before treatment-boundary review.'}</p>
-      <div className="crisis-drug__actions">
-        {evidence && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-toxicology-salicylate-bounded-qualified-alkalinization-and-dialysis-preparedness-with-strict-later-review') : undefined}>Prepare early + reassess</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-toxicology-salicylate-cns-pulmonary-acidemia-absorption-extracorporeal-and-active-risk') : undefined}>Hand off the whole trajectory</Button>}
-      </div>
-    </section>
-  </>;
-}
 
-function ToxicologyTricyclicTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyTricyclicAssessment']>;
-  scenarioVersion: string;
-  onAction: NonNullable<ActionCockpitProps['onToxicologyTricyclicResponse']>;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-}) {
-  const prompt = tricyclicInlinePrompt(guidance, { scenarioVersion, tricyclic: assessment });
-  const act = demonstrating ? undefined : onAction;
-  const trajectory = assessment?.trajectoryAtTick != null;
-  const recognition = assessment?.recognitionAtTick != null;
-  const support = assessment?.supportAtTick != null;
-  const evidence = assessment?.evidenceAtTick != null;
-  const reassessment = assessment?.reassessmentAtTick != null;
-  const handoff = assessment?.handoffAtTick != null;
-  return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    <TutorPanel prompt={demonstrating ? null : prompt} />
-    <section className="syringe" aria-labelledby="toxicology-tricyclic-early-title">
-      <div id="toxicology-tricyclic-early-title" className="syringe__name">The tracing belongs to a whole patient.</div>
-      <p className="syringe__remaining">Begin with product, clock, mentation, seizure, perfusion, supplied ECG, oxygenation, and whole person.</p>
-      <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-toxicology-tricyclic-product-clock-cns-seizure-perfusion-ecg-and-whole-patient') : undefined}>Connect patient + tracing</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-toxicology-tricyclic-sodium-channel-cardiotoxicity-pattern-without-qrs-only-closure') : undefined}>Recognize the electrical pattern</Button>}
-        {recognition && !support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-toxicology-tricyclic-poison-center-resuscitation-cardiac-airway-seizure-and-safety-ownership') : undefined}>Build the rescue circle</Button>}
-        {support && !evidence && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-toxicology-tricyclic-supplied-ecg-perfusion-acid-base-electrolyte-coingestion-and-rescue-boundary') : undefined}>Review the coupled risk</Button>}
-      </div>
-    </section>
-    <section className="syringe" aria-labelledby="toxicology-tricyclic-later-title">
-      <div id="toxicology-tricyclic-later-title" className="syringe__name">A narrower tracing is a checkpoint, not an all-clear.</div>
-      <p className="syringe__remaining" role="status">{handoff ? 'Serial conduction, perfusion, CNS, seizure, acid-base, recurrence, rescue, safety, and outcome uncertainty handed off.' : reassessment ? 'The fixed electrical, perfusion, and mental-state report improved. Durable stability and treatment effect remain unproven.' : evidence ? 'ECG, perfusion, CNS, seizure, acid-base, electrolytes, and rescue readiness stay coupled. Record qualified intent after time passes.' : support ? 'Qualified toxicology, resuscitation, cardiac, airway, seizure, and safety ownership are active. Review the supplied evidence.' : 'Complete whole-pattern recognition and rescue ownership before treatment-boundary review.'}</p>
-      <div className="crisis-drug__actions">
-        {evidence && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-toxicology-tricyclic-bounded-qualified-bicarbonate-and-rescue-intent-with-strict-later-review') : undefined}>Record intent + reassess</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-toxicology-tricyclic-recurrent-conduction-shock-seizure-acidemia-rescue-and-active-risk') : undefined}>Hand off what can recur</Button>}
-      </div>
-    </section>
-  </>;
-}
 
-function ToxicologyBetaBlockerTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyBetaBlockerAssessment']>;
-  scenarioVersion: string;
-  onAction: NonNullable<ActionCockpitProps['onToxicologyBetaBlockerResponse']>;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-}) {
-  const prompt = betaBlockerInlinePrompt(guidance, { scenarioVersion, betaBlocker: assessment });
-  const act = demonstrating ? undefined : onAction;
-  const trajectory = assessment?.trajectoryAtTick != null;
-  const recognition = assessment?.recognitionAtTick != null;
-  const support = assessment?.supportAtTick != null;
-  const evidence = assessment?.evidenceAtTick != null;
-  const reassessment = assessment?.reassessmentAtTick != null;
-  const handoff = assessment?.handoffAtTick != null;
-  return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    <TutorPanel prompt={demonstrating ? null : prompt} />
-    <section className="syringe" aria-labelledby="toxicology-beta-blocker-early-title">
-      <div id="toxicology-beta-blocker-early-title" className="syringe__name">A slow pulse can hide a failing pump.</div>
-      <p className="syringe__remaining">Begin with product, clock, pulse, perfusion, mentation, glucose, supplied ECG, and whole person.</p>
-      <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-toxicology-beta-blocker-product-clock-pulse-perfusion-mentation-glucose-ecg-and-whole-patient') : undefined}>Connect pulse + perfusion</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-toxicology-beta-blocker-cardiogenic-shock-pattern-without-pulse-only-closure') : undefined}>Recognize the shock pattern</Button>}
-        {recognition && !support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-toxicology-beta-blocker-poison-center-resuscitation-cardiac-glucose-airway-and-safety-ownership') : undefined}>Build the rescue circle</Button>}
-        {support && !evidence && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-toxicology-beta-blocker-supplied-ecg-perfusion-contractility-glucose-electrolyte-prior-care-and-rescue-boundary') : undefined}>Review pump + metabolism</Button>}
-      </div>
-    </section>
-    <section className="syringe" aria-labelledby="toxicology-beta-blocker-later-title">
-      <div id="toxicology-beta-blocker-later-title" className="syringe__name">A better pressure is a checkpoint, not an exit.</div>
-      <p className="syringe__remaining" role="status">{handoff ? 'Shock, rhythm, glucose, potassium, volume, recurrence, rescue, safety, and outcome uncertainty handed off.' : reassessment ? 'The fixed perfusion, mental-state, and metabolic report improved. Durable stability and treatment effect remain unproven.' : evidence ? 'Perfusion, rhythm, contractility, glucose, electrolytes, prior care, and rescue readiness stay coupled. Record qualified intent after time passes.' : support ? 'Qualified toxicology, resuscitation, cardiac, metabolic, airway, and safety ownership are active. Review the supplied evidence.' : 'Complete whole-pattern recognition and rescue ownership before treatment-boundary review.'}</p>
-      <div className="crisis-drug__actions">
-        {evidence && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-toxicology-beta-blocker-bounded-qualified-vasopressor-glucagon-insulin-euglycemia-and-rescue-intent-with-strict-later-review') : undefined}>Record rescue intent + reassess</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-toxicology-beta-blocker-recurrent-shock-bradycardia-hypoglycemia-electrolyte-volume-rescue-and-active-risk') : undefined}>Hand off what can recur</Button>}
-      </div>
-    </section>
-  </>;
-}
 
-function ToxicologyCalciumChannelBlockerTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyCalciumChannelBlockerAssessment']>;
-  scenarioVersion: string;
-  onAction: NonNullable<ActionCockpitProps['onToxicologyCalciumChannelBlockerResponse']>;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-}) {
-  const prompt = calciumChannelBlockerInlinePrompt(guidance, { scenarioVersion, calciumChannelBlocker: assessment });
-  const act = demonstrating ? undefined : onAction;
-  const trajectory = assessment?.trajectoryAtTick != null;
-  const recognition = assessment?.recognitionAtTick != null;
-  const support = assessment?.supportAtTick != null;
-  const evidence = assessment?.evidenceAtTick != null;
-  const reassessment = assessment?.reassessmentAtTick != null;
-  const handoff = assessment?.handoffAtTick != null;
-  return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    <TutorPanel prompt={demonstrating ? null : prompt} />
-    <section className="syringe" aria-labelledby="toxicology-calcium-channel-blocker-early-title">
-      <div id="toxicology-calcium-channel-blocker-early-title" className="syringe__name">The high glucose belongs beside the slow rhythm.</div>
-      <p className="syringe__remaining">Begin with product, formulation, clock, perfusion, conduction, glucose, and whole person.</p>
-      <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-toxicology-calcium-channel-blocker-product-formulation-clock-perfusion-rhythm-glucose-and-whole-patient') : undefined}>Connect rhythm + glucose</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-toxicology-calcium-channel-blocker-mixed-shock-pattern-without-glucose-or-pulse-only-closure') : undefined}>Recognize mixed shock</Button>}
-        {recognition && !support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-toxicology-calcium-channel-blocker-poison-center-resuscitation-cardiac-metabolic-airway-and-safety-ownership') : undefined}>Build the rescue circle</Button>}
-        {support && !evidence && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-toxicology-calcium-channel-blocker-supplied-ecg-perfusion-contractility-glucose-electrolyte-prior-care-and-rescue-boundary') : undefined}>Review pump + vessels</Button>}
-      </div>
-    </section>
-    <section className="syringe" aria-labelledby="toxicology-calcium-channel-blocker-later-title">
-      <div id="toxicology-calcium-channel-blocker-later-title" className="syringe__name">Extended release means the clock keeps mattering.</div>
-      <p className="syringe__remaining" role="status">{handoff ? 'Shock, conduction, glucose, potassium, volume, absorption, rescue, safety, and outcome uncertainty handed off.' : reassessment ? 'The fixed perfusion, rhythm, mental-state, and metabolic report improved. Durable stability and completed absorption remain unproven.' : evidence ? 'Perfusion, conduction, contractility, vascular tone, glucose, electrolytes, prior care, and prolonged absorption stay coupled. Record qualified intent after time passes.' : support ? 'Qualified toxicology, resuscitation, cardiac, metabolic, airway, and safety ownership are active. Review the supplied evidence.' : 'Complete whole-pattern recognition and rescue ownership before treatment-boundary review.'}</p>
-      <div className="crisis-drug__actions">
-        {evidence && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-toxicology-calcium-channel-blocker-bounded-qualified-vasopressor-calcium-insulin-euglycemia-and-rescue-intent-with-strict-later-review') : undefined}>Record rescue intent + reassess</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-toxicology-calcium-channel-blocker-recurrent-shock-av-block-hyperglycemia-electrolyte-volume-rescue-and-active-risk') : undefined}>Hand off delayed risk</Button>}
-      </div>
-    </section>
-  </>;
-}
 
-function ToxicologyDigoxinTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyDigoxinAssessment']>;
-  scenarioVersion: string;
-  onAction: NonNullable<ActionCockpitProps['onToxicologyDigoxinResponse']>;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-}) {
-  const prompt = digoxinInlinePrompt(guidance, { scenarioVersion, digoxin: assessment });
-  const act = demonstrating ? undefined : onAction;
-  const trajectory = assessment?.trajectoryAtTick != null;
-  const recognition = assessment?.recognitionAtTick != null;
-  const support = assessment?.supportAtTick != null;
-  const evidence = assessment?.evidenceAtTick != null;
-  const reassessment = assessment?.reassessmentAtTick != null;
-  const handoff = assessment?.handoffAtTick != null;
-  return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    <TutorPanel prompt={demonstrating ? null : prompt} />
-    <section className="syringe" aria-labelledby="toxicology-digoxin-early-title">
-      <div id="toxicology-digoxin-early-title" className="syringe__name">The rhythm and potassium tell one story.</div>
-      <p className="syringe__remaining">Begin with product, clock, GI and visual clues, perfusion, rhythm, potassium, and whole person.</p>
-      <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-toxicology-digoxin-product-clock-gi-visual-perfusion-rhythm-potassium-and-whole-patient') : undefined}>Connect rhythm + potassium</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-toxicology-digoxin-life-threatening-pattern-without-level-rhythm-or-potassium-only-closure') : undefined}>Recognize the whole pattern</Button>}
-        {recognition && !support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-toxicology-digoxin-poison-center-resuscitation-cardiac-electrolyte-airway-and-safety-ownership') : undefined}>Build the rescue circle</Button>}
-        {support && !evidence && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-toxicology-digoxin-supplied-ecg-level-timing-potassium-renal-coingestion-and-antidote-boundary') : undefined}>Review timing + antidote</Button>}
-      </div>
-    </section>
-    <section className="syringe" aria-labelledby="toxicology-digoxin-later-title">
-      <div id="toxicology-digoxin-later-title" className="syringe__name">After Fab, follow the patient, not a misleading total level.</div>
-      <p className="syringe__remaining" role="status">{handoff ? 'Rhythm, potassium, assay interference, renal state, recurrence, rescue, safety, and outcome uncertainty handed off.' : reassessment ? 'The fixed perfusion, rhythm, mental-state, and potassium report improved. Durable stability and treatment effect remain unproven.' : evidence ? 'Perfusion, conduction, timed pre-Fab level, potassium, renal state, prior care, and antidote readiness stay coupled. Record qualified intent after time passes.' : support ? 'Qualified toxicology, resuscitation, cardiac, electrolyte, airway, and safety ownership are active. Review the supplied evidence.' : 'Complete whole-pattern recognition and rescue ownership before antidote-boundary review.'}</p>
-      <div className="crisis-drug__actions">
-        {evidence && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-toxicology-digoxin-bounded-qualified-immune-fab-surveillance-and-rescue-intent-with-strict-later-review') : undefined}>Record Fab intent + reassess</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-toxicology-digoxin-recurrent-arrhythmia-potassium-shift-level-interference-renal-rescue-and-active-risk') : undefined}>Hand off what can recur</Button>}
-      </div>
-    </section>
-  </>;
-}
 
-function ToxicologyCholinergicTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyCholinergicAssessment']>;
-  scenarioVersion: string;
-  onAction: NonNullable<ActionCockpitProps['onToxicologyCholinergicResponse']>;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-}) {
-  const prompt = cholinergicInlinePrompt(guidance, { scenarioVersion, cholinergic: assessment });
-  const act = demonstrating ? undefined : onAction;
-  const trajectory = assessment?.trajectoryAtTick != null;
-  const recognition = assessment?.recognitionAtTick != null;
-  const safety = assessment?.safetyAtTick != null;
-  const evidence = assessment?.evidenceAtTick != null;
-  const reassessment = assessment?.reassessmentAtTick != null;
-  const handoff = assessment?.handoffAtTick != null;
-  return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    <TutorPanel prompt={demonstrating ? null : prompt} />
-    <section className="syringe" aria-labelledby="toxicology-cholinergic-early-title">
-      <div id="toxicology-cholinergic-early-title" className="syringe__name">Protect the rescuers before the first touch.</div>
-      <p className="syringe__remaining">Begin with exposure route, wet clothing, secretions, breathing, weakness, CNS, and whole person.</p>
-      <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-toxicology-cholinergic-product-route-secondary-contamination-secretions-breathing-weakness-cns-and-whole-patient') : undefined}>Connect exposure + breathing</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-toxicology-cholinergic-muscarinic-nicotinic-and-cns-pattern-without-mnemonic-or-cholinesterase-only-closure') : undefined}>Recognize the whole pattern</Button>}
-        {recognition && !safety && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-toxicology-cholinergic-ppe-decontamination-airway-resuscitation-poison-center-and-safety-ownership') : undefined}>Protect patient + team</Button>}
-        {safety && !evidence && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-toxicology-cholinergic-supplied-respiratory-neuromuscular-cns-exposure-cholinesterase-and-airway-boundary') : undefined}>Review lungs + strength</Button>}
-      </div>
-    </section>
-    <section className="syringe" aria-labelledby="toxicology-cholinergic-later-title">
-      <div id="toxicology-cholinergic-later-title" className="syringe__name">Dryer lungs do not prove stronger muscles.</div>
-      <p className="syringe__remaining" role="status">{handoff ? 'Airway, secretions, bronchospasm, weakness, intermediate syndrome, exposure, seizure, safety, and outcome uncertainty handed off.' : reassessment ? 'Secretions, oxygenation, circulation, and mentation improved while weakness persisted. Durable ventilation and treatment effect remain unproven.' : evidence ? 'Respiratory, neuromuscular, CNS, exposure, contamination, and airway evidence stay coupled. Record qualified intent after time passes.' : safety ? 'PPE, contamination, decontamination, airway, resuscitation, toxicology, occupational, and co-worker ownership are active. Review the supplied evidence.' : 'Complete whole-pattern recognition and team protection before antidote-boundary review.'}</p>
-      <div className="crisis-drug__actions">
-        {evidence && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-toxicology-cholinergic-bounded-qualified-atropine-pralidoxime-benzodiazepine-airway-and-surveillance-intent-with-strict-later-review') : undefined}>Record rescue intent + reassess</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-toxicology-cholinergic-recurrent-secretions-bronchospasm-weakness-intermediate-syndrome-exposure-seizure-and-active-risk') : undefined}>Hand off what can return</Button>}
-      </div>
-    </section>
-  </>;
-}
 
-function ToxicologyAnticholinergicTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyAnticholinergicAssessment']>;
-  scenarioVersion: string;
-  onAction: NonNullable<ActionCockpitProps['onToxicologyAnticholinergicResponse']>;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-}) {
-  const prompt = anticholinergicInlinePrompt(guidance, { scenarioVersion, anticholinergic: assessment });
-  const act = demonstrating ? undefined : onAction;
-  const trajectory = assessment?.trajectoryAtTick != null;
-  const recognition = assessment?.recognitionAtTick != null;
-  const support = assessment?.supportAtTick != null;
-  const evidence = assessment?.evidenceAtTick != null;
-  const reassessment = assessment?.reassessmentAtTick != null;
-  const handoff = assessment?.handoffAtTick != null;
-  return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    <TutorPanel prompt={demonstrating ? null : prompt} />
-    <section className="syringe" aria-labelledby="toxicology-anticholinergic-early-title">
-      <div id="toxicology-anticholinergic-early-title" className="syringe__name">Cool the patient. Keep the differential warm.</div>
-      <p className="syringe__remaining">Begin with product, clock, delirium, temperature, dry surfaces, retention, ECG, and whole person.</p>
-      <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-toxicology-anticholinergic-product-clock-delirium-temperature-dryness-retention-ecg-and-whole-patient') : undefined}>Connect heat + delirium</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-toxicology-anticholinergic-central-and-peripheral-pattern-without-mnemonic-temperature-or-pupil-only-closure') : undefined}>Recognize the whole pattern</Button>}
-        {recognition && !support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-toxicology-anticholinergic-resuscitation-cooling-airway-toxicology-monitoring-and-compassionate-safety-ownership') : undefined}>Build a calm rescue circle</Button>}
-        {support && !evidence && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-toxicology-anticholinergic-supplied-temperature-cns-ecg-renal-ck-retention-and-differential-boundary') : undefined}>Review heat + hidden harm</Button>}
-      </div>
-    </section>
-    <section className="syringe" aria-labelledby="toxicology-anticholinergic-later-title">
-      <div id="toxicology-anticholinergic-later-title" className="syringe__name">A cooler number does not close the case.</div>
-      <p className="syringe__remaining" role="status">{handoff ? 'Temperature, delirium, airway, ECG, retention, renal and CK injury, seizure, coingestion, safety, and outcome uncertainty handed off.' : reassessment ? 'Temperature and agitation improved while confusion and urinary retention persisted. Durable cooling and treatment effect remain unproven.' : evidence ? 'Temperature, CNS, ECG, renal, CK, retention, coingestion, and differential evidence stay coupled. Record qualified intent after time passes.' : support ? 'Cooling, resuscitation, airway, toxicology, bladder, renal, monitoring, and compassionate safety ownership are active. Review the supplied evidence.' : 'Complete whole-pattern recognition and support ownership before antidote-boundary review.'}</p>
-      <div className="crisis-drug__actions">
-        {evidence && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-toxicology-anticholinergic-bounded-qualified-cooling-support-sedation-seizure-surveillance-and-physostigmine-eligibility-intent-with-strict-later-review') : undefined}>Record support intent + reassess</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-toxicology-anticholinergic-rebound-delirium-hyperthermia-retention-rhabdomyolysis-seizure-coingestion-and-active-risk') : undefined}>Hand off what can rebound</Button>}
-      </div>
-    </section>
-  </>;
-}
 
-function ToxicologySerotoninTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologySerotoninAssessment']>;
-  scenarioVersion: string;
-  onAction: NonNullable<ActionCockpitProps['onToxicologySerotoninResponse']>;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-}) {
-  const prompt = serotoninInlinePrompt(guidance, { scenarioVersion, serotonin: assessment });
-  const act = demonstrating ? undefined : onAction;
-  const trajectory = assessment?.trajectoryAtTick != null;
-  const recognition = assessment?.recognitionAtTick != null;
-  const support = assessment?.supportAtTick != null;
-  const evidence = assessment?.evidenceAtTick != null;
-  const reassessment = assessment?.reassessmentAtTick != null;
-  const handoff = assessment?.handoffAtTick != null;
-  return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    <TutorPanel prompt={demonstrating ? null : prompt} />
-    <section className="syringe" aria-labelledby="toxicology-serotonin-early-title">
-      <div id="toxicology-serotonin-early-title" className="syringe__name">Follow the clonus, not just the thermometer.</div>
-      <p className="syringe__remaining">Begin with agents, clock, mind, sweating, bowel activity, clonus, reflexes, tone, temperature, and whole person.</p>
-      <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-toxicology-serotonin-agents-clock-mental-autonomic-neuromuscular-temperature-and-whole-patient') : undefined}>Connect interaction + pattern</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-toxicology-serotonin-coupled-pattern-without-hunter-clonus-temperature-or-medication-list-only-closure') : undefined}>Recognize the whole pattern</Button>}
-        {recognition && !support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-toxicology-serotonin-resuscitation-cooling-airway-toxicology-monitoring-and-compassionate-safety-ownership') : undefined}>Build a calm rescue circle</Button>}
-        {support && !evidence && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-toxicology-serotonin-supplied-cns-autonomic-neuromuscular-temperature-ecg-renal-ck-and-differential-boundary') : undefined}>Review clonus + hidden harm</Button>}
-      </div>
-    </section>
-    <section className="syringe" aria-labelledby="toxicology-serotonin-later-title">
-      <div id="toxicology-serotonin-later-title" className="syringe__name">Cooler is better. Persistent clonus keeps the story open.</div>
-      <p className="syringe__remaining" role="status">{handoff ? 'Temperature, clonus, rigidity, airway, renal and CK injury, seizure, coingestion, safety, and outcome uncertainty handed off.' : reassessment ? 'Temperature and agitation improved while clonus and hyperreflexia persisted. Durable cooling and neuromuscular recovery remain unproven.' : evidence ? 'CNS, autonomic, neuromuscular, temperature, ECG, renal, CK, coingestion, and differential evidence stay coupled. Record qualified intent after time passes.' : support ? 'Cooling, resuscitation, airway, toxicology, renal, monitoring, and compassionate safety ownership are active. Review the supplied evidence.' : 'Complete whole-pattern recognition and support ownership before rescue-boundary review.'}</p>
-      <div className="crisis-drug__actions">
-        {evidence && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-toxicology-serotonin-bounded-qualified-source-cessation-cooling-support-sedation-seizure-surveillance-airway-and-antagonist-intent-with-strict-later-review') : undefined}>Record rescue intent + reassess</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-toxicology-serotonin-rebound-hyperthermia-clonus-rigidity-seizure-rhabdomyolysis-coingestion-airway-and-active-risk') : undefined}>Hand off what can rebound</Button>}
-      </div>
-    </section>
-  </>;
-}
 
-function ToxicologySympathomimeticTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologySympathomimeticAssessment']>;
-  scenarioVersion: string;
-  onAction: NonNullable<ActionCockpitProps['onToxicologySympathomimeticResponse']>;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-}) {
-  const prompt = sympathomimeticInlinePrompt(guidance, { scenarioVersion, sympathomimetic: assessment });
-  const act = demonstrating ? undefined : onAction;
-  const trajectory = assessment?.trajectoryAtTick != null;
-  const recognition = assessment?.recognitionAtTick != null;
-  const support = assessment?.supportAtTick != null;
-  const evidence = assessment?.evidenceAtTick != null;
-  const reassessment = assessment?.reassessmentAtTick != null;
-  const handoff = assessment?.handoffAtTick != null;
-  return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    <TutorPanel prompt={demonstrating ? null : prompt} />
-    <section className="syringe" aria-labelledby="toxicology-sympathomimetic-early-title">
-      <div id="toxicology-sympathomimetic-early-title" className="syringe__name">Lower the heat. Lower the threat.</div>
-      <p className="syringe__remaining">Begin with exposure, clock, fear, agitation, sweating, pupils, bowel activity, pressure, pulse, temperature, and whole person.</p>
-      <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-toxicology-sympathomimetic-exposure-clock-agitation-autonomic-temperature-and-whole-patient') : undefined}>Connect exposure + surge</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-toxicology-sympathomimetic-coupled-pattern-without-screen-pupil-pressure-temperature-or-agitation-only-closure') : undefined}>Recognize the whole pattern</Button>}
-        {recognition && !support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-toxicology-sympathomimetic-deescalation-resuscitation-cooling-airway-toxicology-monitoring-and-compassionate-safety-ownership') : undefined}>Make the room safer</Button>}
-        {support && !evidence && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-toxicology-sympathomimetic-supplied-mental-autonomic-cardiac-temperature-renal-ck-and-differential-boundary') : undefined}>Review surge + hidden harm</Button>}
-      </div>
-    </section>
-    <section className="syringe" aria-labelledby="toxicology-sympathomimetic-later-title">
-      <div id="toxicology-sympathomimetic-later-title" className="syringe__name">Calmer is safer. It is not the same as safe.</div>
-      <p className="syringe__remaining" role="status">{handoff ? 'Mental state, psychiatric safety, pressure, rhythm, temperature, airway, renal and CK injury, seizure, coingestion, and outcome uncertainty handed off.' : reassessment ? 'Temperature, pressure, pulse, and agitation improved. Durable control, cardiac safety, psychiatric safety, and treatment effect remain unproven.' : evidence ? 'Mental, autonomic, cardiac, temperature, renal, CK, coingestion, and differential evidence stay coupled. Record qualified intent after time passes.' : support ? 'De-escalation, cooling, resuscitation, cardiac, airway, toxicology, psychiatric, monitoring, and compassionate safety ownership are active. Review the supplied evidence.' : 'Complete whole-pattern recognition and safety ownership before the treatment-boundary review.'}</p>
-      <div className="crisis-drug__actions">
-        {evidence && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-toxicology-sympathomimetic-bounded-qualified-deescalation-support-sedation-cooling-surveillance-airway-and-adjunct-intent-with-strict-later-review') : undefined}>Record calming intent + reassess</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-toxicology-sympathomimetic-rebound-agitation-psychosis-suicidality-ischemia-arrhythmia-hyperthermia-rhabdomyolysis-coingestion-airway-and-active-risk') : undefined}>Hand off what can rebound</Button>}
-      </div>
-    </section>
-  </>;
-}
 
-function ToxicologyMethanolTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyMethanolAssessment']>;
-  scenarioVersion: string;
-  onAction: NonNullable<ActionCockpitProps['onToxicologyMethanolResponse']>;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-}) {
-  const prompt = methanolInlinePrompt(guidance, { scenarioVersion, methanol: assessment });
-  const act = demonstrating ? undefined : onAction;
-  const trajectory = assessment?.trajectoryAtTick != null;
-  const recognition = assessment?.recognitionAtTick != null;
-  const support = assessment?.supportAtTick != null;
-  const evidence = assessment?.evidenceAtTick != null;
-  const reassessment = assessment?.reassessmentAtTick != null;
-  const handoff = assessment?.handoffAtTick != null;
-  return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    <TutorPanel prompt={demonstrating ? null : prompt} />
-    <section className="syringe" aria-labelledby="toxicology-methanol-early-title">
-      <div id="toxicology-methanol-early-title" className="syringe__name">Two gaps. One whole story.</div>
-      <p className="syringe__remaining">Begin with source, clock, vision, breathing, mentation, acid-base state, both supplied gaps, and the whole person.</p>
-      <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-toxicology-methanol-source-clock-vision-acid-base-gaps-and-whole-patient') : undefined}>Connect source + trajectory</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-toxicology-methanol-coupled-pattern-without-source-vision-anion-osmolar-or-level-only-closure') : undefined}>Recognize the whole pattern</Button>}
-        {recognition && !support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-toxicology-methanol-resuscitation-airway-antidote-extracorporeal-toxicology-laboratory-and-vision-ownership') : undefined}>Bring the right teams together</Button>}
-        {support && !evidence && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-toxicology-methanol-supplied-acid-base-osmolar-electrolyte-renal-visual-coingestion-and-differential-boundary') : undefined}>Review both gaps + harm</Button>}
-      </div>
-    </section>
-    <section className="syringe" aria-labelledby="toxicology-methanol-later-title">
-      <div id="toxicology-methanol-later-title" className="syringe__name">A better pH does not mean the danger is gone.</div>
-      <p className="syringe__remaining" role="status">{handoff ? 'Acid-base, vision, neurologic, airway, renal, electrolyte, exposure, coingestion, extracorporeal, and outcome uncertainty handed off.' : reassessment ? 'Acid-base values improved while blurred vision and confusion persisted. Clearance, recovery, durable control, and treatment effect remain unproven.' : evidence ? 'Acid-base, osmolar, renal, visual, coingestion, and competing-cause evidence stay coupled. Record qualified intent after time passes.' : support ? 'Resuscitation, airway, antidote, extracorporeal, toxicology, laboratory, and vision ownership are active. Review the supplied evidence.' : 'Complete whole-pattern recognition and qualified ownership before the treatment-boundary review.'}</p>
-      <div className="crisis-drug__actions">
-        {evidence && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-toxicology-methanol-bounded-qualified-source-antidote-cofactor-acid-base-extracorporeal-surveillance-and-airway-intent-with-strict-later-review') : undefined}>Record rescue intent + reassess</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-toxicology-methanol-rebound-acidosis-vision-neurologic-airway-renal-electrolyte-coingestion-and-active-risk') : undefined}>Hand off what stays open</Button>}
-      </div>
-    </section>
-  </>;
-}
 
-function ToxicologyDelayedLastTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyDelayedLastAssessment']>;
-  scenarioVersion: string;
-  onAction: NonNullable<ActionCockpitProps['onToxicologyDelayedLastResponse']>;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-}) {
-  const prompt = delayedLastInlinePrompt(guidance, { scenarioVersion, delayedLast: assessment });
-  const act = demonstrating ? undefined : onAction;
-  const trajectory = assessment?.trajectoryAtTick != null;
-  const recognition = assessment?.recognitionAtTick != null;
-  const support = assessment?.supportAtTick != null;
-  const evidence = assessment?.evidenceAtTick != null;
-  const reassessment = assessment?.reassessmentAtTick != null;
-  const handoff = assessment?.handoffAtTick != null;
-  return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    <TutorPanel prompt={demonstrating ? null : prompt} />
-    <section className="syringe" aria-labelledby="toxicology-delayed-last-early-title">
-      <div id="toxicology-delayed-last-early-title" className="syringe__name">The quiet cues were part of the crisis.</div>
-      <p className="syringe__remaining">Begin with source, long clock, short prodrome, seizure, breathing, conduction, perfusion, and the whole person.</p>
-      <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-toxicology-delayed-last-source-clock-prodrome-seizure-cardiac-and-whole-patient') : undefined}>Connect source + evolution</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-toxicology-delayed-last-coupled-pattern-without-classic-sequence-clock-symptom-or-ecg-only-closure') : undefined}>Recognize the whole pattern</Button>}
-        {recognition && !support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-toxicology-delayed-last-source-airway-seizure-cardiac-toxicology-lipid-and-refractory-rescue-ownership') : undefined}>Bring rescue owners together</Button>}
-        {support && !evidence && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-toxicology-delayed-last-supplied-source-delivery-cns-ecg-perfusion-acid-base-electrolyte-and-differential-boundary') : undefined}>Review source + hidden harm</Button>}
-      </div>
-    </section>
-    <section className="syringe" aria-labelledby="toxicology-delayed-last-later-title">
-      <div id="toxicology-delayed-last-later-title" className="syringe__name">A steadier rhythm is a checkpoint, not an ending.</div>
-      <p className="syringe__remaining" role="status">{handoff ? 'Seizure, rhythm, conduction, perfusion, airway, acid-base, source, lipid, refractory-rescue, and outcome uncertainty handed off.' : reassessment ? 'Rhythm, pressure, breathing, and QRS improved. Durable seizure control, recovery, source completeness, lipid safety, and treatment effect remain unproven.' : evidence ? 'Source-delivery, CNS, ECG, perfusion, acid-base, electrolyte, coingestion, and differential evidence stay coupled. Record qualified intent after time passes.' : support ? 'Source, airway, seizure, cardiac, toxicology, lipid, and refractory-rescue ownership are active. Review the supplied evidence.' : 'Complete whole-pattern recognition and qualified ownership before the rescue-boundary review.'}</p>
-      <div className="crisis-drug__actions">
-        {evidence && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-toxicology-delayed-last-bounded-qualified-source-airway-seizure-lipid-acid-base-modified-resuscitation-and-ecls-intent-with-strict-later-review') : undefined}>Record rescue intent + reassess</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-toxicology-delayed-last-recurrent-seizure-arrhythmia-shock-airway-acidemia-source-lipid-and-refractory-risk') : undefined}>Hand off what can return</Button>}
-      </div>
-    </section>
-  </>;
-}
 
-function ToxicologyOpioidXylazineTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
-  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyOpioidXylazineAssessment']>;
-  scenarioVersion: string;
-  onAction: NonNullable<ActionCockpitProps['onToxicologyOpioidXylazineResponse']>;
-  guidance?: GuidanceLevel;
-  demonstrating?: boolean;
-}) {
-  const prompt = opioidXylazineInlinePrompt(guidance, { scenarioVersion, opioidXylazine: assessment });
-  const act = demonstrating ? undefined : onAction;
-  const trajectory = assessment?.trajectoryAtTick != null;
-  const recognition = assessment?.recognitionAtTick != null;
-  const support = assessment?.supportAtTick != null;
-  const evidence = assessment?.evidenceAtTick != null;
-  const reassessment = assessment?.reassessmentAtTick != null;
-  const handoff = assessment?.handoffAtTick != null;
-  return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
-    <TutorPanel prompt={demonstrating ? null : prompt} />
-    <section className="syringe" aria-labelledby="toxicology-opioid-xylazine-early-title">
-      <div id="toxicology-opioid-xylazine-early-title" className="syringe__name">Restore breathing. Keep the differential open.</div>
-      <p className="syringe__remaining">Begin with the unknown exposure, bystander rescue, breathing, carbon dioxide, sedation, pupils, perfusion, temperature, and the whole person.</p>
-      <div className="crisis-drug__actions">
-        {!trajectory && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('reconcile-toxicology-opioid-xylazine-exposure-rescue-breathing-sedation-perfusion-and-whole-patient') : undefined}>Connect rescue + patient</Button>}
-        {trajectory && !recognition && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('recognize-toxicology-opioid-xylazine-opioid-emergency-and-possible-adulterant-without-pupil-naloxone-response-or-screen-only-closure') : undefined}>Act without overcalling</Button>}
-        {recognition && !support && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('activate-toxicology-opioid-xylazine-ventilation-oxygen-monitoring-toxicology-addiction-wound-and-dignity-ownership') : undefined}>Bring care around the person</Button>}
-        {support && !evidence && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('review-toxicology-opioid-xylazine-supplied-respiratory-response-circulation-temperature-glucose-ecg-screen-wound-and-differential-boundary') : undefined}>Review response + hidden harm</Button>}
-      </div>
-    </section>
-    <section className="syringe" aria-labelledby="toxicology-opioid-xylazine-later-title">
-      <div id="toxicology-opioid-xylazine-later-title" className="syringe__name">Better breathing is progress, not proof.</div>
-      <p className="syringe__remaining" role="status">{handoff ? 'Recurrent depression, sedation, perfusion, temperature, skin, withdrawal, co-exposure, addiction, harm-reduction, and outcome uncertainty handed off.' : reassessment ? 'Breathing and gas exchange improved while sedation persisted. Agent identity, naloxone resistance, recovery, treatment effect, and durable safety remain unproven.' : evidence ? 'Respiratory, circulation, temperature, glucose, ECG, routine-screen, skin, coingestion, and differential evidence stay coupled. Record qualified intent after time passes.' : support ? 'Respiratory, toxicology, addiction, wound, and dignity-centered ownership are active. Review the supplied evidence.' : 'Recognize the actionable opioid emergency and possible co-exposure before the supportive-care boundary.'}</p>
-      <div className="crisis-drug__actions">
-        {evidence && !reassessment && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('record-toxicology-opioid-xylazine-bounded-qualified-continued-support-opioid-antagonist-symptomatic-care-no-veterinary-antagonist-and-strict-later-review') : undefined}>Record support + reassess</Button>}
-        {reassessment && !handoff && <Button className="crisis-drug__action" aria-disabled={demonstrating} onClick={act ? () => act('handoff-toxicology-opioid-xylazine-recurrent-depression-persistent-sedation-shock-hypothermia-wound-withdrawal-addiction-and-outcome-risk') : undefined}>Hand off the whole horizon</Button>}
-      </div>
-    </section>
-  </>;
-}
 
 
 

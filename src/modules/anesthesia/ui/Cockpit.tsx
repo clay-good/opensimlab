@@ -1801,36 +1801,6 @@ export function Cockpit({
           neonatologyTermTransitionDemonstrating={demonstrating && registryDemo?.id === 'TermTransition'}
           neonatologyTensionPneumothoraxGuidance={session.guidance}
           neonatologyTensionPneumothoraxDemonstrating={demonstrating && registryDemo?.id === 'TensionPneumothorax'}
-          toxicologyMethemoglobinemiaGuidance={session.guidance}
-          toxicologyMethemoglobinemiaDemonstrating={demonstrating && registryDemo?.id === 'Methemoglobinemia'}
-          toxicologyCarbonMonoxideGuidance={session.guidance}
-          toxicologyCarbonMonoxideDemonstrating={demonstrating && registryDemo?.id === 'CarbonMonoxide'}
-          toxicologyAcetaminophenGuidance={session.guidance}
-          toxicologyAcetaminophenDemonstrating={demonstrating && registryDemo?.id === 'Acetaminophen'}
-          toxicologySalicylateGuidance={session.guidance}
-          toxicologySalicylateDemonstrating={demonstrating && registryDemo?.id === 'Salicylate'}
-          toxicologyTricyclicGuidance={session.guidance}
-          toxicologyTricyclicDemonstrating={demonstrating && registryDemo?.id === 'Tricyclic'}
-          toxicologyBetaBlockerGuidance={session.guidance}
-          toxicologyBetaBlockerDemonstrating={demonstrating && registryDemo?.id === 'BetaBlocker'}
-          toxicologyCalciumChannelBlockerGuidance={session.guidance}
-          toxicologyCalciumChannelBlockerDemonstrating={demonstrating && registryDemo?.id === 'CalciumChannelBlocker'}
-          toxicologyDigoxinGuidance={session.guidance}
-          toxicologyDigoxinDemonstrating={demonstrating && registryDemo?.id === 'Digoxin'}
-          toxicologyCholinergicGuidance={session.guidance}
-          toxicologyCholinergicDemonstrating={demonstrating && registryDemo?.id === 'Cholinergic'}
-          toxicologyAnticholinergicGuidance={session.guidance}
-          toxicologyAnticholinergicDemonstrating={demonstrating && registryDemo?.id === 'Anticholinergic'}
-          toxicologySerotoninGuidance={session.guidance}
-          toxicologySerotoninDemonstrating={demonstrating && registryDemo?.id === 'Serotonin'}
-          toxicologySympathomimeticGuidance={session.guidance}
-          toxicologySympathomimeticDemonstrating={demonstrating && registryDemo?.id === 'Sympathomimetic'}
-          toxicologyMethanolGuidance={session.guidance}
-          toxicologyMethanolDemonstrating={demonstrating && registryDemo?.id === 'Methanol'}
-          toxicologyDelayedLastGuidance={session.guidance}
-          toxicologyDelayedLastDemonstrating={demonstrating && registryDemo?.id === 'DelayedLast'}
-          toxicologyOpioidXylazineGuidance={session.guidance}
-          toxicologyOpioidXylazineDemonstrating={demonstrating && registryDemo?.id === 'OpioidXylazine'}
           neurologyMyastheniaGuidance={session.guidance}
           neurologyMyastheniaDemonstrating={demonstrating && registryDemo?.id === 'Myasthenia'}
           neurologyDysreflexiaGuidance={session.guidance}
@@ -2022,51 +1992,6 @@ export function Cockpit({
           })}
           onHyponatremiaResponse={(action) => session.act({
             type: 'hyponatremia-response', payload: { action },
-          })}
-          onToxicologyMethemoglobinemiaResponse={(action) => session.act({
-            type: 'methemoglobinemia-saturation-gap-response', payload: { action },
-          })}
-          onToxicologyCarbonMonoxideResponse={(action) => session.act({
-            type: 'carbon-monoxide-reassuring-monitor-response', payload: { action },
-          })}
-          onToxicologyAcetaminophenResponse={(action) => session.act({
-            type: 'acetaminophen-clock-and-nomogram-response', payload: { action },
-          })}
-          onToxicologySalicylateResponse={(action) => session.act({
-            type: 'salicylate-falling-number-response', payload: { action },
-          })}
-          onToxicologyTricyclicResponse={(action) => session.act({
-            type: 'tricyclic-sodium-channel-cardiotoxicity-response', payload: { action },
-          })}
-          onToxicologyBetaBlockerResponse={(action) => session.act({
-            type: 'beta-blocker-cardiogenic-shock-response', payload: { action },
-          })}
-          onToxicologyCalciumChannelBlockerResponse={(action) => session.act({
-            type: 'calcium-channel-blocker-shock-response', payload: { action },
-          })}
-          onToxicologyDigoxinResponse={(action) => session.act({
-            type: 'digoxin-rhythm-potassium-response', payload: { action },
-          })}
-          onToxicologyCholinergicResponse={(action) => session.act({
-            type: 'cholinergic-pesticide-respiratory-failure-response', payload: { action },
-          })}
-          onToxicologyAnticholinergicResponse={(action) => session.act({
-            type: 'anticholinergic-hyperthermia-delirium-response', payload: { action },
-          })}
-          onToxicologySerotoninResponse={(action) => session.act({
-            type: 'serotonin-toxicity-hyperthermia-clonus-response', payload: { action },
-          })}
-          onToxicologySympathomimeticResponse={(action) => session.act({
-            type: 'sympathomimetic-hyperadrenergic-hyperthermia-response', payload: { action },
-          })}
-          onToxicologyMethanolResponse={(action) => session.act({
-            type: 'methanol-visual-acidosis-gaps-response', payload: { action },
-          })}
-          onToxicologyDelayedLastResponse={(action) => session.act({
-            type: 'delayed-local-anesthetic-cns-cardiac-toxicity-response', payload: { action },
-          })}
-          onToxicologyOpioidXylazineResponse={(action) => session.act({
-            type: 'opioid-xylazine-persistent-sedation-response', payload: { action },
           })}
           onObstetricsMaternalArrestResponse={(action) => session.act({
             type: 'maternal-cardiac-arrest-response', payload: { action },

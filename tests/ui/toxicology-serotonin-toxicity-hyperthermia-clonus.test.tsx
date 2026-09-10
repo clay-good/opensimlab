@@ -4,11 +4,17 @@ import { describe, expect, it } from 'vitest';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { TOXICOLOGY_TRAYS } from '../../src/modules/toxicology/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, TOXICOLOGY_TRAYS);
 import { SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS as SCENARIO } from '../../src/modules/toxicology/scenarios/serotonin-toxicity-hyperthermia-clonus';
 const markup = (assessment: NonNullable<ActionCockpitProps['resuscitation']['toxicologySerotoninAssessment']>, extra: {
-  toxicologySerotoninGuidance?: ActionCockpitProps['toxicologySerotoninGuidance'];
-  toxicologySerotoninDemonstrating?: boolean;
-} = {}) => renderToStaticMarkup(createElement(ActionCockpit, { scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, toxicologySerotoninAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 450, respiratoryRateBpm: 10, fio2: 1, peep: 0, delivering: true, sevofluranePercent: 0, freshGasFlowLPerMin: 10 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onToxicologySerotoninResponse: () => {}, ...extra } satisfies ActionCockpitProps));
+  guidance?: ActionCockpitProps['guidance'];
+  demonstratingLessonId?: string | undefined;
+} = {}) => renderToStaticMarkup(createElement(ActionCockpit, { scenario: SCENARIO, region: UNITED_STATES, lessonTrays: TOXICOLOGY_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, toxicologySerotoninAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 450, respiratoryRateBpm: 10, fio2: 1, peep: 0, delivering: true, sevofluranePercent: 0, freshGasFlowLPerMin: 10 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onLessonAction: () => {}, ...extra } satisfies ActionCockpitProps));
 
 const EMPTY = { trajectoryAtTick: null, recognitionAtTick: null, supportAtTick: null, evidenceAtTick: null, reassessmentAtTick: null, handoffAtTick: null };
 const LABELS = ['Connect interaction + pattern', 'Recognize the whole pattern', 'Build a calm rescue circle', 'Review clonus + hidden harm', 'Record rescue intent + reassess', 'Hand off what can rebound'];
@@ -25,8 +31,8 @@ describe('Toxicology serotonin experience', () => {
   });
 
   it('fails closed and exposes one calm cognitive action at a time', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasToxicologySerotoninResponse).toBe(true);
-    expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasToxicologySerotoninResponse).toBe(false);
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasToxicologySerotoninResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasToxicologySerotoninResponse).toBe(false);
     const states = [EMPTY,
       { ...EMPTY, trajectoryAtTick: 0 },
       { ...EMPTY, trajectoryAtTick: 0, recognitionAtTick: 1 },
@@ -51,33 +57,33 @@ describe('Serotonin tutor and worked example', () => {
 
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { toxicologySerotoninGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { toxicologySerotoninGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('Say the interaction out loud');
-    const next = markup(named, { toxicologySerotoninGuidance: 'guided' });
+    const next = markup(named, { guidance: 'guided' });
     expect(next).toContain('before you give the antagonist a thought');
     expect(next).not.toContain('Say the interaction out loud');
   });
 
   it('refuses the four early closures', () => {
-    const html = markup({ ...EMPTY, trajectoryAtTick: 0 }, { toxicologySerotoninGuidance: 'guided' });
+    const html = markup({ ...EMPTY, trajectoryAtTick: 0 }, { guidance: 'guided' });
     expect(html).toContain('no Hunter rule, clonus finding, temperature, pulse or medication list');
     expect(html).toContain('they exclude nothing on their own');
   });
 
   it('goes quiet once the handoff is recorded', () => {
     const ended = { trajectoryAtTick: 0, recognitionAtTick: 1, supportAtTick: 2, evidenceAtTick: 3, reassessmentAtTick: 4, handoffAtTick: 5 };
-    expect(markup(ended, { toxicologySerotoninGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(ended, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = 'Connect interaction + pattern';
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { toxicologySerotoninGuidance: 'guided', toxicologySerotoninDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'Serotonin' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

@@ -4,6 +4,12 @@ import { describe, expect, it } from 'vitest';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { Prebrief } from '@anesthesia/ui/Prebrief';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { TOXICOLOGY_TRAYS } from '../../src/modules/toxicology/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, TOXICOLOGY_TRAYS);
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { METHEMOGLOBINEMIA_SATURATION_GAP as SCENARIO } from '../../src/modules/toxicology/scenarios/methemoglobinemia-saturation-gap';
 import { CARBON_MONOXIDE_REASSURING_MONITOR } from '../../src/modules/toxicology/scenarios/carbon-monoxide-reassuring-monitor';
@@ -34,6 +40,7 @@ describe('Toxicology module user-facing foundation', () => {
   ) => renderToStaticMarkup(createElement(ActionCockpit, {
     scenario, region: UNITED_STATES, infusions: [],
     hypnoticLine: { connected: true, inspected: false },
+    lessonTrays: TOXICOLOGY_TRAYS,
     resuscitation: {
       epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
       lastEpinephrineTick: null, crystalloidTotalMl: 0,
@@ -52,18 +59,7 @@ describe('Toxicology module user-facing foundation', () => {
     onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {},
     onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {},
     onActiveCooling: () => {}, onDrugCard: () => {},
-    onToxicologyMethemoglobinemiaResponse: () => {},
-    onToxicologyCarbonMonoxideResponse: () => {},
-    onToxicologyAcetaminophenResponse: () => {},
-    onToxicologySalicylateResponse: () => {},
-    onToxicologyTricyclicResponse: () => {},
-    onToxicologyBetaBlockerResponse: () => {},
-    onToxicologyCalciumChannelBlockerResponse: () => {},
-    onToxicologyDigoxinResponse: () => {},
-    onToxicologyCholinergicResponse: () => {},
-    onToxicologyAnticholinergicResponse: () => {},
-    onToxicologySerotoninResponse: () => {},
-    onToxicologySympathomimeticResponse: () => {},
+    onLessonAction: () => {},
   } satisfies ActionCockpitProps));
 
   it('renders a calm module index with shared navigation and the exact first lab', () => {
@@ -117,9 +113,9 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('Review and sources');
     expect(markup).toContain('Not clinically reviewed');
     expect(markup).toContain('methylene-blue hazard boundary');
-    expect(crisisResponseAvailability(SCENARIO, []))
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO, []))
       .toMatchObject({ hasToxicologyMethemoglobinemiaResponse: true });
-    expect(crisisResponseAvailability({ ...SCENARIO,
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO,
       metadata: { ...SCENARIO.metadata, id: 'methemoglobinemia-clone' } }, []))
       .toMatchObject({ hasToxicologyMethemoglobinemiaResponse: false });
   });
@@ -140,7 +136,7 @@ describe('Toxicology module user-facing foundation', () => {
     }));
     expect(page).toContain('<h1>Carbon monoxide with a reassuring monitor</h1>');
     expect(page).toContain('conventional pulse oximetry');
-    expect(crisisResponseAvailability(CARBON_MONOXIDE_REASSURING_MONITOR, []))
+    expect(crisisResponseAvailabilityWithTrays(CARBON_MONOXIDE_REASSURING_MONITOR, []))
       .toMatchObject({ hasToxicologyCarbonMonoxideResponse: true });
     const markup = cockpitMarkup(CARBON_MONOXIDE_REASSURING_MONITOR, {
       toxicologyCarbonMonoxideAssessment: {
@@ -161,9 +157,9 @@ describe('Toxicology module user-facing foundation', () => {
     }));
     expect(page).toContain('<h1>Acetaminophen: the clock changes the meaning</h1>');
     expect(page).toContain('nomogram-applicability boundary');
-    expect(crisisResponseAvailability(ACETAMINOPHEN_CLOCK_AND_NOMOGRAM, []))
+    expect(crisisResponseAvailabilityWithTrays(ACETAMINOPHEN_CLOCK_AND_NOMOGRAM, []))
       .toMatchObject({ hasToxicologyAcetaminophenResponse: true });
-    expect(crisisResponseAvailability({ ...ACETAMINOPHEN_CLOCK_AND_NOMOGRAM,
+    expect(crisisResponseAvailabilityWithTrays({ ...ACETAMINOPHEN_CLOCK_AND_NOMOGRAM,
       metadata: { ...ACETAMINOPHEN_CLOCK_AND_NOMOGRAM.metadata, id: 'acetaminophen-clone' } }, []))
       .toMatchObject({ hasToxicologyAcetaminophenResponse: false });
     const markup = cockpitMarkup(ACETAMINOPHEN_CLOCK_AND_NOMOGRAM, {
@@ -184,9 +180,9 @@ describe('Toxicology module user-facing foundation', () => {
     const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/salicylate-falling-number' }));
     expect(page).toContain('<h1>Salicylate: the falling number can be worse</h1>');
     expect(page).toContain('mixed acid-base pattern');
-    expect(crisisResponseAvailability(SALICYLATE_FALLING_NUMBER, []))
+    expect(crisisResponseAvailabilityWithTrays(SALICYLATE_FALLING_NUMBER, []))
       .toMatchObject({ hasToxicologySalicylateResponse: true });
-    expect(crisisResponseAvailability({ ...SALICYLATE_FALLING_NUMBER,
+    expect(crisisResponseAvailabilityWithTrays({ ...SALICYLATE_FALLING_NUMBER,
       metadata: { ...SALICYLATE_FALLING_NUMBER.metadata, id: 'salicylate-clone' } }, []))
       .toMatchObject({ hasToxicologySalicylateResponse: false });
     const markup = cockpitMarkup(SALICYLATE_FALLING_NUMBER, {
@@ -205,9 +201,9 @@ describe('Toxicology module user-facing foundation', () => {
     const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/tricyclic-sodium-channel-cardiotoxicity' }));
     expect(page).toContain('<h1>Tricyclic toxicity: read the whole electrical pattern</h1>');
     expect(page).toContain('QRS-only closure');
-    expect(crisisResponseAvailability(TRICYCLIC_SODIUM_CHANNEL_CARDIOTOXICITY, []))
+    expect(crisisResponseAvailabilityWithTrays(TRICYCLIC_SODIUM_CHANNEL_CARDIOTOXICITY, []))
       .toMatchObject({ hasToxicologyTricyclicResponse: true });
-    expect(crisisResponseAvailability({ ...TRICYCLIC_SODIUM_CHANNEL_CARDIOTOXICITY,
+    expect(crisisResponseAvailabilityWithTrays({ ...TRICYCLIC_SODIUM_CHANNEL_CARDIOTOXICITY,
       metadata: { ...TRICYCLIC_SODIUM_CHANNEL_CARDIOTOXICITY.metadata, id: 'tricyclic-clone' } }, []))
       .toMatchObject({ hasToxicologyTricyclicResponse: false });
     const markup = cockpitMarkup(TRICYCLIC_SODIUM_CHANNEL_CARDIOTOXICITY, {
@@ -226,9 +222,9 @@ describe('Toxicology module user-facing foundation', () => {
     const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/beta-blocker-cardiogenic-shock' }));
     expect(page).toContain('<h1>Beta-blocker toxicity: perfusion is more than pulse rate</h1>');
     expect(page).toContain('pulse-only closure');
-    expect(crisisResponseAvailability(BETA_BLOCKER_CARDIOGENIC_SHOCK, []))
+    expect(crisisResponseAvailabilityWithTrays(BETA_BLOCKER_CARDIOGENIC_SHOCK, []))
       .toMatchObject({ hasToxicologyBetaBlockerResponse: true });
-    expect(crisisResponseAvailability({ ...BETA_BLOCKER_CARDIOGENIC_SHOCK,
+    expect(crisisResponseAvailabilityWithTrays({ ...BETA_BLOCKER_CARDIOGENIC_SHOCK,
       metadata: { ...BETA_BLOCKER_CARDIOGENIC_SHOCK.metadata, id: 'beta-blocker-clone' } }, []))
       .toMatchObject({ hasToxicologyBetaBlockerResponse: false });
     const markup = cockpitMarkup(BETA_BLOCKER_CARDIOGENIC_SHOCK, {
@@ -247,9 +243,9 @@ describe('Toxicology module user-facing foundation', () => {
     const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/calcium-channel-blocker-shock' }));
     expect(page).toContain('<h1>Calcium-channel blocker toxicity: read the glucose with the shock</h1>');
     expect(page).toContain('glucose- or pulse-only closure');
-    expect(crisisResponseAvailability(CALCIUM_CHANNEL_BLOCKER_SHOCK, []))
+    expect(crisisResponseAvailabilityWithTrays(CALCIUM_CHANNEL_BLOCKER_SHOCK, []))
       .toMatchObject({ hasToxicologyCalciumChannelBlockerResponse: true });
-    expect(crisisResponseAvailability({ ...CALCIUM_CHANNEL_BLOCKER_SHOCK,
+    expect(crisisResponseAvailabilityWithTrays({ ...CALCIUM_CHANNEL_BLOCKER_SHOCK,
       metadata: { ...CALCIUM_CHANNEL_BLOCKER_SHOCK.metadata, id: 'calcium-channel-blocker-clone' } }, []))
       .toMatchObject({ hasToxicologyCalciumChannelBlockerResponse: false });
     const markup = cockpitMarkup(CALCIUM_CHANNEL_BLOCKER_SHOCK, {
@@ -268,9 +264,9 @@ describe('Toxicology module user-facing foundation', () => {
     const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/digoxin-rhythm-potassium' }));
     expect(page).toContain('<h1>Digoxin toxicity: read the rhythm and potassium together</h1>');
     expect(page).toContain('level-, rhythm-, or potassium-only closure');
-    expect(crisisResponseAvailability(DIGOXIN_RHYTHM_POTASSIUM, []))
+    expect(crisisResponseAvailabilityWithTrays(DIGOXIN_RHYTHM_POTASSIUM, []))
       .toMatchObject({ hasToxicologyDigoxinResponse: true });
-    expect(crisisResponseAvailability({ ...DIGOXIN_RHYTHM_POTASSIUM,
+    expect(crisisResponseAvailabilityWithTrays({ ...DIGOXIN_RHYTHM_POTASSIUM,
       metadata: { ...DIGOXIN_RHYTHM_POTASSIUM.metadata, id: 'digoxin-clone' } }, []))
       .toMatchObject({ hasToxicologyDigoxinResponse: false });
     const markup = cockpitMarkup(DIGOXIN_RHYTHM_POTASSIUM, {
@@ -289,9 +285,9 @@ describe('Toxicology module user-facing foundation', () => {
     const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/cholinergic-pesticide-respiratory-failure' }));
     expect(page).toContain('<h1>Cholinergic poisoning: protect the team, then clear the air</h1>');
     expect(page).toContain('mnemonic- or cholinesterase-only closure');
-    expect(crisisResponseAvailability(CHOLINERGIC_PESTICIDE_RESPIRATORY_FAILURE, []))
+    expect(crisisResponseAvailabilityWithTrays(CHOLINERGIC_PESTICIDE_RESPIRATORY_FAILURE, []))
       .toMatchObject({ hasToxicologyCholinergicResponse: true });
-    expect(crisisResponseAvailability({ ...CHOLINERGIC_PESTICIDE_RESPIRATORY_FAILURE,
+    expect(crisisResponseAvailabilityWithTrays({ ...CHOLINERGIC_PESTICIDE_RESPIRATORY_FAILURE,
       metadata: { ...CHOLINERGIC_PESTICIDE_RESPIRATORY_FAILURE.metadata, id: 'cholinergic-clone' } }, []))
       .toMatchObject({ hasToxicologyCholinergicResponse: false });
     const markup = cockpitMarkup(CHOLINERGIC_PESTICIDE_RESPIRATORY_FAILURE, {
@@ -310,9 +306,9 @@ describe('Toxicology module user-facing foundation', () => {
     const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/anticholinergic-hyperthermia-delirium' }));
     expect(page).toContain('<h1>Anticholinergic poisoning: cool the patient, not the clues</h1>');
     expect(page).toContain('mnemonic-, temperature-, pupil-, or dryness-only closure');
-    expect(crisisResponseAvailability(ANTICHOLINERGIC_HYPERTHERMIA_DELIRIUM, []))
+    expect(crisisResponseAvailabilityWithTrays(ANTICHOLINERGIC_HYPERTHERMIA_DELIRIUM, []))
       .toMatchObject({ hasToxicologyAnticholinergicResponse: true });
-    expect(crisisResponseAvailability({ ...ANTICHOLINERGIC_HYPERTHERMIA_DELIRIUM,
+    expect(crisisResponseAvailabilityWithTrays({ ...ANTICHOLINERGIC_HYPERTHERMIA_DELIRIUM,
       metadata: { ...ANTICHOLINERGIC_HYPERTHERMIA_DELIRIUM.metadata, id: 'anticholinergic-clone' } }, []))
       .toMatchObject({ hasToxicologyAnticholinergicResponse: false });
     const markup = cockpitMarkup(ANTICHOLINERGIC_HYPERTHERMIA_DELIRIUM, {
@@ -331,9 +327,9 @@ describe('Toxicology module user-facing foundation', () => {
     const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/serotonin-toxicity-hyperthermia-clonus' }));
     expect(page).toContain('<h1>Serotonin toxicity: cool the heat, follow the clonus</h1>');
     expect(page).toContain('Hunter-, clonus-, temperature-, or medication-list-only closure');
-    expect(crisisResponseAvailability(SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS, []))
+    expect(crisisResponseAvailabilityWithTrays(SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS, []))
       .toMatchObject({ hasToxicologySerotoninResponse: true });
-    expect(crisisResponseAvailability({ ...SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS,
+    expect(crisisResponseAvailabilityWithTrays({ ...SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS,
       metadata: { ...SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS.metadata, id: 'serotonin-clone' } }, []))
       .toMatchObject({ hasToxicologySerotoninResponse: false });
     const markup = cockpitMarkup(SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS, {
@@ -352,9 +348,9 @@ describe('Toxicology module user-facing foundation', () => {
     const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/sympathomimetic-hyperadrenergic-hyperthermia' }));
     expect(page).toContain('<h1>Sympathomimetic toxicity: calm the surge, protect the person</h1>');
     expect(page).toContain('screen-, pupil-, pressure-, temperature-, or agitation-only closure');
-    expect(crisisResponseAvailability(SYMPATHOMIMETIC_HYPERADRENERGIC_HYPERTHERMIA, []))
+    expect(crisisResponseAvailabilityWithTrays(SYMPATHOMIMETIC_HYPERADRENERGIC_HYPERTHERMIA, []))
       .toMatchObject({ hasToxicologySympathomimeticResponse: true });
-    expect(crisisResponseAvailability({ ...SYMPATHOMIMETIC_HYPERADRENERGIC_HYPERTHERMIA,
+    expect(crisisResponseAvailabilityWithTrays({ ...SYMPATHOMIMETIC_HYPERADRENERGIC_HYPERTHERMIA,
       metadata: { ...SYMPATHOMIMETIC_HYPERADRENERGIC_HYPERTHERMIA.metadata, id: 'sympathomimetic-clone' } }, []))
       .toMatchObject({ hasToxicologySympathomimeticResponse: false });
     const markup = cockpitMarkup(SYMPATHOMIMETIC_HYPERADRENERGIC_HYPERTHERMIA, {
@@ -373,9 +369,9 @@ describe('Toxicology module user-facing foundation', () => {
     const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/methanol-visual-acidosis-gaps' }));
     expect(page).toContain('<h1>Methanol toxicity: the gaps are clues, not answers</h1>');
     expect(page).toContain('source-, vision-, anion-gap-, osmolar-gap-, or level-only closure');
-    expect(crisisResponseAvailability(METHANOL_VISUAL_ACIDOSIS_GAPS, []))
+    expect(crisisResponseAvailabilityWithTrays(METHANOL_VISUAL_ACIDOSIS_GAPS, []))
       .toMatchObject({ hasToxicologyMethanolResponse: true });
-    expect(crisisResponseAvailability({ ...METHANOL_VISUAL_ACIDOSIS_GAPS,
+    expect(crisisResponseAvailabilityWithTrays({ ...METHANOL_VISUAL_ACIDOSIS_GAPS,
       metadata: { ...METHANOL_VISUAL_ACIDOSIS_GAPS.metadata, id: 'methanol-clone' } }, []))
       .toMatchObject({ hasToxicologyMethanolResponse: false });
     const markup = cockpitMarkup(METHANOL_VISUAL_ACIDOSIS_GAPS, {
@@ -394,9 +390,9 @@ describe('Toxicology module user-facing foundation', () => {
     const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/delayed-local-anesthetic-cns-cardiac-toxicity' }));
     expect(page).toContain('<h1>Local anesthetic toxicity: quiet warnings can turn fast</h1>');
     expect(page).toContain('classic-sequence-, clock-, symptom-, or ECG-only closure');
-    expect(crisisResponseAvailability(DELAYED_LOCAL_ANESTHETIC_CNS_CARDIAC_TOXICITY, []))
+    expect(crisisResponseAvailabilityWithTrays(DELAYED_LOCAL_ANESTHETIC_CNS_CARDIAC_TOXICITY, []))
       .toMatchObject({ hasToxicologyDelayedLastResponse: true });
-    expect(crisisResponseAvailability({ ...DELAYED_LOCAL_ANESTHETIC_CNS_CARDIAC_TOXICITY,
+    expect(crisisResponseAvailabilityWithTrays({ ...DELAYED_LOCAL_ANESTHETIC_CNS_CARDIAC_TOXICITY,
       metadata: { ...DELAYED_LOCAL_ANESTHETIC_CNS_CARDIAC_TOXICITY.metadata, id: 'delayed-last-clone' } }, []))
       .toMatchObject({ hasToxicologyDelayedLastResponse: false });
     const markup = cockpitMarkup(DELAYED_LOCAL_ANESTHETIC_CNS_CARDIAC_TOXICITY, {
@@ -415,9 +411,9 @@ describe('Toxicology module user-facing foundation', () => {
     const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/opioid-xylazine-persistent-sedation' }));
     expect(page).toContain('<h1>Opioid poisoning: breathing can improve before sedation does</h1>');
     expect(page).toContain('pupil-, naloxone-response-, or screen-only closure');
-    expect(crisisResponseAvailability(OPIOID_XYLAZINE_PERSISTENT_SEDATION, []))
+    expect(crisisResponseAvailabilityWithTrays(OPIOID_XYLAZINE_PERSISTENT_SEDATION, []))
       .toMatchObject({ hasToxicologyOpioidXylazineResponse: true });
-    expect(crisisResponseAvailability({ ...OPIOID_XYLAZINE_PERSISTENT_SEDATION,
+    expect(crisisResponseAvailabilityWithTrays({ ...OPIOID_XYLAZINE_PERSISTENT_SEDATION,
       metadata: { ...OPIOID_XYLAZINE_PERSISTENT_SEDATION.metadata, id: 'opioid-xylazine-clone' } }, []))
       .toMatchObject({ hasToxicologyOpioidXylazineResponse: false });
     const markup = cockpitMarkup(OPIOID_XYLAZINE_PERSISTENT_SEDATION, {
