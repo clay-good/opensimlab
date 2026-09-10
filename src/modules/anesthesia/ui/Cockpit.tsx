@@ -1861,18 +1861,6 @@ export function Cockpit({
           neurologyDeliriumDemonstrating={demonstrating && registryDemo?.id === 'Delirium'}
           neurologyDysreflexiaGuidance={session.guidance}
           neurologyDysreflexiaDemonstrating={demonstrating && registryDemo?.id === 'Dysreflexia'}
-          obstetricsAtonyGuidance={session.guidance}
-          obstetricsAtonyDemonstrating={demonstrating && registryDemo?.id === 'Atony'}
-          obstetricsMaternalSepsisGuidance={session.guidance}
-          obstetricsMaternalSepsisDemonstrating={demonstrating && registryDemo?.id === 'MaternalSepsis'}
-          obstetricsConcealedAbruptionGuidance={session.guidance}
-          obstetricsConcealedAbruptionDemonstrating={demonstrating && registryDemo?.id === 'ConcealedAbruption'}
-          obstetricsPostpartumPreeclampsiaGuidance={session.guidance}
-          obstetricsPostpartumPreeclampsiaDemonstrating={demonstrating && registryDemo?.id === 'PostpartumPreeclampsia'}
-          obstetricsEclampsiaGuidance={session.guidance}
-          obstetricsEclampsiaDemonstrating={demonstrating && registryDemo?.id === 'Eclampsia'}
-          obstetricsAfeGuidance={session.guidance}
-          obstetricsAfeDemonstrating={demonstrating && registryDemo?.id === 'Afe'}
           obstetricsMaternalArrestGuidance={session.guidance}
           obstetricsMaternalArrestDemonstrating={demonstrating && registryDemo?.id === 'MaternalArrest'}
           obstetricsShoulderDystociaGuidance={session.guidance}
@@ -2582,24 +2570,6 @@ export function Cockpit({
           })}
           onToxicologyOpioidXylazineResponse={(action) => session.act({
             type: 'opioid-xylazine-persistent-sedation-response', payload: { action },
-          })}
-          onObstetricsAtonyResponse={(action) => session.act({
-            type: 'postpartum-hemorrhage-uterine-atony-response', payload: { action },
-          })}
-          onObstetricsMaternalSepsisResponse={(action) => session.act({
-            type: 'maternal-sepsis-postpartum-deterioration-response', payload: { action },
-          })}
-          onObstetricsConcealedAbruptionResponse={(action) => session.act({
-            type: 'concealed-placental-abruption-hemorrhage-response', payload: { action },
-          })}
-          onObstetricsPostpartumPreeclampsiaResponse={(action) => session.act({
-            type: 'postpartum-severe-preeclampsia-warning-signs-response', payload: { action },
-          })}
-          onObstetricsEclampsiaResponse={(action) => session.act({
-            type: 'eclampsia-first-seizure-response', payload: { action },
-          })}
-          onObstetricsAfeResponse={(action) => session.act({
-            type: 'suspected-amniotic-fluid-embolism-pattern-response', payload: { action },
           })}
           onObstetricsMaternalArrestResponse={(action) => session.act({
             type: 'maternal-cardiac-arrest-response', payload: { action },

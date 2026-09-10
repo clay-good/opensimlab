@@ -7,6 +7,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { objectiveFindings } from '@anesthesia/ui/Debrief';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { OBSTETRICS_TRAYS } from '../../src/modules/obstetrics/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (scenario: Parameters<typeof crisisResponseAvailability>[0]) =>
+  crisisResponseAvailability(scenario, [], OBSTETRICS_TRAYS);
 import type { EngineEvent } from '@platform/kernel/protocol';
 import { POSTPARTUM_HEMORRHAGE_UTERINE_ATONY as SCENARIO } from '../../src/modules/obstetrics/scenarios/postpartum-hemorrhage-uterine-atony';
 
@@ -25,7 +29,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['obstetricsAtonyAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: OBSTETRICS_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, obstetricsAtonyAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 450, respiratoryRateBpm: 10, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -34,7 +38,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onObstetricsAtonyResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -54,7 +58,7 @@ describe('Obstetrics postpartum-hemorrhage UI', () => {
   it('offers exactly one live control per recorded step, in the enforced order', () => {
     STATES.forEach((state, index) => {
       const onAction = vi.fn();
-      act(() => root.render(createElement(ActionCockpit, props(state, { onObstetricsAtonyResponse: onAction }))));
+      act(() => root.render(createElement(ActionCockpit, props(state, { onLessonAction: (_type: string, action: string) => onAction(action as never) }))));
       expect(buttons()).toHaveLength(index === 6 ? 0 : 1);
       expect(container.querySelectorAll('[role="status"]')).toHaveLength(1);
       if (index === 6) return;
@@ -65,8 +69,8 @@ describe('Obstetrics postpartum-hemorrhage UI', () => {
   });
 
   it('requires exact identity and debriefs exact event prefixes', () => {
-    expect(crisisResponseAvailability(SCENARIO, [])).toMatchObject({ hasObstetricsAtonyResponse: true });
-    expect(crisisResponseAvailability({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'clone' } }, []))
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO)).toMatchObject({ hasObstetricsAtonyResponse: true });
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'clone' } }))
       .toMatchObject({ hasObstetricsAtonyResponse: false });
     const suffixes = ['trajectory-reconciled', 'pattern-recognized', 'support-activated', 'evidence-reviewed', 'intent-and-reassessment-recorded', 'active-risk-handoff-recorded'];
     const log: EngineEvent[] = suffixes.map((suffix, tick) => ({ tick, eventId: `obstetrics-atony-${suffix}-${tick}`, severity: 'info', category: 'assessment', message: suffix }));
@@ -83,8 +87,8 @@ describe('Obstetrics postpartum-hemorrhage experience', () => {
   });
 
   it('fails closed and never offers a measurement, an examination, or a treatment', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasObstetricsAtonyResponse).toBe(true);
-    expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasObstetricsAtonyResponse).toBe(false);
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasObstetricsAtonyResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasObstetricsAtonyResponse).toBe(false);
     expect(STATES.map((state) => lessonButtons(markup(state)).length)).toEqual([1, 1, 1, 1, 1, 1, 0]);
     expect(markup(STATES[0]!)).toContain('One clue never gets to close every cause.');
     expect(markup(STATES[5]!)).toContain('Cumulative loss, hidden bleeding, durable control, treatment effect, and outcome remain open.');
@@ -98,32 +102,32 @@ describe('Obstetrics postpartum-hemorrhage experience', () => {
 describe('Postpartum-hemorrhage tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { obstetricsAtonyGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { obstetricsAtonyGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('Read the physiology rather than the volume');
-    const next = markup(STATES[1]!, { obstetricsAtonyGuidance: 'guided' });
+    const next = markup(STATES[1]!, { guidance: 'guided' });
     expect(next).toContain('refuse both the threshold and the single cause');
     expect(next).not.toContain('Read the physiology rather than the volume');
   });
 
   it('refuses the threshold and keeps every cause open', () => {
-    const html = markup(STATES[1]!, { obstetricsAtonyGuidance: 'guided' });
+    const html = markup(STATES[1]!, { guidance: 'guided' });
     expect(html).toContain('a definition for counting cases, not a trigger for starting');
     expect(html).toContain('looked at rather than proven whole');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(STATES[6]!, { obstetricsAtonyGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(STATES[6]!, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { obstetricsAtonyGuidance: 'guided', obstetricsAtonyDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'ObstetricsAtony' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

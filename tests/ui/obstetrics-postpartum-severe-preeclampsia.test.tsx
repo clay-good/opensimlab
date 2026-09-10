@@ -4,12 +4,16 @@ import { describe, expect, it } from 'vitest';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { OBSTETRICS_TRAYS } from '../../src/modules/obstetrics/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (scenario: Parameters<typeof crisisResponseAvailability>[0]) =>
+  crisisResponseAvailability(scenario, [], OBSTETRICS_TRAYS);
 import { POSTPARTUM_SEVERE_PREECLAMPSIA_WARNING_SIGNS as SCENARIO } from '../../src/modules/obstetrics/scenarios/postpartum-severe-preeclampsia-warning-signs';
 
 const markup = (assessment: NonNullable<ActionCockpitProps['resuscitation']['obstetricsPostpartumPreeclampsiaAssessment']>) => renderToStaticMarkup(createElement(ActionCockpit, {
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: OBSTETRICS_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, obstetricsPostpartumPreeclampsiaAssessment: assessment },
-  lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 480, respiratoryRateBpm: 20, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 2 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onObstetricsPostpartumPreeclampsiaResponse: () => {},
+  lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 480, respiratoryRateBpm: 20, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 2 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onLessonAction: () => {},
 } satisfies ActionCockpitProps));
 
 describe('Obstetrics postpartum severe-preeclampsia experience', () => {
@@ -21,8 +25,8 @@ describe('Obstetrics postpartum severe-preeclampsia experience', () => {
     expect(route).toContain('<h1>Postpartum severe preeclampsia: listen, connect, escalate</h1>');
   });
   it('requires exact identity and makes urgent activation precede parallel review without treatment controls', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasObstetricsPostpartumPreeclampsiaResponse).toBe(true);
-    expect(crisisResponseAvailability({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'lookalike' } }).hasObstetricsPostpartumPreeclampsiaResponse).toBe(false);
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasObstetricsPostpartumPreeclampsiaResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'lookalike' } }).hasObstetricsPostpartumPreeclampsiaResponse).toBe(false);
     const initial = markup({ trajectoryAtTick: null, recognitionAtTick: null, supportAtTick: null, evidenceAtTick: null, reassessmentAtTick: null, handoffAtTick: null });
     expect(initial).toContain('Listen past the pressure.'); expect(initial).toContain('Connect pressure + whole person');
     expect(initial).not.toMatch(/Labetalol|Hydralazine|Nifedipine|Magnesium|20 mg|4 g|IV|Give oxygen|Perform delivery|Cesarean/);

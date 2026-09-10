@@ -4,12 +4,16 @@ import { describe, expect, it } from 'vitest';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { Prebrief } from '@anesthesia/ui/Prebrief';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { OBSTETRICS_TRAYS } from '../../src/modules/obstetrics/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (scenario: Parameters<typeof crisisResponseAvailability>[0]) =>
+  crisisResponseAvailability(scenario, [], OBSTETRICS_TRAYS);
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { POSTPARTUM_HEMORRHAGE_UTERINE_ATONY as SCENARIO } from '../../src/modules/obstetrics/scenarios/postpartum-hemorrhage-uterine-atony';
 import { LIMITATIONS } from '@platform/docs/limitations';
 
 const cockpitMarkup = (assessment: NonNullable<ActionCockpitProps['resuscitation']['obstetricsAtonyAssessment']>) => renderToStaticMarkup(createElement(ActionCockpit, {
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [],
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: OBSTETRICS_TRAYS, infusions: [],
   hypnoticLine: { connected: true, inspected: false },
   resuscitation: {
     epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
@@ -27,7 +31,7 @@ const cockpitMarkup = (assessment: NonNullable<ActionCockpitProps['resuscitation
   onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {},
   onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {},
-  onActiveCooling: () => {}, onDrugCard: () => {}, onObstetricsAtonyResponse: () => {},
+  onActiveCooling: () => {}, onDrugCard: () => {}, onLessonAction: () => {},
 } satisfies ActionCockpitProps));
 
 describe('Obstetrics module user-facing foundation', () => {
@@ -47,9 +51,9 @@ describe('Obstetrics module user-facing foundation', () => {
   });
 
   it('requires exact route identity and exposes only the calm bounded sequence', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasObstetricsAtonyResponse).toBe(true);
-    expect(crisisResponseAvailability({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'lookalike' } }).hasObstetricsAtonyResponse).toBe(false);
-    expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasObstetricsAtonyResponse).toBe(false);
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasObstetricsAtonyResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'lookalike' } }).hasObstetricsAtonyResponse).toBe(false);
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasObstetricsAtonyResponse).toBe(false);
     const initial = cockpitMarkup({ trajectoryAtTick: null, recognitionAtTick: null, supportAtTick: null, evidenceAtTick: null, reassessmentAtTick: null, handoffAtTick: null });
     expect(initial).toContain('See the bleeding early. Bring calm around it.');
     expect(initial).toContain('Connect birth + whole person');
