@@ -3845,6 +3845,23 @@
       "limitationManifestHash": "sha256:54ed8a115dc5342606f2fe0fd5ffeccb04813b4a2ad4d3a6395bc42e5facb5ce"
     },
     {
+      "scenarioId": "phosphate-target-a-surrogate-that-moved-the-wrong-way",
+      "contentVersion": "0.1.0",
+      "moduleId": "renal-electrolyte",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:fefe2ce9fae2b18d78bb0e33c4df2eb386b15f3bbf1c6a0b7197420e9c5b2528",
+      "defaultsHash": "sha256:b38eb69234a1b584a00cc26bc93572eb9c5b9fbdb122baa43bbdb2f13f6d266a",
+      "maturityHash": "sha256:9a783d4579c762a325ead035cb19df4fb113932fa0075b0fe8951e0d7f7991d6",
+      "sourceManifestHash": "sha256:643597a0399fd9619691551d24f5b3abf79bb50120030d307af7a949b58e0507",
+      "limitationManifestHash": "sha256:d706f85182b7d2fccfe9dd737edbf53827fc95b196068fb442dfb6f37ba0b335"
+    },
+    {
       "scenarioId": "rhabdomyolysis-a-number-that-does-not-carry-the-risk",
       "contentVersion": "0.1.0",
       "moduleId": "renal-electrolyte",

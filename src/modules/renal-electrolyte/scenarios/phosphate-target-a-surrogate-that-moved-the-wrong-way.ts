@@ -1,0 +1,62 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+
+export const RENAL_PHOSPHATE_TARGET: Scenario = {
+  schemaVersion: 1,
+  metadata: {
+    id: 'phosphate-target-a-surrogate-that-moved-the-wrong-way', version: '0.1.0', maturity: 'preview',
+    title: 'A phosphate target: the surrogate that moved the wrong way', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
+    estimatedMinutes: 60, difficulty: 'intermediate',
+    objectives: [
+      { id: 'renal-phosphate-surrogate', statement: 'Name the target as a surrogate before treating it as the goal.', measure: 'Record that the clinic target is a serum value standing in for an outcome nobody in the room can see, and that moving the value is not the same as moving what it stands for. Nothing here establishes that his phosphate is harmless or that it is harmful.' },
+      { id: 'renal-phosphate-trial', statement: 'Read the randomised comparison in this population, including the part nobody quotes.', measure: 'Review that in 148 patients with an estimated GFR of 20–45 randomised to three binders or placebo, serum and urinary phosphorus fell and secondary hyperparathyroidism was attenuated — while coronary and abdominal aortic calcification increased significantly against placebo, and the authors concluded that safety and efficacy remain uncertain. That is uncertainty in both directions, not evidence that binders are harmful.' },
+      { id: 'renal-phosphate-intake', statement: 'Ask what he is actually eating before tightening anything again.', measure: 'Review the two restrictions already applied, his falling appetite and albumin, and the difference between protein-bound phosphate and the additive phosphate in processed food and drinks. A third restriction has a cost this rehearsal does not model and this lesson does not prescribe a diet, a target, or an education programme.' },
+      { id: 'renal-phosphate-reassessment', statement: 'Distinguish a repeated value from an answer to the question behind it.', measure: 'Request fresh full reassessment after care. A phosphate-only recheck restates the surrogate and settles nothing about the outcome it stands for. His weight and albumin are the findings that changed, and no vascular imaging, bone assessment, or outcome is supplied.' },
+      { id: 'renal-phosphate-handoff', statement: 'Transfer with the target named as a surrogate and the decision owned.', measure: 'Hand off the surrogate framing, the trial review, the intake and nutritional review, and current full findings, with the binder decision owned by the qualified team that knows the clinical context, the costs, and his tolerability. A phosphate inside the printed range is not a handoff gate and is not supplied.' },
+    ],
+    clinicalReview: {
+      reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED', competingInterests: 'None declared',
+      reviewedOn: '1970-01-01', reviewBy: '1970-01-01', contentVersion: '0.1.0',
+      sources: [
+        'Block GA, Wheeler DC, Persky MS, Kestenbaum B, et al. Effects of phosphate binders in moderate CKD. Journal of the American Society of Nephrology. 2012;23:1407–1415. doi:10.1681/ASN.2012030223. One hundred and forty-eight patients over nine months, with the phosphorus change as the primary endpoint and the calcification findings secondary at p values of 0.05 and 0.03. The authors conclude that the safety and efficacy of phosphate binders in CKD remain uncertain, which is the claim used here — not that binders are harmful.',
+        'Malberti F. Hyperphosphataemia: treatment options. Drugs. 2013;73:673–688. doi:10.1007/s40265-013-0054-y. A narrative review by a single author, published in 2013, so its comparative reading predates later agents and trials. It is used only for the claim that the comparison between binder classes has not been settled for patient-level outcomes and that the choice should be individualised.',
+        'Shimada M, Shutto-Uchita Y, Yamabe H. Lack of awareness of dietary sources of phosphorus is a clinical concern. In Vivo. 2019;33:11–16. doi:10.21873/invivo.11432. A short awareness review rather than a trial: it demonstrates no outcome from education, and its own opening claim that hyperphosphatemia is associated with mortality and cardiovascular events is exactly the associative reasoning this lesson asks a learner to hold at arm’s length.',
+      ],
+    },
+    limitations: ['renal-phosphate-surrogate-bounds', 'renal-phosphate-authored-contrasts', 'renal-phosphate-continuing-care'],
+  },
+  patient: {
+    ageYears: 63, sex: 'male', heightCm: 172, weightKg: 68, asaClass: 3,
+    diagnosis: 'A serum phosphate above the printed range in chronic kidney disease, with a clinic target the team is preparing to treat toward',
+    procedure: 'Surrogate review, review of the randomised comparison, intake and nutritional review, reassessment, and handoff of an owned binder decision',
+    comorbidities: ['Chronic kidney disease with a supplied estimated GFR of 26 mL/min/1.73 m², not on dialysis',
+      'Phosphate 1.62 mmol/L; calcium 2.24 mmol/L, parathyroid hormone 31 pmol/L, bicarbonate 22 mmol/L',
+      'Dietary phosphate restricted twice in the last year; appetite reduced for four months',
+      'Weight 74 kg twelve months ago and 68 kg today; albumin 38 g/L twelve months ago and 31 g/L today',
+      'No vascular imaging, bone assessment, fracture, or cardiovascular event is supplied',
+      'The clinic protocol is to start a binder to bring the phosphate into the printed range'],
+    medications: ['Several long-term medicines; no binder is currently prescribed and no dose is supplied'],
+    allergies: ['No known drug allergies'], fasting: 'Not a fasting lesson; nothing here turns on the airway, and no feeding decision is made',
+    baseline: { heartRateBpm: 74, meanArterialMmHg: 90, strokeVolumeMl: 70, hemoglobinGPerDl: 10.9,
+      bloodVolumeMl: 4700, coreTemperatureC: 36.6, arterialStiffness: 1, baroreflexGain: 1, fixedStrokeVolume: true },
+    airway: { difficulty: 0.1, difficultMaskVentilation: false, assessment: 'Awake, oriented, and thinner than at his last visit; the airway is not the problem in this lesson' },
+    respiratory: { profile: 'healthy' },
+  },
+  equipment: { monitoring: ['ecg', 'nibp', 'pulse-oximetry', 'temperature'], ventilator: { mode: 'manual', fio2: 0.21,
+    tidalVolumeMl: 480, respiratoryRateBpm: 15, freshGasFlowLPerMin: 10, delivering: false } },
+  formulary: [],
+  timeline: [
+    { id: 'renal-phosphate-presentation', type: 'narrative', target: 'renal-phosphate', atTick: 0, severity: 'critical',
+      message: 'A fictional 63-year-old man attends the kidney clinic with a supplied estimated GFR of 26 mL/min/1.73 m² and is not on dialysis. His phosphate is 1.62 mmol/L, calcium 2.24 mmol/L, parathyroid hormone 31 pmol/L, and bicarbonate 22 mmol/L. His diet has been restricted for phosphate twice in the last year and his appetite has been poor for four months. He weighed 74 kg a year ago and weighs 68 kg today; his albumin has gone from 38 to 31 g/L. No vascular imaging, bone assessment, fracture, or cardiovascular event is supplied. The clinic protocol is to start a binder to bring the phosphate into the printed range. Decide what that range is standing in for.' },
+    { id: 'renal-phosphate-boundary', type: 'narrative', target: 'renal-phosphate-boundary', atTick: 0, severity: 'warning',
+      message: 'This lesson selects no binder, no dose, no diet, no target, and no education programme, and it does not decide whether a binder should be started. It teaches that a serum phosphate is a surrogate: in a randomised comparison of three binders against placebo in 148 patients with an estimated GFR of 20 to 45, serum and urinary phosphorus fell and secondary hyperparathyroidism was attenuated, while coronary and abdominal aortic calcification increased significantly against placebo, and the authors concluded that safety and efficacy remain uncertain. That is uncertainty in both directions. It is not evidence that binders are harmful, it does not establish that his phosphate is harmless, and refusing to treat toward a number supplies no other plan. The comparison between binder classes for patient-level outcomes has not been settled, which is why the choice belongs with the team that knows his context, the costs, and his tolerability. A third dietary restriction has a cost this rehearsal does not model; the weight and albumin supplied are findings, not a diagnosis of malnutrition, and no feeding decision is made. The 60-minute records checkpoint and the 5-minute unexamined contrast are authored teaching intervals, not pharmacokinetics, safe waits, or grading deadlines. The phosphate does not change across this rehearsal, because nothing here is a treatment response. Partial checks do not refresh full assessment. No vascular imaging, bone assessment, outcome, target, or discharge clearance is claimed. Exhaled CO2 and FiO2 are unavailable.' },
+  ],
+  replayPoints: [{ id: 'renal-phosphate-first-response', label: 'Return to what the target stands for', objectiveId: 'renal-phosphate-surrogate', atTick: 1,
+    reason: 'Separate naming the target as a surrogate from reading the trial that measured both the surrogate and the thing it stands for.' }],
+  debrief: { rubric: [
+    { id: 'renal-phosphate-surrogate-review', objectiveId: 'renal-phosphate-surrogate', question: 'What is the clinic target standing in for, and who in the room can see that thing?' },
+    { id: 'renal-phosphate-trial-review', objectiveId: 'renal-phosphate-trial', question: 'In the randomised comparison, what moved the desired way and what moved the other way?' },
+    { id: 'renal-phosphate-intake-review', objectiveId: 'renal-phosphate-intake', question: 'What had already been restricted twice, and what did his weight and albumin add?' },
+    { id: 'renal-phosphate-reassessment-review', objectiveId: 'renal-phosphate-reassessment', question: 'The phosphate did not change. Which findings had?' },
+    { id: 'renal-phosphate-handoff-review', objectiveId: 'renal-phosphate-handoff', question: 'Who owns the binder decision, and what did they need to know that the number does not carry?' },
+  ] },
+};

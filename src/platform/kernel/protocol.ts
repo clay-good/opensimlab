@@ -330,6 +330,35 @@ export interface RenalEstimatedFiltrationSnapshot {
   readonly durableRecoveryProven: false;
 }
 
+export interface RenalPhosphateTargetSnapshot {
+  readonly supportActive: boolean;
+  readonly surrogateReviewedAtTick: number | null;
+  readonly trialReviewedAtTick: number | null;
+  readonly intakeReviewedAtTick: number | null;
+  readonly decisionOwnedAtTick: number | null;
+  readonly monitoringAtTick: number | null;
+  readonly recordsDueInSeconds: number | null;
+  readonly recordsOpened: boolean;
+  readonly unexaminedContrastObserved: boolean;
+  readonly treatTheNumberAttempted: boolean;
+  readonly restrictFurtherAttempted: boolean;
+  readonly phosphateObservation: { readonly atTick: number; readonly phosphateMmolL: number } | null;
+  readonly nutritionObservation: { readonly atTick: number; readonly weightKg: number; readonly albuminGL: number } | null;
+  readonly observation: {
+    readonly atTick: number; readonly phosphateMmolL: number; readonly weightKg: number;
+    readonly albuminGL: number; readonly parathyroidPmolL: number; readonly restrictionsApplied: number;
+    readonly heartRateBpm: number; readonly systolicMmHg: number; readonly diastolicMmHg: number;
+    readonly meanArterialMmHg: number; readonly respiratoryRateBpm: number; readonly spo2Percent: number;
+    readonly coreTemperatureC: number; readonly alertness: string;
+  } | null;
+  readonly alertness: string;
+  readonly choiceFeedback: string | null;
+  readonly ended: 'handoff' | 'instructor-takeover' | null;
+  readonly authoredStateTransitions: true;
+  readonly doseModelAvailable: false;
+  readonly durableRecoveryProven: false;
+}
+
 export interface MeningococcalSepsisSnapshot {
   readonly rashRecognizedAtTick: number | null;
   readonly seniorAtTick: number | null;
@@ -5399,6 +5428,7 @@ export interface EquipmentSnapshot {
     readonly renalContrastAttribution?: RenalContrastAttributionSnapshot;
     readonly renalRhabdomyolysis?: RenalRhabdomyolysisSnapshot;
     readonly renalEstimatedFiltration?: RenalEstimatedFiltrationSnapshot;
+    readonly renalPhosphateTarget?: RenalPhosphateTargetSnapshot;
     readonly meningococcalSepsis?: MeningococcalSepsisSnapshot;
     readonly obstructedKidney?: ObstructedKidneySnapshot;
     readonly febrileNeutropenia?: FebrileNeutropeniaSnapshot;

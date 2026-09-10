@@ -7,8 +7,8 @@ credited toward the catalog until every item in the completion contract passes.
 
 - [ ] Approve the product position, 256-scenario target catalog, training-versus-runtime-tool
   boundary, fidelity classes, maturity vocabulary,
-  privacy exception, report retention, and no-hosted-MCP decision. The catalogue stands at 254 of
-  the 256, and the two missing labs are all renal and electrolyte, at slice 10 of 12.
+  privacy exception, report retention, and no-hosted-MCP decision. The catalogue stands at 255 of
+  the 256, and the one missing lab is renal and electrolyte slice 12 of 12.
 - [ ] Resolve every conflict between this change and the master clinical-governance, privacy,
   delivery, module, curriculum, pedagogy, safety, adoption, and sustainability specifications.
 - [x] Publish a machine-readable scenario completion schema and validate all existing anesthesia
@@ -704,9 +704,9 @@ credited toward the catalog until every item in the completion contract passes.
     transport, communication, documentation, counseling, procedure, diagnosis, disposition, or
     outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
-  Neurology is 15 of 15 and endocrine and metabolic is 12 of 12. **Renal and electrolyte is 10 of
-  12**, and the two remaining labs are the whole of the gap between the catalogue's 254 and the
-  256 target in section 0.
+  Neurology is 15 of 15 and endocrine and metabolic is 12 of 12. **Renal and electrolyte is 11 of
+  12**, and the last lab is the whole of the gap between the catalogue's 255 and the 256 target
+  in section 0.
 
   The thirteen sub-tasks left open below are independent clinical review and inclusive-runtime
   verification. They need named clinicians, exact-version assistive technology and physical
@@ -1385,6 +1385,22 @@ credited toward the catalog until every item in the completion contract passes.
     estimate and adopting whichever value suits the plan are both refused, and neither refusal
     supplies an alternative. Nothing selects a drug, dose, adjustment, equation, or marker.
     Three sources verified through NCBI E-utilities, each carrying its own limits.
+  - [x] Renal/electrolyte slice 11/12 registers
+    `phosphate-target-a-surrogate-that-moved-the-wrong-way@0.1.0`, a fictional 63-year-old man
+    with a supplied estimated GFR of 26, a phosphate of 1.62 mmol/L, and a clinic protocol to
+    start a binder to bring the number into the printed range. His diet has been restricted
+    twice, his appetite has been poor for four months, and he has lost 6 kg and 7 g/L of albumin
+    in a year. The learner names the target as a surrogate, reads the randomised comparison in
+    this population including the half rarely quoted -- phosphorus fell on all three binders and
+    coronary and aortic calcification rose against placebo, with the authors concluding that
+    safety and efficacy remain uncertain -- asks what he is actually eating, and places the
+    binder decision with the team that knows his context, costs, and tolerability. The phosphate
+    never moves, because the lesson contains no treatment for it to respond to; what the review
+    changes is the record, which carries the two documented restrictions the phosphate column
+    never showed. Treating toward the range and tightening the diet a third time are both
+    refused, and both refusals state that they decide nothing about the binder, establish no
+    diagnosis of malnutrition, and prescribe no diet. Three sources verified through NCBI
+    E-utilities, each carrying its own weaknesses.
   - [ ] Complete hypermagnesemia independent clinical review, four exact-version quality records,
     complete inclusive-runtime validation, and production Turnstile/D1 evidence. Local checks
     do not replace those requirements. Publish the additive Worker identity catalog before

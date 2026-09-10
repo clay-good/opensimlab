@@ -16,7 +16,7 @@ any device, with or without a network.
 
 ## What it covers
 
-254 bounded labs across 16 specialties:
+255 bounded labs across 16 specialties:
 
 | Module | Labs | Where |
 | --- | --- | --- |
@@ -33,12 +33,12 @@ any device, with or without a network.
 | Neonatology | 11 | `/neonatology` |
 | Infectious disease | 10 | `/infectious-disease` |
 | Nursing | 9 | `/medical-surgical-nursing` |
-| Renal & electrolyte | 10 | `/renal-electrolyte` |
+| Renal & electrolyte | 11 | `/renal-electrolyte` |
 | Oncology | 11 | `/oncology` |
 | Surgery and trauma | 10 | `/surgery-trauma` |
 
 Counts are the registered scenarios the build audits, not a roadmap. Renal and electrolyte is at
-10 of a planned 12 and says so on its own page; every other module is at its full planned count.
+11 of a planned 12 and says so on its own page; every other module is at its full planned count.
 
 Each lab is a closed-loop scenario: the physiology keeps running while you decide, and
 what you do changes where the patient goes next.

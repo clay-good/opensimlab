@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "renal-electrolyte",
-  "recordCount": 10,
+  "recordCount": 11,
   "records": [
     {
       "recordId": "scenario:hyperkalemia-cardioprotection-and-rebound@0.1.0",
@@ -111,6 +111,17 @@
       "evidence": [
         "/catalog/renal-electrolyte-completion-audit.json#estimated-filtration-a-number-she-was-never-measured-by@0.1.0",
         "/catalog/renal-electrolyte-quality-audit.json#estimated-filtration-a-number-she-was-never-measured-by@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:phosphate-target-a-surrogate-that-moved-the-wrong-way@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "phosphate-target-a-surrogate-that-moved-the-wrong-way",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/renal-electrolyte-completion-audit.json#phosphate-target-a-surrogate-that-moved-the-wrong-way@0.1.0",
+        "/catalog/renal-electrolyte-quality-audit.json#phosphate-target-a-surrogate-that-moved-the-wrong-way@0.1.0"
       ]
     }
   ]

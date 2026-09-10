@@ -105,7 +105,7 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
   });
 
   it('covers every renal and electrolyte lab', () => {
-    expect(RENAL_ELECTROLYTE_SCENARIOS).toHaveLength(10);
+    expect(RENAL_ELECTROLYTE_SCENARIOS).toHaveLength(11);
     expect(uncovered(RENAL_ELECTROLYTE_SCENARIOS, 'renal-electrolyte')).toEqual([]);
   });
 

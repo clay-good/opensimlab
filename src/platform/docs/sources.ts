@@ -64,6 +64,30 @@ const CHECKED = '2026-08-20';
 
 export const SOURCES: readonly Source[] = [
   {
+    id: 'renal-phosphate-binders-2012', pmid: '22822075', authors: 'Block GA, Wheeler DC, Persky MS, Kestenbaum B, et al',
+    title: 'Effects of phosphate binders in moderate CKD', publication: 'Journal of the American Society of Nephrology', year: 2012,
+    locator: '23(8):1407\u20131415; doi:10.1681/ASN.2012030223; results and conclusion',
+    usedFor: 'In 148 patients with an estimated GFR of 20\u201345 randomised to three binders or placebo, serum and urinary phosphorus fell and secondary hyperparathyroidism was attenuated \u2014 while coronary and abdominal aortic calcification increased significantly compared with placebo. The lesson uses this to teach that a surrogate moving the desired way is not the outcome moving the desired way.',
+    verifiedAgainst: 'PubMed PMID 22822075 bibliographic record and abstract, read field by field through NCBI E-utilities. One hundred and forty-eight patients, nine months, and the primary endpoint was the phosphorus change rather than the calcification; the calcification findings are secondary, with p values of 0.05 and 0.03. The authors conclude in their own words that the safety and efficacy of phosphate binders in CKD remain uncertain, which is the claim this lesson adopts \u2014 not that binders are harmful.',
+    verifiedOn: '2026-09-10',
+  },
+  {
+    id: 'renal-phosphate-binder-choice-2013', pmid: '23625273', authors: 'Malberti F',
+    title: 'Hyperphosphataemia: treatment options', publication: 'Drugs', year: 2013,
+    locator: '73(7):673\u2013688; doi:10.1007/s40265-013-0054-y; comparative-evidence discussion and conclusion',
+    usedFor: 'There are insufficient data to establish the comparative superiority of non-calcium binding agents over calcium salts for patient-level outcomes such as all-cause mortality and cardiovascular end points, so the choice belongs with the clinician who knows the clinical context, the costs, and the individual tolerability. The lesson uses this to place the decision rather than to make it.',
+    verifiedAgainst: 'PubMed PMID 23625273 bibliographic record and abstract, read field by field through NCBI E-utilities. A narrative review by a single author rather than a systematic one, published in 2013, so its comparative reading predates later agents and trials. It is used only for the claim that the comparison has not been settled and that the choice should be individualised.',
+    verifiedOn: '2026-09-10',
+  },
+  {
+    id: 'renal-phosphate-awareness-2019', pmid: '30587596', authors: 'Shimada M, Shutto-Uchita Y, Yamabe H',
+    title: 'Lack of Awareness of Dietary Sources of Phosphorus Is a Clinical Concern', publication: 'In Vivo', year: 2019,
+    locator: '33(1):11\u201316; doi:10.21873/invivo.11432; discussion of additive and hidden phosphate intake',
+    usedFor: 'Hidden phosphate from additives in processed foods and carbonated drinks is commonly unrecognised, and nutritional education is raised as a way to reduce intake without adding pill burden or malnutrition. The lesson uses this to open the question of what the patient is actually eating before anything is tightened further.',
+    verifiedAgainst: 'PubMed PMID 30587596 bibliographic record and abstract, read field by field through NCBI E-utilities. A short review raising awareness rather than a trial: it demonstrates no outcome from education, and its opening claim that hyperphosphatemia is associated with mortality and cardiovascular events is exactly the associative reasoning this lesson asks a learner to hold at arm\u2019s length.',
+    verifiedOn: '2026-09-10',
+  },
+  {
     id: 'renal-estimate-equations-2021', pmid: '34554658', authors: 'Inker LA, Eneanya ND, Coresh J, Tighiouart H, et al',
     title: 'New Creatinine- and Cystatin C-Based Equations to Estimate GFR without Race', publication: 'The New England Journal of Medicine', year: 2021,
     locator: '385(19):1737\u20131749; doi:10.1056/NEJMoa2102953; validation-set accuracy results',

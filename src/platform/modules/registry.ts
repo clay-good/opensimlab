@@ -130,7 +130,7 @@ export const MODULES: readonly ModuleDeclaration[] = [
     route: 'renal-electrolyte',
     displayName: 'Renal and electrolyte medicine',
     status: 'available',
-    scenarioCount: 10,
+    scenarioCount: 11,
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
