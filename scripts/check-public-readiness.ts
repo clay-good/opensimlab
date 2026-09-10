@@ -6,11 +6,30 @@ const root = process.cwd();
 const history = process.argv.includes('--history');
 const failures: string[] = [];
 
-const git = (...args: string[]): string => execFileSync('git', args, {
-  cwd: root,
-  encoding: 'utf8',
-  stdio: ['ignore', 'pipe', 'pipe'],
-});
+/**
+ * `rev-list --objects --all` prints one line per object in the whole history, so its
+ * output grows with the repository and passed Node's 1 MB default, which surfaced as
+ * an unhandled ENOBUFS with a megabyte of hashes in the stack trace rather than as an
+ * audit failure. The ceiling is raised and an overflow now says which git call hit it.
+ */
+const GIT_OUTPUT_CEILING_BYTES = 256 * 1024 * 1024;
+
+const git = (...args: string[]): string => {
+  try {
+    return execFileSync('git', args, {
+      cwd: root,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+      maxBuffer: GIT_OUTPUT_CEILING_BYTES,
+    });
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOBUFS') {
+      throw new Error(`git ${args[0]} produced more than ${GIT_OUTPUT_CEILING_BYTES} bytes; `
+        + 'the audit needs to read it in chunks rather than in one buffer');
+    }
+    throw error;
+  }
+};
 
 const manifest = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')) as {
   license?: string;

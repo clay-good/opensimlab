@@ -107,7 +107,7 @@ adoption packs are built from, and it will stay refused until named clinicians s
 content versions.
 
 What is done: the waveform engine, compartment solver, physiology, design system, cockpit, sound,
-accessibility, debrief, practice regions, and offline shell — with over 7,000 automated tests and
+accessibility, debrief, practice regions, and offline shell — with over 14,000 automated tests and
 the Benumof apnea benchmarks inside 5% of published times.
 
 ## Running it

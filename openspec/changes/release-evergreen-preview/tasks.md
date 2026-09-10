@@ -179,10 +179,24 @@ preview-channel blockers until it is. Updating the specification does not clear 
 
 ## 7. Publish
 
-- [ ] Re-run `npm run public-ready:history` and `npm audit` immediately before the visibility
-  change, per `docs/public-readiness-audit.md`.
-- [ ] Make the repository public.
-- [ ] `npm run deploy` on the preview channel.
+- [x] Re-run `npm run public-ready:history` and `npm audit` immediately before the visibility
+  change, per `docs/public-readiness-audit.md`. The history audit had stopped running: its
+  `git rev-list --objects --all` output outgrew Node's 1 MB default buffer, so the script died
+  with an unhandled ENOBUFS carrying a megabyte of commit hashes instead of reporting anything.
+  Fixed, held by `tests/unit/public-readiness-history-audit.test.ts`, and re-run clean over
+  30,038 history objects and one contributor identity, with a clean tracked tree and 418
+  dependency licenses classified.
+
+  `npm audit` finds nothing in what ships: `npm audit --omit=dev` is zero, and the only runtime
+  dependencies are react, react-dom and zustand. Of the four development findings, js-yaml is
+  fixed by the lockfile bump in this change. The remaining three are one advisory reached
+  through `wrangler -> miniflare -> sharp`, and there is no version to move to: the newest
+  wrangler still pins the same sharp, and npm's suggested `--force` downgrade does not clear it.
+  It is a deploy-time tool on a maintainer's machine, not a byte a learner downloads.
+- [x] Make the repository public. Done; `gh repo view` reports PUBLIC.
+- [ ] `npm run deploy` on the preview channel. The site answers at opensimlab.com and serves the
+  current module list, so a deploy has happened; deploys stay manual and each new one is a
+  maintainer's call, not a step this change closes.
 
 ## 8. Still outstanding after this release
 
