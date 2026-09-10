@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { CARDIOLOGY_TRAYS } from '../../src/modules/cardiology/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, CARDIOLOGY_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { STABLE_CHEST_PAIN_EVALUATION as SCENARIO } from '../../src/modules/cardiology/scenarios/stable-chest-pain-evaluation';
 
@@ -35,7 +41,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['stableChestPainAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: CARDIOLOGY_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, stableChestPainAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 500, respiratoryRateBpm: 14, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -44,7 +50,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onStableChestPainResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -64,8 +70,8 @@ describe('Stable-chest-pain experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasStableChestPainResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasStableChestPainResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'stable-chest-pain-evaluation'),
     }).hasStableChestPainResponse).toBe(false);
@@ -91,43 +97,43 @@ describe('Stable-chest-pain experience', () => {
 describe('Stable-chest-pain tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { stableChestPainGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { stableChestPainGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('before you treat it as stable');
-    const pattern = markup(STABLE, { stableChestPainGuidance: 'guided' });
+    const pattern = markup(STABLE, { guidance: 'guided' });
     expect(pattern).toContain('Do not reach for the word');
     expect(pattern).not.toContain('before you treat it as stable');
   });
 
   it('refuses the word atypical and explains the cost', () => {
-    const html = markup(STABLE, { stableChestPainGuidance: 'guided' });
+    const html = markup(STABLE, { guidance: 'guided' });
     expect(html).toContain('it performs worse in women');
   });
 
   it('keeps the likelihood a band and flags the resting ECG', () => {
-    const html = markup(PATTERN, { stableChestPainGuidance: 'guided' });
+    const html = markup(PATTERN, { guidance: 'guided' });
     expect(html).toContain('routinely over-read as reassurance');
     expect(html).toContain('a band and not a percentage');
   });
 
   it('makes the test choice shared and local', () => {
-    const html = markup(LIKELIHOOD, { stableChestPainGuidance: 'guided' });
+    const html = markup(LIKELIHOOD, { guidance: 'guided' });
     expect(html).toContain('no universal right modality');
     expect(html).toContain('is not the best test for him');
   });
 
   it('goes quiet once the safety net is recorded', () => {
-    expect(markup(DONE, { stableChestPainGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { stableChestPainGuidance: 'guided', stableChestPainDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'StableChestPain' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

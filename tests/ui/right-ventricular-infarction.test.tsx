@@ -3,6 +3,7 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { CARDIOLOGY_TRAYS } from '../../src/modules/cardiology/trays';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { RIGHT_VENTRICULAR_INFARCTION as SCENARIO } from '../../src/modules/cardiology/scenarios/right-ventricular-infarction';
 
@@ -20,7 +21,7 @@ describe('Requirement: right-ventricular infarction has a calm focused surface',
     reperfusionPerformedByLearner: false as const, deviceSelected: false as const,
   });
   function props(value = assessment(), onAction = vi.fn()): ActionCockpitProps {
-    return { scenario: SCENARIO, region: UNITED_STATES, infusions: [],
+    return { scenario: SCENARIO, region: UNITED_STATES, lessonTrays: CARDIOLOGY_TRAYS, infusions: [],
       hypnoticLine: { connected: true, inspected: false }, resuscitation: {
         epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null,
         crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
@@ -34,7 +35,7 @@ describe('Requirement: right-ventricular infarction has a calm focused surface',
       onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {},
       onCallForHelp: () => {}, onAirwayDevice: () => {}, onEpinephrine: () => {},
       onDantrolene: () => {}, onActiveCooling: () => {},
-      onRightVentricularInfarctionResponse: onAction, onDrugCard: () => {} };
+      onLessonAction: (_type: string, action: string) => onAction(action as never), onDrugCard: () => {} };
   }
   const button = (label: string) => [...container.querySelectorAll('button')]
     .find((entry) => entry.textContent?.trim() === label) as HTMLButtonElement;

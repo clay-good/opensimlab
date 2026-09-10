@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { CARDIOLOGY_TRAYS } from '../../src/modules/cardiology/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, CARDIOLOGY_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { NSTEMI_RISK_REASSESSMENT as SCENARIO } from '../../src/modules/cardiology/scenarios/nstemi-risk-reassessment';
 
@@ -36,7 +42,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['nstemiRiskAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: CARDIOLOGY_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, nstemiRiskAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 450, respiratoryRateBpm: 16, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -45,7 +51,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onNstemiRiskResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -65,8 +71,8 @@ describe('NSTEMI risk-reassessment experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasNstemiRiskResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasNstemiRiskResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'nstemi-risk-reassessment'),
     }).hasNstemiRiskResponse).toBe(false);
@@ -90,38 +96,38 @@ describe('NSTEMI risk-reassessment experience', () => {
 describe('NSTEMI risk tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { nstemiRiskGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { nstemiRiskGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('Three things moved');
-    const verification = markup(TRAJECTORY, { nstemiRiskGuidance: 'guided' });
+    const verification = markup(TRAJECTORY, { guidance: 'guided' });
     expect(verification).toContain('keep the other reasons for a rising troponin in the room');
     expect(verification).not.toContain('Three things moved');
   });
 
   it('refuses inherited stability by name', () => {
-    const html = markup(VERIFIED, { nstemiRiskGuidance: 'guided' });
+    const html = markup(VERIFIED, { guidance: 'guided' });
     expect(html).toContain('Do not inherit her stability from an earlier note');
     expect(html).toContain('the only thing that catches a change');
   });
 
   it('treats bleeding risk as load-bearing and timing as regional', () => {
-    const html = markup(SCREENED, { nstemiRiskGuidance: 'guided' });
+    const html = markup(SCREENED, { guidance: 'guided' });
     expect(html).toContain('the same catheter that treats the first raises the second');
     expect(html).toContain('teaches none of them as the answer');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(DONE, { nstemiRiskGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { nstemiRiskGuidance: 'guided', nstemiRiskDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'NstemiRisk' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

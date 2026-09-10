@@ -7,6 +7,7 @@
 import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRoute';
 import { CARDIOLOGY_SCENARIOS, DEFAULT_CARDIOLOGY_SCENARIO_ID, getCardiologyScenario } from '../../modules/cardiology/scenarios';
 import { CARDIOLOGY_LIMITATIONS } from '@platform/docs/limitations/cardiology';
+import { CARDIOLOGY_TRAYS } from '../../modules/cardiology/trays';
 import { CARDIOLOGY_DEMONSTRATIONS } from '../../modules/cardiology/demo/demonstrations';
 
 const CARDIOLOGY_CONFIG: ClinicalModuleConfig = {
@@ -14,6 +15,7 @@ const CARDIOLOGY_CONFIG: ClinicalModuleConfig = {
   limitations: CARDIOLOGY_LIMITATIONS,
   catalogIntroduction: 'Calm cardiovascular rehearsals from clinic to inpatient care. Read the trajectory, surface what remains, and make each next step earn its place.',
   catalogStatus: 'All seventeen bounded cardiology labs are playable.',
+  trays: CARDIOLOGY_TRAYS,
   scenarios: CARDIOLOGY_SCENARIOS, defaultScenarioId: DEFAULT_CARDIOLOGY_SCENARIO_ID,
   getScenario: getCardiologyScenario,
   demonstrations: CARDIOLOGY_DEMONSTRATIONS,

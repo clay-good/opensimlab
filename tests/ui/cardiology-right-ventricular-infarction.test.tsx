@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { CARDIOLOGY_TRAYS } from '../../src/modules/cardiology/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, CARDIOLOGY_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { RIGHT_VENTRICULAR_INFARCTION as SCENARIO } from '../../src/modules/cardiology/scenarios/right-ventricular-infarction';
 
@@ -46,7 +52,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['rightVentricularInfarctionAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: CARDIOLOGY_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, rightVentricularInfarctionAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 450, respiratoryRateBpm: 18, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -55,7 +61,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onRightVentricularInfarctionResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -75,8 +81,8 @@ describe('Right-ventricular infarction experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasRightVentricularInfarctionResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasRightVentricularInfarctionResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'right-ventricular-infarction'),
     }).hasRightVentricularInfarctionResponse).toBe(false);
@@ -118,38 +124,38 @@ describe('Right-ventricular infarction experience', () => {
 describe('Right-ventricular infarction tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { rightVentricularInfarctionGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { rightVentricularInfarctionGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('preload-sensitive hypotension rather than declared shock');
-    const parallel = markup(RECONCILED, { rightVentricularInfarctionGuidance: 'guided' });
+    const parallel = markup(RECONCILED, { guidance: 'guided' });
     expect(parallel).toContain('quietly consume the time the other half does not have');
     expect(parallel).not.toContain('preload-sensitive hypotension rather than declared shock');
   });
 
   it('follows whichever lane the learner left open', () => {
-    expect(markup(PHENOTYPE, { rightVentricularInfarctionGuidance: 'guided' }))
+    expect(markup(PHENOTYPE, { guidance: 'guided' }))
       .toContain('the reperfusion pathway is still moving');
-    expect(markup(REPERFUSION, { rightVentricularInfarctionGuidance: 'guided' }))
+    expect(markup(REPERFUSION, { guidance: 'guided' }))
       .toContain('not a diagnosis you have made');
   });
 
   it('names the two drugs to leave alone', () => {
-    expect(markup(BOTH, { rightVentricularInfarctionGuidance: 'guided' }))
+    expect(markup(BOTH, { guidance: 'guided' }))
       .toContain('the two drugs you would ordinarily reach for are the two to leave alone');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(DONE, { rightVentricularInfarctionGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { rightVentricularInfarctionGuidance: 'guided', rightVentricularInfarctionDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'RightVentricularInfarction' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { CARDIOLOGY_TRAYS } from '../../src/modules/cardiology/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, CARDIOLOGY_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { HYPERKALEMIC_CONDUCTION_DISTURBANCE as SCENARIO } from '../../src/modules/cardiology/scenarios/hyperkalemic-conduction-disturbance';
 
@@ -38,7 +44,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['hyperkalemicConductionAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: CARDIOLOGY_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, hyperkalemicConductionAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 440, respiratoryRateBpm: 16, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -47,7 +53,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onHyperkalemicConductionResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -67,8 +73,8 @@ describe('Hyperkalemic conduction experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasHyperkalemicConductionResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasHyperkalemicConductionResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'hyperkalemic-conduction-disturbance'),
     }).hasHyperkalemicConductionResponse).toBe(false);
@@ -113,42 +119,42 @@ describe('Hyperkalemic conduction experience', () => {
 describe('Hyperkalemic conduction tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { hyperkalemicConductionGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { hyperkalemicConductionGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('Three timepoints, not one');
-    const lanes = markup(RECONCILED, { hyperkalemicConductionGuidance: 'guided' });
+    const lanes = markup(RECONCILED, { guidance: 'guided' });
     expect(lanes).toContain('none of them queues behind the others');
     expect(lanes).not.toContain('Three timepoints, not one');
   });
 
   it('says what the calcium did not do', () => {
-    expect(markup(TWO, { hyperkalemicConductionGuidance: 'guided' }))
+    expect(markup(TWO, { guidance: 'guided' }))
       .toContain('calcium does not remove potassium and was never going to');
   });
 
   it('names both consequences of shifting treatment', () => {
-    const html = markup(CALCIUM, { hyperkalemicConductionGuidance: 'guided' });
+    const html = markup(CALCIUM, { guidance: 'guided' });
     expect(html).toContain('which is what rebound means');
     expect(html).toContain('the insulin outlasts the glucose');
   });
 
   it('reads the later panel as one point on a line', () => {
-    expect(markup(THREE, { hyperkalemicConductionGuidance: 'guided' }))
+    expect(markup(THREE, { guidance: 'guided' }))
       .toContain('a serial measurement rather than a result');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(DONE, { hyperkalemicConductionGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { hyperkalemicConductionGuidance: 'guided', hyperkalemicConductionDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'HyperkalemicConduction' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

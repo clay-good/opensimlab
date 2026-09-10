@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { CARDIOLOGY_TRAYS } from '../../src/modules/cardiology/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, CARDIOLOGY_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { TRANSCUTANEOUS_PACING_MECHANICAL_CAPTURE_REASSESSMENT as SCENARIO } from '../../src/modules/cardiology/scenarios/transcutaneous-pacing-mechanical-capture-reassessment';
 
@@ -41,7 +47,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['transcutaneousPacingCaptureAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: CARDIOLOGY_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, transcutaneousPacingCaptureAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 440, respiratoryRateBpm: 18, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -50,7 +56,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onTranscutaneousPacingCaptureResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -70,8 +76,8 @@ describe('Transcutaneous-pacing capture experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasTranscutaneousPacingCaptureResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasTranscutaneousPacingCaptureResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'transcutaneous-pacing-mechanical-capture-reassessment'),
     }).hasTranscutaneousPacingCaptureResponse).toBe(false);
@@ -106,36 +112,36 @@ describe('Transcutaneous-pacing capture experience', () => {
 describe('Transcutaneous-pacing capture tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { transcutaneousPacingCaptureGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { transcutaneousPacingCaptureGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('Four independent signals say there is no circulation');
-    const arrest = markup(RECOGNISED, { transcutaneousPacingCaptureGuidance: 'guided' });
+    const arrest = markup(RECOGNISED, { guidance: 'guided' });
     expect(arrest).toContain('are minutes without compressions');
     expect(arrest).not.toContain('Four independent signals say there is no circulation');
   });
 
   it('keeps the cause review alongside the arrest', () => {
-    expect(markup(ARREST, { transcutaneousPacingCaptureGuidance: 'guided' }))
+    expect(markup(ARREST, { guidance: 'guided' }))
       .toContain('The word that matters is while');
   });
 
   it('says the missing ending is a choice', () => {
-    expect(markup(CAUSES, { transcutaneousPacingCaptureGuidance: 'guided' }))
+    expect(markup(CAUSES, { guidance: 'guided' }))
       .toContain('that is a choice rather than an omission');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(DONE, { transcutaneousPacingCaptureGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { transcutaneousPacingCaptureGuidance: 'guided', transcutaneousPacingCaptureDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'TranscutaneousPacingCapture' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

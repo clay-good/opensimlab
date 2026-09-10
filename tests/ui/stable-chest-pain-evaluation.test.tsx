@@ -3,6 +3,7 @@ import { act, createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import { describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { CARDIOLOGY_TRAYS } from '../../src/modules/cardiology/trays';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { STABLE_CHEST_PAIN_EVALUATION as SCENARIO } from '../../src/modules/cardiology/scenarios/stable-chest-pain-evaluation';
 
@@ -11,7 +12,7 @@ describe('Requirement: stable chest-pain evaluation stays calm, structured, and 
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
     const container = document.createElement('div'); document.body.appendChild(container);
     const root = createRoot(container); const onAction = vi.fn();
-    const props = { scenario: SCENARIO, region: UNITED_STATES, infusions: [],
+    const props = { scenario: SCENARIO, region: UNITED_STATES, lessonTrays: CARDIOLOGY_TRAYS, infusions: [],
       hypnoticLine: { connected: true, inspected: false }, resuscitation: {
         epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null,
         crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
@@ -27,7 +28,7 @@ describe('Requirement: stable chest-pain evaluation stays calm, structured, and 
       muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {},
       onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {},
       onCallForHelp: () => {}, onAirwayDevice: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
-      onActiveCooling: () => {}, onStableChestPainResponse: onAction, onDrugCard: () => {},
+      onActiveCooling: () => {}, onLessonAction: (_type: string, action: string) => onAction(action as never), onDrugCard: () => {},
     } satisfies ActionCockpitProps;
     act(() => root.render(createElement(ActionCockpit, props)));
     expect(container.querySelector('[role="tablist"]')).toBeNull();

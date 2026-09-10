@@ -3,6 +3,7 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { CARDIOLOGY_TRAYS } from '../../src/modules/cardiology/trays';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { STEMI_RECOGNITION_AND_FIRST_ACTIONS as SCENARIO } from '../../src/modules/cardiology/scenarios/stemi-recognition-and-first-actions';
 
@@ -17,7 +18,7 @@ describe('Requirement: clinic STEMI actions stay immediate, parallel, and calm',
 
   it('unlocks EMS and danger review together without unsupported treatment controls', () => {
     const onAction = vi.fn();
-    const base = { scenario: SCENARIO, region: UNITED_STATES, infusions: [],
+    const base = { scenario: SCENARIO, region: UNITED_STATES, lessonTrays: CARDIOLOGY_TRAYS, infusions: [],
       hypnoticLine: { connected: true, inspected: false }, resuscitation: {
         epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
         lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0,
@@ -35,7 +36,7 @@ describe('Requirement: clinic STEMI actions stay immediate, parallel, and calm',
       muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {},
       onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
       onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onCallForHelp: () => {},
-      onAirwayDevice: () => {}, onClinicStemiResponse: onAction, onEpinephrine: () => {},
+      onAirwayDevice: () => {}, onLessonAction: (_type: string, action: string) => onAction(action as never), onEpinephrine: () => {},
       onDantrolene: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
     } satisfies ActionCockpitProps;
     const render = (patternAtTick: number | null) => act(() => root.render(createElement(

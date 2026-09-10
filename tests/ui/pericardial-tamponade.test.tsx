@@ -3,6 +3,7 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { CARDIOLOGY_TRAYS } from '../../src/modules/cardiology/trays';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { PERICARDIAL_TAMPONADE as SCENARIO } from '../../src/modules/cardiology/scenarios/pericardial-tamponade';
 
@@ -16,7 +17,7 @@ describe('Requirement: post-drainage pericardial tamponade has a calm reassessme
 
   function props(assessment: NonNullable<ActionCockpitProps['resuscitation']['pericardialTamponadeAssessment']>,
     onAction = vi.fn()): ActionCockpitProps {
-    return { scenario: SCENARIO, region: UNITED_STATES, infusions: [],
+    return { scenario: SCENARIO, region: UNITED_STATES, lessonTrays: CARDIOLOGY_TRAYS, infusions: [],
       hypnoticLine: { connected: true, inspected: false }, resuscitation: {
         epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null,
         crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
@@ -29,7 +30,7 @@ describe('Requirement: post-drainage pericardial tamponade has a calm reassessme
       muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {},
       onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {},
       onCallForHelp: () => {}, onAirwayDevice: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
-      onActiveCooling: () => {}, onPericardialTamponadeResponse: onAction, onDrugCard: () => {} };
+      onActiveCooling: () => {}, onLessonAction: (_type: string, action: string) => onAction(action as never), onDrugCard: () => {} };
   }
 
   const button = (container: HTMLElement, label: string) => [...container.querySelectorAll('button')]

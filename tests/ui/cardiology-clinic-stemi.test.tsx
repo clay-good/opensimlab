@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { CARDIOLOGY_TRAYS } from '../../src/modules/cardiology/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, CARDIOLOGY_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { STEMI_RECOGNITION_AND_FIRST_ACTIONS as SCENARIO } from '../../src/modules/cardiology/scenarios/stemi-recognition-and-first-actions';
 
@@ -36,7 +42,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['clinicStemiAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: CARDIOLOGY_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, clinicStemiAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 450, respiratoryRateBpm: 16, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -45,7 +51,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onClinicStemiResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -65,8 +71,8 @@ describe('Clinic-STEMI experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasClinicStemiResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasClinicStemiResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'stemi-recognition-and-first-actions'),
     }).hasClinicStemiResponse).toBe(false);
@@ -95,42 +101,42 @@ describe('Clinic-STEMI experience', () => {
 describe('Clinic-STEMI tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { clinicStemiGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { clinicStemiGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('Start the clock');
-    const parallel = markup(PATTERN, { clinicStemiGuidance: 'guided' });
+    const parallel = markup(PATTERN, { guidance: 'guided' });
     expect(parallel).toContain('while the phone is ringing');
     expect(parallel).not.toContain('Start the clock');
   });
 
   it('has a beat for a finished screen with nobody called', () => {
-    const html = markup(DANGER_ONLY, { clinicStemiGuidance: 'guided' });
+    const html = markup(DANGER_ONLY, { guidance: 'guided' });
     expect(html).toContain('Nobody has been called');
     expect(html).toContain('moves her no closer to a catheter laboratory');
   });
 
   it('treats the open questions as pre-alert items', () => {
-    const html = markup(TRANSFER_ONLY, { clinicStemiGuidance: 'guided' });
+    const html = markup(TRANSFER_ONLY, { guidance: 'guided' });
     expect(html).toContain('belong in the pre-alert rather than in your conclusions');
   });
 
   it('calls routine oxygen a habit rather than a treatment', () => {
-    const html = markup(BOTH, { clinicStemiGuidance: 'guided' });
+    const html = markup(BOTH, { guidance: 'guided' });
     expect(html).toContain('a habit rather than a treatment');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(DONE, { clinicStemiGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { clinicStemiGuidance: 'guided', clinicStemiDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'ClinicStemi' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

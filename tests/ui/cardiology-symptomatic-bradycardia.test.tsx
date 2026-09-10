@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { CARDIOLOGY_TRAYS } from '../../src/modules/cardiology/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, CARDIOLOGY_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { SYMPTOMATIC_SINUS_BRADYCARDIA_REASSESSMENT as SCENARIO } from '../../src/modules/cardiology/scenarios/symptomatic-sinus-bradycardia-reassessment';
 
@@ -35,7 +41,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['symptomaticBradycardiaAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: CARDIOLOGY_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, symptomaticBradycardiaAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 450, respiratoryRateBpm: 16, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -44,7 +50,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onSymptomaticBradycardiaResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -64,8 +70,8 @@ describe('Symptomatic sinus-bradycardia experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasSymptomaticBradycardiaResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasSymptomaticBradycardiaResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'symptomatic-sinus-bradycardia-reassessment'),
     }).hasSymptomaticBradycardiaResponse).toBe(false);
@@ -101,38 +107,38 @@ describe('Symptomatic sinus-bradycardia experience', () => {
 describe('Symptomatic bradycardia tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { symptomaticBradycardiaGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { symptomaticBradycardiaGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('Symptomatic and unstable are different words');
-    const review = markup(STABILITY, { symptomaticBradycardiaGuidance: 'guided' });
+    const review = markup(STABILITY, { guidance: 'guided' });
     expect(review).toContain('Two review lanes are open');
     expect(review).not.toContain('Symptomatic and unstable are different words');
   });
 
   it('follows whichever lane the learner left open', () => {
-    expect(markup(CONTEXT, { symptomaticBradycardiaGuidance: 'guided' }))
+    expect(markup(CONTEXT, { guidance: 'guided' }))
       .toContain('whether her episodes and the slow rate happen at the same time');
-    expect(markup(CORRELATED, { symptomaticBradycardiaGuidance: 'guided' }))
+    expect(markup(CORRELATED, { guidance: 'guided' }))
       .toContain('without stopping her medication');
   });
 
   it('refuses to let a low rate earn a device', () => {
-    const html = markup(BOTH, { symptomaticBradycardiaGuidance: 'guided' });
+    const html = markup(BOTH, { guidance: 'guided' });
     expect(html).toContain('not something a rate of 44 earns on its own');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(DONE, { symptomaticBradycardiaGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { symptomaticBradycardiaGuidance: 'guided', symptomaticBradycardiaDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'SymptomaticBradycardia' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

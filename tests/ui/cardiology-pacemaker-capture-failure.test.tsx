@@ -4,6 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { CARDIOLOGY_TRAYS } from '../../src/modules/cardiology/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, CARDIOLOGY_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { PACEMAKER_CAPTURE_FAILURE as SCENARIO } from '../../src/modules/cardiology/scenarios/pacemaker-capture-failure';
 
@@ -43,7 +49,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['pacemakerCaptureFailureAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: CARDIOLOGY_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, pacemakerCaptureFailureAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 450, respiratoryRateBpm: 18, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -52,7 +58,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onPacemakerCaptureFailureResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -72,8 +78,8 @@ describe('Pacemaker capture-failure experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasPacemakerCaptureFailureResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasPacemakerCaptureFailureResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.target !== 'pacemaker-capture-failure-reassessment'),
     }).hasPacemakerCaptureFailureResponse).toBe(false);
@@ -113,41 +119,41 @@ describe('Pacemaker capture-failure experience', () => {
 describe('Pacemaker capture-failure tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { pacemakerCaptureFailureGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { pacemakerCaptureFailureGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('the display is counting the wrong thing');
-    const lanes = markup(RECOGNISED, { pacemakerCaptureFailureGuidance: 'guided' });
+    const lanes = markup(RECOGNISED, { guidance: 'guided' });
     expect(lanes).toContain('Rescue is in this group rather than in front of it');
     expect(lanes).not.toContain('the display is counting the wrong thing');
   });
 
   it('names the rescue when both troubleshooting lanes went first', () => {
-    expect(markup(TWO, { pacemakerCaptureFailureGuidance: 'guided' }))
+    expect(markup(TWO, { guidance: 'guided' }))
       .toContain('Get the bridge organised now');
   });
 
   it('reads the interrogation as trends rather than a verdict', () => {
-    expect(markup(RESCUED, { pacemakerCaptureFailureGuidance: 'guided' }))
+    expect(markup(RESCUED, { guidance: 'guided' }))
       .toContain('the output has not changed, the threshold has climbed past it');
   });
 
   it('keeps the programming change temporary', () => {
-    expect(markup(THREE, { pacemakerCaptureFailureGuidance: 'guided' }))
+    expect(markup(THREE, { guidance: 'guided' }))
       .toContain('the word doing the work is temporary');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(DONE, { pacemakerCaptureFailureGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { pacemakerCaptureFailureGuidance: 'guided', pacemakerCaptureFailureDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'PacemakerCaptureFailure' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

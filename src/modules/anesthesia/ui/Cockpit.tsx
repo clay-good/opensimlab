@@ -1885,40 +1885,6 @@ export function Cockpit({
           pediatricFbaoDemonstrating={demonstrating && registryDemo?.id === 'PediatricFbao'}
           pediatricInjurySafeguardingGuidance={session.guidance}
           pediatricInjurySafeguardingDemonstrating={demonstrating && registryDemo?.id === 'PediatricInjurySafeguarding'}
-          stableChestPainGuidance={session.guidance}
-          stableChestPainDemonstrating={demonstrating && registryDemo?.id === 'StableChestPain'}
-          clinicStemiGuidance={session.guidance}
-          clinicStemiDemonstrating={demonstrating && registryDemo?.id === 'ClinicStemi'}
-          nstemiRiskGuidance={session.guidance}
-          nstemiRiskDemonstrating={demonstrating && registryDemo?.id === 'NstemiRisk'}
-          heartFailureGuidance={session.guidance}
-          heartFailureDemonstrating={demonstrating && registryDemo?.id === 'HeartFailure'}
-          afRvrGuidance={session.guidance}
-          afRvrDemonstrating={demonstrating && registryDemo?.id === 'AfRvr'}
-          postInfarctionShockGuidance={session.guidance}
-          postInfarctionShockDemonstrating={demonstrating && registryDemo?.id === 'PostInfarctionShock'}
-          stableNarrowTachycardiaGuidance={session.guidance}
-          stableNarrowTachycardiaDemonstrating={demonstrating && registryDemo?.id === 'StableNarrowTachycardia'}
-          stableWideTachycardiaGuidance={session.guidance}
-          stableWideTachycardiaDemonstrating={demonstrating && registryDemo?.id === 'StableWideTachycardia'}
-          symptomaticBradycardiaGuidance={session.guidance}
-          symptomaticBradycardiaDemonstrating={demonstrating && registryDemo?.id === 'SymptomaticBradycardia'}
-          completeHeartBlockGuidance={session.guidance}
-          completeHeartBlockDemonstrating={demonstrating && registryDemo?.id === 'CompleteHeartBlock'}
-          torsadesGuidance={session.guidance}
-          torsadesDemonstrating={demonstrating && registryDemo?.id === 'Torsades'}
-          hyperkalemicConductionGuidance={session.guidance}
-          hyperkalemicConductionDemonstrating={demonstrating && registryDemo?.id === 'HyperkalemicConduction'}
-          pericardialTamponadeGuidance={session.guidance}
-          pericardialTamponadeDemonstrating={demonstrating && registryDemo?.id === 'PericardialTamponade'}
-          rightVentricularInfarctionGuidance={session.guidance}
-          rightVentricularInfarctionDemonstrating={demonstrating && registryDemo?.id === 'RightVentricularInfarction'}
-          hypertensiveEmergencyGuidance={session.guidance}
-          hypertensiveEmergencyDemonstrating={demonstrating && registryDemo?.id === 'HypertensiveEmergency'}
-          pacemakerCaptureFailureGuidance={session.guidance}
-          pacemakerCaptureFailureDemonstrating={demonstrating && registryDemo?.id === 'PacemakerCaptureFailure'}
-          transcutaneousPacingCaptureGuidance={session.guidance}
-          transcutaneousPacingCaptureDemonstrating={demonstrating && registryDemo?.id === 'TranscutaneousPacingCapture'}
           hemorrhagicShockGuidance={session.guidance}
           hemorrhagicShockDemonstrating={demonstrating && registryDemo?.id === 'HemorrhagicShock'}
           undifferentiatedShockGuidance={session.guidance}
@@ -2088,57 +2054,6 @@ export function Cockpit({
           })}
           onHyponatremiaResponse={(action) => session.act({
             type: 'hyponatremia-response', payload: { action },
-          })}
-          onStableChestPainResponse={(action) => session.act({
-            type: 'stable-chest-pain-response', payload: { action },
-          })}
-          onNstemiRiskResponse={(action) => session.act({
-            type: 'nstemi-risk-response', payload: { action },
-          })}
-          onClinicStemiResponse={(action) => session.act({
-            type: 'clinic-stemi-response', payload: { action },
-          })}
-          onHeartFailureResponse={(action) => session.act({
-            type: 'heart-failure-response', payload: { action },
-          })}
-          onAfRvrResponse={(action) => session.act({
-            type: 'af-rvr-response', payload: { action },
-          })}
-          onPostInfarctionShockResponse={(action) => session.act({
-            type: 'post-infarction-shock-response', payload: { action },
-          })}
-          onStableNarrowTachycardiaResponse={(action) => session.act({
-            type: 'stable-narrow-tachycardia-response', payload: { action },
-          })}
-          onStableWideTachycardiaResponse={(action) => session.act({
-            type: 'stable-wide-tachycardia-response', payload: { action },
-          })}
-          onSymptomaticBradycardiaResponse={(action) => session.act({
-            type: 'symptomatic-bradycardia-response', payload: { action },
-          })}
-          onCompleteHeartBlockResponse={(action) => session.act({
-            type: 'complete-heart-block-response', payload: { action },
-          })}
-          onTorsadesResponse={(action) => session.act({
-            type: 'torsades-response', payload: { action },
-          })}
-          onHyperkalemicConductionResponse={(action) => session.act({
-            type: 'hyperkalemic-conduction-response', payload: { action },
-          })}
-          onPericardialTamponadeResponse={(action) => session.act({
-            type: 'pericardial-tamponade-response', payload: { action },
-          })}
-          onRightVentricularInfarctionResponse={(action) => session.act({
-            type: 'right-ventricular-infarction-response', payload: { action },
-          })}
-          onHypertensiveEmergencyResponse={(action) => session.act({
-            type: 'hypertensive-emergency-response', payload: { action },
-          })}
-          onPacemakerCaptureFailureResponse={(action) => session.act({
-            type: 'pacemaker-capture-failure-response', payload: { action },
-          })}
-          onTranscutaneousPacingCaptureResponse={(action) => session.act({
-            type: 'transcutaneous-pacing-capture-response', payload: { action },
           })}
           onPediatricRespiratoryDistressResponse={(action) => session.act({
             type: 'pediatric-respiratory-distress-response', payload: { action },
