@@ -106,11 +106,21 @@ describe('Requirement: One Module Downloads One Catalogue', () => {
     // 878.5 to 776.9 KB gz and the shared chunk from 538.3 to 436.8, so the guard comes down
     // again, to 800.
     //
-    // What is left is the ~167 lesson trays written inline in `ActionCockpit.tsx` itself,
-    // which is why that file is still 164 KB gz of source. They are the next lever, and the
-    // seam above is the one to extend to them. Note `React.lazy` is NOT available for any of
-    // this: 294 test files render `ActionCockpit` through `renderToStaticMarkup`, which will
-    // not serve Suspense. Raising this number is not the answer; measure and move the boundary.
-    expect(gzipBytes(anesthesia) / 1024).toBeLessThan(800);
+    // The ~167 trays still written inline in `ActionCockpit.tsx` were the next lever, and the
+    // same seam took them. Stubbing them first measured the prize at 264 KB gz; the migration
+    // collected 261. Every migratable tray now lives in its module, the graph is 532.5 KB gz
+    // and `ActionCockpit.tsx` is 5,774 lines rather than 17,180, so the guard comes down to
+    // 575.
+    //
+    // Five trays are still defined here, and belong here. Four are gated on `injected.has(...)`
+    // -- a crisis injected at runtime, which the seam's `supports(scenario)` cannot see -- and
+    // the emergence-residual-block tray reads the train-of-four count and ratio, which are
+    // cockpit props rather than fields of the resuscitation snapshot a tray is handed. Moving
+    // it would mean widening the seam for one lesson.
+    //
+    // Note `React.lazy` is NOT available for any of this: 294 test files render `ActionCockpit`
+    // through `renderToStaticMarkup`, which will not serve Suspense. Raising this number is not
+    // the answer; measure and move the boundary.
+    expect(gzipBytes(anesthesia) / 1024).toBeLessThan(575);
   });
 });

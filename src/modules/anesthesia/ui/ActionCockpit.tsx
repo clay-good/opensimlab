@@ -3785,7 +3785,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <moduleTray.Component assessment={moduleTray.assessment(
                   // This file declares its own structural `resuscitation` shape, which is the
                   // snapshot's with a few lesson fields written out differently. A tray reads
-                  // one field of it, so the cast is here rather than in all 48 registrations.
+                  // one field of it, so the cast is here rather than in every registration.
                   props.resuscitation as unknown as EquipmentSnapshot['resuscitation'],
                 )}
                 guidance={props.guidance}

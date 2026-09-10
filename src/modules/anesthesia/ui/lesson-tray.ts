@@ -11,6 +11,10 @@
  * cockpit renders them without naming any lesson: `guidance` is `session.guidance`
  * at all 202 call sites it replaced, and the action handler was the identical
  * `session.act({ type, payload: { action } })` at 198 of 201.
+ *
+ * All sixteen modules have moved. Five trays are still defined in the cockpit and
+ * belong there: four are gated on a crisis injected at runtime, which `supports`
+ * cannot see, and one reads cockpit props rather than the resuscitation snapshot.
  */
 import type { ComponentType } from 'react';
 import type { EquipmentSnapshot } from '@platform/kernel/protocol';
