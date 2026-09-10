@@ -7,10 +7,9 @@ credited toward the catalog until every item in the completion contract passes.
 
 - [ ] Approve the product position, 256-scenario target catalog, training-versus-runtime-tool
   boundary, fidelity classes, maturity vocabulary,
-  privacy exception, report retention, and no-hosted-MCP decision. The catalogue shipped at 250,
-  not 256: renal and electrolyte was settled at six labs rather than twelve, and every other
-  module is at its declared count. Ratifying the target means either accepting 250 as the
-  catalogue or declaring the six renal labs as roadmap.
+  privacy exception, report retention, and no-hosted-MCP decision. The catalogue stands at 250 of
+  the 256: every module is at its declared count, and the six missing labs are all renal and
+  electrolyte, which stopped at slice 6 of 12.
 - [ ] Resolve every conflict between this change and the master clinical-governance, privacy,
   delivery, module, curriculum, pedagogy, safety, adoption, and sustainability specifications.
 - [x] Publish a machine-readable scenario completion schema and validate all existing anesthesia
@@ -706,17 +705,15 @@ credited toward the catalog until every item in the completion contract passes.
     transport, communication, documentation, counseling, procedure, diagnosis, disposition, or
     outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
-  Authoring is done for what the modules actually declare: neurology 15 of 15, endocrine and
-  metabolic 12 of 12, renal and electrolyte **6 of 6**. The renal figure is the correction this
-  line still carries: the module was settled at six labs -- hyperkalemia, hypokalemia,
-  hyponatremia, hypernatremia, hypocalcemia and hypermagnesemia -- and the registry, the README
-  and the audited counts all say six. That is why the catalogue totals 250 rather than the 256
-  named in section 0, and the six-lab difference is exactly this. Whether renal grows to twelve
-  is a roadmap decision for a maintainer, not an unfinished task.
+  Neurology is 15 of 15 and endocrine and metabolic is 12 of 12. **Renal and electrolyte is 6 of
+  12**: the slices below are numbered out of twelve and stop at six, and the registry declaration
+  was brought down to six so the counts would audit. That is the whole of the gap between the
+  catalogue's 250 labs and the 256 target in section 0 -- six unwritten renal labs, not a target
+  that was revised.
 
-  The thirteen sub-tasks left open below are all independent clinical review and
-  inclusive-runtime verification. They need named clinicians, exact-version assistive technology
-  and physical devices, and no code makes them true.
+  The thirteen sub-tasks left open below are independent clinical review and inclusive-runtime
+  verification. They need named clinicians, exact-version assistive technology and physical
+  devices, and no code makes them true.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and
     no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later
