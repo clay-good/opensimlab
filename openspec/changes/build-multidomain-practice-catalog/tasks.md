@@ -7,7 +7,10 @@ credited toward the catalog until every item in the completion contract passes.
 
 - [ ] Approve the product position, 256-scenario target catalog, training-versus-runtime-tool
   boundary, fidelity classes, maturity vocabulary,
-  privacy exception, report retention, and no-hosted-MCP decision.
+  privacy exception, report retention, and no-hosted-MCP decision. The catalogue shipped at 250,
+  not 256: renal and electrolyte was settled at six labs rather than twelve, and every other
+  module is at its declared count. Ratifying the target means either accepting 250 as the
+  catalogue or declaring the six renal labs as roadmap.
 - [ ] Resolve every conflict between this change and the master clinical-governance, privacy,
   delivery, module, curriculum, pedagogy, safety, adoption, and sustainability specifications.
 - [x] Publish a machine-readable scenario completion schema and validate all existing anesthesia
@@ -347,7 +350,9 @@ credited toward the catalog until every item in the completion contract passes.
   tracheostomy gas-path correction by qualified staff, a strictly elapsed response, and another
   elapsed active-risk handoff without teaching suction, tube exchange, ventilation, or laryngectomy
   care.
-- [ ] Wave D: complete 16 pediatric, 15 obstetric, and 11 neonatal scenarios.
+- [x] Wave D: complete 16 pediatric, 15 obstetric, and 11 neonatal scenarios. All 42 shipped and
+  are registered at their declared counts, which `tests/unit/discoverability.test.ts` asserts
+  against the real arrays.
   - [x] Pediatrics slice 1/16 adds the available module foundation and one undifferentiated
     respiratory-distress lab with whole-child recognition, experienced support, a misleading early
     saturation improvement, a strictly later fatigue pattern, airway-capable rescue ownership, and
@@ -701,6 +706,17 @@ credited toward the catalog until every item in the completion contract passes.
     transport, communication, documentation, counseling, procedure, diagnosis, disposition, or
     outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
+  Authoring is done for what the modules actually declare: neurology 15 of 15, endocrine and
+  metabolic 12 of 12, renal and electrolyte **6 of 6**. The renal figure is the correction this
+  line still carries: the module was settled at six labs -- hyperkalemia, hypokalemia,
+  hyponatremia, hypernatremia, hypocalcemia and hypermagnesemia -- and the registry, the README
+  and the audited counts all say six. That is why the catalogue totals 250 rather than the 256
+  named in section 0, and the six-lab difference is exactly this. Whether renal grows to twelve
+  is a roadmap decision for a maintainer, not an unfinished task.
+
+  The thirteen sub-tasks left open below are all independent clinical review and
+  inclusive-runtime verification. They need named clinicians, exact-version assistive technology
+  and physical devices, and no code makes them true.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and
     no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later
@@ -1358,7 +1374,8 @@ credited toward the catalog until every item in the completion contract passes.
     or production reporting signoff. Final indexable checks verify 220 routes, 223 static routes,
     and 44 catalog artifacts. Compressed budgets are 147.9 KiB landing, 1,474.6 KiB cockpit, and
     3,281.4 KiB offline. Scenario counts and pending independent gates are unchanged.
-- [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
+- [x] Wave F: complete 10 infectious-disease and 15 toxicology scenarios. Both modules are
+  registered at 10 of 10 and 15 of 15.
   - [x] Infectious-disease slice 1/10 establishes the indexable `/infectious-disease` module with one
     authored meningococcal sepsis lab. A previously well MenACWY-vaccinated 15-year-old presents with
     fever, heart rate 138/min, BP 88/44 mmHg, capillary refill 4 s, conscious level 14/15, lactate
@@ -1919,8 +1936,9 @@ credited toward the catalog until every item in the completion contract passes.
     diagnosis, oxygen, ventilation, opioid or veterinary antagonist, fluid, vasopressor, glucose,
     rewarming, wound or withdrawal care, drug, dose, rate, target, route, access, airway, transport,
     procedure, observation, disposition, prognosis, or outcome control exists.
-- [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
-  scenarios.
+- [x] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
+  scenarios. All three are registered at their full counts; surgery and trauma finished the
+  catalogue at 250 labs across 16 specialties.
   The nursing module is registered at 9 of 9. Oncology is now registered at 11 of 11: a delayed immune-related
   event after the drug has stopped, an incidentally found pulmonary embolus whose management is
   only conditionally recommended, severe first-cycle oral-fluoropyrimidine toxicity after a
