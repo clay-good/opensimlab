@@ -5,6 +5,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { NEUROLOGY_TRAYS } from '../../src/modules/neurology/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) =>
+  crisisResponseAvailability(scenario, injected, NEUROLOGY_TRAYS);
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { BASILAR_ARTERY_OCCLUSION_ESCALATION } from '../../src/modules/neurology/scenarios/basilar-artery-occlusion-escalation';
 import { routeFor } from '../../src/routes/routes';
@@ -50,6 +57,7 @@ describe('Neurology basilar-LVO escalation UI', () => {
     scenario: ActionCockpitProps['scenario'] = BASILAR_ARTERY_OCCLUSION_ESCALATION,
   ) {
     const props: ActionCockpitProps = {
+      lessonTrays: NEUROLOGY_TRAYS,
       scenario, region: UNITED_STATES, infusions: [],
       hypnoticLine: { connected: true, inspected: false },
       resuscitation: {
@@ -73,7 +81,7 @@ describe('Neurology basilar-LVO escalation UI', () => {
       onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {},
       onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
       onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {},
-      onDrugCard: () => {}, onNeurologyBasilarLvoResponse: onAction,
+      onDrugCard: () => {}, onLessonAction: (_type: string, action: string) => onAction(action as never),
     };
     act(() => root.render(createElement(ActionCockpit, props)));
     return onAction;
@@ -139,19 +147,19 @@ describe('Neurology basilar-LVO escalation UI', () => {
   });
 
   it('requires the exact scenario and both frozen targets', () => {
-    expect(crisisResponseAvailability(BASILAR_ARTERY_OCCLUSION_ESCALATION, []))
+    expect(crisisResponseAvailabilityWithTrays(BASILAR_ARTERY_OCCLUSION_ESCALATION, []))
       .toMatchObject({ hasNeurologyBasilarLvoResponse: true });
     const clone = {
       ...BASILAR_ARTERY_OCCLUSION_ESCALATION,
       metadata: { ...BASILAR_ARTERY_OCCLUSION_ESCALATION.metadata, id: 'basilar-lvo-clone' },
     };
-    expect(crisisResponseAvailability(clone, []))
+    expect(crisisResponseAvailabilityWithTrays(clone, []))
       .toMatchObject({ hasNeurologyBasilarLvoResponse: false });
     const missingBoundary = {
       ...BASILAR_ARTERY_OCCLUSION_ESCALATION,
       timeline: BASILAR_ARTERY_OCCLUSION_ESCALATION.timeline.slice(0, 1),
     };
-    expect(crisisResponseAvailability(missingBoundary, []))
+    expect(crisisResponseAvailabilityWithTrays(missingBoundary, []))
       .toMatchObject({ hasNeurologyBasilarLvoResponse: false });
   });
 

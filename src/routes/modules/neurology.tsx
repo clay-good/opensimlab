@@ -7,6 +7,7 @@
 import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRoute';
 import { DEFAULT_NEUROLOGY_SCENARIO_ID, NEUROLOGY_SCENARIOS, getNeurologyScenario } from '../../modules/neurology/scenarios';
 import { NEUROLOGY_LIMITATIONS } from '@platform/docs/limitations/neurology';
+import { NEUROLOGY_TRAYS } from '../../modules/neurology/trays';
 import { NEUROLOGY_DEMONSTRATIONS } from '../../modules/neurology/demo/demonstrations';
 
 const NEUROLOGY_CONFIG: ClinicalModuleConfig = {
@@ -14,6 +15,7 @@ const NEUROLOGY_CONFIG: ClinicalModuleConfig = {
   limitations: NEUROLOGY_LIMITATIONS,
   catalogIntroduction: 'Calm neurological rehearsals for reading function, change, and uncertainty. Follow the trajectory, involve the right team, and leave unresolved risk visible.',
   catalogStatus: `${NEUROLOGY_SCENARIOS.length} of 15 bounded Neurology labs is playable.`,
+  trays: NEUROLOGY_TRAYS,
   scenarios: NEUROLOGY_SCENARIOS, defaultScenarioId: DEFAULT_NEUROLOGY_SCENARIO_ID,
   getScenario: getNeurologyScenario,
   demonstrations: NEUROLOGY_DEMONSTRATIONS,

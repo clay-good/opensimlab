@@ -7,6 +7,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { objectiveFindings } from '@anesthesia/ui/Debrief';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { NEUROLOGY_TRAYS } from '../../src/modules/neurology/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) =>
+  crisisResponseAvailability(scenario, injected, NEUROLOGY_TRAYS);
 import type { EngineEvent } from '@platform/kernel/protocol';
 import { METASTATIC_SPINAL_CORD_COMPRESSION as SCENARIO } from '../../src/modules/neurology/scenarios/metastatic-spinal-cord-compression';
 
@@ -19,7 +26,7 @@ describe('Neurology metastatic spinal cord compression UI', () => {
   beforeEach(() => { (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true; container = document.createElement('div'); document.body.appendChild(container); root = createRoot(container); });
   afterEach(() => { act(() => root.unmount()); container.remove(); vi.restoreAllMocks(); });
   function renderAssessment(assessment: NonNullable<ActionCockpitProps['resuscitation']['neurologyMsccAssessment']>, onAction = vi.fn()) {
-    const props: ActionCockpitProps = { scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, neurologyMsccAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 420, respiratoryRateBpm: 10, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onNeurologyMsccResponse: onAction };
+    const props: ActionCockpitProps = { scenario: SCENARIO, region: UNITED_STATES, lessonTrays: NEUROLOGY_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, neurologyMsccAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 420, respiratoryRateBpm: 10, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onLessonAction: (_type: string, action: string) => onAction(action as never) };
     act(() => root.render(createElement(ActionCockpit, props))); return onAction;
   }
   const buttons = () => [...container.querySelectorAll<HTMLButtonElement>('.actions__tray button')];
@@ -33,9 +40,9 @@ describe('Neurology metastatic spinal cord compression UI', () => {
   });
 
   it('requires exact identity and targets, and debriefs exact prefixes', () => {
-    expect(crisisResponseAvailability(SCENARIO, [])).toMatchObject({ hasNeurologyMsccResponse: true });
-    expect(crisisResponseAvailability({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'clone' } }, [])).toMatchObject({ hasNeurologyMsccResponse: false });
-    expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 2) }, [])).toMatchObject({ hasNeurologyMsccResponse: false });
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO)).toMatchObject({ hasNeurologyMsccResponse: true });
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'clone' } })).toMatchObject({ hasNeurologyMsccResponse: false });
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 2) })).toMatchObject({ hasNeurologyMsccResponse: false });
     const suffixes = ['trajectory-reconciled', 'emergency-recognized', 'qualified-ownership-activated', 'care-boundary-reviewed', 'later-mri-reviewed', 'active-risk-handoff-recorded'];
     const log: EngineEvent[] = suffixes.map((suffix, tick) => ({ tick, eventId: `neurology-mscc-${suffix}-${tick}`, severity: 'info', category: 'assessment', message: suffix }));
     expect(objectiveFindings(SCENARIO, [], 0, 0, [], log).map(({ outcome }) => outcome)).toEqual(Array(6).fill('met'));
@@ -43,9 +50,9 @@ describe('Neurology metastatic spinal cord compression UI', () => {
 });
 
 const markup = (assessment: NonNullable<ActionCockpitProps['resuscitation']['neurologyMsccAssessment']>, extra: {
-  neurologyMsccGuidance?: ActionCockpitProps['neurologyMsccGuidance'];
-  neurologyMsccDemonstrating?: boolean;
-} = {}) => renderToStaticMarkup(createElement(ActionCockpit, { scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, neurologyMsccAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 450, respiratoryRateBpm: 10, fio2: 1, peep: 0, delivering: true, sevofluranePercent: 0, freshGasFlowLPerMin: 10 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onNeurologyMsccResponse: () => {}, ...extra } satisfies ActionCockpitProps));
+  guidance?: ActionCockpitProps['guidance'];
+  demonstratingLessonId?: string | undefined;
+} = {}) => renderToStaticMarkup(createElement(ActionCockpit, { scenario: SCENARIO, region: UNITED_STATES, lessonTrays: NEUROLOGY_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, neurologyMsccAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 450, respiratoryRateBpm: 10, fio2: 1, peep: 0, delivering: true, sevofluranePercent: 0, freshGasFlowLPerMin: 10 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onLessonAction: () => {}, ...extra } satisfies ActionCockpitProps));
 
 const EMPTY = { trajectoryAtTick: null, recognitionAtTick: null, ownershipAtTick: null, boundaryAtTick: null, laterAtTick: null, handoffAtTick: null };
 const LABELS = ['Review the cord clock', 'Recognize the emergency', 'Activate spine + cancer owners', 'Review care boundaries', 'Review the 4-hour report', 'Hand off function + active risk'];
@@ -62,8 +69,8 @@ describe('Neurology cord-compression experience', () => {
   });
 
   it('fails closed and exposes one calm cognitive action at a time', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasNeurologyMsccResponse).toBe(true);
-    expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasNeurologyMsccResponse).toBe(false);
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasNeurologyMsccResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasNeurologyMsccResponse).toBe(false);
     const states = [EMPTY,
       { ...EMPTY, trajectoryAtTick: 0 },
       { ...EMPTY, trajectoryAtTick: 0, recognitionAtTick: 1 },
@@ -88,33 +95,33 @@ describe('Cord-compression tutor and worked example', () => {
 
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { neurologyMsccGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { neurologyMsccGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('Separate the three weeks of pain');
-    const next = markup(named, { neurologyMsccGuidance: 'guided' });
+    const next = markup(named, { guidance: 'guided' });
     expect(next).toContain('Start the referral chain');
     expect(next).not.toContain('Separate the three weeks of pain');
   });
 
   it('names the emergency before imaging', () => {
-    const html = markup({ ...EMPTY, trajectoryAtTick: 0 }, { neurologyMsccGuidance: 'guided' });
+    const html = markup({ ...EMPTY, trajectoryAtTick: 0 }, { guidance: 'guided' });
     expect(html).toContain('no single one of those is sufficient on its own');
     expect(html).toContain('That is why this cannot wait for imaging');
   });
 
   it('goes quiet once the handoff is recorded', () => {
     const ended = { trajectoryAtTick: 0, recognitionAtTick: 1, ownershipAtTick: 2, boundaryAtTick: 3, laterAtTick: 4, handoffAtTick: 5 };
-    expect(markup(ended, { neurologyMsccGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(ended, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = 'Review the cord clock';
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { neurologyMsccGuidance: 'guided', neurologyMsccDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'NeurologyMscc' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

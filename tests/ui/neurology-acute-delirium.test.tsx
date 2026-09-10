@@ -7,6 +7,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { objectiveFindings } from '@anesthesia/ui/Debrief';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { NEUROLOGY_TRAYS } from '../../src/modules/neurology/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) =>
+  crisisResponseAvailability(scenario, injected, NEUROLOGY_TRAYS);
 import type { EngineEvent } from '@platform/kernel/protocol';
 import { ACUTE_DELIRIUM_REVERSIBLE_CAUSES as SCENARIO } from '../../src/modules/neurology/scenarios/acute-delirium-reversible-causes';
 
@@ -16,16 +23,16 @@ describe('Neurology acute delirium UI', () => {
   let container: HTMLDivElement; let root: Root;
   beforeEach(() => { (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true; container = document.createElement('div'); document.body.appendChild(container); root = createRoot(container); });
   afterEach(() => { act(() => root.unmount()); container.remove(); vi.restoreAllMocks(); });
-  function renderAssessment(assessment: NonNullable<ActionCockpitProps['resuscitation']['neurologyDeliriumAssessment']>, onAction = vi.fn()) { const props: ActionCockpitProps = { scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, neurologyDeliriumAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 420, respiratoryRateBpm: 10, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onNeurologyDeliriumResponse: onAction }; act(() => root.render(createElement(ActionCockpit, props))); return onAction; }
+  function renderAssessment(assessment: NonNullable<ActionCockpitProps['resuscitation']['neurologyDeliriumAssessment']>, onAction = vi.fn()) { const props: ActionCockpitProps = { scenario: SCENARIO, region: UNITED_STATES, lessonTrays: NEUROLOGY_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, neurologyDeliriumAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 420, respiratoryRateBpm: 10, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onLessonAction: (_type: string, action: string) => onAction(action as never) }; act(() => root.render(createElement(ActionCockpit, props))); return onAction; }
   const buttons = () => [...container.querySelectorAll<HTMLButtonElement>('.actions__tray button')];
   it('keeps the exact calm six-step flow', () => { const states = [empty, { ...empty, trajectoryAtTick: 0 }, { ...empty, trajectoryAtTick: 0, recognitionAtTick: 1 }, { ...empty, trajectoryAtTick: 0, recognitionAtTick: 1, ownershipAtTick: 2 }, { ...empty, trajectoryAtTick: 0, recognitionAtTick: 1, ownershipAtTick: 2, boundaryAtTick: 3 }, { ...empty, trajectoryAtTick: 0, recognitionAtTick: 1, ownershipAtTick: 2, boundaryAtTick: 3, laterAtTick: 4 }, { ...empty, trajectoryAtTick: 0, recognitionAtTick: 1, ownershipAtTick: 2, boundaryAtTick: 3, laterAtTick: 4, handoffAtTick: 5 }]; const labels = ['Review baseline + fluctuation', 'Recognize the assessment boundary', 'Bring familiar care together', 'Review causes + calm care', 'Review the 6-hour report', 'Hand off the whole picture']; states.forEach((state, index) => { const onAction = renderAssessment(state); expect(buttons()).toHaveLength(index === 6 ? 0 : 1); expect(container.querySelectorAll('[role="status"]')).toHaveLength(1); if (index < 6) { expect(buttons()[0]!.textContent).toBe(labels[index]); act(() => buttons()[0]!.click()); expect(onAction).toHaveBeenCalledWith(objectives[index]); } }); expect(container.textContent).toContain('Begin with who she was.'); expect(container.textContent).toContain('Make the room easier to understand.'); });
-  it('requires exact identity and debriefs exact prefixes', () => { expect(crisisResponseAvailability(SCENARIO, [])).toMatchObject({ hasNeurologyDeliriumResponse: true }); expect(crisisResponseAvailability({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'clone' } }, [])).toMatchObject({ hasNeurologyDeliriumResponse: false }); const suffixes = ['trajectory-reconciled', 'assessment-boundary-recognized', 'qualified-ownership-activated', 'contributor-boundary-reviewed', 'later-contributors-reviewed', 'active-risk-handoff-recorded']; const log: EngineEvent[] = suffixes.map((suffix, tick) => ({ tick, eventId: `neurology-delirium-${suffix}-${tick}`, severity: 'info', category: 'assessment', message: suffix })); expect(objectiveFindings(SCENARIO, [], 0, 0, [], log).map(({ outcome }) => outcome)).toEqual(Array(6).fill('met')); });
+  it('requires exact identity and debriefs exact prefixes', () => { expect(crisisResponseAvailabilityWithTrays(SCENARIO)).toMatchObject({ hasNeurologyDeliriumResponse: true }); expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'clone' } })).toMatchObject({ hasNeurologyDeliriumResponse: false }); const suffixes = ['trajectory-reconciled', 'assessment-boundary-recognized', 'qualified-ownership-activated', 'contributor-boundary-reviewed', 'later-contributors-reviewed', 'active-risk-handoff-recorded']; const log: EngineEvent[] = suffixes.map((suffix, tick) => ({ tick, eventId: `neurology-delirium-${suffix}-${tick}`, severity: 'info', category: 'assessment', message: suffix })); expect(objectiveFindings(SCENARIO, [], 0, 0, [], log).map(({ outcome }) => outcome)).toEqual(Array(6).fill('met')); });
 });
 
 const markup = (assessment: NonNullable<ActionCockpitProps['resuscitation']['neurologyDeliriumAssessment']>, extra: {
-  neurologyDeliriumGuidance?: ActionCockpitProps['neurologyDeliriumGuidance'];
-  neurologyDeliriumDemonstrating?: boolean;
-} = {}) => renderToStaticMarkup(createElement(ActionCockpit, { scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, neurologyDeliriumAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 450, respiratoryRateBpm: 10, fio2: 1, peep: 0, delivering: true, sevofluranePercent: 0, freshGasFlowLPerMin: 10 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onNeurologyDeliriumResponse: () => {}, ...extra } satisfies ActionCockpitProps));
+  guidance?: ActionCockpitProps['guidance'];
+  demonstratingLessonId?: string | undefined;
+} = {}) => renderToStaticMarkup(createElement(ActionCockpit, { scenario: SCENARIO, region: UNITED_STATES, lessonTrays: NEUROLOGY_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, neurologyDeliriumAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 450, respiratoryRateBpm: 10, fio2: 1, peep: 0, delivering: true, sevofluranePercent: 0, freshGasFlowLPerMin: 10 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onLessonAction: () => {}, ...extra } satisfies ActionCockpitProps));
 
 const EMPTY = { trajectoryAtTick: null, recognitionAtTick: null, ownershipAtTick: null, boundaryAtTick: null, laterAtTick: null, handoffAtTick: null };
 const LABELS = ['Review baseline + fluctuation', 'Recognize the assessment boundary', 'Bring familiar care together', 'Review causes + calm care', 'Review the 6-hour report', 'Hand off the whole picture'];
@@ -42,8 +49,8 @@ describe('Neurology delirium experience', () => {
   });
 
   it('fails closed and exposes one calm cognitive action at a time', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasNeurologyDeliriumResponse).toBe(true);
-    expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasNeurologyDeliriumResponse).toBe(false);
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasNeurologyDeliriumResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasNeurologyDeliriumResponse).toBe(false);
     const states = [EMPTY,
       { ...EMPTY, trajectoryAtTick: 0 },
       { ...EMPTY, trajectoryAtTick: 0, recognitionAtTick: 1 },
@@ -68,33 +75,33 @@ describe('Delirium tutor and worked example', () => {
 
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { neurologyDeliriumGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { neurologyDeliriumGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('Start with who she was at eight this morning');
-    const next = markup(named, { neurologyDeliriumGuidance: 'guided' });
+    const next = markup(named, { guidance: 'guided' });
     expect(next).toContain('Bring in the people whose work actually treats this');
     expect(next).not.toContain('Start with who she was at eight this morning');
   });
 
   it('refuses the dementia label and the single cause', () => {
-    const html = markup({ ...EMPTY, trajectoryAtTick: 0 }, { neurologyDeliriumGuidance: 'guided' });
+    const html = markup({ ...EMPTY, trajectoryAtTick: 0 }, { guidance: 'guided' });
     expect(html).toContain('or a dementia label');
     expect(html).toContain('And it is not one cause either');
   });
 
   it('goes quiet once the handoff is recorded', () => {
     const ended = { trajectoryAtTick: 0, recognitionAtTick: 1, ownershipAtTick: 2, boundaryAtTick: 3, laterAtTick: 4, handoffAtTick: 5 };
-    expect(markup(ended, { neurologyDeliriumGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(ended, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = 'Review baseline + fluctuation';
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { neurologyDeliriumGuidance: 'guided', neurologyDeliriumDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'NeurologyDelirium' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

@@ -6,8 +6,11 @@ import { Prebrief } from '@anesthesia/ui/Prebrief';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { OBSTETRICS_TRAYS } from '../../src/modules/obstetrics/trays';
 // The lesson trays moved to the module, so the gate now needs them supplied.
-const crisisResponseAvailabilityWithTrays = (scenario: Parameters<typeof crisisResponseAvailability>[0]) =>
-  crisisResponseAvailability(scenario, [], OBSTETRICS_TRAYS);
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) =>
+  crisisResponseAvailability(scenario, injected, OBSTETRICS_TRAYS);
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { POSTPARTUM_HEMORRHAGE_UTERINE_ATONY as SCENARIO } from '../../src/modules/obstetrics/scenarios/postpartum-hemorrhage-uterine-atony';
 import { LIMITATIONS } from '@platform/docs/limitations';

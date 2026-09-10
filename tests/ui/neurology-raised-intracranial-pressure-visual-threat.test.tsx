@@ -7,6 +7,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { objectiveFindings } from '@anesthesia/ui/Debrief';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { NEUROLOGY_TRAYS } from '../../src/modules/neurology/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) =>
+  crisisResponseAvailability(scenario, injected, NEUROLOGY_TRAYS);
 import type { EngineEvent } from '@platform/kernel/protocol';
 import { RAISED_INTRACRANIAL_PRESSURE_VISUAL_THREAT as SCENARIO } from '../../src/modules/neurology/scenarios/raised-intracranial-pressure-visual-threat';
 
@@ -19,7 +26,7 @@ describe('Neurology raised intracranial pressure visual-threat UI', () => {
   beforeEach(() => { (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true; container = document.createElement('div'); document.body.appendChild(container); root = createRoot(container); });
   afterEach(() => { act(() => root.unmount()); container.remove(); vi.restoreAllMocks(); });
   function renderAssessment(assessment: NonNullable<ActionCockpitProps['resuscitation']['neurologyRaisedIcpAssessment']>, onAction = vi.fn()) {
-    const props: ActionCockpitProps = { scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, neurologyRaisedIcpAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 420, respiratoryRateBpm: 16, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onNeurologyRaisedIcpResponse: onAction };
+    const props: ActionCockpitProps = { scenario: SCENARIO, region: UNITED_STATES, lessonTrays: NEUROLOGY_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, neurologyRaisedIcpAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 420, respiratoryRateBpm: 16, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onLessonAction: (_type: string, action: string) => onAction(action as never) };
     act(() => root.render(createElement(ActionCockpit, props))); return onAction;
   }
   const buttons = () => [...container.querySelectorAll<HTMLButtonElement>('.actions__tray button')];
@@ -33,9 +40,9 @@ describe('Neurology raised intracranial pressure visual-threat UI', () => {
   });
 
   it('requires exact identity and targets, and debriefs exact prefixes', () => {
-    expect(crisisResponseAvailability(SCENARIO, [])).toMatchObject({ hasNeurologyRaisedIcpResponse: true });
-    expect(crisisResponseAvailability({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'clone' } }, [])).toMatchObject({ hasNeurologyRaisedIcpResponse: false });
-    expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 2) }, [])).toMatchObject({ hasNeurologyRaisedIcpResponse: false });
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO)).toMatchObject({ hasNeurologyRaisedIcpResponse: true });
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'clone' } })).toMatchObject({ hasNeurologyRaisedIcpResponse: false });
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 2) })).toMatchObject({ hasNeurologyRaisedIcpResponse: false });
     const suffixes = ['trajectory-reconciled', 'qualified-ownership-activated', 'papilledema-and-vision-reviewed', 'diagnostic-boundary-reviewed', 'later-visual-threat-reviewed', 'active-risk-handoff-recorded'];
     const log: EngineEvent[] = suffixes.map((suffix, tick) => ({ tick, eventId: `neurology-raised-icp-${suffix}-${tick}`, severity: 'info', category: 'assessment', message: suffix }));
     expect(objectiveFindings(SCENARIO, [], 0, 0, [], log).map(({ outcome }) => outcome)).toEqual(Array(6).fill('met'));
@@ -43,9 +50,9 @@ describe('Neurology raised intracranial pressure visual-threat UI', () => {
 });
 
 const markup = (assessment: NonNullable<ActionCockpitProps['resuscitation']['neurologyRaisedIcpAssessment']>, extra: {
-  neurologyRaisedIcpGuidance?: ActionCockpitProps['neurologyRaisedIcpGuidance'];
-  neurologyRaisedIcpDemonstrating?: boolean;
-} = {}) => renderToStaticMarkup(createElement(ActionCockpit, { scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, neurologyRaisedIcpAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 450, respiratoryRateBpm: 10, fio2: 1, peep: 0, delivering: true, sevofluranePercent: 0, freshGasFlowLPerMin: 10 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onNeurologyRaisedIcpResponse: () => {}, ...extra } satisfies ActionCockpitProps));
+  guidance?: ActionCockpitProps['guidance'];
+  demonstratingLessonId?: string | undefined;
+} = {}) => renderToStaticMarkup(createElement(ActionCockpit, { scenario: SCENARIO, region: UNITED_STATES, lessonTrays: NEUROLOGY_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, neurologyRaisedIcpAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 450, respiratoryRateBpm: 10, fio2: 1, peep: 0, delivering: true, sevofluranePercent: 0, freshGasFlowLPerMin: 10 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onLessonAction: () => {}, ...extra } satisfies ActionCockpitProps));
 
 const EMPTY = { trajectoryAtTick: null, ownershipAtTick: null, eyesAtTick: null, diagnosticsAtTick: null, laterAtTick: null, handoffAtTick: null };
 const LABELS = ['Review the pressure clock', 'Activate vision + brain owners', 'Review papilledema + fields', 'Review MRI + veins + LP', 'Review the 24-hour fields', 'Hand off sight + active risk'];
@@ -62,8 +69,8 @@ describe('Neurology raised-pressure experience', () => {
   });
 
   it('fails closed and exposes one calm cognitive action at a time', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasNeurologyRaisedIcpResponse).toBe(true);
-    expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasNeurologyRaisedIcpResponse).toBe(false);
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasNeurologyRaisedIcpResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasNeurologyRaisedIcpResponse).toBe(false);
     const states = [EMPTY,
       { ...EMPTY, trajectoryAtTick: 0 },
       { ...EMPTY, trajectoryAtTick: 0, ownershipAtTick: 1 },
@@ -88,33 +95,33 @@ describe('Raised-pressure tutor and worked example', () => {
 
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { neurologyRaisedIcpGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { neurologyRaisedIcpGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('Read the headache as the background');
-    const next = markup(named, { neurologyRaisedIcpGuidance: 'guided' });
+    const next = markup(named, { guidance: 'guided' });
     expect(next).toContain('Look at the fields');
     expect(next).not.toContain('Read the headache as the background');
   });
 
   it('treats neuro-ophthalmology as urgent', () => {
-    const html = markup({ ...EMPTY, trajectoryAtTick: 0 }, { neurologyRaisedIcpGuidance: 'guided' });
+    const html = markup({ ...EMPTY, trajectoryAtTick: 0 }, { guidance: 'guided' });
     expect(html).toContain('not a follow-up appointment');
     expect(html).toContain('in hours rather than in clinic');
   });
 
   it('goes quiet once the handoff is recorded', () => {
     const ended = { trajectoryAtTick: 0, ownershipAtTick: 1, eyesAtTick: 2, diagnosticsAtTick: 3, laterAtTick: 4, handoffAtTick: 5 };
-    expect(markup(ended, { neurologyRaisedIcpGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(ended, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = 'Review the pressure clock';
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { neurologyRaisedIcpGuidance: 'guided', neurologyRaisedIcpDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'NeurologyRaisedIcp' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

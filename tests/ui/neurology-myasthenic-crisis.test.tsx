@@ -5,6 +5,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { objectiveFindings } from '@anesthesia/ui/Debrief';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { NEUROLOGY_TRAYS } from '../../src/modules/neurology/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) =>
+  crisisResponseAvailability(scenario, injected, NEUROLOGY_TRAYS);
 import type { EngineEvent } from '@platform/kernel/protocol';
 import { MYASTHENIC_CRISIS_ESCALATION as SCENARIO } from '../../src/modules/neurology/scenarios/myasthenic-crisis-escalation';
 
@@ -18,7 +25,7 @@ describe('Neurology myasthenic-crisis UI', () => {
     container = document.createElement('div'); document.body.appendChild(container); root = createRoot(container); });
   afterEach(() => { act(() => root.unmount()); container.remove(); vi.restoreAllMocks(); });
   function renderAssessment(assessment: NonNullable<ActionCockpitProps['resuscitation']['neurologyMyasthenicCrisisAssessment']>, onAction = vi.fn()) {
-    const props: ActionCockpitProps = { scenario: SCENARIO, region: UNITED_STATES, infusions: [],
+    const props: ActionCockpitProps = { scenario: SCENARIO, region: UNITED_STATES, lessonTrays: NEUROLOGY_TRAYS, infusions: [],
       hypnoticLine: { connected: true, inspected: false }, resuscitation: {
         epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null,
         crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
@@ -34,7 +41,7 @@ describe('Neurology myasthenic-crisis UI', () => {
       onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {},
       onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {},
       onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-      onNeurologyMyasthenicCrisisResponse: onAction };
+      onLessonAction: (_type: string, action: string) => onAction(action as never) };
     act(() => root.render(createElement(ActionCockpit, props))); return onAction;
   }
   const buttons = () => [...container.querySelectorAll<HTMLButtonElement>('.actions__tray button')];
@@ -60,10 +67,10 @@ describe('Neurology myasthenic-crisis UI', () => {
   });
 
   it('requires exact identity and targets, and debriefs exact prefixes', () => {
-    expect(crisisResponseAvailability(SCENARIO, [])).toMatchObject({ hasNeurologyMyasthenicCrisisResponse: true });
-    expect(crisisResponseAvailability({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'clone' } }, []))
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO)).toMatchObject({ hasNeurologyMyasthenicCrisisResponse: true });
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'clone' } }))
       .toMatchObject({ hasNeurologyMyasthenicCrisisResponse: false });
-    expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 2) }, []))
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 2) }))
       .toMatchObject({ hasNeurologyMyasthenicCrisisResponse: false });
     const suffixes = ['trajectory-reconciled', 'impending-boundary-recognized',
       'qualified-ownership-activated', 'safety-and-causes-reviewed',

@@ -6,6 +6,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { NEUROLOGY_TRAYS } from '../../src/modules/neurology/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) =>
+  crisisResponseAvailability(scenario, injected, NEUROLOGY_TRAYS);
 import { Prebrief } from '@anesthesia/ui/Prebrief';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { MINOR_NONDISABLING_ACUTE_ISCHEMIC_STROKE } from '../../src/modules/neurology/scenarios/minor-nondisabling-acute-ischemic-stroke';
@@ -54,6 +61,7 @@ describe('Neurology minor nondisabling stroke UI', () => {
     scenario: ActionCockpitProps['scenario'] = MINOR_NONDISABLING_ACUTE_ISCHEMIC_STROKE,
   ) {
     const props: ActionCockpitProps = {
+      lessonTrays: NEUROLOGY_TRAYS,
       scenario, region: UNITED_STATES, infusions: [],
       hypnoticLine: { connected: true, inspected: false },
       resuscitation: {
@@ -77,7 +85,7 @@ describe('Neurology minor nondisabling stroke UI', () => {
       onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {},
       onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
       onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {},
-      onDrugCard: () => {}, onNeurologyMinorStrokeResponse: onAction,
+      onDrugCard: () => {}, onLessonAction: (_type: string, action: string) => onAction(action as never),
     };
     act(() => root.render(createElement(ActionCockpit, props)));
     return onAction;
@@ -131,19 +139,19 @@ describe('Neurology minor nondisabling stroke UI', () => {
   });
 
   it('requires the exact scenario and both targets', () => {
-    expect(crisisResponseAvailability(MINOR_NONDISABLING_ACUTE_ISCHEMIC_STROKE, []))
+    expect(crisisResponseAvailabilityWithTrays(MINOR_NONDISABLING_ACUTE_ISCHEMIC_STROKE, []))
       .toMatchObject({ hasNeurologyMinorStrokeResponse: true });
     const clone = {
       ...MINOR_NONDISABLING_ACUTE_ISCHEMIC_STROKE,
       metadata: { ...MINOR_NONDISABLING_ACUTE_ISCHEMIC_STROKE.metadata, id: 'minor-stroke-clone' },
     };
-    expect(crisisResponseAvailability(clone, []))
+    expect(crisisResponseAvailabilityWithTrays(clone, []))
       .toMatchObject({ hasNeurologyMinorStrokeResponse: false });
     const missingBoundary = {
       ...MINOR_NONDISABLING_ACUTE_ISCHEMIC_STROKE,
       timeline: MINOR_NONDISABLING_ACUTE_ISCHEMIC_STROKE.timeline.slice(0, 1),
     };
-    expect(crisisResponseAvailability(missingBoundary, []))
+    expect(crisisResponseAvailabilityWithTrays(missingBoundary, []))
       .toMatchObject({ hasNeurologyMinorStrokeResponse: false });
   });
 

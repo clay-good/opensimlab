@@ -6,8 +6,11 @@ import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } fr
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { OBSTETRICS_TRAYS } from '../../src/modules/obstetrics/trays';
 // The lesson trays moved to the module, so the gate now needs them supplied.
-const crisisResponseAvailabilityWithTrays = (scenario: Parameters<typeof crisisResponseAvailability>[0]) =>
-  crisisResponseAvailability(scenario, [], OBSTETRICS_TRAYS);
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) =>
+  crisisResponseAvailability(scenario, injected, OBSTETRICS_TRAYS);
 import { CONCEALED_PLACENTAL_ABRUPTION_HEMORRHAGE as SCENARIO } from '../../src/modules/obstetrics/scenarios/concealed-placental-abruption-hemorrhage';
 
 const markup = (assessment: NonNullable<ActionCockpitProps['resuscitation']['obstetricsConcealedAbruptionAssessment']>) => renderToStaticMarkup(createElement(ActionCockpit, {

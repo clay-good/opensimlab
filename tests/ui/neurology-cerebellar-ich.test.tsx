@@ -5,6 +5,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { NEUROLOGY_TRAYS } from '../../src/modules/neurology/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) =>
+  crisisResponseAvailability(scenario, injected, NEUROLOGY_TRAYS);
 import { objectiveFindings } from '@anesthesia/ui/Debrief';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import type { EngineEvent } from '@platform/kernel/protocol';
@@ -49,6 +56,7 @@ describe('Neurology spontaneous cerebellar ICH UI', () => {
     onAction = vi.fn(), scenario: ActionCockpitProps['scenario'] = SCENARIO,
   ) {
     const props: ActionCockpitProps = {
+      lessonTrays: NEUROLOGY_TRAYS,
       scenario, region: UNITED_STATES, infusions: [],
       hypnoticLine: { connected: true, inspected: false },
       resuscitation: {
@@ -70,7 +78,7 @@ describe('Neurology spontaneous cerebellar ICH UI', () => {
       onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {},
       onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
       onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {},
-      onDrugCard: () => {}, onNeurologyCerebellarIchResponse: onAction,
+      onDrugCard: () => {}, onLessonAction: (_type: string, action: string) => onAction(action as never),
     };
     act(() => root.render(createElement(ActionCockpit, props)));
     return onAction;
@@ -123,12 +131,12 @@ describe('Neurology spontaneous cerebellar ICH UI', () => {
   });
 
   it('requires the exact scenario and both reassessment targets', () => {
-    expect(crisisResponseAvailability(SCENARIO, []))
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO))
       .toMatchObject({ hasNeurologyCerebellarIchResponse: true });
-    expect(crisisResponseAvailability({ ...SCENARIO,
-      metadata: { ...SCENARIO.metadata, id: 'cerebellar-ich-clone' } }, []))
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO,
+      metadata: { ...SCENARIO.metadata, id: 'cerebellar-ich-clone' } }))
       .toMatchObject({ hasNeurologyCerebellarIchResponse: false });
-    expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }, []))
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }))
       .toMatchObject({ hasNeurologyCerebellarIchResponse: false });
   });
 

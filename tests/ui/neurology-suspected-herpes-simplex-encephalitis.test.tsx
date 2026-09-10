@@ -7,6 +7,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { objectiveFindings } from '@anesthesia/ui/Debrief';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { NEUROLOGY_TRAYS } from '../../src/modules/neurology/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) =>
+  crisisResponseAvailability(scenario, injected, NEUROLOGY_TRAYS);
 import type { EngineEvent } from '@platform/kernel/protocol';
 import { SUSPECTED_HERPES_SIMPLEX_ENCEPHALITIS as SCENARIO } from '../../src/modules/neurology/scenarios/suspected-herpes-simplex-encephalitis';
 
@@ -20,7 +27,7 @@ describe('Neurology suspected herpes simplex encephalitis UI', () => {
     container = document.createElement('div'); document.body.appendChild(container); root = createRoot(container); });
   afterEach(() => { act(() => root.unmount()); container.remove(); vi.restoreAllMocks(); });
   function renderAssessment(assessment: NonNullable<ActionCockpitProps['resuscitation']['neurologyEncephalitisAssessment']>, onAction = vi.fn()) {
-    const props: ActionCockpitProps = { scenario: SCENARIO, region: UNITED_STATES, infusions: [],
+    const props: ActionCockpitProps = { scenario: SCENARIO, region: UNITED_STATES, lessonTrays: NEUROLOGY_TRAYS, infusions: [],
       hypnoticLine: { connected: true, inspected: false }, resuscitation: {
         epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null,
         crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
@@ -36,7 +43,7 @@ describe('Neurology suspected herpes simplex encephalitis UI', () => {
       onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {},
       onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {},
       onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-      onNeurologyEncephalitisResponse: onAction };
+      onLessonAction: (_type: string, action: string) => onAction(action as never) };
     act(() => root.render(createElement(ActionCockpit, props))); return onAction;
   }
   const buttons = () => [...container.querySelectorAll<HTMLButtonElement>('.actions__tray button')];
@@ -62,10 +69,10 @@ describe('Neurology suspected herpes simplex encephalitis UI', () => {
   });
 
   it('requires exact identity and targets, and debriefs exact prefixes', () => {
-    expect(crisisResponseAvailability(SCENARIO, [])).toMatchObject({ hasNeurologyEncephalitisResponse: true });
-    expect(crisisResponseAvailability({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'clone' } }, []))
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO)).toMatchObject({ hasNeurologyEncephalitisResponse: true });
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'clone' } }))
       .toMatchObject({ hasNeurologyEncephalitisResponse: false });
-    expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 2) }, []))
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 2) }))
       .toMatchObject({ hasNeurologyEncephalitisResponse: false });
     const suffixes = ['trajectory-reconciled', 'qualified-ownership-activated',
       'early-qualified-pathway-activated', 'diagnostics-and-seizure-boundary-reviewed',
@@ -79,9 +86,9 @@ describe('Neurology suspected herpes simplex encephalitis UI', () => {
 });
 
 const markup = (assessment: NonNullable<ActionCockpitProps['resuscitation']['neurologyEncephalitisAssessment']>, extra: {
-  neurologyEncephalitisGuidance?: ActionCockpitProps['neurologyEncephalitisGuidance'];
-  neurologyEncephalitisDemonstrating?: boolean;
-} = {}) => renderToStaticMarkup(createElement(ActionCockpit, { scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, neurologyEncephalitisAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 450, respiratoryRateBpm: 10, fio2: 1, peep: 0, delivering: true, sevofluranePercent: 0, freshGasFlowLPerMin: 10 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onNeurologyEncephalitisResponse: () => {}, ...extra } satisfies ActionCockpitProps));
+  guidance?: ActionCockpitProps['guidance'];
+  demonstratingLessonId?: string | undefined;
+} = {}) => renderToStaticMarkup(createElement(ActionCockpit, { scenario: SCENARIO, region: UNITED_STATES, lessonTrays: NEUROLOGY_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, neurologyEncephalitisAssessment: assessment }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 450, respiratoryRateBpm: 10, fio2: 1, peep: 0, delivering: true, sevofluranePercent: 0, freshGasFlowLPerMin: 10 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onLessonAction: () => {}, ...extra } satisfies ActionCockpitProps));
 
 const EMPTY = { trajectoryAtTick: null, ownershipAtTick: null, treatmentAtTick: null, diagnosticsAtTick: null, laterAtTick: null, handoffAtTick: null };
 const LABELS = ['Review encephalitic trajectory', 'Activate brain + infection owners', 'Activate early antiviral care', 'Review MRI + EEG + CSF', 'Review the 4-hour report', 'Hand off repeat testing + risk'];
@@ -98,8 +105,8 @@ describe('Neurology encephalitis experience', () => {
   });
 
   it('fails closed and exposes one calm cognitive action at a time', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasNeurologyEncephalitisResponse).toBe(true);
-    expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasNeurologyEncephalitisResponse).toBe(false);
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasNeurologyEncephalitisResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasNeurologyEncephalitisResponse).toBe(false);
     const states = [EMPTY,
       { ...EMPTY, trajectoryAtTick: 0 },
       { ...EMPTY, trajectoryAtTick: 0, ownershipAtTick: 1 },
@@ -124,33 +131,33 @@ describe('Encephalitis tutor and worked example', () => {
 
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { neurologyEncephalitisGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { neurologyEncephalitisGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('Put the fever and the new mind in the same sentence');
-    const next = markup(named, { neurologyEncephalitisGuidance: 'guided' });
+    const next = markup(named, { guidance: 'guided' });
     expect(next).toContain('Start the empiric antiviral pathway now');
     expect(next).not.toContain('Put the fever and the new mind in the same sentence');
   });
 
   it('brings seizure and airway ownership in from the start', () => {
-    const html = markup({ ...EMPTY, trajectoryAtTick: 0 }, { neurologyEncephalitisGuidance: 'guided' });
+    const html = markup({ ...EMPTY, trajectoryAtTick: 0 }, { guidance: 'guided' });
     expect(html).toContain('one focal seizure that stopped without treatment');
     expect(html).toContain('rather than when something changes');
   });
 
   it('goes quiet once the handoff is recorded', () => {
     const ended = { trajectoryAtTick: 0, ownershipAtTick: 1, treatmentAtTick: 2, diagnosticsAtTick: 3, laterAtTick: 4, handoffAtTick: 5 };
-    expect(markup(ended, { neurologyEncephalitisGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(ended, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = 'Review encephalitic trajectory';
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { neurologyEncephalitisGuidance: 'guided', neurologyEncephalitisDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'NeurologyEncephalitis' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

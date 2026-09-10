@@ -1831,34 +1831,8 @@ export function Cockpit({
           toxicologyDelayedLastDemonstrating={demonstrating && registryDemo?.id === 'DelayedLast'}
           toxicologyOpioidXylazineGuidance={session.guidance}
           toxicologyOpioidXylazineDemonstrating={demonstrating && registryDemo?.id === 'OpioidXylazine'}
-          neurologyMinorStrokeGuidance={session.guidance}
-          neurologyMinorStrokeDemonstrating={demonstrating && registryDemo?.id === 'MinorStroke'}
-          neurologyBasilarLvoGuidance={session.guidance}
-          neurologyBasilarLvoDemonstrating={demonstrating && registryDemo?.id === 'BasilarLvo'}
-          neurologyCerebellarIchGuidance={session.guidance}
-          neurologyCerebellarIchDemonstrating={demonstrating && registryDemo?.id === 'CerebellarIch'}
-          neurologyAsahGuidance={session.guidance}
-          neurologyAsahDemonstrating={demonstrating && registryDemo?.id === 'Asah'}
-          neurologyFocalMotorStatusGuidance={session.guidance}
-          neurologyFocalMotorStatusDemonstrating={demonstrating && registryDemo?.id === 'FocalMotorStatus'}
-          neurologyNcseGuidance={session.guidance}
-          neurologyNcseDemonstrating={demonstrating && registryDemo?.id === 'Ncse'}
           neurologyMyastheniaGuidance={session.guidance}
           neurologyMyastheniaDemonstrating={demonstrating && registryDemo?.id === 'Myasthenia'}
-          neurologyGbsGuidance={session.guidance}
-          neurologyGbsDemonstrating={demonstrating && registryDemo?.id === 'Gbs'}
-          neurologyMeningitisGuidance={session.guidance}
-          neurologyMeningitisDemonstrating={demonstrating && registryDemo?.id === 'Meningitis'}
-          neurologyEncephalitisGuidance={session.guidance}
-          neurologyEncephalitisDemonstrating={demonstrating && registryDemo?.id === 'Encephalitis'}
-          neurologyRaisedIcpGuidance={session.guidance}
-          neurologyRaisedIcpDemonstrating={demonstrating && registryDemo?.id === 'RaisedIcp'}
-          neurologyHerniationGuidance={session.guidance}
-          neurologyHerniationDemonstrating={demonstrating && registryDemo?.id === 'Herniation'}
-          neurologyMsccGuidance={session.guidance}
-          neurologyMsccDemonstrating={demonstrating && registryDemo?.id === 'Mscc'}
-          neurologyDeliriumGuidance={session.guidance}
-          neurologyDeliriumDemonstrating={demonstrating && registryDemo?.id === 'Delirium'}
           neurologyDysreflexiaGuidance={session.guidance}
           neurologyDysreflexiaDemonstrating={demonstrating && registryDemo?.id === 'Dysreflexia'}
           obstetricsMaternalArrestGuidance={session.guidance}
@@ -2405,51 +2379,6 @@ export function Cockpit({
           })}
           onPediatricInjurySafeguardingResponse={(action) => session.act({
             type: 'pediatric-injury-safeguarding-escalation-response', payload: { action },
-          })}
-          onNeurologyMinorStrokeResponse={(action) => session.act({
-            type: 'minor-nondisabling-acute-ischemic-stroke-response', payload: { action },
-          })}
-          onNeurologyBasilarLvoResponse={(action) => session.act({
-            type: 'basilar-artery-occlusion-escalation-response', payload: { action },
-          })}
-          onNeurologyCerebellarIchResponse={(action) => session.act({
-            type: 'spontaneous-cerebellar-intracerebral-hemorrhage-response', payload: { action },
-          })}
-          onNeurologyAsahDeteriorationResponse={(action) => session.act({
-            type: 'aneurysmal-subarachnoid-hemorrhage-deterioration-response', payload: { action },
-          })}
-          onNeurologyFocalMotorStatusResponse={(action) => session.act({
-            type: 'focal-motor-status-epilepticus-escalation-response', payload: { action },
-          })}
-          onNeurologyNcseResponse={(action) => session.act({
-            type: 'nonconvulsive-status-epilepticus-recognition-response', payload: { action },
-          })}
-          onNeurologyMyasthenicCrisisResponse={(action) => session.act({
-            type: 'myasthenic-crisis-escalation-response', payload: { action },
-          })}
-          onNeurologyGbsResponse={(action) => session.act({
-            type: 'guillain-barre-respiratory-decline-response', payload: { action },
-          })}
-          onNeurologyMeningitisResponse={(action) => session.act({
-            type: 'acute-bacterial-meningitis-first-hour-response', payload: { action },
-          })}
-          onNeurologyEncephalitisResponse={(action) => session.act({
-            type: 'suspected-herpes-simplex-encephalitis-response', payload: { action },
-          })}
-          onNeurologyRaisedIcpResponse={(action) => session.act({
-            type: 'raised-intracranial-pressure-visual-threat-response', payload: { action },
-          })}
-          onNeurologyHerniationResponse={(action) => session.act({
-            type: 'acute-transtentorial-herniation-pattern-response', payload: { action },
-          })}
-          onNeurologyMsccResponse={(action) => session.act({
-            type: 'metastatic-spinal-cord-compression-response', payload: { action },
-          })}
-          onNeurologyDeliriumResponse={(action) => session.act({
-            type: 'acute-delirium-reversible-causes-response', payload: { action },
-          })}
-          onNeurologyAutonomicDysreflexiaResponse={(action) => session.act({
-            type: 'autonomic-dysreflexia-authored-trigger-response', payload: { action },
           })}
           onToxicologyMethemoglobinemiaResponse={(action) => session.act({
             type: 'methemoglobinemia-saturation-gap-response', payload: { action },

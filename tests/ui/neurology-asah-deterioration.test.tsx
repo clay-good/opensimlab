@@ -7,6 +7,13 @@ import { join } from 'node:path';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { objectiveFindings } from '@anesthesia/ui/Debrief';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { NEUROLOGY_TRAYS } from '../../src/modules/neurology/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) =>
+  crisisResponseAvailability(scenario, injected, NEUROLOGY_TRAYS);
 import type { EngineEvent } from '@platform/kernel/protocol';
 import { ANEURYSMAL_SUBARACHNOID_HEMORRHAGE_DETERIORATION as SCENARIO } from '../../src/modules/neurology/scenarios/aneurysmal-subarachnoid-hemorrhage-deterioration';
 
@@ -40,7 +47,7 @@ describe('Neurology aneurysmal SAH deterioration UI', () => {
     vi.unstubAllGlobals(); vi.restoreAllMocks(); });
 
   function renderAssessment(assessment: NonNullable<ActionCockpitProps['resuscitation']['neurologyAsahAssessment']>, onAction = vi.fn()) {
-    const props: ActionCockpitProps = { scenario: SCENARIO, region: UNITED_STATES, infusions: [],
+    const props: ActionCockpitProps = { scenario: SCENARIO, region: UNITED_STATES, lessonTrays: NEUROLOGY_TRAYS, infusions: [],
       hypnoticLine: { connected: true, inspected: false }, resuscitation: {
         epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null,
         crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
@@ -55,7 +62,7 @@ describe('Neurology aneurysmal SAH deterioration UI', () => {
       onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {},
       onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {},
       onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-      onNeurologyAsahDeteriorationResponse: onAction };
+      onLessonAction: (_type: string, action: string) => onAction(action as never) };
     act(() => root.render(createElement(ActionCockpit, props))); return onAction;
   }
   const buttons = () => [...container.querySelectorAll<HTMLButtonElement>('.actions__tray button')];
@@ -90,10 +97,10 @@ describe('Neurology aneurysmal SAH deterioration UI', () => {
   });
 
   it('requires exact identity and both targets, and debriefs exact elapsed prefixes', () => {
-    expect(crisisResponseAvailability(SCENARIO, [])).toMatchObject({ hasNeurologyAsahDeteriorationResponse: true });
-    expect(crisisResponseAvailability({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'asah-clone' } }, []))
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO)).toMatchObject({ hasNeurologyAsahDeteriorationResponse: true });
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'asah-clone' } }))
       .toMatchObject({ hasNeurologyAsahDeteriorationResponse: false });
-    expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }, []))
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }))
       .toMatchObject({ hasNeurologyAsahDeteriorationResponse: false });
     const suffixes = ['trajectory-reconciled', 'evidence-and-threats-reviewed',
       'possible-dci-boundary-recognized', 'qualified-ownership-activated',
