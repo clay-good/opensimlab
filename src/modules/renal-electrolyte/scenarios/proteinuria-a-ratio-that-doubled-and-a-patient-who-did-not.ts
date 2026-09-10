@@ -1,0 +1,62 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+
+export const RENAL_PROTEINURIA_RATIO: Scenario = {
+  schemaVersion: 1,
+  metadata: {
+    id: 'proteinuria-a-ratio-that-doubled-and-a-patient-who-did-not', version: '0.1.0', maturity: 'preview',
+    title: 'Proteinuria: a ratio that nearly doubled, and a patient who did not change', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
+    estimatedMinutes: 60, difficulty: 'intermediate',
+    objectives: [
+      { id: 'renal-proteinuria-variation', statement: 'Compare the change against the variation the measurement carries.', measure: 'Record that in repeat sampling of clinically stable outpatients the within-person coefficient of variation for a random spot albumin-creatinine ratio was 29.7%, with reference change values of +124% and −55%. The supplied rise from 168 to 312 mg/g is +86%. That does not establish the change is noise, and it does not establish it is real; it establishes that one pair of random spot values cannot tell them apart.' },
+      { id: 'renal-proteinuria-sampling', statement: 'Read when and how each sample was taken as part of what it says.', measure: 'Review that both values are random afternoon spot samples, that protein excretion varies through the day, and that a dipstick reports a concentration so a dilute sample reads lower. None of this establishes that either supplied value is wrong.' },
+      { id: 'renal-proteinuria-patient', statement: 'Check the patient against the number before acting on the number.', measure: 'Review the unchanged blood pressure, weight, creatinine, and urine sediment, and that she reports no change herself. Agreement between an unchanged patient and an uncertain measurement is not proof that nothing is happening, and no cause, progression, or stability is established here.' },
+      { id: 'renal-proteinuria-repeat', statement: 'Obtain the measurement that would actually answer the question.', measure: 'Request a first morning sample and a repeat under matched conditions, with qualified support, rather than a third random afternoon value. The fix here is available and was skipped; nothing in this rehearsal supplies a timed collection, a biopsy, or a cause.' },
+      { id: 'renal-proteinuria-handoff', statement: 'Transfer the finding with what it rests on stated.', measure: 'Hand off the compared change, the sampling conditions, the unchanged clinical picture, the repeat result, and who owns the treatment decision. A single number that settles the question is not a handoff gate; the repeat narrows the question rather than closing it.' },
+    ],
+    clinicalReview: {
+      reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED', competingInterests: 'None declared',
+      reviewedOn: '1970-01-01', reviewBy: '1970-01-01', contentVersion: '0.1.0',
+      sources: [
+        'Waikar SS, Rebholz CM, Zheng Z, Hurwitz S, et al. Biological variability of estimated GFR and albuminuria in CKD. American Journal of Kidney Diseases. 2018;72:538–546. doi:10.1053/j.ajkd.2018.04.023. Fifty clinically stable outpatients, cross-sectional, and the authors state the small sample limits the ability to detect differences. Reference change values describe measurement variation in a stable population; they are not a rule that a smaller change is meaningless in an unstable one.',
+        'Fine DM, Ziegenbein M, Petri M, Han EC. A prospective study of protein excretion using short-interval timed urine collections in patients with lupus nephritis. Kidney International. 2009;76:1284–1288. doi:10.1038/ki.2009.344. Patients with lupus nephritis only, so the diurnal pattern may not transfer. The paper concludes by endorsing a 12-hour overnight collection as an excellent surrogate — it argues for better sampling rather than against sampling, which is the position taken here.',
+        'Baba Y, Furuta I, Zhai T, Ohkuchi A, et al. Effect of urine creatinine level during pregnancy on dipstick test. Journal of Obstetrics and Gynaecology Research. 2017;43:967–973. doi:10.1111/jog.13327. A pregnant population at one institution with only twenty false-negative samples driving the comparison at p = 0.046. It shows an association between dilution and false negatives in that setting rather than establishing a general threshold.',
+      ],
+    },
+    limitations: ['renal-proteinuria-variation-bounds', 'renal-proteinuria-authored-contrasts', 'renal-proteinuria-continuing-care'],
+  },
+  patient: {
+    ageYears: 47, sex: 'female', heightCm: 165, weightKg: 71, asaClass: 2,
+    diagnosis: 'A near-doubling of a random spot albumin-creatinine ratio in stable chronic kidney disease, read as progression',
+    procedure: 'Comparison of the change against measurement variation, review of sampling conditions, review of the clinical picture, a matched repeat, and handoff of an owned treatment decision',
+    comorbidities: ['Chronic kidney disease with known albuminuria; supplied estimated GFR 58 mL/min/1.73 m², unchanged from last clinic',
+      'Albumin-creatinine ratio 168 mg/g at the last clinic and 312 mg/g today; both random afternoon spot samples',
+      'Blood pressure 128/78 mmHg today and 126/76 mmHg at the last clinic; weight 71 kg at both',
+      'Creatinine unchanged; urine sediment bland at both visits; no oedema and no new medicines',
+      'She reports feeling exactly as she did at the last visit',
+      'The team has read the change as progression and is preparing to change treatment today'],
+    medications: ['Long-term renin-angiotensin blockade at an unchanged dose; no dose is supplied'],
+    allergies: ['No known drug allergies'], fasting: 'Not a fasting lesson; nothing here turns on the airway or on oral intake',
+    baseline: { heartRateBpm: 72, meanArterialMmHg: 95, strokeVolumeMl: 74, hemoglobinGPerDl: 12.8,
+      bloodVolumeMl: 4600, coreTemperatureC: 36.7, arterialStiffness: 1, baroreflexGain: 1, fixedStrokeVolume: true },
+    airway: { difficulty: 0.1, difficultMaskVentilation: false, assessment: 'Awake, well, and unchanged from her last visit; the airway is not the problem in this lesson' },
+    respiratory: { profile: 'healthy' },
+  },
+  equipment: { monitoring: ['ecg', 'nibp', 'pulse-oximetry', 'temperature'], ventilator: { mode: 'manual', fio2: 0.21,
+    tidalVolumeMl: 460, respiratoryRateBpm: 14, freshGasFlowLPerMin: 10, delivering: false } },
+  formulary: [],
+  timeline: [
+    { id: 'renal-proteinuria-presentation', type: 'narrative', target: 'renal-proteinuria', atTick: 0, severity: 'critical',
+      message: 'A fictional 47-year-old woman with chronic kidney disease and known albuminuria attends clinic. Her albumin-creatinine ratio was 168 mg/g at the last visit and is 312 mg/g today; both are random afternoon spot samples. Her supplied estimated GFR is 58 mL/min/1.73 m² and unchanged, her blood pressure is 128/78 against 126/76, her weight is 71 kg at both visits, her creatinine is unchanged, her urine sediment is bland, she has no oedema, no new medicines, and she reports feeling exactly as she did last time. The team has read the change as progression and is preparing to change treatment today. Decide what a rise from 168 to 312 in one pair of random spot samples can show.' },
+    { id: 'renal-proteinuria-boundary', type: 'narrative', target: 'renal-proteinuria-boundary', atTick: 0, severity: 'warning',
+      message: 'This lesson selects no drug, no dose, and no treatment change, and it does not decide whether her treatment should change. It teaches a comparison: in repeat sampling of clinically stable outpatients the within-person coefficient of variation for a random spot albumin-creatinine ratio was 29.7%, with reference change values of +124% and −55%, and the supplied rise is +86%. That does not establish the change is noise and does not establish it is real — it establishes that this pair of values cannot tell them apart, and reference change values describe variation in a stable population rather than ruling out change in an unstable one. Protein excretion varies through the day, and a dipstick reports a concentration, so a dilute sample reads lower; neither fact makes a supplied value wrong. An unchanged patient beside an uncertain measurement is agreement, not proof that nothing is happening. The repeat in this rehearsal returns a single authored value under matched conditions; it narrows the question and does not close it, and no timed collection, biopsy, imaging, cause, progression, or stability is established at any point. The 60-minute repeat checkpoint and the 5-minute uncompared contrast are authored teaching intervals, not kinetics, safe waits, or grading deadlines. Partial checks do not refresh full assessment. No cause, diagnosis, treatment change, or discharge clearance is claimed. Exhaled CO2 and FiO2 are unavailable.' },
+  ],
+  replayPoints: [{ id: 'renal-proteinuria-first-response', label: 'Return to the comparison', objectiveId: 'renal-proteinuria-variation', atTick: 1,
+    reason: 'Separate comparing the change against measurement variation from reviewing how the samples were taken.' }],
+  debrief: { rubric: [
+    { id: 'renal-proteinuria-variation-review', objectiveId: 'renal-proteinuria-variation', question: 'How large was the rise against the variation the measurement carries, and what did that comparison settle?' },
+    { id: 'renal-proteinuria-sampling-review', objectiveId: 'renal-proteinuria-sampling', question: 'What did the timing of the two samples add, and what did it not make wrong?' },
+    { id: 'renal-proteinuria-patient-review', objectiveId: 'renal-proteinuria-patient', question: 'Everything else was unchanged. What did that agreement prove?' },
+    { id: 'renal-proteinuria-repeat-review', objectiveId: 'renal-proteinuria-repeat', question: 'Which measurement would have answered the question, and why was it available all along?' },
+    { id: 'renal-proteinuria-handoff-review', objectiveId: 'renal-proteinuria-handoff', question: 'Who owns the treatment decision, and what did the repeat narrow without closing?' },
+  ] },
+};

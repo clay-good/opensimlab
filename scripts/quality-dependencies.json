@@ -16,11 +16,11 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "d6b4bc5bb9c6955141a9934aa91efaee5445b01ee1742488e518b46480dab54e"
+        "sha256": "4b6d627e69897335ce2faf2b87b3829a3ed88a4cd03d448eaefad74624c02d8b"
       },
       {
         "path": "src/modules/anesthesia/engine.ts",
-        "sha256": "16e8b5fae520988c697d8e028dee5f8ed935de6130351648f8047c42085b50eb"
+        "sha256": "db4c1925b0f1e2b853f9ada0b3a11ba10b9d676827a312d28cc8d665b85cb2ab"
       },
       {
         "path": "src/modules/anesthesia/region/profiles.ts",
@@ -124,7 +124,7 @@
       },
       {
         "path": "src/platform/docs/limitations/renal-electrolyte.ts",
-        "sha256": "4312920c0cb617d08427cbb3df625a4024b78d6e9d471c4efce393586e309dfc"
+        "sha256": "94bd12b1c9bfb6a199b24fc3ad4f48d69516bd2dbb6d22828a07b4b081c7041a"
       },
       {
         "path": "src/platform/docs/limitations/respiratory-medicine.ts",
@@ -148,7 +148,7 @@
       },
       {
         "path": "src/platform/docs/sources.ts",
-        "sha256": "c9a8d9cfd5499ca7e7ce90dbcc942ad6605b8d8e209aecb6f4ad2580a159d600"
+        "sha256": "83f1b0151b4d6384669ed46f70a580c80fd68be19d1ae6920a0a4303de0503c1"
       },
       {
         "path": "src/platform/governance/publication.ts",
@@ -225,7 +225,7 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "d6b4bc5bb9c6955141a9934aa91efaee5445b01ee1742488e518b46480dab54e"
+        "sha256": "4b6d627e69897335ce2faf2b87b3829a3ed88a4cd03d448eaefad74624c02d8b"
       },
       {
         "path": "src/modules/anesthesia/demo/useObservedDemonstration.ts",
@@ -233,7 +233,7 @@
       },
       {
         "path": "src/modules/anesthesia/engine.ts",
-        "sha256": "16e8b5fae520988c697d8e028dee5f8ed935de6130351648f8047c42085b50eb"
+        "sha256": "db4c1925b0f1e2b853f9ada0b3a11ba10b9d676827a312d28cc8d665b85cb2ab"
       },
       {
         "path": "src/modules/anesthesia/region/profiles.ts",
@@ -365,7 +365,7 @@
       },
       {
         "path": "src/platform/docs/limitations/renal-electrolyte.ts",
-        "sha256": "4312920c0cb617d08427cbb3df625a4024b78d6e9d471c4efce393586e309dfc"
+        "sha256": "94bd12b1c9bfb6a199b24fc3ad4f48d69516bd2dbb6d22828a07b4b081c7041a"
       },
       {
         "path": "src/platform/docs/limitations/respiratory-medicine.ts",
@@ -389,7 +389,7 @@
       },
       {
         "path": "src/platform/docs/sources.ts",
-        "sha256": "c9a8d9cfd5499ca7e7ce90dbcc942ad6605b8d8e209aecb6f4ad2580a159d600"
+        "sha256": "83f1b0151b4d6384669ed46f70a580c80fd68be19d1ae6920a0a4303de0503c1"
       },
       {
         "path": "src/platform/governance/publication.ts",
@@ -409,7 +409,7 @@
       },
       {
         "path": "src/platform/kernel/protocol.ts",
-        "sha256": "8107298f3f9b4aa098fc1c15b55d25e1dbc873694533fbf68f475ad66408ee19"
+        "sha256": "808b0d201d01e17aa36a092e862c20df88d82640927fa8acfecb89dd2beed298"
       },
       {
         "path": "src/platform/log/event-log.ts",
@@ -490,7 +490,7 @@
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
-        "sha256": "d6b4bc5bb9c6955141a9934aa91efaee5445b01ee1742488e518b46480dab54e"
+        "sha256": "4b6d627e69897335ce2faf2b87b3829a3ed88a4cd03d448eaefad74624c02d8b"
       },
       {
         "path": "src/modules/anesthesia/demo/useDemonstration.ts",
@@ -502,7 +502,7 @@
       },
       {
         "path": "src/modules/anesthesia/engine.ts",
-        "sha256": "16e8b5fae520988c697d8e028dee5f8ed935de6130351648f8047c42085b50eb"
+        "sha256": "db4c1925b0f1e2b853f9ada0b3a11ba10b9d676827a312d28cc8d665b85cb2ab"
       },
       {
         "path": "src/modules/anesthesia/region/profiles.ts",
@@ -642,7 +642,7 @@
       },
       {
         "path": "src/platform/docs/limitations/renal-electrolyte.ts",
-        "sha256": "4312920c0cb617d08427cbb3df625a4024b78d6e9d471c4efce393586e309dfc"
+        "sha256": "94bd12b1c9bfb6a199b24fc3ad4f48d69516bd2dbb6d22828a07b4b081c7041a"
       },
       {
         "path": "src/platform/docs/limitations/respiratory-medicine.ts",
@@ -666,7 +666,7 @@
       },
       {
         "path": "src/platform/docs/sources.ts",
-        "sha256": "c9a8d9cfd5499ca7e7ce90dbcc942ad6605b8d8e209aecb6f4ad2580a159d600"
+        "sha256": "83f1b0151b4d6384669ed46f70a580c80fd68be19d1ae6920a0a4303de0503c1"
       },
       {
         "path": "src/platform/governance/publication.ts",
@@ -686,7 +686,7 @@
       },
       {
         "path": "src/platform/kernel/protocol.ts",
-        "sha256": "8107298f3f9b4aa098fc1c15b55d25e1dbc873694533fbf68f475ad66408ee19"
+        "sha256": "808b0d201d01e17aa36a092e862c20df88d82640927fa8acfecb89dd2beed298"
       },
       {
         "path": "src/platform/reporting/ScenarioProblemReport.tsx",

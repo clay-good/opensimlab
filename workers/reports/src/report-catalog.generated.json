@@ -3862,6 +3862,23 @@
       "limitationManifestHash": "sha256:d706f85182b7d2fccfe9dd737edbf53827fc95b196068fb442dfb6f37ba0b335"
     },
     {
+      "scenarioId": "proteinuria-a-ratio-that-doubled-and-a-patient-who-did-not",
+      "contentVersion": "0.1.0",
+      "moduleId": "renal-electrolyte",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:c9a9abf511d59d3d0de450e0e3246dab7d4674a08aa84c1130f905171f603c15",
+      "defaultsHash": "sha256:ff63a5cf6de2852ff4bd247fb1cd6847f6dccddf4bd0b8f92bb74f0d9aaf8169",
+      "maturityHash": "sha256:4f29550cff01e8dff99988fefebb15e953dfdb86cb001428d0e54835de67156f",
+      "sourceManifestHash": "sha256:e08844da5dec894395eaa99f27f4a7690c9f2f6f3d6a634e5eff5a80c66c7661",
+      "limitationManifestHash": "sha256:6b52f9da466179c173a3116455299efaf5863ef7641bb60a3faa925c6b8c1466"
+    },
+    {
       "scenarioId": "rhabdomyolysis-a-number-that-does-not-carry-the-risk",
       "contentVersion": "0.1.0",
       "moduleId": "renal-electrolyte",

@@ -59,6 +59,7 @@ import { supportsRenalContrastAttributionDemonstration } from '../../renal-elect
 import { supportsRenalRhabdomyolysisDemonstration } from '../../renal-electrolyte/demo/renal-rhabdomyolysis-demonstration';
 import { supportsRenalEstimatedFiltrationDemonstration } from '../../renal-electrolyte/demo/renal-estimated-filtration-demonstration';
 import { supportsRenalPhosphateTargetDemonstration } from '../../renal-electrolyte/demo/renal-phosphate-target-demonstration';
+import { supportsRenalProteinuriaRatioDemonstration } from '../../renal-electrolyte/demo/renal-proteinuria-ratio-demonstration';
 import { supportsDelayedImmuneEventDemonstration } from '../../oncology/demo/delayed-immune-event-demonstration';
 import { supportsIncidentalClotDemonstration } from '../../oncology/demo/incidental-clot-demonstration';
 import { supportsNormalTestToxicityDemonstration } from '../../oncology/demo/normal-test-toxicity-demonstration';
@@ -342,6 +343,7 @@ const WORKED_EXAMPLES: Readonly<Record<string, readonly ((scenario: Scenario) =>
     supportsRenalRhabdomyolysisDemonstration,
     supportsRenalEstimatedFiltrationDemonstration,
     supportsRenalPhosphateTargetDemonstration,
+    supportsRenalProteinuriaRatioDemonstration,
   ],
   oncology: [
         supportsDelayedImmuneEventDemonstration,

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "moduleId": "renal-electrolyte",
   "capabilityVersion": "0.1.0-alpha.48",
-  "scenarioCount": 11,
+  "scenarioCount": 12,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -1373,6 +1373,132 @@
           "status": "satisfied",
           "evidence": [
             "phosphate-target-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "proteinuria-a-ratio-that-doubled-and-a-patient-who-did-not",
+      "title": "Proteinuria: a ratio that nearly doubled, and a patient who did not change",
+      "moduleId": "renal-electrolyte",
+      "environment": "ward",
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario proteinuria-a-ratio-that-doubled-and-a-patient-who-did-not carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "5 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "proteinuria-ratio-fixtures.ts binds seed 5077 and content 0.1.0 to expert, progression-label error, recovery, and no-action contrasts. No excretion model is implemented."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "proteinuria-ratio.ts is the one lesson in this module where the missing measurement can actually be obtained: a matched first morning sample returns 189 mg/g against the 312 the case opens on. It narrows the question rather than closing it, and the engine says so — one matched value is not a timed collection and establishes no cause."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "Comparing the rise against the reference change, reading the sampling conditions, checking the patient against the number, and requesting a matched repeat are four distinct recorded steps. Changing treatment on the supplied pair and recording the change as progression are refused with explanations that claim neither stability nor correctness of the current treatment."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "The comparison, the sampling review, the clinical review, the matched repeat and its result, the owned decision, support, monitoring, and a current full assessment permit handoff of a narrowed question. A single settling number is not a gate and is not produced. Instructor takeover bounds a run in which the change is never compared and no repeat requested at 30 minutes, or an unfinished session at 180 minutes."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "satisfied",
+          "evidence": [
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary recorded actions. Unassisted mode remains silent; prompts do not reveal the matched value before it returns."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "Five event-bound objectives distinguish comparing a change against measurement variation, reading sampling conditions, checking the patient against the number, obtaining the measurement that would answer the question, and handing on what the finding rests on. Refused shortcuts and the authored uncompared contrast remain available after later care."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "3 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "proteinuria-ratio-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
           ]
         },
         {

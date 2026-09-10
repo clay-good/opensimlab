@@ -60,6 +60,7 @@ import { RenalContrastAttribution, supportsRenalContrastAttribution } from '../r
 import { RenalRhabdomyolysis, supportsRenalRhabdomyolysis } from '../renal-electrolyte/rhabdomyolysis';
 import { RenalEstimatedFiltration, supportsRenalEstimatedFiltration } from '../renal-electrolyte/estimated-filtration';
 import { RenalPhosphateTarget, supportsRenalPhosphateTarget } from '../renal-electrolyte/phosphate-target';
+import { RenalProteinuriaRatio, supportsRenalProteinuriaRatio } from '../renal-electrolyte/proteinuria-ratio';
 import { MeningococcalSepsis, supportsMeningococcalSepsis } from '../infectious-disease/meningococcal-sepsis';
 import { ObstructedKidney, supportsObstructedKidney } from '../infectious-disease/obstructed-kidney';
 import { FebrileNeutropenia, supportsFebrileNeutropenia } from '../infectious-disease/febrile-neutropenia';
@@ -1807,6 +1808,7 @@ export class AnesthesiaEngine {
   private readonly renalRhabdomyolysis: RenalRhabdomyolysis | null;
   private readonly renalEstimatedFiltration: RenalEstimatedFiltration | null;
   private readonly renalPhosphateTarget: RenalPhosphateTarget | null;
+  private readonly renalProteinuriaRatio: RenalProteinuriaRatio | null;
   private readonly meningococcalSepsis: MeningococcalSepsis | null;
   private readonly obstructedKidney: ObstructedKidney | null;
   private readonly febrileNeutropenia: FebrileNeutropenia | null;
@@ -1984,6 +1986,8 @@ export class AnesthesiaEngine {
     if (this.renalEstimatedFiltration) this.rhythm = 'sinus';
     this.renalPhosphateTarget = supportsRenalPhosphateTarget(options.scenario) ? new RenalPhosphateTarget() : null;
     if (this.renalPhosphateTarget) this.rhythm = 'sinus';
+    this.renalProteinuriaRatio = supportsRenalProteinuriaRatio(options.scenario) ? new RenalProteinuriaRatio() : null;
+    if (this.renalProteinuriaRatio) this.rhythm = 'sinus';
     this.meningococcalSepsis = supportsMeningococcalSepsis(options.scenario) ? new MeningococcalSepsis() : null;
     if (this.meningococcalSepsis) this.rhythm = 'sinus';
     this.obstructedKidney = supportsObstructedKidney(options.scenario) ? new ObstructedKidney() : null;
@@ -2402,6 +2406,11 @@ export class AnesthesiaEngine {
     if (this.renalHypermagnesemia && action.type !== 'renal-hypermagnesemia-response' && action.type !== 'silence-alarm') {
       this.log('warning', 'assessment', `renal-hypermagnesemia-generic-action-refused-${this.currentTick}`,
         'Only this lesson’s qualified respiratory support, calcium antagonism, exposure control, magnesium removal, observations, and continuing-care choices are available.');
+      return;
+    }
+    if (this.renalProteinuriaRatio && action.type !== 'renal-proteinuria-ratio-response' && action.type !== 'silence-alarm') {
+      this.log('warning', 'assessment', `renal-proteinuria-generic-action-refused-${this.currentTick}`,
+        'Only this lesson\u2019s comparison, sampling, clinical review, repeat, decision-ownership, observation, and continuing-care choices are available.');
       return;
     }
     if (this.renalPhosphateTarget && action.type !== 'renal-phosphate-target-response' && action.type !== 'silence-alarm') {
@@ -3911,6 +3920,19 @@ export class AnesthesiaEngine {
         }
         for (const event of this.renalHypermagnesemia.apply(action.payload.action, this.currentTick)) {
           this.log('warning', 'assessment', `renal-hypermagnesemia-${event.id}-${this.currentTick}`, event.message);
+        }
+        break;
+      }
+      case 'renal-proteinuria-ratio-response': {
+        if (!this.renalProteinuriaRatio || Reflect.ownKeys(action.payload).length !== 1
+          || !Object.hasOwn(action.payload, 'action')
+          || !Object.getOwnPropertyDescriptor(action.payload, 'action')!.enumerable
+          || !Object.hasOwn(Object.getOwnPropertyDescriptor(action.payload, 'action')!, 'value')) {
+          this.log('warning', 'assessment', `renal-proteinuria-action-refused-${this.currentTick}`, 'Only the declared dose-free proteinuria choices are available in this lesson.');
+          break;
+        }
+        for (const event of this.renalProteinuriaRatio.apply(action.payload.action, this.currentTick)) {
+          this.log('warning', 'assessment', `renal-proteinuria-${event.id}-${this.currentTick}`, event.message);
         }
         break;
       }
@@ -15685,6 +15707,9 @@ export class AnesthesiaEngine {
     for (const event of this.meningococcalSepsis?.advance(this.currentTick) ?? []) {
       this.log('warning', 'assessment', `meningococcal-sepsis-${event.id}-${this.currentTick}`, event.message);
     }
+    for (const event of this.renalProteinuriaRatio?.advance(this.currentTick) ?? []) {
+      this.log('warning', 'assessment', `renal-proteinuria-${event.id}-${this.currentTick}`, event.message);
+    }
     for (const event of this.renalPhosphateTarget?.advance(this.currentTick) ?? []) {
       this.log('warning', 'assessment', `renal-phosphate-${event.id}-${this.currentTick}`, event.message);
     }
@@ -16839,6 +16864,13 @@ export class AnesthesiaEngine {
     }
     if (this.renalHypermagnesemia) {
       const patient = this.renalHypermagnesemia.vitals();
+      crisisState = { ...crisisState, heartRateBpm: patient.heartRateBpm,
+        respiratoryRateBpm: patient.respiratoryRateBpm, spo2Percent: patient.spo2Percent,
+        systolicMmHg: patient.systolicMmHg, diastolicMmHg: patient.diastolicMmHg,
+        meanArterialMmHg: patient.meanArterialMmHg, coreTemperatureC: patient.coreTemperatureC };
+    }
+    if (this.renalProteinuriaRatio) {
+      const patient = this.renalProteinuriaRatio.vitals();
       crisisState = { ...crisisState, heartRateBpm: patient.heartRateBpm,
         respiratoryRateBpm: patient.respiratoryRateBpm, spo2Percent: patient.spo2Percent,
         systolicMmHg: patient.systolicMmHg, diastolicMmHg: patient.diastolicMmHg,
@@ -21689,6 +21721,7 @@ export class AnesthesiaEngine {
         ...(this.renalRhabdomyolysis ? { renalRhabdomyolysis: this.renalRhabdomyolysis.snapshot(this.currentTick) } : {}),
         ...(this.renalEstimatedFiltration ? { renalEstimatedFiltration: this.renalEstimatedFiltration.snapshot(this.currentTick) } : {}),
         ...(this.renalPhosphateTarget ? { renalPhosphateTarget: this.renalPhosphateTarget.snapshot(this.currentTick) } : {}),
+        ...(this.renalProteinuriaRatio ? { renalProteinuriaRatio: this.renalProteinuriaRatio.snapshot(this.currentTick) } : {}),
         ...(this.meningococcalSepsis ? { meningococcalSepsis: this.meningococcalSepsis.snapshot(this.currentTick) } : {}),
         ...(this.obstructedKidney ? { obstructedKidney: this.obstructedKidney.snapshot(this.currentTick) } : {}),
         ...(this.febrileNeutropenia ? { febrileNeutropenia: this.febrileNeutropenia.snapshot(this.currentTick) } : {}),
@@ -21925,7 +21958,7 @@ export class AnesthesiaEngine {
   invalidParameters(): Set<string> {
     const invalid = new Set<string>();
     // These lessons do not supply a capnogram or a modeled oxygen setting.
-    if (this.myxedema || this.hypercalcemia || this.hypocalcemia || this.hyponatremiaCorrection || this.avpDeficiency || this.refeeding || this.perioperativeDiabetes || this.renalHyperkalemia || this.renalHypokalemia || this.renalHyponatremia || this.renalHypernatremia || this.renalHypocalcemia || this.renalHypermagnesemia || this.renalHypomagnesemia || this.renalContrastAttribution || this.renalRhabdomyolysis || this.renalEstimatedFiltration || this.renalPhosphateTarget || this.meningococcalSepsis || this.obstructedKidney || this.febrileNeutropenia || this.necrotizingInfection || this.endocarditisHeartFailure || this.severePneumonia || this.toxicShock || this.possibleSepsis || this.septicShockLabel || this.meningitisImaging || this.lowScore || this.countedRate || this.pairedReading || this.afferentLimb || this.quietPatient || this.proxyScale || this.lastKnownWell || this.oxygenTargetScale || this.lostContingency || this.delayedImmuneEvent || this.incidentalClot || this.normalTestToxicity || this.prognosisQuestion || this.laboratoryTls || this.rareEarlyMyocarditis || this.loweringTheCount || this.inheritedUrgency || this.trialRule || this.silentInteraction || this.easyLabel) {
+    if (this.myxedema || this.hypercalcemia || this.hypocalcemia || this.hyponatremiaCorrection || this.avpDeficiency || this.refeeding || this.perioperativeDiabetes || this.renalHyperkalemia || this.renalHypokalemia || this.renalHyponatremia || this.renalHypernatremia || this.renalHypocalcemia || this.renalHypermagnesemia || this.renalHypomagnesemia || this.renalContrastAttribution || this.renalRhabdomyolysis || this.renalEstimatedFiltration || this.renalPhosphateTarget || this.renalProteinuriaRatio || this.meningococcalSepsis || this.obstructedKidney || this.febrileNeutropenia || this.necrotizingInfection || this.endocarditisHeartFailure || this.severePneumonia || this.toxicShock || this.possibleSepsis || this.septicShockLabel || this.meningitisImaging || this.lowScore || this.countedRate || this.pairedReading || this.afferentLimb || this.quietPatient || this.proxyScale || this.lastKnownWell || this.oxygenTargetScale || this.lostContingency || this.delayedImmuneEvent || this.incidentalClot || this.normalTestToxicity || this.prognosisQuestion || this.laboratoryTls || this.rareEarlyMyocarditis || this.loweringTheCount || this.inheritedUrgency || this.trialRule || this.silentInteraction || this.easyLabel) {
       invalid.add('etco2MmHg');
       invalid.add('fio2');
     }

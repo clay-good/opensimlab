@@ -12,6 +12,7 @@ import { RenalContrastAttributionTray } from './RenalContrastAttributionTray';
 import { RenalRhabdomyolysisTray } from './RenalRhabdomyolysisTray';
 import { RenalEstimatedFiltrationTray } from './RenalEstimatedFiltrationTray';
 import { RenalPhosphateTargetTray } from './RenalPhosphateTargetTray';
+import { RenalProteinuriaRatioTray } from './RenalProteinuriaRatioTray';
 import { RenalHypomagnesemiaTray } from './RenalHypomagnesemiaTray';
 import { RenalHypernatremiaTray } from './RenalHypernatremiaTray';
 import { RenalHypocalcemiaTray } from './RenalHypocalcemiaTray';
@@ -23,6 +24,7 @@ import { supportsRenalContrastAttribution } from './contrast-attribution';
 import { supportsRenalRhabdomyolysis } from './rhabdomyolysis';
 import { supportsRenalEstimatedFiltration } from './estimated-filtration';
 import { supportsRenalPhosphateTarget } from './phosphate-target';
+import { supportsRenalProteinuriaRatio } from './proteinuria-ratio';
 import { supportsRenalHypomagnesemia } from './hypomagnesemia';
 import { supportsRenalHypernatremia } from './hypernatremia';
 import { supportsRenalHypocalcemia } from './hypocalcemia';
@@ -33,6 +35,7 @@ export const RENAL_ELECTROLYTE_TRAYS: readonly LessonTray[] = [
   { id: 'RenalHyperkalemia', actionType: 'renal-hyperkalemia-response', supports: supportsRenalHyperkalemia, assessment: (r) => r?.renalHyperkalemia, opensSource: true, Component: RenalHyperkalemiaTray as LessonTray['Component'] },
   { id: 'RenalHypermagnesemia', actionType: 'renal-hypermagnesemia-response', supports: supportsRenalHypermagnesemia, assessment: (r) => r?.renalHypermagnesemia, opensSource: true, Component: RenalHypermagnesemiaTray as LessonTray['Component'] },
   { id: 'RenalContrastAttribution', actionType: 'renal-contrast-attribution-response', supports: supportsRenalContrastAttribution, assessment: (r) => r?.renalContrastAttribution, opensSource: true, Component: RenalContrastAttributionTray as LessonTray['Component'] },
+  { id: 'RenalProteinuriaRatio', actionType: 'renal-proteinuria-ratio-response', supports: supportsRenalProteinuriaRatio, assessment: (r) => r?.renalProteinuriaRatio, opensSource: true, Component: RenalProteinuriaRatioTray as LessonTray['Component'] },
   { id: 'RenalPhosphateTarget', actionType: 'renal-phosphate-target-response', supports: supportsRenalPhosphateTarget, assessment: (r) => r?.renalPhosphateTarget, opensSource: true, Component: RenalPhosphateTargetTray as LessonTray['Component'] },
   { id: 'RenalEstimatedFiltration', actionType: 'renal-estimated-filtration-response', supports: supportsRenalEstimatedFiltration, assessment: (r) => r?.renalEstimatedFiltration, opensSource: true, Component: RenalEstimatedFiltrationTray as LessonTray['Component'] },
   { id: 'RenalRhabdomyolysis', actionType: 'renal-rhabdomyolysis-response', supports: supportsRenalRhabdomyolysis, assessment: (r) => r?.renalRhabdomyolysis, opensSource: true, Component: RenalRhabdomyolysisTray as LessonTray['Component'] },

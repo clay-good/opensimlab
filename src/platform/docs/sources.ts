@@ -64,6 +64,30 @@ const CHECKED = '2026-08-20';
 
 export const SOURCES: readonly Source[] = [
   {
+    id: 'renal-proteinuria-variability-2018', pmid: '30031564', authors: 'Waikar SS, Rebholz CM, Zheng Z, Hurwitz S, et al',
+    title: 'Biological Variability of Estimated GFR and Albuminuria in CKD', publication: 'American Journal of Kidney Diseases', year: 2018,
+    locator: '72(4):538\u2013546; doi:10.1053/j.ajkd.2018.04.023; within-person coefficients of variation and reference change values',
+    usedFor: 'Across repeat samples from clinically stable outpatients, the within-person coefficient of variation was 29.7% for a random spot albumin-creatinine ratio, with reference change values of +124% and \u221255%. A ratio therefore has to roughly double before a rise is distinguishable from measurement variation. The lesson uses this to teach what a single pair of values can and cannot show.',
+    verifiedAgainst: 'PubMed PMID 30031564 bibliographic record and abstract, read field by field through NCBI E-utilities. Fifty clinically stable outpatients, cross-sectional, with the authors stating that the small sample limits the ability to detect differences. Reference change values describe measurement variation in a stable population; they are not a rule that a smaller change is meaningless in an unstable one.',
+    verifiedOn: '2026-09-10',
+  },
+  {
+    id: 'renal-proteinuria-diurnal-2009', pmid: '19759526', authors: 'Fine DM, Ziegenbein M, Petri M, Han EC',
+    title: 'A prospective study of protein excretion using short-interval timed urine collections in patients with lupus nephritis', publication: 'Kidney International', year: 2009,
+    locator: '76(12):1284\u20131288; doi:10.1038/ki.2009.344; diurnal-variation results and comparison of sampling times',
+    usedFor: 'Protein excretion varied significantly through the day, peaking at 6\u201312 hours and reaching its nadir at 18\u201324 hours, and the first morning void correlated well but underestimated the 24-hour ratio while random spot samples agreed less well. The lesson uses this to show that when a sample was taken is part of what it says.',
+    verifiedAgainst: 'PubMed PMID 19759526 bibliographic record and abstract, read field by field through NCBI E-utilities. Patients with lupus nephritis only, so the pattern may not transfer. The paper\u2019s own conclusion endorses a 12-hour overnight collection as an excellent surrogate: it argues for better sampling rather than against sampling, which is the position taken here.',
+    verifiedOn: '2026-09-10',
+  },
+  {
+    id: 'renal-proteinuria-dipstick-2017', pmid: '28422372', authors: 'Baba Y, Furuta I, Zhai T, Ohkuchi A, et al',
+    title: 'Effect of urine creatinine level during pregnancy on dipstick test', publication: 'Journal of Obstetrics and Gynaecology Research', year: 2017,
+    locator: '43(6):967\u2013973; doi:10.1111/jog.13327; false-negative analysis by urine creatinine concentration',
+    usedFor: 'Dipstick false negatives were associated with dilute urine: half the false-negative samples had a urine creatinine below 47 mg/dL against 28% of the rest. The lesson uses this to teach that a dipstick reports concentration, so how dilute the sample was changes what it says.',
+    verifiedAgainst: 'PubMed PMID 28422372 bibliographic record and abstract, read field by field through NCBI E-utilities. A pregnant population at one institution, with only twenty false-negative samples driving the comparison at p = 0.046. It demonstrates an association between dilution and false negatives in that setting rather than establishing a general dilution threshold.',
+    verifiedOn: '2026-09-10',
+  },
+  {
     id: 'renal-phosphate-binders-2012', pmid: '22822075', authors: 'Block GA, Wheeler DC, Persky MS, Kestenbaum B, et al',
     title: 'Effects of phosphate binders in moderate CKD', publication: 'Journal of the American Society of Nephrology', year: 2012,
     locator: '23(8):1407\u20131415; doi:10.1681/ASN.2012030223; results and conclusion',

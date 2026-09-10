@@ -105,7 +105,7 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
   });
 
   it('covers every renal and electrolyte lab', () => {
-    expect(RENAL_ELECTROLYTE_SCENARIOS).toHaveLength(11);
+    expect(RENAL_ELECTROLYTE_SCENARIOS).toHaveLength(12);
     expect(uncovered(RENAL_ELECTROLYTE_SCENARIOS, 'renal-electrolyte')).toEqual([]);
   });
 
@@ -283,15 +283,16 @@ describe('Requirement: The Worked-Example Claim Matches The Audit', () => {
     }
     expect(readme).toContain('All sixteen specialties are complete on both counts');
     expect(readme).toContain('anesthesia, and surgery and trauma, whose ten labs are the newest.');
-    // The README names the one module still short of its planned count, and names the right
-    // one. It said the catalogue was complete while surgery and trauma was the last gap; the
-    // seventh renal lab reopened a smaller one, and the front door has to say so rather than
-    // keep a claim that has stopped being true.
+    // Every module is at its declared count and the catalogue reached the 256 it was ratified
+    // against. This claim was briefly false: it read as complete at 250 while renal and
+    // electrolyte had stopped at slice 6 of 12, so the fragments below pin the honest form and
+    // forbid the shapes the sentence took while it was wrong.
     // Asserted on fragments that do not straddle the README's line wrap.
-    expect(readme).toContain('Renal and electrolyte is at');
-    expect(readme).toContain('every other module is at its full planned count');
+    expect(readme).toContain('Every module is at its full');
+    expect(readme).toContain('256 is the number the catalogue was ratified against');
     expect(readme).not.toContain('of a planned ten');
-    // Surgery and trauma finished; it must not come back as the module being excused.
+    // No module may be named as the one still short, because none is.
+    expect(readme).not.toContain('is at\n11 of a planned 12');
     expect(readme).not.toContain('surgery and trauma is at');
     // The hedge this sentence used to carry belongs to a state the audit has
     // left behind. If it comes back, one of the tests above is failing too.
