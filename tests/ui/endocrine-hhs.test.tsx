@@ -6,17 +6,23 @@ import { Prebrief } from '@anesthesia/ui/Prebrief';
 import { LIMITATIONS } from '@platform/docs/limitations';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { ENDOCRINE_METABOLIC_TRAYS } from '../../src/modules/endocrine-metabolic/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, ENDOCRINE_METABOLIC_TRAYS);
 import { HHS_OSMOLALITY_TRAJECTORY as SCENARIO } from '../../src/modules/endocrine-metabolic/scenarios/hhs-osmolality-trajectory';
 
 const markup = (assessment: NonNullable<ActionCockpitProps['resuscitation']['endocrineHhsAssessment']>, extra: {
-  endocrineHhsGuidance?: ActionCockpitProps['endocrineHhsGuidance'];
-  endocrineHhsDemonstrating?: boolean;
+  guidance?: ActionCockpitProps['guidance'];
+  demonstratingLessonId?: string | undefined;
 } = {}) => renderToStaticMarkup(createElement(ActionCockpit, {
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: ENDOCRINE_METABOLIC_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, endocrineHhsAssessment: assessment },
   lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 450, respiratoryRateBpm: 22, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 10 },
   intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0,
-  onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onEndocrineHhsResponse: () => {},
+  onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onLessonAction: () => {},
   ...extra,
 } satisfies ActionCockpitProps));
 
@@ -26,8 +32,8 @@ describe('Endocrine HHS experience', () => {
     expect(html).toContain('<h1>HHS: follow the whole trajectory</h1>');
     expect(html).toContain('HHS correction and reassessment rehearsal');
     expect(html).not.toContain('ASA 4');
-    expect(crisisResponseAvailability(SCENARIO).hasEndocrineHhsResponse).toBe(true);
-    expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasEndocrineHhsResponse).toBe(false);
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasEndocrineHhsResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasEndocrineHhsResponse).toBe(false);
   });
   it('keeps each panel visible with one cognitive action and no treatment controls', () => {
     const fields = ['supportAtTick', 'contextAtTick', 'recognitionAtTick', 'readinessAtTick', 'reassessmentAtTick', 'handoffAtTick'] as const;
@@ -52,21 +58,21 @@ describe('Endocrine HHS tutor and worked example', () => {
 
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(start)).not.toContain('A moment to think');
-    expect(markup(start, { endocrineHhsGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(start, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner\u2019s own recorded steps when guidance is on', () => {
-    const opening = markup(start, { endocrineHhsGuidance: 'guided' });
+    const opening = markup(start, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('Confirm who owns fluid');
-    const next = markup(reconciled, { endocrineHhsGuidance: 'guided' });
+    const next = markup(reconciled, { guidance: 'guided' });
     expect(next).toContain('Read the osmolality, the dehydration and the cognition as one finding');
     expect(next).not.toContain('Confirm who owns fluid');
   });
 
   it('never grades her progress in either direction', () => {
     const reviewed = { ...reconciled, recognitionAtTick: 2, readinessAtTick: 3, reassessmentAtTick: 4 };
-    const closing = markup(reviewed, { endocrineHhsGuidance: 'guided' });
+    const closing = markup(reviewed, { guidance: 'guided' });
     expect(closing).toContain('what is still moving');
     expect(closing).not.toContain('she is improving');
     expect(closing).not.toContain('resolved');
@@ -74,13 +80,13 @@ describe('Endocrine HHS tutor and worked example', () => {
 
   it('goes quiet once the handoff is recorded', () => {
     const ended = { supportAtTick: 0, contextAtTick: 1, recognitionAtTick: 2, readinessAtTick: 3, reassessmentAtTick: 4, handoffAtTick: 5 };
-    expect(markup(ended, { endocrineHhsGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(ended, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = 'Confirm prepared support';
     expect(markup(start)).toContain(label);
-    const watching = markup(start, { endocrineHhsGuidance: 'guided', endocrineHhsDemonstrating: true });
+    const watching = markup(start, { guidance: 'guided', demonstratingLessonId: 'HhsOsmolality' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

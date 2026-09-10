@@ -7,6 +7,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { objectiveFindings } from '@anesthesia/ui/Debrief';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { OBSTETRICS_TRAYS } from '../../src/modules/obstetrics/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, OBSTETRICS_TRAYS);
 import type { EngineEvent } from '@platform/kernel/protocol';
 import { MAGNESIUM_SULFATE_TOXICITY_RECOGNITION as SCENARIO } from '../../src/modules/obstetrics/scenarios/magnesium-sulfate-toxicity-recognition';
 
@@ -25,7 +31,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['obstetricsMagnesiumToxicityAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: OBSTETRICS_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, obstetricsMagnesiumToxicityAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 450, respiratoryRateBpm: 10, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -34,7 +40,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onObstetricsMagnesiumToxicityResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -54,7 +60,7 @@ describe('Obstetrics magnesium-toxicity UI', () => {
   it('offers exactly one live control per recorded step, in the enforced order', () => {
     STATES.forEach((state, index) => {
       const onAction = vi.fn();
-      act(() => root.render(createElement(ActionCockpit, props(state, { onObstetricsMagnesiumToxicityResponse: onAction }))));
+      act(() => root.render(createElement(ActionCockpit, props(state, { onLessonAction: (_type: string, action: string) => onAction(action as never) }))));
       expect(buttons()).toHaveLength(index === 6 ? 0 : 1);
       expect(container.querySelectorAll('[role="status"]')).toHaveLength(1);
       if (index === 6) return;
@@ -65,8 +71,8 @@ describe('Obstetrics magnesium-toxicity UI', () => {
   });
 
   it('requires exact identity and debriefs exact event prefixes', () => {
-    expect(crisisResponseAvailability(SCENARIO, [])).toMatchObject({ hasObstetricsMagnesiumToxicityResponse: true });
-    expect(crisisResponseAvailability({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'clone' } }, []))
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO, [])).toMatchObject({ hasObstetricsMagnesiumToxicityResponse: true });
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'clone' } }, []))
       .toMatchObject({ hasObstetricsMagnesiumToxicityResponse: false });
     const suffixes = ['support-activated', 'context-reconciled', 'uncertainty-reviewed', 'readiness-reviewed', 'five-minute-report-reviewed', 'active-risk-handoff-recorded'];
     const log: EngineEvent[] = suffixes.map((suffix, tick) => ({ tick, eventId: `obstetrics-magnesium-toxicity-${suffix}-${tick}`, severity: 'info', category: 'assessment', message: suffix }));
@@ -83,8 +89,8 @@ describe('Obstetrics magnesium-toxicity experience', () => {
   });
 
   it('fails closed and never offers an infusion change, an airway, or an antidote', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasObstetricsMagnesiumToxicityResponse).toBe(true);
-    expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasObstetricsMagnesiumToxicityResponse).toBe(false);
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasObstetricsMagnesiumToxicityResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasObstetricsMagnesiumToxicityResponse).toBe(false);
     expect(STATES.map((state) => lessonButtons(markup(state)).length)).toEqual([1, 1, 1, 1, 1, 1, 0]);
     expect(markup(STATES[6]!)).toContain('Respiratory, renal, preeclampsia, medication, newborn, support, and outcome risks handed off.');
     for (const html of STATES.map((state) => markup(state))) {
@@ -96,32 +102,32 @@ describe('Obstetrics magnesium-toxicity experience', () => {
 describe('Magnesium-toxicity tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { obstetricsMagnesiumToxicityGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { obstetricsMagnesiumToxicityGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('before you work anything out');
-    const next = markup(STATES[1]!, { obstetricsMagnesiumToxicityGuidance: 'guided' });
+    const next = markup(STATES[1]!, { guidance: 'guided' });
     expect(next).toContain('that is the whole mechanism');
     expect(next).not.toContain('before you work anything out');
   });
 
   it('quotes all three units and keeps the alternatives open', () => {
-    const html = markup(STATES[2]!, { obstetricsMagnesiumToxicityGuidance: 'guided' });
+    const html = markup(STATES[2]!, { guidance: 'guided' });
     expect(html).toContain('11.8 mg/dL is the same as 4.85 mmol/L and 9.7 mEq/L');
     expect(html).toContain('a documented source of error');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(STATES[6]!, { obstetricsMagnesiumToxicityGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(STATES[6]!, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { obstetricsMagnesiumToxicityGuidance: 'guided', obstetricsMagnesiumToxicityDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'MagnesiumToxicity' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

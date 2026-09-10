@@ -4,12 +4,18 @@ import { describe, expect, it } from 'vitest';
 import { PrerenderedBody } from '@routes/Prerendered';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { OBSTETRICS_TRAYS } from '../../src/modules/obstetrics/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, OBSTETRICS_TRAYS);
 import { UMBILICAL_CORD_PROLAPSE_URGENT_BIRTH_COORDINATION as SCENARIO } from '../../src/modules/obstetrics/scenarios/umbilical-cord-prolapse-urgent-birth-coordination';
 
 const markup = (assessment: NonNullable<ActionCockpitProps['resuscitation']['obstetricsCordProlapseAssessment']>) => renderToStaticMarkup(createElement(ActionCockpit, {
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: OBSTETRICS_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, obstetricsCordProlapseAssessment: assessment },
-  lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 500, respiratoryRateBpm: 10, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 2 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onObstetricsCordProlapseResponse: () => {},
+  lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 500, respiratoryRateBpm: 10, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 2 }, intubated: false, airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {}, onLessonAction: () => {},
 } satisfies ActionCockpitProps));
 
 describe('Obstetrics cord-prolapse experience', () => {
@@ -21,14 +27,14 @@ describe('Obstetrics cord-prolapse experience', () => {
   });
 
   it('requires exact identity and exposes one calm cognitive action at a time', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasObstetricsCordProlapseResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasObstetricsCordProlapseResponse).toBe(true);
     const malformed = [
       { ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'umbilical-cord-prolapse-urgent-birth-coordination-lookalike' } },
       { ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) },
       { ...SCENARIO, timeline: [...SCENARIO.timeline, SCENARIO.timeline[0]!] },
       { ...SCENARIO, timeline: [...SCENARIO.timeline, { ...SCENARIO.timeline[0]!, id: 'bad-event', type: 'rhythm-change', target: 'pea' } as never] },
     ];
-    for (const scenario of malformed) expect(crisisResponseAvailability(scenario).hasObstetricsCordProlapseResponse).toBe(false);
+    for (const scenario of malformed) expect(crisisResponseAvailabilityWithTrays(scenario).hasObstetricsCordProlapseResponse).toBe(false);
     const states = [
       { supportAtTick: null, contextAtTick: null, bridgeAtTick: null, birthPlanAtTick: null, reassessmentAtTick: null, handoffAtTick: null },
       { supportAtTick: 1, contextAtTick: null, bridgeAtTick: null, birthPlanAtTick: null, reassessmentAtTick: null, handoffAtTick: null },

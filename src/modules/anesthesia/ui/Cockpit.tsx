@@ -1783,24 +1783,6 @@ export function Cockpit({
           neurologyMyastheniaDemonstrating={demonstrating && registryDemo?.id === 'Myasthenia'}
           neurologyDysreflexiaGuidance={session.guidance}
           neurologyDysreflexiaDemonstrating={demonstrating && registryDemo?.id === 'Dysreflexia'}
-          obstetricsMaternalArrestGuidance={session.guidance}
-          obstetricsMaternalArrestDemonstrating={demonstrating && registryDemo?.id === 'MaternalArrest'}
-          obstetricsShoulderDystociaGuidance={session.guidance}
-          obstetricsShoulderDystociaDemonstrating={demonstrating && registryDemo?.id === 'ShoulderDystocia'}
-          obstetricsCordProlapseGuidance={session.guidance}
-          obstetricsCordProlapseDemonstrating={demonstrating && registryDemo?.id === 'CordProlapse'}
-          obstetricsUterineRuptureGuidance={session.guidance}
-          obstetricsUterineRuptureDemonstrating={demonstrating && registryDemo?.id === 'UterineRupture'}
-          obstetricsMagnesiumToxicityGuidance={session.guidance}
-          obstetricsMagnesiumToxicityDemonstrating={demonstrating && registryDemo?.id === 'MagnesiumToxicity'}
-          obstetricsHighNeuraxialGuidance={session.guidance}
-          obstetricsHighNeuraxialDemonstrating={demonstrating && registryDemo?.id === 'HighNeuraxial'}
-          obstetricsFailedIntubationGuidance={session.guidance}
-          obstetricsFailedIntubationDemonstrating={demonstrating && registryDemo?.id === 'FailedIntubation'}
-          obstetricsMaternalNeonatalHandoffGuidance={session.guidance}
-          obstetricsMaternalNeonatalHandoffDemonstrating={demonstrating && registryDemo?.id === 'MaternalNeonatalHandoff'}
-          obstetricsOxytocinTachysystoleGuidance={session.guidance}
-          obstetricsOxytocinTachysystoleDemonstrating={demonstrating && registryDemo?.id === 'OxytocinTachysystole'}
           hemorrhagicShockGuidance={session.guidance}
           hemorrhagicShockDemonstrating={demonstrating && registryDemo?.id === 'HemorrhagicShock'}
           undifferentiatedShockGuidance={session.guidance}
@@ -1848,10 +1830,6 @@ export function Cockpit({
           easyLabel={equipment?.resuscitation.easyLabel}
           negativeScan={equipment?.resuscitation.negativeScan}
           risingRequirement={equipment?.resuscitation.risingRequirement}
-          endocrineDkaResolutionGuidance={session.guidance}
-          endocrineDkaResolutionDemonstrating={demonstrating && registryDemo?.id === 'DkaResolution'}
-          endocrineHhsGuidance={session.guidance}
-          endocrineHhsDemonstrating={demonstrating && registryDemo?.id === 'HhsOsmolality'}
           scenario={scenario}
           region={region}
           infusions={infusions}
@@ -1970,39 +1948,6 @@ export function Cockpit({
           })}
           onHyponatremiaResponse={(action) => session.act({
             type: 'hyponatremia-response', payload: { action },
-          })}
-          onObstetricsMaternalArrestResponse={(action) => session.act({
-            type: 'maternal-cardiac-arrest-response', payload: { action },
-          })}
-          onObstetricsShoulderDystociaResponse={(action) => session.act({
-            type: 'shoulder-dystocia-cognitive-sequence-response', payload: { action },
-          })}
-          onObstetricsCordProlapseResponse={(action) => session.act({
-            type: 'umbilical-cord-prolapse-urgent-birth-coordination-response', payload: { action },
-          })}
-          onObstetricsUterineRuptureResponse={(action) => session.act({
-            type: 'suspected-uterine-rupture-recognition-response', payload: { action },
-          })}
-          onObstetricsMagnesiumToxicityResponse={(action) => session.act({
-            type: 'magnesium-sulfate-toxicity-recognition-response', payload: { action },
-          })}
-          onObstetricsHighNeuraxialResponse={(action) => session.act({
-            type: 'high-neuraxial-block-obstetric-coordination-response', payload: { action },
-          })}
-          onObstetricsFailedIntubationResponse={(action) => session.act({
-            type: 'failed-obstetric-intubation-oxygenation-first-response', payload: { action },
-          })}
-          onObstetricsMaternalNeonatalHandoffResponse={(action) => session.act({
-            type: 'maternal-to-neonatal-resuscitation-handoff-response', payload: { action },
-          })}
-          onObstetricsOxytocinTachysystoleResponse={(action) => session.act({
-            type: 'oxytocin-associated-uterine-tachysystole-response', payload: { action },
-          })}
-          onEndocrineDkaResolutionResponse={(action) => session.act({
-            type: 'dka-resolution-transition-response', payload: { action },
-          })}
-          onEndocrineHhsResponse={(action) => session.act({
-            type: 'hhs-osmolality-trajectory-response', payload: { action },
           })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },

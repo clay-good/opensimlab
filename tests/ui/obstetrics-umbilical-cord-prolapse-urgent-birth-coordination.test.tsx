@@ -7,6 +7,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { objectiveFindings } from '@anesthesia/ui/Debrief';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { OBSTETRICS_TRAYS } from '../../src/modules/obstetrics/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, OBSTETRICS_TRAYS);
 import type { EngineEvent } from '@platform/kernel/protocol';
 import { UMBILICAL_CORD_PROLAPSE_URGENT_BIRTH_COORDINATION as SCENARIO } from '../../src/modules/obstetrics/scenarios/umbilical-cord-prolapse-urgent-birth-coordination';
 
@@ -25,7 +31,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['obstetricsCordProlapseAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: OBSTETRICS_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, obstetricsCordProlapseAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 450, respiratoryRateBpm: 10, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -34,7 +40,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onObstetricsCordProlapseResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -54,7 +60,7 @@ describe('Obstetrics cord-prolapse UI', () => {
   it('offers exactly one live control per recorded step, in the enforced order', () => {
     STATES.forEach((state, index) => {
       const onAction = vi.fn();
-      act(() => root.render(createElement(ActionCockpit, props(state, { onObstetricsCordProlapseResponse: onAction }))));
+      act(() => root.render(createElement(ActionCockpit, props(state, { onLessonAction: (_type: string, action: string) => onAction(action as never) }))));
       expect(buttons()).toHaveLength(index === 6 ? 0 : 1);
       expect(container.querySelectorAll('[role="status"]')).toHaveLength(1);
       if (index === 6) return;
@@ -65,8 +71,8 @@ describe('Obstetrics cord-prolapse UI', () => {
   });
 
   it('requires exact identity and debriefs exact event prefixes', () => {
-    expect(crisisResponseAvailability(SCENARIO, [])).toMatchObject({ hasObstetricsCordProlapseResponse: true });
-    expect(crisisResponseAvailability({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'clone' } }, []))
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO, [])).toMatchObject({ hasObstetricsCordProlapseResponse: true });
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'clone' } }, []))
       .toMatchObject({ hasObstetricsCordProlapseResponse: false });
     const suffixes = ['support-activated', 'context-reconciled', 'bridge-reviewed', 'birth-plan-reviewed', 'transfer-report-reviewed', 'active-risk-handoff-recorded'];
     const log: EngineEvent[] = suffixes.map((suffix, tick) => ({ tick, eventId: `obstetrics-cord-prolapse-${suffix}-${tick}`, severity: 'info', category: 'assessment', message: suffix }));
@@ -83,8 +89,8 @@ describe('Obstetrics cord-prolapse experience', () => {
   });
 
   it('fails closed and never offers a cord maneuver, a position, or a birth', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasObstetricsCordProlapseResponse).toBe(true);
-    expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasObstetricsCordProlapseResponse).toBe(false);
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasObstetricsCordProlapseResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasObstetricsCordProlapseResponse).toBe(false);
     expect(STATES.map((state) => lessonButtons(markup(state)).length)).toEqual([1, 1, 1, 1, 1, 1, 0]);
     expect(markup(STATES[6]!)).toContain('Fetal, maternal, theatre, newborn, support, documentation, and outcome risks handed off.');
     for (const html of STATES.map((state) => markup(state))) {
@@ -96,32 +102,32 @@ describe('Obstetrics cord-prolapse experience', () => {
 describe('Cord-prolapse tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { obstetricsCordProlapseGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { obstetricsCordProlapseGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('get a theatre opened now');
-    const next = markup(STATES[1]!, { obstetricsCordProlapseGuidance: 'guided' });
+    const next = markup(STATES[1]!, { guidance: 'guided' });
     expect(next).toContain('read what it implies');
     expect(next).not.toContain('get a theatre opened now');
   });
 
   it('names the bedside measures as a bridge to theatre', () => {
-    const html = markup(STATES[2]!, { obstetricsCordProlapseGuidance: 'guided' });
+    const html = markup(STATES[2]!, { guidance: 'guided' });
     expect(html).toContain('as a bridge rather than as the treatment');
     expect(html).toContain('none of them is a reason to spend another minute at the bedside');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(STATES[6]!, { obstetricsCordProlapseGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(STATES[6]!, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { obstetricsCordProlapseGuidance: 'guided', obstetricsCordProlapseDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'CordProlapse' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

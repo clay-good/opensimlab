@@ -7,6 +7,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { objectiveFindings } from '@anesthesia/ui/Debrief';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { OBSTETRICS_TRAYS } from '../../src/modules/obstetrics/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, OBSTETRICS_TRAYS);
 import type { EngineEvent } from '@platform/kernel/protocol';
 import { MATERNAL_TO_NEONATAL_RESUSCITATION_HANDOFF as SCENARIO } from '../../src/modules/obstetrics/scenarios/maternal-to-neonatal-resuscitation-handoff';
 
@@ -25,7 +31,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['obstetricsMaternalNeonatalHandoffAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: OBSTETRICS_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, obstetricsMaternalNeonatalHandoffAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 450, respiratoryRateBpm: 10, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -34,7 +40,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onObstetricsMaternalNeonatalHandoffResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -54,7 +60,7 @@ describe('Obstetrics maternal-neonatal-handoff UI', () => {
   it('offers exactly one live control per recorded step, in the enforced order', () => {
     STATES.forEach((state, index) => {
       const onAction = vi.fn();
-      act(() => root.render(createElement(ActionCockpit, props(state, { onObstetricsMaternalNeonatalHandoffResponse: onAction }))));
+      act(() => root.render(createElement(ActionCockpit, props(state, { onLessonAction: (_type: string, action: string) => onAction(action as never) }))));
       expect(buttons()).toHaveLength(index === 6 ? 0 : 1);
       expect(container.querySelectorAll('[role="status"]')).toHaveLength(1);
       if (index === 6) return;
@@ -65,8 +71,8 @@ describe('Obstetrics maternal-neonatal-handoff UI', () => {
   });
 
   it('requires exact identity and debriefs exact event prefixes', () => {
-    expect(crisisResponseAvailability(SCENARIO, [])).toMatchObject({ hasObstetricsMaternalNeonatalHandoffResponse: true });
-    expect(crisisResponseAvailability({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'clone' } }, []))
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO, [])).toMatchObject({ hasObstetricsMaternalNeonatalHandoffResponse: true });
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'clone' } }, []))
       .toMatchObject({ hasObstetricsMaternalNeonatalHandoffResponse: false });
     const suffixes = ['support-activated', 'context-reconciled', 'safety-reviewed', 'transfer-reviewed', 'five-minute-report-reviewed', 'active-risk-handoff-recorded'];
     const log: EngineEvent[] = suffixes.map((suffix, tick) => ({ tick, eventId: `obstetrics-maternal-neonatal-handoff-${suffix}-${tick}`, severity: 'info', category: 'assessment', message: suffix }));
@@ -83,8 +89,8 @@ describe('Obstetrics maternal-neonatal-handoff experience', () => {
   });
 
   it('fails closed and never offers a resuscitation, a test, or a conversation', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasObstetricsMaternalNeonatalHandoffResponse).toBe(true);
-    expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasObstetricsMaternalNeonatalHandoffResponse).toBe(false);
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasObstetricsMaternalNeonatalHandoffResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasObstetricsMaternalNeonatalHandoffResponse).toBe(false);
     expect(STATES.map((state) => lessonButtons(markup(state)).length)).toEqual([1, 1, 1, 1, 1, 1, 0]);
     expect(markup(STATES[6]!)).toContain('Postresuscitation, maternal, family, documentation, follow-up, and outcome risks handed off.');
     for (const html of STATES.map((state) => markup(state))) {
@@ -96,32 +102,32 @@ describe('Obstetrics maternal-neonatal-handoff experience', () => {
 describe('Maternal-neonatal-handoff tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { obstetricsMaternalNeonatalHandoffGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { obstetricsMaternalNeonatalHandoffGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('who owns the mother and who owns the newborn');
-    const next = markup(STATES[1]!, { obstetricsMaternalNeonatalHandoffGuidance: 'guided' });
+    const next = markup(STATES[1]!, { guidance: 'guided' });
     expect(next).toContain('both clocks and the whole family in one view');
     expect(next).not.toContain('who owns the mother and who owns the newborn');
   });
 
   it('keeps the claim narrow behind a rising heart rate', () => {
-    const html = markup(STATES[2]!, { obstetricsMaternalNeonatalHandoffGuidance: 'guided' });
+    const html = markup(STATES[2]!, { guidance: 'guided' });
     expect(html).toContain('not as a newborn who is well');
     expect(html).toContain('the narrowest claim available');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(STATES[6]!, { obstetricsMaternalNeonatalHandoffGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(STATES[6]!, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { obstetricsMaternalNeonatalHandoffGuidance: 'guided', obstetricsMaternalNeonatalHandoffDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'MaternalNeonatalHandoff' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

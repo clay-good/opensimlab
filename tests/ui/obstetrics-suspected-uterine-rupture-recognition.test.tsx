@@ -7,6 +7,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { objectiveFindings } from '@anesthesia/ui/Debrief';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { OBSTETRICS_TRAYS } from '../../src/modules/obstetrics/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, OBSTETRICS_TRAYS);
 import type { EngineEvent } from '@platform/kernel/protocol';
 import { SUSPECTED_UTERINE_RUPTURE_RECOGNITION as SCENARIO } from '../../src/modules/obstetrics/scenarios/suspected-uterine-rupture-recognition';
 
@@ -25,7 +31,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['obstetricsUterineRuptureAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: OBSTETRICS_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, obstetricsUterineRuptureAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 450, respiratoryRateBpm: 10, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
@@ -34,7 +40,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onObstetricsUterineRuptureResponse: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -54,7 +60,7 @@ describe('Obstetrics uterine-rupture UI', () => {
   it('offers exactly one live control per recorded step, in the enforced order', () => {
     STATES.forEach((state, index) => {
       const onAction = vi.fn();
-      act(() => root.render(createElement(ActionCockpit, props(state, { onObstetricsUterineRuptureResponse: onAction }))));
+      act(() => root.render(createElement(ActionCockpit, props(state, { onLessonAction: (_type: string, action: string) => onAction(action as never) }))));
       expect(buttons()).toHaveLength(index === 6 ? 0 : 1);
       expect(container.querySelectorAll('[role="status"]')).toHaveLength(1);
       if (index === 6) return;
@@ -65,8 +71,8 @@ describe('Obstetrics uterine-rupture UI', () => {
   });
 
   it('requires exact identity and debriefs exact event prefixes', () => {
-    expect(crisisResponseAvailability(SCENARIO, [])).toMatchObject({ hasObstetricsUterineRuptureResponse: true });
-    expect(crisisResponseAvailability({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'clone' } }, []))
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO, [])).toMatchObject({ hasObstetricsUterineRuptureResponse: true });
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, metadata: { ...SCENARIO.metadata, id: 'clone' } }, []))
       .toMatchObject({ hasObstetricsUterineRuptureResponse: false });
     const suffixes = ['support-activated', 'context-reconciled', 'uncertainty-reviewed', 'readiness-reviewed', 'laparotomy-report-reviewed', 'active-risk-handoff-recorded'];
     const log: EngineEvent[] = suffixes.map((suffix, tick) => ({ tick, eventId: `obstetrics-uterine-rupture-${suffix}-${tick}`, severity: 'info', category: 'assessment', message: suffix }));
@@ -83,8 +89,8 @@ describe('Obstetrics uterine-rupture experience', () => {
   });
 
   it('fails closed and never offers an operation, an anesthetic, or a confirmation', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasObstetricsUterineRuptureResponse).toBe(true);
-    expect(crisisResponseAvailability({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasObstetricsUterineRuptureResponse).toBe(false);
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasObstetricsUterineRuptureResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({ ...SCENARIO, timeline: SCENARIO.timeline.slice(0, 1) }).hasObstetricsUterineRuptureResponse).toBe(false);
     expect(STATES.map((state) => lessonButtons(markup(state)).length)).toEqual([1, 1, 1, 1, 1, 1, 0]);
     expect(markup(STATES[6]!)).toContain('Maternal, fetal, hemorrhage, surgery, newborn, fertility, support, and outcome risks handed off.');
     for (const html of STATES.map((state) => markup(state))) {
@@ -96,32 +102,32 @@ describe('Obstetrics uterine-rupture experience', () => {
 describe('Uterine-rupture tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { obstetricsUterineRuptureGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { obstetricsUterineRuptureGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('nothing here will upgrade it');
-    const next = markup(STATES[1]!, { obstetricsUterineRuptureGuidance: 'guided' });
+    const next = markup(STATES[1]!, { guidance: 'guided' });
     expect(next).toContain('as one coupled pattern rather than a list');
     expect(next).not.toContain('nothing here will upgrade it');
   });
 
   it('refuses the classic triad and keeps the alternatives open', () => {
-    const html = markup(STATES[2]!, { obstetricsUterineRuptureGuidance: 'guided' });
+    const html = markup(STATES[2]!, { guidance: 'guided' });
     expect(html).toContain('The classic triad is neither necessary nor reliable');
     expect(html).toContain('the same posture here rather than opposite ones');
   });
 
   it('goes quiet once the handoff is recorded', () => {
-    expect(markup(STATES[6]!, { obstetricsUterineRuptureGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(STATES[6]!, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { obstetricsUterineRuptureGuidance: 'guided', obstetricsUterineRuptureDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'UterineRupture' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

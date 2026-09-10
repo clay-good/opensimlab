@@ -27,6 +27,9 @@ import { supportsRefeeding } from './refeeding';
 import { supportsSevereHypoglycemia } from './severe-hypoglycemia';
 import { supportsThyroidStorm } from './thyroid-storm';
 
+import { EndocrineDkaResolutionTray } from './EndocrineDkaResolutionTray';
+import { EndocrineHhsTray } from './EndocrineHhsTray';
+
 export const ENDOCRINE_METABOLIC_TRAYS: readonly LessonTray[] = [
   { id: 'AdrenalCrisis', demoId: 'Adrenal', actionType: 'adrenal-crisis-response', supports: supportsAdrenalCrisis, assessment: (r) => r?.adrenalCrisis, opensSource: true, Component: AdrenalCrisisTray as LessonTray['Component'] },
   { id: 'AvpDeficiency', actionType: 'avp-deficiency-response', supports: supportsAvpDeficiency, assessment: (r) => r?.avpDeficiency, opensSource: true, Component: AvpDeficiencyTray as LessonTray['Component'] },
@@ -38,4 +41,26 @@ export const ENDOCRINE_METABOLIC_TRAYS: readonly LessonTray[] = [
   { id: 'Refeeding', actionType: 'refeeding-response', supports: supportsRefeeding, assessment: (r) => r?.refeeding, opensSource: true, Component: RefeedingTray as LessonTray['Component'] },
   { id: 'SevereHypoglycemia', demoId: 'Hypoglycemia', actionType: 'severe-hypoglycemia-response', supports: supportsSevereHypoglycemia, assessment: (r) => r?.severeHypoglycemia, Component: SevereHypoglycemiaTray as LessonTray['Component'] },
   { id: 'ThyroidStorm', demoId: 'Thyroid', actionType: 'thyroid-storm-response', supports: supportsThyroidStorm, assessment: (r) => r?.thyroidStorm, opensSource: true, Component: ThyroidStormTray as LessonTray['Component'] },
+  {
+    id: 'EndocrineDkaResolution',
+    demoId: 'DkaResolution',
+    actionType: 'dka-resolution-transition-response',
+    supports: (scenario) => scenario.metadata.id === 'dka-resolution-transition'
+    && scenario.timeline.every((event) => event.type === 'narrative')
+    && scenario.timeline.filter((event) => event.target === 'dka-resolution-transition').length === 1
+    && scenario.timeline.filter((event) => event.target === 'dka-resolution-transition-boundary').length === 1,
+    assessment: (r) => r?.endocrineDkaResolutionAssessment,
+    Component: EndocrineDkaResolutionTray as LessonTray['Component'],
+  },
+  {
+    id: 'EndocrineHhs',
+    demoId: 'HhsOsmolality',
+    actionType: 'hhs-osmolality-trajectory-response',
+    supports: (scenario) => scenario.metadata.id === 'hhs-osmolality-trajectory'
+    && scenario.timeline.every((event) => event.type === 'narrative')
+    && scenario.timeline.filter((event) => event.target === 'hhs-osmolality-trajectory').length === 1
+    && scenario.timeline.filter((event) => event.target === 'hhs-osmolality-trajectory-boundary').length === 1,
+    assessment: (r) => r?.endocrineHhsAssessment,
+    Component: EndocrineHhsTray as LessonTray['Component'],
+  },
 ];
