@@ -10,6 +10,12 @@ import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { EMERGENCY_MEDICINE_TRAYS } from '../../src/modules/emergency-medicine/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, EMERGENCY_MEDICINE_TRAYS);
 import { CARDIAC_TAMPONADE as SCENARIO } from '../../src/modules/emergency-medicine/scenarios/cardiac-tamponade';
 
 const base = (over: Record<string, unknown>) => ({
@@ -32,7 +38,7 @@ const props = (
   assessment: NonNullable<ActionCockpitProps['resuscitation']['cardiacTamponadeAssessment']>,
   extra: Partial<ActionCockpitProps> = {},
 ): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: EMERGENCY_MEDICINE_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, cardiacTamponadeFraction: 0.9, cardiacTamponadeAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 480, respiratoryRateBpm: 18, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 10 },
@@ -41,7 +47,7 @@ const props = (
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onCardiacTamponadeAssessment: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (
@@ -65,8 +71,8 @@ describe('Emergency cardiac tamponade experience', () => {
   });
 
   it('fails closed on the tamponade event target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasCardiacTamponadeResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasCardiacTamponadeResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO, timeline: SCENARIO.timeline.filter((event) => event.type !== 'cardiac-tamponade'),
     }).hasCardiacTamponadeResponse).toBe(false);
   });
@@ -100,36 +106,36 @@ describe('Emergency cardiac tamponade experience', () => {
 describe('Emergency cardiac tamponade tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { cardiacTamponadeGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { cardiacTamponadeGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('rather than a tension pneumothorax');
-    const pocus = markup(CONTEXT, { cardiacTamponadeGuidance: 'guided' });
+    const pocus = markup(CONTEXT, { guidance: 'guided' });
     expect(pocus).toContain('an effusion is only tamponade when the circulation says it is');
     expect(pocus).not.toContain('rather than a tension pneumothorax');
   });
 
   it('explains why there is no procedure on the screen', () => {
-    expect(markup(POCUS, { cardiacTamponadeGuidance: 'guided' }))
+    expect(markup(POCUS, { guidance: 'guided' }))
       .toContain('not something a needle empties');
   });
 
   it('tells the learner to expect nothing better', () => {
-    expect(markup(CONTROL, { cardiacTamponadeGuidance: 'guided' }))
+    expect(markup(CONTROL, { guidance: 'guided' }))
       .toContain('expect it to be no better');
   });
 
   it('goes quiet once the reassessment is recorded', () => {
-    expect(markup(DONE, { cardiacTamponadeGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { cardiacTamponadeGuidance: 'guided', cardiacTamponadeDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'CardiacTamponade' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

@@ -1783,16 +1783,10 @@ export function Cockpit({
           neurologyMyastheniaDemonstrating={demonstrating && registryDemo?.id === 'Myasthenia'}
           neurologyDysreflexiaGuidance={session.guidance}
           neurologyDysreflexiaDemonstrating={demonstrating && registryDemo?.id === 'Dysreflexia'}
-          hemorrhagicShockGuidance={session.guidance}
-          hemorrhagicShockDemonstrating={demonstrating && registryDemo?.id === 'HemorrhagicShock'}
-          undifferentiatedShockGuidance={session.guidance}
-          undifferentiatedShockDemonstrating={demonstrating && registryDemo?.id === 'UndifferentiatedShock'}
           peaArrestGuidance={session.guidance}
           peaArrestDemonstrating={demonstrating && peaArrestDemoSupported}
           persistentVfGuidance={session.guidance}
           persistentVfDemonstrating={demonstrating && persistentVfDemoSupported}
-          cardiacTamponadeGuidance={session.guidance}
-          cardiacTamponadeDemonstrating={demonstrating && registryDemo?.id === 'CardiacTamponade'}
           exertionalHeatStrokeGuidance={session.guidance}
           exertionalHeatStrokeDemonstrating={demonstrating && registryDemo?.id === 'ExertionalHeatStroke'}
           hyperkalemiaEcgGuidance={session.guidance}
@@ -1805,10 +1799,6 @@ export function Cockpit({
           emergencySvtDemonstrating={demonstrating && emergencySvtDemoSupported}
           obstructivePleuralShockGuidance={session.guidance}
           obstructivePleuralShockDemonstrating={demonstrating && obstructivePleuralShockDemoSupported}
-          statusEpilepticusGuidance={session.guidance}
-          statusEpilepticusDemonstrating={demonstrating && registryDemo?.id === 'StatusEpilepticus'}
-          emergencySepticShockGuidance={session.guidance}
-          emergencySepticShockDemonstrating={demonstrating && registryDemo?.id === 'SepticShock'}
           countedRate={equipment?.resuscitation.countedRate}
           pairedReading={equipment?.resuscitation.pairedReading}
           afferentLimb={equipment?.resuscitation.afferentLimb}
@@ -1930,21 +1920,6 @@ export function Cockpit({
           })}
           onPostoperativeHandoffAssessment={(action) => session.act({
             type: 'postoperative-handoff-assessment', payload: { action },
-          })}
-          onUndifferentiatedShockAssessment={(action) => session.act({
-            type: 'undifferentiated-shock-assessment', payload: { action },
-          })}
-          onSepticShockAssessment={(action) => session.act({
-            type: 'septic-shock-assessment', payload: { action },
-          })}
-          onHemorrhagicShockAssessment={(action) => session.act({
-            type: 'hemorrhagic-shock-assessment', payload: { action },
-          })}
-          onCardiacTamponadeAssessment={(action) => session.act({
-            type: 'cardiac-tamponade-assessment', payload: { action },
-          })}
-          onStatusEpilepticusResponse={(action) => session.act({
-            type: 'status-epilepticus-response', payload: { action },
           })}
           onHyponatremiaResponse={(action) => session.act({
             type: 'hyponatremia-response', payload: { action },

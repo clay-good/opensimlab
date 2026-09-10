@@ -4,6 +4,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { EMERGENCY_MEDICINE_TRAYS } from '../../src/modules/emergency-medicine/trays';
 import { SEPTIC_SHOCK } from '../../src/modules/emergency-medicine/scenarios/septic-shock';
 
 describe('Requirement: septic shock keeps parallel initial care focused and ordered', () => {
@@ -25,6 +26,7 @@ describe('Requirement: septic shock keeps parallel initial care focused and orde
   it('opens one focused tray and withholds downstream actions until prerequisites are met', () => {
     const onSepticShockAssessment = vi.fn();
     const props: ActionCockpitProps = {
+      lessonTrays: EMERGENCY_MEDICINE_TRAYS,
       scenario: SEPTIC_SHOCK, region: UNITED_STATES, infusions: [],
       hypnoticLine: { connected: true, inspected: false },
       resuscitation: {
@@ -52,7 +54,8 @@ describe('Requirement: septic shock keeps parallel initial care focused and orde
       onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {},
       onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {},
       onAirwayManeuver: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {},
-      onSepticShockAssessment, onEpinephrine: () => {}, onDantrolene: () => {},
+      onLessonAction: (_type: string, action: string) => onSepticShockAssessment(action as never),
+      onEpinephrine: () => {}, onDantrolene: () => {},
       onActiveCooling: () => {}, onDrugCard: () => {},
     };
     act(() => root.render(createElement(ActionCockpit, props)));

@@ -5,6 +5,12 @@ import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { EMERGENCY_MEDICINE_TRAYS } from '../../src/modules/emergency-medicine/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, EMERGENCY_MEDICINE_TRAYS);
 import { UNDIFFERENTIATED_SHOCK as SCENARIO } from '../../src/modules/emergency-medicine/scenarios/undifferentiated-shock';
 
 type Assessment = NonNullable<ActionCockpitProps['resuscitation']['undifferentiatedShockAssessment']>;
@@ -32,7 +38,7 @@ const LABELS = ['Review tissue perfusion', 'Review fixed lactate', 'Review focus
   'Escalate ongoing shock workup'];
 
 const props = (assessment: Assessment, extra: Partial<ActionCockpitProps> = {}): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: EMERGENCY_MEDICINE_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, undifferentiatedShockAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 480, respiratoryRateBpm: 18, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 10 },
@@ -41,7 +47,7 @@ const props = (assessment: Assessment, extra: Partial<ActionCockpitProps> = {}):
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onUndifferentiatedShockAssessment: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (assessment: Assessment, extra: Partial<ActionCockpitProps> = {}) =>
@@ -64,8 +70,8 @@ describe('Emergency undifferentiated shock experience', () => {
   });
 
   it('fails closed on the timeline target rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasUndifferentiatedShockResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasUndifferentiatedShockResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.type !== 'shock-pattern'),
     }).hasUndifferentiatedShockResponse).toBe(false);
@@ -99,36 +105,36 @@ describe('Emergency undifferentiated shock experience', () => {
 describe('Emergency undifferentiated shock tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { undifferentiatedShockGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { undifferentiatedShockGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('the three organs you can assess without a machine');
-    const lactate = markup(PERFUSION, { undifferentiatedShockGuidance: 'guided' });
+    const lactate = markup(PERFUSION, { guidance: 'guided' });
     expect(lactate).toContain('confirmation of a decision you can already make');
     expect(lactate).not.toContain('the three organs you can assess without a machine');
   });
 
   it('names whichever half of the pair is still missing', () => {
-    expect(markup(LACTATE_FIRST, { undifferentiatedShockGuidance: 'guided' }))
+    expect(markup(LACTATE_FIRST, { guidance: 'guided' }))
       .toContain('the three organs you can assess without a machine');
   });
 
   it('gives the reversibility argument at the leg raise', () => {
-    expect(markup(ECHO, { undifferentiatedShockGuidance: 'guided' }))
+    expect(markup(ECHO, { guidance: 'guided' }))
       .toContain('volume you have given cannot be taken back');
   });
 
   it('goes quiet once the escalation is recorded', () => {
-    expect(markup(DONE, { undifferentiatedShockGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { undifferentiatedShockGuidance: 'guided', undifferentiatedShockDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'UndifferentiatedShock' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');

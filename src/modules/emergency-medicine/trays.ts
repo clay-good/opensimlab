@@ -23,6 +23,12 @@ import { HeatStrokeTray } from './HeatStrokeTray';
 import { TraumaPrimarySurveyTray } from './TraumaPrimarySurveyTray';
 import { AcuteAorticSyndromeTray } from './AcuteAorticSyndromeTray';
 
+import { UndifferentiatedShockTray } from './UndifferentiatedShockTray';
+import { SepticShockTray } from './SepticShockTray';
+import { HemorrhagicShockTray } from './HemorrhagicShockTray';
+import { CardiacTamponadeTray } from './CardiacTamponadeTray';
+import { StatusEpilepticusTray } from './StatusEpilepticusTray';
+
 export const EMERGENCY_MEDICINE_TRAYS: readonly LessonTray[] = [
   {
     id: 'EmergencyAnaphylaxis',
@@ -172,5 +178,52 @@ export const EMERGENCY_MEDICINE_TRAYS: readonly LessonTray[] = [
     ),
     assessment: (r) => r?.acuteAorticSyndromeAssessment,
     Component: AcuteAorticSyndromeTray as LessonTray['Component'],
+  },
+  {
+    id: 'UndifferentiatedShock',
+    actionType: 'undifferentiated-shock-assessment',
+    supports: (scenario) => scenario.timeline.some(
+      (event) => event.type === 'shock-pattern',
+    ),
+    assessment: (r) => r?.undifferentiatedShockAssessment,
+    Component: UndifferentiatedShockTray as LessonTray['Component'],
+  },
+  {
+    id: 'SepticShock',
+    actionType: 'septic-shock-assessment',
+    supports: (scenario) => scenario.timeline.some(
+      (event) => event.type === 'sepsis-pattern',
+    ),
+    assessment: (r) => r?.septicShockAssessment,
+    Component: SepticShockTray as LessonTray['Component'],
+  },
+  {
+    id: 'HemorrhagicShock',
+    actionType: 'hemorrhagic-shock-assessment',
+    supports: (scenario) => scenario.timeline.some(
+      (event) => event.type === 'hemorrhagic-shock-pattern',
+    ),
+    assessment: (r) => r?.hemorrhagicShockAssessment,
+    Component: HemorrhagicShockTray as LessonTray['Component'],
+  },
+  {
+    id: 'CardiacTamponade',
+    actionType: 'cardiac-tamponade-assessment',
+    supports: (scenario) => scenario.timeline.some(
+      (event) => event.type === 'cardiac-tamponade',
+    ),
+    assessment: (r) => ({ fraction: r?.cardiacTamponadeFraction ?? 0,
+      assessment: r?.cardiacTamponadeAssessment }),
+    Component: CardiacTamponadeTray as LessonTray['Component'],
+  },
+  {
+    id: 'StatusEpilepticus',
+    actionType: 'status-epilepticus-response',
+    supports: (scenario) => scenario.timeline.some(
+      (event) => event.type === 'status-epilepticus',
+    ),
+    assessment: (r) => ({ seizureActivityFraction: r?.seizureActivityFraction ?? 0,
+      assessment: r?.statusEpilepticusAssessment }),
+    Component: StatusEpilepticusTray as LessonTray['Component'],
   },
 ];

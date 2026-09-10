@@ -4,6 +4,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { EMERGENCY_MEDICINE_TRAYS } from '../../src/modules/emergency-medicine/trays';
 import { UNDIFFERENTIATED_SHOCK } from '../../src/modules/emergency-medicine/scenarios/undifferentiated-shock';
 
 describe('Requirement: undifferentiated shock uses ordered serial assessment', () => {
@@ -25,6 +26,7 @@ describe('Requirement: undifferentiated shock uses ordered serial assessment', (
   it('opens to shock assessment and withholds phenotype, fluid, and escalation until prerequisites are met', () => {
     const onUndifferentiatedShockAssessment = vi.fn();
     const props: ActionCockpitProps = {
+      lessonTrays: EMERGENCY_MEDICINE_TRAYS,
       scenario: UNDIFFERENTIATED_SHOCK, region: UNITED_STATES,
       infusions: [], hypnoticLine: { connected: true, inspected: false },
       resuscitation: {
@@ -52,7 +54,8 @@ describe('Requirement: undifferentiated shock uses ordered serial assessment', (
       onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {},
       onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {},
       onAirwayManeuver: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {},
-      onUndifferentiatedShockAssessment, onEpinephrine: () => {}, onDantrolene: () => {},
+      onLessonAction: (_type: string, action: string) => onUndifferentiatedShockAssessment(action as never),
+      onEpinephrine: () => {}, onDantrolene: () => {},
       onActiveCooling: () => {}, onDrugCard: () => {},
     };
     act(() => root.render(createElement(ActionCockpit, props)));

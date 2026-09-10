@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { EMERGENCY_MEDICINE_TRAYS } from '../../src/modules/emergency-medicine/trays';
 import { STATUS_EPILEPTICUS } from '../../src/modules/emergency-medicine/scenarios/status-epilepticus';
 
 describe('Requirement: status epilepticus opens a focused first-line surface', () => {
@@ -11,7 +12,7 @@ describe('Requirement: status epilepticus opens a focused first-line surface', (
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
     const container = document.createElement('div'); document.body.appendChild(container);
     const root = createRoot(container); const onAction = vi.fn();
-    const props = { scenario: STATUS_EPILEPTICUS, region: UNITED_STATES, infusions: [],
+    const props = { scenario: STATUS_EPILEPTICUS, region: UNITED_STATES, lessonTrays: EMERGENCY_MEDICINE_TRAYS, infusions: [],
       hypnoticLine: { connected: true, inspected: false }, resuscitation: {
         epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null,
         crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
@@ -28,7 +29,7 @@ describe('Requirement: status epilepticus opens a focused first-line surface', (
       onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
       onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onCallForHelp: () => {},
       onAirwayDevice: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
-      onActiveCooling: () => {}, onStatusEpilepticusResponse: onAction,
+      onActiveCooling: () => {}, onLessonAction: (_type: string, action: string) => onAction(action as never),
       onDrugCard: () => {} } satisfies ActionCockpitProps;
     act(() => root.render(createElement(ActionCockpit, props)));
     expect(container.querySelector('[role="tablist"]')).toBeNull();

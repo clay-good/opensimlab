@@ -4,6 +4,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { EMERGENCY_MEDICINE_TRAYS } from '../../src/modules/emergency-medicine/trays';
 import { HEMORRHAGIC_SHOCK } from '../../src/modules/emergency-medicine/scenarios/hemorrhagic-shock';
 
 describe('Requirement: traumatic hemorrhage keeps control and resuscitation parallel', () => {
@@ -25,6 +26,7 @@ describe('Requirement: traumatic hemorrhage keeps control and resuscitation para
   it('opens one focused tray and exposes parallel control tasks after recognition', () => {
     const onHemorrhagicShockAssessment = vi.fn();
     const props: ActionCockpitProps = {
+      lessonTrays: EMERGENCY_MEDICINE_TRAYS,
       scenario: HEMORRHAGIC_SHOCK, region: UNITED_STATES, infusions: [],
       hypnoticLine: { connected: true, inspected: false },
       resuscitation: {
@@ -52,7 +54,8 @@ describe('Requirement: traumatic hemorrhage keeps control and resuscitation para
       onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {},
       onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {},
       onAirwayManeuver: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {},
-      onHemorrhagicShockAssessment, onEpinephrine: () => {}, onDantrolene: () => {},
+      onLessonAction: (_type: string, action: string) => onHemorrhagicShockAssessment(action as never),
+      onEpinephrine: () => {}, onDantrolene: () => {},
       onActiveCooling: () => {}, onDrugCard: () => {},
     };
     act(() => root.render(createElement(ActionCockpit, props)));

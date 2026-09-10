@@ -5,6 +5,12 @@ import { PrerenderedBody } from '@routes/Prerendered';
 import { describe, expect, it } from 'vitest';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
+import { EMERGENCY_MEDICINE_TRAYS } from '../../src/modules/emergency-medicine/trays';
+// The lesson trays moved to the module, so the gate now needs them supplied.
+const crisisResponseAvailabilityWithTrays = (
+  scenario: Parameters<typeof crisisResponseAvailability>[0],
+  injected: Parameters<typeof crisisResponseAvailability>[1] = [],
+) => crisisResponseAvailability(scenario, injected, EMERGENCY_MEDICINE_TRAYS);
 import { HEMORRHAGIC_SHOCK as SCENARIO } from '../../src/modules/emergency-medicine/scenarios/hemorrhagic-shock';
 
 type Assessment = NonNullable<ActionCockpitProps['resuscitation']['hemorrhagicShockAssessment']>;
@@ -30,7 +36,7 @@ const LABELS = ['Review mechanism + perfusion', 'Record pelvic stabilization',
   'Give fixed 2-unit red-cell bridge', 'Review coagulation + temperature', 'Reassess perfusion'];
 
 const props = (assessment: Assessment, extra: Partial<ActionCockpitProps> = {}): ActionCockpitProps => ({
-  scenario: SCENARIO, region: UNITED_STATES, infusions: [], hypnoticLine: { connected: true, inspected: false },
+  scenario: SCENARIO, region: UNITED_STATES, lessonTrays: EMERGENCY_MEDICINE_TRAYS, infusions: [], hypnoticLine: { connected: true, inspected: false },
   resuscitation: { epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false, hemorrhagicShockAssessment: assessment },
   lastExposure: null, syringeRemaining: {},
   ventilator: { mode: 'manual', tidalVolumeMl: 480, respiratoryRateBpm: 18, fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 10 },
@@ -39,7 +45,7 @@ const props = (assessment: Assessment, extra: Partial<ActionCockpitProps> = {}):
   onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
   onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
   onCallForHelp: () => {}, onAirwayDevice: () => {}, onActiveCooling: () => {}, onDrugCard: () => {},
-  onHemorrhagicShockAssessment: () => {}, ...extra,
+  onLessonAction: () => {}, ...extra,
 });
 
 const markup = (assessment: Assessment, extra: Partial<ActionCockpitProps> = {}) =>
@@ -57,8 +63,8 @@ describe('Emergency hemorrhagic shock experience', () => {
   });
 
   it('fails closed on the timeline event type rather than the scenario id', () => {
-    expect(crisisResponseAvailability(SCENARIO).hasHemorrhagicShockResponse).toBe(true);
-    expect(crisisResponseAvailability({
+    expect(crisisResponseAvailabilityWithTrays(SCENARIO).hasHemorrhagicShockResponse).toBe(true);
+    expect(crisisResponseAvailabilityWithTrays({
       ...SCENARIO,
       timeline: SCENARIO.timeline.filter((event) => event.type !== 'hemorrhagic-shock-pattern'),
     }).hasHemorrhagicShockResponse).toBe(false);
@@ -96,38 +102,38 @@ describe('Emergency hemorrhagic shock experience', () => {
 describe('Emergency hemorrhagic shock tutor and worked example', () => {
   it('says nothing at all on the unassisted setting', () => {
     expect(markup(EMPTY)).not.toContain('A moment to think');
-    expect(markup(EMPTY, { hemorrhagicShockGuidance: 'unassisted' })).not.toContain('A moment to think');
+    expect(markup(EMPTY, { guidance: 'unassisted' })).not.toContain('A moment to think');
   });
 
   it('reads the learner’s own recorded steps when guidance is on', () => {
-    const opening = markup(EMPTY, { hemorrhagicShockGuidance: 'guided' });
+    const opening = markup(EMPTY, { guidance: 'guided' });
     expect(opening).toContain('A moment to think');
     expect(opening).toContain('waiting for a sign this injury does not produce');
-    const stabilize = markup(RECOGNIZED, { hemorrhagicShockGuidance: 'guided' });
+    const stabilize = markup(RECOGNIZED, { guidance: 'guided' });
     expect(stabilize).toContain('a thing your hands can do in the meantime');
     expect(stabilize).not.toContain('waiting for a sign this injury does not produce');
   });
 
   it('goes back to the unfinished lane when the learner has only run the other', () => {
-    expect(markup(BLOOD_ONLY, { hemorrhagicShockGuidance: 'guided' }))
+    expect(markup(BLOOD_ONLY, { guidance: 'guided' }))
       .toContain('a thing your hands can do in the meantime');
-    expect(markup(CONTROL_ONLY, { hemorrhagicShockGuidance: 'guided' }))
+    expect(markup(CONTROL_ONLY, { guidance: 'guided' }))
       .toContain('one negotiated unit at a time');
   });
 
   it('insists the bridge cannot touch the source', () => {
-    expect(markup(BOTH, { hemorrhagicShockGuidance: 'guided' }))
+    expect(markup(BOTH, { guidance: 'guided' }))
       .toContain('means nothing at all about the source');
   });
 
   it('goes quiet once the reassessment is recorded', () => {
-    expect(markup(DONE, { hemorrhagicShockGuidance: 'guided' })).not.toContain('A moment to think');
+    expect(markup(DONE, { guidance: 'guided' })).not.toContain('A moment to think');
   });
 
   it('leaves the controls visible but inert while the example runs', () => {
     const label = LABELS[0]!;
     expect(markup(EMPTY)).toContain(label);
-    const watching = markup(EMPTY, { hemorrhagicShockGuidance: 'guided', hemorrhagicShockDemonstrating: true });
+    const watching = markup(EMPTY, { guidance: 'guided', demonstratingLessonId: 'HemorrhagicShock' });
     expect(watching).toContain(label);
     expect(watching).toContain('aria-disabled="true"');
     expect(watching).toContain('Watching the worked example');
