@@ -22,7 +22,12 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
+      # Full history: tests/unit/public-readiness-history-audit.test.ts audits every
+      # object ever committed, and the audit refuses a shallow clone rather than
+      # passing on one commit. The default depth of 1 failed every run from 2026-09-10.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
