@@ -113,16 +113,22 @@ credited toward the catalog until every item in the completion contract passes.
   400% zoom validation remain open; details are in the accessibility audit.
 - [ ] Implement the catalog manifest, scenario completion validator, static search index, goal paths,
   domain/environment/duration/difficulty/fidelity/maturity filters, and URL state.
-  The anesthesia catalog now has bounded local search plus difficulty, duration, and maturity
-  filters with compact URL state. A schema-valid public manifest/search artifact is generated from
-  the same registry and exact-version completion audit and ships offline. All 10 goal paths are
-  versioned, URL-selectable, included in that public artifact, and validated against the registry.
-  Authored domain/environment/fidelity filters remain.
+  A schema-valid public manifest/search artifact is generated from the same registry and
+  exact-version completion audit and ships offline. All 10 goal paths are versioned,
+  URL-selectable, included in that public artifact, and validated against the registry.
+  The in-page search and difficulty, duration, and maturity filters that anesthesia once had were
+  removed deliberately in `2446065f`: the selects overflowed, every filter but one was a no-op
+  because all items share one maturity, and it made anesthesia the one module with a different
+  catalog. Every module now shows the same read-through index (see `ScenarioIndex` in
+  `src/routes/AnesthesiaRoute.tsx`). Whether in-page filtering, including domain, environment,
+  and fidelity, returns at all is a maintainer's product decision, not an authoring gap, so this
+  task stays open for that decision rather than for code.
 - [ ] Implement catalog desktop, tablet, 320 px phone, keyboard, screen-reader, reduced-motion, and
   no-script/prerendered experiences.
-  The default prerender contains all 39 anesthesia scenario cards, controls are native keyboard and screen-
-  reader fields, result changes use a focused polite status, and browser inspection passes without
-  horizontal overflow at 320 px. Tablet and reduced-motion procedures remain.
+  Every module's prerendered index lists all of its scenarios as plain links, readable with no
+  script, and browser inspection passes without horizontal overflow at 320 px. With the filter
+  controls removed (see the task above), there is no result-change status left to announce.
+  Tablet and reduced-motion procedures remain.
 - [ ] Demonstrate with 20 moderated learners that named and need-based cases are found within the
   specified threshold; record the procedure and results without production telemetry.
 - [ ] Build shared operating-room, emergency-department, ICU, ward, delivery-room, neonatal, clinic,
@@ -149,7 +155,11 @@ credited toward the catalog until every item in the completion contract passes.
   and a fresh session advances and accepts a qualified-care choice from the cached build. This is
   local offline smoke evidence, not a physical-phone frame measurement, clinical signoff, or live
   Turnstile/D1 submission verification; those checks remain pending.
-- [ ] Ensure planned titles are distinct from playable scenarios and excluded from complete counts.
+- [x] Ensure planned titles are distinct from playable scenarios and excluded from complete counts.
+  A planned module must declare zero scenarios (`tests/unit/discoverability.test.ts`), so nothing
+  planned can enter a count, and planned modules render a distinct, dateless scope statement from
+  `PlannedModuleRoute` that the same file tests. All 16 modules are now available and none is
+  planned; the guards stay for the next module that is announced before it ships.
 
 ## 4. Private tutor
 
