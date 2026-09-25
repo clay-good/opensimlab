@@ -77,7 +77,7 @@ describe('Pacemaker-and-cautery-planning transcripts through the real engine and
     expect(supportsPacemakerAndCauteryPlanning({ ...SCENARIO, timeline: [] })).toBe(false);
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'anesthesia', 'operating-room', 'state_transition');
     expect(audit.complete).toBe(false);
-    expect(pacemakerAndCauteryPlanningCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(8);
+    expect(pacemakerAndCauteryPlanningCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(9);
     expect(pacemakerAndCauteryPlanningCompletionEvidence(SCENARIO, ENGINE_VERSION, 'cardiology')).toEqual([]);
     expect(pacemakerAndCauteryPlanningCompletionEvidence(SCENARIO, 'changed', 'anesthesia')).toEqual([]);
     expect(pacemakerAndCauteryPlanningCompletionEvidence(
@@ -156,6 +156,36 @@ describe('Pacemaker-and-cautery-planning transcripts through the real engine and
     ] as LearnerAction[]);
     expect(outcomes(noChange)).toEqual(['met', 'met', 'not-met', 'not-met']);
     expect(plan(noChange).plan).toBe('proceed-no-change');
+  });
+
+  it('progresses by an engine-enforced order, not by physiology', () => {
+    // The meaningful-progression claim. The monitor carries none of the lesson:
+    // the solver state is identical with and without the four steps.
+    const expert = run(FIXTURES.expert);
+    expect(expert.history.map(({ state }) => state)).toEqual(run(FIXTURES.noAction).history.map(({ state }) => state));
+    expect(plan(expert)).toEqual({
+      deviceRecordReviewedAtTick: 300, procedureRiskReviewedAtTick: 600,
+      plan: 'coordinate-asynchronous-pacing', planAtTick: 900, backupAndRestorationDocumentedAtTick: 1200,
+    });
+    // Out of turn is refused and records nothing.
+    const outOfTurn = run([
+      { tick: 300, type: 'cied-planning-assessment', payload: { action: 'document-backup-and-restoration' } },
+      { tick: 600, type: 'cied-planning-assessment', payload: { action: 'review-device-record' } },
+      { tick: 900, type: 'cied-planning-assessment', payload: { action: 'coordinate-asynchronous-pacing' } },
+    ] as LearnerAction[]);
+    expect(refusals(outOfTurn)).toEqual(['cied-restoration-order-refused-300', 'cied-plan-order-refused-900']);
+    expect(plan(outOfTurn)).toEqual({
+      deviceRecordReviewedAtTick: 600, procedureRiskReviewedAtTick: null,
+      plan: null, planAtTick: null, backupAndRestorationDocumentedAtTick: null,
+    });
+    // The two reviews are the one unordered pair.
+    const swapped = run([
+      { tick: 300, type: 'cied-planning-assessment', payload: { action: 'review-procedure-emi' } },
+      { tick: 600, type: 'cied-planning-assessment', payload: { action: 'review-device-record' } },
+      { tick: 900, type: 'cied-planning-assessment', payload: { action: 'coordinate-asynchronous-pacing' } },
+    ] as LearnerAction[]);
+    expect(refusals(swapped)).toEqual([]);
+    expect(plan(swapped).planAtTick).toBe(900);
   });
 
   it('plans nothing when nothing is read', () => {

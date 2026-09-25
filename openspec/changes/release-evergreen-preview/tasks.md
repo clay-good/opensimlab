@@ -48,11 +48,12 @@ preview-channel blockers until it is. Updating the specification does not clear 
     Turnstile/D1 verification. That is people, hardware and infrastructure, in the same category
     as face-validity review. No code makes them true, and marking them satisfied would be the
     fabrication this project refuses.
-  - `observable-objectives` is a single content-design decision, not authoring. 118 scenarios
-    across anesthesia, cardiology, neurology and oncology fail it, and every one fails only
-    because it declares more objectives than the contract's cap of 5: 107 declare 6, 10 declare 7,
-    1 declares 8. Not one scenario anywhere has an objective without a debrief rubric row. So the
-    choice is to raise the cap or to merge objectives in 118 scenarios, and it belongs to a
+  - `observable-objectives` is a single content-design decision, not authoring. When first
+    diagnosed, 118 scenarios failed it; as of September 25, 2026, with the catalogue at 256, it is
+    128 scenarios across 13 modules, and every one fails only because it declares more objectives
+    than the contract's cap of 5. Not one scenario anywhere has an objective without a debrief
+    rubric row. So the choice is to raise the cap or to merge objectives in 128 scenarios, and it
+    belongs to a
     maintainer rather than to whoever happens to be editing next. The audit now names the cause
     per scenario instead of restating the rule, so the decision can be made from the data.
   - `guidance-and-demonstration` is the genuine authoring gap: oncology had no bound expert
@@ -69,6 +70,19 @@ preview-channel blockers until it is. Updating the specification does not clear 
     `easy-label-a-label-that-fits-too-easily`. All 11 done. Every oncology scenario now carries an
     observed-state tutor and a worked example, leaving only the objectives cap and the two
     people-and-hardware requirements outstanding for the module.
+    A fourth code-closable gap sat outside oncology and was never listed here:
+    `meaningful-progression` was missing for 13 anesthesia lessons, because the shared audit
+    reads it from the timeline and their timelines hold only narrative events. The requirement is
+    progression over simulated time, not a timeline event, so each lesson now carries an
+    exact-version record measured through the real engine and pinned in its runs test. Five
+    progress through solver physiology (the oxygen store, the block, depth and pressure), two
+    through physiology plus an engine refusal, and six through an order the engine enforces with
+    refusals while the monitor stays still, which those records state plainly. Measuring them
+    also caught two wrong numbers in shipped evidence, both corrected and now pinned: the
+    rapid-sequence block reaches a count of zero about 20 s after rocuronium, not 35, and the
+    quantitative-reversal post-tetanic count reads 1 from tick 878 to 1,218 and again from 3,346,
+    not "about 900 to 1,400" and 3,600. After this, every one of the 256 scenarios fails only the
+    objectives cap (128 of them) and the two people-and-hardware requirements.
     Renal-electrolyte was already complete on this requirement. Endocrine-metabolic now has it on
     all twelve. `dka-resolution-transition` and `hhs-osmolality-trajectory` were the two
     outstanding, and the reason recorded here had gone stale: both already publish an assessment

@@ -72,7 +72,7 @@ describe('Aspiration-risk transcripts through the real engine and debrief', () =
     expect(supportsAspirationRiskRecognition(EMERGENCE_WITH_RESIDUAL_BLOCKADE)).toBe(false);
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'anesthesia', 'operating-room', 'state_transition');
     expect(audit.complete).toBe(false);
-    expect(aspirationRiskCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(8);
+    expect(aspirationRiskCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(9);
     expect(aspirationRiskCompletionEvidence(SCENARIO, ENGINE_VERSION, 'critical-care')).toEqual([]);
     expect(aspirationRiskCompletionEvidence(SCENARIO, 'changed', 'anesthesia')).toEqual([]);
     expect(aspirationRiskCompletionEvidence(
@@ -113,6 +113,31 @@ describe('Aspiration-risk transcripts through the real engine and debrief', () =
     expect(refusals(skipped)).toHaveLength(2);
     expect(skipped.assessment?.classification).toBeNull();
     expect(skipped.assessment?.plan).toBeNull();
+  });
+
+  it('progresses by an engine-enforced order, not by physiology', () => {
+    // The meaningful-progression claim. The monitor carries none of the lesson:
+    // the solver state is identical with and without the three choices.
+    const expert = run(FIXTURES.expert);
+    expect(expert.history.map(({ state }) => state)).toEqual(run(FIXTURES.noAction).history.map(({ state }) => state));
+    expect(expert.assessment).toEqual({
+      cuesReviewedAtTick: 300, classification: 'elevated', classifiedAtTick: 600,
+      plan: 'defer-and-replan', planAtTick: 900,
+    });
+    for (const path of ['expert', 'commonError', 'recovery', 'noAction'] as const) {
+      expect(refusals(run(FIXTURES[path]))).toHaveLength(0);
+    }
+    // Out of turn is refused and records nothing.
+    const outOfTurn = run([
+      { tick: 300, type: 'aspiration-risk-assessment', payload: { action: 'classify-elevated' } },
+      { tick: 600, type: 'aspiration-risk-assessment', payload: { action: 'review-cues' } },
+      { tick: 900, type: 'aspiration-risk-assessment', payload: { action: 'defer-and-replan' } },
+    ] as LearnerAction[]);
+    expect(refusals(outOfTurn).map(({ eventId }) => eventId))
+      .toEqual(['aspiration-risk-order-refused-300', 'aspiration-risk-plan-order-refused-900']);
+    expect(outOfTurn.assessment).toEqual({
+      cuesReviewedAtTick: 600, classification: null, classifiedAtTick: null, plan: null, planAtTick: null,
+    });
   });
 
   it('differs from the recovery path in exactly one action', () => {

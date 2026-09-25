@@ -73,7 +73,7 @@ describe('Emergence-with-residual-blockade transcripts through the real engine a
     expect(supportsEmergenceWithResidualBlockade(QUANTITATIVE_NEUROMUSCULAR_REVERSAL)).toBe(false);
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'anesthesia', 'operating-room', 'state_transition');
     expect(audit.complete).toBe(false);
-    expect(emergenceResidualBlockadeCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(8);
+    expect(emergenceResidualBlockadeCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(9);
     expect(emergenceResidualBlockadeCompletionEvidence(SCENARIO, ENGINE_VERSION, 'critical-care')).toEqual([]);
     expect(emergenceResidualBlockadeCompletionEvidence(SCENARIO, 'changed', 'anesthesia')).toEqual([]);
     expect(emergenceResidualBlockadeCompletionEvidence(
@@ -127,6 +127,29 @@ describe('Emergence-with-residual-blockade transcripts through the real engine a
     expect(skipped.assessment?.classification).toBeNull();
     expect(skipped.assessment?.plan).toBeNull();
     expect(outcomes(skipped)).toEqual(['not-met', 'not-met', 'not-met', 'not-met']);
+  });
+
+  it('progresses by an enforced order while the monitor itself stays still', () => {
+    // The meaningful-progression claim, pinned: ordered, not physiological.
+    const idle = run(FIXTURES.noAction);
+    expect(idle.history).toHaveLength(3001);
+    expect(idle.history.every((sample) =>
+      sample.state.trainOfFourCount === 4 && sample.state.trainOfFourRatio === 0.72)).toBe(true);
+    const expert = run(FIXTURES.expert);
+    expect(expert.events.map(({ eventId }) => eventId).filter((id) => id.startsWith('emergence-') && id !== 'emergence-residual-blockade-briefing'))
+      .toEqual(['emergence-monitor-reviewed-300', 'emergence-block-classified-residual-600', 'emergence-plan-defer-extubation-and-support-900']);
+    const skipped = run([
+      { tick: 300, type: 'emergence-residual-block-assessment', payload: { action: 'classify-recovered' } },
+      { tick: 600, type: 'emergence-residual-block-assessment', payload: { action: 'proceed-to-extubation' } },
+    ] as LearnerAction[]);
+    expect(refusals(skipped).map(({ eventId }) => eventId))
+      .toEqual(['emergence-block-order-refused-300', 'emergence-block-order-refused-600']);
+    const planFirst = run([
+      { tick: 300, type: 'emergence-residual-block-assessment', payload: { action: 'review-quantitative-monitor' } },
+      { tick: 600, type: 'emergence-residual-block-assessment', payload: { action: 'defer-extubation-and-support' } },
+    ] as LearnerAction[]);
+    expect(refusals(planFirst).map(({ eventId }) => eventId)).toEqual(['emergence-plan-order-refused-600']);
+    expect(planFirst.assessment?.plan).toBeNull();
   });
 
   it('differs from the recovery path in exactly one action', () => {

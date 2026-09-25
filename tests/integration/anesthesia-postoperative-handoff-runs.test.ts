@@ -76,7 +76,7 @@ describe('Postoperative-handoff transcripts through the real engine and debrief'
     expect(supportsPostoperativeHandoff({ ...SCENARIO, timeline: [] })).toBe(false);
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'anesthesia', 'operating-room', 'state_transition');
     expect(audit.complete).toBe(false);
-    expect(postoperativeHandoffCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(8);
+    expect(postoperativeHandoffCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(9);
     expect(postoperativeHandoffCompletionEvidence(SCENARIO, ENGINE_VERSION, 'critical-care')).toEqual([]);
     expect(postoperativeHandoffCompletionEvidence(SCENARIO, 'changed', 'anesthesia')).toEqual([]);
     expect(postoperativeHandoffCompletionEvidence(
@@ -155,6 +155,34 @@ describe('Postoperative-handoff transcripts through the real engine and debrief'
     expect(refusals(spoken)[0]).toContain('refused');
     expect(steps(spoken).receiverReadyAtTick).toBeNull();
     expect(outcomes(spoken)[0]).toBe('not-met');
+  });
+
+  it('progresses by an engine-enforced order, not by physiology', () => {
+    // The meaningful-progression claim. The monitor carries none of the lesson:
+    // the solver state is identical with and without the six steps.
+    const expert = run(FIXTURES.expert);
+    expect(expert.history.map(({ state }) => state)).toEqual(run(FIXTURES.noAction).history.map(({ state }) => state));
+    expect(steps(expert)).toEqual({
+      receiverReadyAtTick: 300, patientAndCourseAtTick: 600, currentStateAtTick: 900,
+      risksActionsOwnershipAtTick: 1200, receiverReadbackAtTick: 1500, transferAcceptedAtTick: 1800,
+    });
+    // Every step taken out of turn is refused, and each refusal records nothing.
+    const outOfTurn = run([
+      { tick: 300, type: 'postoperative-handoff-assessment', payload: { action: 'share-patient-and-course' } },
+      { tick: 600, type: 'postoperative-handoff-assessment', payload: { action: 'confirm-receiver-readiness' } },
+      { tick: 900, type: 'postoperative-handoff-assessment', payload: { action: 'share-current-state' } },
+      { tick: 1200, type: 'postoperative-handoff-assessment', payload: { action: 'share-risks-actions-ownership' } },
+      { tick: 1500, type: 'postoperative-handoff-assessment', payload: { action: 'receiver-readback' } },
+      { tick: 1800, type: 'postoperative-handoff-assessment', payload: { action: 'accept-transfer' } },
+    ] as LearnerAction[]);
+    expect(refusals(outOfTurn)).toEqual([
+      'handoff-order-refused-300', 'handoff-risk-order-refused-1200',
+      'handoff-readback-order-refused-1500', 'handoff-acceptance-order-refused-1800',
+    ]);
+    expect(steps(outOfTurn)).toEqual({
+      receiverReadyAtTick: 600, patientAndCourseAtTick: null, currentStateAtTick: 900,
+      risksActionsOwnershipAtTick: null, receiverReadbackAtTick: null, transferAcceptedAtTick: null,
+    });
   });
 
   it('states the limit it cannot measure', () => {

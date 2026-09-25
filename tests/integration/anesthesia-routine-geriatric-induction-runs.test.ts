@@ -75,7 +75,7 @@ describe('Geriatric-induction transcripts through the real engine and debrief', 
     })).toBe(false);
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'anesthesia', 'operating-room', 'state_transition');
     expect(audit.complete).toBe(false);
-    expect(routineGeriatricInductionCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(8);
+    expect(routineGeriatricInductionCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(9);
     expect(routineGeriatricInductionCompletionEvidence(SCENARIO, ENGINE_VERSION, 'critical-care')).toEqual([]);
     expect(routineGeriatricInductionCompletionEvidence(SCENARIO, 'changed', 'anesthesia')).toEqual([]);
     expect(routineGeriatricInductionCompletionEvidence(
@@ -163,5 +163,31 @@ describe('Geriatric-induction transcripts through the real engine and debrief', 
     const expert = run(FIXTURES.expert);
     expect(expert.findings[3]!.finding).toContain('6.9 mL/kg');
     expect(expert.findings[3]!.outcome).toBe('met');
+  });
+
+  it('keeps moving the depth and the pressure long after the last increment', () => {
+    // The meaningful-progression evidence, measured at seed 5860.
+    const series = (result: ReturnType<typeof run>, key: string, from = 0, to = Infinity) =>
+      result.history.filter(({ tick }) => tick >= from && tick < to).map(({ state }) => (state as Readonly<Record<string, number>>)[key]!);
+    const at = (result: ReturnType<typeof run>, key: string, tick: number) =>
+      (result.history.find((sample) => sample.tick === tick)!.state as Readonly<Record<string, number>>)[key]!;
+    const low = (result: ReturnType<typeof run>, key: string, from = 0, to = Infinity) => Math.min(...series(result, key, from, to));
+    const lowTick = (result: ReturnType<typeof run>, key: string) => {
+      const value = low(result, key);
+      return result.history.find(({ state }) => (state as Readonly<Record<string, number>>)[key] === value)!.tick;
+    };
+    const expert = run(FIXTURES.expert);
+    expect(at(expert, 'endTidalO2Fraction', 0)).toBeCloseTo(0.14, 2);
+    expect(at(expert, 'endTidalO2Fraction', 1500)).toBeCloseTo(0.94, 2);
+    expect(Math.max(...FIXTURES.expert.filter(({ type }) => type === 'bolus').map(({ tick }) => tick))).toBe(2100);
+    expect(low(expert, 'depthIndex')).toBeCloseTo(49.6, 1);
+    expect(lowTick(expert, 'depthIndex')).toBe(4114);
+    expect(low(expert, 'meanArterialMmHg')).toBeCloseTo(69.2, 1);
+    expect(lowTick(expert, 'meanArterialMmHg')).toBe(4283);
+    const errored = run(FIXTURES.commonError);
+    expect(at(errored, 'meanArterialMmHg', 0)).toBeCloseTo(92, 1);
+    expect(low(errored, 'meanArterialMmHg')).toBeCloseTo(61.9, 1);
+    expect(lowTick(errored, 'meanArterialMmHg')).toBe(3967);
+    expect(low(errored, 'depthIndex')).toBeCloseTo(36.5, 1);
   });
 });

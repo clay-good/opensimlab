@@ -71,7 +71,7 @@ describe('Quantitative-reversal transcripts through the real engine and debrief'
     expect(supportsQuantitativeNeuromuscularReversal(RAPID_SEQUENCE_INDUCTION)).toBe(false);
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'anesthesia', 'operating-room', 'state_transition');
     expect(audit.complete).toBe(false);
-    expect(quantitativeReversalCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(8);
+    expect(quantitativeReversalCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(9);
     expect(quantitativeReversalCompletionEvidence(SCENARIO, ENGINE_VERSION, 'critical-care')).toEqual([]);
     expect(quantitativeReversalCompletionEvidence(SCENARIO, 'changed', 'anesthesia')).toEqual([]);
     expect(quantitativeReversalCompletionEvidence(
@@ -109,6 +109,59 @@ describe('Quantitative-reversal transcripts through the real engine and debrief'
     expect(ascending.state.trainOfFourCount).toBe(0);
     expect(receding.state.trainOfFourCount).toBe(0);
     expect(ascending.state.trainOfFourRatio).toBe(receding.state.trainOfFourRatio);
+  });
+
+  it('changes the post-tetanic count at exactly the ticks the evidence and fixtures state', () => {
+    // Read from the refused path, so nothing but rocuronium acts on the block.
+    const engine = new AnesthesiaEngine({ scenario: SCENARIO, seed: FIXTURES.seed, practiceRegion: 'US' });
+    const changes: string[] = [];
+    let next = 0;
+    let previous: number | undefined;
+    for (let tick = 0; tick <= FIXTURES.ticks; tick += 1) {
+      while (FIXTURES.commonError[next]?.tick === tick) { engine.apply(FIXTURES.commonError[next]!); next += 1; }
+      engine.step();
+      const count = engine.equipment().resuscitation.postTetanicCount;
+      if (count !== previous) changes.push(`${tick}:${count}`);
+      previous = count;
+    }
+    expect(changes).toEqual(['0:0', '793:3', '821:2', '878:1', '1219:0', '3346:1']);
+    const [evidence] = quantitativeReversalCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia');
+    expect(evidence!.evidence[0]).toContain('reads 1 from tick 878 to 1,218');
+    expect(evidence!.evidence[0]).toContain('reads 1 again from tick 3,346 onward');
+  });
+
+  it('evolves the block over simulated time and refuses reversal while it is still deepening', () => {
+    // The meaningful-progression claim, pinned. Read from the refused path so
+    // the block runs untouched for the whole window.
+    const trace = run(FIXTURES.commonError);
+    const at = (tick: number) => trace.history.find((sample) => sample.tick === tick)!;
+    const effectSite = (tick: number) =>
+      at(tick).concentrations.find(({ drugId }) => drugId === 'rocuronium')?.effectSite ?? 0;
+    const plasma = (tick: number) =>
+      at(tick).concentrations.find(({ drugId }) => drugId === 'rocuronium')?.plasma ?? 0;
+    const series = trace.history.map((sample) =>
+      sample.concentrations.find(({ drugId }) => drugId === 'rocuronium')?.effectSite ?? 0);
+    const peak = Math.max(...series);
+    expect(trace.history[series.indexOf(peak)]!.tick).toBe(1797);
+    expect(peak).toBeCloseTo(7.755, 3);
+    expect(Math.abs(effectSite(1797) - plasma(1797))).toBeLessThan(0.001);
+    expect(effectSite(600)).toBeCloseTo(0.028, 3);
+    expect(effectSite(3700)).toBeCloseTo(6.970, 3);
+    expect(effectSite(7200)).toBeCloseTo(5.520, 3);
+    const firstTick = (predicate: (state: Readonly<Record<string, number>>) => boolean, after = 0) =>
+      trace.history.find((sample) => sample.tick > after
+        && predicate(sample.state as Readonly<Record<string, number>>))?.tick;
+    expect(firstTick((state) => state.trainOfFourCount === 0)).toBe(793);
+    expect(at(7200).state.trainOfFourRatio).toBe(0);
+    // Refused on the rising limb, accepted on the falling one.
+    expect(events(trace, 'bad-sugammadex-').map(({ eventId }) => eventId)).toEqual(['bad-sugammadex-1000']);
+    const expert = run(FIXTURES.expert);
+    expect(events(expert, 'sugammadex-')).toHaveLength(1);
+    expect(Number(expert.history.find((sample) => sample.tick === 3701)!.state.trainOfFourRatio))
+      .toBeGreaterThanOrEqual(0.9);
+    // Without the dose, the block never moves.
+    const idle = run(FIXTURES.noAction);
+    expect(idle.history.every((sample) => sample.state.trainOfFourRatio === 1)).toBe(true);
   });
 
   it('meets every objective on the expert path, and refuses nothing', () => {

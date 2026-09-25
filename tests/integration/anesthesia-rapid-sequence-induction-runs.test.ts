@@ -87,7 +87,7 @@ describe('Rapid-sequence-induction transcripts through the real engine and debri
     })).toBe(false);
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'anesthesia', 'operating-room', 'state_transition');
     expect(audit.complete).toBe(false);
-    expect(rapidSequenceInductionCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(8);
+    expect(rapidSequenceInductionCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(9);
     expect(rapidSequenceInductionCompletionEvidence(SCENARIO, ENGINE_VERSION, 'critical-care')).toEqual([]);
     expect(rapidSequenceInductionCompletionEvidence(SCENARIO, 'changed', 'anesthesia')).toEqual([]);
     expect(rapidSequenceInductionCompletionEvidence(
@@ -191,5 +191,41 @@ describe('Rapid-sequence-induction transcripts through the real engine and debri
     // reached for the syringe at all.
     expect(early.findings.at(-1)!.outcome).toBe('not-met');
     expect(run(FIXTURES.commonError).findings.at(-1)!.outcome).toBe('not-exercised');
+  });
+
+  it('moves the oxygen store, the depth and the block over simulated time', () => {
+    // The meaningful-progression evidence, measured at seed 3120.
+    const series = (result: ReturnType<typeof run>, key: string, from = 0, to = Infinity) =>
+      result.history.filter(({ tick }) => tick >= from && tick < to).map(({ state }) => (state as Readonly<Record<string, number>>)[key]!);
+    const at = (result: ReturnType<typeof run>, key: string, tick: number) =>
+      (result.history.find((sample) => sample.tick === tick)!.state as Readonly<Record<string, number>>)[key]!;
+    const low = (result: ReturnType<typeof run>, key: string, from = 0, to = Infinity) => Math.min(...series(result, key, from, to));
+    const lowTick = (result: ReturnType<typeof run>, key: string) => {
+      const value = low(result, key);
+      return result.history.find(({ state }) => (state as Readonly<Record<string, number>>)[key] === value)!.tick;
+    };
+    const firstTick = (result: ReturnType<typeof run>, key: string, test: (value: number) => boolean, from = 0) =>
+      result.history.find(({ tick, state }) => tick >= from && test((state as Readonly<Record<string, number>>)[key]!))!.tick;
+    const expert = run(FIXTURES.expert);
+    expect(at(expert, 'endTidalO2Fraction', 0)).toBeCloseTo(0.14, 2);
+    expect(at(expert, 'endTidalO2Fraction', 2100)).toBeCloseTo(0.95, 2);
+    // The apnea spends the reserve rather than the saturation.
+    expect(low(expert, 'endTidalO2Fraction', 2150, 3160)).toBeCloseTo(0.80, 2);
+    expect(low(expert, 'spo2Percent', 2150, 3160)).toBeGreaterThan(99.9);
+    expect(firstTick(expert, 'etco2MmHg', (value) => value > 0, 2291)).toBe(3160);
+    expect(firstTick(expert, 'trainOfFourCount', (value) => value === 0)).toBe(2393);
+    expect(firstTick(expert, 'trainOfFourCount', (value) => value > 0, 2393)).toBe(5400);
+    // Rocuronium goes in at tick 2,200, so zero comes 19.3 s later; the seed
+    // evidence once said thirty-five.
+    expect(FIXTURES.expert.find((action) => action.tick === 2200)?.payload).toMatchObject({ drugId: 'rocuronium' });
+    expect(rapidSequenceInductionCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')[0]!.evidence[0])
+      .toContain('the count reaches zero about twenty seconds after 0.6 mg/kg');
+    expect(low(expert, 'depthIndex')).toBeCloseTo(43.0, 1);
+    const errored = run(FIXTURES.commonError);
+    expect(Math.max(...series(errored, 'spo2Percent', 0, 1719))).toBeCloseTo(98.1, 1);
+    expect(low(errored, 'spo2Percent')).toBeCloseTo(72.1, 1);
+    expect(lowTick(errored, 'spo2Percent')).toBe(1719);
+    expect(at(errored, 'spo2Percent', FIXTURES.ticks)).toBeCloseTo(97.8, 1);
+    expect(low(run(FIXTURES.recovery), 'spo2Percent')).toBeCloseTo(80.1, 1);
   });
 });

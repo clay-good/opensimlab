@@ -85,7 +85,7 @@ describe('Paediatric IV-induction transcripts through the real engine and debrie
     })).toBe(false);
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'anesthesia', 'operating-room', 'state_transition');
     expect(audit.complete).toBe(false);
-    expect(routinePediatricIvInductionCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(8);
+    expect(routinePediatricIvInductionCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(9);
     expect(routinePediatricIvInductionCompletionEvidence(SCENARIO, ENGINE_VERSION, 'pediatrics')).toEqual([]);
     expect(routinePediatricIvInductionCompletionEvidence(SCENARIO, 'changed', 'anesthesia')).toEqual([]);
     expect(routinePediatricIvInductionCompletionEvidence(
@@ -206,5 +206,36 @@ describe('Paediatric IV-induction transcripts through the real engine and debrie
   it('states the limits it cannot measure', () => {
     expect(SCENARIO.metadata.limitations).toContain('paedfusor-pk-does-not-validate-pediatric-depth');
     expect(SCENARIO.metadata.limitations).toContain('pediatric-case-is-one-bounded-profile');
+  });
+
+  it('moves the oxygen store, the depth, the pressure and the carbon dioxide over simulated time', () => {
+    // The meaningful-progression evidence, measured at seed 6390.
+    const series = (result: ReturnType<typeof run>, key: string, from = 0, to = Infinity) =>
+      result.history.filter(({ tick }) => tick >= from && tick < to).map(({ state }) => (state as Readonly<Record<string, number>>)[key]!);
+    const at = (result: ReturnType<typeof run>, key: string, tick: number) =>
+      (result.history.find((sample) => sample.tick === tick)!.state as Readonly<Record<string, number>>)[key]!;
+    const low = (result: ReturnType<typeof run>, key: string, from = 0, to = Infinity) => Math.min(...series(result, key, from, to));
+    const lowTick = (result: ReturnType<typeof run>, key: string) => {
+      const value = low(result, key);
+      return result.history.find(({ state }) => (state as Readonly<Record<string, number>>)[key] === value)!.tick;
+    };
+    const firstTick = (result: ReturnType<typeof run>, key: string, test: (value: number) => boolean, from = 0) =>
+      result.history.find(({ tick, state }) => tick >= from && test((state as Readonly<Record<string, number>>)[key]!))!.tick;
+    const expert = run(FIXTURES.expert);
+    expect(at(expert, 'endTidalO2Fraction', 0)).toBeCloseTo(0.14, 2);
+    expect(at(expert, 'endTidalO2Fraction', 1500)).toBeCloseTo(0.93, 2);
+    expect(low(expert, 'depthIndex')).toBeCloseTo(52.4, 1);
+    expect(lowTick(expert, 'depthIndex')).toBe(4166);
+    expect(at(expert, 'meanArterialMmHg', 0)).toBe(70);
+    expect(low(expert, 'meanArterialMmHg')).toBeCloseTo(54.2, 1);
+    expect(lowTick(expert, 'meanArterialMmHg')).toBe(4324);
+    const errored = run(FIXTURES.commonError);
+    expect(at(errored, 'etco2MmHg', 1799)).toBeCloseTo(39.5, 1);
+    expect(firstTick(errored, 'etco2MmHg', (value) => value < 30, 1800)).toBe(2289);
+    expect(at(errored, 'etco2MmHg', FIXTURES.ticks)).toBeCloseTo(10.5, 1);
+    const recovered = run(FIXTURES.recovery);
+    expect(low(recovered, 'etco2MmHg', 1800)).toBeCloseTo(28.3, 1);
+    expect(firstTick(recovered, 'etco2MmHg', (value) => value >= 30, 2400)).toBe(2961);
+    expect(at(recovered, 'etco2MmHg', FIXTURES.ticks)).toBeCloseTo(36.1, 1);
   });
 });

@@ -85,7 +85,7 @@ describe('Paediatric inhalational-induction transcripts through the real engine 
     })).toBe(false);
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'anesthesia', 'operating-room', 'state_transition');
     expect(audit.complete).toBe(false);
-    expect(routinePediatricInhalationalInductionCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(8);
+    expect(routinePediatricInhalationalInductionCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(9);
     expect(routinePediatricInhalationalInductionCompletionEvidence(SCENARIO, ENGINE_VERSION, 'pediatrics')).toEqual([]);
     expect(routinePediatricInhalationalInductionCompletionEvidence(SCENARIO, 'changed', 'anesthesia')).toEqual([]);
     expect(routinePediatricInhalationalInductionCompletionEvidence(
@@ -174,5 +174,26 @@ describe('Paediatric inhalational-induction transcripts through the real engine 
     expect(SCENARIO.metadata.limitations).toContain('pediatric-case-is-one-bounded-profile');
     expect(SCENARIO.metadata.limitations).toContain('depth-index-is-a-drug-model-not-an-eeg');
     expect(SCENARIO.formulary).toEqual([]);
+  });
+
+  it('moves the end-tidal agent, the depth and the pressure over simulated time', () => {
+    // The meaningful-progression evidence, measured at seed 4126.
+    const at = (result: ReturnType<typeof run>, key: string, tick: number) =>
+      (result.history.find((sample) => sample.tick === tick)!.state as Readonly<Record<string, number>>)[key]!;
+    const errored = run(FIXTURES.commonError);
+    expect([500, 1000, FIXTURES.ticks].map((tick) => at(errored, 'endTidalSevofluranePercent', tick)))
+      .toEqual([expect.closeTo(1.99, 2), expect.closeTo(5.46, 2), expect.closeTo(6.0, 2)]);
+    expect([500, 1000, FIXTURES.ticks].map((tick) => at(errored, 'depthIndex', tick)))
+      .toEqual([expect.closeTo(49.3, 1), expect.closeTo(18.5, 1), expect.closeTo(16.5, 1)]);
+    expect([500, 1000, FIXTURES.ticks].map((tick) => at(errored, 'meanArterialMmHg', tick)))
+      .toEqual([expect.closeTo(67.0, 1), expect.closeTo(42.1, 1), expect.closeTo(33.8, 1)]);
+    const recovered = run(FIXTURES.recovery);
+    expect(at(recovered, 'endTidalSevofluranePercent', 1799)).toBeCloseTo(5.98, 2);
+    expect(at(recovered, 'endTidalSevofluranePercent', 2500)).toBeCloseTo(2.24, 2);
+    expect([1800, 2500].map((tick) => at(recovered, 'depthIndex', tick)))
+      .toEqual([expect.closeTo(16.6, 1), expect.closeTo(44.4, 1)]);
+    expect([1799, 2500].map((tick) => at(recovered, 'meanArterialMmHg', tick)))
+      .toEqual([expect.closeTo(34.2, 1), expect.closeTo(55.6, 1)]);
+    expect(settled(recovered)).toEqual({ depth: 49, map: 60 });
   });
 });

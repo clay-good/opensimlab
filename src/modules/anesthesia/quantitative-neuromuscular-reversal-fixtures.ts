@@ -5,9 +5,9 @@ import type { LearnerAction } from '@platform/kernel/protocol';
  *
  * The counterfactual is the limb, and the trap is that the number does not say
  * which one you are on. Measured at this seed, after 0.6 mg/kg the post-tetanic
- * count reads 1 from tick 900 to about 1,400 while the block is still deepening,
- * falls to 0 through the middle of the case, and reads 1 again from tick 3,600
- * onward while it wears off. The two are indistinguishable on the monitor.
+ * count reads 1 from tick 878 to 1,218 while the block is still deepening,
+ * falls to 0 from tick 1,219 through the middle of the case, and reads 1 again
+ * from tick 3,346 onward while it wears off. The two are indistinguishable on the monitor.
  *
  * So the error path reverses at tick 1,000 on a post-tetanic count of 1 — the
  * count the objective asks for, read on the wrong limb — and the engine refuses

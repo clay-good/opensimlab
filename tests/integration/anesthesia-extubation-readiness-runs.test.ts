@@ -74,7 +74,7 @@ describe('Extubation-readiness transcripts through the real engine and debrief',
     expect(supportsExtubationReadiness(EMERGENCE_WITH_RESIDUAL_BLOCKADE)).toBe(false);
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'anesthesia', 'operating-room', 'state_transition');
     expect(audit.complete).toBe(false);
-    expect(extubationReadinessCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(8);
+    expect(extubationReadinessCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(9);
     expect(extubationReadinessCompletionEvidence(SCENARIO, ENGINE_VERSION, 'critical-care')).toEqual([]);
     expect(extubationReadinessCompletionEvidence(SCENARIO, 'changed', 'anesthesia')).toEqual([]);
     expect(extubationReadinessCompletionEvidence(
@@ -146,6 +146,37 @@ describe('Extubation-readiness transcripts through the real engine and debrief',
     const start = run(FIXTURES.noAction).history[0]!.state;
     expect(Number(start.trainOfFourRatio)).toBeGreaterThan(0.9);
     expect(run(FIXTURES.expert).findings[0]!.finding).toContain('above 0.90');
+  });
+
+  it('progresses by an engine-enforced order, not by physiology', () => {
+    // The meaningful-progression claim. The monitor carries none of the lesson:
+    // the solver state is identical with and without the five choices.
+    const expert = run(FIXTURES.expert);
+    expect(expert.history.map(({ state }) => state)).toEqual(run(FIXTURES.noAction).history.map(({ state }) => state));
+    expect(expert.assessment).toMatchObject({
+      quantitativeRecoveryReviewedAtTick: 300, awakeAirwayReviewedAtTick: 600,
+      gasExchangeReviewedAtTick: 900, airwayPlanReviewedAtTick: 1200, decidedAtTick: 1500,
+    });
+    expect(refusals(run(FIXTURES.commonError)).map(({ eventId }) => eventId))
+      .toEqual(['extubation-readiness-order-refused-300']);
+    // Every step taken out of turn is refused, and each refusal records nothing.
+    const outOfTurn = run([
+      CHOOSE(300, 'review-awake-airway-protection'),
+      CHOOSE(600, 'review-quantitative-recovery'),
+      CHOOSE(900, 'review-spontaneous-gas-exchange'),
+      CHOOSE(1200, 'review-airway-risk-and-rescue'),
+      CHOOSE(1500, 'ready-for-planned-awake-extubation'),
+    ]);
+    expect(refusals(outOfTurn).map(({ eventId }) => eventId)).toEqual([
+      'extubation-readiness-order-refused-300',
+      'extubation-gas-exchange-order-refused-900',
+      'extubation-airway-plan-order-refused-1200',
+      'extubation-decision-order-refused-1500',
+    ]);
+    expect(outOfTurn.assessment).toMatchObject({
+      quantitativeRecoveryReviewedAtTick: 600, awakeAirwayReviewedAtTick: null,
+      gasExchangeReviewedAtTick: null, airwayPlanReviewedAtTick: null, decision: null,
+    });
   });
 
   it('fails everything when nothing is chosen', () => {

@@ -77,7 +77,7 @@ describe('Preeclampsia-urgent-delivery transcripts through the real engine and d
     expect(supportsPreeclampsiaUrgentDelivery({ ...SCENARIO, timeline: [] })).toBe(false);
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'anesthesia', 'operating-room', 'state_transition');
     expect(audit.complete).toBe(false);
-    expect(preeclampsiaUrgentDeliveryCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(8);
+    expect(preeclampsiaUrgentDeliveryCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(9);
     expect(preeclampsiaUrgentDeliveryCompletionEvidence(SCENARIO, ENGINE_VERSION, 'obstetrics')).toEqual([]);
     expect(preeclampsiaUrgentDeliveryCompletionEvidence(SCENARIO, 'changed', 'anesthesia')).toEqual([]);
     expect(preeclampsiaUrgentDeliveryCompletionEvidence(
@@ -110,6 +110,35 @@ describe('Preeclampsia-urgent-delivery transcripts through the real engine and d
     expect(pressure(expert, 2400)).toEqual([136, 99]);
     expect(expert.findings[3]!.finding).toContain('136/99 mmHg');
     expect(expert.findings[3]!.finding).toContain('without modeled hypotension');
+  });
+
+  it('lowers the pressure over simulated time after labetalol, and only after it', () => {
+    // The meaningful-progression claim, pinned.
+    const expert = run(FIXTURES.expert);
+    const systolic = expert.history.map((sample) => Number(sample.state.systolicMmHg));
+    const at = (tick: number) => expert.history[tick]!.state as Readonly<Record<string, number>>;
+    const fixed = (value: number) => value.toFixed(1);
+    expect([fixed(at(300).systolicMmHg!), fixed(at(300).diastolicMmHg!), fixed(at(300).heartRateBpm!)])
+      .toEqual(['164.6', '120.2', '96.0']);
+    expect(fixed(at(600).systolicMmHg!)).toBe('164.6');
+    expect([fixed(at(2400).systolicMmHg!), fixed(at(2400).diastolicMmHg!), fixed(at(2400).heartRateBpm!)])
+      .toEqual(['135.5', '98.9', '88.5']);
+    const start = systolic[600]!;
+    const settled = systolic[6000]!;
+    expect(systolic.findIndex((value, tick) => tick > 600 && value <= (start + settled) / 2)).toBe(912);
+    expect(systolic.findIndex((value, tick) => tick > 600 && value <= settled + 1)).toBe(2124);
+    for (const path of ['noAction', 'commonError'] as const) {
+      const flat = run(FIXTURES[path]);
+      expect(flat.history.every((sample) =>
+        fixed(Number(sample.state.systolicMmHg)) === '164.6'
+        && fixed(Number(sample.state.diastolicMmHg)) === '120.2')).toBe(true);
+    }
+    const early = run([
+      { tick: 300, type: 'preeclampsia-response', payload: { action: 'labetalol-20mg-iv' } },
+    ] as LearnerAction[]);
+    expect(early.events.map(({ eventId }) => eventId)).toContain('preeclampsia-treatment-before-confirmation-300');
+    expect(early.events.some(({ eventId }) => eventId.startsWith('labetalol-iv-'))).toBe(false);
+    expect(fixed(Number(early.history[6000]!.state.systolicMmHg))).toBe('164.6');
   });
 
   it('measures the pressure magnesium does not move', () => {

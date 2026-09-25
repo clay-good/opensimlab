@@ -679,14 +679,14 @@
           "id": "deterministic-seed-policy",
           "status": "satisfied",
           "evidence": [
-            "rapid-sequence-induction-fixtures.ts binds seed 3120 and content 0.2.0 to expert, hurried-induction error, same-reserve recovery, and no-action paths over 7,200 ticks. Nothing the objectives are scored on is authored. The forty-one-year-old woman of 74 kg is a set of baseline parameters and a healthy respiratory profile, and the end-tidal oxygen fraction, the saturation, the train-of-four count and ratio, the post-tetanic count and the laryngoscopic view all come out of the shared engine. The block in particular is a Wierda-anchored teaching model rather than a script: the count reaches zero about thirty-five seconds after 0.6 mg/kg and the post-tetanic count returns roughly forty-eight minutes of simulated time later, and the transcripts record what the model did rather than asserting a schedule. tests/integration/anesthesia-rapid-sequence-induction-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
+            "rapid-sequence-induction-fixtures.ts binds seed 3120 and content 0.2.0 to expert, hurried-induction error, same-reserve recovery, and no-action paths over 7,200 ticks. Nothing the objectives are scored on is authored. The forty-one-year-old woman of 74 kg is a set of baseline parameters and a healthy respiratory profile, and the end-tidal oxygen fraction, the saturation, the train-of-four count and ratio, the post-tetanic count and the laryngoscopic view all come out of the shared engine. The block in particular is a Wierda-anchored teaching model rather than a script: the count reaches zero about twenty seconds after 0.6 mg/kg and the post-tetanic count returns roughly forty-eight minutes of simulated time later, and the transcripts record what the model did rather than asserting a schedule. tests/integration/anesthesia-rapid-sequence-induction-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is two narratives with no non-narrative state event. The progression is physiological: the shared engine evolves the oxygen store, the depth and the block over simulated time, and none of it is scripted. Measured at seed 3120 on the expert path, the end-tidal oxygen fraction rises from 0.14 to 0.95 between the oxygen at tick 120 and the remifentanil at tick 2,100, then drains to 0.80 during the apnea before the first delivered breath at tick 3,160 while the saturation stays above 99.9% -- the reserve is spent instead of the patient, which is what the preoxygenation objective is for. The train-of-four count reaches zero at tick 2,393, 19.3 seconds after the 0.6 mg/kg rocuronium, and stays there until the accepted reversal at tick 5,400; the depth index falls from 93 to a low of 43.0. Without the reserve the same interval costs the patient: the error path's saturation falls from 98.1% to 72.1% at tick 1,719 and returns to 97.8% once she is ventilated, and the same-reserve recovery path bottoms at 80.1%. One step is also ordered by the engine rather than by physiology: sugammadex is refused unless its dose matches the observed depth on the receding limb, and a transcript in tests/integration/anesthesia-rapid-sequence-induction-runs.test.ts is refused twice. Every number here is pinned by a test in that file."
           ]
         },
         {
@@ -1314,9 +1314,9 @@
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is two narratives with no non-narrative state event. The progression is physiological: the shared engine evolves the oxygen store, the depth, the pressure and the carbon dioxide over simulated time on the Paedfusor-anchored profile. Measured at seed 6390 on the expert path, the end-tidal oxygen fraction rises from 0.14 to 0.93 before the propofol at tick 1,500. After it, the depth index falls from 93 to a low of 52.4 and the mean arterial pressure from 70 to 54.2 mmHg, and both reach their lows more than four minutes after the bolus, at ticks 4,166 and 4,324. The ventilation objective reads a trend rather than a setting. On the error path the 450 mL breath takes end-tidal carbon dioxide from 39.5 mmHg at tick 1,799 below 30 by tick 2,289 and to 10.5 by the end of the run. On the recovery path, resized at tick 2,400, it climbs back from a low of 28.3 to 30 at tick 2,961 and 36.1 by the end, which is why the sustained window the objective reads has to close after the correction rather than at it. Every number here is pinned by a test in tests/integration/anesthesia-routine-pediatric-iv-induction-runs.test.ts."
           ]
         },
         {
@@ -2952,9 +2952,9 @@
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is three narratives with no non-narrative state event. The progression is physiological: the shared engine evolves the oxygen store, the depth and the pressure over simulated time on the Eleveld-anchored propofol model. Measured at seed 5860 on the expert path, the end-tidal oxygen fraction rises from 0.14 to 0.94 by the first increment at tick 1,500. The five increments end at tick 2,100, and the patient keeps changing well after the last one: the depth index reaches its low of 49.6 at tick 4,114 and the mean arterial pressure its nadir of 69.2 mmHg at tick 4,283, 218 seconds after the fifth increment. That lag between giving a drug and seeing its effect is what the titration and perfusion objectives are about. The error path's single 144 mg push takes the same pressure from 92 to 61.9 mmHg at tick 3,967 and the depth index to 36.5. Every number here is pinned by a test in tests/integration/anesthesia-routine-geriatric-induction-runs.test.ts."
           ]
         },
         {
@@ -3073,14 +3073,14 @@
           "id": "deterministic-seed-policy",
           "status": "satisfied",
           "evidence": [
-            "quantitative-neuromuscular-reversal-fixtures.ts binds seed 4930 and content 0.1.0 to expert, wrong-limb error, refusal-heeded recovery, and no-action paths over 7,200 ticks. Nothing the objectives are scored on is authored. The forty-five-year-old woman of 70 kg is a set of baseline parameters and the block is a Wierda-anchored teaching model, so the timings the counterfactual turns on are solver output: after 0.6 mg/kg the post-tetanic count reads 1 from about tick 900 to 1,400 while the block is still deepening, falls to 0 through the middle of the case, and reads 1 again from tick 3,600 onward while it wears off. tests/integration/anesthesia-quantitative-reversal-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
+            "quantitative-neuromuscular-reversal-fixtures.ts binds seed 4930 and content 0.1.0 to expert, wrong-limb error, refusal-heeded recovery, and no-action paths over 7,200 ticks. Nothing the objectives are scored on is authored. The forty-five-year-old woman of 70 kg is a set of baseline parameters and the block is a Wierda-anchored teaching model, so the timings the counterfactual turns on are solver output: after 0.6 mg/kg the post-tetanic count reads 1 from tick 878 to 1,218 while the block is still deepening, falls to 0 from tick 1,219 through the middle of the case, and reads 1 again from tick 3,346 onward while it wears off. tests/integration/anesthesia-quantitative-reversal-runs.test.ts replays every path frame-for-frame across all three guidance levels and both practice regions."
           ]
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is three narratives with no non-narrative state event. The progression here is physiological: the shared engine evolves the rocuronium teaching model tick by tick, and the lesson is built on its shape. Measured at seed 4930 on the wrong-limb error path, where the reversal is refused and the block runs untouched, the 0.6 mg/kg dose at tick 600 takes the effect-site concentration from 0.028 mg/L to a peak of 7.755 mg/L at tick 1,797, where it meets the plasma curve, and then lets it fall to 6.970 mg/L at tick 3,700 and 5.520 mg/L at tick 7,200. The monitor follows: the train-of-four count falls from 4 to 0 by tick 793, and the ratio stays at 0 to the end of the run because this window is too short for unaided recovery. That shape is what the reversal objective is scored on. The engine refuses sugammadex at tick 1,000 with bad-sugammadex-1000 because the effect site is still rising, and accepts the same 4 mg/kg dose on the expert path at tick 3,700, after which the ratio reads at least 0.9 on the next frame. The refusal is gated on the modeled block depth rather than on a step order. On the no-action path no rocuronium is given, the ratio reads 1 on every frame, and only the circulation drifts under the running volatile, so none of the block objectives is exercised without the dose."
           ]
         },
         {
@@ -3204,9 +3204,9 @@
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is three narratives with no non-narrative state event. The progression is physiological: the shared engine evolves the end-tidal sevoflurane, the depth and the pressure over simulated time from the vaporizer setting, and the objectives read the result rather than the dial. Measured at seed 4126 on the error path, where the vaporizer stays at 6%, end-tidal sevoflurane climbs from 1.99% at tick 500 to 5.46% at tick 1,000 and 6.00% by the end. The depth index follows it from 49.3 to 18.5 to 16.5, and the mean arterial pressure falls from 67.0 to 42.1 to 33.8 mmHg. On the recovery path, turned down to 2% at tick 1,800, end-tidal sevoflurane falls from 5.98% to 2.24% by tick 2,500, and the child comes back over the following minutes: depth 16.6 to 44.4 at tick 2,500 and 49 by tick 4,100, pressure 34.2 to 55.6 to 60 mmHg. That washout takes simulated time, which is why a reduction at tick 1,800 cannot score the sixty seconds after it the way the expert path's reduction at tick 500 does. Every number here is pinned by a test in tests/integration/anesthesia-routine-pediatric-inhalational-induction-runs.test.ts."
           ]
         },
         {
@@ -3330,9 +3330,9 @@
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is two narratives with no non-narrative state event. The progression is physiological: the shared engine evolves the oxygen store, the block and the depth over simulated time on a term profile with a smaller functional residual capacity and a higher oxygen consumption. Measured at seed 7203 on the expert path, the end-tidal oxygen fraction rises from 0.14 to 0.93 by the propofol at tick 1,200, then falls to 0.74 during the apnea before the first delivered breath at tick 2,060 while the saturation stays above 99.9% -- the reserve is spent instead of the patient. The train-of-four count reaches zero at tick 1,331, 8.1 seconds after the 1.2 mg/kg rocuronium, and the depth index falls from 93 to 45.7. Without the reserve the same interval costs the patient: the error path's saturation falls from 97.8% to 50.2% at tick 1,819 and returns to 97.2% once she is ventilated, and the same-reserve recovery path bottoms at 81.5%. Every number here is pinned by a test in tests/integration/anesthesia-obstetric-general-anesthesia-runs.test.ts."
           ]
         },
         {
@@ -3456,9 +3456,9 @@
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is two narratives with no non-narrative state event. Two things progress here, and neither is a scripted state change. The first is the labetalol response, which the shared engine evolves over simulated time as a declared first-order teaching curve rather than an individual drug model. Measured at seed 4471 on the expert path, labetalol at tick 600 takes the systolic pressure from 164.6 mmHg to half-way toward its settled value by tick 912, to within 1 mmHg of it by tick 2,124, and to 135.5/98.9 mmHg with a heart rate of 88.5 bpm at tick 2,400, from 164.6/120.2 mmHg and 96.0 bpm at confirmation. That time course is why the reassessment objective asks for a later reading rather than an immediate one. The pressure does not move on its own: on the no-action and magnesium-only error paths it reads 164.6/120.2 mmHg at every frame through tick 6,000, and only oxygenation drifts. The second is an ordered gate the engine enforces with refusals: either drug reached for before a repeat pressure is refused (preeclampsia-treatment-before-confirmation-300) and nothing is given."
           ]
         },
         {
@@ -3708,9 +3708,9 @@
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is one narrative with no non-narrative state event. The progression here is ordered, not physiological: the solver state replays frame-for-frame identically on the expert and no-action paths at seed 7180, so the monitor carries none of the lesson. What moves is the recorded assessment, and the engine enforces its order with two distinct refusals, each of which leaves the record unchanged: any classification or disposition before the cues are reviewed (aspiration-risk-order-refused), and a disposition before the risk has been classified (aspiration-risk-plan-order-refused). On seed 7180 the expert path records the cue review at tick 300, the elevated classification at 600 and the deferral at 900. None of the four reference transcripts is refused; the refusals are exercised by out-of-order paths in the runs test rather than by a shipped fixture. The order matters to the objectives because the risk is a pattern across the medication, symptom, fasting and urgency cues, and the engine will not record a classification or a disposition that was reached without reading them."
           ]
         },
         {
@@ -3834,9 +3834,9 @@
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is one narrative with no non-narrative state event. The progression in this lesson is ordered rather than physiological, and the evidence says so plainly: measured at seed 2277 on the no-action path, the train-of-four count reads 4 and the ratio reads 0.72 on every one of the 3,001 frames, because this is a static decision snapshot with no drug and no block model running. What moves is the assessment state, and the engine enforces its order with refusals. Review, classification and plan are recorded in that order on the expert path (emergence-monitor-reviewed-300, emergence-block-classified-residual-600, emergence-plan-defer-extubation-and-support-900). A path that classifies before reviewing is refused twice (emergence-block-order-refused-300 and emergence-block-order-refused-600) and records neither a classification nor a plan, and a path that reviews and then reaches for a plan before classifying is refused at the plan (emergence-plan-order-refused-600). That order matters to the objectives because the plan is only credited as following from a reading of the monitor, and the engine will not let a plan exist without one."
           ]
         },
         {
@@ -3960,9 +3960,9 @@
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is one narrative with no non-narrative state event. The progression in this lesson is ordered rather than physiological, and the evidence says so plainly: the bedside findings are fixed scenario content, the vital signs drift only slightly under the shared solver, and nothing the objectives are scored on changes with time. What moves is the assessment state, through a five-step order the engine enforces with refusals. Measured at seed 5544, the expert path records support, exposure, metabolic, examination and escalation in that order (delayed-emergence-support-reviewed-300, delayed-emergence-exposure-reviewed-600, delayed-emergence-metabolic-reviewed-900, delayed-emergence-neurologic-exam-1200, delayed-emergence-escalation-urgent-neurologic-evaluation-1500). The error path, which opens with the examination and then the escalation, is refused at both (delayed-emergence-order-refused-300 and delayed-emergence-order-refused-600) and records neither, and a path that reviews support and then skips straight to the metabolic check is refused at that step (delayed-emergence-metabolic-order-refused-600). That order is the lesson: the lateralizing sign only counts once the common reversible causes have been worked through, and the engine will not let the escalation decision exist before it."
           ]
         },
         {
@@ -4086,9 +4086,9 @@
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is one narrative with no non-narrative state event. The progression here is ordered, not physiological: the solver state replays frame-for-frame identically on the expert and no-action paths at seed 9021, so nothing on the monitor carries the lesson. What moves is the recorded assessment, and the engine enforces its order with four distinct refusals, each of which leaves the record unchanged: anything before the quantitative review is refused (extubation-readiness-order-refused), gas exchange before the awake-airway review (extubation-gas-exchange-order-refused), the rescue plan before gas exchange (extubation-airway-plan-order-refused), and the decision before the rescue plan (extubation-decision-order-refused). On seed 9021 the expert path records the four reviews at ticks 300, 600, 900 and 1,200 and the decision at 1,500; the decided-first error path is refused at tick 300 and records nothing at all. That order is what the objectives rest on: a train-of-four ratio of 0.93 is one checkpoint rather than the answer, and the engine accepts a decision only after the awake airway, gas exchange and rescue plan have been reviewed behind it."
           ]
         },
         {
@@ -4716,9 +4716,9 @@
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is one narrative with no non-narrative state event. The progression here is ordered, not physiological: the solver state replays frame-for-frame identically on the expert and no-action paths at seed 7712, so the monitor carries none of the lesson. What moves is the recorded plan, and the engine enforces a partial order with two distinct refusals, each of which leaves the record unchanged: any plan before both the device record and the procedure interference pattern have been reviewed (cied-plan-order-refused), and backup and restoration before a plan exists (cied-restoration-order-refused). The two reviews may come in either order. On seed 7712 the expert path records the reviews at ticks 300 and 600, the coordinated plan at 900 and the documentation at 1,200; the recovery path reaches for the plan first and is refused at tick 300. The order matters to the objectives because a plan chosen before reading which device this is and where the interference will be is a guess, and the restoration step has nothing to restore to until a plan is on record."
           ]
         },
         {
@@ -4842,9 +4842,9 @@
         },
         {
           "id": "meaningful-progression",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "No non-narrative state progression is declared."
+            "The shared audit records this requirement as missing because the timeline is one narrative with no non-narrative state event. The progression here is ordered, not physiological: the solver state replays frame-for-frame identically on the expert and no-action paths at seed 6633, so the monitor carries none of the lesson. What moves is the recorded handoff, and the engine enforces its order with four distinct refusals, each of which leaves the record unchanged: any content before receiver readiness is confirmed (handoff-order-refused), risks and ownership before both the course and the current state have been shared (handoff-risk-order-refused), read-back before risks and ownership (handoff-readback-order-refused), and acceptance before read-back (handoff-acceptance-order-refused). The course and current-state blocks may come in either order; everything else is sequenced. On seed 6633 the expert path records the six steps at ticks 300, 600, 900, 1,200, 1,500 and 1,800; the no-read-back error path shares every content block and is refused acceptance at tick 1,500, so responsibility never moves. That gate is the point of the lesson: the engine will not record a transfer until the receiver has repeated the critical content back."
           ]
         },
         {

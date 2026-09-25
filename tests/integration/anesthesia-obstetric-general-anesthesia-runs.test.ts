@@ -73,7 +73,7 @@ describe('Obstetric-general-anaesthesia transcripts through the real engine and 
     expect(supportsObstetricGeneralAnesthesia(RAPID_SEQUENCE_INDUCTION)).toBe(false);
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'anesthesia', 'operating-room', 'state_transition');
     expect(audit.complete).toBe(false);
-    expect(obstetricGeneralAnesthesiaCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(8);
+    expect(obstetricGeneralAnesthesiaCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(9);
     expect(obstetricGeneralAnesthesiaCompletionEvidence(SCENARIO, ENGINE_VERSION, 'obstetrics')).toEqual([]);
     expect(obstetricGeneralAnesthesiaCompletionEvidence(SCENARIO, 'changed', 'anesthesia')).toEqual([]);
     expect(obstetricGeneralAnesthesiaCompletionEvidence(
@@ -155,5 +155,35 @@ describe('Obstetric-general-anaesthesia transcripts through the real engine and 
     const idle = run(FIXTURES.noAction);
     expect(outcomes(idle))
       .toEqual(['not-exercised', 'not-exercised', 'not-exercised', 'not-exercised']);
+  });
+
+  it('moves the oxygen store, the block and the depth over simulated time', () => {
+    // The meaningful-progression evidence, measured at seed 7203.
+    const series = (result: ReturnType<typeof run>, key: string, from = 0, to = Infinity) =>
+      result.history.filter(({ tick }) => tick >= from && tick < to).map(({ state }) => (state as Readonly<Record<string, number>>)[key]!);
+    const at = (result: ReturnType<typeof run>, key: string, tick: number) =>
+      (result.history.find((sample) => sample.tick === tick)!.state as Readonly<Record<string, number>>)[key]!;
+    const low = (result: ReturnType<typeof run>, key: string, from = 0, to = Infinity) => Math.min(...series(result, key, from, to));
+    const lowTick = (result: ReturnType<typeof run>, key: string) => {
+      const value = low(result, key);
+      return result.history.find(({ state }) => (state as Readonly<Record<string, number>>)[key] === value)!.tick;
+    };
+    const firstTick = (result: ReturnType<typeof run>, key: string, test: (value: number) => boolean, from = 0) =>
+      result.history.find(({ tick, state }) => tick >= from && test((state as Readonly<Record<string, number>>)[key]!))!.tick;
+    const expert = run(FIXTURES.expert);
+    expect(at(expert, 'endTidalO2Fraction', 0)).toBeCloseTo(0.14, 2);
+    expect(at(expert, 'endTidalO2Fraction', 1200)).toBeCloseTo(0.93, 2);
+    // The apnea spends the reserve rather than the saturation.
+    expect(low(expert, 'endTidalO2Fraction', 1200, 2060)).toBeCloseTo(0.74, 2);
+    expect(low(expert, 'spo2Percent', 1200, 2060)).toBeGreaterThan(99.9);
+    expect(firstTick(expert, 'etco2MmHg', (value) => value > 0, 1293)).toBe(2060);
+    expect(firstTick(expert, 'trainOfFourCount', (value) => value === 0)).toBe(1331);
+    expect(low(expert, 'depthIndex')).toBeCloseTo(45.7, 1);
+    const errored = run(FIXTURES.commonError);
+    expect(Math.max(...series(errored, 'spo2Percent', 0, 1819))).toBeCloseTo(97.8, 1);
+    expect(low(errored, 'spo2Percent')).toBeCloseTo(50.2, 1);
+    expect(lowTick(errored, 'spo2Percent')).toBe(1819);
+    expect(at(errored, 'spo2Percent', FIXTURES.ticks)).toBeCloseTo(97.2, 1);
+    expect(low(run(FIXTURES.recovery), 'spo2Percent')).toBeCloseTo(81.5, 1);
   });
 });

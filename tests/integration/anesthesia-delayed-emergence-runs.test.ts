@@ -74,7 +74,7 @@ describe('Delayed-emergence transcripts through the real engine and debrief', ()
     expect(supportsDelayedEmergenceDifferential(EMERGENCE_WITH_RESIDUAL_BLOCKADE)).toBe(false);
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'anesthesia', 'operating-room', 'state_transition');
     expect(audit.complete).toBe(false);
-    expect(delayedEmergenceCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(8);
+    expect(delayedEmergenceCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toHaveLength(9);
     expect(delayedEmergenceCompletionEvidence(SCENARIO, ENGINE_VERSION, 'critical-care')).toEqual([]);
     expect(delayedEmergenceCompletionEvidence(SCENARIO, 'changed', 'anesthesia')).toEqual([]);
     expect(delayedEmergenceCompletionEvidence(
@@ -112,6 +112,22 @@ describe('Delayed-emergence transcripts through the real engine and debrief', ()
     expect(errored.assessment?.neurologicExamAtTick).toBeNull();
     expect(errored.assessment?.escalation).toBeNull();
     expect(outcomes(errored)).toEqual(['not-met', 'not-met', 'not-met', 'not-met', 'not-met']);
+  });
+
+  it('progresses through a five-step order the engine enforces with refusals', () => {
+    // The meaningful-progression claim, pinned: ordered, not physiological.
+    const steps = (result: ReturnType<typeof run>) => result.events.map(({ eventId }) => eventId)
+      .filter((id) => id.startsWith('delayed-emergence-') && id !== 'delayed-emergence-briefing');
+    expect(steps(run(FIXTURES.expert))).toEqual([
+      'delayed-emergence-support-reviewed-300', 'delayed-emergence-exposure-reviewed-600',
+      'delayed-emergence-metabolic-reviewed-900', 'delayed-emergence-neurologic-exam-1200',
+      'delayed-emergence-escalation-urgent-neurologic-evaluation-1500',
+    ]);
+    expect(refusals(run(FIXTURES.commonError)).map(({ eventId }) => eventId))
+      .toEqual(['delayed-emergence-order-refused-300', 'delayed-emergence-order-refused-600']);
+    const skippedOne = run([CHOOSE(300, 'review-support'), CHOOSE(600, 'check-metabolic-causes')]);
+    expect(steps(skippedOne)).toEqual(['delayed-emergence-support-reviewed-300', 'delayed-emergence-metabolic-order-refused-600']);
+    expect(skippedOne.assessment?.escalation).toBeNull();
   });
 
   it('costs nothing once the refusal is heeded', () => {
