@@ -61,10 +61,14 @@ credited toward the catalog until every item in the completion contract passes.
 - [x] Add issue and pull-request templates that require scope, source locators, tests, limitations,
   maturity effect, and reviewer-domain impact.
 - [x] Add asset-license and evidence-source manifests and fail the build on unclassified assets.
-- [ ] Prove a clean public clone can build and self-host the static simulator without Cloudflare
+- [x] Prove a clean public clone can build and self-host the static simulator without Cloudflare
   credentials or the report service.
-  Automated CI now proves the clean-checkout artifact is complete, credential-free, and portable;
-  anonymous-clone verification remains open until the repository is public.
+  Done once the repository was public: an anonymous clone with an empty `HOME` and no credentials
+  builds, passes `static-host`, and serves from `python3 -m http.server`, including offline in
+  headless Chrome. That last step found a real defect: a plain static host redirects `/route` to
+  `/route/`, the precache kept the redirected response, and browsers refuse one for a navigation,
+  so every offline page on a self-hosted copy failed while Cloudflare's direct 200 hid it. The
+  worker now serves navigations from a non-redirected copy. Record in `docs/deployment.md`.
 
 ## 2. Maturity and governance transition
 

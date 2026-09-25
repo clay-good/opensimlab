@@ -31,6 +31,14 @@ function canonicalDocument(path) {
   return path.replace(/\/index\.html$/, '').replace(/\/$/, '') || '/';
 }
 
+// A static host that redirects `/route` to `/route/` leaves a redirected
+// response in the precache, and browsers refuse one for a navigation.
+function asDocument(response) {
+  if (!response?.redirected) return response;
+  const { status, statusText, headers } = response;
+  return new Response(response.body, { status, statusText, headers });
+}
+
 async function liveClients() {
   return (await self.clients.matchAll({ includeUncontrolled: true, type: 'all' }))
     .filter((client) => client.url.startsWith(self.registration.scope));
@@ -164,10 +172,10 @@ self.addEventListener('fetch', (event) => {
     const cache = await caches.open(name);
     const path = navigation ? canonicalDocument(url.pathname) : url.pathname;
     const cached = await cache.match(path);
-    if (cached) return cached;
+    if (cached) return navigation ? asDocument(cached) : cached;
     if (navigation) {
       const shell = await cache.match('/index.html');
-      if (shell) return shell;
+      if (shell) return asDocument(shell);
     }
     // Unknown resources may be fetched, but can never alter a release snapshot.
     // Missing shipped assets fail rather than silently mixing another release.

@@ -21,6 +21,14 @@ class BrowserRequest extends Request {
   }
 }
 
+/** A followed-redirect response, as fetch returns it; the flag survives clone() as in browsers. */
+function redirected(response: Response): Response {
+  const clone = response.clone.bind(response);
+  Object.defineProperty(response, 'redirected', { value: true });
+  Object.defineProperty(response, 'clone', { value: () => redirected(clone()) });
+  return response;
+}
+
 class MemoryCache {
   readonly entries = new Map<string, Response>();
   readonly writes: string[] = [];
@@ -311,6 +319,25 @@ describe('Service worker release consistency', () => {
     expect(worker.skipWaiting).not.toHaveBeenCalled(); expect(worker.clients.claim).not.toHaveBeenCalled();
     await worker.dispatch('message', { data: { type: 'skip-waiting' } });
     expect(worker.skipWaiting).toHaveBeenCalledOnce();
+  });
+
+  // A plain static host (python -m http.server, nginx, GitHub Pages) answers the
+  // precached `/route` with a redirect to `/route/`. The cache keeps the followed
+  // response, and a browser refuses a redirected response for a navigation, so
+  // every offline page on a self-hosted copy failed while Cloudflare's 200 hid it.
+  it.each([ROUTE, '/unknown-route'])('delivers %s offline as a usable document when the host redirected it at install', async (path) => {
+    const worker = harness('B');
+    for (const [url, body] of Object.entries(worker.release)) worker.network.set(url, new Response(body));
+    for (const url of [ROUTE, '/index.html']) {
+      worker.network.set(url, redirected(new Response(worker.release[url], { headers: { 'content-type': 'text/html' } })));
+    }
+    await worker.dispatch('install');
+    for (const url of Object.keys(worker.release)) worker.network.set(url, new Error('offline'));
+    const response = (await worker.request(path))!;
+    expect(response.redirected).toBe(false);
+    expect(response.status).toBe(200);
+    expect(response.headers.get('content-type')).toBe('text/html');
+    expect(await response.text()).toBe(HTML_B);
   });
 
   it.each(['missing asset', 'newer HTML at a stable URL'])('rejects a partial or inconsistent installation: %s', async (failure) => {

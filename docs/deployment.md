@@ -29,10 +29,27 @@ measures every emitted file for the complete-offline ceiling. This prevents lazy
 review or documentation routes from being charged to first cockpit entry without
 letting code splitting hide growth in the installed artifact.
 
-The source repository is currently private. This automated proof covers the
-clean-checkout build and the resulting portable artifact, but it does not claim
-that an anonymous public clone is possible yet. That final visibility check must
-be repeated when the repository is made public.
+### Anonymous-clone proof (September 25, 2026)
+
+Repeated once the repository was public, with no GitHub credentials, an empty
+`HOME`, no environment variables, and no Cloudflare login:
+
+| Step | Result |
+| --- | --- |
+| `git clone https://github.com/clay-good/opensimlab.git` | cloned without a credential helper |
+| `npm ci`, `npm run build`, `npm run static-host` | all exit 0; 286 routes and 59 catalog artifacts verified |
+| Serve `dist/` with `python3 -m http.server` | routes, `sw.js`, manifest and sitemap answer 200; `/api/reports` 404s, which the report control reports as unavailable |
+| Headless Chrome: load, let the service worker install, go offline | an unvisited lesson briefing, a module catalog and `/review-status` all open from the cache |
+
+The last row failed until the fix it prompted. A plain static host answers the
+precached `/route` with a redirect to `/route/`; the cache stored the redirected
+response, and a browser refuses one for a navigation, so every offline page on a
+self-hosted copy failed while Cloudflare's direct 200 hid it. The worker now
+serves navigations from a non-redirected copy, held by
+`tests/integration/service-worker-releases.test.ts`.
+
+Some embedded browsers refuse service workers on plain-HTTP origins outright;
+use a normal browser, or HTTPS, when checking offline behavior on a self-host.
 
 ## Where it is deployed
 
