@@ -124,6 +124,26 @@ closed Browse and restored its control; dismissing Report left Browse open and r
 focus. No report was sent. Full screen-reader, whole-session keyboard, and actual 400% zoom
 validation remain open. Temporary test pages are excluded from the final build.
 
+## Tablet and reduced motion, 2026-09-25
+
+Headless Chrome for Testing (Chromium 1243) against a production build served by
+`python3 -m http.server`, not Cloudflare, after dismissing the first-load acknowledgement.
+
+| Check | Result |
+| --- | --- |
+| Every sitemap route (283) at 768 × 1024 and at 1024 × 768 | 566 page loads; no horizontal overflow; no button, input, select or summary under 24 × 24 px |
+| A live session in the first lesson of each of the 16 modules, both orientations | 32 sessions started; no overflow; no control under 24 px |
+| Running CSS animations, landing and cockpit, `reduce` and `no-preference` | none in either mode |
+| Distinct canvas frames over 2 s, landing ECG | 40 with no preference; 1 with `reduce` (static) |
+| Distinct canvas frames over 2 s, cockpit sweep | 40 with no preference; 9 with `reduce` (stepped at 4 Hz) |
+
+Writing the regression test found one flaw: under `reduce` the landing hero started for one
+render before the preference hook caught up, then stopped. It now never starts.
+`tests/ui/landing-reduced-motion.test.tsx` and `tests/unit/reduced-motion.test.ts` hold both
+mechanisms. The 24 px floor is WCAG 2.2 target size (minimum); it is not the 44 px token,
+which `tests/ui/cockpit-layout.test.tsx` holds for cockpit controls. This is emulation of a
+tablet viewport, not a physical tablet with touch input.
+
 ## Still owed, and only a person can do it
 
 The thyroid-storm content 0.1.0 engineering check is recorded in

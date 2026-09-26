@@ -57,6 +57,11 @@ export function Landing() {
 
   useEffect(() => {
     if (reducedMotion || !canvasRef.current) return undefined;
+    // The hook reports the preference one render late, because its first value
+    // must match the server's. Read it here too rather than start and stop.
+    if (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return undefined;
+    }
     return startLiveHero(canvasRef.current);
   }, [reducedMotion]);
 

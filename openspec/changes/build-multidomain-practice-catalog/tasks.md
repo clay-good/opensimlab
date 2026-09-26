@@ -128,7 +128,10 @@ credited toward the catalog until every item in the completion contract passes.
   Every module's prerendered index lists all of its scenarios as plain links, readable with no
   script, and browser inspection passes without horizontal overflow at 320 px. With the filter
   controls removed (see the task above), there is no result-change status left to announce.
-  Tablet and reduced-motion procedures remain.
+  Tablet and reduced-motion procedures ran on September 25, 2026 (`docs/accessibility-audit.md`):
+  every route at both tablet orientations with no overflow or undersized control, and reduced
+  motion stops the landing ECG and steps the cockpit sweep at 4 Hz, both now held by tests. The
+  screen-reader experience is what remains, and only a person can check it.
 - [ ] Demonstrate with 20 moderated learners that named and need-based cases are found within the
   specified threshold; record the procedure and results without production telemetry.
 - [ ] Build shared operating-room, emergency-department, ICU, ward, delivery-room, neonatal, clinic,
