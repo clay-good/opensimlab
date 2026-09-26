@@ -2143,6 +2143,12 @@ credited toward the catalog until every item in the completion contract passes.
   boundary; earlier releases publish their smaller honest passing count.
 - [ ] Verify a full session makes no API call, then preview and submit one bounded report and inspect
   the D1 row.
+  First half checked on September 25, 2026, in headless Chrome against a production build: in
+  the first lesson of each of the 16 modules, the worked example drove a live session for 150 s
+  (the anesthesia one through a full induction to 6 min 40 s of simulated time) with zero
+  requests to `/api/`, zero requests to any other origin, and no page error. That is a
+  demonstration-driven run, not a learner session carried to its debrief. Submitting one real
+  report and inspecting its D1 row needs the production report values and stays open.
 - [ ] Verify all preview, reviewed, endorsed, overdue, and withdrawn labels against public records.
 - [ ] Verify report Worker failure, D1 exhaustion, Turnstile failure, domain-pack failure, and offline
   installation leave playable cached scenarios intact.
