@@ -144,5 +144,16 @@ describe('Requirement: the renal hypomagnesemia lesson runs on its own engine', 
     const { events } = run(FIXTURES.expert, FIXTURES.expert.at(-1)![0] + 5);
     const outcomes = objectiveFindings(SCENARIO, [], 0, 0, [], events);
     expect(outcomes).toHaveLength(SCENARIO.metadata.objectives.length);
+    expect(outcomes.map((finding) => [finding.objectiveId, finding.outcome]))
+      .toEqual(SCENARIO.metadata.objectives.map((objective) => [objective.id, 'met']));
+  });
+
+  it('meets no objective on the common-error path, whose only recorded steps are two refusals and a partial check', () => {
+    const { events } = run(FIXTURES.commonError, FIXTURES.commonError.at(-1)![0] + 5);
+    const outcomes = objectiveFindings(SCENARIO, [], 0, 0, [], events);
+    expect(outcomes.map((finding) => [finding.objectiveId, finding.outcome]))
+      .toEqual(SCENARIO.metadata.objectives.map((objective) => [objective.id, 'not-met']));
+    expect(outcomes.some((finding) => finding.finding.includes('attempted and refused')),
+      'a refused shortcut stays visible in the debrief').toBe(true);
   });
 });

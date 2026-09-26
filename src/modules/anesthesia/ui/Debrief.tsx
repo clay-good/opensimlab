@@ -40,6 +40,12 @@ import { supportsRenalHyponatremia } from '../../renal-electrolyte/hyponatremia'
 import { supportsRenalHypernatremia } from '../../renal-electrolyte/hypernatremia';
 import { supportsRenalHypocalcemia } from '../../renal-electrolyte/hypocalcemia';
 import { supportsRenalHypermagnesemia } from '../../renal-electrolyte/hypermagnesemia';
+import { supportsRenalHypomagnesemia } from '../../renal-electrolyte/hypomagnesemia';
+import { supportsRenalContrastAttribution } from '../../renal-electrolyte/contrast-attribution';
+import { supportsRenalRhabdomyolysis } from '../../renal-electrolyte/rhabdomyolysis';
+import { supportsRenalEstimatedFiltration } from '../../renal-electrolyte/estimated-filtration';
+import { supportsRenalPhosphateTarget } from '../../renal-electrolyte/phosphate-target';
+import { supportsRenalProteinuriaRatio } from '../../renal-electrolyte/proteinuria-ratio';
 import { supportsMeningococcalSepsis } from '../../infectious-disease/meningococcal-sepsis';
 import { supportsObstructedKidney } from '../../infectious-disease/obstructed-kidney';
 import { supportsFebrileNeutropenia } from '../../infectious-disease/febrile-neutropenia';
@@ -2317,6 +2323,206 @@ export function objectiveFindings(
           finding: (handoff ? 'Current bedside and laboratory findings, delivered care, critical-care review, and continuing responsibilities were handed off with shock unresolved. ' : 'Current full findings or continuing-care ownership remains incomplete. ')
             + (monitoring ? '' : 'Continuing surveillance was not arranged. ')
             + 'A settled diagnosis, a normal marker, and an error-free history are not handoff gates. Handoff ends rehearsal, not treatment, and no survival or discharge readiness is certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id.startsWith('renal-hypomagnesemia-')) {
+      if (!supportsRenalHypomagnesemia(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The renal hypomagnesemia lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^renal-hypomagnesemia-${id}-\\d+$`).test(entry.eventId));
+      const monitoring = event('monitoring'); const stopped = event('exposure-stopped'); const repletion = event('repletion');
+      const support = event('support'); const context = event('context-review'); const number = event('number-review');
+      const response = event('repletion-reassessment'); const handoff = event('handoff');
+      const untreated = event('untreated-contrast'); const untreatedSeen = event('untreated-reassessment'); const partial = event('magnesium-check') || event('potassium-check');
+      const potassiumAlone = event('potassium-alone-refused'); const normalNumber = event('normal-number-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'renal-hypomagnesemia-support': { met: !!monitoring && !!stopped, tick: monitoring?.tick,
+          finding: (monitoring && stopped ? 'Continuous cardiac monitoring and stopping the acid-suppression agent were both recorded without waiting for a repeat number. ' : 'Monitoring of the prolonged QT interval, stopping the suspected exposure, or both remain unrecorded. ')
+            + (untreatedSeen ? 'The authored untreated contrast was observed in a full assessment and remains part of this run. ' : untreated ? 'The authored untreated contrast was reached and remains part of this run. ' : '')
+            + 'Monitoring watches the risk without reducing it, and stopping a suspected contributor is not an attribution; neither is a diagnosis.' },
+        'renal-hypomagnesemia-context': { met: !!support && !!context, tick: context?.tick,
+          finding: (support && context ? 'The long-term acid suppression, the months of loose stool, the two earlier potassium replacements, and the low ionized calcium were reviewed with qualified support. ' : 'Qualified support or the exposure-and-losses review remains incomplete. ')
+            + (potassiumAlone ? 'A third potassium replacement on its own was attempted and refused; that mechanism does not make magnesium the only possible reason a potassium fails to rise. ' : '')
+            + 'The supplied history supports review. It establishes no cause, no drug attribution, and no renal or malabsorption diagnosis.' },
+        'renal-hypomagnesemia-number': { met: !!number, tick: number?.tick,
+          finding: (number ? 'What the in-range magnesium shows and what it does not exclude was recorded, and the fractional excretion was read as separating loss routes. ' : 'What the in-range magnesium does and does not exclude was never recorded. ')
+            + (normalNumber ? 'The claim that an in-range magnesium excludes depletion was attempted and refused; refusing it does not rule depletion in either. ' : '')
+            + 'The fractional excretion is not a diagnosis, a threshold, or a repletion instruction, and no cutoff is taught.' },
+        'renal-hypomagnesemia-reassessment': { met: !!repletion && !!response, tick: response?.tick,
+          finding: (repletion && response ? 'A requested full assessment after delivered repletion made the authored response available where it appears: the potassium, the ionized calcium, and the bedside findings. ' : 'Delivered repletion or a requested full assessment showing its response remains incomplete. ')
+            + (partial ? 'Magnesium-only and potassium-only checks remained partial and did not refresh the other findings. ' : '')
+            + 'The magnesium barely moved, and that is not evidence that repletion failed. No corrected total-body deficit is established.' },
+        'renal-hypomagnesemia-handoff': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The repletion response, the medication decision, continuing QT surveillance, and serial electrolyte review were handed over with current full findings. ' : 'Current full findings after an observed response, or continuing-care ownership, remain incomplete. ')
+            + 'The deficit may be far from corrected and the cause is not established. A normal magnesium and every earlier panel are not handoff gates; practice ends, not treatment.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id.startsWith('renal-contrast-')) {
+      if (!supportsRenalContrastAttribution(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The renal contrast-attribution lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^renal-contrast-${id}-\\d+$`).test(entry.eventId));
+      const label = event('label-review'); const alternatives = event('alternatives-review'); const evidence = event('evidence-review');
+      const withdrawn = event('exposures-withdrawn'); const support = event('support'); const handoff = event('handoff');
+      const unexamined = event('unexamined-contrast'); const partial = event('creatinine-check') || event('perfusion-check');
+      const attribution = event('attribution-refused'); const stopLooking = event('stop-looking-refused');
+      const current = withdrawn && log.find((entry, index) => index > log.indexOf(withdrawn) && entry.tick >= withdrawn.tick
+        && /^renal-contrast-record-reassessment-\d+$/.test(entry.eventId));
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'renal-contrast-attribution': { met: !!label, tick: label?.tick,
+          finding: (label ? 'The written "contrast-induced nephropathy" was recorded as an attribution someone made, not a result anyone reported. ' : 'The written label was never recorded as an attribution, so it went on standing as a finding. ')
+            + (attribution ? 'Recording the injury as caused by contrast was attempted and refused. That refusal is not a claim that contrast never injures a kidney, and it does not name a different cause. ' : '')
+            + 'Timing alone attributes nothing, and this lesson establishes no alternative cause.' },
+        'renal-contrast-alternatives': { met: !!alternatives && !!support, tick: alternatives?.tick,
+          finding: (alternatives && support ? 'The hypotensive episodes, the continued renin-angiotensin blocker, the non-steroidal anti-inflammatory, and the fever with a rising inflammatory marker were reviewed with qualified support. ' : 'Qualified support or the review of what the label did not exclude remains incomplete. ')
+            + (stopLooking ? 'Closing the search on the strength of the label was attempted and refused. ' : '')
+            + (unexamined ? 'The authored unexamined contrast was reached and remains part of this run. ' : '')
+            + 'Naming the competing explanations does not make any of them the cause.' },
+        'renal-contrast-evidence': { met: !!evidence, tick: evidence?.tick,
+          finding: (evidence ? 'The difference between a before-and-after rise and a controlled comparison was reviewed, with the limits of the controlled work stated. ' : 'The evidence behind the label was never reviewed. ')
+            + 'That work argues against a strong causal claim; it is not proof of none, and a consensus position is not a settled fact. No threshold, protocol, imaging decision, or fluid decision follows.' },
+        'renal-contrast-reassessment': { met: !!current, tick: current?.tick,
+          finding: (current ? 'A requested full assessment after the exposures were withdrawn and the full charts were open made the current picture available. ' : 'A full assessment after withdrawing the exposures, with the full charts open, is missing. ')
+            + (partial ? 'Creatinine-only and perfusion-only checks remained partial and did not refresh the other findings. ' : '')
+            + 'The creatinine kept rising. That does not confirm the label, and a fall would not have confirmed it either.' },
+        'renal-contrast-handoff': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'An open question was handed over: the exposures withdrawn, the alternatives recorded, the evidence reviewed, and the cause named as unresolved. ' : 'Current full findings or continuing ownership of the open question remain incomplete. ')
+            + 'Naming a cause before leaving, a falling creatinine, and a completed diagnosis are not handoff gates. Practice ends, not the search.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id.startsWith('renal-rhabdomyolysis-')) {
+      if (!supportsRenalRhabdomyolysis(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The renal rhabdomyolysis lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^renal-rhabdomyolysis-${id}-\\d+$`).test(entry.eventId));
+      const cause = event('cause-review'); const compartment = event('compartment-examination'); const number = event('number-review');
+      const additions = event('additions-review'); const fluids = event('fluid-ownership'); const support = event('support');
+      const handoff = event('handoff'); const unexamined = event('unexamined-contrast');
+      const dialysis = event('dialysis-refused'); const routineAdditions = event('additions-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'renal-rhabdomyolysis-cause': { met: !!cause && !!support, tick: cause?.tick,
+          finding: (cause && support ? 'The unaccustomed training session and the absence of trauma, toxin, heat illness, sepsis, and arrest were reviewed with qualified support. ' : 'Qualified support or the review of the cause remains incomplete. ')
+            + 'The cohort figures are an observed distribution, not a prognosis for this patient, and establishing a cause does not close the search for a second one.' },
+        'renal-rhabdomyolysis-compartment': { met: !!compartment, tick: compartment?.tick,
+          finding: (compartment ? 'A compartment examination of the affected limbs was performed and recorded, independently of any laboratory result. ' : 'The limbs were never examined. ')
+            + (unexamined ? 'The authored unexamined contrast was reached before the examination and remains part of this run. ' : '')
+            + 'No creatine kinase value rules a compartment syndrome in or out; the examination has to be repeated, and no pressure or procedure is supplied here.' },
+        'renal-rhabdomyolysis-number': { met: !!number, tick: number?.tick,
+          finding: (number ? 'The creatine kinase was recorded as one variable among several rather than the value that sets treatment or disposition. ' : 'What the creatine kinase does and does not decide was never recorded. ')
+            + (dialysis ? 'Requesting replacement therapy on the strength of the value was attempted and refused; that refusal is not a claim that he will never need it. ' : '')
+            + 'A rising value beside an unchanged kidney is not deterioration, and no threshold, dialysis criterion, or discharge criterion is taught.' },
+        'renal-rhabdomyolysis-additions': { met: !!fluids && !!additions, tick: fluids?.tick,
+          finding: (fluids && additions ? 'Qualified individualized fluid ownership was arranged, and the review of bicarbonate and mannitol was recorded. ' : 'Qualified fluid ownership or the review of bicarbonate and mannitol remains incomplete. ')
+            + (routineAdditions ? 'Adding bicarbonate and mannitol as a routine pair was attempted and refused. ' : '')
+            + 'The review rated its own evidence very low quality, so this is an absence of demonstrated benefit rather than proof of none. No volume, rate, product, or alkalinization target is selected.' },
+        'renal-rhabdomyolysis-handoff': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The cause, the recorded examination, the fluid ownership, monitoring, and current full findings were handed over. ' : 'Current full findings or continuing-care ownership remain incomplete. ')
+            + 'The creatine kinase was still rising and the kidney unaffected; neither is the discharge criterion, and this rehearsal supplies none. No peak, prognosis, or recovery is certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id.startsWith('renal-estimate-')) {
+      if (!supportsRenalEstimatedFiltration(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The renal estimated-filtration lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^renal-estimate-${id}-\\d+$`).test(entry.eventId));
+      const precision = event('precision-review'); const generation = event('generation-review');
+      const marker = event('second-marker-requested'); const discordance = event('discordance-review');
+      const medicine = event('medicine-owned'); const support = event('support'); const handoff = event('handoff');
+      const unreviewed = event('unreviewed-contrast'); const early = event('discordance-early');
+      const repeated = event('creatinine-check'); const dose = event('dose-refused'); const convenient = event('convenient-number-refused');
+      const current = medicine && log.find((entry, index) => index > log.indexOf(medicine) && entry.tick >= medicine.tick
+        && /^renal-estimate-discordant-reassessment-\d+$/.test(entry.eventId));
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'renal-estimate-precision': { met: !!precision, tick: precision?.tick,
+          finding: (precision ? 'The width of the reported estimate was recorded: 85% or more within 30% of measured filtration, and up to one in seven outside even that. ' : 'What the reported estimate claims, and how wide it is, was never recorded. ')
+            + (dose ? 'Starting at the dose the estimate supports, on that estimate alone, was attempted and refused; the refusal selects no other dose and does not decide whether to start. ' : '')
+            + (unreviewed ? 'The authored unreviewed contrast was reached and remains part of this run. ' : '')
+            + 'This is a property of the estimate, not a claim about her.' },
+        'renal-estimate-generation': { met: !!generation, tick: generation?.tick,
+          finding: (generation ? 'That the estimate was generated from a marker made by muscle, and indexed to a population convention, was reviewed against her frailty, weight, and amputation. ' : 'What the estimate was generated from was never reviewed. ')
+            + 'None of this establishes that her filtration is low.' },
+        'renal-estimate-discordance': { met: !!marker && !!support && !!discordance, tick: discordance?.tick,
+          finding: (marker && support && discordance ? 'A differently generated marker was requested with qualified support, and the disagreement it produced was recorded as the finding. ' : 'The second marker, qualified support, or the record of the disagreement remains incomplete. ')
+            + (early ? 'A comparison was attempted before the second marker returned, when there was nothing yet to compare. ' : '')
+            + (convenient ? 'Adopting whichever estimate suits the plan was attempted and refused. ' : '')
+            + 'Neither value is a measurement, and nothing here settles which is closer.' },
+        'renal-estimate-reassessment': { met: !!current, tick: current?.tick,
+          finding: (current ? 'A requested full assessment after the medicine decision was placed, with the second marker back, made the current picture available. ' : 'A full assessment after the medicine decision, with the second marker back, is missing. ')
+            + (repeated ? 'A repeated creatinine was requested; it repeats the same inference from the same marker and narrows nothing. ' : '')
+            + 'Only a differently derived measure changes what is known, and no measured filtration rate is supplied in this rehearsal.' },
+        'renal-estimate-handoff': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The estimate, its width, what it was generated from, the disagreement, and current findings were handed over, with the medicine decision owned by the qualified team. ' : 'Current full findings or ownership of the medicine decision remain incomplete. ')
+            + 'What was handed on is the uncertainty, stated as uncertainty. No filtration rate, cause, or dose is certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id.startsWith('renal-phosphate-')) {
+      if (!supportsRenalPhosphateTarget(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The renal phosphate-target lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^renal-phosphate-${id}-\\d+$`).test(entry.eventId));
+      const surrogate = event('surrogate-review'); const trial = event('trial-review'); const intake = event('intake-review');
+      const decision = event('decision-owned'); const handoff = event('handoff');
+      const unexamined = event('unexamined-contrast'); const repeated = event('phosphate-check');
+      const treat = event('treat-the-number-refused'); const restrict = event('restrict-further-refused');
+      const current = decision && log.find((entry, index) => index > log.indexOf(decision) && entry.tick >= decision.tick
+        && /^renal-phosphate-records-reassessment-\d+$/.test(entry.eventId));
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'renal-phosphate-surrogate': { met: !!surrogate, tick: surrogate?.tick,
+          finding: (surrogate ? 'The clinic target was recorded as a serum value standing in for outcomes nobody in the room can see. ' : 'The target was never named as a surrogate. ')
+            + (treat ? 'Starting a binder to bring the value into range, with the range as the goal, was attempted and refused; that refusal is not a claim that a binder would harm him and does not decide against one. ' : '')
+            + (unexamined ? 'The authored unexamined contrast was reached and remains part of this run. ' : '')
+            + 'Nothing here establishes that his phosphate is harmless or that it is harmful.' },
+        'renal-phosphate-trial': { met: !!trial, tick: trial?.tick,
+          finding: (trial ? 'The randomized comparison was reviewed, including the calcification that rose against placebo while the phosphate fell. ' : 'The randomized comparison in this population was never reviewed. ')
+            + 'That is uncertainty in both directions from one trial of 148 patients, not evidence that binders are harmful.' },
+        'renal-phosphate-intake': { met: !!intake, tick: intake?.tick,
+          finding: (intake ? 'The two restrictions already applied, the poor appetite, and the difference between protein-bound and additive phosphate were reviewed. ' : 'What he is actually eating was never reviewed. ')
+            + (restrict ? 'Tightening the diet a third time without that review was attempted and refused. ' : '')
+            + 'The weight and albumin change is not a diagnosis of malnutrition and is not proof the restrictions caused it. No diet, target, or education program is prescribed.' },
+        'renal-phosphate-reassessment': { met: !!current, tick: current?.tick,
+          finding: (current ? 'A requested full assessment after the decision was placed, with the previous letters open, made the current picture available. ' : 'A full assessment after the decision was placed, with the previous letters open, is missing. ')
+            + (repeated ? 'A phosphate-only recheck was requested; it restated the surrogate and settled nothing about the outcome it stands for. ' : '')
+            + 'The phosphate stayed where it was; the weight and albumin are the findings that moved, with no cause established and no imaging, bone assessment, or outcome supplied.' },
+        'renal-phosphate-handoff': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The surrogate framing, the trial review, the intake review, and current findings were handed over, with the binder decision owned by the qualified team. ' : 'Current full findings or ownership of the binder decision remain incomplete. ')
+            + 'A phosphate inside the printed range is not a handoff gate. No target, outcome, or cause is certified.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id.startsWith('renal-proteinuria-')) {
+      if (!supportsRenalProteinuriaRatio(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The renal proteinuria lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^renal-proteinuria-${id}-\\d+$`).test(entry.eventId));
+      const variation = event('variation-comparison'); const sampling = event('sampling-review'); const patient = event('patient-review');
+      const repeat = event('repeat-requested'); const support = event('support'); const handoff = event('handoff');
+      const uncompared = event('uncompared-contrast'); const returned = event('repeat-checkpoint');
+      const change = event('change-treatment-refused'); const progression = event('progression-refused');
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'renal-proteinuria-variation': { met: !!variation, tick: variation?.tick,
+          finding: (variation ? 'The +86% rise was compared against the variation a random spot ratio carries, with reference change values of +124% and −55%. ' : 'The rise was never compared against the variation the measurement carries. ')
+            + (progression ? 'Recording the change as progression was attempted and refused. Refusing the label is not the opposite label: nothing here establishes that she is stable either. ' : '')
+            + (uncompared ? 'The authored uncompared contrast was reached and remains part of this run. ' : '')
+            + 'The comparison shows that this pair cannot tell noise from change; it does not show which one it is.' },
+        'renal-proteinuria-sampling': { met: !!sampling, tick: sampling?.tick,
+          finding: (sampling ? 'Both values were recorded as random afternoon spot samples, read against the daily variation in excretion. ' : 'How and when each sample was taken was never reviewed. ')
+            + 'None of this establishes that either supplied value is wrong.' },
+        'renal-proteinuria-patient': { met: !!patient, tick: patient?.tick,
+          finding: (patient ? 'The unchanged blood pressure, weight, creatinine, and sediment, and her own report of no change, were reviewed beside the number. ' : 'The patient was never checked against the number. ')
+            + (change ? 'Changing treatment today on this pair of values was attempted and refused; that refusal does not say her treatment is correct as it stands. ' : '')
+            + 'An unchanged patient beside an uncertain measurement is agreement, not proof that nothing is happening.' },
+        'renal-proteinuria-repeat': { met: !!repeat && !!support, tick: repeat?.tick,
+          finding: (repeat && support ? 'A first morning sample under matched conditions was requested with qualified support, rather than a third random value. ' : 'The matched repeat, or qualified support for it, was never requested. ')
+            + (returned ? 'It returned and narrowed the question without closing it. ' : '')
+            + 'This measurement was available at the last visit as well. No timed collection, biopsy, or cause is supplied here.' },
+        'renal-proteinuria-handoff': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The compared change, the sampling conditions, the unchanged clinical picture, the matched result, and ownership of the treatment decision were handed over. ' : 'Current full findings, the matched result, or ownership of the treatment decision remain incomplete. ')
+            + 'The question is narrower and still open; no progression, stability, or cause is established.' },
       };
       const result = results[objective.id]!;
       return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
