@@ -223,6 +223,7 @@ export function EducatorsRoute() {
           <li><a href="/governance">Clinical governance</a>: who has reviewed what, and every outstanding item</li>
           <li><a href="/limitations">Limitations register</a>: what this deliberately does not model</li>
           <li><a href="/privacy">Privacy</a>: what is stored, which is only on the learner&rsquo;s own device</li>
+          <li><a href="/catalog/adoption-pack.json">Adoption pack</a>: one file for this release listing every scenario with its version, status, sources and limitations, and exactly what a problem report sends; it needs no account, and its reviewed coverage is currently zero</li>
         </ul>
 
         <p className="reading__aside">{NOT_FOR_CLINICAL_USE}</p>

@@ -59,4 +59,5 @@ export const PUBLIC_CATALOG_ARTIFACTS = [
   '/catalog/surgery-trauma-maturity.json',
   '/catalog/asset-licenses.json',
   '/catalog/evidence-sources.json',
+  '/catalog/adoption-pack.json',
 ] as const;

@@ -2125,6 +2125,15 @@ credited toward the catalog until every item in the completion contract passes.
 - [ ] Generate a static adoption pack for a selected release containing catalog, competency maps,
   scenario maturity, sources, limitations, corrections, accessibility conformance, privacy/data
   flow, security model, build provenance, review records, and endorsement records.
+  `/catalog/adoption-pack.json` is built by `npm run catalog` from the existing records and stamped
+  with the release id at prerender; an unstamped pack fails `static-host`. Reviewed coverage is 0
+  of 256, and all 256 scenarios are listed as excluded (preview). The reviewer, endorsement,
+  conflict, and expiration sections are empty because the editorial board is empty and no
+  endorsement record exists. Competency mappings exist only for anesthesia. The exclusion list
+  covers scenarios, not non-scenario dependencies such as explainers or drug cards.
+  Left open for that reason and two more: scenario sources are full citations with no link to
+  the ids in `evidence-sources.json`, and no endorsement record type exists to scope an
+  `institution_endorsed` item. The pack is shipped; those three are what remain.
 - [ ] Support reviewed-only course links and pinned static content-pack versions without learner
   accounts or observation.
 - [ ] Add local instructor import and cohort analysis while preserving learner-controlled export.

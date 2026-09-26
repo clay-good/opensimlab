@@ -3,6 +3,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { extname, join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PUBLIC_CATALOG_ARTIFACTS } from '../src/platform/catalog/public-artifacts.ts';
+import { ADOPTION_PACK_RELEASE_TOKEN } from '../src/platform/adoption/adoption-pack.ts';
 import { ROUTES } from '../src/routes/routes.ts';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
@@ -14,7 +15,9 @@ const PRIVATE_BASENAMES = new Set([
 const PRIVATE_EXTENSIONS = new Set([
   '.db', '.dump', '.kdbx', '.key', '.p12', '.pem', '.pfx', '.sqlite', '.sqlite3',
 ]);
-const BUILD_TOKENS = ['__CACHE_VERSION__', '__PRECACHE_MANIFEST__', '__PRECACHE_INTEGRITY__'] as const;
+const BUILD_TOKENS = [
+  '__CACHE_VERSION__', '__PRECACHE_MANIFEST__', '__PRECACHE_INTEGRITY__', ADOPTION_PACK_RELEASE_TOKEN,
+] as const;
 
 function filesUnder(directory: string): string[] {
   return readdirSync(directory).flatMap((name) => {

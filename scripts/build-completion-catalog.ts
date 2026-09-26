@@ -4,7 +4,6 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ENGINE_VERSION } from '@anesthesia/engine';
 import { SCENARIOS } from '@anesthesia/scenarios';
-import type { Scenario } from '@anesthesia/scenarios/types';
 import {
   buildAnesthesiaCompletionCatalog,
   buildModuleCompletionCatalog,
@@ -36,6 +35,8 @@ import {
   buildPublicScenarioCatalog,
   SCENARIO_CATALOG_SCHEMA,
 } from '@anesthesia/catalog/public-catalog';
+import { buildAdoptionPack } from '@platform/adoption/adoption-pack';
+import { adoptionPackInput, authoredByKey } from './adoption-pack-input';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const REPORT_EVIDENCE_ALGORITHM = 'scenario-evidence-v1';
@@ -146,27 +147,6 @@ function evidenceHash(value: unknown): string {
   return `sha256:${createHash('sha256').update(stableJson(value)).digest('hex')}`;
 }
 
-const authoredScenarios = [
-  ['anesthesia', SCENARIOS],
-  ['emergency-medicine', EMERGENCY_MEDICINE_SCENARIOS],
-  ['critical-care', CRITICAL_CARE_SCENARIOS],
-  ['cardiology', CARDIOLOGY_SCENARIOS],
-  ['respiratory-medicine', RESPIRATORY_MEDICINE_SCENARIOS],
-  ['pediatrics', PEDIATRICS_SCENARIOS],
-  ['neurology', NEUROLOGY_SCENARIOS],
-  ['toxicology', TOXICOLOGY_SCENARIOS],
-  ['obstetrics', OBSTETRICS_SCENARIOS],
-  ['neonatology', NEONATOLOGY_SCENARIOS],
-  ['endocrine-metabolic', ENDOCRINE_METABOLIC_SCENARIOS],
-  ['renal-electrolyte', RENAL_ELECTROLYTE_SCENARIOS],
-  ['infectious-disease', INFECTIOUS_DISEASE_SCENARIOS],
-  ['medical-surgical-nursing', MEDICAL_SURGICAL_NURSING_SCENARIOS],
-  ['oncology', ONCOLOGY_SCENARIOS],
-  ['surgery-trauma', SURGERY_TRAUMA_SCENARIOS],
-] as const;
-const authoredByKey = new Map<string, Scenario>(authoredScenarios.flatMap(([moduleId, scenarios]) => scenarios.map(
-  (scenario) => [`${moduleId}:${scenario.metadata.id}@${scenario.metadata.version}`, scenario] as const,
-)));
 const currentReportRecords = [
   completion, emergencyCompletion, criticalCareCompletion, cardiologyCompletion,
   respiratoryMedicineCompletion, pediatricsCompletion, neurologyCompletion, toxicologyCompletion,
@@ -392,6 +372,20 @@ writeFileSync(join(target, 'oncology-maturity.json'),
   `${JSON.stringify(buildMaturityCatalog(oncologyCompletion, oncologyQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'surgery-trauma-maturity.json'),
   `${JSON.stringify(buildMaturityCatalog(surgeryTraumaCompletion, surgeryTraumaQuality), null, 2)}\n`, 'utf8');
+const allCompletions = [
+  completion, emergencyCompletion, criticalCareCompletion, cardiologyCompletion,
+  respiratoryMedicineCompletion, pediatricsCompletion, neurologyCompletion, toxicologyCompletion,
+  obstetricsCompletion, neonatologyCompletion, endocrineMetabolicCompletion, renalElectrolyteCompletion,
+  infectiousDiseaseCompletion, medicalSurgicalNursingCompletion, oncologyCompletion,
+  surgeryTraumaCompletion,
+];
+const maturityCatalogs = allCompletions.map((entry) => buildMaturityCatalog(
+  entry, qualityCatalogs.get(entry.moduleId)!,
+  entry.moduleId === 'anesthesia' ? additionalMaturitySubjects() : [],
+));
+writeFileSync(join(target, 'adoption-pack.json'), `${JSON.stringify(buildAdoptionPack(adoptionPackInput(
+  allCompletions, maturityCatalogs, process.env.SOURCE_DATE ? new Date(process.env.SOURCE_DATE) : new Date(),
+)), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'asset-licenses.json'), `${JSON.stringify(ASSET_LICENSE_MANIFEST, null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'evidence-sources.json'), `${JSON.stringify(buildEvidenceSourceManifest(SOURCES), null, 2)}\n`, 'utf8');
 

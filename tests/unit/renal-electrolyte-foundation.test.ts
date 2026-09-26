@@ -309,8 +309,9 @@ describe('Renal and electrolyte medicine module foundation', () => {
     // does the seventh renal lab.
     expect(ROUTES).toHaveLength(286);
     expect(indexableRoutes()).toHaveLength(283);
-    expect(PUBLIC_CATALOG_ARTIFACTS).toHaveLength(59);
-    expect(new Set(PUBLIC_CATALOG_ARTIFACTS).size).toBe(59);
+    // 59 module and shared artifacts, plus the release-wide adoption pack.
+    expect(PUBLIC_CATALOG_ARTIFACTS).toHaveLength(60);
+    expect(new Set(PUBLIC_CATALOG_ARTIFACTS).size).toBe(60);
     expect(PUBLIC_CATALOG_ARTIFACTS).toEqual(expect.arrayContaining([
       '/catalog/renal-electrolyte-completion-audit.json', '/catalog/renal-electrolyte-quality-audit.json',
       '/catalog/renal-electrolyte-maturity.json',

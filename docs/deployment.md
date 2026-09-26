@@ -23,6 +23,13 @@ credential-shaped file or local Cloudflare state entered `dist/`. CI runs the
 same proof after every build. The artifact can then be served by any static file
 server; `wrangler` is only one deployment option.
 
+One of those catalog files, `/catalog/adoption-pack.json`, is the adoption pack: a single file
+a program can evaluate without an account. It lists every scenario with its version, status,
+sources, and limitations, excludes each one from reviewed coverage with a reason, states what
+works offline and what a problem report sends, and points each claim at a public record.
+`npm run catalog` writes it with a placeholder release, and `npm run prerender` replaces that
+with the build's release id. `npm run static-host` fails if the placeholder survives.
+
 The production build also emits `dist/.vite/manifest.json`. The size gate follows
 its static import graph for the landing and clinical routes, then separately
 measures every emitted file for the complete-offline ceiling. This prevents lazy

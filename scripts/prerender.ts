@@ -22,6 +22,10 @@ import {
 import { structuredDataFor } from '../src/platform/docs/structured-data.ts';
 import { PUBLIC_CATALOG_ARTIFACTS } from '../src/platform/catalog/public-artifacts.ts';
 import { PrerenderedBody } from '../src/routes/Prerendered.tsx';
+import {
+  ADOPTION_PACK_PATH, ADOPTION_PACK_RELEASE_TOKEN,
+} from '../src/platform/adoption/adoption-pack.ts';
+import { releaseId } from './release-id.ts';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const dist = join(root, 'dist');
@@ -218,6 +222,12 @@ function main(): void {
     '',
   ].join('\n');
   writeFileSync(join(dist, 'robots.txt'), robots, 'utf8');
+
+  // Stamp the adoption pack with the release it describes. This must precede the
+  // precache integrity below, which hashes the stamped bytes.
+  const packPath = join(dist, ADOPTION_PACK_PATH.slice(1));
+  writeFileSync(packPath, readFileSync(packPath, 'utf8')
+    .replace(`"${ADOPTION_PACK_RELEASE_TOKEN}"`, JSON.stringify(releaseId())), 'utf8');
 
   // Stamp the service worker with a cache version and its precache manifest.
   const swPath = join(dist, 'sw.js');
