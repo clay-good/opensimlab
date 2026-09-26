@@ -2146,6 +2146,12 @@ credited toward the catalog until every item in the completion contract passes.
 - [ ] Verify all preview, reviewed, endorsed, overdue, and withdrawn labels against public records.
 - [ ] Verify report Worker failure, D1 exhaustion, Turnstile failure, domain-pack failure, and offline
   installation leave playable cached scenarios intact.
+  Client side verified on September 25, 2026 (`docs/problem-reporting.md`): a missing, failing,
+  HTML-answering or hung config, a blocked Turnstile, a 503 and a 429 on submit, and a
+  not-queued acceptance each leave the live session running with an honest message, and two
+  lessons never opened online start and run from the offline cache. Open for two reasons:
+  domain packs do not exist yet, so their failure cannot be exercised, and the live Worker, D1
+  and Turnstile paths need production values.
 - [ ] Re-run moderated catalog, first-action, tutor-understanding, and report-access procedures.
 - [ ] Publish the release changelog with capability changes, scenario counts by maturity, known
   limitations, corrections, review coverage, and no unsupported efficacy claim.

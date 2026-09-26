@@ -109,6 +109,30 @@ launch. These application ceilings and the WAF bound both Siteverify and D1 free
   the simulator.
 - D1 access is maintainer-only through authenticated tooling. There is no public read or admin UI.
 
+## Failure isolation, checked in a browser (September 25, 2026)
+
+Headless Chrome against a production build, with the report service replaced by controlled
+responses. Each row started a live session, opened the report dialog, tried to send, closed it,
+and read the simulation clock.
+
+| Report service state | Posts sent | What the learner is told | Session |
+| --- | --- | --- | --- |
+| Config 404 (static fork) | 0 | Reporting is unavailable on this host; practice still works | resumes |
+| Config 500 (Worker failure) | 0 | same | resumes |
+| Config answered with the app's HTML (SPA fallback) | 0 | same | resumes |
+| Config never answers (8 s timeout) | 0 | same | resumes |
+| Turnstile script blocked | 0 | same | resumes |
+| Report POST 503 (Worker failure) | 1 | Report not sent; try again later | resumes |
+| Report POST 429 (quota or D1 exhaustion) | 1 | same | resumes |
+| Report accepted, not queued (duplicate or daily cap) | 1 | Thanks; it did not join the queue, and why | resumes |
+| Report accepted and queued (control) | 1 | In the weekly review queue | resumes |
+
+The session is paused while the dialog is open and advances again when it closes; no page error
+was raised in any row. Separately, after the service worker installed, going offline and opening
+two lessons never visited online started both sessions from the cache with the clock advancing.
+This exercises the client against simulated service states. The live Worker, D1 and Turnstile
+paths against production remain unverified until those values are configured.
+
 Deployment, migration, cleanup, recovery, and secret commands are in [deployment.md](deployment.md).
 The fixed private projection, automation trust boundary, and weekly human procedure are in
 [report-maintenance.md](report-maintenance.md).
