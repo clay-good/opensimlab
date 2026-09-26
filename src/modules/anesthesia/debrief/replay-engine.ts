@@ -15,18 +15,27 @@
  */
 
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
-import type { LearnerAction } from '@platform/kernel/protocol';
+import type { EngineEvent, LearnerAction } from '@platform/kernel/protocol';
 import { AnesthesiaEngine } from '@anesthesia/engine';
 import type { HistorySample } from '@platform/session/session-store';
-import { MAX_REPLAY_TICKS, type ReplayOptions } from './replay';
+import { MAX_REPLAY_TICKS, type ReplayOptions, type ReplayResult } from './replay';
 
 /** Run the engine over an action list and return the history it produces. */
 export function replay(actions: readonly LearnerAction[], options: ReplayOptions): HistorySample[] {
+  return replayWithEvents(actions, options).history as HistorySample[];
+}
+
+/**
+ * The same run, keeping every event as well. Many objectives are scored from the
+ * steps the engine recorded or refused, which the sampled history does not carry.
+ */
+export function replayWithEvents(actions: readonly LearnerAction[], options: ReplayOptions): ReplayResult {
   const engine = new AnesthesiaEngine({
     scenario: options.scenario, seed: options.seed, practiceRegion: options.practiceRegion,
   });
   const ordered = [...actions].sort((a, b) => a.tick - b.tick);
   const history: HistorySample[] = [];
+  const events: EngineEvent[] = [];
   let next = 0;
   // A non-finite or negative count runs nothing rather than looping forever or
   // throwing from inside a render.
@@ -39,9 +48,10 @@ export function replay(actions: readonly LearnerAction[], options: ReplayOptions
       next += 1;
     }
     const result = engine.step();
+    events.push(...result.events);
     if (tick % TICKS_PER_SECOND === 0) {
       history.push({ tick: result.tick, state: result.state, concentrations: result.concentrations });
     }
   }
-  return history;
+  return { history, events };
 }

@@ -16,8 +16,7 @@
 import {
   WORKER_PROTOCOL_VERSION, type FromWorkerMessage, type HistoryReplayMessage,
 } from '@platform/kernel/protocol';
-import type { HistorySample } from '@platform/session/session-store';
-import type { RunReplay } from './replay';
+import type { ReplayResult, RunReplay } from './replay';
 
 /**
  * How long a single replay may take before it is abandoned, in milliseconds.
@@ -33,7 +32,7 @@ let requests = 0;
 
 /** Build a `RunReplay` that runs in a worker made by `createWorker`. */
 export function workerReplay(createWorker: () => Worker): RunReplay {
-  return (actions, options) => new Promise<readonly HistorySample[]>((resolve, reject) => {
+  return (actions, options) => new Promise<ReplayResult>((resolve, reject) => {
     const worker = createWorker();
     requests += 1;
     const requestId = `replay-${requests}`;
@@ -56,7 +55,7 @@ export function workerReplay(createWorker: () => Worker): RunReplay {
       // is a state message from a session this worker is not running.
       if (message.v !== WORKER_PROTOCOL_VERSION) return;
       if (message.type === 'history' && message.requestId === requestId) {
-        finish(() => resolve(message.history));
+        finish(() => resolve({ history: message.history, events: message.events }));
       } else if (message.type === 'error') {
         // Any error at all, whether or not it names this request: the worker was
         // made for this replay and does nothing else, so a failure it reports is

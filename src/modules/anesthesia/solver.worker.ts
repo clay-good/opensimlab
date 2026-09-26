@@ -12,7 +12,7 @@ import {
   WORKER_PROTOCOL_VERSION, type FromWorkerMessage, type StateMessage, type ToWorkerMessage,
 } from '@platform/kernel/protocol';
 import { AnesthesiaEngine, ENGINE_VERSION, type Scenario } from './engine';
-import { replay as replayHistory } from './debrief/replay-engine';
+import { replayWithEvents } from './debrief/replay-engine';
 import type { PatientState } from './physiology';
 import { MODEL_SET_REVISION } from './pharmacology/registry';
 import { validateScenario } from './scenarios/schema';
@@ -162,7 +162,7 @@ self.onmessage = (event: MessageEvent<ToWorkerMessage>) => {
         }
         post({
           v: WORKER_PROTOCOL_VERSION, type: 'history', requestId: message.requestId,
-          history: replayHistory(message.actions, {
+          ...replayWithEvents(message.actions, {
             scenario: message.scenario as Scenario, seed: message.seed,
             practiceRegion: message.practiceRegion, ticks: message.ticks,
           }),

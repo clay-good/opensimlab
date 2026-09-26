@@ -45,10 +45,11 @@ describe('Requirement: A Counterfactual Runs Where The Engine Already Is', () =>
     expect(request.type).toBe('history-replay');
     expect(request.ticks).toBe(10);
     const history = [{ tick: 0, state: { spo2Percent: 97 }, concentrations: [] }];
+    const events = [{ eventId: 'e-1', tick: 0, kind: 'narrative' }];
     worker.onmessage?.({ data: {
-      v: WORKER_PROTOCOL_VERSION, type: 'history', requestId: request.requestId, history,
+      v: WORKER_PROTOCOL_VERSION, type: 'history', requestId: request.requestId, history, events,
     } });
-    await expect(pending).resolves.toEqual(history);
+    await expect(pending).resolves.toEqual({ history, events });
     // The worker existed for one replay and no longer exists.
     expect(worker.terminated).toBe(true);
     expect(StubWorker.live).toBe(0);
@@ -59,14 +60,14 @@ describe('Requirement: A Counterfactual Runs Where The Engine Already Is', () =>
     const pending = run([], OPTIONS);
     const worker = workers[0]!;
     worker.onmessage?.({ data: {
-      v: WORKER_PROTOCOL_VERSION, type: 'history', requestId: 'somebody-elses', history: [],
+      v: WORKER_PROTOCOL_VERSION, type: 'history', requestId: 'somebody-elses', history: [], events: [],
     } });
     expect(worker.terminated).toBe(false);
     const request = worker.sent[0] as { requestId: string };
     worker.onmessage?.({ data: {
-      v: WORKER_PROTOCOL_VERSION, type: 'history', requestId: request.requestId, history: [],
+      v: WORKER_PROTOCOL_VERSION, type: 'history', requestId: request.requestId, history: [], events: [],
     } });
-    await expect(pending).resolves.toEqual([]);
+    await expect(pending).resolves.toEqual({ history: [], events: [] });
   });
 
   it('Scenario: an engine failure rejects rather than waiting for the timeout', async () => {

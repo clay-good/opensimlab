@@ -15,8 +15,18 @@ import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import {
   UnreadableTranscript, analyseTranscript, parseTranscript, summariseCohort,
 } from '@anesthesia/debrief/analyse-transcript';
-import { replay } from '@anesthesia/debrief/replay-engine';
-import type { LearnerAction } from '@platform/kernel/protocol';
+import { replayWithEvents } from '@anesthesia/debrief/replay-engine';
+import type { EngineEvent, LearnerAction } from '@platform/kernel/protocol';
+import type { HistorySample } from '@platform/session/session-store';
+import { objectiveFindings } from '@anesthesia/ui/Debrief';
+import { POSTOPERATIVE_HANDOFF } from '@anesthesia/scenarios/postoperative-handoff';
+import { ASPIRATION_RISK_RECOGNITION } from '@anesthesia/scenarios/aspiration-risk-recognition';
+import { RAPID_SEQUENCE_INDUCTION } from '@anesthesia/scenarios/rapid-sequence-induction';
+import { BRONCHOSPASM } from '@anesthesia/scenarios/bronchospasm';
+import { POSTOPERATIVE_HANDOFF_FIXTURES } from '../../src/modules/anesthesia/postoperative-handoff-fixtures';
+import { ASPIRATION_RISK_FIXTURES } from '../../src/modules/anesthesia/aspiration-risk-recognition-fixtures';
+import { RAPID_SEQUENCE_INDUCTION_FIXTURES } from '../../src/modules/anesthesia/rapid-sequence-induction-fixtures';
+import { BRONCHOSPASM_FIXTURES } from '../../src/modules/anesthesia/bronchospasm-fixtures';
 
 const VERSIONS = { engine: 'test', content: '0.1.0', modelSet: 'test', scenario: '0.1.0' };
 
@@ -92,8 +102,8 @@ function rushedSession(seed = 991): Transcript {
  * Node, where there is none, so they hand `analyseTranscript` the same replay the
  * worker itself runs. What is under test is the derivation, not the transport.
  */
-const runReplay = (actions: Parameters<typeof replay>[0], options: Parameters<typeof replay>[1]) =>
-  Promise.resolve(replay(actions, options));
+const runReplay = (actions: Parameters<typeof replayWithEvents>[0], options: Parameters<typeof replayWithEvents>[1]) =>
+  Promise.resolve(replayWithEvents(actions, options));
 
 describe('Requirement: Instructor Mode Without Surveillance', () => {
   it('Scenario: An exported session can be read back and analysed', async () => {
@@ -174,5 +184,36 @@ describe('Requirement: Instructor Mode Without Surveillance', () => {
     const analysis = await analyseTranscript(parseTranscript(JSON.stringify(transcript), 'x.json'), 'x.json', runReplay);
     expect(analysis.findings.map((f) => f.objectiveId).sort())
       .toEqual(RAPID_DESATURATION.metadata.objectives.map((o) => o.id).sort());
+  });
+});
+
+describe('Requirement: the instructor sees the same findings the learner saw', () => {
+  // The review page once replayed only the sampled history and dropped the engine's
+  // events, so every objective scored from a recorded or refused step read as not
+  // met. An expert handoff transcript showed four failures to its instructor.
+  it.each([
+    ['postoperative-handoff', POSTOPERATIVE_HANDOFF, POSTOPERATIVE_HANDOFF_FIXTURES],
+    ['aspiration-risk-recognition', ASPIRATION_RISK_RECOGNITION, ASPIRATION_RISK_FIXTURES],
+    ['rapid-sequence-induction', RAPID_SEQUENCE_INDUCTION, RAPID_SEQUENCE_INDUCTION_FIXTURES],
+    ['bronchospasm', BRONCHOSPASM, BRONCHOSPASM_FIXTURES],
+  ] as const)('scores the %s expert transcript exactly as the debrief does', async (_id, scenario, fixtures) => {
+    const engine = new AnesthesiaEngine({ scenario, seed: fixtures.seed, practiceRegion: 'US' });
+    const history: HistorySample[] = [];
+    const events: EngineEvent[] = [];
+    let next = 0;
+    for (let tick = 0; tick <= fixtures.ticks; tick += 1) {
+      while (fixtures.expert[next]?.tick === tick) { engine.apply(fixtures.expert[next]!); next += 1; }
+      const frame = engine.step();
+      history.push({ tick: frame.tick, state: frame.state, concentrations: frame.concentrations } as HistorySample);
+      events.push(...frame.events);
+    }
+    const learner = objectiveFindings(scenario, history, 0, 0, fixtures.expert, events).map((f) => f.outcome);
+    const transcript = {
+      format: 'opensimlab.transcript', scenarioId: scenario.metadata.id, moduleId: 'anesthesia',
+      seed: fixtures.seed, practiceRegion: 'US', ticks: fixtures.ticks, actions: fixtures.expert,
+    } as unknown as Transcript;
+    const instructor = (await analyseTranscript(transcript, 'expert.json', runReplay)).findings.map((f) => f.outcome);
+    expect(learner.every((outcome) => outcome === 'met')).toBe(true);
+    expect(instructor).toEqual(learner);
   });
 });

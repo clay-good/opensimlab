@@ -5702,6 +5702,8 @@ export interface HistoryMessage {
     readonly state: Readonly<Record<string, number>>;
     readonly concentrations: readonly DrugConcentration[];
   }[];
+  /** Every event the replay raised. Objectives scored from recorded steps need them. */
+  readonly events: readonly EngineEvent[];
 }
 
 export type FromWorkerMessage<TState> =

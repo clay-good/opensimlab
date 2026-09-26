@@ -14,7 +14,7 @@
  */
 
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
-import type { LearnerAction } from '@platform/kernel/protocol';
+import type { EngineEvent, LearnerAction } from '@platform/kernel/protocol';
 import type { Scenario } from '@anesthesia/engine';
 import type { HistorySample } from '@platform/session/session-store';
 import type { CounterfactualRequest, CounterfactualResult } from './analysis';
@@ -26,8 +26,14 @@ export interface ReplayOptions {
   readonly ticks: number;
 }
 
+/** What a replay produces: the per-second history and every event the engine raised. */
+export interface ReplayResult {
+  readonly history: readonly HistorySample[];
+  readonly events: readonly EngineEvent[];
+}
+
 /**
- * Re-run an action list somewhere and hand back the history.
+ * Re-run an action list somewhere and hand back the history and the events.
  *
  * The application passes the worker-backed implementation from `replay-client.ts`;
  * the tests pass the direct one from `replay-engine.ts`. Neither caller of this
@@ -35,7 +41,7 @@ export interface ReplayOptions {
  */
 export type RunReplay = (
   actions: readonly LearnerAction[], options: ReplayOptions,
-) => Promise<readonly HistorySample[]>;
+) => Promise<ReplayResult>;
 
 /**
  * The longest run a replay will perform, in ticks: eight simulated hours.
@@ -57,7 +63,7 @@ export async function evaluateCounterfactual(
   runReplay: RunReplay,
 ): Promise<CounterfactualResult> {
   const modifiedActions = request.modify(actions);
-  const counterfactualHistory = await runReplay(modifiedActions, options);
+  const { history: counterfactualHistory } = await runReplay(modifiedActions, options);
   const actual = request.measure(actualHistory);
   const counterfactual = request.measure(counterfactualHistory);
   return {

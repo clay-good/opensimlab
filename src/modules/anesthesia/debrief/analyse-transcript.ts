@@ -108,7 +108,7 @@ export async function analyseTranscript(
   transcript: Transcript, label: string, runReplay: RunReplay,
 ): Promise<TranscriptAnalysis> {
   const scenario = getScenario(transcript.scenarioId)!;
-  const history = await runReplay(transcript.actions, {
+  const { history, events } = await runReplay(transcript.actions, {
     scenario,
     seed: transcript.seed,
     practiceRegion: transcript.practiceRegion,
@@ -117,6 +117,7 @@ export async function analyseTranscript(
   const stacking = findStacking(transcript.actions, history, { propofol: 100, remifentanil: 90 });
   const findings = objectiveFindings(
     scenario, history, stacking.length, preoxygenationSeconds(history, transcript), transcript.actions,
+    events,
   );
   return {
     transcript,

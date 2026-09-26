@@ -241,7 +241,7 @@
       },
       {
         "path": "src/modules/anesthesia/solver.worker.ts",
-        "sha256": "3f66d08408a9651a8b3340847d48bc27824387e073d3f25c1371aea487cf08c2"
+        "sha256": "0075cfb4ce0f5fa294d5c2e64041b0bf59ca680553c9a763515ca1927ddccb14"
       },
       {
         "path": "src/modules/anesthesia/ui/ActionCockpit.tsx",
@@ -409,7 +409,7 @@
       },
       {
         "path": "src/platform/kernel/protocol.ts",
-        "sha256": "808b0d201d01e17aa36a092e862c20df88d82640927fa8acfecb89dd2beed298"
+        "sha256": "365aae32fb2d4d214a27dbd93cbd98afcc88227ed02b54006656b0447067f44d"
       },
       {
         "path": "src/platform/log/event-log.ts",
@@ -686,7 +686,7 @@
       },
       {
         "path": "src/platform/kernel/protocol.ts",
-        "sha256": "808b0d201d01e17aa36a092e862c20df88d82640927fa8acfecb89dd2beed298"
+        "sha256": "365aae32fb2d4d214a27dbd93cbd98afcc88227ed02b54006656b0447067f44d"
       },
       {
         "path": "src/platform/reporting/ScenarioProblemReport.tsx",
