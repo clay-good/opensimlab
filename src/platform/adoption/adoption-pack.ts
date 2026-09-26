@@ -111,6 +111,21 @@ export interface AdoptionExclusion {
   readonly detail: string;
 }
 
+/**
+ * A non-scenario item a scenario depends on: an explainer, drug card or practice
+ * region. None has a published exact-version review record, so none can be shown
+ * current, and each is listed with the reason it stays out of reviewed coverage.
+ */
+export interface AdoptionDependency {
+  readonly moduleId: string;
+  readonly subjectKind: string;
+  readonly subjectId: string;
+  readonly contentVersion: string;
+  readonly status: ContentMaturity;
+  readonly reason: ExclusionReason;
+  readonly detail: string;
+}
+
 export interface AdoptionScenario {
   readonly moduleId: string;
   readonly scenarioId: string;
@@ -160,6 +175,7 @@ export interface AdoptionPack {
     readonly withdrawn: number;
   };
   readonly excluded: readonly AdoptionExclusion[];
+  readonly dependencies: readonly AdoptionDependency[];
   readonly scenarios: readonly AdoptionScenario[];
   readonly reviewers: readonly BoardMember[];
   readonly endorsements: readonly never[];
@@ -286,6 +302,31 @@ export function buildAdoptionPack(input: AdoptionPackInput): AdoptionPack {
     }
   }
 
+  const dependencies: AdoptionDependency[] = input.maturity.flatMap((catalog) => catalog.records
+    .filter((record) => record.subjectKind !== 'scenario')
+    .map((record): AdoptionDependency => {
+      const base = {
+        moduleId: catalog.moduleId, subjectKind: record.subjectKind, subjectId: record.subjectId,
+        contentVersion: record.contentVersion, status: record.status,
+      };
+      if (record.status === 'withdrawn') {
+        return { ...base, reason: 'withdrawn', detail: 'Withdrawn content is unavailable and never counts as reviewed.' };
+      }
+      if (!isReviewedOnlyStatus(record.status)) {
+        return {
+          ...base,
+          reason: record.status === 'source_checked' ? 'source-checked' : record.status as 'draft' | 'preview',
+          detail: `Its status is "${MATURITY_LABELS[record.status]}". Only current clinically reviewed or `
+            + 'institution-endorsed content counts toward reviewed coverage.',
+        };
+      }
+      return {
+        ...base,
+        reason: 'review-not-current',
+        detail: 'No exact-version review record is published for non-scenario content, so its review cannot be shown current.',
+      };
+    }));
+
   const records: Record<string, string> = {
     accessibility: 'docs/accessibility-audit.md',
     security: 'SECURITY.md',
@@ -334,6 +375,7 @@ export function buildAdoptionPack(input: AdoptionPackInput): AdoptionPack {
       withdrawn: byStatus.withdrawn,
     },
     excluded,
+    dependencies,
     scenarios,
     reviewers: input.board,
     // No organizational endorsement record exists (docs/organizational-endorsement.md).

@@ -59,6 +59,31 @@ describe('static adoption pack', () => {
     expect(committed.expirations).toEqual([]);
   });
 
+  it('lists every non-scenario dependency as excluded, with reasons', () => {
+    const kinds = committed.dependencies.reduce<Record<string, number>>((counts, entry) =>
+      ({ ...counts, [entry.subjectKind]: (counts[entry.subjectKind] ?? 0) + 1 }), {});
+    expect(kinds).toEqual({ explanation: 10, 'drug-card': 3, 'practice-region': 2 });
+    for (const entry of committed.dependencies) {
+      expect(entry).toMatchObject({ status: 'preview', reason: 'preview' });
+    }
+  });
+
+  it('never counts a dependency as reviewed, because none has a review record to check', () => {
+    const [reviewed, withdrawn] = maturity[0]!.records.filter((record) => record.subjectKind !== 'scenario');
+    const pack = buildAdoptionPack({
+      ...realInput,
+      maturity: maturity.map((catalog, index) => index !== 0 ? catalog : {
+        ...catalog,
+        records: catalog.records.map((record) => record === reviewed
+          ? { ...record, status: 'clinically_reviewed' as const }
+          : record === withdrawn ? { ...record, status: 'withdrawn' as const } : record),
+      }),
+    });
+    const find = (id: string) => pack.dependencies.find((entry) => entry.subjectId === id);
+    expect(find(reviewed!.subjectId)).toMatchObject({ status: 'clinically_reviewed', reason: 'review-not-current' });
+    expect(find(withdrawn!.subjectId)).toMatchObject({ status: 'withdrawn', reason: 'withdrawn' });
+  });
+
   describe('with synthetic review records', () => {
     const base = completions[0]!;
     const [reviewedId, overdueId, withdrawnId] = base.scenarios.slice(0, 3).map((s) => s.scenarioId);
