@@ -50,8 +50,8 @@ describe('Portable-oxygen-failure transcripts through the real engine and debrie
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'respiratory-medicine', 'icu', 'state_transition');
     expect(audit.complete).toBe(false);
     expect(audit.requirements.filter(({ status }) => status === 'missing').map(({ id }) => id))
-      .toEqual(['observable-objectives', 'inclusive-runtime-verification', 'report-control-coverage']);
-    expect(oxygenDeviceFailureCompletionEvidence(SCENARIO, ENGINE_VERSION, 'respiratory-medicine')).toHaveLength(10);
+      .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
+    expect(oxygenDeviceFailureCompletionEvidence(SCENARIO, ENGINE_VERSION, 'respiratory-medicine')).toHaveLength(9);
     expect(oxygenDeviceFailureCompletionEvidence(SCENARIO, ENGINE_VERSION, 'obstetrics')).toEqual([]);
     expect(oxygenDeviceFailureCompletionEvidence(SCENARIO, 'changed', 'respiratory-medicine')).toEqual([]);
     expect(oxygenDeviceFailureCompletionEvidence({ ...SCENARIO, patient: { ...SCENARIO.patient, weightKg: 9 } }, ENGINE_VERSION, 'respiratory-medicine')).toEqual([]);

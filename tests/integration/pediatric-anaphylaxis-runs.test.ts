@@ -59,8 +59,8 @@ describe('Pediatric anaphylaxis transcripts through the real engine and debrief'
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'pediatrics', 'ward', 'state_transition');
     expect(audit.complete).toBe(false);
     expect(audit.requirements.filter(({ status }) => status === 'missing').map(({ id }) => id))
-      .toEqual(['observable-objectives', 'inclusive-runtime-verification', 'report-control-coverage']);
-    expect(pediatricAnaphylaxisCompletionEvidence(SCENARIO, ENGINE_VERSION, 'pediatrics')).toHaveLength(10);
+      .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
+    expect(pediatricAnaphylaxisCompletionEvidence(SCENARIO, ENGINE_VERSION, 'pediatrics')).toHaveLength(9);
     expect(pediatricAnaphylaxisCompletionEvidence(SCENARIO, ENGINE_VERSION, 'emergency-medicine')).toEqual([]);
     expect(pediatricAnaphylaxisCompletionEvidence(SCENARIO, 'changed', 'pediatrics')).toEqual([]);
     expect(pediatricAnaphylaxisCompletionEvidence({ ...SCENARIO, patient: { ...SCENARIO.patient, weightKg: 9 } }, ENGINE_VERSION, 'pediatrics')).toEqual([]);

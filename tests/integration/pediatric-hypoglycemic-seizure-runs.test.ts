@@ -57,8 +57,8 @@ describe('Hypoglycemic-seizure transcripts through the real engine and debrief',
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'pediatrics', 'ward', 'state_transition');
     expect(audit.complete).toBe(false);
     expect(audit.requirements.filter(({ status }) => status === 'missing').map(({ id }) => id))
-      .toEqual(['observable-objectives', 'inclusive-runtime-verification', 'report-control-coverage']);
-    expect(pediatricHypoglycemicSeizureCompletionEvidence(SCENARIO, ENGINE_VERSION, 'pediatrics')).toHaveLength(10);
+      .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
+    expect(pediatricHypoglycemicSeizureCompletionEvidence(SCENARIO, ENGINE_VERSION, 'pediatrics')).toHaveLength(9);
     expect(pediatricHypoglycemicSeizureCompletionEvidence(SCENARIO, ENGINE_VERSION, 'neurology')).toEqual([]);
     expect(pediatricHypoglycemicSeizureCompletionEvidence(SCENARIO, 'changed', 'pediatrics')).toEqual([]);
     expect(pediatricHypoglycemicSeizureCompletionEvidence({ ...SCENARIO, patient: { ...SCENARIO.patient, weightKg: 9 } }, ENGINE_VERSION, 'pediatrics')).toEqual([]);

@@ -266,6 +266,14 @@ import {
   type ScenarioCompletionCatalog,
 } from '@platform/catalog/scenario-completion';
 
+/**
+ * The most objectives one debrief is expected to observe. It was 5; on
+ * 2026-09-25 the maintainer raised it to 8 rather than merge objectives in the
+ * 128 lessons that declared 6-8, every one of which maps each objective to a
+ * debrief rubric row. The floor of 2 and the rubric mapping are unchanged.
+ */
+export const MAX_OBJECTIVES = 8;
+
 const requirement = (
   id: CompletionRequirementId,
   status: CompletionStatus,
@@ -284,7 +292,7 @@ export function auditClinicalScenario(
   const rubricIds = new Set(scenario.debrief.rubric.map((item) => item.objectiveId));
   const unmappedObjectives = [...objectiveIds].filter((id) => !rubricIds.has(id));
   const objectivesObservable = scenario.metadata.objectives.length >= 2
-    && scenario.metadata.objectives.length <= 5
+    && scenario.metadata.objectives.length <= MAX_OBJECTIVES
     && unmappedObjectives.length === 0;
   /**
    * Why this one failed, rather than what the rule says.
@@ -301,7 +309,9 @@ export function auditClinicalScenario(
     const count = scenario.metadata.objectives.length;
     const reasons: string[] = [];
     if (count < 2) reasons.push(`declares ${count} objective(s); the contract requires at least 2`);
-    if (count > 5) reasons.push(`declares ${count} objectives; the contract allows at most 5`);
+    if (count > MAX_OBJECTIVES) {
+      reasons.push(`declares ${count} objectives; the contract allows at most ${MAX_OBJECTIVES}`);
+    }
     if (unmappedObjectives.length > 0) {
       reasons.push(`${unmappedObjectives.length} objective(s) have no debrief rubric row: ${unmappedObjectives.join(', ')}`);
     }

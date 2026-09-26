@@ -73,7 +73,8 @@ A scenario counts toward the 256-scenario catalog only when it has all of the fo
 1. stable ID, title, module, environment, estimated duration, difficulty, prerequisites, practice
    regions, content version, engine capability version, and maturity;
 2. a bounded patient profile containing no real-person data;
-3. 2–5 observable learner objectives, each mapped to transcript evidence;
+3. 2–8 observable learner objectives, each mapped to transcript evidence (raised from 2–5 on
+   September 25, 2026; see the release plan's task 3);
 4. a deterministic initial state and seed policy;
 5. meaningful progression over simulated time;
 6. at least 3 accepted learner actions and at least 2 clinically distinct choices or timings;

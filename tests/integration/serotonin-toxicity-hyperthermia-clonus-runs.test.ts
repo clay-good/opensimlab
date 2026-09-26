@@ -51,11 +51,9 @@ describe('Serotonin-toxicity transcripts through the real engine and debrief', (
     expect(FIXTURES.scenarioId).toBe(SCENARIO.metadata.id);
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'toxicology', 'emergency-department', 'state_transition');
     expect(audit.complete).toBe(false);
-    // The objectives cap is a content-design decision across several modules,
-    // and the two runtime requirements need people and hardware. Nothing else
-    // remains.
+    // Only the two runtime requirements remain, and they need people and hardware.
     expect(audit.requirements.filter(({ status }) => status === 'missing').map(({ id }) => id))
-      .toEqual(['observable-objectives', 'inclusive-runtime-verification', 'report-control-coverage']);
+      .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
     expect(serotoninCompletionEvidence(SCENARIO, ENGINE_VERSION, 'toxicology')).toHaveLength(9);
     expect(serotoninCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toEqual([]);
     expect(serotoninCompletionEvidence(SCENARIO, 'changed', 'toxicology')).toEqual([]);

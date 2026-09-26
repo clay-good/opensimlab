@@ -49,10 +49,9 @@ describe('HHS trajectory transcripts through the real engine and debrief', () =>
     expect(FIXTURES.scenarioId).toBe(SCENARIO.metadata.id);
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'endocrine-metabolic', 'ward', 'state_transition');
     expect(audit.complete).toBe(false);
-    // The objectives cap is a content-design decision across 118 scenarios, and
-    // the two runtime requirements need people and hardware. Nothing else remains.
+    // Only the two runtime requirements remain, and they need people and hardware.
     expect(audit.requirements.filter(({ status }) => status === 'missing').map(({ id }) => id))
-      .toEqual(['observable-objectives', 'inclusive-runtime-verification', 'report-control-coverage']);
+      .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
     expect(hhsOsmolalityCompletionEvidence(SCENARIO, ENGINE_VERSION, 'endocrine-metabolic')).toHaveLength(9);
     expect(hhsOsmolalityCompletionEvidence(SCENARIO, ENGINE_VERSION, 'anesthesia')).toEqual([]);
     expect(hhsOsmolalityCompletionEvidence(SCENARIO, 'changed', 'endocrine-metabolic')).toEqual([]);

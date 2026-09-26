@@ -63,7 +63,7 @@ honest count rather than waive a gate to reach 256.
 
 Every playable scenario SHALL declare stable identity, module, environment, estimated duration,
 difficulty, prerequisites, practice regions, fidelity class, content and capability versions,
-maturity, a bounded fictional patient, 2–5 observable objectives, a deterministic seed policy,
+maturity, a bounded fictional patient, 2–8 observable objectives, a deterministic seed policy,
 accepted and refused actions, progression, stop conditions, sources, limitations, tutor behavior,
 debrief behavior, regression fixtures, a training-value record, an authored-defaults record, a
 hazard analysis, and a complete state-space verification matrix.

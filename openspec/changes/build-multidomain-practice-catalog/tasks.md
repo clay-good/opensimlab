@@ -2102,7 +2102,7 @@ credited toward the catalog until every item in the completion contract passes.
 - [ ] Write the evidence brief before implementation and identify disputed regional practice.
 - [ ] Record primary/authoritative sources, exact locators, date consulted, applicability, review-by
   date, and copyrighted-material boundary.
-- [ ] Define 2–5 observable objectives and explicitly mark psychomotor, physical-examination, team,
+- [ ] Define 2–8 observable objectives and explicitly mark psychomotor, physical-examination, team,
   and communication claims the browser cannot assess.
 - [ ] Produce expert, common-error, and recovery transcripts before calling the scenario complete.
 - [ ] Document every default, preselection, hidden trait, scripted delay, and randomization range;

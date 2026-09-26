@@ -3,13 +3,13 @@
  *
  * `observable-objectives` answered every failure with "requires 2–5 objectives and
  * a rubric mapping for every objective", which leaves a reader unable to tell an
- * unmapped objective from a scenario that simply declares six. Those need opposite
+ * unmapped objective from a scenario that simply declares too many. Those need opposite
  * fixes — one is a missing rubric row, the other is a decision about how much a
  * single debrief should try to teach — so the audit names the actual cause.
  */
 import { describe, expect, it } from 'vitest';
 import { ENGINE_VERSION } from '@anesthesia/engine';
-import { auditClinicalScenario } from '@anesthesia/catalog/scenario-completion';
+import { MAX_OBJECTIVES, auditClinicalScenario } from '@anesthesia/catalog/scenario-completion';
 import type { Scenario } from '@anesthesia/scenarios/types';
 import { ONCOLOGY_SCENARIOS } from '../../src/modules/oncology/scenarios';
 
@@ -20,26 +20,43 @@ function audit(scenario: Scenario) {
   return record.requirements.find((entry) => entry.id === 'observable-objectives')!;
 }
 
-/** The same scenario with only its objective list and rubric changed. */
+/**
+ * The same scenario with only its objective list and rubric changed. Beyond the
+ * lesson's own objectives it repeats them under new ids, each with its rubric row,
+ * so a count above the cap is still a lesson whose objectives are all mapped.
+ */
 function withObjectives(count: number, mappedCount = count): Scenario {
-  const objectives = BASE.metadata.objectives.slice(0, count);
+  const own = BASE.metadata.objectives;
+  const objectives = Array.from({ length: count }, (_, index) => {
+    const objective = own[index % own.length]!;
+    return index < own.length ? objective : { ...objective, id: `${objective.id}-extra-${index}` };
+  });
+  const rows = objectives.map((objective, index) => {
+    const row = BASE.debrief.rubric.find((item) => item.objectiveId === own[index % own.length]!.id)!;
+    return { ...row, objectiveId: objective.id };
+  });
   return {
     ...BASE,
     metadata: { ...BASE.metadata, objectives },
     debrief: {
       ...BASE.debrief,
-      rubric: BASE.debrief.rubric.filter((item) => objectives
-        .slice(0, mappedCount).some((objective) => objective.id === item.objectiveId)),
+      rubric: rows.slice(0, mappedCount),
     },
   };
 }
 
 describe('Requirement: The Audit Names The Cause, Not The Rule', () => {
+  it('holds the cap the maintainer set: eight passes and nine does not', () => {
+    expect(MAX_OBJECTIVES).toBe(8);
+    expect(audit(withObjectives(8)).status).toBe('satisfied');
+    expect(audit(withObjectives(9)).status).toBe('missing');
+  });
+
   it('reports the actual count when a scenario declares too many objectives', () => {
-    const entry = audit(withObjectives(7));
+    const entry = audit(withObjectives(9));
     expect(entry.status).toBe('missing');
-    expect(entry.evidence[0]).toContain('declares 7 objectives');
-    expect(entry.evidence[0]).toContain('at most 5');
+    expect(entry.evidence[0]).toContain('declares 9 objectives');
+    expect(entry.evidence[0]).toContain('at most 8');
     // The count is the only problem, so an unmapped-objective reason must not appear.
     expect(entry.evidence[0]).not.toContain('rubric row');
   });
@@ -56,12 +73,12 @@ describe('Requirement: The Audit Names The Cause, Not The Rule', () => {
     const entry = audit(scenario);
     expect(entry.evidence[0]).toContain('no debrief rubric row');
     for (const id of unmapped) expect(entry.evidence[0]).toContain(id);
-    expect(entry.evidence[0]).not.toContain('at most 5');
+    expect(entry.evidence[0]).not.toContain('at most 8');
   });
 
   it('reports both causes when both are true', () => {
-    const entry = audit(withObjectives(7, 5));
-    expect(entry.evidence[0]).toContain('declares 7 objectives');
+    const entry = audit(withObjectives(9, 5));
+    expect(entry.evidence[0]).toContain('declares 9 objectives');
     expect(entry.evidence[0]).toContain('no debrief rubric row');
   });
 
@@ -73,13 +90,12 @@ describe('Requirement: The Audit Names The Cause, Not The Rule', () => {
 });
 
 describe('Requirement: Every Shipped Failure Has A Named Cause', () => {
-  it('fails no oncology scenario for an unmapped objective', () => {
-    // The shipped gap is entirely the objective cap. Not one scenario is missing a
-    // rubric row, which is what makes this a content-design decision rather than a
-    // defect: 6-8 objectives against a contract that allows 5.
+  it('passes every oncology scenario now that the cap is eight', () => {
+    // The shipped gap was entirely the old cap of 5: 6-8 objectives, every one with
+    // a rubric row. Raising the cap was a content-design decision, not a defect fix.
     for (const scenario of ONCOLOGY_SCENARIOS) {
       const entry = audit(scenario);
-      expect(entry.evidence[0], scenario.metadata.id).not.toContain('rubric row');
+      expect(entry.status, scenario.metadata.id).toBe('satisfied');
     }
   });
 });

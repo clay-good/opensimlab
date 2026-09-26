@@ -61,11 +61,10 @@ describe('Stable wide-tachycardia transcripts through the real engine and debrie
     expect(SCENARIO.metadata.objectives.map(({ id }) => id)).toEqual([...STABLE_WIDE_TACHYCARDIA_OBJECTIVES]);
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'cardiology', 'ward', 'state_transition');
     expect(audit.complete).toBe(false);
-    // Six objectives, so unlike its cardiology siblings this lesson leaves the
-    // observable-objectives cap outstanding as well as the two runtime items.
+    // Only the two runtime requirements remain, and they need people and hardware.
     expect(audit.requirements.filter(({ status }) => status === 'missing').map(({ id }) => id))
-      .toEqual(['observable-objectives', 'inclusive-runtime-verification', 'report-control-coverage']);
-    expect(stableWideTachycardiaCompletionEvidence(SCENARIO, ENGINE_VERSION, 'cardiology')).toHaveLength(9);
+      .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
+    expect(stableWideTachycardiaCompletionEvidence(SCENARIO, ENGINE_VERSION, 'cardiology')).toHaveLength(8);
     expect(stableWideTachycardiaCompletionEvidence(SCENARIO, ENGINE_VERSION, 'emergency-medicine')).toEqual([]);
     expect(stableWideTachycardiaCompletionEvidence(SCENARIO, 'changed', 'cardiology')).toEqual([]);
     expect(stableWideTachycardiaCompletionEvidence({ ...SCENARIO, patient: { ...SCENARIO.patient, weightKg: 9 } }, ENGINE_VERSION, 'cardiology')).toEqual([]);

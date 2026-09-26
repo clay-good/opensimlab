@@ -69,7 +69,7 @@ describe('Pacemaker capture-failure transcripts through the real engine and debr
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'cardiology', 'clinic', 'state_transition');
     expect(audit.complete).toBe(false);
     expect(audit.requirements.filter(({ status }) => status === 'missing').map(({ id }) => id))
-      .toEqual(['observable-objectives', 'inclusive-runtime-verification', 'report-control-coverage']);
+      .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
     expect(pacemakerCaptureFailureCompletionEvidence(SCENARIO, ENGINE_VERSION, 'cardiology')).toHaveLength(9);
     expect(pacemakerCaptureFailureCompletionEvidence(SCENARIO, ENGINE_VERSION, 'emergency-medicine')).toEqual([]);
     expect(pacemakerCaptureFailureCompletionEvidence(SCENARIO, 'changed', 'cardiology')).toEqual([]);

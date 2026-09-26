@@ -50,8 +50,8 @@ describe('Pediatric dehydration transcripts through the real engine and debrief'
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'pediatrics', 'ward', 'state_transition');
     expect(audit.complete).toBe(false);
     expect(audit.requirements.filter(({ status }) => status === 'missing').map(({ id }) => id))
-      .toEqual(['observable-objectives', 'inclusive-runtime-verification', 'report-control-coverage']);
-    expect(pediatricDehydrationCompletionEvidence(SCENARIO, ENGINE_VERSION, 'pediatrics')).toHaveLength(10);
+      .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
+    expect(pediatricDehydrationCompletionEvidence(SCENARIO, ENGINE_VERSION, 'pediatrics')).toHaveLength(9);
     expect(pediatricDehydrationCompletionEvidence(SCENARIO, ENGINE_VERSION, 'emergency-medicine')).toEqual([]);
     expect(pediatricDehydrationCompletionEvidence(SCENARIO, 'changed', 'pediatrics')).toEqual([]);
     expect(pediatricDehydrationCompletionEvidence({ ...SCENARIO, patient: { ...SCENARIO.patient, weightKg: 9 } }, ENGINE_VERSION, 'pediatrics')).toEqual([]);

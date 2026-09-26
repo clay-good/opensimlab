@@ -51,10 +51,9 @@ describe('Mucus-plugging transcripts through the real engine and debrief', () =>
     expect(FIXTURES.scenarioId).toBe(SCENARIO.metadata.id);
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'respiratory-medicine', 'icu', 'state_transition');
     expect(audit.complete).toBe(false);
-    // Six objectives rather than five here, so unlike the first six lessons in
-    // this module the shared objectives cap stays outstanding.
+    // Only the two runtime requirements remain, and they need people and hardware.
     expect(audit.requirements.filter(({ status }) => status === 'missing').map(({ id }) => id))
-      .toEqual(['observable-objectives', 'inclusive-runtime-verification', 'report-control-coverage']);
+      .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
     expect(bronchiectasisMucusPluggingCompletionEvidence(SCENARIO, ENGINE_VERSION, 'respiratory-medicine')).toHaveLength(9);
     expect(bronchiectasisMucusPluggingCompletionEvidence(SCENARIO, ENGINE_VERSION, 'obstetrics')).toEqual([]);
     expect(bronchiectasisMucusPluggingCompletionEvidence(SCENARIO, 'changed', 'respiratory-medicine')).toEqual([]);

@@ -63,8 +63,8 @@ describe('Safeguarding-escalation transcripts through the real engine and debrie
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'pediatrics', 'ward', 'state_transition');
     expect(audit.complete).toBe(false);
     expect(audit.requirements.filter(({ status }) => status === 'missing').map(({ id }) => id))
-      .toEqual(['observable-objectives', 'inclusive-runtime-verification', 'report-control-coverage']);
-    expect(pediatricInjurySafeguardingCompletionEvidence(SCENARIO, ENGINE_VERSION, 'pediatrics')).toHaveLength(10);
+      .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
+    expect(pediatricInjurySafeguardingCompletionEvidence(SCENARIO, ENGINE_VERSION, 'pediatrics')).toHaveLength(9);
     expect(pediatricInjurySafeguardingCompletionEvidence(SCENARIO, ENGINE_VERSION, 'emergency-medicine')).toEqual([]);
     expect(pediatricInjurySafeguardingCompletionEvidence(SCENARIO, 'changed', 'pediatrics')).toEqual([]);
     expect(pediatricInjurySafeguardingCompletionEvidence({ ...SCENARIO, patient: { ...SCENARIO.patient, weightKg: 9 } }, ENGINE_VERSION, 'pediatrics')).toEqual([]);

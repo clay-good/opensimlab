@@ -50,8 +50,8 @@ describe('Tracheostomy-patency transcripts through the real engine and debrief',
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'respiratory-medicine', 'icu', 'state_transition');
     expect(audit.complete).toBe(false);
     expect(audit.requirements.filter(({ status }) => status === 'missing').map(({ id }) => id))
-      .toEqual(['observable-objectives', 'inclusive-runtime-verification', 'report-control-coverage']);
-    expect(acuteTracheostomyObstructionCompletionEvidence(SCENARIO, ENGINE_VERSION, 'respiratory-medicine')).toHaveLength(10);
+      .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
+    expect(acuteTracheostomyObstructionCompletionEvidence(SCENARIO, ENGINE_VERSION, 'respiratory-medicine')).toHaveLength(9);
     expect(acuteTracheostomyObstructionCompletionEvidence(SCENARIO, ENGINE_VERSION, 'obstetrics')).toEqual([]);
     expect(acuteTracheostomyObstructionCompletionEvidence(SCENARIO, 'changed', 'respiratory-medicine')).toEqual([]);
     expect(acuteTracheostomyObstructionCompletionEvidence({ ...SCENARIO, patient: { ...SCENARIO.patient, weightKg: 9 } }, ENGINE_VERSION, 'respiratory-medicine')).toEqual([]);

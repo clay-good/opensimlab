@@ -50,8 +50,8 @@ describe('Pediatric sepsis transcripts through the real engine and debrief', () 
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'pediatrics', 'ward', 'state_transition');
     expect(audit.complete).toBe(false);
     expect(audit.requirements.filter(({ status }) => status === 'missing').map(({ id }) => id))
-      .toEqual(['observable-objectives', 'inclusive-runtime-verification', 'report-control-coverage']);
-    expect(pediatricSepsisCompletionEvidence(SCENARIO, ENGINE_VERSION, 'pediatrics')).toHaveLength(10);
+      .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
+    expect(pediatricSepsisCompletionEvidence(SCENARIO, ENGINE_VERSION, 'pediatrics')).toHaveLength(9);
     expect(pediatricSepsisCompletionEvidence(SCENARIO, ENGINE_VERSION, 'infectious-disease')).toEqual([]);
     expect(pediatricSepsisCompletionEvidence(SCENARIO, 'changed', 'pediatrics')).toEqual([]);
     expect(pediatricSepsisCompletionEvidence({ ...SCENARIO, patient: { ...SCENARIO.patient, weightKg: 9 } }, ENGINE_VERSION, 'pediatrics')).toEqual([]);

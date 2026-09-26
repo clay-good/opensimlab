@@ -40,9 +40,9 @@
         },
         {
           "id": "observable-objectives",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This scenario declares 6 objectives; the contract allows at most 5."
+            "6 objectives map to debrief rubric evidence."
           ]
         },
         {
@@ -166,9 +166,9 @@
         },
         {
           "id": "observable-objectives",
-          "status": "missing",
+          "status": "satisfied",
           "evidence": [
-            "This scenario declares 6 objectives; the contract allows at most 5."
+            "6 objectives map to debrief rubric evidence."
           ]
         },
         {

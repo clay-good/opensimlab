@@ -50,11 +50,10 @@ describe('Support-selection transcripts through the real engine and debrief', ()
     expect(FIXTURES.scenarioId).toBe(SCENARIO.metadata.id);
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'respiratory-medicine', 'icu', 'state_transition');
     expect(audit.complete).toBe(false);
-    // Six objectives rather than five, so the shared objectives cap stays
-    // outstanding alongside the two runtime requirements.
+    // Only the two runtime requirements remain, and they need people and hardware.
     expect(audit.requirements.filter(({ status }) => status === 'missing').map(({ id }) => id))
-      .toEqual(['observable-objectives', 'inclusive-runtime-verification', 'report-control-coverage']);
-    expect(noninvasiveVentilationSelectionCompletionEvidence(SCENARIO, ENGINE_VERSION, 'respiratory-medicine')).toHaveLength(10);
+      .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
+    expect(noninvasiveVentilationSelectionCompletionEvidence(SCENARIO, ENGINE_VERSION, 'respiratory-medicine')).toHaveLength(9);
     expect(noninvasiveVentilationSelectionCompletionEvidence(SCENARIO, ENGINE_VERSION, 'obstetrics')).toEqual([]);
     expect(noninvasiveVentilationSelectionCompletionEvidence(SCENARIO, 'changed', 'respiratory-medicine')).toEqual([]);
     expect(noninvasiveVentilationSelectionCompletionEvidence({ ...SCENARIO, patient: { ...SCENARIO.patient, weightKg: 9 } }, ENGINE_VERSION, 'respiratory-medicine')).toEqual([]);

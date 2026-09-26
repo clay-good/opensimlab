@@ -66,9 +66,9 @@ describe('Hyperkalemic conduction transcripts through the real engine and debrie
     })).toBe(false);
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'cardiology', 'clinic', 'state_transition');
     expect(audit.complete).toBe(false);
-    // Six objectives, so the observable-objectives cap stays outstanding too.
+    // Only the two runtime requirements remain, and they need people and hardware.
     expect(audit.requirements.filter(({ status }) => status === 'missing').map(({ id }) => id))
-      .toEqual(['observable-objectives', 'inclusive-runtime-verification', 'report-control-coverage']);
+      .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
     expect(hyperkalemicConductionCompletionEvidence(SCENARIO, ENGINE_VERSION, 'cardiology')).toHaveLength(9);
     expect(hyperkalemicConductionCompletionEvidence(SCENARIO, ENGINE_VERSION, 'emergency-medicine')).toEqual([]);
     expect(hyperkalemicConductionCompletionEvidence(SCENARIO, 'changed', 'cardiology')).toEqual([]);

@@ -51,8 +51,8 @@ describe('Pediatric respiratory-distress transcripts through the real engine and
     const audit = auditClinicalScenario(SCENARIO, ENGINE_VERSION, 'pediatrics', 'ward', 'state_transition');
     expect(audit.complete).toBe(false);
     expect(audit.requirements.filter(({ status }) => status === 'missing').map(({ id }) => id))
-      .toEqual(['observable-objectives', 'inclusive-runtime-verification', 'report-control-coverage']);
-    expect(pediatricRespiratoryDistressCompletionEvidence(SCENARIO, ENGINE_VERSION, 'pediatrics')).toHaveLength(10);
+      .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
+    expect(pediatricRespiratoryDistressCompletionEvidence(SCENARIO, ENGINE_VERSION, 'pediatrics')).toHaveLength(9);
     // The first lesson in a new module, so the module guard matters here.
     expect(pediatricRespiratoryDistressCompletionEvidence(SCENARIO, ENGINE_VERSION, 'respiratory-medicine')).toEqual([]);
     expect(pediatricRespiratoryDistressCompletionEvidence(SCENARIO, 'changed', 'pediatrics')).toEqual([]);
