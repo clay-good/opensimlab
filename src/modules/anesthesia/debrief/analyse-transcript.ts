@@ -11,7 +11,7 @@
 
 import type { Transcript } from '@platform/transcript/transcript';
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
-import { getScenario } from '../scenarios';
+import { transcriptScenario, TRANSCRIPT_MODULE_IDS } from './transcript-scenarios';
 import { MAX_REPLAY_TICKS, type RunReplay } from './replay';
 import { findStacking } from './analysis';
 import { objectiveFindings } from '../ui/Debrief';
@@ -71,10 +71,21 @@ export function parseTranscript(text: string, label: string): Transcript {
       `${label} records ${candidate.actions.length} actions, far more than a session can contain.`,
     );
   }
-  if (typeof candidate.scenarioId !== 'string' || !getScenario(candidate.scenarioId)) {
+  // The page shows the engine version and the replay needs the seed and region.
+  // A file without them would crash the review rather than be refused, which is
+  // the one outcome this parser exists to prevent.
+  if (typeof candidate.versions !== 'object' || candidate.versions === null
+    || typeof candidate.versions.engine !== 'string'
+    || typeof candidate.seed !== 'number' || !Number.isFinite(candidate.seed)
+    || typeof candidate.practiceRegion !== 'string') {
     throw new UnreadableTranscript(
-      `${label} names a scenario this build does not have: ${String(candidate.scenarioId)}. `
-      + 'The learner may be on a different version.',
+      `${label} is missing its version, seed or practice region. It may be damaged, or from an older export.`,
+    );
+  }
+  if (typeof candidate.scenarioId !== 'string'
+    || typeof candidate.moduleId !== 'string' || !TRANSCRIPT_MODULE_IDS.includes(candidate.moduleId)) {
+    throw new UnreadableTranscript(
+      `${label} does not name a module and scenario this simulator has.`,
     );
   }
   return candidate as Transcript;
@@ -107,7 +118,13 @@ function preoxygenationSeconds(
 export async function analyseTranscript(
   transcript: Transcript, label: string, runReplay: RunReplay,
 ): Promise<TranscriptAnalysis> {
-  const scenario = getScenario(transcript.scenarioId)!;
+  const scenario = await transcriptScenario(transcript.moduleId, transcript.scenarioId);
+  if (!scenario) {
+    throw new UnreadableTranscript(
+      `${label} names a scenario this build does not have: ${transcript.moduleId}/${transcript.scenarioId}. `
+      + 'The learner may be on a different version.',
+    );
+  }
   const { history, events } = await runReplay(transcript.actions, {
     scenario,
     seed: transcript.seed,

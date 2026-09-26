@@ -2146,7 +2146,13 @@ credited toward the catalog until every item in the completion contract passes.
   Open because a static site serves only the current release: a pinned older version is named,
   not served, until domain packs or archived releases exist, and links pin one scenario rather
   than a set.
-- [ ] Add local instructor import and cohort analysis while preserving learner-controlled export.
+- [x] Add local instructor import and cohort analysis while preserving learner-controlled export.
+  `/review` reads the transcripts learners choose to export, replays each in the browser's solver
+  worker, and summarizes the cohort per objective, never per learner; nothing is uploaded. On
+  September 25, 2026 it was extended from anesthesia to all 16 modules, loading only the module a
+  file names, and fixed to score from the engine's events as well as its history: it had shown an
+  expert handoff transcript as four failures. `tests/integration/instructor-review.test.ts` pins
+  that the instructor's findings equal the learner's own debrief, including for oncology.
 - [ ] Pilot with at least 3 distinct programs and record adoption objections, review scope, and
   corrections without collecting production learner telemetry.
 - [ ] Publish organization endorsements only after authority, scope, version, region, expiration,

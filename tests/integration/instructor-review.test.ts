@@ -27,6 +27,8 @@ import { POSTOPERATIVE_HANDOFF_FIXTURES } from '../../src/modules/anesthesia/pos
 import { ASPIRATION_RISK_FIXTURES } from '../../src/modules/anesthesia/aspiration-risk-recognition-fixtures';
 import { RAPID_SEQUENCE_INDUCTION_FIXTURES } from '../../src/modules/anesthesia/rapid-sequence-induction-fixtures';
 import { BRONCHOSPASM_FIXTURES } from '../../src/modules/anesthesia/bronchospasm-fixtures';
+import { ONCOLOGY_SCENARIOS } from '../../src/modules/oncology/scenarios';
+import { EASY_LABEL_FIXTURES } from '../../src/modules/oncology/easy-label-fixtures';
 
 const VERSIONS = { engine: 'test', content: '0.1.0', modelSet: 'test', scenario: '0.1.0' };
 
@@ -163,15 +165,16 @@ describe('Requirement: Instructor Mode Without Surveillance', () => {
     expect(Object.keys(summary[0]!)).not.toContain('label');
   });
 
-  it('Scenario: A file that is not a transcript is refused in plain language', () => {
+  it('Scenario: A file that is not a transcript is refused in plain language', async () => {
     expect(() => parseTranscript('not json at all', 'notes.txt'))
       .toThrow(UnreadableTranscript);
     expect(() => parseTranscript(JSON.stringify({ hello: 'world' }), 'other.json'))
       .toThrow(/not an Open Sim Lab transcript/);
     // A transcript for a scenario this build does not have says so, and says why.
+    // Scenarios load per module, so the check happens when it is analysed.
     const unknown = { ...competentSession(), scenarioId: 'a-scenario-from-the-future' };
-    expect(() => parseTranscript(JSON.stringify(unknown), 'future.json'))
-      .toThrow(/different version/);
+    await expect(analyseTranscript(parseTranscript(JSON.stringify(unknown), 'future.json'), 'future.json', runReplay))
+      .rejects.toThrow(/different version/);
   });
 
   it('Scenario: A session from another scenario analyses against ITS objectives', async () => {
@@ -215,5 +218,47 @@ describe('Requirement: the instructor sees the same findings the learner saw', (
     const instructor = (await analyseTranscript(transcript, 'expert.json', runReplay)).findings.map((f) => f.outcome);
     expect(learner.every((outcome) => outcome === 'met')).toBe(true);
     expect(instructor).toEqual(learner);
+  });
+});
+
+describe('Requirement: an instructor can read a session from any module', () => {
+  it('loads and scores an oncology transcript exactly as the debrief does', async () => {
+    const scenario = ONCOLOGY_SCENARIOS.find((s) => s.metadata.id === EASY_LABEL_FIXTURES.scenarioId)!;
+    const actions: LearnerAction[] = EASY_LABEL_FIXTURES.expert.map(([tick, action]) =>
+      ({ tick, type: 'easy-label-response', payload: { action } }));
+    const ticks = 40_100;
+    const direct = replayWithEvents(actions, { scenario, seed: EASY_LABEL_FIXTURES.seed, practiceRegion: 'US', ticks });
+    const learner = objectiveFindings(scenario, direct.history, 0, 0, actions, direct.events).map((f) => f.outcome);
+    const transcript = {
+      format: 'opensimlab.transcript', scenarioId: scenario.metadata.id, moduleId: 'oncology',
+      seed: EASY_LABEL_FIXTURES.seed, practiceRegion: 'US', ticks, actions,
+      versions: { engine: 'e', content: 'c', modelSet: 'm', scenario: scenario.metadata.version },
+    };
+    const analysis = await analyseTranscript(
+      parseTranscript(JSON.stringify(transcript), 'oncology.json'), 'oncology.json', runReplay,
+    );
+    expect(analysis.scenarioTitle).toBe(scenario.metadata.title);
+    expect(analysis.findings.map((f) => f.outcome)).toEqual(learner);
+    expect(learner.filter((outcome) => outcome === 'met').length).toBeGreaterThan(0);
+  });
+
+  it('refuses a file with no version record instead of breaking the page', () => {
+    const { versions: _dropped, ...partial } = competentSession();
+    expect(() => parseTranscript(JSON.stringify(partial), 'old.json'))
+      .toThrow('old.json is missing its version, seed or practice region.');
+    expect(() => parseTranscript(JSON.stringify({ ...competentSession(), seed: 'seven' }), 'bad.json'))
+      .toThrow(UnreadableTranscript);
+  });
+
+  it('refuses a module this simulator does not have, and says so', () => {
+    const transcript = { format: 'opensimlab.transcript', scenarioId: 'x', moduleId: 'dermatology', seed: 1, practiceRegion: 'US', ticks: 10, actions: [], versions: { engine: 'e', content: 'c', modelSet: 'm', scenario: '0.1.0' } };
+    expect(() => parseTranscript(JSON.stringify(transcript), 'odd.json'))
+      .toThrow('odd.json does not name a module and scenario this simulator has.');
+  });
+
+  it('refuses a scenario the named module does not have', async () => {
+    const transcript = { format: 'opensimlab.transcript', scenarioId: 'no-such-lesson', moduleId: 'oncology', seed: 1, practiceRegion: 'US', ticks: 10, actions: [], versions: { engine: 'e', content: 'c', modelSet: 'm', scenario: '0.1.0' } };
+    await expect(analyseTranscript(parseTranscript(JSON.stringify(transcript), 'old.json'), 'old.json', runReplay))
+      .rejects.toThrow('old.json names a scenario this build does not have: oncology/no-such-lesson.');
   });
 });
