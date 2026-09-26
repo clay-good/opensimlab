@@ -49,6 +49,11 @@ export interface PrebriefProps {
   readonly onWatch?: (() => void) | undefined;
   /** Set by an assignment link, so a learner knows which assignment they are in. */
   readonly assignmentLabel?: string;
+  /** What a pinned course link says before starting; see assignmentNotices. */
+  readonly assignmentNotices?: readonly {
+    readonly text: string;
+    readonly link: { readonly href: string; readonly label: string };
+  }[];
   readonly guidance: 'guided' | 'coached' | 'unassisted';
   readonly onGuidance: (level: 'guided' | 'coached' | 'unassisted') => void;
   readonly onReportLimitation?: () => void;
@@ -56,7 +61,7 @@ export interface PrebriefProps {
 
 export function Prebrief({
   scenario, region, limitations, environment = 'anesthesia', onStart, onWatch, guidance, onGuidance,
-  assignmentLabel, onReportLimitation,
+  assignmentLabel, assignmentNotices = [], onReportLimitation,
 }: PrebriefProps) {
   const patient = scenario.patient;
   const hypoglycemia = supportsSevereHypoglycemia(scenario);
@@ -84,6 +89,12 @@ export function Prebrief({
       {assignmentLabel && (
         <p className="field__label">Assignment: {assignmentLabel}</p>
       )}
+      {assignmentNotices.map((notice) => (
+        <p key={notice.text} className="field__hint" role="note">
+          {notice.text}
+          {' '}<a href={notice.link.href}>{notice.link.label}</a>
+        </p>
+      ))}
       <h1>{scenario.metadata.title}</h1>
       <p>{patient.ageYears === 0 ? 'Newborn' : `${patient.ageYears}-year-old ${patientPersonNoun(patient)}`}, {patient.weightKg} kg
         {environment === 'cardiology' || environment === 'respiratory-medicine' || environment === 'pediatrics' || environment === 'neurology' || environment === 'toxicology' || environment === 'obstetrics' || environment === 'neonatology' || environment === 'endocrine-metabolic' || environment === 'renal-electrolyte' || environment === 'infectious-disease'

@@ -124,6 +124,8 @@ import { completedScenarioIds, loadPracticeHistory } from '@anesthesia/catalog/p
 // modules no longer reach this file, so their catalogues stay in their own chunks.
 import { scenariosByDifficulty } from '@anesthesia/scenarios';
 import { APP_VERSION } from '@platform/governance/status';
+import { isReviewedOnlyStatus, MATURITY_LABELS } from '@platform/governance/publication';
+import type { ContentMaturity } from '@platform/catalog/maturity';
 import { ScenarioProblemReport } from '@platform/reporting/ScenarioProblemReport';
 import {
   REPORT_CONTEXT_ACTION_LIMIT, REPORT_CONTEXT_SNAPSHOT_LIMIT,
@@ -757,6 +759,10 @@ export interface Assignment {
   readonly seed: number;
   readonly guidance: GuidanceLevel | null;
   readonly label: string | null;
+  /** The content version the link was made for, so a later change is visible. */
+  readonly pinnedVersion: string | null;
+  /** The instructor asked for clinically reviewed content only. */
+  readonly reviewedOnly: boolean;
 }
 
 const GUIDANCE_LEVELS: readonly GuidanceLevel[] = ['guided', 'coached', 'unassisted'];
@@ -772,7 +778,46 @@ export function readAssignment(search: string): Assignment {
     // Shown back to the learner, so it is trimmed and bounded rather than
     // rendered at whatever length a URL happens to carry.
     label: rawLabel ? rawLabel.slice(0, 80) : null,
+    pinnedVersion: /^\d{1,4}\.\d{1,4}\.\d{1,4}$/.test(params.get('version') ?? '') ? params.get('version') : null,
+    reviewedOnly: params.get('policy') === 'reviewed-only',
   };
+}
+
+/** A notice the briefing shows before a pinned course link is started. */
+export interface AssignmentNotice {
+  readonly text: string;
+  readonly link: { readonly href: string; readonly label: string };
+}
+
+/**
+ * What a pinned link has to say before the learner starts (platform/adoption →
+ * Courses Can Pin Reviewed Static Content). A static site serves only the current
+ * release, so a changed version cannot be swapped back; it is named instead. A
+ * reviewed-only link never quietly accepts preview content: it names the item and
+ * why it falls short, and practice stays available because it is the learner's.
+ */
+export function assignmentNotices(
+  assignment: Assignment,
+  scenario: { readonly metadata: { readonly title: string; readonly version: string; readonly maturity: ContentMaturity } },
+): AssignmentNotice[] {
+  const { title, version, maturity } = scenario.metadata;
+  const notices: AssignmentNotice[] = [];
+  if (assignment.pinnedVersion !== null && assignment.pinnedVersion !== version) {
+    notices.push({
+      text: `This assignment was made for version ${assignment.pinnedVersion}. ${title} is now version `
+        + `${version}. What changed is in the corrections log.`,
+      link: { href: '/corrections', label: 'Corrections log' },
+    });
+  }
+  if (assignment.reviewedOnly && !isReviewedOnlyStatus(maturity)) {
+    notices.push({
+      text: `This assignment asks for clinically reviewed content only. ${title} version ${version} is `
+        + `"${MATURITY_LABELS[maturity]}", so it does not meet that policy. You can still practice it, `
+        + 'but it does not count as reviewed.',
+      link: { href: '/review-status', label: 'Review status' },
+    });
+  }
+  return notices;
 }
 
 export function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalModuleConfig }) {
@@ -1035,6 +1080,7 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
             ? { onWatch: () => { setDemonstrating(true); session.setSpeed(60); session.play(); } }
             : {})}
           {...(assignment.label ? { assignmentLabel: assignment.label } : {})}
+          assignmentNotices={assignmentNotices(assignment, scenario)}
         />
         {guess.isFallback && regionId === null && (
           <div className="reading">

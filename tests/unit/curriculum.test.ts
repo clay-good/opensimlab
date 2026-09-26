@@ -12,7 +12,7 @@ import {
   SCENARIO_MAPPINGS, coverageFor, danglingMappings, mappingCsv, unmappedScenarios,
 } from '@anesthesia/curriculum/mapping';
 import { SCENARIOS } from '@anesthesia/scenarios';
-import { readAssignment } from '@routes/AnesthesiaRoute';
+import { assignmentNotices, readAssignment } from '@routes/AnesthesiaRoute';
 
 describe('Requirement: Curriculum Mapping To Recognized Frameworks', () => {
   it('Scenario: Mappings state their framework and its version', () => {
@@ -119,6 +119,42 @@ describe('Requirement: Assignment Links Without Accounts', () => {
 
   it('Scenario: A seed is a whole number, so the same link is the same patient', () => {
     expect(readAssignment('?seed=12.7').seed).toBe(12);
+  });
+
+  it('Scenario: A course link pins a version and a reviewed-only policy, and trusts neither blindly', () => {
+    const pinned = readAssignment('?version=0.2.0&policy=reviewed-only');
+    expect(pinned.pinnedVersion).toBe('0.2.0');
+    expect(pinned.reviewedOnly).toBe(true);
+    expect(readAssignment('?version=latest').pinnedVersion).toBeNull();
+    expect(readAssignment('?version=0.2.0<script>').pinnedVersion).toBeNull();
+    expect(readAssignment('?policy=anything').reviewedOnly).toBe(false);
+    expect(readAssignment('').pinnedVersion).toBeNull();
+  });
+});
+
+describe('Requirement: Courses Can Pin Reviewed Static Content Without Learner Accounts', () => {
+  const scenario = (version: string, maturity: 'preview' | 'clinically_reviewed') =>
+    ({ metadata: { title: 'Routine induction', version, maturity } });
+
+  it('Scenario: A semester sees a later change before starting', () => {
+    const [notice, ...rest] = assignmentNotices(readAssignment('?version=0.1.0'), scenario('0.2.0', 'preview'));
+    expect(rest).toEqual([]);
+    expect(notice!.text).toContain('made for version 0.1.0');
+    expect(notice!.text).toContain('now version 0.2.0');
+    expect(notice!.link).toEqual({ href: '/corrections', label: 'Corrections log' });
+  });
+
+  it('Scenario: Reviewed-only fails visibly instead of accepting preview content', () => {
+    const [notice] = assignmentNotices(readAssignment('?version=0.2.0&policy=reviewed-only'), scenario('0.2.0', 'preview'));
+    expect(notice!.text).toContain('clinically reviewed content only');
+    expect(notice!.text).toContain('Routine induction version 0.2.0');
+    expect(notice!.text).toContain('does not meet that policy');
+    expect(notice!.link.href).toBe('/review-status');
+  });
+
+  it('Scenario: A matching, reviewed pin says nothing', () => {
+    expect(assignmentNotices(readAssignment('?version=0.2.0&policy=reviewed-only'), scenario('0.2.0', 'clinically_reviewed'))).toEqual([]);
+    expect(assignmentNotices(readAssignment('?seed=4'), scenario('0.2.0', 'preview'))).toEqual([]);
   });
 });
 

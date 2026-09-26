@@ -21,12 +21,17 @@ function AssignmentBuilder() {
   const [guidance, setGuidance] = useState('coached');
   const [label, setLabel] = useState('');
   const [seed, setSeed] = useState('20260819');
+  const [reviewedOnly, setReviewedOnly] = useState(false);
   const [copied, setCopied] = useState(false);
+  const version = SCENARIOS.find((scenario) => scenario.metadata.id === scenarioId)?.metadata.version;
 
   const params = new URLSearchParams();
   params.set('guidance', guidance);
   if (seed.trim()) params.set('seed', seed.trim());
   if (label.trim()) params.set('assignment', label.trim());
+  // Pinned so a learner opening the link after the scenario changes is told so.
+  if (version) params.set('version', version);
+  if (reviewedOnly) params.set('policy', 'reviewed-only');
   const url = `${SITE_ORIGIN}/anesthesia/scenario/${scenarioId}?${params.toString()}`;
 
   return (
@@ -80,6 +85,22 @@ function AssignmentBuilder() {
           compared against itself.
         </span>
       </label>
+
+      <div className="field">
+        <label>
+          <input
+            type="checkbox"
+            checked={reviewedOnly}
+            aria-describedby="reviewed-only-hint"
+            onChange={(e) => setReviewedOnly(e.target.checked)}
+          />{' '}
+          Clinically reviewed content only
+        </label>
+        <span className="field__hint" id="reviewed-only-hint">
+          The briefing then says plainly when the scenario is not clinically reviewed, and
+          practice stays open. No scenario is reviewed yet, so every such link will say so.
+        </span>
+      </div>
 
       <p className="educators__link"><code>{url}</code></p>
       <Button

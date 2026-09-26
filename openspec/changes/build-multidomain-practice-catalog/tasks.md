@@ -2138,6 +2138,14 @@ credited toward the catalog until every item in the completion contract passes.
   `institution_endorsed` item.
 - [ ] Support reviewed-only course links and pinned static content-pack versions without learner
   accounts or observation.
+  Assignment links from `/for-educators` now pin the scenario's content version and can carry a
+  reviewed-only policy, still with no learner or cohort identifier and no server state. A learner
+  opening a link after the scenario changed sees the change and the corrections log before
+  starting; a reviewed-only link names the item and why it falls short instead of quietly
+  accepting preview content, and practice stays open. Held by `tests/unit/curriculum.test.ts`.
+  Open because a static site serves only the current release: a pinned older version is named,
+  not served, until domain packs or archived releases exist, and links pin one scenario rather
+  than a set.
 - [ ] Add local instructor import and cohort analysis while preserving learner-controlled export.
 - [ ] Pilot with at least 3 distinct programs and record adoption objections, review scope, and
   corrections without collecting production learner telemetry.
