@@ -3,6 +3,9 @@ import {
   appendPracticeAttempt,
   completedScenarioIds,
   importPracticeHistory,
+  importProgressFile,
+  objectiveStatus,
+  SIMULATED_PRACTICE_NOT_CLINICAL_TIME,
   loadPracticeHistory,
   objectiveChanges,
   practiceHistoryExport,
@@ -56,8 +59,9 @@ describe('bounded private practice history', () => {
     const source = memoryStorage();
     appendPracticeAttempt(attempt(), source);
     const target = memoryStorage();
+    // The file keeps the calendar day and drops the time of day.
     expect(importPracticeHistory(practiceHistoryExport(loadPracticeHistory(source)), target))
-      .toEqual([attempt()]);
+      .toEqual([{ ...attempt(), completedAt: '2026-08-24T00:00:00.000Z' }]);
     const recordWithExtraData = { ...attempt(1), identity: 'must-not-survive' };
     expect(importPracticeHistory(JSON.stringify({
       schemaVersion: 1, attempts: [recordWithExtraData],
@@ -82,5 +86,60 @@ describe('bounded private practice history', () => {
       attempts: Array.from({ length: PRACTICE_HISTORY_LIMIT + 1 }, () => attempt()),
     }), storage)).toThrow('Invalid practice history file.');
     expect(loadPracticeHistory(storage)).toEqual([attempt()]);
+  });
+
+  describe('the progress file', () => {
+    const later = (index: number, outcome: PracticeAttempt['objectives'][number]['outcome'], day: number): PracticeAttempt => ({
+      ...attempt(index), objectives: [{ objectiveId: 'preoxygenate', outcome }],
+      completedAt: new Date(Date.UTC(2026, 8, day, 9, 30)).toISOString(),
+    });
+
+    it('carries both statements and no identifier, device field, or sub-day timestamp', () => {
+      const text = practiceHistoryExport([attempt(0), attempt(1)]);
+      const file = JSON.parse(text) as Record<string, unknown>;
+      expect(file.simulatedPracticeNotClinicalTime).toBe(SIMULATED_PRACTICE_NOT_CLINICAL_TIME);
+      expect(file.notForClinicalUse).toBeTruthy();
+      expect(text).not.toMatch(/T\d{2}:\d{2}|\d{2}:\d{2}:\d{2}|completedAt/);
+      expect(text).not.toMatch(/"(?:id|uuid|device|userAgent|platform|identity|email|name)"\s*:/i);
+      expect(text).toContain('"completedOn": "2026-08-24"');
+    });
+
+    it('round-trips every objective status losslessly between devices', () => {
+      const source = memoryStorage();
+      for (const entry of [attempt(0), attempt(1), later(2, 'met', 3)]) appendPracticeAttempt(entry, source);
+      const target = memoryStorage();
+      importProgressFile(practiceHistoryExport(loadPracticeHistory(source)), 'replace', target);
+      expect(objectiveStatus(loadPracticeHistory(target))).toEqual(objectiveStatus(loadPracticeHistory(source)));
+    });
+
+    it('merges without double-counting an attempt this device already holds', () => {
+      const storage = memoryStorage();
+      appendPracticeAttempt(attempt(0), storage);
+      const file = practiceHistoryExport([attempt(0), later(2, 'met', 3)]);
+      const result = importProgressFile(file, 'merge', storage);
+      expect(result).toMatchObject({ added: 1, duplicates: 1 });
+      expect(result.history).toHaveLength(2);
+      expect(importProgressFile(file, 'merge', storage)).toMatchObject({ added: 0, duplicates: 2, changes: [] });
+    });
+
+    it('replaces on request and reports every status that changed, and from what', () => {
+      const storage = memoryStorage();
+      appendPracticeAttempt(later(0, 'not-met', 1), storage);
+      const result = importProgressFile(practiceHistoryExport([later(2, 'met', 3)]), 'replace', storage);
+      expect(result.history).toHaveLength(1);
+      expect(result.changes).toEqual([{ scenarioId: 'routine-induction', objectiveId: 'preoxygenate',
+        previous: 'not-met', current: 'met' }]);
+    });
+
+    it('still reads a version 1 file, and refuses an unknown version atomically', () => {
+      const storage = memoryStorage();
+      const v1 = JSON.stringify({ schemaVersion: 1, attempts: [attempt(0)] });
+      expect(importProgressFile(v1, 'merge', storage).history).toEqual([attempt(0)]);
+      expect(() => importProgressFile(JSON.stringify({ schemaVersion: 3, attempts: [] }), 'replace', storage))
+        .toThrow('Invalid practice history file.');
+      expect(loadPracticeHistory(storage)).toEqual([attempt(0)]);
+      const badDay = JSON.stringify({ schemaVersion: 2, attempts: [{ ...attempt(0), completedOn: '2026-08-24T10:00' }] });
+      expect(() => importProgressFile(badDay, 'merge', storage)).toThrow('Invalid practice history file.');
+    });
   });
 });

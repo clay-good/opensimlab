@@ -27,7 +27,7 @@ import {
 } from '@anesthesia/pharmacology/verification';
 import { routeFor } from './routes';
 import {
-  importPracticeHistory,
+  importProgressFile,
   loadPracticeHistory,
   practiceHistoryExport,
   PRACTICE_HISTORY_KEY,
@@ -701,6 +701,21 @@ function PrivacyBody() {
     anchor.click();
     URL.revokeObjectURL(url);
   };
+  const importHistory = (mode: 'merge' | 'replace') => {
+    try {
+      const result = importProgressFile(historyImport, mode);
+      setAttemptCount(result.history.length);
+      setHistoryImport('');
+      const moved = result.changes.map((change) =>
+        `${change.scenarioId} ${change.objectiveId}: ${change.previous ?? 'none'} → ${change.current ?? 'none'}`);
+      setHistoryMessage(`${mode === 'merge' ? 'Merged' : 'Replaced'}. ${result.added} added, `
+        + `${result.duplicates} already here; ${result.history.length} summaries stored. `
+        + (moved.length === 0 ? 'No objective status changed.'
+          : `${moved.length} objective ${moved.length === 1 ? 'status' : 'statuses'} changed: ${moved.join('; ')}.`));
+    } catch (error) {
+      setHistoryMessage(error instanceof Error ? error.message : 'Could not import that JSON.');
+    }
+  };
   return (
     <>
       {/* The three facts a privacy page is read for. They are all in the prose
@@ -757,6 +772,10 @@ function PrivacyBody() {
         Each contains only the scenario and content version, selected public goal, simulated
         duration, completion time, and objective outcome words.
       </p>
+      <p>
+        Progress never syncs. Exporting this file and importing it on another device is the only
+        way it moves, and the exported file keeps each attempt&apos;s calendar day, not its time.
+      </p>
       <p className="field__hint">
         No reflection, action list, physiology trace, patient data, identity, or overall score is
         included. The newest 50 summaries are kept; older ones fall away locally.
@@ -776,16 +795,11 @@ function PrivacyBody() {
       </label>
       <div className="phase-nav">
         <Button onClick={downloadHistory}>Export practice history</Button>
-        <Button onClick={() => {
-          try {
-            const history = importPracticeHistory(historyImport);
-            setAttemptCount(history.length);
-            setHistoryImport('');
-            setHistoryMessage(`Imported. ${history.length} bounded attempt summaries are now stored.`);
-          } catch (error) {
-            setHistoryMessage(error instanceof Error ? error.message : 'Could not import that JSON.');
-          }
-        }}>Import practice history</Button>
+        <Button onClick={() => importHistory('merge')}>Merge into this device</Button>
+        <Button variant="ghost" onClick={() => {
+          if (!confirm('Replace this device\'s practice history with the file? This cannot be undone unless you exported it first.')) return;
+          importHistory('replace');
+        }}>Replace this device&apos;s history</Button>
         <Button variant="danger" onClick={() => {
           if (!confirm('Erase all private practice history from this device? This cannot be undone unless you exported it first.')) return;
           try { eraseOne(localStorage, PRACTICE_HISTORY_KEY); } catch { /* Storage may be blocked. */ }

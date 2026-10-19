@@ -75,7 +75,7 @@ describe('Requirement: Every Export Discloses That Nothing Is Signed', () => {
     expect(exported.notForClinicalUse).toBe(NOT_FOR_CLINICAL_USE);
     expect(exported.notClinicallyReviewed).toBe(NOT_CLINICALLY_REVIEWED);
     // And the file it produces is still one this build will import back.
-    expect(exported.schemaVersion).toBe(1);
+    expect(exported.schemaVersion).toBe(2);
     expect(importPracticeHistory(practiceHistoryExport([]), fakeStorage())).toEqual([]);
   });
 });

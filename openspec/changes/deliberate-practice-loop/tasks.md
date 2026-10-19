@@ -50,9 +50,19 @@ its own, none changes the engine, and none produces a score.
 - [ ] Compute weakest-then-oldest across all modules from the tutor's local evidence; one
   suggestion; 7-day dismissal; interval schedule 7 → 14 → 28 → 56 days labelled as convention.
 - [ ] Define the progress file schema; export with both statements; import with replace/merge and
-  recomputation report.
+  recomputation report. Mostly done: the practice-history export is now progress file version 2.
+  It carries the not-for-clinical-use, not-clinically-reviewed, and simulated-practice-not-
+  clinical-time statements and each attempt's calendar day instead of its timestamp. Version 1
+  files still import. `/privacy` offers merge (duplicates skipped) or replace (confirmed), and
+  reports what it added and every objective whose latest status moved, from what to what.
+  Remaining: the file does not yet carry goal-suggestion dismissals or reasoning notes. The notes
+  do not exist yet, and the dismissals live in their own store.
 - [ ] Tests: round trip, newer-map recomputation, identifier/device/sub-day timestamp absence,
-  zero network requests.
+  zero network requests. Round trip, status-change reporting, duplicate-safe merge, version-1
+  compatibility, and the absence of identifiers, device fields, and sub-day timestamps are in
+  `tests/unit/practice-history.test.ts` and `tests/ui/practice-history-controls.test.tsx`.
+  Recomputation under a newer competency map waits for a map; status today is the latest
+  outcome per objective. The no-network claim rests on the existing offline suite.
 
 ## 6. Documentation and labels
 

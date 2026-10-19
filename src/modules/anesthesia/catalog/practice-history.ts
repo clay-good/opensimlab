@@ -123,26 +123,126 @@ export function objectiveChanges(
   });
 }
 
+/**
+ * The progress file says what it records: rehearsal in a simulator, which no
+ * program may count as clinical experience.
+ */
+export const SIMULATED_PRACTICE_NOT_CLINICAL_TIME =
+  'This file records simulated practice. It is not clinical time, a case log, or a procedure log, '
+  + 'and it does not count toward any case requirement, clinical hour, or supervised experience.';
+
+export const PROGRESS_FILE_SCHEMA_VERSION = 2;
+
+/** The calendar day of an attempt; the progress file carries nothing finer. */
+const dayOf = (timestamp: string) => timestamp.slice(0, 10);
+
+/**
+ * The progress file: the only way practice moves between devices. Version 2
+ * keeps each attempt's calendar day and drops its time of day, so the file
+ * cannot place a learner at a moment.
+ */
 export function practiceHistoryExport(history: readonly PracticeAttempt[]): string {
   return `${JSON.stringify({
-    schemaVersion: 1,
+    schemaVersion: PROGRESS_FILE_SCHEMA_VERSION,
     notForClinicalUse: NOT_FOR_CLINICAL_USE,
     notClinicallyReviewed: NOT_CLINICALLY_REVIEWED,
-    attempts: history,
+    simulatedPracticeNotClinicalTime: SIMULATED_PRACTICE_NOT_CLINICAL_TIME,
+    attempts: history.map(({ completedAt, schemaVersion: _version, ...rest }) => ({
+      ...rest, completedOn: dayOf(completedAt),
+    })),
   }, null, 2)}\n`;
 }
 
-export function importPracticeHistory(text: string, storage?: Storage): PracticeAttempt[] {
+/** Read a version 1 (full timestamp) or version 2 (calendar day) attempt. */
+function fileAttempt(value: unknown, fileVersion: number): PracticeAttempt | undefined {
+  if (fileVersion === 1) return normalizedAttempt(value);
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return undefined;
+  const { completedOn, ...rest } = value as Record<string, unknown>;
+  if (typeof completedOn !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(completedOn)) return undefined;
+  return normalizedAttempt({ ...rest, schemaVersion: PRACTICE_HISTORY_SCHEMA_VERSION,
+    completedAt: `${completedOn}T00:00:00.000Z` });
+}
+
+function parseProgressFile(text: string): PracticeAttempt[] {
   if (text.length > 100_000) throw new Error('Practice history file is too large.');
   const value: unknown = JSON.parse(text);
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Invalid practice history file.');
   const record = value as Record<string, unknown>;
-  if (record.schemaVersion !== 1 || !Array.isArray(record.attempts)
+  const version = record.schemaVersion;
+  if ((version !== 1 && version !== PROGRESS_FILE_SCHEMA_VERSION) || !Array.isArray(record.attempts)
     || record.attempts.length > PRACTICE_HISTORY_LIMIT) throw new Error('Invalid practice history file.');
-  const imported = record.attempts.map(normalizedAttempt);
+  const imported = record.attempts.map((attempt) => fileAttempt(attempt, version));
   if (imported.some((attempt) => !attempt)) throw new Error('Invalid practice history file.');
-  const next = [...loadPracticeHistory(storage), ...imported as PracticeAttempt[]]
+  return imported as PracticeAttempt[];
+}
+
+/** One attempt as the progress file sees it, so a re-import does not double-count. */
+const attemptKey = (attempt: PracticeAttempt) => JSON.stringify([
+  attempt.scenarioId, attempt.contentVersion, attempt.goalId, dayOf(attempt.completedAt),
+  attempt.simulatedSeconds, attempt.objectives,
+]);
+
+/** The latest recorded outcome of every scenario objective. */
+export function objectiveStatus(history: readonly PracticeAttempt[]): Map<string, PracticeOutcome> {
+  const status = new Map<string, PracticeOutcome>();
+  for (const attempt of [...history].sort((a, b) => a.completedAt.localeCompare(b.completedAt))) {
+    for (const { objectiveId, outcome } of attempt.objectives) {
+      status.set(`${attempt.scenarioId}:${objectiveId}`, outcome);
+    }
+  }
+  return status;
+}
+
+export interface StatusChange {
+  readonly scenarioId: string;
+  readonly objectiveId: string;
+  readonly previous: PracticeOutcome | null;
+  readonly current: PracticeOutcome | null;
+}
+
+export interface ProgressImport {
+  readonly history: PracticeAttempt[];
+  readonly added: number;
+  readonly duplicates: number;
+  /** Every objective whose latest status differs after the import, and from what. */
+  readonly changes: readonly StatusChange[];
+}
+
+/**
+ * Import a progress file. `merge` adds attempts this device does not already
+ * hold; `replace` discards this device's history first. Either way it is
+ * atomic, and the learner is told every status that moved.
+ */
+export function importProgressFile(
+  text: string, mode: 'merge' | 'replace', storage?: Storage,
+): ProgressImport {
+  const imported = parseProgressFile(text);
+  const before = mode === 'replace' ? [] : loadPracticeHistory(storage);
+  const previousStatus = objectiveStatus(loadPracticeHistory(storage));
+  const seen = new Set(before.map(attemptKey));
+  const fresh = imported.filter((attempt) => {
+    const key = attemptKey(attempt);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  const history = [...before, ...fresh]
+    .sort((a, b) => a.completedAt.localeCompare(b.completedAt))
     .slice(-PRACTICE_HISTORY_LIMIT);
-  availableStorage(storage)?.setItem(PRACTICE_HISTORY_KEY, JSON.stringify(next));
-  return next;
+  availableStorage(storage)?.setItem(PRACTICE_HISTORY_KEY, JSON.stringify(history));
+  const currentStatus = objectiveStatus(history);
+  const keys = [...new Set([...previousStatus.keys(), ...currentStatus.keys()])].sort();
+  const changes = keys.flatMap((key) => {
+    const previous = previousStatus.get(key) ?? null;
+    const current = currentStatus.get(key) ?? null;
+    if (previous === current) return [];
+    const [scenarioId, objectiveId] = key.split(':') as [string, string];
+    return [{ scenarioId, objectiveId, previous, current }];
+  });
+  return { history, added: fresh.length, duplicates: imported.length - fresh.length, changes };
+}
+
+/** Merge a progress file into this device's history. */
+export function importPracticeHistory(text: string, storage?: Storage): PracticeAttempt[] {
+  return importProgressFile(text, 'merge', storage).history;
 }
