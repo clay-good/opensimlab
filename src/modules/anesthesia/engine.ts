@@ -27,6 +27,7 @@ import {
   getBloodProduct, MAX_PRBC_UNITS_PER_ACTION,
 } from './content/blood-products';
 import { oxygenDeliveryMlPerMin } from './physiology/oxygen-delivery';
+import { followDeliveredVentilation, trachealTubeDeliveredFraction } from './physiology/equipment-ventilation';
 import type { Covariates } from './pharmacology/body-composition';
 import {
   RESPIRATORY_PROFILES, VirtualPatient, baselineSvr, healthyChildRespiratoryProfile,
@@ -136,6 +137,32 @@ export const NIBP_CYCLE_SECONDS = 20;
 /** Blood-column approximation: 10 cm of vertical error changes pressure by about 7.5 mmHg. */
 export const ARTERIAL_HYDROSTATIC_MMHG_PER_CM = 0.75;
 export const ARTERIAL_MISLEVELING_CM = 20;
+/**
+ * Authored endpoints for the three airway-equipment lessons. The equipment
+ * state picks the point between them through `followDeliveredVentilation`,
+ * so the monitor cannot move without the tube, cannula, or pleural space.
+ */
+const TUBE_MIGRATION_TRACHEAL_DEPTH_CM = 22;
+const TUBE_MIGRATION_MIGRATED_DEPTH_CM = 25;
+/** This fictional patient's authored right-mainstem depth, never a universal target. */
+const TUBE_MIGRATION_MAINSTEM_DEPTH_CM = 24;
+const TUBE_MIGRATION_MAINSTEM_VITALS = { heartRateBpm: 104, respiratoryRateBpm: 18,
+  spo2Percent: 89, etco2MmHg: 45, systolicMmHg: 102, diastolicMmHg: 62, meanArterialMmHg: 75 };
+const TUBE_MIGRATION_TRACHEAL_VITALS = { heartRateBpm: 94, respiratoryRateBpm: 18,
+  spo2Percent: 96, etco2MmHg: 39, systolicMmHg: 105, diastolicMmHg: 63, meanArterialMmHg: 77 };
+const TUBE_MIGRATION_MAINSTEM_MECHANICS = { exhaledTidalVolumeMl: 310,
+  peakPressureCmH2O: 36, plateauPressureCmH2O: 22 };
+const TUBE_MIGRATION_TRACHEAL_MECHANICS = { exhaledTidalVolumeMl: 410,
+  peakPressureCmH2O: 27, plateauPressureCmH2O: 21 };
+const TRACHEOSTOMY_OCCLUDED_VITALS = { heartRateBpm: 118, respiratoryRateBpm: 34,
+  spo2Percent: 82, etco2MmHg: 0, systolicMmHg: 146, diastolicMmHg: 84, meanArterialMmHg: 105 };
+const TRACHEOSTOMY_PATENT_VITALS = { heartRateBpm: 94, respiratoryRateBpm: 22,
+  spo2Percent: 95, etco2MmHg: 38, systolicMmHg: 132, diastolicMmHg: 78, meanArterialMmHg: 96 };
+const NEONATAL_TENSION_PLEURAL_VITALS = { heartRateBpm: 92, respiratoryRateBpm: 40,
+  spo2Percent: 71, systolicMmHg: 42, diastolicMmHg: 24, meanArterialMmHg: 31 };
+/** The fixed 2-minute qualified-team report: a partial response, not a resolved air leak. */
+const NEONATAL_REPORTED_DECOMPRESSION_VITALS = { heartRateBpm: 138, respiratoryRateBpm: 40,
+  spo2Percent: 91, systolicMmHg: 54, diastolicMmHg: 32, meanArterialMmHg: 40 };
 const HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES = new Set([
   'bolus', 'infusion', 'ventilator', 'call-for-help', 'airway-device', 'laryngoscopy',
   'vasopressor', 'ephedrine', 'inhaled-bronchodilator', 'epinephrine', 'inject-crisis',
@@ -1151,6 +1178,8 @@ export class AnesthesiaEngine {
   private tubeMigrationPositionReviewedAtTick: number | null = null;
   private tubeMigrationCorrectionAtTick: number | null = null;
   private tubeMigrationReassessedAtTick: number | null = null;
+  /** Canonical tube depth at the teeth; the panel and the monitor both read it. */
+  private trachealTubeDepthCm = TUBE_MIGRATION_TRACHEAL_DEPTH_CM;
   private septicResuscitationContextAtTick: number | null = null;
   private septicResuscitationPerfusionAtTick: number | null = null;
   private septicResuscitationFluidResponseAtTick: number | null = null;
@@ -1774,6 +1803,8 @@ export class AnesthesiaEngine {
   private neonatologyTensionPneumothoraxRecognitionAtTick: number | null = null;
   private neonatologyTensionPneumothoraxReadinessAtTick: number | null = null;
   private neonatologyTensionPneumothoraxReassessmentAtTick: number | null = null;
+  /** Canonical share of the reported post-decompression ventilation the pleural state lets through. */
+  private neonatalPleuralDeliveredFraction = 1;
   private neonatologyTensionPneumothoraxHandoffAtTick: number | null = null;
   private endocrineDkaResolutionSupportAtTick: number | null = null;
   private endocrineDkaResolutionContextAtTick: number | null = null;
@@ -2073,6 +2104,14 @@ export class AnesthesiaEngine {
     if (options.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'acute-tracheostomy-obstruction-reassessment')) {
       this.tracheostomyPatencyFraction = 0.08;
+    }
+    if (options.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'endotracheal-tube-migration-after-repositioning')) {
+      this.trachealTubeDepthCm = TUBE_MIGRATION_MIGRATED_DEPTH_CM;
+    }
+    if (options.scenario.metadata.id === 'neonatal-tension-pneumothorax'
+      && options.scenario.timeline.some((event) => event.target === 'neonatal-tension-pneumothorax')) {
+      this.neonatalPleuralDeliveredFraction = 0;
     }
     this.rng = createRng(options.seed, 'session');
     this.configuredResidualRocuroniumCe = options.scenario.equipment.startingTrainOfFourRatio === undefined
@@ -7423,6 +7462,7 @@ export class AnesthesiaEngine {
         if (this.tubeMigrationCorrectionAtTick === null) { this.log('warning', 'assessment', `tube-migration-correction-order-refused-${this.currentTick}`, 'Record bounded experienced-airway correction intent before response proof.'); break; }
         if (this.tubeMigrationReassessedAtTick !== null) { this.log('warning', 'assessment', `tube-migration-reassessment-refused-${this.currentTick}`, 'The fixed multi-signal response has already been recorded.'); break; }
         this.tubeMigrationReassessedAtTick = this.currentTick;
+        this.trachealTubeDepthCm = TUBE_MIGRATION_TRACHEAL_DEPTH_CM;
         this.log('critical', 'assessment', `tube-migration-reassessed-${this.currentTick}`, 'Fixed 3-minute response: tube mark 22 cm, typed tracheal position, bilateral ventilation, exhaled volume 410 mL, peak pressure 27 cm H₂O, plateau 21, PEEP 8, continuous EtCO₂ 39 mmHg, SpO₂ 96% on unchanged FiO₂ 0.50, HR 94/min, and MAP 77 mmHg. Physical correction, imaging, durability, diagnosis, and outcome remain outside the model.', { bilateralVentilation: true, physicalTubeMovementPerformed: false, outcomeProven: false });
         break;
       }
@@ -13204,7 +13244,7 @@ export class AnesthesiaEngine {
         if (this.neonatologyTensionPneumothoraxRecognitionAtTick === null) { this.log('warning', 'assessment', `neonatology-tension-pneumothorax-recognition-order-refused-${this.currentTick}`, 'Recognize the suspected tension-pneumothorax pattern without imaging or diagnostic closure before boundary review.'); break; }
         if (response === actions[3]) { if (this.neonatologyTensionPneumothoraxReadinessAtTick !== null) break; this.neonatologyTensionPneumothoraxReadinessAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-tension-pneumothorax-readiness-reviewed-${this.currentTick}`, 'Qualified oxygenation and ventilation support, immediate decompression without radiography delay in an unstable newborn, locally protocolized device and site selection, analgesia, ongoing drain and imaging planning, and serial reassessment were reviewed without learner care, setting selection, equipment selection, or procedure.'); break; }
         if (this.neonatologyTensionPneumothoraxReadinessAtTick === null) { this.log('warning', 'assessment', `neonatology-tension-pneumothorax-readiness-order-refused-${this.currentTick}`, 'Review qualified support, decompression, drain, analgesia, imaging, and reassessment boundaries before the fixed report.'); break; }
-        if (response === actions[4]) { if (this.currentTick <= this.neonatologyTensionPneumothoraxReadinessAtTick) { this.log('warning', 'assessment', `neonatology-tension-pneumothorax-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed qualified-team report.'); break; } if (this.neonatologyTensionPneumothoraxReassessmentAtTick !== null) break; this.neonatologyTensionPneumothoraxReassessmentAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-tension-pneumothorax-two-minute-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report 2 minutes after reported emergency decompression: heart rate 138/min, preductal SpO2 91% with oxygen 60%, mean arterial pressure 40 mm Hg, capillary refill 3 seconds, improving but still asymmetric chest movement, and ongoing qualified ventilation, drain preparation, analgesia, imaging, and serial reassessment. This partial response does not prove learner care, confirm diagnosis, exclude another cause, establish durable oxygenation or circulation, prove a resolved air leak, determine disposition, or predict outcome.', { decompressionOrDrainPerformedByLearner: false, diagnosisConfirmed: false, alternativeCauseExcluded: false, airLeakResolved: false, durableOxygenationOrCirculationProven: false, outcomePredicted: false }); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.neonatologyTensionPneumothoraxReadinessAtTick) { this.log('warning', 'assessment', `neonatology-tension-pneumothorax-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed qualified-team report.'); break; } if (this.neonatologyTensionPneumothoraxReassessmentAtTick !== null) break; this.neonatologyTensionPneumothoraxReassessmentAtTick = this.currentTick; this.neonatalPleuralDeliveredFraction = 1; this.log('warning', 'assessment', `neonatology-tension-pneumothorax-two-minute-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report 2 minutes after reported emergency decompression: heart rate 138/min, preductal SpO2 91% with oxygen 60%, mean arterial pressure 40 mm Hg, capillary refill 3 seconds, improving but still asymmetric chest movement, and ongoing qualified ventilation, drain preparation, analgesia, imaging, and serial reassessment. This partial response does not prove learner care, confirm diagnosis, exclude another cause, establish durable oxygenation or circulation, prove a resolved air leak, determine disposition, or predict outcome.', { decompressionOrDrainPerformedByLearner: false, diagnosisConfirmed: false, alternativeCauseExcluded: false, airLeakResolved: false, durableOxygenationOrCirculationProven: false, outcomePredicted: false }); break; }
         if (this.neonatologyTensionPneumothoraxReassessmentAtTick === null) { this.log('warning', 'assessment', `neonatology-tension-pneumothorax-handoff-order-refused-${this.currentTick}`, 'Review the fixed 2-minute qualified-team report before active-risk handoff.'); break; }
         if (this.currentTick <= this.neonatologyTensionPneumothoraxReassessmentAtTick) { this.log('warning', 'assessment', `neonatology-tension-pneumothorax-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
         if (this.neonatologyTensionPneumothoraxHandoffAtTick !== null) break;
@@ -15173,6 +15213,10 @@ export class AnesthesiaEngine {
     }
   }
 
+  private trachealTubeDeliveredFraction(): number {
+    return trachealTubeDeliveredFraction(this.trachealTubeDepthCm, TUBE_MIGRATION_MAINSTEM_DEPTH_CM);
+  }
+
   private log(
     severity: EngineEvent['severity'], category: string, eventId: string, message: string,
     data?: EngineEvent['data'],
@@ -16566,11 +16610,9 @@ export class AnesthesiaEngine {
       && this.scenario.timeline.every((event) => event.type === 'narrative')
       && this.scenario.timeline.filter((event) => event.target === 'neonatal-tension-pneumothorax').length === 1
       && this.scenario.timeline.filter((event) => event.target === 'neonatal-tension-pneumothorax-boundary').length === 1) {
-      crisisState = { ...crisisState, heartRateBpm: this.neonatologyTensionPneumothoraxReassessmentAtTick !== null ? 138 : 92,
-        respiratoryRateBpm: 40, spo2Percent: this.neonatologyTensionPneumothoraxReassessmentAtTick !== null ? 91 : 71,
-        systolicMmHg: this.neonatologyTensionPneumothoraxReassessmentAtTick !== null ? 54 : 42,
-        diastolicMmHg: this.neonatologyTensionPneumothoraxReassessmentAtTick !== null ? 32 : 24,
-        meanArterialMmHg: this.neonatologyTensionPneumothoraxReassessmentAtTick !== null ? 40 : 31,
+      crisisState = { ...crisisState,
+        ...followDeliveredVentilation(NEONATAL_TENSION_PLEURAL_VITALS, NEONATAL_REPORTED_DECOMPRESSION_VITALS,
+          this.neonatalPleuralDeliveredFraction),
         coreTemperatureC: 36.6 };
     }
     if (this.scenario.metadata.id === 'dka-resolution-transition'
@@ -17121,15 +17163,9 @@ export class AnesthesiaEngine {
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'acute-tracheostomy-obstruction-reassessment')) {
-      const blocked = 1 - this.tracheostomyPatencyFraction;
       crisisState = { ...crisisState,
-        heartRateBpm: 94 + 24 * blocked,
-        respiratoryRateBpm: 22 + 12 * blocked,
-        spo2Percent: 95 - 13 * blocked,
-        etco2MmHg: 38 * this.tracheostomyPatencyFraction,
-        systolicMmHg: 132 + 14 * blocked,
-        diastolicMmHg: 78 + 6 * blocked,
-        meanArterialMmHg: 96 + 9 * blocked,
+        ...followDeliveredVentilation(TRACHEOSTOMY_OCCLUDED_VITALS, TRACHEOSTOMY_PATENT_VITALS,
+          this.tracheostomyPatencyFraction),
         coreTemperatureC: 37.1 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -17820,11 +17856,9 @@ export class AnesthesiaEngine {
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'endotracheal-tube-migration-after-repositioning')) {
-      const reassessed = this.tubeMigrationReassessedAtTick !== null;
-      crisisState = { ...crisisState, heartRateBpm: reassessed ? 94 : 104,
-        respiratoryRateBpm: 18, spo2Percent: reassessed ? 96 : 89,
-        etco2MmHg: reassessed ? 39 : 45, systolicMmHg: reassessed ? 105 : 102,
-        diastolicMmHg: reassessed ? 63 : 62, meanArterialMmHg: reassessed ? 77 : 75,
+      crisisState = { ...crisisState,
+        ...followDeliveredVentilation(TUBE_MIGRATION_MAINSTEM_VITALS, TUBE_MIGRATION_TRACHEAL_VITALS,
+          this.trachealTubeDeliveredFraction()),
         coreTemperatureC: 37.6 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -18057,17 +18091,16 @@ export class AnesthesiaEngine {
       ...(this.scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'endotracheal-tube-migration-after-repositioning') ? {
           trachealTubePosition: {
-            depthCm: this.tubeMigrationReassessedAtTick === null ? 25 : 22,
-            position: this.tubeMigrationReassessedAtTick === null
+            depthCm: this.trachealTubeDepthCm,
+            position: this.trachealTubeDeliveredFraction() < 1
               ? 'right-mainstem' as const : 'tracheal' as const,
-            leftVentilation: this.tubeMigrationReassessedAtTick === null
+            leftVentilation: this.trachealTubeDeliveredFraction() < 1
               ? 'markedly-reduced' as const : 'present' as const,
             rightVentilation: 'present' as const,
             securement: 'intact' as const,
             cuffState: 'unchanged' as const,
-            exhaledTidalVolumeMl: this.tubeMigrationReassessedAtTick === null ? 310 : 410,
-            peakPressureCmH2O: this.tubeMigrationReassessedAtTick === null ? 36 : 27,
-            plateauPressureCmH2O: this.tubeMigrationReassessedAtTick === null ? 22 : 21,
+            ...followDeliveredVentilation(TUBE_MIGRATION_MAINSTEM_MECHANICS, TUBE_MIGRATION_TRACHEAL_MECHANICS,
+              this.trachealTubeDeliveredFraction()),
             peepCmH2O: 8,
             continuousCapnography: true,
           },

@@ -286,9 +286,24 @@ credited toward the catalog until every item in the completion contract passes.
   claiming to simulate team performance.
 - [ ] For every capability: sources, applicability, calibration, invariants, hostile inputs,
   deterministic replay, nonvisual representation, limitations, and cross-scenario regression.
-- [ ] Add equipment-state capabilities for endotracheal-tube position, tracheostomy patency, and
+- [x] Add equipment-state capabilities for endotracheal-tube position, tracheostomy patency, and
   neonatal pleural-pressure deterioration; circle-system carbon-dioxide rebreathing is complete;
   state changes must alter canonical flow/ventilation rather than display text alone.
+  All three lessons had set their monitor and their equipment panel from the same "reassessed?"
+  flag, independently, so the two could drift and neither depended on the equipment. Each now
+  holds one canonical equipment state — tube depth at the teeth, tracheostomy patency, and the
+  share of the reported post-decompression ventilation the pleural space lets through — and one
+  shared rule, `followDeliveredVentilation` in
+  `src/modules/anesthesia/physiology/equipment-ventilation.ts`, derives every monitor reading and
+  the tube panel's exhaled volume and pressures from it. Hostile or non-finite fractions fail
+  toward the compromised state. The authored endpoints are unchanged to the decimal, so no
+  evidence or pinned value moved; the straight line between them is a declared teaching
+  calibration, and the tube's 24 cm mainstem threshold is a fact about one fictional patient,
+  not a target. `tests/unit/equipment-ventilation.test.ts` holds the rule, the bounds, and, in
+  each lesson, that recognition, help and review leave the monitor untouched and only the
+  equipment change moves it, with the panel and the monitor moving together. Transitions remain
+  at the authored report rather than relaxing over simulated time, because each lesson's
+  restoring step is itself a fixed timed report.
 - [ ] Add bounded state-transition capabilities for evolving aortic malperfusion, autonomic
   dysreflexia, methemoglobinemia saturation gap, and cellular-therapy cytokine-release syndrome,
   each with explicit differential, escalation, and definitive-diagnosis boundaries.
