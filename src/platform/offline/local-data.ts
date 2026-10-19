@@ -40,6 +40,12 @@ export const LOCAL_DATA_ITEMS: readonly LocalDataItem[] = [
     purpose: 'Whether the variable-pitch pulse tone and the alarm tones play. Off unless you turn it on.',
   },
   {
+    key: 'opensimlab.haptics-on',
+    name: 'Alarm vibration',
+    kind: 'preference',
+    purpose: 'Whether alarms also vibrate, on devices that can. Off unless you turn it on.',
+  },
+  {
     key: 'opensimlab.action-height',
     name: 'Height of the action region',
     kind: 'preference',

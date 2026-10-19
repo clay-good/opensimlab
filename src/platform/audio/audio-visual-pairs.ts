@@ -73,6 +73,26 @@ export const AUDIO_VISUAL_PAIRS: readonly AudioVisualPair[] = [
     visualEquivalent: 'The depth index numeric.',
     visualLocation: 'Monitor region, depth VitalTile.',
   },
+  // Vibration is a second non-visual channel, held to the same rule: it may
+  // repeat what the screen says, never say something the screen does not.
+  {
+    audioEvent: 'haptic-alarm-high',
+    conveys: 'A high-priority alarm, as three short vibrations every 2 seconds.',
+    visualEquivalent: 'The same alarm rail item flashing at 2 Hz with the words "High priority".',
+    visualLocation: 'AlarmRail above the traces.',
+  },
+  {
+    audioEvent: 'haptic-alarm-medium',
+    conveys: 'A medium-priority alarm, as one longer vibration every 1.5 seconds.',
+    visualEquivalent: 'The same alarm rail item flashing at 0.6 Hz with the word "Medium".',
+    visualLocation: 'AlarmRail above the traces.',
+  },
+  {
+    audioEvent: 'haptic-alarm-low',
+    conveys: 'A low-priority alarm, as one short vibration at onset.',
+    visualEquivalent: 'The same steady alarm rail item with the word "Low".',
+    visualLocation: 'AlarmRail above the traces.',
+  },
 ];
 
 /** Every audio event this build can emit. The audit compares against this list. */
@@ -80,4 +100,5 @@ export const AUDIO_EVENTS: readonly string[] = [
   'pulse-tone', 'pulse-tone-pitch', 'pulse-tone-absent',
   'alarm-burst-high', 'alarm-burst-medium', 'alarm-burst-low',
   'extended-cue-map-drone', 'extended-cue-etco2-pulse', 'extended-cue-depth-drone',
+  'haptic-alarm-high', 'haptic-alarm-medium', 'haptic-alarm-low',
 ];

@@ -130,6 +130,7 @@ import { getDrugCard } from '@anesthesia/content/drug-cards';
 import type { DrugConcentration } from '@platform/kernel/protocol';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import type { SonificationEngine } from '@platform/audio/sonification';
+import { HAPTICS_UNSUPPORTED_REASON, HapticEngine, hapticsSupported } from '@platform/audio/haptics';
 import { ManualCrisisInjector } from './ManualCrisisInjector';
 import { MaturityMarker } from '@platform/governance/MaturityMarker';
 import type { ContentMaturity, MaturitySubjectKind } from '@platform/catalog/maturity';
@@ -1161,6 +1162,9 @@ export function Cockpit({
   // box on arrival is an interruption, and "nothing interrupts arrival" is a
   // rule this project holds elsewhere. It lives in the overflow menu instead.
   const [soundOn, setSoundOn] = useLocalPreference('sound-on', false);
+  const [hapticsOn, setHapticsOn] = useLocalPreference('haptics-on', false);
+  const vibration = typeof navigator === 'undefined' ? undefined : navigator;
+  const haptics = useMemo(() => new HapticEngine(vibration), [vibration]);
   const [announcement, setAnnouncement] = useState('');
   const [criticalAnnouncement, setCriticalAnnouncement] = useState('');
   const [selectedTick, setSelectedTick] = useState<number | null>(null);
@@ -1346,6 +1350,15 @@ export function Cockpit({
       || alarm.silencedUntilTick <= session.tick);
     if (soundOn && highest) audio.alarm(highest.priority);
   }, [session.alarms, session.tick, audio, soundOn]);
+
+  // Vibration mirrors the tone: the same unsilenced alarm, stopped at once on
+  // silence, on pause, or when the learner turns it off.
+  useEffect(() => {
+    const highest = session.alarms.find((alarm) => alarm.silencedUntilTick === null
+      || alarm.silencedUntilTick <= session.tick);
+    haptics.alarm(hapticsOn && session.transport === 'running' && highest
+      ? { id: highest.alarmId, priority: highest.priority } : null, new Date().getTime());
+  }, [session.alarms, session.tick, session.transport, haptics, hapticsOn]);
 
   // Guidance is presentational. It reads state the engine produced anyway and
   // never feeds anything back, which is what makes the trajectory identical at
@@ -2100,6 +2113,20 @@ export function Cockpit({
             The pulse tone falls in pitch as saturation falls, which is how clinicians track
             saturation while looking somewhere else. Sound is never the only channel: every alarm
             and cue is also shown.
+          </p>
+        </div>
+        <div className="overflow-menu__sound">
+          <Toggle
+            checked={hapticsOn && hapticsSupported(vibration)}
+            disabled={!hapticsSupported(vibration)}
+            describedBy="haptics-hint"
+            onChange={(next: boolean) => setHapticsOn(next)}
+            label={hapticsOn && hapticsSupported(vibration) ? 'Alarm vibration on' : 'Alarm vibration off'}
+          />
+          <p className="field__hint" id="haptics-hint">
+            {hapticsSupported(vibration)
+              ? 'High-priority alarms vibrate in threes, medium in a slow pulse, low once. Silencing or pausing stops it.'
+              : HAPTICS_UNSUPPORTED_REASON}
           </p>
         </div>
         {scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !observedStateDemoSupported && <Button onClick={() => {
