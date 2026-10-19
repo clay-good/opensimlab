@@ -9,6 +9,7 @@
  */
 
 import { availableModules } from '@platform/modules/registry';
+import { APP_VERSION } from '@platform/governance/status';
 
 /**
  * Both counts are derived from the module registry rather than typed here.
@@ -286,9 +287,21 @@ export const FOOTER_LINKS: readonly { readonly label: string; readonly href: str
   { label: 'Source', href: 'https://github.com/clay-good/opensimlab' },
 ];
 
-export const SUGGESTED_CITATION =
-  'Open Sim Lab. An open-source browser-native clinical simulator. opensimlab.com. '
-  + 'Cite the release version shown in the about panel.';
+/**
+ * The citation for the running build, from the same release identity the
+ * transcript records, so a reader cites the exact version they used. The title
+ * and author match `CITATION.cff`, which a test holds in step. No persistent
+ * identifier is printed because none has been issued; inventing one would be
+ * the one citation error a reader cannot detect.
+ */
+export function suggestedCitation(release: string): string {
+  const year = /^\d{4}/.exec(release)?.[0];
+  const version = year === undefined ? 'an unreleased source build' : `release ${release}`;
+  return `Good C. Open Sim Lab: an open-source browser-native clinical simulator${year === undefined ? '' : ` (${year})`}. `
+    + `Software, ${version}. https://opensimlab.com. No archived persistent identifier has been issued yet.`;
+}
+
+export const SUGGESTED_CITATION = suggestedCitation(APP_VERSION);
 
 /** Words the one-line description is forbidden to contain. */
 export const FORBIDDEN_MARKETING_WORDS = ['revolutionary', 'cutting-edge', 'AI-powered', 'platform'];

@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: >-
+  If you cite Open Sim Lab, cite the exact build you used: the release identifier
+  (build date and commit) is shown in the about panel. No archived persistent
+  identifier has been issued yet.
+type: software
+title: "Open Sim Lab: an open-source browser-native clinical simulator"
+authors:
+  - family-names: Good
+    given-names: Clay
+license: MIT
+repository-code: "https://github.com/clay-good/opensimlab"
+url: "https://opensimlab.com"
+keywords:
+  - clinical simulation
+  - medical education
+  - nursing education
+  - open source

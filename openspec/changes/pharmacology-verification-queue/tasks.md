@@ -33,10 +33,20 @@
 
 ## 4. Citation and archive (adoption requirement)
 
-- [ ] Add `CITATION.cff`; validate it in CI.
+- [x] Add `CITATION.cff`; validate it in CI. `tests/unit/citation.test.ts` holds its required
+  fields and keeps its title, author, licence, repository, and site in step with the package and
+  the about panel. It is a repository test, not the upstream `cffconvert` validator, which is a
+  Python tool this Node-only CI does not install. The file claims no DOI, because none exists.
 - [ ] Archive releases with a persistent identifier and a project concept identifier; record the
-  identifier in the release record; fail the release gate without it.
-- [ ] Render the suggested citation in the about panel from build-time release identity.
+  identifier in the release record; fail the release gate without it. Needs a maintainer to
+  connect an archive (for example Zenodo's GitHub integration) and mint the concept identifier;
+  the gate is not added before then, because it would block every deploy on an account nobody has
+  opened.
+- [x] Render the suggested citation in the about panel from build-time release identity.
+  The panel used to say "cite the release version shown in the about panel" and show none. It now
+  prints the running build's `<date>+<commit>`, and the prerender step receives the same identity
+  through `scripts/register-release-id.ts`, so the hydrated About page and its HTML agree. A
+  source checkout says it is an unreleased build rather than inventing a version.
 
 ## 5. Outreach
 
