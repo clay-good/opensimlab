@@ -256,8 +256,15 @@ credited toward the catalog until every item in the completion contract passes.
 - [ ] Require human or named clinical review according to severity before merge and release.
 - [ ] Add weekly open-report review, duplicate grouping, urgent-content withdrawal, resolution,
   correction-log, retention, and false-report procedures.
-- [ ] Measure prompt-injection, malformed-context, duplicate-flood, stale-version, and withdrawn-
+- [x] Measure prompt-injection, malformed-context, duplicate-flood, stale-version, and withdrawn-
   scenario cases in an adversarial test suite.
+  `tests/unit/report-maintenance.test.ts` holds all five against the projector every batch passes
+  through: hostile instructions survive only as a typed untrusted quotation under the fixed
+  workflow, malformed context is rejected without leaking it, an exact duplicate flood collapses to
+  one capped group with no added authority, and stale-release and withdrawn evidence is preserved
+  as recorded rather than substituted with main. This measures the projection, not an agent:
+  agent and branch credentials stay disabled (see the triage task above), so no agent behavior
+  exists yet to measure.
 
 ## 7. Shared clinical capabilities
 
@@ -307,6 +314,15 @@ credited toward the catalog until every item in the completion contract passes.
 - [ ] Add bounded state-transition capabilities for evolving aortic malperfusion, autonomic
   dysreflexia, methemoglobinemia saturation gap, and cellular-therapy cytokine-release syndrome,
   each with explicit differential, escalation, and definitive-diagnosis boundaries.
+  Three of four ship: `acute-aortic-syndrome`, `autonomic-dysreflexia-authored-trigger`, and
+  `methemoglobinemia-saturation-gap` each keep a plausible alternative open, bound escalation to
+  the learner role, and refuse definitive diagnosis. Two gaps remain, and neither is code alone.
+  Cytokine-release syndrome after cellular therapy has no scenario: the catalogue is ratified at
+  256, so adding one means choosing what it replaces or changing the count, which is a
+  maintainer's call. And the aortic lesson's malperfusion is revealed by the learner's repeat
+  examination rather than evolving on the simulated clock, so the monitor never shows it. Moving
+  it onto the clock would change the lesson's authored timing, its evidence, and its pinned worked
+  example, so it needs that lesson's evidence revised first.
 
 ## 8. Catalog production waves
 
