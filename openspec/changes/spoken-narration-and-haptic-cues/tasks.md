@@ -4,13 +4,19 @@
 
 - [x] Write the voice-selection function: wait for the voice list to be ready, filter to local
   voices, prefer the active locale, expose the rest; unit test with mixed local/non-local lists.
-  `src/platform/audio/narration-voices.ts`. Nothing speaks yet; the setting and the drivers below
-  are next.
-- [ ] Add the narration setting with per-source toggles, rate 0.8×–1.5×, voice choice; persist.
-- [ ] Drive speech from the existing worked-example beat, tutor display, alarm live-region, and
+  `src/platform/audio/narration-voices.ts`.
+- [x] Add the narration setting with per-source toggles, rate 0.8×–1.5×, voice choice; persist.
+  In the session menu beside sound and vibration, stored as one validated `opensimlab.narration`
+  preference declared in the local-data inventory.
+- [x] Drive speech from the existing worked-example beat, tutor display, alarm live-region, and
   state-summary events; implement interruption by priority; pause with the clock.
-- [ ] Suppress alarm and summary speech when the live-region announcements are enabled; state why.
-- [ ] Disabled-with-reason toggle when no local voice exists.
+  `NarrationEngine` in `src/platform/audio/narration.ts`: a new beat replaces the one being read,
+  a high-priority alarm replaces anything, everything else queues, and speech pauses and resumes
+  with the clock. The waveform description shares the summary source; both are on-demand reads.
+- [x] Suppress alarm and summary speech when the live-region announcements are enabled; state why.
+  The live regions are always present, so the per-device choice is an "I use a screen reader"
+  setting whose label says why those two sources are skipped.
+- [x] Disabled-with-reason toggle when no local voice exists.
 - [ ] Replay test: narration on/off produces identical traces and transcripts.
 - [ ] Automated offline run with a stubbed speech interface; add to the manual offline audit.
 
@@ -24,6 +30,7 @@
 
 ## 3. Pairing and documentation
 
-- [ ] Extend the audio-visual pairing audit to spoken and haptic events. Haptic events are paired; spoken events join when narration speaks.
+- [x] Extend the audio-visual pairing audit to spoken and haptic events. All three haptic and all
+  four spoken events are declared with their on-screen equivalents.
 - [ ] Document both channels in the accessibility conformance report and the sonification
   documentation, including the on-device-voice rule and its privacy reason.

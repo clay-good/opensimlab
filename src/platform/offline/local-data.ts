@@ -46,6 +46,12 @@ export const LOCAL_DATA_ITEMS: readonly LocalDataItem[] = [
     purpose: 'Whether alarms also vibrate, on devices that can. Off unless you turn it on.',
   },
   {
+    key: 'opensimlab.narration',
+    name: 'Narration',
+    kind: 'preference',
+    purpose: 'Whether narration is on, which sources it reads, its speed, and the on-device voice. Off unless you turn it on.',
+  },
+  {
     key: 'opensimlab.action-height',
     name: 'Height of the action region',
     kind: 'preference',

@@ -131,6 +131,11 @@ import type { DrugConcentration } from '@platform/kernel/protocol';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import type { SonificationEngine } from '@platform/audio/sonification';
 import { HAPTICS_UNSUPPORTED_REASON, HapticEngine, hapticsSupported } from '@platform/audio/haptics';
+import {
+  DEFAULT_NARRATION_SETTINGS, NARRATION_RATES, NarrationEngine, isNarrationSettings,
+  type NarrationSource, type SpeechTarget, type UtteranceLike,
+} from '@platform/audio/narration';
+import { NO_LOCAL_VOICE_REASON, selectVoices, voicesWhenReady, type VoiceLike } from '@platform/audio/narration-voices';
 import { ManualCrisisInjector } from './ManualCrisisInjector';
 import { MaturityMarker } from '@platform/governance/MaturityMarker';
 import type { ContentMaturity, MaturitySubjectKind } from '@platform/catalog/maturity';
@@ -1165,6 +1170,19 @@ export function Cockpit({
   const [hapticsOn, setHapticsOn] = useLocalPreference('haptics-on', false);
   const vibration = typeof navigator === 'undefined' ? undefined : navigator;
   const haptics = useMemo(() => new HapticEngine(vibration), [vibration]);
+  const [narration, setNarration] = useLocalPreference('narration', DEFAULT_NARRATION_SETTINGS, isNarrationSettings);
+  const [voices, setVoices] = useState<VoiceLike[]>([]);
+  const narratorRef = useRef<NarrationEngine | null>(null);
+  if (narratorRef.current === null) {
+    const synthesis = typeof window !== 'undefined' && 'speechSynthesis' in window
+      ? window.speechSynthesis : undefined;
+    narratorRef.current = new NarrationEngine(synthesis as unknown as SpeechTarget | undefined,
+      (text) => new SpeechSynthesisUtterance(text) as unknown as UtteranceLike);
+  }
+  const voiceChoice = selectVoices(voices,
+    typeof document === 'undefined' ? 'en-US' : document.documentElement.lang || 'en-US');
+  const narrationVoice = voices.find((voice) => voice.localService && voice.name === narration.voiceName)
+    ?? voiceChoice.preferred;
   const [announcement, setAnnouncement] = useState('');
   const [criticalAnnouncement, setCriticalAnnouncement] = useState('');
   const [selectedTick, setSelectedTick] = useState<number | null>(null);
@@ -1328,6 +1346,8 @@ export function Cockpit({
     const critical = announcements.filter((entry) => entry.severity === 'critical');
     if (critical.length > 0) setCriticalAnnouncement(critical.map((entry) => entry.text).join('. '));
     else setAnnouncement(announcements.map((entry) => entry.text).join('. '));
+    narratorRef.current?.speak('alarm', (critical.length > 0 ? critical : announcements)
+      .map((entry) => entry.text).join('. '), critical.length > 0 ? 'high' : 'normal');
   }, [session.state, session.alarms, equipment?.resuscitation.myxedema, equipment?.resuscitation.hypercalcemia, equipment?.resuscitation.hypocalcemia, equipment?.resuscitation.hyponatremiaCorrection, equipment?.resuscitation.avpDeficiency, equipment?.resuscitation.refeeding, equipment?.resuscitation.perioperativeDiabetes, equipment?.resuscitation.renalHyperkalemia, equipment?.resuscitation.renalHypokalemia, equipment?.resuscitation.renalHyponatremia, equipment?.resuscitation.renalHypernatremia, equipment?.resuscitation.renalHypocalcemia, equipment?.resuscitation.renalHypermagnesemia, equipment?.resuscitation.meningococcalSepsis, equipment?.resuscitation.obstructedKidney, equipment?.resuscitation.febrileNeutropenia, equipment?.resuscitation.necrotizingInfection, equipment?.resuscitation.endocarditisHeartFailure, equipment?.resuscitation.severePneumonia, equipment?.resuscitation.toxicShock, equipment?.resuscitation.possibleSepsis, equipment?.resuscitation.septicShockLabel, equipment?.resuscitation.meningitisImaging, equipment?.resuscitation.lowScore, equipment?.resuscitation.countedRate, equipment?.resuscitation.pairedReading, equipment?.resuscitation.afferentLimb, equipment?.resuscitation.quietPatient, equipment?.resuscitation.proxyScale, equipment?.resuscitation.lastKnownWell, equipment?.resuscitation.oxygenTargetScale, equipment?.resuscitation.lostContingency, equipment?.resuscitation.delayedImmuneEvent, equipment?.resuscitation.incidentalClot, equipment?.resuscitation.normalTestToxicity, equipment?.resuscitation.prognosisQuestion, equipment?.resuscitation.laboratoryTls, equipment?.resuscitation.rareEarlyMyocarditis, equipment?.resuscitation.loweringTheCount, equipment?.resuscitation.inheritedUrgency, equipment?.resuscitation.trialRule, equipment?.resuscitation.silentInteraction, equipment?.resuscitation.easyLabel, equipment?.resuscitation.negativeScan, equipment?.resuscitation.risingRequirement, equipment?.resuscitation.unfinishedSurvey, equipment?.resuscitation.transientResponse, equipment?.resuscitation.quietChest, equipment?.resuscitation.unownedDelay, equipment?.resuscitation.thirdAttendance, equipment?.resuscitation.deferredStep, equipment?.resuscitation.knownLabel, equipment?.resuscitation.unspokenDoubt, invalidParameters]);
 
   // The pulse tone sounds once per beat, at the pitch saturation implies.
@@ -1406,7 +1426,30 @@ export function Cockpit({
   }, [session.tick, session.guidance, session.state, session.alarms.length, prompt,
     tutorIntroductionOpen, invalidParameters, demonstrating]);
 
-  const speak = useCallback((text: string) => setAnnouncement(text), []);
+  const speak = useCallback((text: string) => {
+    setAnnouncement(text);
+    narratorRef.current?.speak('summary', text);
+  }, []);
+
+  // Narration reads what the screen shows: the worked-example line as it
+  // changes, a tutor prompt when it is displayed, and it pauses with the clock.
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    let active = true;
+    void voicesWhenReady(window.speechSynthesis).then((list) => { if (active) setVoices(list); });
+    return () => { active = false; };
+  }, []);
+  useEffect(() => { narratorRef.current?.configure(narration, narrationVoice); }, [narration, narrationVoice]);
+  const beatLine = demonstration.beat?.narration ?? '';
+  useEffect(() => { narratorRef.current?.speak('beat', beatLine); }, [beatLine]);
+  useEffect(() => {
+    if (prompt) narratorRef.current?.speak('tutor', `${prompt.suggestion} ${prompt.because}`);
+  }, [prompt]);
+  useEffect(() => {
+    if (session.transport === 'running') narratorRef.current?.resume();
+    else narratorRef.current?.pause();
+  }, [session.transport]);
+  useEffect(() => () => narratorRef.current?.stop(), []);
 
   const readSummary = useCallback(() => {
     if (!displayedState) return;
@@ -2128,6 +2171,54 @@ export function Cockpit({
               ? 'High-priority alarms vibrate in threes, medium in a slow pulse, low once. Silencing or pausing stops it.'
               : HAPTICS_UNSUPPORTED_REASON}
           </p>
+        </div>
+        <div className="overflow-menu__sound">
+          <Toggle
+            checked={narration.enabled && voiceChoice.preferred !== null}
+            disabled={voiceChoice.preferred === null}
+            describedBy="narration-hint"
+            onChange={(next: boolean) => setNarration({ ...narration, enabled: next })}
+            label={narration.enabled && voiceChoice.preferred !== null ? 'Narration on' : 'Narration off'}
+          />
+          <p className="field__hint" id="narration-hint">
+            {voiceChoice.preferred === null
+              ? NO_LOCAL_VOICE_REASON
+              : 'Reads aloud what the screen shows, with an on-device voice. It pauses with the clock.'}
+          </p>
+          {narration.enabled && voiceChoice.preferred !== null && (
+            <fieldset className="field">
+              <legend className="field__label">What to read</legend>
+              {([['beat', 'Worked-example steps'], ['tutor', 'Tutor prompts'], ['alarm', 'Alarm announcements'],
+                ['summary', 'State summary on request']] as const).map(([source, label]: readonly [NarrationSource, string]) => (
+                <label key={source} className="field__hint">
+                  <input type="checkbox" checked={narration.sources[source]}
+                    onChange={(event) => setNarration({ ...narration,
+                      sources: { ...narration.sources, [source]: event.target.checked } })} />{' '}
+                  {label}
+                </label>
+              ))}
+              <label className="field__hint">
+                <input type="checkbox" checked={narration.screenReader}
+                  onChange={(event) => setNarration({ ...narration, screenReader: event.target.checked })} />{' '}
+                I use a screen reader (it already reads alarms and the summary, so narration skips them)
+              </label>
+              <label className="field__hint">
+                Speed{' '}
+                <select value={narration.rate}
+                  onChange={(event) => setNarration({ ...narration, rate: Number(event.target.value) })}>
+                  {NARRATION_RATES.map((rate) => <option key={rate} value={rate}>{rate}×</option>)}
+                </select>
+              </label>
+              <label className="field__hint">
+                Voice{' '}
+                <select value={narrationVoice?.name ?? ''}
+                  onChange={(event) => setNarration({ ...narration, voiceName: event.target.value || null })}>
+                  {[voiceChoice.preferred, ...voiceChoice.others].filter((voice): voice is VoiceLike => voice !== null)
+                    .map((voice) => <option key={voice.name} value={voice.name}>{voice.name} ({voice.lang})</option>)}
+                </select>
+              </label>
+            </fieldset>
+          )}
         </div>
         {scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !observedStateDemoSupported && <Button onClick={() => {
           setShortcutsOpen(false);

@@ -13,6 +13,7 @@ actually uses the thing.
 | Every audio event has a paired visual event | `tests/unit/sonification.test.ts` |
 | Every alarm vibration pattern has a paired visual alarm, is distinguishable, and stops on silence or pause | `tests/unit/haptics.test.ts` |
 | Narration offers only on-device voices and says so when there are none | `tests/unit/narration-voices.test.ts` |
+| Narration interrupts by priority, pauses with the clock, and skips alarms and the summary for a screen-reader user | `tests/unit/narration.test.ts` |
 | Live-region announcements fire on threshold crossings, not every tick | `tests/unit/accessibility.test.ts` |
 | A text description exists for every waveform morphology | `tests/unit/accessibility.test.ts` |
 | Hit targets and target gaps hold their token values | `tests/ui/cockpit-layout.test.tsx` |

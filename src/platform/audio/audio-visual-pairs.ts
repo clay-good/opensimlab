@@ -93,6 +93,31 @@ export const AUDIO_VISUAL_PAIRS: readonly AudioVisualPair[] = [
     visualEquivalent: 'The same steady alarm rail item with the word "Low".',
     visualLocation: 'AlarmRail above the traces.',
   },
+  // Narration reads text that is already on screen, word for word.
+  {
+    audioEvent: 'speech-beat',
+    conveys: 'The current worked-example step.',
+    visualEquivalent: 'The same narration line in the worked-example banner.',
+    visualLocation: 'Demonstration banner above the action region.',
+  },
+  {
+    audioEvent: 'speech-tutor',
+    conveys: 'A tutor prompt and its reason.',
+    visualEquivalent: 'The same suggestion and reason on the tutor prompt card.',
+    visualLocation: 'Tutor prompt card beside the monitor.',
+  },
+  {
+    audioEvent: 'speech-alarm',
+    conveys: 'A threshold or alarm announcement.',
+    visualEquivalent: 'The alarm rail item and the changed vital tile the announcement describes.',
+    visualLocation: 'AlarmRail and the monitor region.',
+  },
+  {
+    audioEvent: 'speech-summary',
+    conveys: 'The state summary or waveform description on request.',
+    visualEquivalent: 'Every value it reads is a numeric tile or trace on the monitor.',
+    visualLocation: 'Monitor region.',
+  },
 ];
 
 /** Every audio event this build can emit. The audit compares against this list. */
@@ -101,4 +126,5 @@ export const AUDIO_EVENTS: readonly string[] = [
   'alarm-burst-high', 'alarm-burst-medium', 'alarm-burst-low',
   'extended-cue-map-drone', 'extended-cue-etco2-pulse', 'extended-cue-depth-drone',
   'haptic-alarm-high', 'haptic-alarm-medium', 'haptic-alarm-low',
+  'speech-beat', 'speech-tutor', 'speech-alarm', 'speech-summary',
 ];
