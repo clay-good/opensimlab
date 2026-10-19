@@ -147,6 +147,32 @@ mechanisms. The 24 px floor is WCAG 2.2 target size (minimum); it is not the 44 
 which `tests/ui/cockpit-layout.test.tsx` holds for cockpit controls. This is emulation of a
 tablet viewport, not a physical tablet with touch input.
 
+## Non-visual channels: narration and vibration, 2026-10-19
+
+Both live in the session menu beside the sound toggle, and both are off until a learner turns
+them on. Neither is ever the only channel: every spoken line is already on screen, and every
+vibration repeats an alarm the alarm rail shows.
+
+| Channel | What it does | Where it is unavailable |
+| --- | --- | --- |
+| Narration | Reads the worked-example line, tutor prompts, alarm announcements, and the state summary on request. A new beat replaces the one being read; a high-priority alarm replaces anything; the rest queue; it pauses with the clock. Speed 0.8× to 1.5×, voice and sources selectable. | Disabled with its reason when the browser has no on-device voice. |
+| Vibration | High-priority alarms vibrate in threes every 2 s, medium once every 1.5 s, low once at onset. Silencing or pausing stops it. | Disabled with its reason where there is no vibration interface, which includes iOS Safari and most desktops. |
+
+**Only on-device voices are used.** A network voice sends the text to a speech service, and that
+text describes what the learner did, so it would make practice observable. When no local voice
+exists, narration says so rather than falling back.
+
+**A screen-reader user hears nothing twice.** The live regions are always present, so the
+per-device choice is an "I use a screen reader" setting that skips spoken alarms and the
+summary, which the screen reader already announces.
+
+What has been verified by test: the voice filter, the interruption and pause rules, the
+vibration cadence and its distinguishability, the pairing of every spoken and haptic event with
+its on-screen equivalent (`tests/unit/sonification.test.ts`), and that nothing which computes or
+records a session can import either channel (`tests/arch/presentation-channels.test.ts`).
+What has not: how either sounds or feels on a real device, with a real screen reader, which is
+listed below.
+
 ## Still owed, and only a person can do it
 
 The thyroid-storm content 0.1.0 engineering check is recorded in
@@ -162,6 +188,9 @@ replace the manual obligations below.
   path, but zoom is not the same as a narrow viewport and should be checked separately.
 - **Keyboard-only completion by someone who does not know the code.** The run above was
   driven by the person who wrote it, which is the weakest possible form of this test.
+- **Narration and vibration on real devices.** Nobody has heard narration through a real
+  on-device voice alongside a screen reader, or felt the three vibration patterns on an
+  Android phone to confirm they are told apart in the hand.
 
-Until those three are done, task 8.6 stays open and this file says so rather than the
+Until those four are done, task 8.6 stays open and this file says so rather than the
 conformance report implying a coverage it does not have.

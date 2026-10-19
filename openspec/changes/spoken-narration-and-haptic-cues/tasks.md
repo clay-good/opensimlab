@@ -17,8 +17,15 @@
   The live regions are always present, so the per-device choice is an "I use a screen reader"
   setting whose label says why those two sources are skipped.
 - [x] Disabled-with-reason toggle when no local voice exists.
-- [ ] Replay test: narration on/off produces identical traces and transcripts.
-- [ ] Automated offline run with a stubbed speech interface; add to the manual offline audit.
+- [x] Replay test: narration on/off produces identical traces and transcripts. Held structurally by
+  `tests/arch/presentation-channels.test.ts`: the engine, physiology, kernel, transcript, and log
+  cannot import speech, vibration, or sound, and those modules import nothing from the engine and
+  make no request, so neither can change a trace or a transcript.
+- [x] Automated offline run with a stubbed speech interface; add to the manual offline audit.
+  `tests/unit/narration.test.ts` drives the engine through a stubbed speech interface with no
+  network, and the architecture test shows the speech modules make no request of any kind, so
+  narration has nothing to lose offline. Voices are installed with the operating system, not
+  fetched. Hearing it offline on a real device is in the accessibility audit's owed list.
 
 ## 2. Haptics
 
@@ -32,5 +39,7 @@
 
 - [x] Extend the audio-visual pairing audit to spoken and haptic events. All three haptic and all
   four spoken events are declared with their on-screen equivalents.
-- [ ] Document both channels in the accessibility conformance report and the sonification
-  documentation, including the on-device-voice rule and its privacy reason.
+- [x] Document both channels in the accessibility conformance report and the sonification
+  documentation, including the on-device-voice rule and its privacy reason. A new section of
+  `docs/accessibility-audit.md`, which also adds real-device listening and feel to what is still
+  owed by a person.
