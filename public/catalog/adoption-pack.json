@@ -12292,7 +12292,8 @@
     "stillOwed": [
       "Screen reader narration",
       "400% browser zoom reflow",
-      "Keyboard-only completion by someone who does not know the code"
+      "Keyboard-only completion by someone who does not know the code",
+      "Narration and vibration on real devices"
     ]
   },
   "records": {

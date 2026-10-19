@@ -210,6 +210,7 @@ export const ACCESSIBILITY_STILL_OWED = [
   'Screen reader narration',
   '400% browser zoom reflow',
   'Keyboard-only completion by someone who does not know the code',
+  'Narration and vibration on real devices',
 ] as const;
 
 function exclusionFor(
