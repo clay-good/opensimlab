@@ -90,7 +90,10 @@ reach it.
   the front page, and the release gate refuses to publish without it.
 - **No pharmacology parameter has had its independent second-source check.** Values are
   transcribed from the primary publications, but the second-person verification this project
-  requires has not happened. Every number is marked as pending.
+  requires has not happened. Every number is marked as pending. The
+  [verification queue](https://opensimlab.com/verification-queue) lists all 31 parameters still
+  awaiting it, how to check one, and the record format; a check needs no clinical credential and
+  is never a clinical review.
 - **Face-validity review and on-device frame-budget measurement have not been run.** Both need
   people and hardware rather than more code.
 

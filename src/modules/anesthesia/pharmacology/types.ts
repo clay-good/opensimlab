@@ -10,6 +10,7 @@
 
 import type { PkParameters } from '@platform/kernel/compartments';
 import type { Covariates } from './body-composition';
+import type { SecondSourceKind, VerificationRecord } from './verification';
 
 /** A resolvable citation. Bundled, so it renders with no network. */
 export interface Citation {
@@ -33,18 +34,19 @@ export interface Citation {
 export interface TranscriptionRecord {
   /** Where the values were read from. */
   readonly primaryLocator: string;
-  /** The independent second source consulted, or null if the check is outstanding. */
-  readonly secondSource: string | null;
-  /** Who performed the independent check, or null if outstanding. */
-  readonly checkedBy: string | null;
-  /** ISO date of the check, or null. */
-  readonly checkedOn: string | null;
+  /** Who transcribed the values; a check by this person is refused. */
+  readonly transcribedBy: string;
+  /** The second-source kinds a check of this model may cite. */
+  readonly acceptedSecondSources: readonly SecondSourceKind[];
+  /** A published correction that changes named parameters, so a check reads it, not the original table. */
+  readonly corrigendum?: { readonly parameters: readonly string[]; readonly note: string };
   /**
-   * `verified` only when a different person has checked the values against a
-   * second source. Anything else is surfaced to the learner as pending an
-   * independent check, and blocks the Published confidence label.
+   * Every independent check submitted against this model, accepted or not.
+   * Whether the model is verified is derived from these by
+   * `isTranscriptionVerified`, never declared, so the confidence label and the
+   * public verification queue read the same thing.
    */
-  readonly status: 'verified' | 'pending-independent-check';
+  readonly checks: readonly VerificationRecord[];
   /** Why the check is outstanding, when it is. */
   readonly note?: string;
 }

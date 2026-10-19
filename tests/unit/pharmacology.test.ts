@@ -13,6 +13,7 @@ import {
   jamesLbmTurningPointKg, leanBodyMassJames1976, type Covariates,
 } from '@anesthesia/pharmacology/body-composition';
 import { evaluateEnvelope, CONFIDENCE_LABEL_TEXT } from '@anesthesia/pharmacology/envelope';
+import { isTranscriptionVerified } from '@anesthesia/pharmacology/verification';
 import {
   MODELS, MODEL_SET_REVISION, getModel, parametersFor, selectDefaultModel,
 } from '@anesthesia/pharmacology/registry';
@@ -486,10 +487,8 @@ describe('Requirement: Initial Model Set Is Named And Cited', () => {
   it('Scenario: A parameter carries its transcription record', () => {
     for (const model of MODELS) {
       expect(model.transcription.primaryLocator.length).toBeGreaterThan(10);
-      if (model.transcription.status === 'verified') {
-        expect(model.transcription.secondSource).not.toBeNull();
-        expect(model.transcription.checkedBy).not.toBeNull();
-        expect(model.transcription.checkedOn).not.toBeNull();
+      if (isTranscriptionVerified(model, MODEL_SET_REVISION)) {
+        expect(model.transcription.checks.length).toBeGreaterThan(0);
       } else {
         // A model pending the independent check must say why, so the state is
         // visible rather than silent.

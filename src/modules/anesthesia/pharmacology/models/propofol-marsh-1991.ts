@@ -85,10 +85,9 @@ export const PROPOFOL_MARSH_1991: PharmacologyModel = {
   },
   transcription: {
     primaryLocator: 'Model description, rate constants k10, k12, k21, k13, k31 and volume coefficients.',
-    secondSource: null,
-    checkedBy: null,
-    checkedOn: null,
-    status: 'pending-independent-check',
+    transcribedBy: 'Open Sim Lab maintainer',
+    acceptedSecondSources: ['independent-published-implementation', 'open-reference-implementation'],
+    checks: [],
     note:
       'Transcribed from the primary publication. The independent second-source check required '
       + 'before this model may carry the Published label has not yet been performed.',

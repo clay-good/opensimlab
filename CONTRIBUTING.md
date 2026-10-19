@@ -12,8 +12,7 @@ the [evidence-brief template](docs/evidence-brief.md). Security problems follow
 [CORRECTIONS.md](CORRECTIONS.md).
 
 The browser-only proposal form described in the catalog specification is not implemented yet.
-Until it exists, contributions require a local checkout and pull request. This repository is still
-private, so external intake begins only after visibility changes.
+Until it exists, contributions require a local checkout and pull request.
 
 ## Make a change
 
@@ -37,3 +36,30 @@ reviewer correspondence, or identifiable learner data.
 
 Maintainers may narrow, request evidence for, or decline a change. Clinical status is assigned only
 through the version-bound process in [GOVERNANCE.md](GOVERNANCE.md).
+
+## Check a pharmacology parameter
+
+This is the most useful contribution that needs no clinical credential: every pharmacology
+parameter is pending an independent second-source check by someone other than its transcriber.
+The [verification queue](https://opensimlab.com/verification-queue) lists each one with its
+primary locator and the second sources accepted for its model.
+
+Add a record to the `checks` array of the model's `transcription` block in
+`src/modules/anesthesia/pharmacology/models/<model>.ts`:
+
+```ts
+{
+  modelId: 'propofol-marsh-1991', parameter: 'v1', valueChecked: 15.96, unit: 'L',
+  contentVersion: '<MODEL_SET_REVISION from registry.ts>',
+  primaryLocator: '<as given on the queue>',
+  secondSource: { kind: 'open-reference-implementation', citation: '<full citation>',
+    locator: '<table, page, file, or line>' },
+  checker: { name: '<your name>', statedQualification: '<as you would state it>' },
+  date: '<YYYY-MM-DD>', maintainerConfirmed: false,
+}
+```
+
+Leave `maintainerConfirmed` false: a maintainer opens your second source and sets it. If the
+second source disagrees, add a `discrepancy` describing what differs instead of changing the
+value; that opens a correction rather than a verified record. No contact detail is needed, and a
+check is never a clinical review. Rules: `src/modules/anesthesia/pharmacology/verification.ts`.

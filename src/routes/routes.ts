@@ -432,6 +432,16 @@ export const ROUTES: readonly RouteMetadata[] = [
     heading: 'Corrections log',
   },
   {
+    path: '/verification-queue',
+    title: formatTitle('Pharmacology verification queue'),
+    description:
+      'Every pharmacology parameter still awaiting its independent second-source check, with its '
+      + 'primary source, the second sources accepted, and how to do the check.',
+    indexable: true,
+    structuredData: [],
+    heading: 'Pharmacology verification queue',
+  },
+  {
     path: '/limitations',
     title: formatTitle('Limitations register'),
     description:

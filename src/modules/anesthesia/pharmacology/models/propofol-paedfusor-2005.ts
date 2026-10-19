@@ -68,10 +68,9 @@ export const PROPOFOL_PAEDFUSOR_2005: PharmacologyModel = {
   },
   transcription: {
     primaryLocator: 'Absalom and Kenny 2005, Table 1, age 1–12 years.',
-    secondSource: null,
-    checkedBy: null,
-    checkedOn: null,
-    status: 'pending-independent-check',
+    transcribedBy: 'Open Sim Lab maintainer',
+    acceptedSecondSources: ['independent-published-implementation', 'open-reference-implementation'],
+    checks: [],
     note:
       'Transcribed from the primary publication. The independent second-person check '
       + 'required for a Published confidence label is still outstanding.',

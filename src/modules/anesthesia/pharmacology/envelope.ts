@@ -11,6 +11,8 @@
 
 import { bodyMassIndex, type Covariates } from './body-composition';
 import type { ConfidenceLabel, PharmacologyModel } from './types';
+import { MODEL_SET_REVISION } from './registry';
+import { isTranscriptionVerified } from './verification';
 
 export interface EnvelopeViolation {
   readonly covariate: string;
@@ -87,7 +89,7 @@ export function evaluateEnvelope(model: PharmacologyModel, covariates: Covariate
     }));
 
   const outOfRange = violations.length > 0 || failures.length > 0;
-  const pendingIndependentCheck = model.transcription.status === 'pending-independent-check';
+  const pendingIndependentCheck = !isTranscriptionVerified(model, MODEL_SET_REVISION);
   // Out of range is the most specific thing to say, so it wins; after that, a
   // transcription nobody has checked cannot call itself published.
   const label: ConfidenceLabel = model.isTeachingModel

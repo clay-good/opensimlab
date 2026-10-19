@@ -1,7 +1,7 @@
 /**
  * The informational routes: the validation report, the governance dashboard, the
- * review-status page, the corrections log, the limitations register, and the
- * privacy statement.
+ * review-status page, the corrections log, the pharmacology verification queue,
+ * the limitations register, and the privacy statement.
  *
  * They are generated from the same records the build gate and the tests read, so
  * a document cannot claim something the code does not do.
@@ -21,6 +21,10 @@ import {
   CORRECTIONS, CORRECTIONS_EMPTY_REASON, CORRECTIONS_POLICY, CORRECTIONS_TRIAGE,
 } from '@platform/docs/corrections';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
+import { MODELS, MODEL_SET_REVISION } from '@anesthesia/pharmacology/registry';
+import {
+  SECOND_SOURCE_KIND_LABEL, verificationQueue, type ParameterStatus,
+} from '@anesthesia/pharmacology/verification';
 import { routeFor } from './routes';
 import {
   importPracticeHistory,
@@ -69,6 +73,7 @@ export function DocumentRoute({ path }: { path: string }) {
         {path === '/governance' && <GovernanceBody />}
         {path === '/review-status' && <ReviewStatusBody />}
         {path === '/corrections' && <CorrectionsBody />}
+        {path === '/verification-queue' && <VerificationQueueBody />}
         {path === '/limitations' && <LimitationsBody />}
         {path === '/privacy' && <PrivacyBody />}
       </main>
@@ -184,7 +189,9 @@ function ValidationBody() {
       <p>
         {confirmedCount().confirmed} of {confirmedCount().total} recorded constants have been read
         from their source&apos;s own text. This is a narrow sampled register, not an exhaustive
-        transcription check or the independent verification required for publication.
+        transcription check or the independent verification required for publication. Every
+        parameter still awaiting that verification is on{' '}
+        <a href="/verification-queue">the verification queue</a>, with how to check it.
       </p>
       <table>
         <thead>
@@ -471,6 +478,85 @@ function ReviewStatusBody() {
         build, and the <a href="/limitations">limitations register</a> names what the simulation
         deliberately does not model.
       </p>
+    </>
+  );
+}
+
+const PARAMETER_STATUS_TEXT: Record<ParameterStatus, string> = {
+  verified: 'verified by an independent check',
+  disputed: 'disputed: a check found a discrepancy, and a correction is open',
+  'earlier-version-checked': 'pending: a check exists, but for an earlier model-set revision',
+  pending: 'pending independent check',
+};
+
+/**
+ * The queue of parameters nobody but the transcriber has checked.
+ *
+ * The blocker is people, and a pharmacologist with an afternoon could clear a
+ * model. This page makes that task one page long: the two counts first, then
+ * the procedure, then every parameter behind a disclosure. It is generated from
+ * the transcription records, so its count cannot disagree with the label a
+ * learner sees beside a concentration.
+ */
+function VerificationQueueBody() {
+  const queue = verificationQueue(MODELS, MODEL_SET_REVISION);
+  return (
+    <>
+      <div className="figures">
+        <KeyFigure value={queue.verified} label="Parameters independently verified" tone="warning" />
+        <KeyFigure value={queue.pending} label="Parameters awaiting a check" tone="warning" />
+      </div>
+      <p>
+        Every pharmacology parameter in this build was transcribed by hand from its primary
+        publication. This project calls a value verified only when a different person has checked
+        it against a second source, and there has not yet been a different person. A check is not
+        a clinical review: it changes one parameter from pending to verified, and it signs no
+        content, covers no clinical domain, and advances no maturity label.
+      </p>
+
+      <h2>How to check a parameter</h2>
+      <p>
+        Open the primary source at the locator given. Confirm the value as transcribed for the
+        paper&apos;s reference individual. Open one of the second sources accepted for that model
+        and confirm it agrees, noting any discrepancy rather than resolving it. Then send a record
+        with the model, the parameter, the value and unit you checked, the model-set revision
+        (<code>{queue.revision}</code>), the second source and its locator, your name and your
+        qualification as you would state it, and the date. A maintainer opens your second source
+        before anything is recorded; nothing changes on receipt, and no contact detail is asked
+        for. A discrepancy opens a <a href="/corrections">correction</a> instead of a verified
+        record. Records arrive by pull request, beside the model file, in the format the
+        contribution guide gives.
+      </p>
+
+      <h2>Every parameter</h2>
+      {queue.models.map((model) => {
+        const pending = model.entries.filter((entry) => entry.status !== 'verified').length;
+        return (
+          <Disclosure
+            key={model.modelId}
+            className="disclosure--group"
+            summary={`${model.drugName} · ${model.modelId}`}
+            meta={`${pending} of ${model.entries.length} pending`}
+          >
+            <p>{model.citation}</p>
+            <p>Primary locator: {model.primaryLocator}</p>
+            <p>
+              Second sources accepted:{' '}
+              {model.acceptedSecondSources.map((kind) => SECOND_SOURCE_KIND_LABEL[kind]).join('; ')}.
+            </p>
+            <ul>
+              {model.entries.map((entry) => (
+                <li key={entry.parameter}>
+                  <code>{entry.parameter}</code>{' '}
+                  <span className="numeric">{Number(entry.value.toPrecision(4))} {entry.unit}</span>{' '}
+                  (reference individual) — {PARAMETER_STATUS_TEXT[entry.status]}.
+                  {entry.corrigendumNote !== null && <> {entry.corrigendumNote}</>}
+                </li>
+              ))}
+            </ul>
+          </Disclosure>
+        );
+      })}
     </>
   );
 }

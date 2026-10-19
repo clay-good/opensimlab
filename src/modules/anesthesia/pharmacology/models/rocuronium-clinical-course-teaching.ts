@@ -63,10 +63,9 @@ export const ROCURONIUM_CLINICAL_COURSE_TEACHING: PharmacologyModel = {
   },
   transcription: {
     primaryLocator: 'No parameter transcription: Open Sim Lab calibration to reported clinical landmarks.',
-    secondSource: null,
-    checkedBy: null,
-    checkedOn: null,
-    status: 'pending-independent-check',
+    transcribedBy: 'Open Sim Lab maintainer',
+    acceptedSecondSources: [],
+    checks: [],
     note: 'The model is permanently presented as Teaching because its PK/PD constants are calibrated.',
   },
   notes:

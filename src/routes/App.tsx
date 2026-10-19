@@ -283,7 +283,7 @@ function CurrentRoute() {
   if (path === '/content-review') return <Suspense fallback={<Loading />}><ContentReviewRoute /></Suspense>;
   if (path === '/gallery') return <Suspense fallback={<Loading />}><GalleryRoute /></Suspense>;
   if (path === '/frame-budget') return <Suspense fallback={<Loading />}><FrameBudgetRoute /></Suspense>;
-  if (['/validation', '/governance', '/review-status', '/corrections', '/limitations', '/privacy'].includes(path)) {
+  if (['/validation', '/governance', '/review-status', '/corrections', '/verification-queue', '/limitations', '/privacy'].includes(path)) {
     return <Suspense fallback={<Loading />}><DocumentRoute path={path} /></Suspense>;
   }
 

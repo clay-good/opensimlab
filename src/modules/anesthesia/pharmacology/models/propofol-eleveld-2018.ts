@@ -188,10 +188,11 @@ export const PROPOFOL_ELEVELD_2018: PharmacologyModel = {
   },
   transcription: {
     primaryLocator: 'Tables 2–3; covariate equations; Supplementary Digital Content S4 final PD $PK/$ERROR.',
-    secondSource: null,
-    checkedBy: null,
-    checkedOn: null,
-    status: 'pending-independent-check',
+    transcribedBy: 'Open Sim Lab maintainer',
+    acceptedSecondSources: ['corrigendum', 'independent-published-implementation',
+      'open-reference-implementation'],
+    corrigendum: { parameters: ['q2'], note: 'The authors\' corrigendum changes the evaluated reference Q2 from 1.75 to 1.83 L/min; the transcribed value follows the corrigendum, so a check against the original abstract will not match.' },
+    checks: [],
     note:
       'The implemented deterministic population-mean equations and fixed effects are transcribed '
       + 'from the primary publication. The independent second-source check by a different person, which this '
