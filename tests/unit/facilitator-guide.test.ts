@@ -5,6 +5,8 @@ import { FacilitatorGuideRoute } from '@routes/FacilitatorGuideRoute';
 import { ROUTES, routeFor } from '@routes/routes';
 import { socialImageUrl } from '@routes/site-metadata';
 import { MODULES } from '@platform/modules/registry';
+import { MAPPING_DISCLAIMER } from '@anesthesia/curriculum/frameworks';
+import { SCENARIO_MAPPINGS } from '@anesthesia/curriculum/mapping';
 import {
   absentGuideSections, facilitatorGuide, GUIDE_TEMPLATES,
 } from '@platform/facilitation/guide';
@@ -52,6 +54,16 @@ describe('facilitator guide', () => {
     }
   });
 
+  it('maps a mapped scenario to its framework domains with the disclaimer, and only then', () => {
+    for (const entry of FACILITATED_SCENARIOS) {
+      const section = facilitatorGuide(entry).find((candidate) => candidate.id === 'frameworks')!;
+      const mapped = entry.moduleRoute === 'anesthesia'
+        && SCENARIO_MAPPINGS.some((mapping) => mapping.scenarioId === entry.scenario.metadata.id);
+      expect(section.status, entry.scenario.metadata.id).toBe(mapped ? 'present' : 'absent');
+      if (section.status === 'present') expect(section.items.at(-1)?.text).toBe(MAPPING_DISCLAIMER);
+    }
+  });
+
   it('adds no clinical claim of its own', () => {
     for (const template of Object.values(GUIDE_TEMPLATES)) {
       expect(template).not.toMatch(/\d|\bmg\b|mmHg|\bdose|\bgive\b|\badminister|diagnos|\btreat|\bshould\b|\bmust\b/i);
@@ -61,7 +73,7 @@ describe('facilitator guide', () => {
   it('reports the same absent sections for every scenario until their fields exist', () => {
     const reported = new Set(FACILITATED_SCENARIOS.map((entry) => absentGuideSections(entry).join('|')));
     expect([...reported].every((ids) =>
-      ['frameworks', 'expected-actions', 'error-and-recovery', 'pause-points']
+      ['expected-actions', 'error-and-recovery', 'pause-points']
         .every((id) => ids.split('|').includes(id)))).toBe(true);
   });
 

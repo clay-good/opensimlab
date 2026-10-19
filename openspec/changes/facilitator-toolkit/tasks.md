@@ -4,10 +4,12 @@
 
 - [x] Define the guide section → scenario field map; write the generator with fixed templates
   only; test that no template string contains a clinical claim. `src/platform/facilitation/guide.ts`
-  renders 13 sections in the design's order; nine fill from fields every scenario has. Four are
-  absent everywhere, each with its reason on the page: framework mapping (not yet read from the
-  curriculum maps), expected actions and common error and recovery (not yet read from the
-  fixtures), and pause points (no such field yet). Timeline entries show ticks as recorded rather
+  renders 13 sections in the design's order; nine fill from fields every scenario has. Framework
+  mapping fills for the 39 anesthesia scenarios from `curriculum/mapping.ts`, with the mapping
+  disclaimer, and is absent for the 217 scenarios in modules with no mapping yet (the
+  framework-mapping-expansion change adds them). Three are absent everywhere, each with its reason
+  on the page: expected actions and common error and recovery (not yet read from the fixtures),
+  and pause points (no such field yet). Timeline entries show ticks as recorded rather
   than clock time, because tick length differs by module timescale.
 - [x] Prerender `/<module>/scenario/<id>/facilitator` with print styles and `noindex`; link from
   the briefing's educator disclosure and the educator pages. Served at

@@ -11,6 +11,8 @@
  */
 import type { Scenario } from '@anesthesia/scenarios/types';
 import { MATURITY_LABELS } from '@platform/governance/publication';
+import { MAPPING_DISCLAIMER, getFramework } from '@anesthesia/curriculum/frameworks';
+import { SCENARIO_MAPPINGS } from '@anesthesia/curriculum/mapping';
 import type { FacilitatedScenario } from './scenario-catalog';
 
 export interface GuideItem {
@@ -75,6 +77,24 @@ function timelineItems(scenario: Scenario): GuideItem[] {
   });
 }
 
+/** Framework domains this scenario is mapped to, with the objectives that carry each. */
+function frameworkItems({ moduleRoute, scenario }: FacilitatedScenario): GuideItem[] {
+  if (moduleRoute !== 'anesthesia') return [];
+  const statement = new Map(scenario.metadata.objectives.map((objective) => [objective.id, objective.statement]));
+  const items = SCENARIO_MAPPINGS
+    .filter((mapping) => mapping.scenarioId === scenario.metadata.id)
+    .flatMap((mapping) => {
+      const framework = getFramework(mapping.frameworkId);
+      const domain = framework?.domains.find((candidate) => candidate.id === mapping.domainId);
+      if (framework === undefined || domain === undefined) return [];
+      return [{
+        label: `${framework.shortLabel}: ${domain.label}`,
+        text: mapping.objectiveIds.map((id) => statement.get(id) ?? id).join('; '),
+      }];
+    });
+  return items.length === 0 ? [] : [...items, { text: MAPPING_DISCLAIMER }];
+}
+
 function debriefItems(scenario: Scenario): GuideItem[] {
   const statement = new Map(scenario.metadata.objectives.map((objective) => [objective.id, objective.statement]));
   const analysis = scenario.debrief.rubric.map((item) => ({
@@ -92,7 +112,8 @@ function debriefItems(scenario: Scenario): GuideItem[] {
 }
 
 /** Every section, in the order the design fixes, present or absent with its reason. */
-export function facilitatorGuide({ moduleName, scenario }: FacilitatedScenario): readonly GuideSection[] {
+export function facilitatorGuide(entry: FacilitatedScenario): readonly GuideSection[] {
+  const { moduleName, scenario } = entry;
   const { metadata } = scenario;
   const signed = metadata.clinicalReview.reviewer !== UNSIGNED;
   return [
@@ -105,8 +126,8 @@ export function facilitatorGuide({ moduleName, scenario }: FacilitatedScenario):
     present('objectives', 'Learning objectives',
       metadata.objectives.map((objective) => ({ label: objective.statement, text: objective.measure })),
       'The scenario declares no objectives.'),
-    absent('frameworks', 'Framework mapping',
-      'The guide does not read curriculum mappings yet. Mapped frameworks are listed on /curriculum.'),
+    present('frameworks', 'Framework mapping', frameworkItems(entry),
+      'No framework mapping exists for this scenario yet. Mapped frameworks are listed on /curriculum.'),
     present('patient', 'Patient', patientItems(scenario), 'The scenario declares no patient.'),
     present('prebrief', 'Prebrief', [
       { text: GUIDE_TEMPLATES.fiction },
