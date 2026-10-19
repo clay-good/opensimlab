@@ -27,6 +27,11 @@ export interface CorrectionEntry {
   readonly whatChanged: string;
   /** The build identifier that carried the fix. */
   readonly releasedIn: string;
+  /**
+   * Set when the correction withdrew a scenario from the catalog. This is the
+   * only way the playable count may fall below the ratified count.
+   */
+  readonly withdrawal?: { readonly moduleId: string; readonly scenarioId: string };
 }
 
 /**

@@ -24,6 +24,8 @@ import { ONCOLOGY_SCENARIOS } from '../src/modules/oncology/scenarios';
 import { SURGERY_TRAUMA_SCENARIOS } from '../src/modules/surgery-trauma/scenarios';
 import { buildScenarioQualityCatalogs } from '@platform/catalog/scenario-quality';
 import { absentGuideSections } from '@platform/facilitation/guide';
+import { catalogFloorBlockers, scenarioKey } from '@platform/catalog/catalog-growth';
+import { CORRECTIONS } from '@platform/docs/corrections';
 import { FACILITATED_SCENARIOS } from '@platform/facilitation/scenario-catalog';
 import { QUALITY_DEPENDENCY_RECEIPTS, QUALITY_RECORDS } from './quality-records';
 import { assertQualityDependencies } from './quality-dependencies';
@@ -252,6 +254,11 @@ const medicalSurgicalNursingQuality = qualityCatalogs.get('medical-surgical-nurs
       }
     }
   }
+
+  // The ratified count is a floor: growth needs nothing, a fall needs a recorded withdrawal.
+  blocking.push(...catalogFloorBlockers(FACILITATED_SCENARIOS
+    .filter((entry) => entry.scenario.metadata.maturity !== 'withdrawn')
+    .map((entry) => scenarioKey(entry.moduleRoute, entry.scenario.metadata.id)), CORRECTIONS));
 
   const items = reviewableItems();
   const reviewCoverage = reportCoverage(items, today);

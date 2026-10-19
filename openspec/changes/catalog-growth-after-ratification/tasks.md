@@ -2,9 +2,17 @@
 
 ## 1. The floor
 
-- [ ] Add `ratified` to the catalog registry; compute the playable count with no upper bound.
-- [ ] Make the gate read `CORRECTIONS.md` for withdrawals; fail on a sub-ratified count without
-  an entry; tests for growth, silent shrink, and recorded withdrawal.
+- [x] Add `ratified` to the catalog registry; compute the playable count with no upper bound.
+  `RATIFIED_SCENARIO_COUNT` in `src/platform/catalog/catalog-growth.ts`. The playable count is
+  every scenario in an available module whose maturity is not `withdrawn`, counted by module and
+  id together. Building this found that ids are unique per module, not across the catalog:
+  `status-epilepticus` is two different lessons, in emergency medicine and critical care, so
+  counting bare ids reported 255.
+- [x] Make the gate read `CORRECTIONS.md` for withdrawals; fail on a sub-ratified count without
+  an entry; tests for growth, silent shrink, and recorded withdrawal. The gate reads the typed
+  corrections log, which `tests/unit/corrections.test.ts` already holds in step with
+  `CORRECTIONS.md`; an entry withdraws a scenario through its `withdrawal` field. It also blocks
+  a recorded withdrawal whose scenario is still playable. `tests/unit/catalog-growth.test.ts`.
 - [ ] Reconcile with the multidomain catalog delta: on archive of
   `build-multidomain-practice-catalog`, "exactly 256" becomes "the ratified count as a floor";
   record the reconciliation in that archive step.
