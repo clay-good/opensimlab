@@ -29,6 +29,12 @@
 - [ ] Add the `parameter check` report category with structured fields inside the existing
   bounds, Turnstile, quotas, and preview; document the maintainer confirmation step in the
   report-maintenance runbook.
+  Deferred deliberately. Every report column is scenario-scoped (`scenario_id`, `surface`,
+  `simulated_tick`) and the note is capped at 160 characters, while a check is model-scoped and
+  carries a citation, a locator, and a name. It needs its own table, a migration a maintainer
+  applies to production D1, and a Worker that is not yet enabled in production (release task 6).
+  Until then the pull-request path, documented in `CONTRIBUTING.md`, is the working route and
+  the queue page names it.
 - [x] Document the pull-request path and the record format in the contribution guide.
 
 ## 4. Citation and archive (adoption requirement)
