@@ -49,6 +49,14 @@ its own, none changes the engine, and none produces a score.
 
 - [ ] Compute weakest-then-oldest across all modules from the tutor's local evidence; one
   suggestion; 7-day dismissal; interval schedule 7 → 14 → 28 → 56 days labelled as convention.
+  Mostly done: `catalog/spaced-return.ts` ranks practised scenarios weakest-then-oldest among
+  those past their interval (7 days after one day of practice, doubling per further separate day,
+  capped at 56, labelled as a convention). Each module's index shows at most one "worth coming
+  back to" suggestion with its duration, the objectives behind it, and a 7-day hide, read after
+  mount so the prerendered page still hydrates. Remaining: each module's index suggests from its
+  own scenarios only. The practice history records scenario ids without a module, so one
+  suggestion across all sixteen modules needs either a module field on each attempt or a
+  cross-module lookup on a page that can afford to load every catalog.
 - [ ] Define the progress file schema; export with both statements; import with replace/merge and
   recomputation report. Mostly done: the practice-history export is now progress file version 2.
   It carries the not-for-clinical-use, not-clinically-reviewed, and simulated-practice-not-

@@ -58,6 +58,12 @@ export const LOCAL_DATA_ITEMS: readonly LocalDataItem[] = [
     purpose: 'Goal-path suggestions you hid, with only the local 7-day expiry for each public path id.',
   },
   {
+    key: 'opensimlab.spaced-return-dismissed-until',
+    name: 'Hidden return suggestion',
+    kind: 'recommendation',
+    purpose: 'Only the local 7-day expiry of a "worth coming back to" suggestion you hid.',
+  },
+  {
     key: 'opensimlab.practice-history',
     name: 'Private practice history',
     kind: 'history',

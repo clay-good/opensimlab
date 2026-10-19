@@ -123,6 +123,7 @@ import { completedScenarioIds, loadPracticeHistory } from '@anesthesia/catalog/p
 // The goal-path and catalog features below are anesthesia-only; the other twelve
 // modules no longer reach this file, so their catalogues stay in their own chunks.
 import { scenariosByDifficulty } from '@anesthesia/scenarios';
+import { SpacedReturnSuggestion } from '@anesthesia/ui/SpacedReturnSuggestion';
 import { APP_VERSION } from '@platform/governance/status';
 import { isReviewedOnlyStatus, MATURITY_LABELS } from '@platform/governance/publication';
 import type { ContentMaturity } from '@platform/catalog/maturity';
@@ -1170,6 +1171,7 @@ function EmergencyMedicineScenarioIndex({ config }: { config: ClinicalModuleConf
         <p>
           {config.catalogIntroduction}
         </p>
+        <SpacedReturnSuggestion scenarios={config.scenarios} basePath={config.basePath} />
         <ul className="scenario-index">
           {config.scenarios.map((entry) => (
             <li key={entry.metadata.id} className="scenario-index__item">
@@ -1216,6 +1218,9 @@ function EmergencyMedicineScenarioIndex({ config }: { config: ClinicalModuleConf
  * Fifteen scenarios is a list you read, not a corpus you query. The shared index
  * below is what every other module shows, and it is what this shows now.
  */
+/** A stable list, so the suggestion's effect does not rerun on every render. */
+const SCENARIOS_FOR_RETURN = scenariosByDifficulty();
+
 export function ScenarioIndex() {
   return (
     <>
@@ -1226,6 +1231,7 @@ export function ScenarioIndex() {
         <p>
           Each scenario is a patient and a problem. Start at the top if this is your first one.
         </p>
+        <SpacedReturnSuggestion scenarios={SCENARIOS_FOR_RETURN} basePath="/anesthesia" />
         <ul className="scenario-index">
           {scenariosByDifficulty().map((entry) => (
             <li key={entry.metadata.id} className="scenario-index__item">
