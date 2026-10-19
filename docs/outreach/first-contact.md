@@ -38,6 +38,12 @@ Do not ask for:
 - a pilot, a cohort, or a letter of support
 - anything that implies you want their name on it
 
+**A smaller ask for a pharmacologist.** If the person reads PK papers rather than runs a sim
+lab, point them at the [verification queue](https://opensimlab.com/verification-queue) instead:
+"Would you check one model's parameters against its paper?" It is an afternoon, it needs no build
+tooling, and [the contribution guide](../../CONTRIBUTING.md#check-a-pharmacology-parameter) says
+exactly what to send. A check is not a review and the page says so, which makes it an easier yes.
+
 ## The note itself
 
 > Subject: A free anesthesia simulator, and a request for one hour of scepticism
