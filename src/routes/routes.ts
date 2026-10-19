@@ -26,6 +26,7 @@ import { ONCOLOGY_SCENARIOS } from '../modules/oncology/scenarios';
 import { SURGERY_TRAUMA_SCENARIOS } from '../modules/surgery-trauma/scenarios';
 import type { Scenario } from '@anesthesia/scenarios/types';
 import { ROOT_ROUTE, formatTitle } from './site-metadata';
+import { FACILITATED_SCENARIOS, facilitatorGuidePath } from '@platform/facilitation/scenario-catalog';
 import type { RouteMetadata } from './site-metadata';
 export {
   SITE_NAME, SITE_ORIGIN, SOCIAL_IMAGE_HEIGHT, SOCIAL_IMAGE_WIDTH,
@@ -491,6 +492,20 @@ export const ROUTES: readonly RouteMetadata[] = [
     indexable: true,
     structuredData: [] as const,
     heading: `${module.displayName} — planned`,
+  })),
+  // One printable facilitator guide per scenario. Not indexed: it is for the
+  // person running a session, and it shares its briefing's preview image.
+  ...FACILITATED_SCENARIOS.map(({ moduleRoute, scenario }) => ({
+    path: facilitatorGuidePath(moduleRoute, scenario.metadata.id),
+    title: formatTitle(`Guide: ${scenario.metadata.title.length > 37
+      ? `${scenario.metadata.title.slice(0, 34)}…`
+      : scenario.metadata.title}`),
+    description: `Printable facilitator guide for ${scenario.metadata.title.length > 48
+      ? `${scenario.metadata.title.slice(0, 47)}…` : scenario.metadata.title}: objectives, `
+      + 'patient, prebrief, timeline, debrief prompts, sources, and limits.',
+    indexable: false,
+    structuredData: [] as const,
+    heading: `Facilitator guide: ${scenario.metadata.title}`,
   })),
 ];
 

@@ -21,6 +21,7 @@ import { ErrorBoundary } from '@platform/ui/ErrorBoundary';
  * route is budgeted separately and must never pull the simulator bundle in, so
  * these three are behind a dynamic import rather than a static one.
  */
+const FacilitatorGuideRoute = lazy(async () => ({ default: (await import('./FacilitatorGuideRoute')).FacilitatorGuideRoute }));
 const AnesthesiaRoute = lazy(async () => ({ default: (await import('./modules/anesthesia')).AnesthesiaRoute }));
 const EmergencyMedicineRoute = lazy(async () => ({ default: (await import('./modules/emergency-medicine')).EmergencyMedicineRoute }));
 const CriticalCareRoute = lazy(async () => ({ default: (await import('./modules/critical-care')).CriticalCareRoute }));
@@ -165,6 +166,9 @@ function CurrentRoute() {
 
   if (path === '/') return <Landing />;
   if (path === '/about') return <Suspense fallback={<Loading />}><About /></Suspense>;
+  if (path.startsWith('/facilitator/')) {
+    return <Suspense fallback={<Loading />}><FacilitatorGuideRoute path={path} /></Suspense>;
+  }
   if (path === '/anesthesia' || path.startsWith('/anesthesia/')) {
     return (
       <ErrorBoundary surface="simulator">

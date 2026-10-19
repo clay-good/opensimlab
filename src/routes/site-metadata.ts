@@ -45,7 +45,9 @@ export function socialImageAlt(heading: string): string {
 }
 
 export function socialImageUrl(path: string): string {
-  const name = path === '/' ? 'index' : path.replace(/^\//, '').replace(/\//g, '-');
+  // A facilitator guide shares its scenario briefing's image rather than adding one.
+  const shared = path.replace(/^\/facilitator(?=\/)/, '');
+  const name = shared === '/' ? 'index' : shared.replace(/^\//, '').replace(/\//g, '-');
   return `${SITE_ORIGIN}/og/${name}.png`;
 }
 

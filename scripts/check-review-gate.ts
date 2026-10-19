@@ -23,6 +23,8 @@ import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../src/modules/medical-surgi
 import { ONCOLOGY_SCENARIOS } from '../src/modules/oncology/scenarios';
 import { SURGERY_TRAUMA_SCENARIOS } from '../src/modules/surgery-trauma/scenarios';
 import { buildScenarioQualityCatalogs } from '@platform/catalog/scenario-quality';
+import { absentGuideSections } from '@platform/facilitation/guide';
+import { FACILITATED_SCENARIOS } from '@platform/facilitation/scenario-catalog';
 import { QUALITY_DEPENDENCY_RECEIPTS, QUALITY_RECORDS } from './quality-records';
 import { assertQualityDependencies } from './quality-dependencies';
 import {
@@ -350,6 +352,15 @@ const medicalSurgicalNursingQuality = qualityCatalogs.get('medical-surgical-nurs
     + `${reviewCoverage.current} of ${reviewCoverage.total} clinical items under current review\n`,
   );
   for (const reason of blocking) process.stdout.write(`  - ${reason}\n`);
+
+  // Reported, never blocking: an absent guide section is printed as absent, so it
+  // misleads nobody, and this line keeps the gap counted rather than forgotten.
+  const absentCounts = new Map<string, number>();
+  for (const entry of FACILITATED_SCENARIOS) {
+    for (const id of absentGuideSections(entry)) absentCounts.set(id, (absentCounts.get(id) ?? 0) + 1);
+  }
+  process.stdout.write(`facilitator guides: ${FACILITATED_SCENARIOS.length}; absent sections: ${
+    [...absentCounts].map(([id, count]) => `${id} ${count}`).join(', ') || 'none'}\n`);
 
   if (!release) {
     if (blocking.length > 0) {

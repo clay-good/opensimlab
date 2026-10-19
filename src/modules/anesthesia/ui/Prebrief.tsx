@@ -456,6 +456,12 @@ export function Prebrief({
         </section>
       )}
 
+      <p className="field__hint">
+        Running this with a group?{' '}
+        <a href={`/facilitator/${environment}/scenario/${scenario.metadata.id}`}>The facilitator
+        guide</a> is generated from this scenario and prints cleanly.
+      </p>
+
       <section>
         <h2>How much help do you want?</h2>
         <p className="field__hint">

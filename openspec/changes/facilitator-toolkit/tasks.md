@@ -2,13 +2,31 @@
 
 ## 1. Facilitator guide
 
-- [ ] Define the guide section → scenario field map; write the generator with fixed templates
-  only; test that no template string contains a clinical claim.
-- [ ] Prerender `/<module>/scenario/<id>/facilitator` with print styles and `noindex`; link from
-  the briefing's educator disclosure and the educator pages.
+- [x] Define the guide section → scenario field map; write the generator with fixed templates
+  only; test that no template string contains a clinical claim. `src/platform/facilitation/guide.ts`
+  renders 13 sections in the design's order; nine fill from fields every scenario has. Four are
+  absent everywhere, each with its reason on the page: framework mapping (not yet read from the
+  curriculum maps), expected actions and common error and recovery (not yet read from the
+  fixtures), and pause points (no such field yet). Timeline entries show ticks as recorded rather
+  than clock time, because tick length differs by module timescale.
+- [x] Prerender `/<module>/scenario/<id>/facilitator` with print styles and `noindex`; link from
+  the briefing's educator disclosure and the educator pages. Served at
+  `/facilitator/<module>/scenario/<id>` rather than under the briefing: a guide nested in a
+  module's path was counted as one of its lessons by every module's route guards and by the
+  briefing precache check, and moving it is simpler than teaching each guard an exception.
+  All 256 are prerendered and noindex,
+  share their briefing's preview image instead of adding 256 more, and print without the site
+  bar. Linked from the live briefing, the prerendered briefing, and a new "Running a scenario
+  with a group" section on `/for-educators`.
 - [ ] Generate PEARLS-phase prompts per objective from attribution; snapshot-test the structure.
-- [ ] Catalog gate: report every scenario with an absent guide field.
-- [ ] Automated offline run over the catalog.
+  Partly done: reactions, description, and summary are fixed templates, and analysis asks each
+  debrief-rubric question under its objective, tested for every scenario. Prompts generated from
+  attribution of the learner's own run remain.
+- [x] Catalog gate: report every scenario with an absent guide field. `npm run gate` prints the
+  guide count and each absent section's scenario count. It reports and does not block, because
+  the page already says the section is absent.
+- [ ] Automated offline run over the catalog. Open: the guides are noindex and so outside the
+  precache, which today takes indexable routes only.
 
 ## 2. Pause points
 

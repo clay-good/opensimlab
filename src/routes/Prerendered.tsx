@@ -15,6 +15,7 @@ import { EducatorsRoute } from './EducatorsRoute';
 import { CurriculumRoute } from './CurriculumRoute';
 import { DEFAULT_SCENARIO_ID, getScenario, scenariosByDifficulty } from '@anesthesia/scenarios';
 import { DocumentRoute } from './DocumentRoute';
+import { FacilitatorGuideRoute } from './FacilitatorGuideRoute';
 import { PlannedModuleRoute } from './PlannedModuleRoute';
 import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
 import { MaturityMarker } from '@platform/governance/MaturityMarker';
@@ -84,6 +85,7 @@ export function PrerenderedBody({ path }: { path: string }) {
   // The educator pages are prerendered as their real components: they are prose
   // and tables, and a program director may well arrive with scripting blocked.
   if (path === '/for-educators') return <EducatorsRoute />;
+  if (path.startsWith('/facilitator/')) return <FacilitatorGuideRoute path={path} />;
   if (path === '/curriculum') return <CurriculumRoute />;
   const planned = MODULES.find((module) => `/${module.route}` === path && module.status === 'planned');
   if (planned) return <PlannedModuleRoute module={planned} />;
@@ -326,6 +328,11 @@ function ScenarioMarkup({
           </ul>
         </section>
         <p><a href={basePath}>Every scenario in this module</a></p>
+        <p>
+          Running this with a group?{' '}
+          <a href={`/facilitator${basePath}/scenario/${metadata.id}`}>The facilitator guide</a>{' '}
+          is generated from this scenario and prints cleanly.
+        </p>
         <p className="landing__disclaimer">{NOT_FOR_CLINICAL_USE}</p>
       </main>
     </div>

@@ -201,6 +201,15 @@ export function EducatorsRoute() {
           opened a link.
         </p>
 
+        <h2>Running a scenario with a group</h2>
+        <p>
+          Every scenario has a printable facilitator guide, linked from its briefing, at{' '}
+          <code>/facilitator/&lt;module&gt;/scenario/&lt;scenario&gt;</code>. It is generated from the scenario, so it cannot drift from what learners see:
+          objectives, patient, prebrief, timeline, debrief prompts in the PEARLS order, sources,
+          limits, and provenance. Where a scenario cannot yet fill a section, such as expected
+          actions or pause points, the guide says so instead of leaving a gap that reads as complete.
+        </p>
+
         <h2>Curriculum documentation</h2>
         <p>
           Every scenario is mapped to published framework domains and the mapping exports as CSV

@@ -172,7 +172,7 @@
       },
       {
         "path": "src/platform/tokens/base.css",
-        "sha256": "d2e4c9eb40a3a921a15a7b09d2fce07811a33804dd108c6be3eb887c0fd8d292"
+        "sha256": "89a2209b806005404e477fafb658e9dfad695f2f291f0863c43d8fede3875669"
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
@@ -257,7 +257,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
-        "sha256": "b6fcee0f49b0f15c330b428455b8a96ac4187afce1cb596f7f0fe6b17b1340d4"
+        "sha256": "5dfca75fca07d3c1cfaa6c39d5e1d1bfc34942bcc62490f470491c774e12891e"
       },
       {
         "path": "src/modules/endocrine-metabolic/HyponatremiaCorrectionTray.tsx",
@@ -429,7 +429,7 @@
       },
       {
         "path": "src/platform/tokens/base.css",
-        "sha256": "d2e4c9eb40a3a921a15a7b09d2fce07811a33804dd108c6be3eb887c0fd8d292"
+        "sha256": "89a2209b806005404e477fafb658e9dfad695f2f291f0863c43d8fede3875669"
       },
       {
         "path": "src/platform/transcript/transcript.ts",
@@ -526,7 +526,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
-        "sha256": "b6fcee0f49b0f15c330b428455b8a96ac4187afce1cb596f7f0fe6b17b1340d4"
+        "sha256": "5dfca75fca07d3c1cfaa6c39d5e1d1bfc34942bcc62490f470491c774e12891e"
       },
       {
         "path": "src/modules/anesthesia/ui/accessibility.ts",
@@ -702,7 +702,7 @@
       },
       {
         "path": "src/platform/tokens/base.css",
-        "sha256": "d2e4c9eb40a3a921a15a7b09d2fce07811a33804dd108c6be3eb887c0fd8d292"
+        "sha256": "89a2209b806005404e477fafb658e9dfad695f2f291f0863c43d8fede3875669"
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",

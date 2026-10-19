@@ -156,7 +156,9 @@ function main(): void {
   const ogDir = join(root, 'public', 'og');
   mkdirSync(ogDir, { recursive: true });
 
-  for (const route of ROUTES) {
+  // A facilitator guide shares its briefing's image (see `socialImageUrl`).
+  const imaged = ROUTES.filter((route) => !route.path.startsWith('/facilitator/'));
+  for (const route of imaged) {
     const name = route.path === '/' ? 'index' : route.path.replace(/^\//, '').replace(/\//g, '-');
     const svg = ogImage(route.heading, route.description);
     writeFileSync(join(ogDir, `${name}.svg`), svg, 'utf8');
@@ -167,7 +169,7 @@ function main(): void {
   writeFileSync(join(root, 'public', 'icon-512.svg'), iconSvg(512, false), 'utf8');
   writeFileSync(join(root, 'public', 'icon-maskable.svg'), iconSvg(512, true), 'utf8');
 
-  process.stdout.write(`og: wrote ${ROUTES.length} preview images as SVG and PNG, and 3 icons\n`);
+  process.stdout.write(`og: wrote ${imaged.length} preview images as SVG and PNG, and 3 icons\n`);
 }
 
 const isEntryPoint = process.argv[1] !== undefined

@@ -452,3 +452,11 @@ body:has([aria-modal='true']) .update-notice--page { visibility: hidden; }
 .flag__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .flag__form { display: grid; gap: var(--space-3); }
 .flag textarea.field__input { resize: vertical; font: var(--type-body); padding: var(--space-2); }
+
+/* The facilitator guide is meant to be printed and carried into a room. */
+.guide__section { break-inside: avoid-page; }
+.guide__absent { color: var(--text-secondary); font-style: italic; }
+@media print {
+  .skip-link, .document__bar, .document__foot, .guide__screen-only { display: none; }
+  .document, .reading { background: white; color: black; }
+}
