@@ -84,7 +84,7 @@ describe('pseudo-locales', () => {
 
   it('renders the site bar under en-XA without a raw placeholder or a lost link', () => {
     const xa = pseudoLocale(EN_MESSAGES, 'en-XA');
-    expect(t('sitebar.browse', undefined, xa)).toMatch(/^\[Browse·+\]$/);
+    expect(t('sitebar.browse', undefined, xa)).toMatch(/^\[Browse[· ]+\]$/);
   });
 });
 
@@ -111,8 +111,8 @@ describe('the active catalog', () => {
     const { setActiveCatalog } = await import('@platform/i18n/messages');
     try {
       setActiveCatalog(pseudoLocale(EN_MESSAGES, 'en-XA'));
-      expect(SITE_BAR_LINKS[0]?.label).toMatch(/^\[Anesthesia·+\]$/);
-      expect(renderToStaticMarkup(createElement(SiteBar))).toMatch(/>\[Browse·+\]<\/summary>/);
+      expect(SITE_BAR_LINKS[0]?.label).toMatch(/^\[Anesthesia[· ]+\]$/);
+      expect(renderToStaticMarkup(createElement(SiteBar))).toMatch(/>\[Browse[· ]+\]<\/summary>/);
     } finally {
       setActiveCatalog(undefined);
     }

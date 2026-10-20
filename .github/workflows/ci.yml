@@ -59,6 +59,13 @@ jobs:
       - name: Font budget
         run: npm run fonts
 
+      # The pseudo-locales lengthen every externalised string and mirror the page;
+      # a real browser measures that nothing scrolls sideways at a 320 px width.
+      - name: Pseudo-locale layout
+        run: |
+          npx playwright install --with-deps chromium
+          npm run layout:pseudo
+
       # Fails and names the largest contributors when a change pushes a bundle
       # past its budget.
       - name: Size budgets

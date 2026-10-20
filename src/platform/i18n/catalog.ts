@@ -138,6 +138,17 @@ export function catalogProblems(source: Readonly<Record<string, SourceMessage>>,
 }
 
 /**
+ * Padding in short groups separated by spaces, because real translations grow
+ * by longer words and more of them, which still wrap. One unbroken run of
+ * dots cannot wrap, and made pages scroll sideways that any language would not.
+ */
+function padding(length: number): string {
+  let out = '';
+  for (let index = 0; index < length; index += 1) out += index > 0 && index % 4 === 0 ? ' ·' : '·';
+  return out;
+}
+
+/**
  * Pseudo-locales for testing layout, never offered to learners. `en-XA` grows
  * every string by about 40% inside brackets so truncation shows; `en-XB` keeps
  * the text and is rendered right-to-left so mirroring bugs show.
@@ -147,7 +158,7 @@ export function pseudoLocale(source: Readonly<Record<string, SourceMessage>>, lo
   for (const [key, message] of Object.entries(source)) {
     if (message.class === 'clinical') continue;
     const text = locale === 'en-XB' ? message.text
-      : `[${message.text}${'·'.repeat(Math.max(1, Math.ceil(message.text.replace(PLACEHOLDER, '').length * 0.4)))}]`;
+      : `[${message.text}${padding(Math.max(1, Math.ceil(message.text.replace(PLACEHOLDER, '').length * 0.4)))}]`;
     messages[key] = { text, sourceHash: sourceHash(message.text) };
   }
   return { locale, translators: [], provenance: 'pseudo', messages };

@@ -29,7 +29,7 @@ describe('the rapid-cycle panel', () => {
   it('translates its interface text but keeps the clinical directive in the scenario\'s words', () => {
     setActiveCatalog(pseudoLocale(EN_MESSAGES, 'en-XA'));
     const markup = panel('missed');
-    expect(markup).toMatch(/\[Rapid cycle 1 of 4·+\]/);
+    expect(markup).toMatch(/\[Rapid cycle 1 of 4[· ]+\]/);
     expect(markup).toContain(point.directive);
   });
 });

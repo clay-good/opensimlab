@@ -26,19 +26,17 @@
   applied by hand in development until CI runs them. The prerendered page computes coverage from the catalogs at build: languages offered (none),
   interface strings so far, each contributed locale's translated and stale counts, the two test
   locales, and that clinical content stays English in every module.
-- [ ] Add `en-XA` (40% expansion) and `en-XB` (mirrored) to the CI matrix; run layout-shift,
-  truncation, 320 px reflow, and mirroring tests under both. Mostly done: `pseudoLocale` generates
-  both, marked `pseudo` so they can never ship; `setActiveCatalog` switches what `t` renders, and
-  labels are read when shown rather than at module load. In development, `?pseudo=en-XA` or
-  `?pseudo=en-XB` (which also sets right-to-left) applies one. Checked in a browser at 320 px on
-  `/governance`: under en-XA every externalised string lengthens with no horizontal scroll and no
-  element past the edge; under en-XB the bar mirrors with no overflow. Found and fixed: the Browse
-  chevron turned sideways under right-to-left; it now uses physical sides, since up and down do
-  not mirror. Remaining: running these as automated browser checks in CI,
-  and covering surfaces as they are externalised. That needs a headless browser (for example
-  Playwright) as a new development dependency, a browser download in CI, and new licenses for the
-  public-readiness check to classify; jsdom has no layout engine to measure overflow. Adding it
-  is a maintainer's call, so it waits for one.
+- [x] Add `en-XA` (40% expansion) and `en-XB` (mirrored) to the CI matrix; run layout-shift,
+  truncation, 320 px reflow, and mirroring tests under both. `npm run layout:pseudo`
+  (`scripts/check-pseudo-layout.ts`) starts the development server, where `?pseudo=` applies a
+  test locale, and with Playwright 1.63.0 (pinned, about six weeks old) loads five pages using
+  externalised strings at 320 px under each locale. It fails on sideways scroll, a site-bar or
+  footer element past the edge, a raw `{placeholder}`, a missing direction, or a locale that did
+  not apply. It runs in `npm run ci` and as its own step in the GitHub workflow, which installs
+  Chromium. Its first run found that the en-XA padding was one unbroken run of dots that could
+  not wrap and scrolled three pages sideways; real translations wrap, so the padding now comes
+  in short space-separated groups, and all five pages are clean. Layout shift is not measured
+  yet; a surface joins the page list when it is externalised.
 - [x] Fail the build on a clinical-content key in an interface catalog. `catalogProblems` refuses
   it, along with unknown keys, changed placeholders, an anonymous catalog, and any provenance but
   human; `tests/unit/i18n-catalog.test.ts` runs it over every shipped catalog.

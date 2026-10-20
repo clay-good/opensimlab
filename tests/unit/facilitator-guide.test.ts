@@ -115,7 +115,7 @@ describe('the guide templates come from the catalog', () => {
     expect(GUIDE_TEMPLATES.reactions).toBe(EN_MESSAGES['guide.template.reactions'].text);
     try {
       setActiveCatalog(pseudoLocale(EN_MESSAGES, 'en-XA'));
-      expect(GUIDE_TEMPLATES.reactions).toMatch(/^\[Reactions:.*·+\]$/);
+      expect(GUIDE_TEMPLATES.reactions).toMatch(/^\[Reactions:.*[· ]+\]$/);
     } finally {
       setActiveCatalog(undefined);
     }
