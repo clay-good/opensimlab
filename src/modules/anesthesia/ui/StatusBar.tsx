@@ -13,6 +13,7 @@ import { IconButton, SegmentedControl } from '@platform/ui';
 import { PERSISTENT_MARKER_TEXT } from '@platform/safety/not-for-clinical-use';
 import type { Scenario } from '@anesthesia/engine';
 import { MaturityMarker } from '@platform/governance/MaturityMarker';
+import { t } from '@platform/i18n/messages';
 
 export interface StatusBarProps {
   readonly scenario: Scenario;
@@ -35,10 +36,10 @@ export function StatusBar({
 }: StatusBarProps) {
   const updateDescriptionId = useId();
   const patient = scenario.patient;
-  const age = patient.ageYears === 0 ? 'Newborn' : `${patient.ageYears} y`;
-  const summary = `${age} ${patient.sex === 'male' ? 'M' : 'F'} · `
-    + `${patient.weightKg} kg${moduleId === 'cardiology' || moduleId === 'respiratory-medicine' || moduleId === 'pediatrics' || moduleId === 'neonatology' || moduleId === 'endocrine-metabolic'
-      ? '' : ` · ASA ${patient.asaClass}`}`;
+  const age = patient.ageYears === 0 ? t('status.newborn') : t('status.age', { years: patient.ageYears });
+  const summary = `${age} ${t(patient.sex === 'male' ? 'status.male' : 'status.female')} · `
+    + `${t('status.weight', { kg: patient.weightKg })}${moduleId === 'cardiology' || moduleId === 'respiratory-medicine' || moduleId === 'pediatrics' || moduleId === 'neonatology' || moduleId === 'endocrine-metabolic'
+      ? '' : ` · ${t('status.asa', { asa: patient.asaClass })}`}`;
 
   return (
     <div className="status-bar">
@@ -53,7 +54,7 @@ export function StatusBar({
           in the accessibility tree at every width. */}
       <span className="status-bar__marker">
         <span className="status-bar__marker-long">{PERSISTENT_MARKER_TEXT}</span>
-        <span className="status-bar__marker-short" aria-hidden="true">Simulator</span>
+        <span className="status-bar__marker-short" aria-hidden="true">{t('status.marker-short')}</span>
       </span>
 
       <MaturityMarker
@@ -65,38 +66,38 @@ export function StatusBar({
         moduleId={moduleId}
       />
 
-      <span className="status-bar__clock numeric" aria-label={`Elapsed simulated time ${elapsed}`}>
+      <span className="status-bar__clock numeric" aria-label={t('status.elapsed', { elapsed })}>
         {elapsed}
       </span>
 
-      <div className="status-bar__transport" role="group" aria-label="Transport controls">
+      <div className="status-bar__transport" role="group" aria-label={t('status.transport')}>
         {transport === 'running'
-          ? <IconButton label="Pause" onClick={onPause}>⏸</IconButton>
-          : <IconButton label="Play" onClick={onPlay}>▶</IconButton>}
+          ? <IconButton label={t('status.pause')} onClick={onPause}>⏸</IconButton>
+          : <IconButton label={t('status.play')} onClick={onPlay}>▶</IconButton>}
         {/* Step and reset leave the bar as phone space tightens. Both remain in
             More options; preserving that gateway is more useful than clipping
             it to duplicate secondary controls in the bar. */}
-        <IconButton className="status-bar__step" label="Advance one simulated second" onClick={onStep}>⏭</IconButton>
-        <IconButton className="status-bar__reset" label="Reset the scenario" onClick={onReset}>↺</IconButton>
+        <IconButton className="status-bar__step" label={t('status.step')} onClick={onStep}>⏭</IconButton>
+        <IconButton className="status-bar__reset" label={t('status.reset')} onClick={onReset}>↺</IconButton>
       </div>
 
       <SegmentedControl<SpeedMultiplier>
-        label="Simulation speed"
+        label={t('status.speed')}
         value={speed}
         onChange={onSpeed}
         options={SPEED_MULTIPLIERS.map((multiplier) => ({
           value: multiplier,
-          label: `${multiplier}×`,
-          srLabel: `${multiplier} times speed`,
+          label: t('status.speed-option', { multiplier }),
+          srLabel: t('status.speed-option-sr', { multiplier }),
         }))}
       />
 
-      <IconButton label="More options" className="status-bar__more" onClick={onOverflow}
+      <IconButton label={t('status.more')} className="status-bar__more" onClick={onOverflow}
         aria-describedby={updateAvailable ? updateDescriptionId : undefined}>
         ⋯
         {updateAvailable && <span className="status-bar__update-indicator" aria-hidden="true">↑</span>}
       </IconButton>
-      {updateAvailable && <span id={updateDescriptionId} className="visually-hidden">An update is ready in More options.</span>}
+      {updateAvailable && <span id={updateDescriptionId} className="visually-hidden">{t('status.update-ready')}</span>}
     </div>
   );
 }
