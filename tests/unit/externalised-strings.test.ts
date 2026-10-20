@@ -21,6 +21,7 @@ const EXTERNALISED: readonly { readonly path: string; readonly region?: readonly
   { path: 'src/platform/governance/ReviewStatusBody.tsx' },
   { path: 'src/platform/docs/LimitationsBody.tsx' },
   { path: 'src/platform/docs/PrivacyBody.tsx' },
+  { path: 'src/platform/governance/GovernanceBody.tsx' },
   { path: 'src/modules/anesthesia/ui/GoalRecommendation.tsx', region: ['return (', '\n}\n'] },
   { path: 'src/platform/offline/UpdateNotice.tsx', region: ['  return (\n    <div className={`update-notice', '\n}\n'] },
   { path: 'src/platform/safety/not-for-clinical-use.tsx', region: ['export function NotForClinicalUseGate', '\n}\n'] },

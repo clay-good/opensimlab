@@ -9,33 +9,17 @@
 
 import { Badge, CitationLink, Disclosure, KeyFigure, Panel, SiteBar } from '@platform/ui';
 import { buildValidationReport } from '@platform/docs/validation-report';
-import { EDITORIAL_BOARD, HONEST_STATUS, reviewableItems } from '@platform/governance/records';
-import { reportCoverage } from '@platform/governance/review-gate';
 import { ReviewStatusBody } from '@platform/governance/ReviewStatusBody';
 import { LimitationsBody } from '@platform/docs/LimitationsBody';
+import { GovernanceBody } from '@platform/governance/GovernanceBody';
 import { PrivacyBody } from '@platform/docs/PrivacyBody';
 import { SOURCES, formatSource, requireSource } from '@platform/docs/sources';
 import { VERIFIED_CONSTANTS, confirmedCount } from '@platform/docs/verified-constants';
 import { CorrectionsBody } from '@platform/docs/CorrectionsBody';
-import { APP_VERSION } from '@platform/governance/status';
-import { FRAMEWORKS } from '@anesthesia/curriculum/frameworks';
 import { t } from '@platform/i18n/messages';
 import { TranslationStatusBody } from '@platform/i18n/TranslationStatusBody';
-import { FRAMEWORK_REVIEW_MONTHS, overdueFrameworks } from '@platform/curriculum/framework-records';
 import { VerificationQueueBody } from '@anesthesia/ui/VerificationQueueBody';
 import { routeFor } from './routes';
-
-/**
- * What each gate verdict means, said once for the whole group rather than
- * repeated after every item id.
- */
-const VERDICT_SUMMARY: Record<string, string> = {
-  unsigned: 'No named reviewer. Clinical content cannot ship signed by nobody.',
-  'version-drift': 'The content changed after it was reviewed, so the review no longer covers it.',
-  overdue: 'The review has passed its re-review date.',
-  incomplete: 'The review record is missing something it requires.',
-  current: 'Under current review.',
-};
 
 /**
  * The trust documents the shared bar does not already carry.
@@ -265,144 +249,6 @@ function sourcesByInitial(): { initial: string; sources: readonly (typeof SOURCE
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([initial, sources]) => ({ initial, sources }));
 }
-
-function GovernanceBody() {
-  const items = reviewableItems();
-  const coverage = reportCoverage(items, new Date('2026-08-19T00:00:00Z'));
-  return (
-    <>
-      <Badge kind="out-of-range">{HONEST_STATUS.headline}</Badge>
-      <p>{HONEST_STATUS.detail}</p>
-
-      <h2>The editorial board</h2>
-      {EDITORIAL_BOARD.length === 0 ? (
-        <p>
-          The board is empty. Recruiting at least three credentialed clinician reviewers is in
-          progress and has not completed. Until it does, nothing in this build is signed, no
-          scenario is described as reviewed, and the release gate refuses to publish.
-        </p>
-      ) : (
-        <ul>
-          {EDITORIAL_BOARD.map((member) => (
-            <li key={member.name}>
-              <strong>{member.name}</strong>, {member.credential}, {member.institution}. Reviews:{' '}
-              {member.scope.join(', ')}. Joined {member.joined}. Competing interests:{' '}
-              {member.competingInterests}.
-            </li>
-          ))}
-        </ul>
-      )}
-
-      <p>
-        This page is about signatures. What each item is actually published as, meaning the
-        maturity status the interface labels it with, is on <a href="/review-status">the
-        review-status page</a>, item by item.
-      </p>
-
-      <h2>Review coverage</h2>
-      <div className="figures">
-        <KeyFigure
-          value={`${coverage.percentCurrent.toFixed(0)}%`}
-          label={`Of ${coverage.total} items under current review`}
-          tone={coverage.percentCurrent > 0 ? 'neutral' : 'warning'}
-        />
-        <KeyFigure
-          value={coverage.outstanding.length}
-          label="Items outstanding, every one named below"
-          tone="warning"
-        />
-      </div>
-      <p className="field__hint">
-        Every outstanding item is named below. No aggregate figure is reported without its list.
-      </p>
-      {/* Grouped by VERDICT, then by kind.
-          Every one of these items is outstanding for the same reason, and the
-          reason string carries the item's own id inside it, so grouping on the
-          sentence grouped nothing, and printing it once per item, fourteen
-          times, buried the only thing the list is for: which items they are. */}
-      {[...new Set(coverage.outstanding.map((entry) => entry.verdict.status))].map((status) => {
-        const matching = coverage.outstanding.filter((entry) => entry.verdict.status === status);
-        const kinds = [...new Set(matching.map((entry) => entry.item.kind))];
-        return (
-          <Disclosure
-            key={status}
-            className="disclosure--group"
-            summary={VERDICT_SUMMARY[status] ?? status}
-            meta={`${matching.length} items`}
-          >
-            <dl className="document__items">
-              {kinds.map((kind) => (
-                <div key={kind}>
-                  <dt><code>{kind}</code></dt>
-                  <dd>
-                    {matching
-                      .filter((entry) => entry.item.kind === kind)
-                      .map((entry) => entry.item.id)
-                      .join(', ')}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </Disclosure>
-        );
-      })}
-
-      <FrameworkReadings />
-
-      <h2>Language</h2>
-      <p>
-        The interface and every scenario are in English. Clinical content is translated only with
-        its own clinical review, which does not exist yet in English;{' '}
-        <a href="/translation-status">the translation status page</a> shows what is translated and why.
-      </p>
-
-      <h2>Reporting a clinical error</h2>
-      <p>
-        Every content item carries a control that opens a public issue with the item id, the
-        content version and the application version pre-filled. Reports are acknowledged within
-        five working days and every correction is appended permanently to the corrections log.
-      </p>
-      <p>
-        <a href="https://github.com/clay-good/opensimlab/issues/new" rel="noreferrer noopener">
-          Open a clinical issue on the public repository
-        </a>
-      </p>
-    </>
-  );
-}
-
-
-/**
- * Framework readings go stale the way clinical reviews do, so they are listed
- * here beside them. Dated by the build, which the prerendered page and the
- * client share, so the list cannot change between the two.
- */
-function FrameworkReadings() {
-  const today = /^\d{4}-\d{2}-\d{2}/.exec(APP_VERSION)?.[0] ?? new Date().toISOString().slice(0, 10);
-  const overdue = new Set(overdueFrameworks(FRAMEWORKS, today).map((framework) => framework.id));
-  return (
-    <>
-      <h2>Framework readings</h2>
-      <p>
-        Curriculum mappings rest on this project&apos;s reading of each framework document. Every
-        reading is re-checked against its source at least every {FRAMEWORK_REVIEW_MONTHS} months.{' '}
-        <span className="numeric">{overdue.size}</span> of {FRAMEWORKS.length} are past their
-        re-check date.
-      </p>
-      <ul>
-        {FRAMEWORKS.map((framework) => (
-          <li key={framework.id}>
-            {framework.name} ({framework.body}): recorded {framework.recordedOn}, re-check by{' '}
-            {framework.reviewBy}{overdue.has(framework.id) ? ' — overdue' : ''}.
-          </li>
-        ))}
-      </ul>
-    </>
-  );
-}
-
-
-
 
 export function DocumentPanel({ title, children }: { title: string; children: React.ReactNode }) {
   return <Panel title={title}>{children}</Panel>;
