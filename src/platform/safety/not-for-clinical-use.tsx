@@ -7,6 +7,7 @@
  * scripting-disabled browser still receives the prerendered content.
  */
 
+import { t } from '@platform/i18n/messages';
 import { Button, Modal } from '@platform/ui';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 
@@ -31,31 +32,21 @@ export function NotForClinicalUseGate({ open, onAcknowledge }: {
   return (
     <Modal
       open={open}
-      title="Before you start"
+      title={t('ack.title')}
       dismissible={false}
-      footer={<Button variant="primary" onClick={onAcknowledge}>I understand</Button>}
+      footer={<Button variant="primary" onClick={onAcknowledge}>{t('ack.accept')}</Button>}
     >
       <p>{NOT_FOR_CLINICAL_USE}</p>
-      <p>
-        It predicts what a virtual patient does. It never advises what to do to a real one. The
-        numbers it shows are model predictions, not measurements, and several of the models in this
-        build have not yet had the independent check the project requires before calling them
-        published.
-      </p>
+      <p>{t('ack.predicts')}</p>
       {/* The disclosure the release turns on. Someone acknowledging this once,
           before anything is interactive, is the moment they are entitled to know
           that nothing here is signed — and to check it rather than take our word,
           which is what the link is for. */}
       <p>
-        <strong>No clinician has reviewed this content.</strong> The editorial board is empty and
-        published as empty, and every item here is labeled &ldquo;Educational use only. Not
-        clinically reviewed&rdquo;. <a href="/review-status">The review-status page</a> lists every
-        item and the label it carries.
+        <strong>{t('ack.unreviewed-lead')}</strong> {t('ack.unreviewed')}{' '}
+        <a href="/review-status">{t('ack.review-status-link')}</a>
       </p>
-      <p className="field__hint">
-        This is asked once on this device and the answer is stored here. Nothing about it is sent
-        anywhere.
-      </p>
+      <p className="field__hint">{t('ack.local')}</p>
     </Modal>
   );
 }

@@ -15,7 +15,9 @@
   the nursing debrief's NCJMM list (7, classed educator), and the facilitator guide (71 strings,
   educator: page, headings, item labels, absent reasons, and its fixed prebrief and debrief
   templates), `/translation-status` (12 strings, root prose), `/verification-queue` (16, root prose), each now its
-  own component, the goal-path recommendation (3), and the update notice (5) read from `src/platform/i18n/messages.ts` and render the same English.
+  own component, the goal-path recommendation (3), the update notice (5), and the first-visit
+  acknowledgement (7, root prose; the not-for-clinical-use statement itself stays one constant
+  because every export carries it) read from `src/platform/i18n/messages.ts` and render the same English.
   `tests/unit/externalised-strings.test.ts` is the hard-coded-string test, applied to each surface
   once it is externalised; every other surface remains.
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.

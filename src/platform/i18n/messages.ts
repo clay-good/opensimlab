@@ -197,6 +197,13 @@ export const EN_MESSAGES = {
   'update.session-warning': { class: 'interface', text: 'Reloading ends this session and clears its unsaved progress.' },
   'update.reload': { class: 'interface', text: 'Reload to update' },
   'update.later': { class: 'interface', text: 'Not now' },
+  'ack.title': { class: 'root-prose', text: 'Before you start' },
+  'ack.accept': { class: 'root-prose', text: 'I understand' },
+  'ack.predicts': { class: 'root-prose', text: 'It predicts what a virtual patient does. It never advises what to do to a real one. The numbers it shows are model predictions, not measurements, and several of the models in this build have not yet had the independent check the project requires before calling them published.' },
+  'ack.unreviewed-lead': { class: 'root-prose', text: 'No clinician has reviewed this content.' },
+  'ack.unreviewed': { class: 'root-prose', text: 'The editorial board is empty and published as empty, and every item here is labeled “Educational use only. Not clinically reviewed”.' },
+  'ack.review-status-link': { class: 'root-prose', text: 'The review-status page lists every item and the label it carries.' },
+  'ack.local': { class: 'root-prose', text: 'This is asked once on this device and the answer is stored here. Nothing about it is sent anywhere.' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 export type MessageKey = keyof typeof EN_MESSAGES;
