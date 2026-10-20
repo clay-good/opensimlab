@@ -18,7 +18,13 @@
 
 - [ ] Map every scenario in every module to at least one applicable framework; list unmapped by
   name in the curriculum view and fail the build on an unmapped scenario once authoring is done.
-- [ ] Map every nursing scenario's objectives to NCJMM functions with named evidence; build check.
+- [x] Map every nursing scenario's objectives to NCJMM functions with named evidence; build check.
+  `src/modules/medical-surgical-nursing/curriculum.ts` records NCSBN's six step names verbatim
+  from the 2026 NCLEX-RN Test Plan (PDF page 8), with this project's own descriptions because the
+  document is copyrighted. All 54 objectives map through their leading verb, a stated convention,
+  each with its own measure as evidence; an objective the convention cannot place fails the build.
+  Evaluate outcomes is honestly not exercised, with the reason: every lesson ends at the decision.
+  The mapping shows in each nursing facilitator guide and in each briefing's structured data.
 - [ ] Show NCJMM coverage (exercised / evidenced / not exercised) in the nursing debrief; no
   composite; quote the NCSBN scope statement with citation.
 

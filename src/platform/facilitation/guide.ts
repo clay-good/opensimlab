@@ -13,6 +13,9 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import { MATURITY_LABELS } from '@platform/governance/publication';
 import { MAPPING_DISCLAIMER, getFramework } from '@anesthesia/curriculum/frameworks';
 import { SCENARIO_MAPPINGS } from '@anesthesia/curriculum/mapping';
+import {
+  NCJMM_NOT_EXERCISED_REASON, NCSBN_NCJMM, ncjmmMappings,
+} from '../../modules/medical-surgical-nursing/curriculum';
 import type { FacilitatedScenario } from './scenario-catalog';
 
 export interface GuideItem {
@@ -79,6 +82,7 @@ function timelineItems(scenario: Scenario): GuideItem[] {
 
 /** Framework domains this scenario is mapped to, with the objectives that carry each. */
 function frameworkItems({ moduleRoute, scenario }: FacilitatedScenario): GuideItem[] {
+  if (moduleRoute === 'medical-surgical-nursing') return ncjmmItems(scenario);
   if (moduleRoute !== 'anesthesia') return [];
   const statement = new Map(scenario.metadata.objectives.map((objective) => [objective.id, objective.statement]));
   const items = SCENARIO_MAPPINGS
@@ -93,6 +97,26 @@ function frameworkItems({ moduleRoute, scenario }: FacilitatedScenario): GuideIt
       }];
     });
   return items.length === 0 ? [] : [...items, { text: MAPPING_DISCLAIMER }];
+}
+
+/** Each NCJMM step this lesson exercises, with the objectives that carry it, and the one it does not. */
+function ncjmmItems(scenario: Scenario): GuideItem[] {
+  const mappings = ncjmmMappings([scenario]);
+  const statement = new Map(scenario.metadata.objectives.map((objective) => [objective.id, objective.statement]));
+  return [
+    ...NCSBN_NCJMM.domains.map((step) => {
+      const carrying = mappings.filter((mapping) => (mapping.steps as readonly string[]).includes(step.id));
+      const reason = NCJMM_NOT_EXERCISED_REASON[step.id as keyof typeof NCJMM_NOT_EXERCISED_REASON];
+      return {
+        label: `${NCSBN_NCJMM.shortLabel}: ${step.label}`,
+        text: carrying.length > 0
+          ? carrying.map((mapping) => statement.get(mapping.objectiveId) ?? mapping.objectiveId).join('; ')
+          : `Not exercised. ${reason ?? ''}`.trim(),
+      };
+    }),
+    { text: NCSBN_NCJMM.note },
+    { text: MAPPING_DISCLAIMER },
+  ];
 }
 
 function debriefItems(scenario: Scenario): GuideItem[] {

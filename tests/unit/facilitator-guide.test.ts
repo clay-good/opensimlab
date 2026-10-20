@@ -57,8 +57,8 @@ describe('facilitator guide', () => {
   it('maps a mapped scenario to its framework domains with the disclaimer, and only then', () => {
     for (const entry of FACILITATED_SCENARIOS) {
       const section = facilitatorGuide(entry).find((candidate) => candidate.id === 'frameworks')!;
-      const mapped = entry.moduleRoute === 'anesthesia'
-        && SCENARIO_MAPPINGS.some((mapping) => mapping.scenarioId === entry.scenario.metadata.id);
+      const mapped = entry.moduleRoute === 'medical-surgical-nursing' || (entry.moduleRoute === 'anesthesia'
+        && SCENARIO_MAPPINGS.some((mapping) => mapping.scenarioId === entry.scenario.metadata.id));
       expect(section.status, entry.scenario.metadata.id).toBe(mapped ? 'present' : 'absent');
       if (section.status === 'present') expect(section.items.at(-1)?.text).toBe(MAPPING_DISCLAIMER);
     }

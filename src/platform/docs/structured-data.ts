@@ -32,6 +32,7 @@ import { ROUTES, SITE_NAME, SITE_ORIGIN, canonicalUrl } from '@routes/routes';
 import { moduleProse } from '@platform/modules/module-prose';
 import { getFramework } from '@anesthesia/curriculum/frameworks';
 import { SCENARIO_MAPPINGS } from '@anesthesia/curriculum/mapping';
+import { NCSBN_NCJMM, ncjmmMappings } from '../../modules/medical-surgical-nursing/curriculum';
 
 /**
  * Which framework domains a scenario teaches toward, as schema.org alignment.
@@ -41,6 +42,18 @@ import { SCENARIO_MAPPINGS } from '@anesthesia/curriculum/mapping';
  * as an endorser, because no body has reviewed these mappings.
  */
 export function educationalAlignmentFor(moduleRoute: string, scenarioId: string): JsonLd[] {
+  if (moduleRoute === 'medical-surgical-nursing') {
+    const scenario = getMedicalSurgicalNursingScenario(scenarioId);
+    if (!scenario) return [];
+    const steps = new Set<string>(ncjmmMappings([scenario]).flatMap((mapping) => mapping.steps));
+    return NCSBN_NCJMM.domains.filter((step) => steps.has(step.id)).map((step) => ({
+      '@type': 'AlignmentObject',
+      alignmentType: 'teaches',
+      educationalFramework: `${NCSBN_NCJMM.name} (${NCSBN_NCJMM.version})`,
+      targetName: step.label,
+      targetUrl: NCSBN_NCJMM.url,
+    }));
+  }
   if (moduleRoute !== 'anesthesia') return [];
   return SCENARIO_MAPPINGS.filter((mapping) => mapping.scenarioId === scenarioId).flatMap((mapping) => {
     const framework = getFramework(mapping.frameworkId);
