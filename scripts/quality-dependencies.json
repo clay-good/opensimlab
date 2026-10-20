@@ -249,7 +249,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "44408dd400f478eff45dbb4f1d4cf2e644b5dde411044f7962ab7f99fd442242"
+        "sha256": "09d260b8529c654b50a332f42bd93516ac90f756f215e0491c2ea25ec9d87209"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
@@ -514,7 +514,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "44408dd400f478eff45dbb4f1d4cf2e644b5dde411044f7962ab7f99fd442242"
+        "sha256": "09d260b8529c654b50a332f42bd93516ac90f756f215e0491c2ea25ec9d87209"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
@@ -534,7 +534,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/cockpit.css",
-        "sha256": "3769a1e2904f8aaddc3646b670c253e2cf73d9d4731e79ef6e6c9b74db519f04"
+        "sha256": "e5c63de1a7e51274551ee55510286e583030353b1ea68eb2dc0bf6f8635ecf50"
       },
       {
         "path": "src/modules/endocrine-metabolic/AvpDeficiencyTray.tsx",

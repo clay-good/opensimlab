@@ -31,3 +31,15 @@ describe('classroom pause points in the transcript', () => {
     expect(useSession.getState().transport).not.toBe('running');
   });
 });
+
+describe('the paused region is outlined', () => {
+  it('outlines the region a pause point names, through its own attribute', async () => {
+    const { readFileSync } = await import('node:fs');
+    const css = readFileSync('src/modules/anesthesia/ui/cockpit.css', 'utf8');
+    for (const region of ['monitor', 'analysis', 'actions']) {
+      expect(css).toContain(`.cockpit[data-pause-focus='${region}'] .cockpit__${region}`);
+    }
+    expect(readFileSync('src/modules/anesthesia/ui/Cockpit.tsx', 'utf8'))
+      .toContain("{...(pausePoint ? { 'data-pause-focus': pausePoint.region } : {})}");
+  });
+});

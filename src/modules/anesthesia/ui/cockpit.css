@@ -726,7 +726,11 @@
    which one you mean". */
 .cockpit[data-demo-focus='monitor'] .cockpit__monitor,
 .cockpit[data-demo-focus='analysis'] .cockpit__analysis,
-.cockpit[data-demo-focus='actions'] .cockpit__actions {
+.cockpit[data-demo-focus='actions'] .cockpit__actions,
+/* A classroom pause points at a region the same way, without the demonstration's layout. */
+.cockpit[data-pause-focus='monitor'] .cockpit__monitor,
+.cockpit[data-pause-focus='analysis'] .cockpit__analysis,
+.cockpit[data-pause-focus='actions'] .cockpit__actions {
   outline: 2px solid var(--focus);
   outline-offset: -2px;
   border-radius: var(--radius-panel);

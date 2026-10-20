@@ -45,8 +45,9 @@
   A due pause point fires once, stops the clock, and shows its question beside the monitor with a
   Resume control. The transcript gains an optional `facilitatorPauses` list, present only when a
   pause fired, which is a marker and never an action, so the state trace and its hash are
-  untouched and replay ignores it (`tests/unit/classroom-pauses.test.ts`). Highlighting the named
-  region on screen is not done yet; the panel names it in words.
+  untouched and replay ignores it (`tests/unit/classroom-pauses.test.ts`). The named region is
+  outlined exactly as a worked-example beat outlines one, through its own attribute so the
+  demonstration's layout does not change.
 - [ ] Author at least two pause points per scenario, placed at the authored teaching moments.
 
 ## 3. Bookmarks and scrubbing

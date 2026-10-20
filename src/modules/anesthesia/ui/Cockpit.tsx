@@ -1712,6 +1712,7 @@ export function Cockpit({
       style={style}
       ref={cockpitRef}
       {...(demonstration.beat ? { 'data-demo-focus': demonstration.beat.focus } : {})}
+      {...(pausePoint ? { 'data-pause-focus': pausePoint.region } : {})}
     >
       <a className="skip-link" href="#monitor-region">Skip to the monitor</a>
 
