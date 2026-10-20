@@ -52,6 +52,15 @@ export const PERSISTENT_VF_ARREST: Scenario = {
     { id: 'emergency-reassess-arrest', type: 'narrative', atTick: 1800, severity: 'advisory',
       message: 'Reassess rhythm and the accepted resuscitation intents. Deterministic conversion in this teaching case is not an individual outcome prediction.' },
   ],
+  // VF is present from tick 0; the earliest decision point the rehearsal branch can restore is
+  // tick 1, so the window runs from there for the 20 seconds the objective measures.
+  rapidCycle: [
+    { id: 'compressions-within-twenty-seconds', objectiveId: 'resume-arrest-compressions',
+      atTick: 1, windowTicks: 200, actionType: 'chest-compressions',
+      directive: 'Pulseless VF: start chest compressions now, before anything else. This lesson looks for them within 20 seconds.',
+      sourceLocator: 'Wigginton 2025, Part 9 Adult ALS, adult cardiac arrest algorithm: start CPR first',
+      cycleCap: 4 },
+  ],
   debrief: { rubric: [
     { id: 'emergency-compression-response', objectiveId: 'resume-arrest-compressions', question: 'How quickly were modeled compressions resumed after pulseless VF appeared?' },
     { id: 'emergency-arrest-epinephrine', objectiveId: 'give-arrest-epinephrine', question: 'Was exactly 1 mg IV/IO epinephrine accepted while modeled compressions were active?' },

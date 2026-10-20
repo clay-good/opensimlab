@@ -45,8 +45,8 @@ its own, none changes the engine, and none produces a score.
 - [ ] Author rapid-cycle decision points for every scenario whose objectives include a timed
   protocol step, starting with cardiac arrest, anaphylaxis, malignant hyperthermia, LAST, and
   status epilepticus across modules; register each directive line with the tutor-rule maturity.
-  Started: persistent VF (anesthesia) declares compressions within 20 seconds of its scheduled VF
-  event, from the first step of the cited algorithm. A rapid-cycle point restores a fixed decision tick, so it fits
+  Started: both persistent VF lessons (anesthesia and emergency medicine) declare compressions
+  within 20 seconds of their scheduled VF event, from the first step of each one's cited algorithm. A rapid-cycle point restores a fixed decision tick, so it fits
   only a lesson whose crisis is scheduled. Malignant hyperthermia is not: its trigger is latent,
   and rigidity begins whenever the learner's volatile reaches the patient (tick 2,400 on the
   expert path, later on others), so a fixed tick would restore the wrong moment for most

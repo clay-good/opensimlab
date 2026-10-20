@@ -3,6 +3,7 @@ import { AnesthesiaEngine } from '@anesthesia/engine';
 import { validateScenario, isRecognitionObjective } from '@anesthesia/scenarios/schema';
 import { offeredRapidCycle, rapidCycleStatus } from '@anesthesia/catalog/rapid-cycle';
 import { PERSISTENT_VF_CARDIAC_ARREST as SCENARIO } from '@anesthesia/scenarios/persistent-vf-cardiac-arrest';
+import { PERSISTENT_VF_ARREST as EMERGENCY_SCENARIO } from '../../src/modules/emergency-medicine/scenarios/persistent-vf-arrest';
 
 const point = SCENARIO.rapidCycle![0]!;
 
@@ -47,5 +48,15 @@ describe('a rapid cycle in progress', () => {
     expect(offeredRapidCycle(SCENARIO.rapidCycle, unmet, 'coached')).toBe(point);
     expect(offeredRapidCycle(SCENARIO.rapidCycle, unmet, 'unassisted')).toBeUndefined();
     expect(offeredRapidCycle(SCENARIO.rapidCycle, new Set(), 'guided')).toBeUndefined();
+  });
+});
+
+describe('the emergency medicine persistent VF rapid-cycle point', () => {
+  const emergency = EMERGENCY_SCENARIO.rapidCycle![0]!;
+  it('is valid and opens at the first restorable tick after VF at tick 0', () => {
+    expect(validateScenario(EMERGENCY_SCENARIO)).toEqual([]);
+    expect(EMERGENCY_SCENARIO.timeline.find((event) => event.type === 'rhythm-change')?.atTick).toBe(0);
+    expect(emergency).toMatchObject({ atTick: 1, windowTicks: 200, actionType: 'chest-compressions' });
+    expect(isRecognitionObjective(emergency.objectiveId)).toBe(false);
   });
 });
