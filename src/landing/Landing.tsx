@@ -24,6 +24,7 @@ import { HONEST_STATUS } from '@platform/governance/status';
 import { FOOTER_LINKS, ONE_LINE_DESCRIPTION, REVIEWER_INVITATION, THREE_FACTS } from './content';
 import { heroStaticSvg, startLiveHero } from './hero';
 import { DEMONSTRATION_HREF } from '@anesthesia/demo/demonstration';
+import { t } from '@platform/i18n/messages';
 
 /**
  * Prefetch the anaesthesia entry bundle at low priority after two seconds, so the
@@ -70,9 +71,9 @@ export function Landing() {
 
   return (
     <div className="landing">
-      <a className="skip-link" href="#main">Skip to main content</a>
+      <a className="skip-link" href="#main">{t('sitebar.skip')}</a>
       <main className="landing__front" id="main">
-        <h1 className="landing__name">Open Sim Lab</h1>
+        <h1 className="landing__name">{t('landing.name')}</h1>
         <p className="landing__tagline">{ONE_LINE_DESCRIPTION}</p>
 
         <div className="landing__hero">
@@ -102,7 +103,7 @@ export function Landing() {
             number of scenarios behind it. The count is the honest version of the
             claim the tagline makes: 240 scenarios is a real number only if a
             visitor can see where they are. */}
-        <nav className="landing__modules" id="modules" aria-label="Specialty modules">
+        <nav className="landing__modules" id="modules" aria-label={t('landing.modules')}>
           {available.map((module, index) => (
             <a
               key={module.id}
@@ -119,7 +120,7 @@ export function Landing() {
                   those with a `<!-- -->` marker so it can hydrate them, which put
                   `39<!-- --> scenarios` into every prerendered page. It reads
                   correctly either way; there is no reason to ship it. */}
-              <span className="landing__module-count">{`${module.scenarioCount} scenarios`}</span>
+              <span className="landing__module-count">{t('landing.scenario-count', { count: module.scenarioCount })}</span>
             </a>
           ))}
         </nav>
@@ -136,7 +137,7 @@ export function Landing() {
           ))}
           {/* A non-breaking space, so the module name and the two words that
               qualify it wrap together rather than breaking across a line. */}
-          {'\u00A0planned. No dates.'}
+          {`\u00A0${t('landing.planned')}`}
         </p>}
 
         {/* For the visitor who has not decided which door is theirs. It sits
@@ -144,7 +145,7 @@ export function Landing() {
             and not the offer. */}
         <div className="landing__action">
           <a className="landing__watch" href={DEMONSTRATION_HREF}>
-            Watch a 90-second demonstration
+            {t('landing.watch')}
           </a>
         </div>
 
@@ -174,7 +175,7 @@ export function Landing() {
           <a href={REVIEWER_INVITATION.href}>{REVIEWER_INVITATION.text}</a>
         </p>
         <ul className="landing__footer-links">
-          <li><a href="/about">About</a></li>
+          <li><a href="/about">{t('landing.about')}</a></li>
           {FOOTER_LINKS.map((link) => (
             <li key={link.href}>
               <a href={link.href} {...(link.href.startsWith('http') ? { rel: 'noreferrer noopener' } : {})}>

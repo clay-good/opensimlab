@@ -287,7 +287,8 @@ describe('the demonstration link', () => {
     // the front page.
     const landing = readFileSync(join(process.cwd(), 'src/landing/Landing.tsx'), 'utf8');
     expect(landing).toContain('DEMONSTRATION_HREF');
-    expect(landing).toContain('Watch a 90-second demonstration');
+    expect(landing).toContain("t('landing.watch')");
+    expect(EN_MESSAGES['landing.watch'].text).toBe('Watch a 90-second demonstration');
     // And it stays a quiet link. It used to be the quiet half of a pair beside a
     // primary anaesthesia button; the front door now offers all fifteen modules
     // at the same weight and has no primary button at all, so the thing to hold

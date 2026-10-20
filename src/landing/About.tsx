@@ -20,14 +20,15 @@ import { HONEST_STATUS } from '@platform/governance/status';
 import {
   CONTENT_SECTIONS, FOOTER_LINKS, QUESTIONS, SUGGESTED_CITATION, THREE_FACTS,
 } from './content';
+import { t } from '@platform/i18n/messages';
 
 export function About() {
   return (
     <div className="landing">
-      <a className="skip-link" href="#main">Skip to main content</a>
+      <a className="skip-link" href="#main">{t('sitebar.skip')}</a>
       <main className="landing__content reading" id="main">
-        <p className="landing__breadcrumb"><a href="/">Open Sim Lab</a></p>
-        <h1>About Open Sim Lab</h1>
+        <p className="landing__breadcrumb"><a href="/">{t('landing.name')}</a></p>
+        <h1>{t('about.heading')}</h1>
 
         <ul className="landing__facts-full">
           {THREE_FACTS.map((fact) => (
@@ -50,7 +51,7 @@ export function About() {
         {/* The module directory in full: the front door carries the status, this
             carries the scope, and neither carries a date. */}
         <section aria-labelledby="modules-heading">
-          <h2 id="modules-heading">Modules</h2>
+          <h2 id="modules-heading">{t('about.modules')}</h2>
           <ul className="landing__modules-full">
             {MODULES.map((module) => (
               <li key={module.id} className="landing__module" data-status={module.status}>
@@ -64,31 +65,29 @@ export function About() {
                     {module.status === 'available' ? moduleProse(module.id).description : moduleProse(module.id).plannedScope}
                   </p>
                 </div>
-                <span className="badge">{module.status === 'available' ? 'Available' : 'Planned'}</span>
+                <span className="badge">{t(module.status === 'available' ? 'about.available' : 'about.planned')}</span>
               </li>
             ))}
           </ul>
           <p className="landing__module-note">
-            No dates are promised for planned modules.{' '}
+            {t('about.no-dates')}{' '}
             <a href={RELEASE_FEED_URL} rel="noreferrer noopener">
-              Watch the repository releases to hear when one ships
+              {t('about.watch-releases')}
             </a>
-            . No email address is collected.
+            {t('about.no-email')}
           </p>
         </section>
 
         <section aria-labelledby="proposed-heading">
-          <h2 id="proposed-heading">Proposed, not planned</h2>
-          <p className="landing__module-note">
-            Candidates the catalog could grow into. None is a promise: each must first pass a
-            stated breadth test, including eight scenario proposals that each have real choices
-            and consequences, before it can even be listed as planned.
-          </p>
+          <h2 id="proposed-heading">{t('about.proposed')}</h2>
+          <p className="landing__module-note">{t('about.proposed-note')}</p>
           <ul>
             {MODULE_PROPOSALS.filter((proposal) => proposal.status !== 'planned').map((proposal) => (
               <li key={proposal.id}>
-                <strong>{proposal.title}</strong> ({proposal.status}). Needs {proposal.needs}.{' '}
-                {proposal.scenarioProposals} of 8 scenario proposals written.
+                <strong>{proposal.title}</strong>{' '}
+                {t('about.proposal', {
+                  status: proposal.status, needs: proposal.needs, count: proposal.scenarioProposals,
+                })}
               </li>
             ))}
           </ul>
@@ -99,7 +98,7 @@ export function About() {
             question is the thing worth showing; the answer is what someone asks
             for. */}
         <section aria-labelledby="questions-heading" className="landing__questions">
-          <h2 id="questions-heading">Questions</h2>
+          <h2 id="questions-heading">{t('about.questions')}</h2>
           {QUESTIONS.map((entry) => (
             <Disclosure key={entry.question} summary={entry.question}>
               <p>{entry.answer}</p>
@@ -112,7 +111,7 @@ export function About() {
 
       <footer className="landing__footer">
         <ul className="landing__footer-links">
-          <li><a href="/">Home</a></li>
+          <li><a href="/">{t('about.home')}</a></li>
           {FOOTER_LINKS.map((link) => (
             <li key={link.href}>
               <a href={link.href} {...(link.href.startsWith('http') ? { rel: 'noreferrer noopener' } : {})}>

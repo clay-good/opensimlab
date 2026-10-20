@@ -33,10 +33,12 @@
   - Educator pages: the facilitator guide (71, with its prebrief and debrief templates),
     `/for-educators` (59, markup byte-identical), `/curriculum` (16), `/review` (14, outcome words
     shared with the debrief).
+  - Front door, root prose: the landing page and `/about`'s own words (18; both render
+    byte-identical markup). Their substantive copy in `src/landing/content.ts` has not moved.
   - Out of scope by design: `/gallery` and `/frame-budget` are noindex development surfaces whose
     text is component names, sample data, and a device measurement, not interface a learner or
     educator reads.
-  - Still to move: the landing and `/about` pages, the prebrief's remaining text, the cockpit shell
+  - Still to move: the landing copy in `src/landing/content.ts`, the prebrief's remaining text, the cockpit shell
     and its action controls, the crisis injector's own words, `/content-review`, the planned-module
     page, and the prerendered scenario briefing.
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.
