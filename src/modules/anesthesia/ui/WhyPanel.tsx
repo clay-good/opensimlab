@@ -11,6 +11,7 @@ import { Badge, Button, Drawer } from '@platform/ui';
 import type { Attribution } from '@platform/kernel/protocol';
 import { FIELDS, type StateField } from '@anesthesia/physiology';
 import { EXPLAINERS } from '@anesthesia/content/explainers';
+import { t } from '@platform/i18n/messages';
 
 /** Which explainer each attribution term links to. */
 /**
@@ -82,22 +83,17 @@ export function WhyPanel({
   const entry = attribution.find((candidate) => candidate.variable === field);
 
   return (
-    <Drawer open={open} title={`Why is ${spec.label} doing that?`} onClose={onClose}>
+    <Drawer open={open} title={t('why.title', { field: spec.label })} onClose={onClose}>
       <p className="numeric" style={{ font: 'var(--type-vital-m)' }}>
         {value === null ? '--' : value.toFixed(spec.precision)}{' '}
         <span className="vital-tile__unit">{spec.unit}</span>
       </p>
 
       {authoredExplanation ? <p className="field__hint">{authoredExplanation}</p> : !entry || entry.terms.length === 0 ? (
-        <p className="field__hint">
-          Nothing is currently pushing on {spec.label.toLowerCase()}. It is sitting where the
-          patient&apos;s own baseline puts it.
-        </p>
+        <p className="field__hint">{t('why.nothing', { field: spec.label.toLowerCase() })}</p>
       ) : (
         <>
-          <p className="field__hint">
-            Ranked contributors right now, from this session&apos;s own numbers:
-          </p>
+          <p className="field__hint">{t('why.ranked')}</p>
           <ul style={{ listStyle: 'none' }}>
             {entry.terms.map((term) => {
               const explainerId = TERM_EXPLAINERS[term.termId];
@@ -113,7 +109,7 @@ export function WhyPanel({
                     />
                     {term.teachingModel && (
                       <Badge kind="teaching">
-                        From an Open Sim Lab teaching model, not a published one
+                        {t('why.teaching')}
                       </Badge>
                     )}
                     {explainer && (
@@ -123,23 +119,23 @@ export function WhyPanel({
                     )}
                     {term.termId.startsWith('propofol') && (
                       <Button variant="ghost" compact onClick={() => onOpenDrugCard('propofol')}>
-                        Propofol card
+                        {t('why.card-propofol')}
                       </Button>
                     )}
                     {term.termId.startsWith('opioid') && (
                       <Button variant="ghost" compact onClick={() => onOpenDrugCard('remifentanil')}>
-                        Remifentanil card
+                        {t('why.card-remifentanil')}
                       </Button>
                     )}
                     {term.termId.startsWith('rocuronium') && (
                       <Button variant="ghost" compact onClick={() => onOpenDrugCard('rocuronium')}>
-                        Rocuronium card
+                        {t('why.card-rocuronium')}
                       </Button>
                     )}
                   </div>
                   <span className="why-panel__share">
                     {(term.share * 100).toFixed(0)}%
-                    <span className="visually-hidden"> of the current change</span>
+                    <span className="visually-hidden"> {t('why.of-change')}</span>
                   </span>
                 </li>
               );
@@ -147,10 +143,7 @@ export function WhyPanel({
           </ul>
         </>
       )}
-      <p className="reading__aside">
-        The simulation continues or stays paused exactly as it was. Closing this returns you to
-        where you were.
-      </p>
+      <p className="reading__aside">{t('why.aside')}</p>
     </Drawer>
   );
 }

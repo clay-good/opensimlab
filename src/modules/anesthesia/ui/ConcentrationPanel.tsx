@@ -14,17 +14,18 @@ import type { DrugConcentration } from '@platform/kernel/protocol';
 import type { HistorySample } from '@platform/session/session-store';
 import { NOT_CLINICALLY_REVIEWED, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { MODELS_BY_ID } from '@anesthesia/pharmacology/registry';
+import { t, type MessageKey } from '@platform/i18n/messages';
 
 const DRUG_TOKENS: Record<string, string> = {
   propofol: '--neuro',
   remifentanil: '--capno',
 };
 
-const CONFIDENCE_LABEL: Record<DrugConcentration['confidence'], string> = {
-  published: 'Published',
-  'pending-check': 'Pending independent check',
-  'out-of-range': 'Out of range',
-  teaching: 'Teaching model',
+const CONFIDENCE_LABEL: Record<DrugConcentration['confidence'], MessageKey> = {
+  published: 'conc.published',
+  'pending-check': 'conc.pending-check',
+  'out-of-range': 'conc.out-of-range',
+  teaching: 'debrief.teaching-model',
 };
 
 const CONFIDENCE_KIND: Record<DrugConcentration['confidence'], 'default' | 'out-of-range' | 'teaching'> = {
@@ -71,11 +72,11 @@ export function ConcentrationPanel({
     const entry = current.find((c) => c.drugId === drugId)!;
     const series: PlotSeries[] = [
       {
-        id: `${drugId}-plasma`, label: 'Plasma', colorToken: DRUG_TOKENS[drugId] ?? '--text-secondary',
+        id: `${drugId}-plasma`, label: t('conc.plasma'), colorToken: DRUG_TOKENS[drugId] ?? '--text-secondary',
         points: plasma, unit: entry.unit,
       },
       {
-        id: `${drugId}-effect`, label: 'Effect site', colorToken: DRUG_TOKENS[drugId] ?? '--text-secondary',
+        id: `${drugId}-effect`, label: t('conc.effect-site'), colorToken: DRUG_TOKENS[drugId] ?? '--text-secondary',
         dashed: true, points: effectSite, unit: entry.unit,
       },
     ];
@@ -89,7 +90,7 @@ export function ConcentrationPanel({
   const currentSeconds = tick / TICKS_PER_SECOND;
 
   if (bands.length === 0) {
-    return <EmptyState title="No drug given yet">The plot appears with the first dose.</EmptyState>;
+    return <EmptyState title={t('conc.empty-title')}>{t('conc.empty')}</EmptyState>;
   }
 
   return (
@@ -102,14 +103,14 @@ export function ConcentrationPanel({
         const model = MODELS_BY_ID.get(band.entry.modelId);
         const modelDetailsId = `model-details-${band.drugId}-${band.entry.modelId}`;
         return (
-          <section key={band.drugId} aria-label={`${band.drugId} concentrations`}>
+          <section key={band.drugId} aria-label={t('conc.section', { drug: band.drugId })}>
             <header style={{ display: 'flex', alignItems: 'baseline', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
               <h3 className="panel__title" style={{ font: 'var(--type-subtitle)' }}>{band.drugId}</h3>
               <span className="vital-tile__unit">{band.entry.unit}</span>
               <Badge kind={CONFIDENCE_KIND[band.entry.confidence]}>
-                {CONFIDENCE_LABEL[band.entry.confidence]}
+                {t(CONFIDENCE_LABEL[band.entry.confidence])}
               </Badge>
-              <span className="field__hint model-detail__identity">Model: {band.entry.modelId}</span>
+              <span className="field__hint model-detail__identity">{t('conc.model', { model: band.entry.modelId })}</span>
               {model && (
                 <Button
                   className="model-detail__action"
@@ -120,7 +121,7 @@ export function ConcentrationPanel({
                     current === band.entry.modelId ? null : band.entry.modelId
                   ))}
                 >
-                  Model details and source
+                  {t('conc.model-details')}
                 </Button>
               )}
               {/* The confidence badge already says "Pending independent check"
@@ -128,7 +129,7 @@ export function ConcentrationPanel({
                   noise. This one only fires for a model that is out of range AND
                   unchecked, where the badge above is showing the range problem. */}
               {pendingCheck && band.entry.confidence === 'out-of-range'
-                && <Badge kind="teaching">Also pending independent check</Badge>}
+                && <Badge kind="teaching">{t('conc.also-pending')}</Badge>}
             </header>
 
             {model && openModelId === band.entry.modelId && (
@@ -136,12 +137,12 @@ export function ConcentrationPanel({
                 <strong>{model.drugName}: {model.id}</strong>
                 <p>{model.notes}</p>
                 <p>
-                  Source: {model.citation.authors}. {model.citation.title}.{' '}
+                  {t('conc.source', { authors: model.citation.authors, title: model.citation.title })}{' '}
                   <em>{model.citation.journal}</em> {model.citation.year}
                   {model.citation.volumePages ? `;${model.citation.volumePages}` : ''}.
-                  {model.citation.pmid ? ` PMID ${model.citation.pmid}.` : ''}
-                  {model.citation.doi ? ` DOI ${model.citation.doi}.` : ''}
-                  {' '}Parameters: {model.citation.locator}.
+                  {model.citation.pmid ? ` ${t('conc.pmid', { pmid: model.citation.pmid })}` : ''}
+                  {model.citation.doi ? ` ${t('conc.doi', { doi: model.citation.doi })}` : ''}
+                  {' '}{t('conc.parameters', { locator: model.citation.locator })}
                 </p>
                 <p>{model.citation.summary}</p>
               </div>
@@ -152,7 +153,7 @@ export function ConcentrationPanel({
             <div
               tabIndex={0}
               role="application"
-              aria-label={`${band.drugId} concentration readout. Use the left and right arrow keys to move the cursor.`}
+              aria-label={t('conc.readout', { drug: band.drugId })}
               onKeyDown={(event) => {
                 if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
                 event.preventDefault();
@@ -175,8 +176,8 @@ export function ConcentrationPanel({
 
             {peakSeconds !== undefined && (
               <p className="field__hint">
-                Time to peak effect for this model is {peakSeconds.toFixed(0)} s after a bolus.
-                {rising && ' The effect site is still rising: the last dose has not been fully expressed yet.'}
+                {t('conc.peak', { seconds: peakSeconds.toFixed(0) })}
+                {rising && ` ${t('conc.rising')}`}
               </p>
             )}
             {(() => {
@@ -184,8 +185,7 @@ export function ConcentrationPanel({
               if (stacked.length === 0) return null;
               return (
                 <p className="field__hint">
-                  {stacked.length} {band.drugId} dose{stacked.length === 1 ? '' : 's'} given while the
-                  effect site was still climbing. The debrief will raise this.
+                  {t('conc.stacked', { count: stacked.length, drug: band.drugId })}
                 </p>
               );
             })()}
@@ -193,7 +193,7 @@ export function ConcentrationPanel({
         );
       })}
 
-      <Button onClick={onExportCsv}>Export this plot as a CSV file</Button>
+      <Button onClick={onExportCsv}>{t('conc.export')}</Button>
       <p className="reading__aside">{NOT_FOR_CLINICAL_USE}</p>
     </div>
   );
@@ -204,9 +204,13 @@ function ReadoutRow({ drugId, unit, seconds, plasma, effectSite }: {
 }) {
   return (
     <p className="field__hint numeric" aria-live="off">
-      {drugId} at {seconds.toFixed(0)} s: plasma{' '}
-      {plasma === null ? '--' : plasma.toFixed(2)} {unit}, effect site{' '}
-      {effectSite === null ? '--' : effectSite.toFixed(2)} {unit}
+      {t('conc.readout-row', {
+        drug: drugId,
+        seconds: seconds.toFixed(0),
+        plasma: plasma === null ? '--' : plasma.toFixed(2),
+        effect: effectSite === null ? '--' : effectSite.toFixed(2),
+        unit,
+      })}
     </p>
   );
 }
