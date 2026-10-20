@@ -162,6 +162,18 @@ export const EN_MESSAGES = {
   'guide.at-start': { class: 'educator', text: 'At start' },
   'guide.tick': { class: 'educator', text: 'Tick {tick}' },
   'guide.when': { class: 'educator', text: 'When {when}' },
+  'translation.offered': { class: 'root-prose', text: 'Languages offered besides English' },
+  'translation.strings': { class: 'root-prose', text: 'Interface strings in the English catalog so far' },
+  'translation.intro': { class: 'root-prose', text: 'The interface is in English. A language is offered only when every interface string has been translated by a named person and none is out of date, because a cockpit that switches language mid-screen under time pressure is worse than one in English. Machine translation is never used to start a catalog.' },
+  'translation.languages': { class: 'root-prose', text: 'Languages' },
+  'translation.none': { class: 'root-prose', text: 'No translation has been contributed yet. The first two planned are Spanish and Brazilian Portuguese.' },
+  'translation.row': { class: 'root-prose', text: '{translated} of {total} strings{stale}, {offered}. Translated by {translators}.' },
+  'translation.row-stale': { class: 'root-prose', text: ', {count} out of date' },
+  'translation.row-offered': { class: 'root-prose', text: 'offered' },
+  'translation.row-not-offered': { class: 'root-prose', text: 'not yet offered' },
+  'translation.pseudo': { class: 'root-prose', text: 'Two test locales are never offered: one lengthens every string by about 40% ({total} strings) and one mirrors the page right to left. They are applied by hand in development to check layout; running them automatically on every build is not done yet.' },
+  'translation.clinical-heading': { class: 'root-prose', text: 'Clinical content' },
+  'translation.clinical': { class: 'root-prose', text: 'Every scenario, explainer, tutor message, debrief, and limitation stays in English in all {modules} modules until a translation of it has its own clinical review. That review does not exist in English yet, so no clinical translation is planned before it.' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 export type MessageKey = keyof typeof EN_MESSAGES;

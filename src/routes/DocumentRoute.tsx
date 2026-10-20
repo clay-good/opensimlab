@@ -23,9 +23,8 @@ import {
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { APP_VERSION } from '@platform/governance/status';
 import { FRAMEWORKS } from '@anesthesia/curriculum/frameworks';
-import { EN_MESSAGES, LOCALE_CATALOGS, t } from '@platform/i18n/messages';
-import { coverage, pseudoLocale, type SourceMessage } from '@platform/i18n/catalog';
-import { MODULES } from '@platform/modules/registry';
+import { t } from '@platform/i18n/messages';
+import { TranslationStatusBody } from '@platform/i18n/TranslationStatusBody';
 import { FRAMEWORK_REVIEW_MONTHS, overdueFrameworks } from '@platform/curriculum/framework-records';
 import { MODELS, MODEL_SET_REVISION } from '@anesthesia/pharmacology/registry';
 import {
@@ -523,57 +522,6 @@ function FrameworkReadings() {
           </li>
         ))}
       </ul>
-    </>
-  );
-}
-
-/**
- * Which language a reader is reading, stated. Counts come from the catalogs
- * themselves, so this page cannot claim a translation that does not exist.
- */
-function TranslationStatusBody() {
-  const interfaceKeys = Object.values(EN_MESSAGES as Readonly<Record<string, SourceMessage>>)
-    .filter((message) => message.class !== 'clinical').length;
-  const reports = LOCALE_CATALOGS.map((catalog) => ({ catalog, report: coverage(EN_MESSAGES, catalog) }));
-  const offered = reports.filter(({ report }) => report.offerable);
-  const pseudo = coverage(EN_MESSAGES, pseudoLocale(EN_MESSAGES, 'en-XA'));
-  return (
-    <>
-      <div className="figures">
-        <KeyFigure value={offered.length} label="Languages offered besides English" tone="warning" />
-        <KeyFigure value={interfaceKeys} label="Interface strings in the English catalog so far" />
-      </div>
-      <p>
-        The interface is in English. A language is offered only when every interface string has
-        been translated by a named person and none is out of date, because a cockpit that switches
-        language mid-screen under time pressure is worse than one in English. Machine translation
-        is never used to start a catalog.
-      </p>
-      <h2>Languages</h2>
-      {reports.length === 0 ? (
-        <p>No translation has been contributed yet. The first two planned are Spanish and Brazilian Portuguese.</p>
-      ) : (
-        <ul>
-          {reports.map(({ catalog, report }) => (
-            <li key={catalog.locale}>
-              <code>{catalog.locale}</code>: {report.translated} of {report.total} strings
-              {report.stale.length > 0 ? `, ${report.stale.length} out of date` : ''}
-              {report.offerable ? ', offered' : ', not yet offered'}. Translated by {catalog.translators.join(', ')}.
-            </li>
-          ))}
-        </ul>
-      )}
-      <p className="field__hint">
-        Two test locales check the layout on every build and are never offered: one lengthens every
-        string by about 40% ({pseudo.total} strings), and one mirrors the page right to left.
-      </p>
-      <h2>Clinical content</h2>
-      <p>
-        Every scenario, explainer, tutor message, debrief, and limitation stays in English in all{' '}
-        {MODULES.filter((module) => module.status === 'available').length} modules until a
-        translation of it has its own clinical review. That review does not exist in English yet,
-        so no clinical translation is planned before it.
-      </p>
     </>
   );
 }

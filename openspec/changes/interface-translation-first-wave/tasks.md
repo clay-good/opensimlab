@@ -14,11 +14,12 @@
   own component, the return suggestion (10, its reason one plural message rather than fragments),
   the nursing debrief's NCJMM list (7, classed educator), and the facilitator guide (71 strings,
   educator: page, headings, item labels, absent reasons, and its fixed prebrief and debrief
-  templates) read from `src/platform/i18n/messages.ts` and render the same English.
+  templates), and `/translation-status` (12 strings, root prose, now its own component) read from `src/platform/i18n/messages.ts` and render the same English.
   `tests/unit/externalised-strings.test.ts` is the hard-coded-string test, applied to each surface
   once it is externalised; every other surface remains.
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.
-  The prerendered page computes coverage from the catalogs at build: languages offered (none),
+  Its sentence claiming the test locales ran on every build was untrue and is corrected: they are
+  applied by hand in development until CI runs them. The prerendered page computes coverage from the catalogs at build: languages offered (none),
   interface strings so far, each contributed locale's translated and stale counts, the two test
   locales, and that clinical content stays English in every module.
 - [ ] Add `en-XA` (40% expansion) and `en-XB` (mirrored) to the CI matrix; run layout-shift,

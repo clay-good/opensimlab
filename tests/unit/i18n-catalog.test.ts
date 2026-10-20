@@ -119,3 +119,11 @@ describe('the active catalog', () => {
     expect(SITE_BAR_LINKS[0]?.label).toBe('Anesthesia');
   });
 });
+
+describe('the translation status page states only what is true', () => {
+  it('does not claim the test locales run on every build', () => {
+    const markup = renderToStaticMarkup(createElement(DocumentRoute, { path: '/translation-status' }));
+    expect(markup).not.toContain('on every build and are never offered');
+    expect(markup).toContain('running them automatically on every build is not done yet');
+  });
+});
