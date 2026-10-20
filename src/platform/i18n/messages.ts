@@ -174,6 +174,21 @@ export const EN_MESSAGES = {
   'translation.pseudo': { class: 'root-prose', text: 'Two test locales are never offered: one lengthens every string by about 40% ({total} strings) and one mirrors the page right to left. They are applied by hand in development to check layout; running them automatically on every build is not done yet.' },
   'translation.clinical-heading': { class: 'root-prose', text: 'Clinical content' },
   'translation.clinical': { class: 'root-prose', text: 'Every scenario, explainer, tutor message, debrief, and limitation stays in English in all {modules} modules until a translation of it has its own clinical review. That review does not exist in English yet, so no clinical translation is planned before it.' },
+  'queue.verified': { class: 'root-prose', text: 'Parameters independently verified' },
+  'queue.pending': { class: 'root-prose', text: 'Parameters awaiting a check' },
+  'queue.intro': { class: 'root-prose', text: 'Every pharmacology parameter in this build was transcribed by hand from its primary publication. This project calls a value verified only when a different person has checked it against a second source, and there has not yet been a different person. A check is not a clinical review: it changes one parameter from pending to verified, and it signs no content, covers no clinical domain, and advances no maturity label.' },
+  'queue.how-heading': { class: 'root-prose', text: 'How to check a parameter' },
+  'queue.how': { class: 'root-prose', text: 'Open the primary source at the locator given. Confirm the value as transcribed for the paper\'s reference individual. Open one of the second sources accepted for that model and confirm it agrees, noting any discrepancy rather than resolving it. Then send a record with the model, the parameter, the value and unit you checked, the model-set revision ({revision}), the second source and its locator, your name and your qualification as you would state it, and the date. A maintainer opens your second source before anything is recorded; nothing changes on receipt, and no contact detail is asked for. Records arrive by pull request, beside the model file, in the format the contribution guide gives.' },
+  'queue.discrepancy': { class: 'root-prose', text: 'A discrepancy opens a correction instead of a verified record.' },
+  'queue.every-heading': { class: 'root-prose', text: 'Every parameter' },
+  'queue.model-meta': { class: 'root-prose', text: '{pending} of {total} pending' },
+  'queue.primary': { class: 'root-prose', text: 'Primary locator: {locator}' },
+  'queue.accepted': { class: 'root-prose', text: 'Second sources accepted: {kinds}.' },
+  'queue.entry': { class: 'root-prose', text: '(reference individual) — {status}.' },
+  'queue.status.verified': { class: 'root-prose', text: 'verified by an independent check' },
+  'queue.status.disputed': { class: 'root-prose', text: 'disputed: a check found a discrepancy, and a correction is open' },
+  'queue.status.earlier-version-checked': { class: 'root-prose', text: 'pending: a check exists, but for an earlier model-set revision' },
+  'queue.status.pending': { class: 'root-prose', text: 'pending independent check' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 export type MessageKey = keyof typeof EN_MESSAGES;

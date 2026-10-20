@@ -51,7 +51,10 @@
 - [ ] Author at least two pause points per scenario, placed at the authored teaching moments.
   Started: both persistent VF lessons (anesthesia and emergency medicine) declare two each, at the
   rhythm event and before the scripted reassessment; each is a question for the room that never
-  names the rhythm. 254 scenarios remain, and the gate counts them.
+  names the rhythm. 254 scenarios remain, and the gate counts them. Authoring stopped there on
+  purpose: a pause is itself a cue, so in a recognition lesson a pause at the onset tells the room
+  that something just happened, and most lessons have one authored moment, not two. Placing the
+  rest is a judgment for educators, lesson by lesson, rather than something to generate.
 
 ## 3. Bookmarks and scrubbing
 

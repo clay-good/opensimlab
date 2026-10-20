@@ -16,6 +16,7 @@ const EXTERNALISED: readonly { readonly path: string; readonly region?: readonly
   { path: 'src/modules/anesthesia/ui/NcjmmCoverageList.tsx' },
   { path: 'src/routes/FacilitatorGuideRoute.tsx' },
   { path: 'src/platform/i18n/TranslationStatusBody.tsx' },
+  { path: 'src/modules/anesthesia/ui/VerificationQueueBody.tsx' },
 ];
 
 /** Text between a closing `>` and the next `<` that is not only whitespace or an expression. */
