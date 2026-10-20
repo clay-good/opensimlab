@@ -12,9 +12,9 @@
   chrome (8 strings), and the cockpit's rapid-cycle and classroom pause panels (11 strings), and
   the session menu's note, classroom, vibration and narration controls (22 strings), each now its
   own component, the return suggestion (10, its reason one plural message rather than fragments),
-  the nursing debrief's NCJMM list (7, classed educator), and the facilitator guide (61 strings,
-  educator: page, headings, item labels, and absent reasons; its fixed prebrief and debrief templates
-  remain) read from `src/platform/i18n/messages.ts` and render the same English.
+  the nursing debrief's NCJMM list (7, classed educator), and the facilitator guide (71 strings,
+  educator: page, headings, item labels, absent reasons, and its fixed prebrief and debrief
+  templates) read from `src/platform/i18n/messages.ts` and render the same English.
   `tests/unit/externalised-strings.test.ts` is the hard-coded-string test, applied to each surface
   once it is externalised; every other surface remains.
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.

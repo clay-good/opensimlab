@@ -100,3 +100,17 @@ describe('facilitator guide', () => {
     expect(socialImageUrl(guide.path)).toBe(socialImageUrl(guide.path.replace(/^\/facilitator/, '')));
   });
 });
+
+describe('the guide templates come from the catalog', () => {
+  it('follow the active locale, so the guide can be translated as educator text', async () => {
+    const { EN_MESSAGES, setActiveCatalog } = await import('@platform/i18n/messages');
+    const { pseudoLocale } = await import('@platform/i18n/catalog');
+    expect(GUIDE_TEMPLATES.reactions).toBe(EN_MESSAGES['guide.template.reactions'].text);
+    try {
+      setActiveCatalog(pseudoLocale(EN_MESSAGES, 'en-XA'));
+      expect(GUIDE_TEMPLATES.reactions).toMatch(/^\[Reactions:.*·+\]$/);
+    } finally {
+      setActiveCatalog(undefined);
+    }
+  });
+});

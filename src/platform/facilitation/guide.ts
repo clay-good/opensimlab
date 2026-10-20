@@ -30,22 +30,17 @@ export type GuideSection =
 
 /** The only prose the guide adds. No dose, value, diagnosis, or recommendation may appear here. */
 export const GUIDE_TEMPLATES = {
-  fiction:
-    'The patient, the setting, and every number are fictional. Ask learners to engage with the '
-    + 'scenario as if it were real for its length, and say plainly that the simulator is a teaching model with stated '
-    + 'limits, not a patient.',
-  confidentiality:
-    'Agree before starting that what learners do and say in the session stays in the room, and '
-    + 'that mistakes made here are the material the debrief works with, not a judgment of anyone.',
-  monitoring: 'The monitor and controls available in this scenario:',
-  reactions: 'Reactions: How are you feeling after that? What stood out to you?',
-  description: 'Description: In a sentence or two, what was going on, and what were you dealing with?',
-  analysisLead: 'Analysis, one prompt per objective, from the scenario\'s own debrief rubric:',
-  summary: 'Summary: What will you take from this into your next case? What would you do the same, and differently?',
-  timelineLead: 'Ticks are simulation steps from the start of the session; a condition fires when it first holds.',
-  unsigned: 'No credentialed clinician has signed this scenario. It is published as a preview.',
-  report: 'Report a problem with the report control inside the scenario; the triage process is on /corrections.',
-} as const;
+  get fiction() { return t('guide.template.fiction'); },
+  get confidentiality() { return t('guide.template.confidentiality'); },
+  get monitoring() { return t('guide.template.monitoring'); },
+  get reactions() { return t('guide.template.reactions'); },
+  get description() { return t('guide.template.description'); },
+  get analysisLead() { return t('guide.template.analysis-lead'); },
+  get summary() { return t('guide.template.summary'); },
+  get timelineLead() { return t('guide.template.timeline-lead'); },
+  get unsigned() { return t('guide.template.unsigned'); },
+  get report() { return t('guide.template.report'); },
+};
 
 const UNSIGNED = 'UNSIGNED';
 
