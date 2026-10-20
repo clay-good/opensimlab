@@ -3,6 +3,8 @@ import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { ThyroidStormAction, ThyroidStormSnapshot } from './thyroid-storm';
 import { thyroidInlinePrompt, THYROID_SOURCE_HREF } from './tutor/thyroid-guidance';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function ThyroidStormTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', onOpenSource, demonstrating = false }: {
   readonly assessment?: ThyroidStormSnapshot;
@@ -12,7 +14,7 @@ export function ThyroidStormTray({ assessment, scenarioVersion, onAction, guidan
   readonly onOpenSource?: () => void;
   readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = thyroidInlinePrompt(guidance, { scenarioVersion, thyroidStorm: assessment });
   const observation = assessment.observation;
   const decision = (action: ThyroidStormAction, label: string, accepted = false) => {
@@ -24,9 +26,9 @@ export function ThyroidStormTray({ assessment, scenarioVersion, onAction, guidan
     assessment.blanketBetaBlockadeChosen && 'blanket beta-blockade request',
     assessment.earlyIodineAttempted && 'early iodine request'].filter(Boolean);
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p>
       <p className="syringe__remaining">{prompt.because}</p>
     </aside>}

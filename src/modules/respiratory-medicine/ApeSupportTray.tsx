@@ -10,6 +10,8 @@ import { apeSupportInlinePrompt } from './tutor/acute-pulmonary-edema-respirator
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import { TutorPanel } from '@anesthesia/ui/tutor-panel';
 import { Badge, Button } from '@platform/ui';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function ApeSupportTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<EquipmentSnapshot['resuscitation']['apeSupportAssessment']>;
@@ -26,7 +28,7 @@ export function ApeSupportTray({ assessment, scenarioVersion, onAction, guidance
   const escalation = assessment?.escalationAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="ape-support-failure-title">
       <div id="ape-support-failure-title" className="syringe__name">A quieter breath can be the warning.</div>

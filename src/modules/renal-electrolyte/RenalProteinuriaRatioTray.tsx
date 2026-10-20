@@ -4,13 +4,15 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { RenalProteinuriaRatioSnapshot } from '@platform/kernel/protocol';
 import type { RenalProteinuriaAction } from './proteinuria-ratio';
 import { renalProteinuriaRatioInlinePrompt, RENAL_PROTEINURIA_SOURCE_HREF } from './renal-proteinuria-ratio-tutor';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function RenalProteinuriaRatioTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', onOpenSource, demonstrating = false }: {
   readonly assessment?: RenalProteinuriaRatioSnapshot; readonly scenarioVersion: string;
   readonly onAction: (action: RenalProteinuriaAction) => void; readonly guidance?: GuidanceLevel;
   readonly onOpenSource?: () => void; readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = renalProteinuriaRatioInlinePrompt(guidance, { scenarioVersion, renalProteinuriaRatio: assessment });
   const observation = assessment.observation; const ratio = assessment.ratioObservation;
   const clinical = assessment.clinicalObservation;
@@ -19,12 +21,12 @@ export function RenalProteinuriaRatioTray({ assessment, scenarioVersion, onActio
     return <Button aria-disabled={unavailable} onClick={unavailable ? undefined : () => onAction(action)}>{label}</Button>;
   };
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
-    <p className="syringe__remaining">Selected source: <a href={RENAL_PROTEINURIA_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>2018 study of biological variability in CKD</a> (opens in a new tab). Fifty clinically stable outpatients, cross-sectional, and its reference change values describe variation in a stable population rather than ruling out change in an unstable one. The patient here is fictional.</p>
+    <p className="syringe__remaining">{t('tray.selected-source')} <a href={RENAL_PROTEINURIA_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>2018 study of biological variability in CKD</a> (opens in a new tab). Fifty clinically stable outpatients, cross-sectional, and its reference change values describe variation in a stable population rather than ruling out change in an unstable one. The patient here is fictional.</p>
     <section className="syringe renal-proteinuria__section" aria-labelledby="renal-proteinuria-variation-title">
       <div id="renal-proteinuria-variation-title" className="syringe__name">168 to 312 is +86%. The band is ±124%.</div>
       <p className="syringe__remaining">Supplied: albumin-creatinine ratio 168 mg/g last clinic and 312 mg/g today, both random afternoon spot samples. Estimated GFR 58 mL/min/1.73 m², unchanged. The team has read the change as progression and is preparing to change treatment today.</p>

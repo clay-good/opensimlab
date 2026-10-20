@@ -11,6 +11,8 @@ import type { EquipmentSnapshot } from '@platform/kernel/protocol';
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import { TutorPanel } from '@anesthesia/ui/tutor-panel';
 import { eclampsiaInlinePrompt } from '../obstetrics/tutor/eclampsia-first-seizure-response-guidance';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function ObstetricsEclampsiaTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<EquipmentSnapshot['resuscitation']['obstetricsEclampsiaAssessment']>;
@@ -28,7 +30,7 @@ export function ObstetricsEclampsiaTray({ assessment, scenarioVersion, onAction,
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="eclampsia-now-title">
       <div id="eclampsia-now-title" className="syringe__name">Read the seizure in its pregnancy context.</div>

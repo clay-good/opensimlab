@@ -4,6 +4,8 @@ import type { CountedRateSnapshot } from '@platform/kernel/protocol';
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { CountedRateAction } from './counted-rate';
 import { countedRateInlinePrompt } from './counted-rate-tutor';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function CountedRateTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: CountedRateSnapshot;
@@ -12,7 +14,7 @@ export function CountedRateTray({ assessment, scenarioVersion, onAction, guidanc
   readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = countedRateInlinePrompt(guidance, { scenarioVersion, countedRate: assessment });
   const chart = assessment.chartRecord; const patient = assessment.patientRecord;
   const observation = assessment.observation;
@@ -21,9 +23,9 @@ export function CountedRateTray({ assessment, scenarioVersion, onAction, guidanc
     return <Button aria-disabled={unavailable} onClick={unavailable ? undefined : () => onAction(action)}>{label}</Button>;
   };
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
     {/* Both numbers are shown together from the moment the second one exists, because the

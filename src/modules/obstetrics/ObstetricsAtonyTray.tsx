@@ -11,6 +11,8 @@ import type { EquipmentSnapshot } from '@platform/kernel/protocol';
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import { TutorPanel } from '@anesthesia/ui/tutor-panel';
 import { atonyInlinePrompt } from '../obstetrics/tutor/postpartum-hemorrhage-uterine-atony-guidance';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function ObstetricsAtonyTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<EquipmentSnapshot['resuscitation']['obstetricsAtonyAssessment']>;
@@ -28,7 +30,7 @@ export function ObstetricsAtonyTray({ assessment, scenarioVersion, onAction, gui
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="obstetrics-atony-early-title">
       <div id="obstetrics-atony-early-title" className="syringe__name">See the bleeding early. Bring calm around it.</div>

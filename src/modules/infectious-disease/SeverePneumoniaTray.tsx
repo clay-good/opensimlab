@@ -4,6 +4,8 @@ import type { SeverePneumoniaSnapshot } from '@platform/kernel/protocol';
 import type { SeverePneumoniaAction } from './severe-pneumonia';
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import { severePneumoniaInlinePrompt } from './severe-pneumonia-tutor';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function SeverePneumoniaTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: SeverePneumoniaSnapshot;
@@ -12,7 +14,7 @@ export function SeverePneumoniaTray({ assessment, scenarioVersion, onAction, gui
   readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = severePneumoniaInlinePrompt(guidance, { scenarioVersion, severePneumonia: assessment });
   const labs = assessment.labObservation; const respiratory = assessment.respiratoryObservation;
   const observation = assessment.observation;
@@ -21,9 +23,9 @@ export function SeverePneumoniaTray({ assessment, scenarioVersion, onAction, gui
     return <Button aria-disabled={unavailable} onClick={unavailable ? undefined : () => onAction(action)}>{label}</Button>;
   };
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
     <p className="syringe__remaining">Selected sources: the 2019 ATS/IDSA severity definition, NICE NG250 (2025), and a 2012 meta-analysis of severity tools for predicting critical-care admission. Open the source view for exact locators.</p>

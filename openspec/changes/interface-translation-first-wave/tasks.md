@@ -69,9 +69,12 @@
     (9), and the tray, pump-settings, free-dose, and out-of-region labels. What remains in
     `ActionCockpit.tsx` names clinical interventions, parameters, and model limits ("Start 20%
     lipid", "Tidal volume", "Never shock asystole or PEA") and stays English as clinical content.
-  - Still to move: an audit of the fifteen other modules' trays for generic controls among their
-    clinical labels, and the cockpit's screen-reader announcements, which describe clinical state
-    and need the same split before any of them moves.
+  - Every module's trays, audited for generic controls among their clinical labels: the
+    worked-example notice (129 copies), the loading line (62), the think-time heading (62), Confirm
+    choice (4), and the source prefixes (14) are six messages used 271 times across 130 files.
+    The rest is each lab's clinical step and boundary wording and stays English.
+  - Still to move: the cockpit's screen-reader announcements, which describe clinical state and
+    need the same split before any of them moves.
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.
   Its sentence claiming the test locales ran on every build was untrue and is corrected: they are
   applied by hand in development until CI runs them. The prerendered page computes coverage from the catalogs at build: languages offered (none),

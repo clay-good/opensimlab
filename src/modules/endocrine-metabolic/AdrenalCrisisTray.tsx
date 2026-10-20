@@ -3,6 +3,8 @@ import type { AdrenalCrisisSnapshot } from '@platform/kernel/protocol';
 import type { AdrenalCrisisAction } from './adrenal-crisis';
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import { adrenalInlinePrompt, ADRENAL_SOURCE_HREF } from './tutor/adrenal-guidance';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function AdrenalCrisisTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', onOpenSource, demonstrating = false }: {
   readonly assessment?: AdrenalCrisisSnapshot;
@@ -12,14 +14,14 @@ export function AdrenalCrisisTray({ assessment, scenarioVersion, onAction, guida
   readonly onOpenSource?: () => void;
   readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const observation = assessment.observation;
   const prompt = adrenalInlinePrompt(guidance, { scenarioId: 'adrenal-crisis-treatment-before-tests', scenarioVersion,
     adrenalCrisis: assessment, tick: 0, state: null, actions: [], ventilating: false, alarmCount: 0 });
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p>
       <p className="syringe__remaining">{prompt.because}</p>
     </aside>}

@@ -3,6 +3,8 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import { TutorPanel } from '@anesthesia/ui/tutor-panel';
 import { maternalArrestInlinePrompt } from '../obstetrics/tutor/maternal-cardiac-arrest-coordinated-response-guidance';
 import { Button } from '@platform/ui';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function ObstetricsMaternalArrestTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<EquipmentSnapshot['resuscitation']['obstetricsMaternalArrestAssessment']>;
@@ -20,7 +22,7 @@ export function ObstetricsMaternalArrestTray({ assessment, scenarioVersion, onAc
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="obstetrics-maternal-arrest-now-title">
       <div id="obstetrics-maternal-arrest-now-title" className="syringe__name">Make the whole team ready at once.</div>

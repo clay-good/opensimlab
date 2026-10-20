@@ -7,6 +7,8 @@
  * that leave take an import rather than a copy.
  */
 
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 /** The observed-state tutor's one suggestion, or nothing at all when it has none. */
 export function TutorPanel({ prompt }: {
   readonly prompt: { readonly suggestion: string; readonly because: string } | null | undefined;
@@ -14,7 +16,7 @@ export function TutorPanel({ prompt }: {
   if (!prompt) return null;
   return (
     <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p>
       <p className="syringe__remaining">{prompt.because}</p>
     </aside>

@@ -3,6 +3,8 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import { TutorPanel } from '@anesthesia/ui/tutor-panel';
 import { tricyclicInlinePrompt } from '../toxicology/tutor/tricyclic-sodium-channel-cardiotoxicity-guidance';
 import { Button } from '@platform/ui';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function ToxicologyTricyclicTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<EquipmentSnapshot['resuscitation']['toxicologyTricyclicAssessment']>;
@@ -20,7 +22,7 @@ export function ToxicologyTricyclicTray({ assessment, scenarioVersion, onAction,
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="toxicology-tricyclic-early-title">
       <div id="toxicology-tricyclic-early-title" className="syringe__name">The tracing belongs to a whole patient.</div>

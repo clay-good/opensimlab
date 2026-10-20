@@ -11,6 +11,8 @@ import type { EquipmentSnapshot } from '@platform/kernel/protocol';
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import { TutorPanel } from '@anesthesia/ui/tutor-panel';
 import { maternalSepsisInlinePrompt } from '../obstetrics/tutor/maternal-sepsis-postpartum-deterioration-guidance';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function ObstetricsMaternalSepsisTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<EquipmentSnapshot['resuscitation']['obstetricsMaternalSepsisAssessment']>;
@@ -28,7 +30,7 @@ export function ObstetricsMaternalSepsisTray({ assessment, scenarioVersion, onAc
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="maternal-sepsis-now-title">
       <div id="maternal-sepsis-now-title" className="syringe__name">Notice the whole person. Move together.</div>

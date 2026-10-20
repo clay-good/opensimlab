@@ -76,7 +76,7 @@ export function AspirationRiskTray({
               <Button variant="primary" className="crisis-drug__action" onClick={() => {
                 onAction(pendingPlan);
                 setPendingPlan(null);
-              }}>Confirm choice</Button>
+              }}>{t('tray.confirm-choice')}</Button>
               <Button variant="ghost" className="crisis-drug__action"
                 onClick={() => setPendingPlan(null)}>{t('action.cancel')}</Button>
             </div>

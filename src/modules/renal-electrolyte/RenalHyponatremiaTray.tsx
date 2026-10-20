@@ -4,13 +4,15 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { RenalHyponatremiaSnapshot } from '@platform/kernel/protocol';
 import type { RenalHyponatremiaAction } from './hyponatremia';
 import { renalHyponatremiaInlinePrompt, RENAL_HYPONATREMIA_SOURCE_HREF } from './renal-hyponatremia-tutor';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function RenalHyponatremiaTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', onOpenSource, demonstrating = false }: {
   readonly assessment?: RenalHyponatremiaSnapshot; readonly scenarioVersion: string;
   readonly onAction: (action: RenalHyponatremiaAction) => void; readonly guidance?: GuidanceLevel;
   readonly onOpenSource?: () => void; readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = renalHyponatremiaInlinePrompt(guidance, { scenarioVersion, renalHyponatremia: assessment });
   const observation = assessment.observation; const sodium = assessment.sodiumObservation; const neurologic = assessment.neurologicObservation;
   const symptoms = (value: { alertness: string; headache: boolean; nausea: boolean }) =>
@@ -20,12 +22,12 @@ export function RenalHyponatremiaTray({ assessment, scenarioVersion, onAction, g
     return <Button aria-disabled={unavailable} onClick={unavailable ? undefined : () => onAction(action)}>{label}</Button>;
   };
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
-    <p className="syringe__remaining">Selected source: <a href={RENAL_HYPONATREMIA_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>Society for Endocrinology 2022 guidance</a> (opens in a new tab). This lesson follows its persistent-symptom pathway, not a universal regional rule.</p>
+    <p className="syringe__remaining">{t('tray.selected-source')} <a href={RENAL_HYPONATREMIA_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>Society for Endocrinology 2022 guidance</a> (opens in a new tab). This lesson follows its persistent-symptom pathway, not a universal regional rule.</p>
     <section className="syringe renal-hyponatremia__section" aria-labelledby="renal-hyponatremia-rescue-title">
       <div id="renal-hyponatremia-rescue-title" className="syringe__name">Treat the presentation. Reassess the person.</div>
       <p className="syringe__remaining">Supplied sodium: 118 mmol/L. The patient is awake but confused, with headache and nausea without vomiting or seizure. This is the historical starting assessment; the sodium of 118 remains the original correction baseline.</p>

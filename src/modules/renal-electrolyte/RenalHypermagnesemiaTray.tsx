@@ -4,13 +4,15 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { RenalHypermagnesemiaSnapshot } from '@platform/kernel/protocol';
 import type { RenalHypermagnesemiaAction } from './hypermagnesemia';
 import { renalHypermagnesemiaInlinePrompt, RENAL_HYPERMAGNESEMIA_SOURCE_HREF } from './renal-hypermagnesemia-tutor';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function RenalHypermagnesemiaTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', onOpenSource, demonstrating = false }: {
   readonly assessment?: RenalHypermagnesemiaSnapshot; readonly scenarioVersion: string;
   readonly onAction: (action: RenalHypermagnesemiaAction) => void; readonly guidance?: GuidanceLevel;
   readonly onOpenSource?: () => void; readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = renalHypermagnesemiaInlinePrompt(guidance, { scenarioVersion, renalHypermagnesemia: assessment });
   const observation = assessment.observation; const magnesium = assessment.magnesiumObservation;
   const neuromuscular = assessment.neuromuscularObservation;
@@ -21,12 +23,12 @@ export function RenalHypermagnesemiaTray({ assessment, scenarioVersion, onAction
     return <Button aria-disabled={unavailable} onClick={unavailable ? undefined : () => onAction(action)}>{label}</Button>;
   };
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
-    <p className="syringe__remaining">Selected source: <a href={RENAL_HYPERMAGNESEMIA_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>2018 emergency-dialysis case series</a> (opens in a new tab). This observational source is not a treatment protocol; the patient and response contrasts are fictional.</p>
+    <p className="syringe__remaining">{t('tray.selected-source')} <a href={RENAL_HYPERMAGNESEMIA_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>2018 emergency-dialysis case series</a> (opens in a new tab). This observational source is not a treatment protocol; the patient and response contrasts are fictional.</p>
     <section className="syringe renal-hypermagnesemia__section" aria-labelledby="renal-hypermagnesemia-support-title">
       <div id="renal-hypermagnesemia-support-title" className="syringe__name">Support breathing. Counter toxicity.</div>
       <p className="syringe__remaining">Supplied magnesium: 4.6 mmol/L, with drowsiness, absent reflexes, severe weakness, and slow breathing. These are historical starting findings.</p>

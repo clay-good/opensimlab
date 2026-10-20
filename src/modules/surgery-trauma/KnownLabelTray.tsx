@@ -4,6 +4,8 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { KnownLabelSnapshot } from '@platform/kernel/protocol';
 import type { KnownLabelAction } from './known-label';
 import { knownLabelInlinePrompt } from './known-label-tutor';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function KnownLabelTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: KnownLabelSnapshot; readonly scenarioVersion: string;
@@ -11,7 +13,7 @@ export function KnownLabelTray({ assessment, scenarioVersion, onAction, guidance
   readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = knownLabelInlinePrompt(guidance, { scenarioVersion, knownLabel: assessment });
   const observations = assessment.observationRecord; const behaviour = assessment.behaviourRecord;
   const observation = assessment.observation;
@@ -20,9 +22,9 @@ export function KnownLabelTray({ assessment, scenarioVersion, onAction, guidance
     return <Button aria-disabled={unavailable} onClick={unavailable ? undefined : () => onAction(action)}>{label}</Button>;
   };
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
     <p className="syringe__remaining" role="status">41-year-old man with a severe learning disability. Chronic constipation recorded for {assessment.labelYears} years. Informant of {assessment.informantYears} years {assessment.informantPresent ? 'is present' : 'has gone home'}. Abdominal examination he could take part in: {assessment.examinationAchieved ? 'achieved' : 'not achieved'}.</p>

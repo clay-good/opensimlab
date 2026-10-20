@@ -3,6 +3,8 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import { TutorPanel } from '@anesthesia/ui/tutor-panel';
 import { delayedLastInlinePrompt } from '../toxicology/tutor/delayed-local-anesthetic-cns-cardiac-toxicity-guidance';
 import { Button } from '@platform/ui';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function ToxicologyDelayedLastTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<EquipmentSnapshot['resuscitation']['toxicologyDelayedLastAssessment']>;
@@ -20,7 +22,7 @@ export function ToxicologyDelayedLastTray({ assessment, scenarioVersion, onActio
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="toxicology-delayed-last-early-title">
       <div id="toxicology-delayed-last-early-title" className="syringe__name">The quiet cues were part of the crisis.</div>

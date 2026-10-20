@@ -4,6 +4,8 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { HypercalcemiaSnapshot } from '@platform/kernel/protocol';
 import type { HypercalcemiaAction } from './hypercalcemia';
 import { hypercalcemiaInlinePrompt, HYPERCALCEMIA_SOURCE_HREF, HYPERCALCEMIA_ES_SOURCE_HREF } from './tutor/hypercalcemia-guidance';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function HypercalcemiaTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', onOpenSource, demonstrating = false }: {
   readonly assessment?: HypercalcemiaSnapshot;
@@ -13,7 +15,7 @@ export function HypercalcemiaTray({ assessment, scenarioVersion, onAction, guida
   readonly onOpenSource?: () => void;
   readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = hypercalcemiaInlinePrompt(guidance, { scenarioVersion, hypercalcemia: assessment });
   const observation = assessment.observation;
   const decision = (action: HypercalcemiaAction, label: string, accepted = false) => {
@@ -24,9 +26,9 @@ export function HypercalcemiaTray({ assessment, scenarioVersion, onAction, guida
     assessment.routineDiureticAttempted && 'routine loop diuretic',
     assessment.waitForCauseChosen && 'waiting for the cause investigation'].filter(Boolean);
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p>
       <p className="syringe__remaining">{prompt.because}</p>
     </aside>}

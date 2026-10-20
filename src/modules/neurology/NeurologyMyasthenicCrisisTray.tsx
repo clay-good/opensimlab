@@ -10,6 +10,8 @@ import { myastheniaInlinePrompt } from './tutor/myasthenic-crisis-escalation-gui
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import { TutorPanel } from '@anesthesia/ui/tutor-panel';
 import { Button } from '@platform/ui';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function NeurologyMyasthenicCrisisTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<EquipmentSnapshot['resuscitation']['neurologyMyasthenicCrisisAssessment']>;
@@ -27,7 +29,7 @@ export function NeurologyMyasthenicCrisisTray({ assessment, scenarioVersion, onA
   const later = assessment?.laterAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neurology-myasthenic-crisis-pattern-title">
       <div id="neurology-myasthenic-crisis-pattern-title" className="syringe__name">Watch work, not just oxygen.</div>

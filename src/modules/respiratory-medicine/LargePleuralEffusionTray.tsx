@@ -10,6 +10,8 @@ import { largePleuralEffusionInlinePrompt } from './tutor/large-unilateral-pleur
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import { TutorPanel } from '@anesthesia/ui/tutor-panel';
 import { Badge, Button } from '@platform/ui';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function LargePleuralEffusionTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<EquipmentSnapshot['resuscitation']['largePleuralEffusionAssessment']>;
@@ -27,7 +29,7 @@ export function LargePleuralEffusionTray({ assessment, scenarioVersion, onAction
   const evaluation = assessment?.evaluationAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="large-effusion-pattern-title">
       <div id="large-effusion-pattern-title" className="syringe__name">The fluid is real. The cause is still open.</div>

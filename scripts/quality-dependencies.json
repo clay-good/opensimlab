@@ -32,7 +32,7 @@
       },
       {
         "path": "src/modules/endocrine-metabolic/HypocalcemiaTray.tsx",
-        "sha256": "79390697f9d6c554a37b9ca0b4523f73d0c87690b30b49d2f8e2c6cf40696a0f"
+        "sha256": "8999eb956f7309fbc7dc2d539d138e2405e6dce21288bf7ef3e063a864cc6e26"
       },
       {
         "path": "src/modules/endocrine-metabolic/demo/hypocalcemia-demonstration.ts",
@@ -245,7 +245,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/ActionCockpit.tsx",
-        "sha256": "541553e51925adf96e2f37339e952f58021805914afaa4bc8197c044288d878e"
+        "sha256": "6ee564834ca1f00db42d812c5f7fbbab96f99f803afb7c9ec79e5a4ee3d73ab8"
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
@@ -261,7 +261,7 @@
       },
       {
         "path": "src/modules/endocrine-metabolic/HyponatremiaCorrectionTray.tsx",
-        "sha256": "83a4e67cdb4957fdcbad2f33dfa260c9cdf9cd0e7166b41b9e86364cf1b9027d"
+        "sha256": "210b78f8f0e33c836c672860747c35e57e05c7e03e83d6c472e129269e1a20bd"
       },
       {
         "path": "src/modules/endocrine-metabolic/demo/hyponatremia-correction-demonstration.ts",
@@ -510,7 +510,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/ActionCockpit.tsx",
-        "sha256": "541553e51925adf96e2f37339e952f58021805914afaa4bc8197c044288d878e"
+        "sha256": "6ee564834ca1f00db42d812c5f7fbbab96f99f803afb7c9ec79e5a4ee3d73ab8"
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
@@ -538,7 +538,7 @@
       },
       {
         "path": "src/modules/endocrine-metabolic/AvpDeficiencyTray.tsx",
-        "sha256": "6ecddbb5ec77963637305be15506f78f7f32896913bcf555151cfe3d7caa15c1"
+        "sha256": "519aad10d22517f4764b898ccd7c12e6a2af81eff43164707d5b2622daa87e05"
       },
       {
         "path": "src/modules/endocrine-metabolic/avp-deficiency-completion.ts",

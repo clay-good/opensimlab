@@ -3,6 +3,8 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import { TutorPanel } from '@anesthesia/ui/tutor-panel';
 import { maternalNeonatalHandoffInlinePrompt } from '../obstetrics/tutor/maternal-to-neonatal-resuscitation-handoff-guidance';
 import { Button } from '@platform/ui';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function ObstetricsMaternalNeonatalHandoffTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<EquipmentSnapshot['resuscitation']['obstetricsMaternalNeonatalHandoffAssessment']>;
@@ -20,7 +22,7 @@ export function ObstetricsMaternalNeonatalHandoffTray({ assessment, scenarioVers
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="obstetrics-maternal-neonatal-handoff-now-title">
       <div id="obstetrics-maternal-neonatal-handoff-now-title" className="syringe__name">Two patients. Two teams. One clear transfer.</div>

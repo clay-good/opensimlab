@@ -10,6 +10,8 @@ import { gbsInlinePrompt } from './tutor/guillain-barre-respiratory-decline-guid
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import { TutorPanel } from '@anesthesia/ui/tutor-panel';
 import { Button } from '@platform/ui';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function NeurologyGbsTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<EquipmentSnapshot['resuscitation']['neurologyGbsAssessment']>;
@@ -27,7 +29,7 @@ export function NeurologyGbsTray({ assessment, scenarioVersion, onAction, guidan
   const later = assessment?.laterAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neurology-gbs-pattern-title">
       <div id="neurology-gbs-pattern-title" className="syringe__name">Track decline, not saturation.</div>

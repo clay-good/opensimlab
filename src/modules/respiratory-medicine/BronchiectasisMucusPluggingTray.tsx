@@ -10,6 +10,8 @@ import { bronchiectasisMucusPluggingInlinePrompt } from './tutor/bronchiectasis-
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import { TutorPanel } from '@anesthesia/ui/tutor-panel';
 import { Badge, Button } from '@platform/ui';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function BronchiectasisMucusPluggingTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<EquipmentSnapshot['resuscitation']['bronchiectasisMucusPluggingAssessment']>;
@@ -27,7 +29,7 @@ export function BronchiectasisMucusPluggingTray({ assessment, scenarioVersion, o
   const escalation = assessment?.escalationAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="bronchiectasis-mucus-pattern-title">
       <div id="bronchiectasis-mucus-pattern-title" className="syringe__name">The image says where. The trajectory says why it matters.</div>

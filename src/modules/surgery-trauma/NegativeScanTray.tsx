@@ -4,6 +4,8 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { NegativeScanSnapshot } from '@platform/kernel/protocol';
 import type { NegativeScanAction } from './negative-scan';
 import { negativeScanInlinePrompt } from './negative-scan-tutor';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function NegativeScanTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: NegativeScanSnapshot; readonly scenarioVersion: string;
@@ -11,7 +13,7 @@ export function NegativeScanTray({ assessment, scenarioVersion, onAction, guidan
   readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = negativeScanInlinePrompt(guidance, { scenarioVersion, negativeScan: assessment });
   const observations = assessment.observationRecord; const operative = assessment.operativeRecord;
   const observation = assessment.observation;
@@ -20,9 +22,9 @@ export function NegativeScanTray({ assessment, scenarioVersion, onAction, guidan
     return <Button aria-disabled={unavailable} onClick={unavailable ? undefined : () => onAction(action)}>{label}</Button>;
   };
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
     <p className="syringe__remaining" role="status">Day {assessment.postoperativeDay} after a sigmoid resection with a primary colorectal anastomosis and no diverting stoma. Heart rate above 100 for {assessment.tachycardiaHours} hours. No flatus passed.</p>

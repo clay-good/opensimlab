@@ -4,6 +4,8 @@ import type { LoweringTheCountSnapshot } from '@platform/kernel/protocol';
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { LoweringTheCountAction } from './lowering-the-count';
 import { loweringTheCountInlinePrompt } from './lowering-the-count-tutor';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function LoweringTheCountTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: LoweringTheCountSnapshot; readonly scenarioVersion: string;
@@ -11,7 +13,7 @@ export function LoweringTheCountTray({ assessment, scenarioVersion, onAction, gu
   readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = loweringTheCountInlinePrompt(guidance, { scenarioVersion, loweringTheCount: assessment });
   const observations = assessment.observationRecord; const results = assessment.resultRecord;
   const observation = assessment.observation;
@@ -20,9 +22,9 @@ export function LoweringTheCountTray({ assessment, scenarioVersion, onAction, gu
     return <Button aria-disabled={unavailable} onClick={unavailable ? undefined : () => onAction(action)}>{label}</Button>;
   };
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
     {/* The count and the findings together. The count alone is the thing being refused. */}

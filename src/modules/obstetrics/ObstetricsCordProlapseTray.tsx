@@ -3,6 +3,8 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import { TutorPanel } from '@anesthesia/ui/tutor-panel';
 import { cordProlapseInlinePrompt } from '../obstetrics/tutor/umbilical-cord-prolapse-urgent-birth-coordination-guidance';
 import { Button } from '@platform/ui';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function ObstetricsCordProlapseTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<EquipmentSnapshot['resuscitation']['obstetricsCordProlapseAssessment']>;
@@ -20,7 +22,7 @@ export function ObstetricsCordProlapseTray({ assessment, scenarioVersion, onActi
   const reassessment = assessment?.reassessmentAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="obstetrics-cord-prolapse-now-title">
       <div id="obstetrics-cord-prolapse-now-title" className="syringe__name">Protect oxygen flow. Prepare the whole path.</div>

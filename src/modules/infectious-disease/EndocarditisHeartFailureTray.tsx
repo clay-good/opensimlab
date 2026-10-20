@@ -4,6 +4,8 @@ import type { EndocarditisHeartFailureSnapshot } from '@platform/kernel/protocol
 import type { EndocarditisHeartFailureAction } from './endocarditis-heart-failure';
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import { endocarditisHeartFailureInlinePrompt } from './endocarditis-heart-failure-tutor';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function EndocarditisHeartFailureTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: EndocarditisHeartFailureSnapshot;
@@ -12,7 +14,7 @@ export function EndocarditisHeartFailureTray({ assessment, scenarioVersion, onAc
   readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = endocarditisHeartFailureInlinePrompt(guidance, { scenarioVersion, endocarditisHeartFailure: assessment });
   const labs = assessment.labObservation; const perfusion = assessment.perfusionObservation;
   const observation = assessment.observation;
@@ -21,9 +23,9 @@ export function EndocarditisHeartFailureTray({ assessment, scenarioVersion, onAc
     return <Button aria-disabled={unavailable} onClick={unavailable ? undefined : () => onAction(action)}>{label}</Button>;
   };
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
     <p className="syringe__remaining">Selected sources: the 2023 European endocarditis guidelines with their 2025 corrigendum, the 2023 Duke-ISCVID criteria, and the 2015 United States statement, which predates both. Open the source view for exact locators.</p>

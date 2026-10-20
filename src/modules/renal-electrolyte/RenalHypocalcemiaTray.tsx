@@ -4,13 +4,15 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { RenalHypocalcemiaSnapshot } from '@platform/kernel/protocol';
 import type { RenalHypocalcemiaAction } from './hypocalcemia';
 import { renalHypocalcemiaInlinePrompt, RENAL_HYPOCALCEMIA_SOURCE_HREF } from './renal-hypocalcemia-tutor';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function RenalHypocalcemiaTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', onOpenSource, demonstrating = false }: {
   readonly assessment?: RenalHypocalcemiaSnapshot; readonly scenarioVersion: string;
   readonly onAction: (action: RenalHypocalcemiaAction) => void; readonly guidance?: GuidanceLevel;
   readonly onOpenSource?: () => void; readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = renalHypocalcemiaInlinePrompt(guidance, { scenarioVersion, renalHypocalcemia: assessment });
   const observation = assessment.observation; const ionized = assessment.ionizedObservation; const symptoms = assessment.symptomObservation;
   const symptomText = (value: { carpopedalSpasm: boolean; perioralTingling: boolean }) =>
@@ -20,12 +22,12 @@ export function RenalHypocalcemiaTray({ assessment, scenarioVersion, onAction, g
     return <Button aria-disabled={unavailable} onClick={unavailable ? undefined : () => onAction(action)}>{label}</Button>;
   };
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
-    <p className="syringe__remaining">Selected source: <a href={RENAL_HYPOCALCEMIA_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>FDA 2024 safety communication</a> (opens in a new tab). This medication-safety source is not a general calcium-treatment guideline.</p>
+    <p className="syringe__remaining">{t('tray.selected-source')} <a href={RENAL_HYPOCALCEMIA_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>FDA 2024 safety communication</a> (opens in a new tab). This medication-safety source is not a general calcium-treatment guideline.</p>
     <section className="syringe renal-hypocalcemia__section" aria-labelledby="renal-hypocalcemia-treatment-title">
       <div id="renal-hypocalcemia-treatment-title" className="syringe__name">Treat the measured calcium and the person.</div>
       <p className="syringe__remaining">Supplied measured ionized calcium: 0.86 mmol/L at pH 7.40, with carpopedal spasm and perioral tingling. These are historical starting findings. The adjusted total-calcium estimate of 8.8 mg/dL does not override the measured ionized result.</p>

@@ -4,6 +4,8 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { MyxedemaSnapshot } from '@platform/kernel/protocol';
 import type { MyxedemaAction } from './myxedema';
 import { myxedemaInlinePrompt, MYXEDEMA_SOURCE_HREF, MYXEDEMA_ATA_SOURCE_HREF } from './tutor/myxedema-guidance';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function MyxedemaTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', onOpenSource, demonstrating = false }: {
   readonly assessment?: MyxedemaSnapshot;
@@ -13,7 +15,7 @@ export function MyxedemaTray({ assessment, scenarioVersion, onAction, guidance =
   readonly onOpenSource?: () => void;
   readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = myxedemaInlinePrompt(guidance, { scenarioVersion, myxedema: assessment });
   const observation = assessment.observation;
   const decision = (action: MyxedemaAction, label: string, accepted = false) => {
@@ -25,9 +27,9 @@ export function MyxedemaTray({ assessment, scenarioVersion, onAction, guidance =
     assessment.earlyThyroxineAttempted && 'thyroxine before steroid coverage',
     assessment.rapidRewarmingAttempted && 'rapid rewarming request'].filter(Boolean);
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p>
       <p className="syringe__remaining">{prompt.because}</p>
     </aside>}

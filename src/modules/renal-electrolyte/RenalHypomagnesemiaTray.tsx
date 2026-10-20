@@ -4,13 +4,15 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { RenalHypomagnesemiaSnapshot } from '@platform/kernel/protocol';
 import type { RenalHypomagnesemiaAction } from './hypomagnesemia';
 import { renalHypomagnesemiaInlinePrompt, RENAL_HYPOMAGNESEMIA_SOURCE_HREF } from './renal-hypomagnesemia-tutor';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function RenalHypomagnesemiaTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', onOpenSource, demonstrating = false }: {
   readonly assessment?: RenalHypomagnesemiaSnapshot; readonly scenarioVersion: string;
   readonly onAction: (action: RenalHypomagnesemiaAction) => void; readonly guidance?: GuidanceLevel;
   readonly onOpenSource?: () => void; readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = renalHypomagnesemiaInlinePrompt(guidance, { scenarioVersion, renalHypomagnesemia: assessment });
   const observation = assessment.observation; const magnesium = assessment.magnesiumObservation;
   const potassium = assessment.potassiumObservation;
@@ -19,12 +21,12 @@ export function RenalHypomagnesemiaTray({ assessment, scenarioVersion, onAction,
     return <Button aria-disabled={unavailable} onClick={unavailable ? undefined : () => onAction(action)}>{label}</Button>;
   };
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
-    <p className="syringe__remaining">Selected source: <a href={RENAL_HYPOMAGNESEMIA_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>2007 mechanism review of hypokalemia in magnesium deficiency</a> (opens in a new tab). It is a mechanistic review, not a trial, and it states that magnesium deficiency alone does not necessarily cause hypokalemia. The patient and the response contrasts are fictional.</p>
+    <p className="syringe__remaining">{t('tray.selected-source')} <a href={RENAL_HYPOMAGNESEMIA_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>2007 mechanism review of hypokalemia in magnesium deficiency</a> (opens in a new tab). It is a mechanistic review, not a trial, and it states that magnesium deficiency alone does not necessarily cause hypokalemia. The patient and the response contrasts are fictional.</p>
     <section className="syringe renal-hypomagnesemia__section" aria-labelledby="renal-hypomagnesemia-support-title">
       <div id="renal-hypomagnesemia-support-title" className="syringe__name">Protect her. Stop the exposure.</div>
       <p className="syringe__remaining">Supplied starting findings: potassium 2.7 mmol/L after two replacements elsewhere with no recorded rise, ionized calcium 1.02 mmol/L, QTc 508 ms, cramping with a positive bedside carpal sign. These are historical.</p>

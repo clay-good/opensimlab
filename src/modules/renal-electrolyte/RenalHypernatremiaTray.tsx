@@ -4,13 +4,15 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { RenalHypernatremiaSnapshot } from '@platform/kernel/protocol';
 import type { RenalHypernatremiaAction } from './hypernatremia';
 import { renalHypernatremiaInlinePrompt, RENAL_HYPERNATREMIA_SOURCE_HREF } from './renal-hypernatremia-tutor';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function RenalHypernatremiaTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', onOpenSource, demonstrating = false }: {
   readonly assessment?: RenalHypernatremiaSnapshot; readonly scenarioVersion: string;
   readonly onAction: (action: RenalHypernatremiaAction) => void; readonly guidance?: GuidanceLevel;
   readonly onOpenSource?: () => void; readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = renalHypernatremiaInlinePrompt(guidance, { scenarioVersion, renalHypernatremia: assessment });
   const observation = assessment.observation; const sodium = assessment.sodiumObservation; const balance = assessment.fluidBalanceObservation;
   const fluidBalance = (value: { urineOutputMlPerHour: number; ongoingDiarrhea: boolean }) =>
@@ -20,12 +22,12 @@ export function RenalHypernatremiaTray({ assessment, scenarioVersion, onAction, 
     return <Button aria-disabled={unavailable} onClick={unavailable ? undefined : () => onAction(action)}>{label}</Button>;
   };
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
-    <p className="syringe__remaining">Selected source: <a href={RENAL_HYPERNATREMIA_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>Yun et al. 2023 review</a> (opens in a new tab). This review informs the lesson; it is not a dosing protocol.</p>
+    <p className="syringe__remaining">{t('tray.selected-source')} <a href={RENAL_HYPERNATREMIA_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>Yun et al. 2023 review</a> (opens in a new tab). This review informs the lesson; it is not a dosing protocol.</p>
     <section className="syringe renal-hypernatremia__section" aria-labelledby="renal-hypernatremia-volume-title">
       <div id="renal-hypernatremia-volume-title" className="syringe__name">Restore circulation. Keep water needs distinct.</div>
       <p className="syringe__remaining">Supplied sodium: 164 mmol/L. The patient is awake, thirsty, and fatigued with BP 88/52 mmHg and urine output 20 mL/hour. These are historical starting findings; sodium duration is unknown.</p>

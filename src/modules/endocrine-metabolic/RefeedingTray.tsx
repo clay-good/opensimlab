@@ -4,6 +4,8 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { RefeedingSnapshot } from '@platform/kernel/protocol';
 import type { RefeedingAction } from './refeeding';
 import { refeedingInlinePrompt, REFEEDING_SOURCE_HREF, REFEEDING_ALTERNATIVE_SOURCE_HREF } from './refeeding-tutor';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function RefeedingTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', onOpenSource, demonstrating = false }: {
   readonly assessment?: RefeedingSnapshot;
@@ -13,7 +15,7 @@ export function RefeedingTray({ assessment, scenarioVersion, onAction, guidance 
   readonly onOpenSource?: () => void;
   readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = refeedingInlinePrompt(guidance, { scenarioVersion, refeeding: assessment });
   const observation = assessment.observation;
   const decision = (action: RefeedingAction, label: string, accepted = false) => {
@@ -23,12 +25,12 @@ export function RefeedingTray({ assessment, scenarioVersion, onAction, guidance 
   const earlierChoices = [assessment.feedingAdvanceAttempted && 'automatic feeding advancement',
     assessment.monitoringStopAttempted && 'premature monitoring closure'].filter(Boolean);
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
-    <p className="syringe__remaining">Source context: <a href={REFEEDING_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>ASPEN 2020</a>{' · '}
+    <p className="syringe__remaining">{t('tray.source-context')} <a href={REFEEDING_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>ASPEN 2020</a>{' · '}
       <a href={REFEEDING_ALTERNATIVE_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>AuSPEN 2025</a>. Both open in a new tab; their feeding recommendations differ.</p>
     <section className="syringe refeeding__section" aria-labelledby="refeeding-electrolytes-title">
       <div id="refeeding-electrolytes-title" className="syringe__name">Address the whole electrolyte picture.</div>

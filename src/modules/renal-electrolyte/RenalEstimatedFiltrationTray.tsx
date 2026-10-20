@@ -4,13 +4,15 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { RenalEstimatedFiltrationSnapshot } from '@platform/kernel/protocol';
 import type { RenalEstimateAction } from './estimated-filtration';
 import { renalEstimatedFiltrationInlinePrompt, RENAL_ESTIMATE_SOURCE_HREF } from './renal-estimated-filtration-tutor';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function RenalEstimatedFiltrationTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', onOpenSource, demonstrating = false }: {
   readonly assessment?: RenalEstimatedFiltrationSnapshot; readonly scenarioVersion: string;
   readonly onAction: (action: RenalEstimateAction) => void; readonly guidance?: GuidanceLevel;
   readonly onOpenSource?: () => void; readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = renalEstimatedFiltrationInlinePrompt(guidance, { scenarioVersion, renalEstimatedFiltration: assessment });
   const observation = assessment.observation; const creatinine = assessment.creatinineObservation;
   const marker = assessment.markerObservation;
@@ -19,12 +21,12 @@ export function RenalEstimatedFiltrationTray({ assessment, scenarioVersion, onAc
     return <Button aria-disabled={unavailable} onClick={unavailable ? undefined : () => onAction(action)}>{label}</Button>;
   };
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
-    <p className="syringe__remaining">Selected source: <a href={RENAL_ESTIMATE_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>2021 equations validated against measured filtration</a> (opens in a new tab). Its accuracy figures are population statistics from development and validation cohorts, not a guarantee for an individual, and the patient here is fictional.</p>
+    <p className="syringe__remaining">{t('tray.selected-source')} <a href={RENAL_ESTIMATE_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>2021 equations validated against measured filtration</a> (opens in a new tab). Its accuracy figures are population statistics from development and validation cohorts, not a guarantee for an individual, and the patient here is fictional.</p>
     <section className="syringe renal-estimate__section" aria-labelledby="renal-estimate-precision-title">
       <div id="renal-estimate-precision-title" className="syringe__name">68 is an estimate. Ask how wide.</div>
       <p className="syringe__remaining">Supplied: creatinine 71 µmol/L, reported estimated filtration 68 mL/min/1.73 m². She is 81, 44 kg, frail, housebound, and fourteen months past a below-knee amputation. A renally eliminated medicine is due today at the dose that estimate supports.</p>

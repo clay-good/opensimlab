@@ -4,6 +4,8 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { DelayedImmuneEventSnapshot } from '@platform/kernel/protocol';
 import type { DelayedImmuneEventAction } from './delayed-immune-event';
 import { delayedImmuneEventInlinePrompt } from './delayed-immune-event-tutor';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function DelayedImmuneEventTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: DelayedImmuneEventSnapshot; readonly scenarioVersion: string;
@@ -11,7 +13,7 @@ export function DelayedImmuneEventTray({ assessment, scenarioVersion, onAction, 
   readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = delayedImmuneEventInlinePrompt(guidance, { scenarioVersion, delayedImmuneEvent: assessment });
   const observations = assessment.observationRecord; const exposure = assessment.exposureRecord;
   const observation = assessment.observation;
@@ -20,9 +22,9 @@ export function DelayedImmuneEventTray({ assessment, scenarioVersion, onAction, 
     return <Button aria-disabled={unavailable} onClick={unavailable ? undefined : () => onAction(action)}>{label}</Button>;
   };
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
     {/* The exposure is stated plainly and immediately. The lesson is not that it is hidden. */}

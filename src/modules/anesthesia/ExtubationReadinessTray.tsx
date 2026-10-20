@@ -83,7 +83,7 @@ export function ExtubationReadinessTray({ assessment, onAction }: {
               <Button variant="primary" className="crisis-drug__action" onClick={() => {
                 onAction(pendingDecision);
                 setPendingDecision(null);
-              }}>Confirm choice</Button>
+              }}>{t('tray.confirm-choice')}</Button>
               <Button variant="ghost" className="crisis-drug__action"
                 onClick={() => setPendingDecision(null)}>{t('action.cancel')}</Button>
             </div>

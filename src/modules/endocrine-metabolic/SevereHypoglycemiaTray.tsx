@@ -1,17 +1,19 @@
 import { Button } from '@platform/ui';
 import type { SevereHypoglycemiaSnapshot } from '@platform/kernel/protocol';
 import type { HypoglycemiaAction } from './severe-hypoglycemia';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function SevereHypoglycemiaTray({ assessment, onAction, demonstrating = false }: {
   readonly assessment?: SevereHypoglycemiaSnapshot;
   readonly onAction: (action: HypoglycemiaAction) => void;
   readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const rescueAvailable = assessment.firstRescueAtTick === null
     || (assessment.recurrenceActive && assessment.secondRescueAtTick === null);
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     <section className="syringe" aria-labelledby="hypoglycemia-observe-title">
       <div id="hypoglycemia-observe-title" className="syringe__name">Notice the person. Verify the glucose.</div>
       <p className="syringe__remaining" role="status">

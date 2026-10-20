@@ -4,6 +4,8 @@ import type { PairedReadingSnapshot } from '@platform/kernel/protocol';
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { PairedReadingAction } from './paired-reading';
 import { pairedReadingInlinePrompt } from './paired-reading-tutor';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function PairedReadingTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: PairedReadingSnapshot;
@@ -12,7 +14,7 @@ export function PairedReadingTray({ assessment, scenarioVersion, onAction, guida
   readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = pairedReadingInlinePrompt(guidance, { scenarioVersion, pairedReading: assessment });
   const device = assessment.oximeterRecord; const patient = assessment.patientRecord;
   const observation = assessment.observation;
@@ -21,9 +23,9 @@ export function PairedReadingTray({ assessment, scenarioVersion, onAction, guida
     return <Button aria-disabled={unavailable} onClick={unavailable ? undefined : () => onAction(action)}>{label}</Button>;
   };
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
     {/* Both numbers appear together the moment the second one exists, and the first is never

@@ -4,6 +4,8 @@ import type { NormalTestToxicitySnapshot } from '@platform/kernel/protocol';
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { NormalTestToxicityAction } from './normal-test-toxicity';
 import { normalTestToxicityInlinePrompt } from './normal-test-toxicity-tutor';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function NormalTestToxicityTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: NormalTestToxicitySnapshot; readonly scenarioVersion: string;
@@ -11,7 +13,7 @@ export function NormalTestToxicityTray({ assessment, scenarioVersion, onAction, 
   readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = normalTestToxicityInlinePrompt(guidance, { scenarioVersion, normalTestToxicity: assessment });
   const observations = assessment.observationRecord; const treatment = assessment.treatmentRecord;
   const observation = assessment.observation;
@@ -20,9 +22,9 @@ export function NormalTestToxicityTray({ assessment, scenarioVersion, onAction, 
     return <Button aria-disabled={unavailable} onClick={unavailable ? undefined : () => onAction(action)}>{label}</Button>;
   };
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
     {/* The drug status leads, because it is the only thing here that changes with the clock. */}

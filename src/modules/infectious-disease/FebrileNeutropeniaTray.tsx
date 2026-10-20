@@ -4,6 +4,8 @@ import type { FebrileNeutropeniaSnapshot } from '@platform/kernel/protocol';
 import type { FebrileNeutropeniaAction } from './febrile-neutropenia';
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import { febrileNeutropeniaInlinePrompt } from './febrile-neutropenia-tutor';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function FebrileNeutropeniaTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: FebrileNeutropeniaSnapshot;
@@ -12,7 +14,7 @@ export function FebrileNeutropeniaTray({ assessment, scenarioVersion, onAction, 
   readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = febrileNeutropeniaInlinePrompt(guidance, { scenarioVersion, febrileNeutropenia: assessment });
   const labs = assessment.labObservation; const observations = assessment.observationsOnly;
   const observation = assessment.observation;
@@ -21,9 +23,9 @@ export function FebrileNeutropeniaTray({ assessment, scenarioVersion, onAction, 
     return <Button aria-disabled={unavailable} onClick={unavailable ? undefined : () => onAction(action)}>{label}</Button>;
   };
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
     <p className="syringe__remaining">Selected sources: NICE CG151 (2012, still current), the IDSA 2010 neutropenia guideline, and the ASCO/IDSA 2018 outpatient update. Open the source view for exact locators. This field still runs on guidance published between 2010 and 2018, which is itself part of the lesson.</p>

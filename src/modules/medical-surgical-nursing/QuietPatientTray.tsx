@@ -4,6 +4,8 @@ import type { QuietPatientSnapshot } from '@platform/kernel/protocol';
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { QuietPatientAction } from './quiet-patient';
 import { quietPatientInlinePrompt } from './quiet-patient-tutor';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function QuietPatientTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: QuietPatientSnapshot;
@@ -12,7 +14,7 @@ export function QuietPatientTray({ assessment, scenarioVersion, onAction, guidan
   readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = quietPatientInlinePrompt(guidance, { scenarioVersion, quietPatient: assessment });
   const chart = assessment.chartRecord; const patient = assessment.patientRecord;
   const observation = assessment.observation;
@@ -21,9 +23,9 @@ export function QuietPatientTray({ assessment, scenarioVersion, onAction, guidan
     return <Button aria-disabled={unavailable} onClick={unavailable ? undefined : () => onAction(action)}>{label}</Button>;
   };
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
     {/* The count of screening results leads, because zero is the finding and it is easy to miss

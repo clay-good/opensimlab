@@ -4,13 +4,15 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { RenalHypokalemiaSnapshot } from '@platform/kernel/protocol';
 import type { RenalHypokalemiaAction } from './hypokalemia';
 import { renalHypokalemiaInlinePrompt, RENAL_HYPOKALEMIA_SOURCE_HREF, RENAL_HYPOKALEMIA_MAGNESIUM_SOURCE_HREF } from './renal-hypokalemia-tutor';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function RenalHypokalemiaTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', onOpenSource, demonstrating = false }: {
   readonly assessment?: RenalHypokalemiaSnapshot; readonly scenarioVersion: string;
   readonly onAction: (action: RenalHypokalemiaAction) => void; readonly guidance?: GuidanceLevel;
   readonly onOpenSource?: () => void; readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = renalHypokalemiaInlinePrompt(guidance, { scenarioVersion, renalHypokalemia: assessment });
   const observation = assessment.observation; const ecg = assessment.ecgObservation; const potassium = assessment.potassiumObservation;
   const rhythmLabel = (rhythm: string) => rhythm === 'sinus' ? 'authored ECG improvement' : 'supplied flattened-T pattern';
@@ -19,12 +21,12 @@ export function RenalHypokalemiaTray({ assessment, scenarioVersion, onAction, gu
     return <Button aria-disabled={unavailable} onClick={unavailable ? undefined : () => onAction(action)}>{label}</Button>;
   };
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
-    <p className="syringe__remaining">Source context: <a href={RENAL_HYPOKALEMIA_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>NHS SPS potassium guidance</a>{' · '}
+    <p className="syringe__remaining">{t('tray.source-context')} <a href={RENAL_HYPOKALEMIA_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>NHS SPS potassium guidance</a>{' · '}
       <a href={RENAL_HYPOKALEMIA_MAGNESIUM_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>NHS SPS magnesium guidance</a>. Both open in a new tab; treatment must be individualized.</p>
     <section className="syringe renal-hypokalemia__section" aria-labelledby="renal-hypokalemia-care-title">
       <div id="renal-hypokalemia-care-title" className="syringe__name">Address potassium and magnesium together.</div>

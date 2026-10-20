@@ -10,6 +10,8 @@ import { cerebellarIchInlinePrompt } from './tutor/spontaneous-cerebellar-intrac
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import { TutorPanel } from '@anesthesia/ui/tutor-panel';
 import { Button } from '@platform/ui';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function NeurologyCerebellarIchTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<EquipmentSnapshot['resuscitation']['neurologyCerebellarIchAssessment']>;
@@ -27,7 +29,7 @@ export function NeurologyCerebellarIchTray({ assessment, scenarioVersion, onActi
   const later = assessment?.laterAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="neurology-cerebellar-ich-location-title">
       <div id="neurology-cerebellar-ich-location-title" className="syringe__name">Location changes the danger.</div>

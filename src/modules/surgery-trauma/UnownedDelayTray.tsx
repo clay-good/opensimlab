@@ -4,6 +4,8 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { UnownedDelaySnapshot } from '@platform/kernel/protocol';
 import type { UnownedDelayAction } from './unowned-delay';
 import { unownedDelayInlinePrompt } from './unowned-delay-tutor';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function UnownedDelayTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   readonly assessment?: UnownedDelaySnapshot; readonly scenarioVersion: string;
@@ -11,7 +13,7 @@ export function UnownedDelayTray({ assessment, scenarioVersion, onAction, guidan
   readonly guidance?: GuidanceLevel;
   readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = unownedDelayInlinePrompt(guidance, { scenarioVersion, unownedDelay: assessment });
   const observations = assessment.observationRecord; const delay = assessment.delayRecord;
   const observation = assessment.observation;
@@ -20,9 +22,9 @@ export function UnownedDelayTray({ assessment, scenarioVersion, onAction, guidan
     return <Button aria-disabled={unavailable} onClick={unavailable ? undefined : () => onAction(action)}>{label}</Button>;
   };
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
     <p className="syringe__remaining" role="status">Displaced femoral neck fracture, aged 84, admitted {assessment.hoursSinceAdmission} hours ago and not yet operated. {assessment.cancellations} cancellations. {assessment.fastedHours} hours fasted across those days. Echocardiogram {assessment.echoRequested ? 'requested' : 'not requested'} and {assessment.echoBooked ? 'booked' : 'not booked'}; requesting clinician {assessment.echoRequesterNamed ? 'named' : 'not named in the record'}.</p>

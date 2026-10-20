@@ -10,6 +10,8 @@ import { copdTransitionInlinePrompt } from './tutor/copd-exacerbation-transition
 import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import { TutorPanel } from '@anesthesia/ui/tutor-panel';
 import { Badge, Button } from '@platform/ui';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function CopdTransitionTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', demonstrating = false }: {
   assessment?: NonNullable<EquipmentSnapshot['resuscitation']['copdTransitionAssessment']>;
@@ -26,7 +28,7 @@ export function CopdTransitionTray({ assessment, scenarioVersion, onAction, guid
   const coordination = assessment?.coordinationAtTick != null;
   const handoff = assessment?.handoffAtTick != null;
   return <div className="tray-grid">
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     <TutorPanel prompt={demonstrating ? null : prompt} />
     <section className="syringe" aria-labelledby="copd-transition-readiness-title">
       <div id="copd-transition-readiness-title" className="syringe__name">Better is not the same as ready.</div>

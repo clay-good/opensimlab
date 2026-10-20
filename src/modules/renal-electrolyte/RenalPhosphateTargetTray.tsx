@@ -4,13 +4,15 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { RenalPhosphateTargetSnapshot } from '@platform/kernel/protocol';
 import type { RenalPhosphateAction } from './phosphate-target';
 import { renalPhosphateTargetInlinePrompt, RENAL_PHOSPHATE_SOURCE_HREF } from './renal-phosphate-target-tutor';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function RenalPhosphateTargetTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', onOpenSource, demonstrating = false }: {
   readonly assessment?: RenalPhosphateTargetSnapshot; readonly scenarioVersion: string;
   readonly onAction: (action: RenalPhosphateAction) => void; readonly guidance?: GuidanceLevel;
   readonly onOpenSource?: () => void; readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = renalPhosphateTargetInlinePrompt(guidance, { scenarioVersion, renalPhosphateTarget: assessment });
   const observation = assessment.observation; const phosphate = assessment.phosphateObservation;
   const nutrition = assessment.nutritionObservation;
@@ -19,12 +21,12 @@ export function RenalPhosphateTargetTray({ assessment, scenarioVersion, onAction
     return <Button aria-disabled={unavailable} onClick={unavailable ? undefined : () => onAction(action)}>{label}</Button>;
   };
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
-    <p className="syringe__remaining">Selected source: <a href={RENAL_PHOSPHATE_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>2012 randomised comparison of three binders against placebo</a> (opens in a new tab). One hundred and forty-eight patients over nine months, with the phosphorus change as the primary endpoint and the calcification findings secondary. The patient here is fictional.</p>
+    <p className="syringe__remaining">{t('tray.selected-source')} <a href={RENAL_PHOSPHATE_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>2012 randomised comparison of three binders against placebo</a> (opens in a new tab). One hundred and forty-eight patients over nine months, with the phosphorus change as the primary endpoint and the calcification findings secondary. The patient here is fictional.</p>
     <section className="syringe renal-phosphate__section" aria-labelledby="renal-phosphate-surrogate-title">
       <div id="renal-phosphate-surrogate-title" className="syringe__name">The target is standing in for something.</div>
       <p className="syringe__remaining">Supplied: estimated GFR 26 mL/min/1.73 m², not on dialysis. Phosphate 1.62 mmol/L, calcium 2.24, parathyroid hormone 31 pmol/L, bicarbonate 22. The clinic protocol is to start a binder to bring the phosphate into the printed range.</p>

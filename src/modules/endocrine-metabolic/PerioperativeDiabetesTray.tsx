@@ -4,6 +4,8 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { PerioperativeDiabetesSnapshot } from '@platform/kernel/protocol';
 import type { PerioperativeDiabetesAction } from './perioperative-diabetes';
 import { perioperativeDiabetesInlinePrompt, PERIOPERATIVE_DIABETES_SOURCE_HREF, PERIOPERATIVE_DIABETES_UK_SOURCE_HREF } from './perioperative-diabetes-tutor';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function PerioperativeDiabetesTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', onOpenSource, demonstrating = false }: {
   readonly assessment?: PerioperativeDiabetesSnapshot;
@@ -13,7 +15,7 @@ export function PerioperativeDiabetesTray({ assessment, scenarioVersion, onActio
   readonly onOpenSource?: () => void;
   readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = perioperativeDiabetesInlinePrompt(guidance, { scenarioVersion, perioperativeDiabetes: assessment });
   const observation = assessment.observation; const glucose = assessment.glucoseObservation;
   const decision = (action: PerioperativeDiabetesAction, label: string, accepted = false) => {
@@ -23,12 +25,12 @@ export function PerioperativeDiabetesTray({ assessment, scenarioVersion, onActio
   const earlierChoices = [assessment.omitInsulinAttempted && 'omitting insulin while fasting',
     assessment.cgmOnlyAttempted && 'relying on CGM alone', assessment.clearanceAttempted && 'automatic surgical clearance'].filter(Boolean);
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
-    <p className="syringe__remaining">Source context: <a href={PERIOPERATIVE_DIABETES_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>ADA 2026</a>{' · '}
+    <p className="syringe__remaining">{t('tray.source-context')} <a href={PERIOPERATIVE_DIABETES_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>ADA 2026</a>{' · '}
       <a href={PERIOPERATIVE_DIABETES_UK_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>Association of Anaesthetists and JBDS 2026</a>. Both open in a new tab; individual plans and regional targets can differ.</p>
     <section className="syringe perioperative-diabetes__section" aria-labelledby="perioperative-diabetes-insulin-title">
       <div id="perioperative-diabetes-insulin-title" className="syringe__name">Protect insulin continuity while fasting.</div>

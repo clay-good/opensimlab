@@ -4,6 +4,8 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { HypocalcemiaSnapshot } from '@platform/kernel/protocol';
 import type { HypocalcemiaAction } from './hypocalcemia';
 import { hypocalcemiaInlinePrompt, HYPOCALCEMIA_SOURCE_HREF, HYPOCALCEMIA_ESE_SOURCE_HREF } from './tutor/hypocalcemia-guidance';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function HypocalcemiaTray({ assessment, scenarioVersion, onAction, guidance = 'unassisted', onOpenSource, demonstrating = false }: {
   readonly assessment?: HypocalcemiaSnapshot;
@@ -13,7 +15,7 @@ export function HypocalcemiaTray({ assessment, scenarioVersion, onAction, guidan
   readonly onOpenSource?: () => void;
   readonly demonstrating?: boolean;
 }) {
-  if (!assessment) return <p role="status">Preparing the fictional patient…</p>;
+  if (!assessment) return <p role="status">{t('tray.preparing')}</p>;
   const prompt = hypocalcemiaInlinePrompt(guidance, { scenarioVersion, hypocalcemia: assessment });
   const observation = assessment.observation;
   const decision = (action: HypocalcemiaAction, label: string, accepted = false) => {
@@ -23,9 +25,9 @@ export function HypocalcemiaTray({ assessment, scenarioVersion, onAction, guidan
   const earlierChoices = [assessment.oralOnlyChosen && 'oral treatment alone', assessment.waitForLabsChosen && 'waiting for laboratory results',
     assessment.waitForMagnesiumChosen && 'waiting for magnesium before rescue', assessment.stopAfterReliefAttempted && 'stopping after symptom relief'].filter(Boolean);
   return <>
-    {demonstrating && <p className="syringe__remaining">Watching the worked example. Choose “Take the controls” to make your own decisions.</p>}
+    {demonstrating && <p className="syringe__remaining">{t('tray.watching')}</p>}
     {!demonstrating && prompt && <aside className="syringe" aria-label="Private tutor">
-      <div className="syringe__name">A moment to think</div>
+      <div className="syringe__name">{t('tray.think')}</div>
       <p className="syringe__remaining">{prompt.suggestion}</p><p className="syringe__remaining">{prompt.because}</p>
     </aside>}
     <p className="syringe__remaining"><a href={HYPOCALCEMIA_SOURCE_HREF} target="_blank" rel="noreferrer" onClick={onOpenSource}>Emergency guidance: SfE 2016 (opens in a new tab)</a>{' · '}
