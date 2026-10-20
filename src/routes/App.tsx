@@ -5,6 +5,8 @@
  * project holds a dependency ceiling and the route set is a dozen static paths.
  */
 
+import { t } from '@platform/i18n/messages';
+import { NOT_FOUND_DESTINATIONS, notFoundLink, notFoundWhy } from './not-found';
 import { Suspense, lazy, useEffect, useState } from 'react';
 import '@platform/tokens/base.css';
 import { Landing } from '@landing/Landing';
@@ -302,26 +304,18 @@ function CurrentRoute() {
     <div className="document">
       <SiteBar />
       <main className="reading" id="main">
-        <h1>Nothing here</h1>
-        <p>
-          That address does not match a page. Nothing has been lost — this site is a handful of
-          pages, and they are all listed below.
-        </p>
-        <h2>Where you probably wanted to go</h2>
+        <h1>{t('not-found.heading')}</h1>
+        <p>{t('not-found.body')}</p>
+        <h2>{t('not-found.where')}</h2>
         <ul>
-          <li><a href="/anesthesia">The anesthesia simulator</a> — every scenario</li>
-          <li><a href="/about">About Open Sim Lab</a> — what it teaches and who it is for</li>
-          <li><a href="/validation">The validation report</a> — how closely the patient matches the evidence</li>
-          <li><a href="/governance">Clinical governance</a> — who has reviewed what, and what is outstanding</li>
-          <li><a href="/review-status">Review status</a> — every item and the label it is published under</li>
-          <li><a href="/corrections">Corrections</a> — every clinical error found, and what changed</li>
-          <li><a href="/limitations">The limitations register</a> — what this deliberately does not model</li>
-          <li><a href="/privacy">Privacy</a> — what is stored on your device, which is all of it</li>
+          {NOT_FOUND_DESTINATIONS.map(({ href, key }) => (
+            <li key={href}><a href={href}>{notFoundLink(key)}</a> — {notFoundWhy(key)}</li>
+          ))}
         </ul>
       </main>
       <footer className="document__foot">
-        <a href="/">Back to the front page</a>
-        <a href="/anesthesia">Open the simulator</a>
+        <a href="/">{t('documents.footer.home')}</a>
+        <a href="/anesthesia">{t('documents.footer.simulator')}</a>
       </footer>
     </div>
   );

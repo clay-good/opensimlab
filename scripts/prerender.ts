@@ -22,6 +22,7 @@ import {
 import { structuredDataFor } from '../src/platform/docs/structured-data.ts';
 import { PUBLIC_CATALOG_ARTIFACTS } from '../src/platform/catalog/public-artifacts.ts';
 import { PrerenderedBody } from '../src/routes/Prerendered.tsx';
+import { notFoundHtml } from '../src/routes/not-found.ts';
 import {
   ADOPTION_PACK_PATH, ADOPTION_PACK_RELEASE_TOKEN,
 } from '../src/platform/adoption/adoption-pack.ts';
@@ -151,25 +152,7 @@ function main(): void {
       structuredData: [],
       heading: 'Nothing here',
     }, `${styles}\n${preloads}`),
-    '<div id="root"><div class="document">'
-    + '<header class="document__bar"><a class="document__home" href="/">Open Sim Lab</a></header>'
-    + '<main class="reading" id="main">'
-    + '<h1>Nothing here</h1>'
-    + '<p>That address does not match a page. Nothing has been lost — this site is a '
-    + 'handful of pages, and they are all listed below.</p>'
-    + '<h2>Where you probably wanted to go</h2>'
-    + '<ul>'
-    + '<li><a href="/anesthesia">The anesthesia simulator</a> — every scenario</li>'
-    + '<li><a href="/about">About Open Sim Lab</a> — what it teaches and who it is for</li>'
-    + '<li><a href="/validation">The validation report</a> — how closely the patient matches the evidence</li>'
-    + '<li><a href="/governance">Clinical governance</a> — who has reviewed what, and what is outstanding</li>'
-    + '<li><a href="/limitations">The limitations register</a> — what this deliberately does not model</li>'
-    + '<li><a href="/privacy">Privacy</a> — what is stored on your device, which is all of it</li>'
-    + '</ul>'
-    + '</main>'
-    + '<footer class="document__foot"><a href="/">Back to the front page</a>'
-    + '<a href="/anesthesia">Open the simulator</a></footer>'
-    + '</div></div>',
+    notFoundHtml(),
     scripts,
     '</body>',
     '</html>',

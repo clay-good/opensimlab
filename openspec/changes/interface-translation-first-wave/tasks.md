@@ -18,7 +18,8 @@
   own component, the goal-path recommendation (3), the update notice (5), and the first-visit
   acknowledgement (7, root prose; the not-for-clinical-use statement itself stays one constant
   because every export carries it), and the debrief's reasoning-notes panel and rapid-cycle offer
-  (9), and the shared briefing's section headings and facilitator link (7) read from `src/platform/i18n/messages.ts` and render the same English.
+  (9), the shared briefing's section headings and facilitator link (7), and the not-found page (19,
+  now one list that the static 404 and the client view both render, after the two had drifted) read from `src/platform/i18n/messages.ts` and render the same English.
   `tests/unit/externalised-strings.test.ts` is the hard-coded-string test, applied to each surface
   once it is externalised; every other surface remains.
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.
