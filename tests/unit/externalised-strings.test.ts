@@ -18,6 +18,7 @@ const EXTERNALISED: readonly { readonly path: string; readonly region?: readonly
   { path: 'src/platform/i18n/TranslationStatusBody.tsx' },
   { path: 'src/modules/anesthesia/ui/VerificationQueueBody.tsx' },
   { path: 'src/platform/docs/CorrectionsBody.tsx' },
+  { path: 'src/platform/governance/ReviewStatusBody.tsx' },
   { path: 'src/modules/anesthesia/ui/GoalRecommendation.tsx', region: ['return (', '\n}\n'] },
   { path: 'src/platform/offline/UpdateNotice.tsx', region: ['  return (\n    <div className={`update-notice', '\n}\n'] },
   { path: 'src/platform/safety/not-for-clinical-use.tsx', region: ['export function NotForClinicalUseGate', '\n}\n'] },
@@ -26,11 +27,12 @@ const EXTERNALISED: readonly { readonly path: string; readonly region?: readonly
 /** Text between a closing `>` and the next `<` that is not only whitespace or an expression. */
 function literalText(source: string): string[] {
   // Template literals and arrows are code, not markup; drop them so `=>` is not read as a tag end.
-  const markup = source.replace(/`[^`]*`/g, '``').replace(/=>/g, ' ');
+  const markup = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/`[^`]*`/g, '``').replace(/=>/g, ' ');
   return [...markup.matchAll(/>([^<>{}]*[A-Za-z][^<>{}]*)</g)]
     .map((match) => match[1]!.trim())
     // A ternary's branches and a .map call sit between tags too; they are code, not text.
-    .filter((text) => text.length > 0 && !/^[=&|?:)]/.test(text) && !text.includes('.map('));
+    .filter((text) => text.length > 0 && !/^[=&|?:)]/.test(text) && !text.includes('.map(')
+      && !text.includes(';') && !text.includes('return ('));
 }
 
 describe('externalised surfaces carry no hard-coded interface text', () => {
@@ -49,6 +51,8 @@ describe('the check itself', () => {
   it('catches literal text in markup and ignores expressions and template literals', () => {
     expect(literalText('const briefing = `/${route}/scenario/${id}`;\nconst f = (x) => x;')).toEqual([]);
     expect(literalText('</p>\n      ) : (\n        ITEMS.map((entry) => (\n          <section>')).toEqual([]);
+    expect(literalText('const n = items.filter((x) => x.count > 0);\n  return (\n    <>')).toEqual([]);
+    expect(literalText('{/* links to /<module>/scenario/<id> */}<li>')).toEqual([]);
     expect(literalText('<a href="/">Back to the front page</a>')).toEqual(['Back to the front page']);
     expect(literalText("<a href=\"/\">{t('documents.footer.home')}</a>")).toEqual([]);
   });

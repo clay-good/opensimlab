@@ -12,7 +12,7 @@ import { Badge, Button, CitationLink, Disclosure, KeyFigure, Panel, SiteBar } fr
 import { buildValidationReport } from '@platform/docs/validation-report';
 import { EDITORIAL_BOARD, HONEST_STATUS, reviewableItems } from '@platform/governance/records';
 import { reportCoverage } from '@platform/governance/review-gate';
-import { itemKey, reviewStatusReport } from '@platform/governance/review-status';
+import { ReviewStatusBody } from '@platform/governance/ReviewStatusBody';
 import { LIMITATIONS, LIMITATION_GROUPS } from '@platform/docs/limitations';
 import { SOURCES, formatSource, requireSource } from '@platform/docs/sources';
 import { VERIFIED_CONSTANTS, confirmedCount } from '@platform/docs/verified-constants';
@@ -380,117 +380,6 @@ function GovernanceBody() {
   );
 }
 
-/**
- * What is published, under what label, item by item.
- *
- * The governance page answers who has signed what. This answers the other half:
- * which maturity status each item carries, which is the label a reader sees beside
- * it in the interface. Two of the eight preview gates report rather than block,
- * and that trade is only defensible while the gap is visible, so every count here
- * is printed with the list behind it, and every status in the vocabulary gets a
- * row even when nothing is in it.
- */
-function ReviewStatusBody() {
-  const report = reviewStatusReport();
-  const populated = report.groups.filter((group) => group.count > 0);
-  return (
-    <>
-      <Badge kind="out-of-range">{HONEST_STATUS.headline}</Badge>
-      <p>
-        Every one of the {report.total} clinical content items in this build carries a maturity
-        status, and that status is the label shown beside it wherever it appears. This page is the
-        complete list. It is generated from the content itself, so it cannot disagree with what the
-        interface says.
-      </p>
-
-      {/* The two numbers this page exists to report, before the four sections
-          that qualify them. Both are zero, and both should be legible in a
-          glance rather than recovered from a sentence. */}
-      <div className="figures">
-        <KeyFigure
-          value={`${report.signedItems} / ${report.total}`}
-          label="Items signed by a clinician"
-          tone="warning"
-        />
-        <KeyFigure value={report.boardSize} label="Clinicians on the editorial board" tone="warning" />
-      </div>
-
-      <h2>The board</h2>
-      <p>
-        {report.boardSize === 0
-          ? 'The board is empty and published as empty. Nothing here has been signed by a '
-            + 'credentialed clinician, and nothing is described anywhere in the interface as '
-            + 'reviewed, validated, or endorsed.'
-          : 'Signed items name their reviewer and the exact content version reviewed on the '
-            + 'governance page.'}{' '}
-        <a href="/governance">The governance page</a> names every outstanding item and why.
-      </p>
-
-      <h2>What is published, and under what label</h2>
-      <p className="field__hint">
-        No count is reported without the list behind it. A status nothing is in still gets a row,
-        because an absent row reads as an oversight and a zero reads as the fact it is.
-      </p>
-      <ul>
-        {report.groups.map((group) => (
-          <li key={group.status} className="numeric">
-            <code>{group.status}</code>: {group.count}. {group.label}.
-          </li>
-        ))}
-      </ul>
-
-      <h2>Every item</h2>
-      <p className="field__hint">
-        The complete roll, by status and then by kind. It is behind a control rather than printed
-        because it is {report.total} rows long and its content is one repeated fact; the counts
-        above are the finding, and this is the evidence for them.
-      </p>
-      {populated.map((group) => (
-        <Disclosure
-          key={group.status}
-          className="disclosure--group"
-          summary={group.label}
-          meta={`${group.count} items`}
-        >
-          {[...new Set(group.items.map((item) => item.kind))].map((kind) => {
-            const matching = group.items.filter((item) => item.kind === kind);
-            return (
-              <Disclosure key={kind} summary={kind} meta={`${matching.length}`}>
-                <ul>
-                  {matching.map((item) => (
-                    <li key={itemKey(item)}>
-                      {/* Only a scenario has a briefing page. An explainer and a
-                          drug card carry a module route so their module is known,
-                          but no `/<module>/scenario/<id>` document exists for them,
-                          and linking one pointed thirteen internal links at a 404. */}
-                      {item.route === null || item.kind !== 'scenario'
-                        ? item.title
-                        : (
-                          <a href={`/${item.route}/scenario/${item.id}`}>{item.title}</a>
-                        )}{' '}
-                      <code>{item.id}</code> <span className="numeric">v{item.contentVersion}</span>
-                    </li>
-                  ))}
-                </ul>
-              </Disclosure>
-            );
-          })}
-        </Disclosure>
-      ))}
-
-      <h2>What this page does not tell you</h2>
-      <p>
-        A maturity status records that an item passed the gates the build can check. It does not
-        record that a clinician agrees with it. Two of the eight preview gates, the completion
-        contract and the full quality-record set, are computed and reported but do not block
-        publication, because no item has ever passed them and a channel nothing can pass is not a
-        channel. The per-module audits behind those two gates are published as JSON alongside the
-        build, and the <a href="/limitations">limitations register</a> names what the simulation
-        deliberately does not model.
-      </p>
-    </>
-  );
-}
 
 /**
  * Framework readings go stale the way clinical reviews do, so they are listed

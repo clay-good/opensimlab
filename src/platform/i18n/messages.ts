@@ -271,6 +271,22 @@ export const EN_MESSAGES = {
   'corrections.unavailable': { class: 'root-prose', text: 'Where the separately deployed report service is unavailable, the control says so rather than pretending to queue anything, and invited reviewers can still record notes and return the exported file through their invitation channel:' },
   'corrections.content-review': { class: 'root-prose', text: 'the content-review page.' },
   'corrections.next-heading': { class: 'root-prose', text: 'What happens next' },
+  'rs.intro': { class: 'root-prose', text: 'Every one of the {total} clinical content items in this build carries a maturity status, and that status is the label shown beside it wherever it appears. This page is the complete list. It is generated from the content itself, so it cannot disagree with what the interface says.' },
+  'rs.signed': { class: 'root-prose', text: 'Items signed by a clinician' },
+  'rs.board-size': { class: 'root-prose', text: 'Clinicians on the editorial board' },
+  'rs.board-heading': { class: 'root-prose', text: 'The board' },
+  'rs.board-empty': { class: 'root-prose', text: 'The board is empty and published as empty. Nothing here has been signed by a credentialed clinician, and nothing is described anywhere in the interface as reviewed, validated, or endorsed.' },
+  'rs.board-signed': { class: 'root-prose', text: 'Signed items name their reviewer and the exact content version reviewed on the governance page.' },
+  'rs.governance-link': { class: 'root-prose', text: 'The governance page names every outstanding item and why.' },
+  'rs.published-heading': { class: 'root-prose', text: 'What is published, and under what label' },
+  'rs.published-hint': { class: 'root-prose', text: 'No count is reported without the list behind it. A status nothing is in still gets a row, because an absent row reads as an oversight and a zero reads as the fact it is.' },
+  'rs.group-row': { class: 'root-prose', text: '{count}. {label}.' },
+  'rs.every-heading': { class: 'root-prose', text: 'Every item' },
+  'rs.every-hint': { class: 'root-prose', text: 'The complete roll, by status and then by kind. It is behind a control rather than printed because it is {total} rows long and its content is one repeated fact; the counts above are the finding, and this is the evidence for them.' },
+  'rs.items': { class: 'root-prose', text: '{count} items' },
+  'rs.not-tell-heading': { class: 'root-prose', text: 'What this page does not tell you' },
+  'rs.not-tell': { class: 'root-prose', text: 'A maturity status records that an item passed the gates the build can check. It does not record that a clinician agrees with it. Two of the eight preview gates, the completion contract and the full quality-record set, are computed and reported but do not block publication, because no item has ever passed them and a channel nothing can pass is not a channel. The per-module audits behind those two gates are published as JSON alongside the build.' },
+  'rs.limitations-link': { class: 'root-prose', text: 'The limitations register names what the simulation deliberately does not model.' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 export type MessageKey = keyof typeof EN_MESSAGES;
