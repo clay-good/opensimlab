@@ -96,6 +96,13 @@ export const PERSISTENT_VF_CARDIAC_ARREST: Scenario = {
   ],
   // The one scheduled crisis step here with a measured window: compressions within 20 seconds of
   // the VF event at tick 300, the first step of the cited adult cardiac arrest algorithm.
+  // Classroom pause points: questions for the room at the two moments the lesson turns on.
+  pausePoints: [
+    { id: 'rhythm-on-takeover', atTick: 300, region: 'monitor',
+      question: 'What has just changed on the monitor, and what is the very first thing you would do?' },
+    { id: 'before-reassessment', atTick: 2100, region: 'actions',
+      question: 'Before the next rhythm check: what has the team done so far, and what is still to come?' },
+  ],
   rapidCycle: [
     {
       id: 'compressions-within-twenty-seconds', objectiveId: 'resume-arrest-compressions',

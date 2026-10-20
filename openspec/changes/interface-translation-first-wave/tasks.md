@@ -31,7 +31,10 @@
   element past the edge; under en-XB the bar mirrors with no overflow. Found and fixed: the Browse
   chevron turned sideways under right-to-left; it now uses physical sides, since up and down do
   not mirror. Remaining: running these as automated browser checks in CI,
-  and covering surfaces as they are externalised.
+  and covering surfaces as they are externalised. That needs a headless browser (for example
+  Playwright) as a new development dependency, a browser download in CI, and new licenses for the
+  public-readiness check to classify; jsdom has no layout engine to measure overflow. Adding it
+  is a maintainer's call, so it waits for one.
 - [x] Fail the build on a clinical-content key in an interface catalog. `catalogProblems` refuses
   it, along with unknown keys, changed placeholders, an anonymous catalog, and any provenance but
   human; `tests/unit/i18n-catalog.test.ts` runs it over every shipped catalog.

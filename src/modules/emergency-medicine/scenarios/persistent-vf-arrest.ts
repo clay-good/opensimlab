@@ -54,6 +54,13 @@ export const PERSISTENT_VF_ARREST: Scenario = {
   ],
   // VF is present from tick 0; the earliest decision point the rehearsal branch can restore is
   // tick 1, so the window runs from there for the 20 seconds the objective measures.
+  // Classroom pause points: questions for the room at the two moments the lesson turns on.
+  pausePoints: [
+    { id: 'rhythm-on-arrival', atTick: 1, region: 'monitor',
+      question: 'What does the monitor show, and what is the very first thing you would do?' },
+    { id: 'before-reassessment', atTick: 1800, region: 'actions',
+      question: 'Before the next rhythm check: what has the team done so far, and what is still to come?' },
+  ],
   rapidCycle: [
     { id: 'compressions-within-twenty-seconds', objectiveId: 'resume-arrest-compressions',
       atTick: 1, windowTicks: 200, actionType: 'chest-compressions',

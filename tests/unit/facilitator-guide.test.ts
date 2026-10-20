@@ -64,6 +64,13 @@ describe('facilitator guide', () => {
     }
   });
 
+  it('shows pause points exactly where a scenario declares them', () => {
+    for (const entry of FACILITATED_SCENARIOS) {
+      const section = facilitatorGuide(entry).find((candidate) => candidate.id === 'pause-points')!;
+      expect(section.status, entry.scenario.metadata.id).toBe((entry.scenario.pausePoints?.length ?? 0) > 0 ? 'present' : 'absent');
+    }
+  });
+
   it('adds no clinical claim of its own', () => {
     for (const template of Object.values(GUIDE_TEMPLATES)) {
       expect(template).not.toMatch(/\d|\bmg\b|mmHg|\bdose|\bgive\b|\badminister|diagnos|\btreat|\bshould\b|\bmust\b/i);
@@ -73,7 +80,7 @@ describe('facilitator guide', () => {
   it('reports the same absent sections for every scenario until their fields exist', () => {
     const reported = new Set(FACILITATED_SCENARIOS.map((entry) => absentGuideSections(entry).join('|')));
     expect([...reported].every((ids) =>
-      ['expected-actions', 'error-and-recovery', 'pause-points']
+      ['expected-actions', 'error-and-recovery']
         .every((id) => ids.split('|').includes(id)))).toBe(true);
   });
 

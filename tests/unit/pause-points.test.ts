@@ -54,3 +54,20 @@ describe('when a pause point is due', () => {
     if (section.status === 'present') expect(section.items.map((item) => item.label)).toEqual(['Tick 600', 'When spo2Percent < 92']);
   });
 });
+
+describe('authored pause points', () => {
+  it('validate on both persistent VF lessons, sit on their scheduled moments, and never name the rhythm', async () => {
+    const { PERSISTENT_VF_CARDIAC_ARREST } = await import('@anesthesia/scenarios/persistent-vf-cardiac-arrest');
+    const { PERSISTENT_VF_ARREST } = await import('../../src/modules/emergency-medicine/scenarios/persistent-vf-arrest');
+    for (const scenario of [PERSISTENT_VF_CARDIAC_ARREST, PERSISTENT_VF_ARREST]) {
+      expect(validateScenario(scenario)).toEqual([]);
+      expect(scenario.pausePoints?.length).toBeGreaterThanOrEqual(2);
+      const ticks = new Set(scenario.timeline.map((event) => event.atTick));
+      for (const point of scenario.pausePoints!) {
+        expect(point.atTick === 1 || ticks.has(point.atTick)).toBe(true);
+        expect(point.question).not.toMatch(/fibrillation|\bVF\b|shock|epinephrine|defibrillat/i);
+        expect(point.question.trim().endsWith('?')).toBe(true);
+      }
+    }
+  });
+});

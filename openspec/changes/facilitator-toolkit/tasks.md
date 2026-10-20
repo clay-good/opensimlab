@@ -49,6 +49,9 @@
   outlined exactly as a worked-example beat outlines one, through its own attribute so the
   demonstration's layout does not change.
 - [ ] Author at least two pause points per scenario, placed at the authored teaching moments.
+  Started: both persistent VF lessons (anesthesia and emergency medicine) declare two each, at the
+  rhythm event and before the scripted reassessment; each is a question for the room that never
+  names the rhythm. 254 scenarios remain, and the gate counts them.
 
 ## 3. Bookmarks and scrubbing
 
