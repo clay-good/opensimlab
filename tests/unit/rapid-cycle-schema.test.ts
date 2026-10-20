@@ -5,7 +5,7 @@ import type { Scenario, ScenarioRapidCycle } from '@anesthesia/scenarios/types';
 
 const objective = ROUTINE_INDUCTION.metadata.objectives.find((entry) => !isRecognitionObjective(entry.id))!;
 const point = (overrides: Partial<ScenarioRapidCycle> = {}): ScenarioRapidCycle => ({
-  id: 'ventilate-in-time', objectiveId: objective.id, atTick: 600, windowTicks: 300,
+  id: 'ventilate-in-time', objectiveId: objective.id, atTick: 600, windowTicks: 300, actionType: 'ventilator',
   directive: 'Start ventilation before the saturation falls, not after.',
   sourceLocator: 'Scenario source 1, airway management section', cycleCap: 4, ...overrides,
 });

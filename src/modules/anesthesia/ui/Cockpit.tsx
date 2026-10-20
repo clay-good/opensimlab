@@ -133,7 +133,8 @@ import type { SonificationEngine } from '@platform/audio/sonification';
 import { HAPTICS_UNSUPPORTED_REASON, HapticEngine, hapticsSupported } from '@platform/audio/haptics';
 import { duePausePoint } from '@platform/facilitation/pause-points';
 import { REASONING_NOTE_LIMIT, useReasoningNotes } from '@platform/session/reasoning-notes';
-import type { ScenarioPausePoint } from '../scenarios/types';
+import type { ScenarioPausePoint, ScenarioRapidCycle } from '../scenarios/types';
+import type { RapidCycleStatus } from '../catalog/rapid-cycle';
 import {
   DEFAULT_NARRATION_SETTINGS, NARRATION_RATES, NarrationEngine, isNarrationSettings,
   type NarrationSource, type SpeechTarget, type UtteranceLike,
@@ -158,6 +159,14 @@ export interface CockpitProps {
   /** Hand the session back to the learner, wherever the demonstration got to. */
   readonly onTakeControls?: (() => void) | undefined;
   readonly onEnd: () => void;
+  /** A rapid-cycle rehearsal in progress: which point, which cycle, and how it stands. */
+  readonly rapidCycle?: {
+    readonly point: ScenarioRapidCycle;
+    readonly cycle: number;
+    readonly status: RapidCycleStatus;
+    readonly onRetry: () => void;
+    readonly onFinish: () => void;
+  };
   readonly onReportSource?: () => void;
   readonly onSourceVisibilityChange?: (open: boolean) => void;
   /**
@@ -257,7 +266,7 @@ const DEFAULT_RESUSCITATION = {
 
 export function Cockpit({
   scenario, region, audio, demonstrating = false, onTakeControls, onEnd, onReportSource,
-  onSourceVisibilityChange,
+  onSourceVisibilityChange, rapidCycle,
   demonstrations,
   trays,
   moduleId = 'anesthesia',
@@ -2069,6 +2078,34 @@ export function Cockpit({
           }}
         />
       ) : null}
+
+      {rapidCycle && (
+        <aside className="panel" aria-labelledby="rapid-cycle-heading" role="complementary">
+          <h2 id="rapid-cycle-heading">Rapid cycle {rapidCycle.cycle} of {rapidCycle.point.cycleCap}</h2>
+          {rapidCycle.status === 'waiting' && (
+            <p>{scenario.metadata.objectives.find((objective) => objective.id === rapidCycle!.point.objectiveId)?.statement}</p>
+          )}
+          {rapidCycle.status === 'landed' && (
+            <>
+              <p>Inside the window. That is the step this cycle was for.</p>
+              <Button variant="primary" onClick={rapidCycle.onFinish}>Back to the debrief</Button>
+            </>
+          )}
+          {rapidCycle.status === 'missed' && (
+            <>
+              <p><strong>{rapidCycle.point.directive}</strong></p>
+              {rapidCycle.cycle < rapidCycle.point.cycleCap ? (
+                <Button variant="primary" onClick={rapidCycle.onRetry}>Try the cycle again</Button>
+              ) : (
+                <>
+                  <p className="field__hint">That was the last cycle. Source: {rapidCycle.point.sourceLocator}.</p>
+                  <Button variant="primary" onClick={rapidCycle.onFinish}>Back to the debrief</Button>
+                </>
+              )}
+            </>
+          )}
+        </aside>
+      )}
 
       {pausePoint && (
         <aside className="panel" aria-labelledby="pause-point-heading" role="complementary">

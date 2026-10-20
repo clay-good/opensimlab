@@ -13,6 +13,8 @@ import {
 } from '@platform/session/session-store';
 import { NotForClinicalUseGate, hasAcknowledged, recordAcknowledgement } from '@platform/safety/not-for-clinical-use';
 import { useReasoningNotes } from '@platform/session/reasoning-notes';
+import { rapidCycleStatus } from '@anesthesia/catalog/rapid-cycle';
+import type { ScenarioRapidCycle } from '@anesthesia/scenarios/types';
 import { SonificationEngine } from '@platform/audio/sonification';
 import { guessRegion, getRegion, REGIONS } from '@anesthesia/region/profiles';
 import type { Scenario } from '@anesthesia/engine';
@@ -825,6 +827,14 @@ export function assignmentNotices(
 export function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalModuleConfig }) {
   const session = useSession();
   const reasoningNotes = useReasoningNotes((state) => state.notes);
+  // Rapid-cycle rehearsal runs on the rehearsal branch; this holds which point and which cycle.
+  const [rapidCycleRun, setRapidCycleRun] = useState<{ point: ScenarioRapidCycle; cycle: number } | null>(null);
+  const rapidCycleState = rapidCycleRun === null ? null : rapidCycleStatus(rapidCycleRun.point,
+    sessionInternals().recorder?.build('pending').actions ?? [], session.tick);
+  useEffect(() => {
+    // The cycle stops at the moment it is decided, so the result is read before anything else happens.
+    if ((rapidCycleState === 'landed' || rapidCycleState === 'missed') && session.transport === 'running') session.pause();
+  }, [rapidCycleState, session]);
   const { scenario, missingId } = useMemo(() => scenarioForPath(path, config), [path, config]);
   const assignment = useMemo(
     () => readAssignment(typeof location === 'undefined' ? '' : location.search),
@@ -1057,6 +1067,11 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
         onExportTranscript={() => { void exportTranscript(); }}
         onReplayScenario={session.resetSession}
         onReplayDecisionPoint={(point) => session.rehearseFromDecisionPoint(point.id, point.atTick)}
+        guidance={session.guidance}
+        onRapidCycle={(point) => {
+          setRapidCycleRun({ point, cycle: 1 });
+          session.rehearseFromDecisionPoint(point.id, point.atTick);
+        }}
         {...(nextRecommendation ? { nextRecommendation } : {})}
       />
       <div className="problem-report-dock">{reportControl()}</div>
@@ -1116,6 +1131,14 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
       trays={config.trays}
       onReportSource={() => requestReport('source')}
       onSourceVisibilityChange={setSourceOpen}
+      {...(rapidCycleRun && rapidCycleState ? { rapidCycle: {
+        point: rapidCycleRun.point, cycle: rapidCycleRun.cycle, status: rapidCycleState,
+        onRetry: () => {
+          setRapidCycleRun({ point: rapidCycleRun.point, cycle: rapidCycleRun.cycle + 1 });
+          session.rehearseFromDecisionPoint(rapidCycleRun.point.id, rapidCycleRun.point.atTick);
+        },
+        onFinish: () => { setRapidCycleRun(null); session.end(); },
+      } } : {})}
     />
     {reportControl(true)}
     </>

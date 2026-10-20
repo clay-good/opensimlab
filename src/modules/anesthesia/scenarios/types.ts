@@ -172,6 +172,8 @@ export interface ScenarioRapidCycle {
   readonly atTick: number;
   /** How long after it the expected action must be accepted. */
   readonly windowTicks: number;
+  /** The learner action type that lands the step, for example `chest-compressions`. */
+  readonly actionType: string;
   /** Shown when the window closes: at most 160 characters. */
   readonly directive: string;
   /** Where the directive comes from in the scenario's sources. */

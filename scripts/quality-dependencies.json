@@ -28,7 +28,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "dfe713269e78cdabe5160ba8f2748c019622bc4b93d9a23355e66d0543630389"
+        "sha256": "ed10e1aa1b702dc00d97e5d9433fc48506934be56b2d72e0de2478b09cc5a0f1"
       },
       {
         "path": "src/modules/endocrine-metabolic/HypocalcemiaTray.tsx",
@@ -176,7 +176,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "e46856c3f18fac1eed994800021f37ff5b889110a4454d70ae275a3abaeae6cd"
+        "sha256": "9f4a626e26a5eac11ac6a21beb8dba17aca79b1d90ecab9f21b7594066c40235"
       },
       {
         "path": "tests/integration/demonstration-runs.test.tsx",
@@ -249,11 +249,11 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "09d260b8529c654b50a332f42bd93516ac90f756f215e0491c2ea25ec9d87209"
+        "sha256": "fa75856d0a1f0921f19d0b329aa55f88db1806f5a3fb75f81061cafbb168923e"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "dfe713269e78cdabe5160ba8f2748c019622bc4b93d9a23355e66d0543630389"
+        "sha256": "ed10e1aa1b702dc00d97e5d9433fc48506934be56b2d72e0de2478b09cc5a0f1"
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
@@ -437,7 +437,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "e46856c3f18fac1eed994800021f37ff5b889110a4454d70ae275a3abaeae6cd"
+        "sha256": "9f4a626e26a5eac11ac6a21beb8dba17aca79b1d90ecab9f21b7594066c40235"
       },
       {
         "path": "tests/integration/hyponatremia-correction-runs.test.ts",
@@ -514,11 +514,11 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "09d260b8529c654b50a332f42bd93516ac90f756f215e0491c2ea25ec9d87209"
+        "sha256": "fa75856d0a1f0921f19d0b329aa55f88db1806f5a3fb75f81061cafbb168923e"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "dfe713269e78cdabe5160ba8f2748c019622bc4b93d9a23355e66d0543630389"
+        "sha256": "ed10e1aa1b702dc00d97e5d9433fc48506934be56b2d72e0de2478b09cc5a0f1"
       },
       {
         "path": "src/modules/anesthesia/ui/DemonstrationBar.tsx",
@@ -706,7 +706,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "e46856c3f18fac1eed994800021f37ff5b889110a4454d70ae275a3abaeae6cd"
+        "sha256": "9f4a626e26a5eac11ac6a21beb8dba17aca79b1d90ecab9f21b7594066c40235"
       },
       {
         "path": "tests/integration/avp-deficiency-demonstration-session.test.tsx",

@@ -32,14 +32,21 @@ its own, none changes the engine, and none produces a score.
   undeclared objective, a directive over 160 characters, a cap outside 3 to 6, and a recognition
   objective, named by the convention every lesson follows (its id leads with "recognize"). The
   author guide documents it. No scenario declares one yet, and the cycle itself is next.
-- [ ] Implement the cycle on top of the existing rehearsal branch; assert the restored state hash
-  equals the original tick's hash.
-- [ ] Hide the mechanism in Unassisted mode; show the evidence sentence with its citation in the
-  rehearsal briefing.
+- [x] Implement the cycle on top of the existing rehearsal branch; assert the restored state hash
+  equals the original tick's hash. Each cycle calls the existing `rehearseFromDecisionPoint`, which
+  rebuilds the run's exact state at the decision tick; `rapidCycleStatus` reads whether the
+  declared action landed inside the window, the route pauses the moment it is decided, and the
+  cockpit shows either the result or the directive with "Try the cycle again" until the cap, then
+  the source. A test holds that the engine reaches an identical state at the decision tick on
+  every run, which is what makes each cycle start the same.
+- [x] Hide the mechanism in Unassisted mode; show the evidence sentence with its citation in the
+  rehearsal briefing. The debrief never offers rapid cycle when guidance is unassisted, and its
+  offer carries the one ILCOR 2024 sentence at very low certainty, claiming no more.
 - [ ] Author rapid-cycle decision points for every scenario whose objectives include a timed
   protocol step, starting with cardiac arrest, anaphylaxis, malignant hyperthermia, LAST, and
   status epilepticus across modules; register each directive line with the tutor-rule maturity.
-  Investigated and not started. A rapid-cycle point restores a fixed decision tick, so it fits
+  Started: persistent VF (anesthesia) declares compressions within 20 seconds of its scheduled VF
+  event, from the first step of the cited algorithm. A rapid-cycle point restores a fixed decision tick, so it fits
   only a lesson whose crisis is scheduled. Malignant hyperthermia is not: its trigger is latent,
   and rigidity begins whenever the learner's volatile reaches the patient (tick 2,400 on the
   expert path, later on others), so a fixed tick would restore the wrong moment for most

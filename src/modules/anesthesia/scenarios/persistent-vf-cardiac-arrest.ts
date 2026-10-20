@@ -94,6 +94,17 @@ export const PERSISTENT_VF_CARDIAC_ARREST: Scenario = {
       message: 'Reassess the rhythm and accepted resuscitation actions. The deterministic conversion in this teaching case is not an individual outcome prediction.',
     },
   ],
+  // The one scheduled crisis step here with a measured window: compressions within 20 seconds of
+  // the VF event at tick 300, the first step of the cited adult cardiac arrest algorithm.
+  rapidCycle: [
+    {
+      id: 'compressions-within-twenty-seconds', objectiveId: 'resume-arrest-compressions',
+      atTick: 300, windowTicks: 200, actionType: 'chest-compressions',
+      directive: 'Pulseless VF: start chest compressions now, before anything else. This lesson looks for them within 20 seconds.',
+      sourceLocator: 'AHA 2025 Adult Cardiac Arrest Algorithm, first step: start CPR',
+      cycleCap: 4,
+    },
+  ],
   debrief: { rubric: [
     {
       id: 'compression-response', objectiveId: 'resume-arrest-compressions',

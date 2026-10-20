@@ -260,12 +260,13 @@ export const SCENARIO_SCHEMA: SchemaNode = {
       type: 'array', description: 'Rapid-cycle decision points for timed protocol steps only.', minItems: 1,
       items: {
         type: 'object', description: 'One rapid-cycle decision point.',
-        required: ['id', 'objectiveId', 'atTick', 'windowTicks', 'directive', 'sourceLocator', 'cycleCap'],
+        required: ['id', 'objectiveId', 'atTick', 'windowTicks', 'actionType', 'directive', 'sourceLocator', 'cycleCap'],
         properties: {
           id: { type: 'string', description: 'Stable identifier.', pattern: '^[a-z0-9-]+$' },
           objectiveId: { type: 'string', description: 'The timed protocol objective it serves.', pattern: '^[a-z0-9-]+$' },
           atTick: { type: 'integer', description: 'The decision point the rehearsal restores.', minimum: 1 },
           windowTicks: { type: 'integer', description: 'The window for the expected action.', minimum: 1 },
+          actionType: { type: 'string', description: 'The learner action type that lands the step.', pattern: '^[a-z0-9-]+$' },
           directive: STRING_FIELD('The directive line shown when the window closes, at most 160 characters.', 10),
           sourceLocator: STRING_FIELD('Where the directive comes from in the scenario sources.', 10),
           cycleCap: { type: 'integer', description: 'Cycles before the rehearsal ends.', minimum: 3, maximum: 6 },

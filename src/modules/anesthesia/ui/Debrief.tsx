@@ -6,6 +6,8 @@
  * directive feedback is the framework's core sequence.
  */
 
+import { offeredRapidCycle, RAPID_CYCLE_EVIDENCE } from '@anesthesia/catalog/rapid-cycle';
+import type { ScenarioRapidCycle } from '@anesthesia/scenarios/types';
 import { NcjmmCoverageList } from './NcjmmCoverageList';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Badge, Button, CitationLink, Panel } from '@platform/ui';
@@ -102,6 +104,10 @@ export interface DebriefProps {
   readonly log: readonly EngineEvent[];
   readonly actions: readonly LearnerAction[];
   readonly attributionByTick: (tick: number) => readonly Attribution[];
+  /** The session's guidance level; rapid cycle is never offered when it is unassisted. */
+  readonly guidance?: 'guided' | 'coached' | 'unassisted';
+  /** Start rapid-cycle rehearsal of one declared decision point. */
+  readonly onRapidCycle?: (point: ScenarioRapidCycle) => void;
   /** What the learner wrote at the time. Passed in, never read from the session here. */
   readonly reasoningNotes?: readonly { readonly tick: number; readonly text: string }[];
   readonly timeToPeakSeconds: Readonly<Record<string, number>>;
@@ -207,6 +213,9 @@ export function Debrief(props: DebriefProps) {
   );
   const changes = objectiveChanges(previousAttempt, findings);
   const replayPoint = applicableReplayPoint(props.scenario, findings, totalTicks);
+  const rapidCycle = offeredRapidCycle(props.scenario.rapidCycle,
+    new Set(findings.filter((finding) => finding.outcome !== 'met').map((finding) => finding.objectiveId)),
+    props.guidance ?? 'unassisted');
 
   useEffect(() => {
     if (phase !== 'summary' || historySaved.current) return;
@@ -485,6 +494,20 @@ export function Debrief(props: DebriefProps) {
           </p>
 
           <h2>Where this goes next</h2>
+          {rapidCycle && props.onRapidCycle && (
+            <Panel>
+              <strong>Rapid-cycle rehearsal</strong>
+              <p>
+                Rehearse one timed step up to {rapidCycle.cycleCap} times from{' '}
+                {formatElapsed(rapidCycle.atTick)}, at normal speed. If the window closes, you see one
+                directive line and try again.
+              </p>
+              <p className="reading__aside">{RAPID_CYCLE_EVIDENCE}</p>
+              <Button onClick={() => props.onRapidCycle?.(rapidCycle)}>
+                Start rapid-cycle rehearsal
+              </Button>
+            </Panel>
+          )}
           {replayPoint && props.onReplayDecisionPoint && (
             <Panel>
               <strong>Rehearse one decision</strong>
