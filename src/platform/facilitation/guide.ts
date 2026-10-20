@@ -167,8 +167,10 @@ export function facilitatorGuide(entry: FacilitatedScenario): readonly GuideSect
       'The common-error and recovery transcripts are not yet summarized here.'),
     present('debrief', 'Debrief prompts (PEARLS)', debriefItems(scenario),
       'The scenario declares no debrief rubric.'),
-    absent('pause-points', 'Pause points and bookmarks',
-      'The scenario format does not declare pause points or bookmarks yet.'),
+    present('pause-points', 'Pause points', (scenario.pausePoints ?? []).map((point) => ({
+      label: point.atTick !== undefined ? (point.atTick === 0 ? 'At start' : `Tick ${point.atTick}`) : `When ${point.when}`,
+      text: `${point.question} (look at the ${point.region} region)`,
+    })), 'This scenario declares no pause points yet. A facilitator can pause the clock at any time.'),
     present('limitations', 'Limitations',
       (metadata.limitations ?? []).map((text) => ({ text })),
       'The scenario declares no limitations of its own; module limitations are on /limitations.'),

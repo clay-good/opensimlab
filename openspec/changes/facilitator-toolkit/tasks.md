@@ -32,8 +32,12 @@
 
 ## 2. Pause points
 
-- [ ] Add `pausePoints` to the scenario schema (tick or one-comparison predicate, question ≤ 200
-  chars, region); reuse the predicate parser; reject anything else.
+- [x] Add `pausePoints` to the scenario schema (tick or one-comparison predicate, question ≤ 200
+  chars, region); reuse the predicate parser; reject anything else. `ScenarioPausePoint` in the
+  scenario types, validated structurally and semantically (`tests/unit/pause-points.test.ts`);
+  `duePausePoint` in `src/platform/facilitation/pause-points.ts` says which one is due, once each.
+  The facilitator guide lists declared points, and the author guide documents the field. No
+  scenario declares any yet, and nothing fires them until classroom mode exists.
 - [ ] Implement classroom mode as an instructor setting that forces Unassisted and enables pause
   points; restore guidance level on exit.
 - [ ] Fire once, record in transcript, assert state hash unchanged across the pause; replay test.

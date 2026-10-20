@@ -144,6 +144,21 @@ export interface ScenarioReplayPoint {
   readonly reason: string;
 }
 
+/**
+ * A facilitator's pause (facilitator-toolkit → pause points). Inert unless
+ * classroom mode is on; then it pauses the clock once and asks the room a
+ * question, pointing at one region of the screen.
+ */
+export interface ScenarioPausePoint {
+  readonly id: string;
+  /** Exactly one of `atTick` or `when`, as for a timeline event. */
+  readonly atTick?: number;
+  readonly when?: string;
+  /** At most 200 characters. A question for the room, not an instruction. */
+  readonly question: string;
+  readonly region: 'monitor' | 'analysis' | 'actions';
+}
+
 export interface Scenario {
   readonly schemaVersion: number;
   readonly metadata: ScenarioMetadata;
@@ -152,5 +167,6 @@ export interface Scenario {
   readonly formulary: readonly FormularyEntry[];
   readonly timeline: readonly TimelineEvent[];
   readonly replayPoints?: readonly ScenarioReplayPoint[];
+  readonly pausePoints?: readonly ScenarioPausePoint[];
   readonly debrief: { readonly rubric: readonly RubricItem[] };
 }

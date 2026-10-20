@@ -55,6 +55,17 @@ all sixteen modules download, which is what `tests/unit/module-chunking.test.ts`
 lessons still written out there are ones that read more than the resuscitation snapshot; a new
 lesson should not join them.
 
+## Add pause points for a facilitator (optional)
+
+A scenario may declare `pausePoints`: moments where a facilitator running it with a group stops
+the clock and asks the room one question. Each has an `id`, exactly one of `atTick` or `when`
+(the same one-comparison predicate a timeline event uses, such as `"spo2Percent < 92"`), a
+`question` of at most 200 characters, and the `region` it is about (`monitor`, `analysis`, or
+`actions`). Write a question for the room, not an instruction, and never one that names the
+diagnosis the lesson leaves open. Pause points change nothing about the patient, and they appear
+in the scenario's facilitator guide; `validateScenario` refuses a duplicated id, both or neither
+of `atTick` and `when`, a predicate the grammar rejects, or a question over 200 characters.
+
 ## Publish quality evidence
 
 Keep records beside the scenario and register them in

@@ -12,6 +12,7 @@
  */
 
 import { EVENT_TYPES } from './event-types';
+import { InvalidPredicate, parsePredicate } from './predicate';
 import { MATURITY_STATUSES } from '@platform/catalog/maturity';
 
 export type JsonType = 'object' | 'array' | 'string' | 'number' | 'integer' | 'boolean';
@@ -255,6 +256,20 @@ export const SCENARIO_SCHEMA: SchemaNode = {
         },
       },
     },
+    pausePoints: {
+      type: 'array', description: 'Facilitator pause points, inert unless classroom mode is on.', minItems: 1,
+      items: {
+        type: 'object', description: 'One pause for the room.',
+        required: ['id', 'question', 'region'],
+        properties: {
+          id: { type: 'string', description: 'Stable pause-point identifier.', pattern: '^[a-z0-9-]+$' },
+          atTick: { type: 'integer', description: 'Simulated tick to pause at. Mutually exclusive with `when`.', minimum: 0 },
+          when: STRING_FIELD('A one-comparison state predicate, for example "spo2Percent < 90".', 3),
+          question: STRING_FIELD('The question for the room, at most 200 characters.', 10),
+          region: { type: 'string', description: 'The screen region the question is about.', enum: ['monitor', 'analysis', 'actions'] },
+        },
+      },
+    },
     debrief: {
       type: 'object', description: 'The debrief rubric.',
       required: ['rubric'],
@@ -454,6 +469,30 @@ export function validateScenarioSemantics(scenario: unknown): ValidationError[] 
         message: `Replay point references objective "${String(point.objectiveId)}", which this scenario `
           + `does not declare. Declared objectives are: ${[...objectiveIds].join(', ')}.`,
       });
+    }
+  });
+
+  const pausePoints = record.pausePoints as readonly Record<string, unknown>[] | undefined;
+  const pauseIds = new Set<string>();
+  (pausePoints ?? []).forEach((point, index) => {
+    const pointer = `/pausePoints/${index}`;
+    if (pauseIds.has(String(point.id))) {
+      errors.push({ pointer, rule: 'unique', message: `Pause point "${String(point.id)}" is declared twice.` });
+    }
+    pauseIds.add(String(point.id));
+    if ((point.atTick !== undefined) === (point.when !== undefined)) {
+      errors.push({ pointer, rule: 'oneOf',
+        message: `Pause point "${String(point.id)}" must declare exactly one of "atTick" or "when".` });
+    }
+    if (typeof point.when === 'string') {
+      try { parsePredicate(point.when); } catch (error) {
+        if (!(error instanceof InvalidPredicate)) throw error;
+        errors.push({ pointer: `${pointer}/when`, rule: 'predicate', message: error.message });
+      }
+    }
+    if (typeof point.question === 'string' && point.question.length > 200) {
+      errors.push({ pointer: `${pointer}/question`, rule: 'maxLength',
+        message: `Pause point "${String(point.id)}" asks a question longer than 200 characters.` });
     }
   });
 

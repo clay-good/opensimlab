@@ -85,7 +85,7 @@ describe('facilitator guide', () => {
     const main = /<main[\s\S]*<\/main>/.exec(markup)?.[0] ?? '';
     expect(main).not.toContain('<details');
     expect((markup.match(/class="guide__section/g) ?? []).length).toBe(ORDER.length);
-    expect(markup).toContain('Not available: The scenario format does not declare pause points');
+    expect(markup).toContain('Not available: This scenario declares no pause points yet.');
     for (const objective of entry.scenario.metadata.objectives) expect(markup).toContain(objective.measure.replace(/'/g, '&#x27;'));
   });
 
