@@ -31,9 +31,15 @@
   exam, exam or learner readiness) rather than the bare words, because "extubation readiness" and
   "handoff readiness" are states of the fictional patient and appear correctly in the mappings. A
   new surface (the NCJMM debrief, the blueprint filter) joins that list when it exists.
-- [ ] Extend the CSV export to every framework with its version; test.
-- [ ] Add `educationalAlignment` to `LearningResource` structured data with the framework as
-  target; validate in CI; assert no endorsement wording.
+- [x] Extend the CSV export to every framework with its version; test. The export already loops
+  over every framework record with a version column; `tests/unit/framework-records.test.ts` now
+  holds every record's id and version to it, so a new framework cannot be left out.
+- [x] Add `educationalAlignment` to `LearningResource` structured data with the framework as
+  target; validate in CI; assert no endorsement wording. Each mapped scenario's briefing carries
+  one `AlignmentObject` per mapped domain, typed `teaches` (subject matter, never `assesses` or
+  `requires`), with the framework named as the target. `tests/unit/educational-alignment.test.ts`
+  forbids endorsement and accreditation claims, while letting a framework keep a name such as
+  "Standards for Accreditation of Nurse Anesthesia Programs".
 
 ## 4. Statements and governance
 

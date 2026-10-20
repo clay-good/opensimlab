@@ -30,6 +30,31 @@ import { getSurgeryTraumaScenario } from '../../modules/surgery-trauma/scenarios
 import { ONE_LINE_DESCRIPTION } from '@landing/content';
 import { ROUTES, SITE_NAME, SITE_ORIGIN, canonicalUrl } from '@routes/routes';
 import { moduleProse } from '@platform/modules/module-prose';
+import { getFramework } from '@anesthesia/curriculum/frameworks';
+import { SCENARIO_MAPPINGS } from '@anesthesia/curriculum/mapping';
+
+/**
+ * Which framework domains a scenario teaches toward, as schema.org alignment.
+ *
+ * `teaches` is the honest alignment type: it states subject matter. It is not
+ * `assesses` or `requires`, and the framework is named as a target rather than
+ * as an endorser, because no body has reviewed these mappings.
+ */
+export function educationalAlignmentFor(moduleRoute: string, scenarioId: string): JsonLd[] {
+  if (moduleRoute !== 'anesthesia') return [];
+  return SCENARIO_MAPPINGS.filter((mapping) => mapping.scenarioId === scenarioId).flatMap((mapping) => {
+    const framework = getFramework(mapping.frameworkId);
+    const domain = framework?.domains.find((candidate) => candidate.id === mapping.domainId);
+    if (!framework || !domain) return [];
+    return [{
+      '@type': 'AlignmentObject',
+      alignmentType: 'teaches',
+      educationalFramework: `${framework.name} (${framework.version})`,
+      targetName: domain.label,
+      targetUrl: framework.url,
+    }];
+  });
+}
 
 export type JsonLd = Record<string, unknown>;
 
@@ -127,6 +152,7 @@ export function learningResourceJsonLd(
                   ? getObstetricsScenario(scenarioId)
             : getScenario(scenarioId);
   if (!scenario) throw new Error(`No scenario with id ${scenarioId}`);
+  const alignment = educationalAlignmentFor(moduleRoute ?? 'anesthesia', scenario.metadata.id);
   return {
     '@context': 'https://schema.org',
     '@type': 'LearningResource',
@@ -139,6 +165,7 @@ export function learningResourceJsonLd(
     isAccessibleForFree: true,
     inLanguage: 'en',
     license: scenario.metadata.license,
+    ...(alignment.length === 0 ? {} : { educationalAlignment: alignment }),
   };
 }
 

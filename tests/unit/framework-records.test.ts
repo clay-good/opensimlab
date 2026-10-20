@@ -3,6 +3,7 @@ import { createElement } from 'react';
 import { describe, expect, it } from 'vitest';
 import { DocumentRoute } from '@routes/DocumentRoute';
 import { FRAMEWORKS } from '@anesthesia/curriculum/frameworks';
+import { mappingCsv } from '@anesthesia/curriculum/mapping';
 import {
   frameworkRecordProblems, latestReviewBy, overdueFrameworks, type FrameworkRecord,
 } from '@platform/curriculum/framework-records';
@@ -40,5 +41,13 @@ describe('framework records', () => {
     const markup = renderToStaticMarkup(createElement(DocumentRoute, { path: '/governance' }));
     expect(markup).toContain('Framework readings');
     for (const framework of FRAMEWORKS) expect(markup).toContain(framework.reviewBy);
+  });
+
+  it('exports every framework with its version in the mapping CSV', () => {
+    const csv = mappingCsv();
+    for (const framework of FRAMEWORKS) {
+      expect(csv).toContain(framework.id);
+      expect(csv).toContain(framework.version.includes(',') ? `"${framework.version}"` : framework.version);
+    }
   });
 });
