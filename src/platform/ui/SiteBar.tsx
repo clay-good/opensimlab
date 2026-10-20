@@ -15,6 +15,7 @@
  */
 
 import { useRef } from 'react';
+import { t, type MessageKey } from '@platform/i18n/messages';
 
 export interface SiteBarLink {
   readonly href: string;
@@ -23,28 +24,28 @@ export interface SiteBarLink {
 
 /** The destinations every page offers, in the order they are worth offering. */
 export const SITE_BAR_LINKS: readonly SiteBarLink[] = [
-  { href: '/anesthesia', label: 'Anesthesia' },
-  { href: '/emergency-medicine', label: 'Emergency' },
-  { href: '/critical-care', label: 'Critical care' },
-  { href: '/cardiology', label: 'Cardiology' },
-  { href: '/respiratory-medicine', label: 'Respiratory medicine' },
-  { href: '/pediatrics', label: 'Pediatrics' },
-  { href: '/neurology', label: 'Neurology' },
-  { href: '/toxicology', label: 'Toxicology' },
-  { href: '/obstetrics', label: 'Obstetrics' },
-  { href: '/neonatology', label: 'Neonatology' },
-  { href: '/endocrine-metabolic', label: 'Endocrine + metabolic' },
-  { href: '/renal-electrolyte', label: 'Renal + electrolyte' },
-  { href: '/infectious-disease', label: 'Infectious disease' },
-  { href: '/medical-surgical-nursing', label: 'Nursing' },
-  { href: '/oncology', label: 'Oncology' },
-  { href: '/surgery-trauma', label: 'Surgery + trauma' },
-  { href: '/about', label: 'About' },
-  { href: '/for-educators', label: 'For educators' },
-  { href: '/curriculum', label: 'Curriculum' },
-  { href: '/validation', label: 'Validation' },
-  { href: '/governance', label: 'Governance' },
-  { href: '/limitations', label: 'Limitations' },
+  { href: '/anesthesia', label: t('sitebar.anesthesia' as MessageKey) },
+  { href: '/emergency-medicine', label: t('sitebar.emergency-medicine' as MessageKey) },
+  { href: '/critical-care', label: t('sitebar.critical-care' as MessageKey) },
+  { href: '/cardiology', label: t('sitebar.cardiology' as MessageKey) },
+  { href: '/respiratory-medicine', label: t('sitebar.respiratory-medicine' as MessageKey) },
+  { href: '/pediatrics', label: t('sitebar.pediatrics' as MessageKey) },
+  { href: '/neurology', label: t('sitebar.neurology' as MessageKey) },
+  { href: '/toxicology', label: t('sitebar.toxicology' as MessageKey) },
+  { href: '/obstetrics', label: t('sitebar.obstetrics' as MessageKey) },
+  { href: '/neonatology', label: t('sitebar.neonatology' as MessageKey) },
+  { href: '/endocrine-metabolic', label: t('sitebar.endocrine-metabolic' as MessageKey) },
+  { href: '/renal-electrolyte', label: t('sitebar.renal-electrolyte' as MessageKey) },
+  { href: '/infectious-disease', label: t('sitebar.infectious-disease' as MessageKey) },
+  { href: '/medical-surgical-nursing', label: t('sitebar.medical-surgical-nursing' as MessageKey) },
+  { href: '/oncology', label: t('sitebar.oncology' as MessageKey) },
+  { href: '/surgery-trauma', label: t('sitebar.surgery-trauma' as MessageKey) },
+  { href: '/about', label: t('sitebar.about' as MessageKey) },
+  { href: '/for-educators', label: t('sitebar.for-educators' as MessageKey) },
+  { href: '/curriculum', label: t('sitebar.curriculum' as MessageKey) },
+  { href: '/validation', label: t('sitebar.validation' as MessageKey) },
+  { href: '/governance', label: t('sitebar.governance' as MessageKey) },
+  { href: '/limitations', label: t('sitebar.limitations' as MessageKey) },
 ];
 
 export interface SiteBarProps {
@@ -62,9 +63,9 @@ export function SiteBar({ current, extra = [] }: SiteBarProps) {
   ];
   return (
     <>
-      <a className="skip-link" href="#main">Skip to main content</a>
+      <a className="skip-link" href="#main">{t('sitebar.skip')}</a>
       <header className="document__bar">
-        <a className="document__home" href="/">Open Sim Lab</a>
+        <a className="document__home" href="/">{t('sitebar.home')}</a>
         <details className="document__browse" onKeyDown={(event) => {
           if (event.key !== 'Escape' || event.defaultPrevented || !event.currentTarget.open) return;
           event.preventDefault();
@@ -72,8 +73,8 @@ export function SiteBar({ current, extra = [] }: SiteBarProps) {
           event.currentTarget.open = false;
           summary.current?.focus({ preventScroll: true });
         }}>
-          <summary className="document__browse-toggle" ref={summary}>Browse</summary>
-          <nav aria-label="Site">
+          <summary className="document__browse-toggle" ref={summary}>{t('sitebar.browse')}</summary>
+          <nav aria-label={t('sitebar.nav-label')}>
             <ul className="document__nav">
               {links.map((link) => (
                 <li key={link.href}>

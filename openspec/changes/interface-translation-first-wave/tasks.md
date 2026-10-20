@@ -2,14 +2,26 @@
 
 ## 1. Infrastructure
 
-- [ ] Choose the catalog format (flat JSON, ICU plural and placeholder syntax); add key classes;
-  write the loader with English fallback and no placeholder leakage.
+- [x] Choose the catalog format (flat JSON, ICU plural and placeholder syntax); add key classes;
+  write the loader with English fallback and no placeholder leakage. `src/platform/i18n/catalog.ts`:
+  flat keyed messages, each English key classed interface, educator, root-prose, or clinical;
+  ICU-style placeholders and plurals; a translation that is missing, stale (its English changed),
+  unfillable, or clinical falls back to English, and English that cannot be filled throws.
 - [ ] Externalise every interface, educator-documentation, and root-prose string; make the
-  hard-coded-string test pass.
-- [ ] Generate the coverage report at build; publish `/translation-status` as a trust document.
+  hard-coded-string test pass. Started: the site bar, on every page, reads its 26 strings from
+  `src/platform/i18n/messages.ts` and renders the same English. Every other surface, and the
+  hard-coded-string test, remain.
+- [x] Generate the coverage report at build; publish `/translation-status` as a trust document.
+  The prerendered page computes coverage from the catalogs at build: languages offered (none),
+  interface strings so far, each contributed locale's translated and stale counts, the two test
+  locales, and that clinical content stays English in every module.
 - [ ] Add `en-XA` (40% expansion) and `en-XB` (mirrored) to the CI matrix; run layout-shift,
-  truncation, 320 px reflow, and mirroring tests under both.
-- [ ] Fail the build on a clinical-content key in an interface catalog.
+  truncation, 320 px reflow, and mirroring tests under both. Started: `pseudoLocale` generates
+  both, marked `pseudo` so they can never ship, and a test renders through `en-XA`. The layout
+  tests under each, which need an active-locale switch, remain.
+- [x] Fail the build on a clinical-content key in an interface catalog. `catalogProblems` refuses
+  it, along with unknown keys, changed placeholders, an anonymous catalog, and any provenance but
+  human; `tests/unit/i18n-catalog.test.ts` runs it over every shipped catalog.
 
 ## 2. Locales
 

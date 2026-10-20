@@ -443,6 +443,16 @@ export const ROUTES: readonly RouteMetadata[] = [
     heading: 'Pharmacology verification queue',
   },
   {
+    path: '/translation-status',
+    title: formatTitle('Translation status'),
+    description:
+      'Which languages the interface is translated into, how complete each is, and why every '
+      + 'scenario stays English until a clinically reviewed translation exists.',
+    indexable: true,
+    structuredData: [],
+    heading: 'Translation status',
+  },
+  {
     path: '/limitations',
     title: formatTitle('Limitations register'),
     description:
