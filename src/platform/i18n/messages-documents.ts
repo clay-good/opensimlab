@@ -193,6 +193,18 @@ export const DOCUMENT_MESSAGES = {
   'val.sources-hint': { class: 'root-prose', text: 'A test refuses the build if any citation appears in the code without an entry here. Nothing below is hidden; it is filed by author so a bibliography of this size can be walked rather than scrolled.' },
   'val.source-count': { class: 'root-prose', text: '{count, plural, one {# source} other {# sources}}' },
   'val.pubmed': { class: 'root-prose', text: 'Look this up on PubMed' },
+  'planned.heading': { class: 'interface', text: '{module} — planned' },
+  'planned.intro': { class: 'interface', text: 'This module is planned and not yet built. There is no interactive entry point here, because there is nothing behind it yet.' },
+  'planned.cover': { class: 'interface', text: 'What it will cover' },
+  'planned.audience': { class: 'interface', text: 'Who it will be for' },
+  'planned.prerequisites': { class: 'interface', text: 'Prerequisites: {prerequisites}' },
+  'planned.when': { class: 'interface', text: 'When' },
+  'planned.no-date': { class: 'interface', text: 'No date is promised. The project does not commit to a schedule it cannot keep, so there is no quarter, no countdown, and no waiting list.' },
+  'planned.watch': { class: 'interface', text: 'Watch the repository releases to hear when it ships' },
+  'planned.today-heading': { class: 'interface', text: 'What is available today' },
+  'planned.today': { class: 'interface', text: 'The anesthesia module is built and running.' },
+  'planned.open': { class: 'interface', text: 'Open the anesthesia simulator' },
+  'planned.back': { class: 'interface', text: 'Back to the Open Sim Lab front page' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 registerMessages(DOCUMENT_MESSAGES);

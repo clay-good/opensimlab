@@ -226,6 +226,12 @@ export const SESSION_MESSAGES = {
   'why.card-rocuronium': { class: 'interface', text: 'Rocuronium card' },
   'why.of-change': { class: 'interface', text: 'of the current change' },
   'why.aside': { class: 'interface', text: 'The simulation continues or stays paused exactly as it was. Closing this returns you to where you were.' },
+  'crisis.intro': { class: 'interface', text: 'Inject a modeled crisis into the current patient. Every accepted injection is recorded in the transcript and event log. The patient, equipment, and current drugs still matter.' },
+  'crisis.badge': { class: 'interface', text: 'Scenario-author tool' },
+  'crisis.already': { class: 'interface', text: 'Already injected' },
+  'crisis.select': { class: 'interface', text: 'Select {crisis}' },
+  'crisis.inject': { class: 'interface', text: 'Inject {crisis}' },
+  'crisis.cancel': { class: 'interface', text: 'Cancel' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 registerMessages(SESSION_MESSAGES);

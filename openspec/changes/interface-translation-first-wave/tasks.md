@@ -20,13 +20,14 @@
     `/corrections` (16; policy, triage, entries stay typed data), `/review-status` (16), the
     limitations register (7), `/privacy` (29, plus its practice-history controls, 16),
     `/governance` (28; board, coverage, framework records stay typed data), `/validation` (43;
-    figures, rows, sources stay generated).
+    figures, rows, sources stay generated), and a planned module's page (12).
   - Cockpit: the status bar (18), the session menu's note, classroom, vibration, and narration
     controls (22), the rapid-cycle and classroom pause panels (11), the private tutor's card and
     the worked-example bar (21; narration stays authored), the analysis region and patient profile
     with the monitor's morphology heading (36; ASA categories and waveform descriptions stay
     clinical), the concentration and Why panels (30; model notes, citations, attribution terms, and
-    the CSV header stay data), the return suggestion (10), the goal-path recommendation (3).
+    the CSV header stay data), the return suggestion (10), the goal-path recommendation (3), the
+    crisis injector's controls (6; crisis names, boundaries, and its two model limits stay data).
   - Briefing and debrief: the briefing's section headings and facilitator link (7), the debrief's
     shared shell (45; scenario framing and episode labels stay clinical), its reasoning-notes panel
     and rapid-cycle offer (9), the nursing NCJMM list (7, educator).
@@ -51,8 +52,7 @@
     text is component names, sample data, and a device measurement, not interface a learner or
     educator reads.
   - Still to move: the prebrief's remaining text, the cockpit shell
-    and its action controls, the crisis injector's own words, `/content-review`, the planned-module
-    page, and the prerendered scenario briefing.
+    and its action controls, `/content-review`, and the prerendered scenario briefing.
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.
   Its sentence claiming the test locales ran on every build was untrue and is corrected: they are
   applied by hand in development until CI runs them. The prerendered page computes coverage from the catalogs at build: languages offered (none),

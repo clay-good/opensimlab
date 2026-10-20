@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { Badge, Button } from '@platform/ui';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export interface CrisisInjection {
   readonly id: string;
@@ -23,6 +25,10 @@ export const MODELED_CRISIS_INJECTIONS: readonly CrisisInjection[] = [
   { id: 'air-embolism', label: 'Venous air embolism', boundary: 'Starts an abrupt pulmonary-flow obstruction teaching pattern with falling end-tidal carbon dioxide, pressure, output, and oxygen saturation.' },
 ] as const;
 
+/** What two of the injections deliberately do not model, said once under the list. */
+export const CRISIS_INJECTION_LIMITS = 'High spinal does not estimate block height or obstetric physiology. '
+  + 'Venous air embolism does not estimate gas volume, diagnose the cause, or model paradoxical or cerebral embolism.';
+
 export function ManualCrisisInjector({ injectedCrisisIds, onInject }: {
   readonly injectedCrisisIds: readonly string[];
   readonly onInject: (crisisId: string) => void;
@@ -30,11 +36,8 @@ export function ManualCrisisInjector({ injectedCrisisIds, onInject }: {
   const [pending, setPending] = useState<string | null>(null);
   return (
     <div className="reading" style={{ padding: 0 }}>
-      <p>
-        Inject a modeled crisis into the current patient. Every accepted injection is recorded in
-        the transcript and event log. The patient, equipment, and current drugs still matter.
-      </p>
-      <Badge kind="teaching">Scenario-author tool</Badge>
+      <p>{t('crisis.intro')}</p>
+      <Badge kind="teaching">{t('crisis.badge')}</Badge>
       <div style={{ display: 'grid', gap: 'var(--space-3)', marginBlockStart: 'var(--space-4)' }}>
         {MODELED_CRISIS_INJECTIONS.map((crisis) => (
           <section className="card" key={crisis.id}>
@@ -43,23 +46,20 @@ export function ManualCrisisInjector({ injectedCrisisIds, onInject }: {
             {pending !== crisis.id ? (
               <Button disabled={injectedCrisisIds.includes(crisis.id)}
                 onClick={() => setPending(crisis.id)}>
-                {injectedCrisisIds.includes(crisis.id) ? 'Already injected' : `Select ${crisis.label}`}
+                {injectedCrisisIds.includes(crisis.id) ? t('crisis.already') : t('crisis.select', { crisis: crisis.label })}
               </Button>
             ) : (
               <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
                 <Button variant="primary" onClick={() => { onInject(crisis.id); setPending(null); }}>
-                  Inject {crisis.label}
+                  {t('crisis.inject', { crisis: crisis.label })}
                 </Button>
-                <Button variant="ghost" onClick={() => setPending(null)}>Cancel</Button>
+                <Button variant="ghost" onClick={() => setPending(null)}>{t('crisis.cancel')}</Button>
               </div>
             )}
           </section>
         ))}
       </div>
-      <p className="field__hint">
-        High spinal does not estimate block height or obstetric physiology. Venous air embolism
-        does not estimate gas volume, diagnose the cause, or model paradoxical or cerebral embolism.
-      </p>
+      <p className="field__hint">{CRISIS_INJECTION_LIMITS}</p>
     </div>
   );
 }

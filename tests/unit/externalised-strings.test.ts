@@ -36,6 +36,9 @@ const EXTERNALISED: readonly { readonly path: string; readonly region?: readonly
   { path: 'src/routes/ReviewRoute.tsx' },
   { path: 'src/landing/Landing.tsx' },
   { path: 'src/landing/About.tsx' },
+  { path: 'src/routes/PlannedModuleRoute.tsx' },
+  // Its crisis names and boundaries above the component are clinical content and stay data.
+  { path: 'src/modules/anesthesia/ui/ManualCrisisInjector.tsx', region: ['export function ManualCrisisInjector', '\n}\n'] },
   { path: 'src/modules/anesthesia/ui/Debrief.tsx', region: ['  return (\n    <>\n      <a className="skip-link"', '\n}\n'] },
   { path: 'src/modules/anesthesia/ui/GoalRecommendation.tsx', region: ['return (', '\n}\n'] },
   { path: 'src/platform/offline/UpdateNotice.tsx', region: ['  return (\n    <div className={`update-notice', '\n}\n'] },

@@ -8,41 +8,39 @@
 import { SiteBar } from '@platform/ui';
 import { moduleProse } from '@platform/modules/module-prose';
 import { RELEASE_FEED_URL, type ModuleDeclaration } from '@platform/modules/registry';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-documents';
 
 export function PlannedModuleRoute({ module }: { module: ModuleDeclaration }) {
   return (
     <>
       <SiteBar />
     <main className="reading" id="main">
-      <h1>{module.displayName} — planned</h1>
-      <p>
-        This module is planned and not yet built. There is no interactive entry point here,
-        because there is nothing behind it yet.
-      </p>
+      <h1>{t('planned.heading', { module: module.displayName })}</h1>
+      <p>{t('planned.intro')}</p>
 
-      <h2>What it will cover</h2>
+      <h2>{t('planned.cover')}</h2>
       <p>{moduleProse(module.id).plannedScope}</p>
 
-      <h2>Who it will be for</h2>
+      <h2>{t('planned.audience')}</h2>
       <p>{moduleProse(module.id).audience}</p>
-      <p className="field__hint">Prerequisites: {moduleProse(module.id).prerequisites}</p>
+      <p className="field__hint">{t('planned.prerequisites', { prerequisites: moduleProse(module.id).prerequisites })}</p>
 
-      <h2>When</h2>
+      <h2>{t('planned.when')}</h2>
       <p>
-        No date is promised. The project does not commit to a schedule it cannot keep, so there is
-        no quarter, no countdown, and no waiting list.{' '}
+        {t('planned.no-date')}{' '}
         <a href={RELEASE_FEED_URL} rel="noreferrer noopener">
-          Watch the repository releases to hear when it ships
+          {t('planned.watch')}
         </a>
-        . No email address is collected.
+        {t('about.no-email')}
       </p>
 
-      <h2>What is available today</h2>
-      <p>The anesthesia module is built and running.</p>
+      <h2>{t('planned.today-heading')}</h2>
+      <p>{t('planned.today')}</p>
       <a className="button button--primary" href="/anesthesia">
-        Open the anesthesia simulator
+        {t('planned.open')}
       </a>
-      <p><a href="/">Back to the Open Sim Lab front page</a></p>
+      <p><a href="/">{t('planned.back')}</a></p>
     </main>
     </>
   );
