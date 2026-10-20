@@ -255,6 +255,22 @@ export const EN_MESSAGES = {
   'history.no-change': { class: 'interface', text: 'No objective status changed.' },
   'history.changed': { class: 'interface', text: '{count, plural, one {# objective status changed} other {# objective statuses changed}}: {changes}.' },
   'history.none': { class: 'interface', text: 'none' },
+  'corrections.intro': { class: 'root-prose', text: 'A permanent, public record of every clinical error found in Open Sim Lab and what was done about it.' },
+  'corrections.entries': { class: 'root-prose', text: 'Entries' },
+  'corrections.count': { class: 'root-prose', text: '{count, plural, one {# correction recorded.} other {# corrections recorded.}}' },
+  'corrections.see-review-status': { class: 'root-prose', text: 'The review-status page lists every item and the label it is published under,' },
+  'corrections.see-governance': { class: 'root-prose', text: 'and the governance page names the empty board.' },
+  'corrections.item': { class: 'root-prose', text: 'Item' },
+  'corrections.was-wrong': { class: 'root-prose', text: 'What was wrong' },
+  'corrections.impact': { class: 'root-prose', text: 'Potential educational impact' },
+  'corrections.reported-by': { class: 'root-prose', text: 'Reported by' },
+  'corrections.what-changed': { class: 'root-prose', text: 'What changed' },
+  'corrections.released-in': { class: 'root-prose', text: 'Released in' },
+  'corrections.how-heading': { class: 'root-prose', text: 'How to report something' },
+  'corrections.how': { class: 'root-prose', text: 'Every playable scenario carries a Help us improve this control. It sends only the scenario, its version, the public practice context, a category, and an optional 160-character note, after showing you a preview of exactly that. Do not include real patient or learner information; there is no field that wants it.' },
+  'corrections.unavailable': { class: 'root-prose', text: 'Where the separately deployed report service is unavailable, the control says so rather than pretending to queue anything, and invited reviewers can still record notes and return the exported file through their invitation channel:' },
+  'corrections.content-review': { class: 'root-prose', text: 'the content-review page.' },
+  'corrections.next-heading': { class: 'root-prose', text: 'What happens next' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 export type MessageKey = keyof typeof EN_MESSAGES;
