@@ -9,7 +9,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button, SiteBar, useLocalPreference } from '@platform/ui';
 import {
-  useSession, sessionInternals, type GuidanceLevel, type SessionState,
+  attributionAfter, useSession, sessionInternals, type GuidanceLevel, type SessionState,
 } from '@platform/session/session-store';
 import { NotForClinicalUseGate, hasAcknowledged, recordAcknowledgement } from '@platform/safety/not-for-clinical-use';
 import { useReasoningNotes } from '@platform/session/reasoning-notes';
@@ -1043,7 +1043,7 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
         history={session.history}
         log={session.log}
         actions={internals.recorder ? internals.recorder.build('pending').actions : []}
-        attributionByTick={() => session.attribution}
+        attributionByTick={(tick) => attributionAfter(session.history, tick) ?? []}
         reasoningNotes={reasoningNotes}
         timeToPeakSeconds={{ propofol: 100, remifentanil: 90 }}
         replayOptions={{

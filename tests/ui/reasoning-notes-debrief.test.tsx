@@ -25,7 +25,8 @@ describe('reasoning notes in the debrief', () => {
     const actions: LearnerAction[] = [{ tick: 120, type: 'bolus', payload: { drugId: 'propofol', amount: 150 } }];
     act(() => root.render(<Debrief scenario={SCENARIO} moduleId="anesthesia"
       history={[{ tick: 0, state: frame.state, concentrations: frame.concentrations }]} actions={actions} log={[]}
-      attributionByTick={() => []} preoxygenationSeconds={0} timeToPeakSeconds={{}}
+      attributionByTick={(tick) => (tick === 300 ? [{ variable: 'map', terms: [{ termId: 'p', label: 'propofol vasodilation', contribution: -8, share: 0.8, teachingModel: false }] }] : [])}
+      preoxygenationSeconds={0} timeToPeakSeconds={{}}
       {...(notes ? { reasoningNotes: notes } : {})}
       replayOptions={{ scenario: SCENARIO, seed: 1, practiceRegion: 'US', ticks: 600 }}
       onOpenExplainer={() => {}} onExportTranscript={() => {}} onReplayScenario={() => {}} />));
@@ -39,6 +40,7 @@ describe('reasoning notes in the debrief', () => {
     expect(container.textContent).toContain('What you wrote at the time');
     expect(container.textContent).toContain('“Waiting for the effect site before a second dose”');
     expect(container.textContent).toContain('Beside your bolus at');
+    expect(container.textContent).toContain('The engine attributed the change that followed mostly to propofol vasodilation.');
     expect(container.textContent).toContain('Nothing reads, scores, or sends them.');
   });
 

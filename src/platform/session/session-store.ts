@@ -24,6 +24,22 @@ export interface HistorySample {
   readonly tick: number;
   readonly state: Readonly<Record<string, number>>;
   readonly concentrations: readonly DrugConcentration[];
+  /** What the engine attributed the state at this sample to, kept so a debrief can ask about a moment. */
+  readonly attribution?: readonly Attribution[];
+}
+
+/**
+ * The engine's attribution for the change that followed a moment: the first
+ * sample at or after it that carries one, within a minute of simulated time.
+ * Null when there is none, so a caller can say so rather than borrow the
+ * attribution of a different moment.
+ */
+export function attributionAfter(
+  history: readonly HistorySample[], tick: number, windowTicks = 60 * TICKS_PER_SECOND,
+): readonly Attribution[] | null {
+  const sample = history.find((entry) => entry.tick >= tick && entry.tick <= tick + windowTicks
+    && (entry.attribution?.length ?? 0) > 0);
+  return sample?.attribution ?? null;
 }
 
 export type GuidanceLevel = 'guided' | 'coached' | 'unassisted';
@@ -318,7 +334,8 @@ function applyState(
   const history = [...previous.history];
   // One history sample per simulated second keeps the plot cheap without losing shape.
   if (history.length === 0 || message.tick - (history[history.length - 1]?.tick ?? -Infinity) >= TICKS_PER_SECOND) {
-    history.push({ tick: message.tick, state: message.state, concentrations: message.concentrations });
+    history.push({ tick: message.tick, state: message.state, concentrations: message.concentrations,
+      attribution: message.attribution });
     if (history.length > HISTORY_LIMIT) history.shift();
   }
   const criticalArrived = message.events.some((event) => event.severity === 'critical');

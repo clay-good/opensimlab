@@ -404,12 +404,14 @@ export function Debrief(props: DebriefProps) {
                 {props.reasoningNotes!.map((note) => {
                   const action = [...props.actions].filter((entry) => entry.tick <= note.tick)
                     .sort((a, b) => b.tick - a.tick)[0];
+                  const followed = props.attributionByTick(note.tick)[0]?.terms[0]?.label;
                   return (
                     <li key={`${note.tick}-${note.text}`}>
                       <span className="numeric">{formatElapsed(note.tick)}</span>: &ldquo;{note.text}&rdquo;
                       <br />
                       <span className="field__hint">
                         {action ? `Beside your ${action.type.replace(/-/g, ' ')} at ${formatElapsed(action.tick)}.` : 'Before any action.'}
+                        {followed ? ` The engine attributed the change that followed mostly to ${followed}.` : ''}
                       </span>
                     </li>
                   );

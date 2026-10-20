@@ -39,3 +39,18 @@ describe('reasoning notes', () => {
     expect(collector.slice(0, collector.indexOf('\n}\n'))).not.toMatch(/reasoning|useReasoningNotes/i);
   });
 });
+
+describe('attribution for a moment', () => {
+  it('reads the first attributed sample at or after the moment, within a minute, and never borrows another', async () => {
+    const { attributionAfter } = await import('@platform/session/session-store');
+    const term = (label: string) => [{ variable: 'map', terms: [{ termId: label, label, contribution: -5, share: 1, teachingModel: false }] }];
+    const history = [
+      { tick: 0, state: {}, concentrations: [], attribution: term('baseline') },
+      { tick: 100, state: {}, concentrations: [], attribution: [] },
+      { tick: 200, state: {}, concentrations: [], attribution: term('propofol vasodilation') },
+      { tick: 2000, state: {}, concentrations: [], attribution: term('much later') },
+    ];
+    expect(attributionAfter(history, 50)?.[0]?.terms[0]?.label).toBe('propofol vasodilation');
+    expect(attributionAfter(history, 1000)).toBeNull();
+  });
+});
