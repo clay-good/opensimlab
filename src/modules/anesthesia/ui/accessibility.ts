@@ -14,6 +14,8 @@ import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms
 import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot, RenalHypocalcemiaSnapshot, RenalHypermagnesemiaSnapshot, MeningococcalSepsisSnapshot, ObstructedKidneySnapshot, FebrileNeutropeniaSnapshot, NecrotizingInfectionSnapshot, EndocarditisHeartFailureSnapshot, SeverePneumoniaSnapshot, ToxicShockSnapshot, PossibleSepsisSnapshot, SepticShockLabelSnapshot, MeningitisImagingSnapshot, LowScoreSnapshot, CountedRateSnapshot, PairedReadingSnapshot, AfferentLimbSnapshot, QuietPatientSnapshot, ProxyScaleSnapshot, LastKnownWellSnapshot, OxygenTargetScaleSnapshot, LostContingencySnapshot, DelayedImmuneEventSnapshot, IncidentalClotSnapshot, NormalTestToxicitySnapshot, PrognosisQuestionSnapshot, LaboratoryTlsSnapshot, RareEarlyMyocarditisSnapshot, LoweringTheCountSnapshot, InheritedUrgencySnapshot, TrialRuleSnapshot, SilentInteractionSnapshot, EasyLabelSnapshot, NegativeScanSnapshot, RisingRequirementSnapshot, UnfinishedSurveySnapshot, TransientResponseSnapshot, QuietChestSnapshot, UnownedDelaySnapshot, ThirdAttendanceSnapshot, DeferredStepSnapshot, KnownLabelSnapshot, UnspokenDoubtSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
+import { t, type MessageKey } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 /**
  * Thresholds that count as a clinically meaningful change. A drift of one beat
@@ -1819,18 +1821,23 @@ export interface Shortcut {
   readonly timeCritical: boolean;
 }
 
+/** One shortcut, its description read from the catalog when the reference renders. */
+function shortcut(keys: string, key: MessageKey, timeCritical: boolean): Shortcut {
+  return { keys, get action() { return t(key); }, timeCritical };
+}
+
 export const SHORTCUTS: readonly Shortcut[] = [
-  { keys: 'Space', action: 'Play or pause the simulation', timeCritical: true },
-  { keys: '.', action: 'Advance one simulated second', timeCritical: false },
-  { keys: 'S', action: 'Read the full state summary aloud', timeCritical: true },
-  { keys: 'W', action: 'Read the waveform descriptions', timeCritical: false },
-  { keys: 'A', action: 'Silence the highest-priority active alarm', timeCritical: true },
-  { keys: '1 – 4', action: 'Switch the Analysis tab', timeCritical: false },
-  { keys: 'G', action: 'Give the focused syringe\'s first preset dose', timeCritical: true },
-  { keys: 'V', action: 'Start or stop ventilating', timeCritical: true },
-  { keys: 'L', action: 'Perform laryngoscopy', timeCritical: true },
-  { keys: 'C', action: 'Start or stop modeled chest compressions', timeCritical: true },
-  { keys: 'E', action: 'Give 1 mg IV epinephrine in the scripted arrest case', timeCritical: true },
-  { keys: 'D', action: 'Deliver the declared 200 J biphasic shock in the scripted arrest case', timeCritical: true },
-  { keys: '?', action: 'Open this shortcut reference', timeCritical: false },
+  shortcut('Space', 'shortcut.play', true),
+  shortcut('.', 'shortcut.step', false),
+  shortcut('S', 'shortcut.summary', true),
+  shortcut('W', 'shortcut.waveforms', false),
+  shortcut('A', 'shortcut.silence', true),
+  shortcut('1 – 4', 'shortcut.tabs', false),
+  shortcut('G', 'shortcut.dose', true),
+  shortcut('V', 'shortcut.ventilate', true),
+  shortcut('L', 'shortcut.laryngoscopy', true),
+  shortcut('C', 'shortcut.compressions', true),
+  shortcut('E', 'shortcut.epinephrine', true),
+  shortcut('D', 'shortcut.shock', true),
+  shortcut('?', 'shortcut.reference', false),
 ];

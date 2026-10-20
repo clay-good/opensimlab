@@ -24,7 +24,10 @@
   - Cockpit: the shell (44: the skip link, rehearsal-branch notice, mobile buttons, overflow
     menu, sound toggle, shortcuts heading, stopped-engine and hidden-tab dialogs, drug-card headings,
     review markers, confidence badges, and resize handles; its screen-reader announcements of
-    clinical state stay engine wording), the status bar (18), the session menu's note, classroom, vibration, and narration
+    clinical state stay engine wording), the keyboard shortcut reference (14; the two that state a
+    dose, epinephrine and the arrest shock, are the catalog's first clinical keys and stay English
+    in every locale, and emergency medicine's Review tab is its own message rather than an edit of
+    the English), the status bar (18), the session menu's note, classroom, vibration, and narration
     controls (22), the rapid-cycle and classroom pause panels (11), the private tutor's card and
     the worked-example bar (21; narration stays authored), the analysis region and patient profile
     with the monitor's morphology heading (36; ASA categories and waveform descriptions stay
@@ -63,7 +66,7 @@
     hand-typed headings that were each a module's name and "simulator" are now one message;
     text identical to the previous build).
   - Still to move: the action cockpit's controls (`ActionCockpit.tsx` and each module's tray),
-    the keyboard shortcut descriptions, and the cockpit's screen-reader announcements.
+    and the cockpit's screen-reader announcements.
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.
   Its sentence claiming the test locales ran on every build was untrue and is corrected: they are
   applied by hand in development until CI runs them. The prerendered page computes coverage from the catalogs at build: languages offered (none),

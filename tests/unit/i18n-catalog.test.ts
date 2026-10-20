@@ -73,6 +73,11 @@ describe('pseudo-locales', () => {
   it('lengthen every interface string by about 40% in brackets, or keep it for right-to-left', () => {
     const xa = pseudoLocale(EN_MESSAGES, 'en-XA');
     for (const [key, message] of Object.entries(EN_MESSAGES)) {
+      // Clinical keys are never translated, test locales included.
+      if (message.class === 'clinical') {
+        expect(xa.messages[key], key).toBeUndefined();
+        continue;
+      }
       const long = xa.messages[key]!.text;
       expect(long.startsWith('[') && long.endsWith(']')).toBe(true);
       // Placeholder names are not text a reader sees, so the padding is sized on the rest.
@@ -81,6 +86,13 @@ describe('pseudo-locales', () => {
     }
     expect(pseudoLocale(EN_MESSAGES, 'en-XB').messages['sitebar.browse']?.text).toBe('Browse');
     expect(catalogProblems(EN_MESSAGES, xa)).toContain('catalog is not human-translated');
+  });
+
+  it('keeps a clinical key in English under a test locale', () => {
+    // The first clinical keys are the two shortcut descriptions that carry a dose.
+    const xa = pseudoLocale(EN_MESSAGES, 'en-XA');
+    expect(EN_MESSAGES['shortcut.epinephrine'].class).toBe('clinical');
+    expect(t('shortcut.epinephrine', undefined, xa)).toBe(EN_MESSAGES['shortcut.epinephrine'].text);
   });
 
   it('renders the site bar under en-XA without a raw placeholder or a lost link', () => {
@@ -101,7 +113,9 @@ describe('the externalised site bar and the status page', () => {
   it('publishes /translation-status with the counts first and clinical content stated as English', () => {
     const markup = renderToStaticMarkup(createElement(DocumentRoute, { path: '/translation-status' }));
     expect(markup.indexOf('figure__value')).toBeLessThan(markup.indexOf('<p>'));
-    expect(markup).toContain(`<span class="figure__value">${Object.keys(EN_MESSAGES).length}</span>`);
+    const translatable = Object.values(EN_MESSAGES as Readonly<Record<string, SourceMessage>>)
+      .filter((message) => message.class !== 'clinical').length;
+    expect(markup).toContain(`<span class="figure__value">${translatable}</span>`);
     expect(markup).toContain('No translation has been contributed yet');
     expect(markup).toContain('stays in English');
   });

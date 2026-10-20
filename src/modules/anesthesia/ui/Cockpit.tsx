@@ -2232,8 +2232,10 @@ export function Cockpit({
             || !['G', 'V', 'L', 'C', 'E', 'D'].includes(shortcut.keys)).map((shortcut) => (
             <div key={shortcut.keys} style={{ display: 'contents' }}>
               <dt><kbd>{shortcut.keys}</kbd></dt>
-              <dd>{moduleId === 'emergency-medicine'
-                ? shortcut.action.replace('Analysis', 'Review') : shortcut.action}</dd>
+              {/* Emergency medicine calls its analysis region Review; a message of its own
+                  rather than an edit of the English, which a translation would not survive. */}
+              <dd>{moduleId === 'emergency-medicine' && shortcut.keys === '1 – 4'
+                ? t('shortcut.tabs-review') : shortcut.action}</dd>
             </div>
           ))}
         </dl>

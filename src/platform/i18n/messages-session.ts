@@ -294,6 +294,20 @@ export const SESSION_MESSAGES = {
   'cockpit.pending-check': { class: 'interface', text: 'Pending check' },
   'cockpit.resize-actions': { class: 'interface', text: 'Height of the action region' },
   'cockpit.resize-analysis': { class: 'interface', text: 'Width of the analysis region' },
+  'shortcut.play': { class: 'interface', text: 'Play or pause the simulation' },
+  'shortcut.step': { class: 'interface', text: 'Advance one simulated second' },
+  'shortcut.summary': { class: 'interface', text: 'Read the full state summary aloud' },
+  'shortcut.waveforms': { class: 'interface', text: 'Read the waveform descriptions' },
+  'shortcut.silence': { class: 'interface', text: 'Silence the highest-priority active alarm' },
+  'shortcut.tabs': { class: 'interface', text: 'Switch the Analysis tab' },
+  'shortcut.dose': { class: 'interface', text: 'Give the focused syringe\'s first preset dose' },
+  'shortcut.ventilate': { class: 'interface', text: 'Start or stop ventilating' },
+  'shortcut.laryngoscopy': { class: 'interface', text: 'Perform laryngoscopy' },
+  'shortcut.compressions': { class: 'interface', text: 'Start or stop modeled chest compressions' },
+  'shortcut.epinephrine': { class: 'clinical', text: 'Give 1 mg IV epinephrine in the scripted arrest case' },
+  'shortcut.shock': { class: 'clinical', text: 'Deliver the declared 200 J biphasic shock in the scripted arrest case' },
+  'shortcut.reference': { class: 'interface', text: 'Open this shortcut reference' },
+  'shortcut.tabs-review': { class: 'interface', text: 'Switch the Review tab' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 registerMessages(SESSION_MESSAGES);
