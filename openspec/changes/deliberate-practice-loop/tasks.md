@@ -39,6 +39,12 @@ its own, none changes the engine, and none produces a score.
 - [ ] Author rapid-cycle decision points for every scenario whose objectives include a timed
   protocol step, starting with cardiac arrest, anaphylaxis, malignant hyperthermia, LAST, and
   status epilepticus across modules; register each directive line with the tutor-rule maturity.
+  Investigated and not started. A rapid-cycle point restores a fixed decision tick, so it fits
+  only a lesson whose crisis is scheduled. Malignant hyperthermia is not: its trigger is latent,
+  and rigidity begins whenever the learner's volatile reaches the patient (tick 2,400 on the
+  expert path, later on others), so a fixed tick would restore the wrong moment for most
+  learners. The first authored points should go on scheduled-event lessons, or the format needs
+  an event-relative decision point (for example "90 seconds after the first modeled rigidity").
 - [ ] Build test: every timed-protocol objective has at least one rapid-cycle decision point.
 
 ## 4. Reasoning notes
